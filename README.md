@@ -1,6 +1,6 @@
 # Typical Code Generator (WIP)
 
-## Comamands 
+## Commands 
 
 ### Typi-Go Tool
 
