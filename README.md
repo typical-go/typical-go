@@ -10,10 +10,15 @@ General:
 - [ ] `typi-go version`: show version of `typi-go`
 - [ ] `typi-go archtype`: show list of available architecture type
 
-Core functional:
+New/Init:
 - [ ] `typi-go new [archtype] [name]`: create new project based on architecture type 
 - [ ] `type-go init [archtype]`: generate `typi-gen` and meta information of the project in current directory
 - [ ] `type-go init [archtype] --force`: same with `init`, but will override everything
+
+Context:
+- [ ] `typi-go ctx`: print application context
+- [ ] `typi-go ctx [field]`: print application context field
+- [ ] `typi-go ctx [field] [value]`: set application context field
 
  
 ### Typi-Gen Tool
@@ -46,7 +51,7 @@ In the future, each architecture will have 2 repository:
 
 The underlying information of typical go project will be store at `.typical-go` folder which is contain appcontext and entity json file
 
-Detail of `_appctx.json`
+Detail of `_context.json`
 ```js
 {
   "name":"[name]",
