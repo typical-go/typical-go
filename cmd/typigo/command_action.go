@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/typical-go/typical-code-generator/typigo"
 	cli "gopkg.in/urfave/cli.v1"
 )
 
@@ -26,7 +27,8 @@ func actionNewProject(c *cli.Context) (err error) {
 	}
 
 	fmt.Printf("Name=%s Archetype=%s Path=%s\n", name, archetype, path)
-	return
+
+	return typigo.NewProject(name, archetype, path)
 }
 
 func actionContext(c *cli.Context) (err error) {

@@ -16,7 +16,7 @@ func main() {
 	app.Version = Version
 	app.Commands = []cli.Command{
 		cli.Command{Name: "new", Action: actionNewProject},
-		cli.Command{Name: "context", ShortName: "ctx", Action: actionNewProject},
+		cli.Command{Name: "context", ShortName: "ctx", Action: actionContext},
 	}
 
 	err := app.Run(os.Args)
