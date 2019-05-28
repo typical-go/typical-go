@@ -1,4 +1,4 @@
-package bashkit
+package oskit
 
 import (
 	"go/build"

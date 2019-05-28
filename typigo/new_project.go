@@ -1,17 +1,25 @@
 package typigo
 
 import (
-	"github.com/typical-go/typical-code-generator/utility/bashkit"
-	"github.com/typical-go/typical-code-generator/utility/linux"
+	"github.com/typical-go/typical-code-generator/command"
+	"github.com/typical-go/typical-code-generator/executor"
+	"github.com/typical-go/typical-code-generator/metadata"
+	"github.com/typical-go/typical-code-generator/utility/oskit"
 )
 
-func NewProject(name, archetype, path string) (err error) {
-	projectPath := bashkit.GOPATH() + "/src/" + path
+// NewProject new project
+func NewProject(path string) (err error) {
+	projectPath := oskit.GOPATH() + "/src/" + path
 	typicalPath := projectPath + "/.typical"
 
-	screen := bashkit.NewScreen()
-	err = screen.Run(
-		linux.MakeDirectory(typicalPath),
+	context := metadata.Context{
+		Name: "meh",
+		Path: path,
+	}
+
+	err = executor.Run(
+		command.MakeDirectory(typicalPath),
+		command.SaveMetadataContext(typicalPath+"/_context.json", context),
 	)
 	return
 }
