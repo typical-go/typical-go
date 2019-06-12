@@ -2,9 +2,15 @@
 
 Typical-project will help to generate golang project which have:
 - [ ] Simple and inituative project layout
+  - Dependency Injection
 - [ ] Auto-generation for documentations
   - Readme
   - Configuration
+  - etc
+- [ ] Builerplate code generator
+  - Add infrastructure layer
+  - Add controller layer
+  - HealthCheck API
   - etc
 - [ ] Have one-off process for administration/development such as:
   - Create/Drop database
@@ -14,15 +20,16 @@ Typical-project will help to generate golang project which have:
   - Run docker compose
   - Custom task
   - etc
-- [ ] Builerplate code generator
-
-Please check <https://github.com/typical-go/typical-rest-server>
 
 ### Usage
 
 ```bash
 typical-project new [project-name]
 ```
+
+### Learn More
+
+Please check <https://github.com/typical-go/typical-rest-server>
 
 ### Contributing
 
