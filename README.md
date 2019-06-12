@@ -1,65 +1,27 @@
-# Typical Code Generator (WIP)
+# Typical Project (WIP)
 
-## Commands 
+Typical-project will help to generate golang project which have:
+- [ ] Simple and inituative project layout
+- [ ] Auto-generation for documentations
+  - Readme
+  - Configuration
+  - etc
+- [ ] Have one-off process for administration/development such as:
+  - Create/Drop database
+  - Execute/Rollback migration
+  - Generate mock
+  - Install dependency
+  - Run docker compose
+  - Custom task
+  - etc
+- [ ] Builerplate code generator
 
-### Typi-Go Tool
+Please check <https://github.com/typical-go/typical-rest-server>
 
-`typi-go` used to bootstrap new project and migrate common go project to typical go project
+### Usage
 
-General:
-- [ ] `typi-go version`: show version of `typi-go`
-- [ ] `typi-go archtype`: show list of available architecture type
-
-New/Init:
-- [ ] `typi-go new [archtype] [name]`: create new project based on architecture type 
-- [ ] `type-go init [archtype]`: generate `typi-gen` and meta information of the project in current directory
-- [ ] `type-go init [archtype] --force`: same with `init`, but will override everything
-
-Context:
-- [ ] `typi-go ctx`: print application context
-- [ ] `typi-go ctx [field]`: print application context field
-- [ ] `typi-go ctx [field] [value]`: set application context field
-
- 
-### Typi-Gen Tool
-
-`typi-gen` should be included and committed in every typical go project.
-
-`typi-gen` mainly help to generate entity/layer, put it the right place, setup the Dependency Inject and update the project readme/documentation.
-
-General:
-- [ ] `typi-gen update`: update metadata in current directory
-- [ ] `typi-gen upgrade`: upgrade `typi-gen`
-- [ ] `typi-gen version`: show current version of `typi-gen`
-- [ ] `typi-gen about`: show general information of this project
-
-Core functional:
-- [ ] `typi-gen add [type] [name]`: add new entity to the project
-- [ ] `type-gen type`: show list of type
-- [ ] `typi-gen mock`: generate mock class
-
-
-## Architecture Type
-
-Currently only support `rest` architecture. 
-
-In the future, each architecture will have 2 repository: 
-1. `typical-[archtype_name]-go`: act as experimental and complete example of respective architecture
-2. `archtype-[archtype_name]`: act as handler to `typi-gen` tool
-
-## Metadata
-
-The underlying information of typical go project will be store at `.typical-go` folder which is contain appcontext and entity json file
-
-Detail of `_context.json`
-```js
-{
-  "name":"[name]",
-  "architecture": {
-    "type": "[type]",
-    "version": "[version]"
-  }
-}
+```bash
+typical-project new [project-name]
 ```
 
 ### Contributing
