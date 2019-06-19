@@ -1,16 +1,16 @@
-package command
+package stmt
 
 import (
 	"os"
 )
 
-type makeDirectory struct {
-	path string
+// MakeDirectory execute `mkdir` in linux bash
+func MakeDirectory(path string) Statement {
+	return &makeDirectory{path: path}
 }
 
-// MakeDirectory execute `mkdir` in linux bash
-func MakeDirectory(path string) Command {
-	return &makeDirectory{path: path}
+type makeDirectory struct {
+	path string
 }
 
 func (md makeDirectory) Run() error {

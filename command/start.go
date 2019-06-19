@@ -1,15 +1,15 @@
-package executor
+package command
 
 import (
 	"bytes"
 	"fmt"
 	"os/exec"
 
-	"github.com/typical-go/typical-go/command"
+	"github.com/typical-go/typical-go/command/stmt"
 )
 
-// Run run commands
-func Run(cmds ...command.Command) (err error) {
+// Start start statements
+func Start(cmds ...stmt.Statement) (err error) {
 	for _, cmd := range cmds {
 		execCmd, ok := cmd.(*exec.Cmd)
 		if ok {

@@ -1,4 +1,4 @@
-package context
+package appcontext
 
 type Context struct {
 	Name        string `json:"name"`
