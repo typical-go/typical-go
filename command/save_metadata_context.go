@@ -1,19 +1,19 @@
 package command
 
 import (
+	"github.com/typical-go/typical-go/context"
+
 	"encoding/json"
 	"io/ioutil"
-
-	"github.com/typical-go/typical-code-generator/metadata"
 )
 
 type saveMetadataContext struct {
 	source  string
-	context metadata.Context
+	context context.Context
 }
 
-// SaveMetadataContext save metadata (context) to corresponding source
-func SaveMetadataContext(source string, context metadata.Context) Command {
+// SaveMetadataContext save context to corresponding source
+func SaveMetadataContext(context context.Context, source string) Command {
 	return &saveMetadataContext{
 		source:  source,
 		context: context,

@@ -1,4 +1,4 @@
-package metadata
+package context
 
 type Context struct {
 	Name        string `json:"name"`

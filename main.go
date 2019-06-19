@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -15,12 +16,15 @@ func main() {
 	app := cli.NewApp()
 	app.Version = Version
 	app.Commands = []cli.Command{
-		cli.Command{Name: "new", Action: actionNewProject},
-		cli.Command{Name: "context", ShortName: "ctx", Action: actionContext},
+		cli.Command{Name: "new", Action: notImplement},
 	}
 
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+}
+
+func notImplement(ctx cli.Context) {
+	fmt.Println("not implement")
 }

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/typical-go/typical-code-generator/command"
+	"github.com/typical-go/typical-go/command"
 )
 
 // Run run commands
