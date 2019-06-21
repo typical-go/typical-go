@@ -1,7 +1,7 @@
-package main
+package command
 
 import (
-	"github.com/typical-go/typical-go/appcontext"
+	"github.com/typical-go/typical-go/appx"
 	"github.com/typical-go/typical-go/command/stmt"
 	"github.com/typical-go/typical-go/utility/oskit"
 )
@@ -11,7 +11,7 @@ func NewProject(path string) (err error) {
 	projectPath := oskit.GOPATH() + "/src/" + path
 	typicalPath := projectPath + "/.typical"
 
-	context := appcontext.Context{
+	context := appx.Context{
 		Name: "meh",
 		Path: path,
 	}
