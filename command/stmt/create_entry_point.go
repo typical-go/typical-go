@@ -5,11 +5,11 @@ import (
 )
 
 type CreateEntryPoint struct {
-	Source string
+	Target string
 }
 
 func (c CreateEntryPoint) Run() error {
-	return ioutil.WriteFile(c.Source, []byte(`package main
+	return ioutil.WriteFile(c.Target, []byte(`package main
 func main(){
 
 }`), 0644)

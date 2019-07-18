@@ -18,17 +18,17 @@ func NewProject(path string) (err error) {
 	}
 
 	err = Start(
-		&stmt.MakeDirectory{path},
-		&stmt.MakeDirectory{path + "/app"},
-		&stmt.MakeDirectory{path + "/cmd"},
-		&stmt.MakeDirectory{path + "/cmd/app"},
-		&stmt.MakeDirectory{path + "/cmd/typical-dev-tool"},
-		&stmt.MakeDirectory{path + "/config"},
-		&stmt.MakeDirectory{path + "/typical"},
-		&stmt.MakeDirectory{path + "/.typical"},
-		&stmt.CreateContextMetadata{metadata, path + "/.typical/metadata.json"},
-		&stmt.CreateEntryPoint{path + "/cmd/app/main.go"},
-		&stmt.CreateEntryPoint{path + "/cmd/typical-dev-tool/main.go"},
+		stmt.MakeDirectory{Path: path},
+		stmt.MakeDirectory{Path: path + "/app"},
+		stmt.MakeDirectory{Path: path + "/cmd"},
+		stmt.MakeDirectory{Path: path + "/cmd/app"},
+		stmt.MakeDirectory{Path: path + "/cmd/typical-dev-tool"},
+		stmt.MakeDirectory{Path: path + "/config"},
+		stmt.MakeDirectory{Path: path + "/typical"},
+		stmt.MakeDirectory{Path: path + "/.typical"},
+		stmt.CreateContextMetadata{Metadata: metadata, Target: path + "/.typical/metadata.json"},
+		stmt.CreateEntryPoint{Target: path + "/cmd/app/main.go"},
+		stmt.CreateEntryPoint{Target: path + "/cmd/typical-dev-tool/main.go"},
 	)
 	return
 }
