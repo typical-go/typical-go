@@ -24,7 +24,7 @@ Typical-project will help to generate golang project which have:
 ### Usage
 
 ```bash
-typical-project new [project-name]
+typical-go new [project-name]
 ```
 
 ### Learn More

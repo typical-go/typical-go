@@ -1,20 +1,21 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
+
+	"github.com/typical-go/typical-go/command"
 
 	cli "gopkg.in/urfave/cli.v1"
 )
 
 const (
-	Version = "0.0.1"
+	version = "0.0.1"
 )
 
 func main() {
 	app := cli.NewApp()
-	app.Version = Version
+	app.Version = version
 	app.Commands = []cli.Command{
 		cli.Command{Name: "new", Action: notImplement},
 	}
@@ -25,6 +26,12 @@ func main() {
 	}
 }
 
-func notImplement(ctx cli.Context) {
-	fmt.Println("not implement")
+func notImplement(ctx *cli.Context) error {
+	projectName := ctx.Args().First()
+
+	if projectName == "" {
+		projectName = "."
+	}
+	return command.NewProject(projectName)
+
 }

@@ -4,15 +4,10 @@ import (
 	"os"
 )
 
-// MakeDirectory execute `mkdir` in linux bash
-func MakeDirectory(path string) Statement {
-	return &makeDirectory{path: path}
+type MakeDirectory struct {
+	Path string
 }
 
-type makeDirectory struct {
-	path string
-}
-
-func (md makeDirectory) Run() error {
-	return os.MkdirAll(md.path, os.ModePerm)
+func (md MakeDirectory) Run() error {
+	return os.MkdirAll(md.Path, os.ModePerm)
 }

@@ -1,16 +1,10 @@
 -include .env
 
-BIN_TARGET=bin
+SAMPLE_FOLDER = sample/hello-world
 
-build:
-	@mkdir -p $(BIN_TARGET)
-	# @echo "  >  Building $(BIN_TARGET)/typigen"
-	# @go build -o $(BIN_TARGET)/typigen ./cli/typigen
-	@echo "  >  Building $(BIN_TARGET)/typigo"
-	@go build -o $(BIN_TARGET)/typigo ./cli/typigo
-
-clean:
-	@echo "  >  Remove $(BIN_TARGET)"
-	@rm -rf $(BIN_TARGET)
+new-sample:
+	@go build 
+	@rm -rf $(SAMPLE_FOLDER)
+	@./typical-go new $(SAMPLE_FOLDER)
 	
 	
