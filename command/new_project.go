@@ -17,7 +17,11 @@ func NewProject(parentPath, packageName string) (err error) {
 		Name:        name,
 		Version:     "0.0.1",
 		Description: "Hello world of typical generation",
-		ArcheType: "github.com/typical-go/typical-go/EXPERIMENTAL/restapp.RestAppArchetype",
+		ArcheType: typicore.ArcheType{
+			Source:  "typical-go/typical-go",
+			Version: "master",
+			Package: "EXPERIMENTAL/restapp",
+		},
 		Modules:     []string{},
 		PackageName: packageName,
 		ProjectPath: projectPath,
@@ -36,6 +40,8 @@ func NewProject(parentPath, packageName string) (err error) {
 		stmt.CreateTypicalContext{Metadata: metadata, Target: projectPath + "/typical/init.go"},
 		stmt.CreateAppEntryPoint{Metadata: metadata, Target: projectPath + "/cmd/app/main.go"},
 		stmt.CreateTypicalDevToolEntryPoint{Metadata: metadata, Target: projectPath + "/cmd/typical-dev-tool/main.go"},
+		stmt.DownloadPrepareFile{Metadata: metadata},
+		stmt.ChangeDirectory{ProjectPath: projectPath},
 		stmt.GoModInit{ProjectPath: projectPath, PackageName: packageName},
 		stmt.GoFmt{ProjectPath: projectPath},
 	)
