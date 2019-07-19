@@ -16,6 +16,7 @@ func NewProject(path string) (err error) {
 		Description: "Hello world of typical generation",
 		AppModule:   "github.com/typical-go/EXPERIMENTAL/typictx.TypiApp",
 		Modules:     []string{},
+		ProjectPath: path,
 	}
 
 	err = Start(
@@ -28,9 +29,9 @@ func NewProject(path string) (err error) {
 		stmt.MakeDirectory{Path: path + "/typical"},
 		stmt.MakeDirectory{Path: path + "/.typical"},
 		stmt.CreateContextMetadata{Metadata: metadata, Target: path + "/.typical/metadata.json"},
-		stmt.CreateEntryPoint{Target: path + "/cmd/app/main.go"},
-		stmt.CreateEntryPoint{Target: path + "/cmd/typical-dev-tool/main.go"},
+		// stmt.CreateEntryPoint{Target: path + "/cmd/typical-dev-tool/main.go"},
 		stmt.CreateTypicalContext{Metadata: metadata, Target: path + "/typical/init.go"},
+		stmt.CreateAppEntryPoint{Metadata: metadata, Target: path + "/cmd/app/main.go"},
 	)
 	return
 }

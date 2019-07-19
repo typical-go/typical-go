@@ -34,8 +34,10 @@ type CreateTypicalContext struct {
 // Run the create typical context
 func (c CreateTypicalContext) Run() (err error) {
 	f, err := os.Create(c.Target)
+	if err != nil {
+		return
+	}
 
-	tmpl, err := template.New("typical_context").Parse(typicalContextTemplate)
-	tmpl.Execute(f, c.Metadata)
-	return err
+	tmpl, _ := template.New("typical_context").Parse(typicalContextTemplate)
+	return tmpl.Execute(f, c.Metadata)
 }
