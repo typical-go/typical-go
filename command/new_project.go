@@ -10,32 +10,34 @@ import (
 // NewProject new project
 func NewProject(parentPath, packageName string) (err error) {
 
+	name := getNameFromPath(packageName)
+	projectPath := parentPath + "/" + name
+
 	metadata := &typicore.ContextMetadata{
-		Name:        getNameFromPath(packageName),
+		Name:        name,
 		Version:     "0.0.1",
 		Description: "Hello world of typical generation",
-		AppModule:   "github.com/typical-go/EXPERIMENTAL/typictx.TypiApp",
+		ArcheType: "github.com/typical-go/typical-go/EXPERIMENTAL/restapp.RestAppArchetype",
 		Modules:     []string{},
 		PackageName: packageName,
+		ProjectPath: projectPath,
 	}
 
-	path := parentPath + "/" + metadata.Name
-
 	err = execute(
-		stmt.MakeDirectory{Path: path},
-		stmt.MakeDirectory{Path: path + "/app"},
-		stmt.MakeDirectory{Path: path + "/cmd"},
-		stmt.MakeDirectory{Path: path + "/cmd/app"},
-		stmt.MakeDirectory{Path: path + "/cmd/typical-dev-tool"},
-		stmt.MakeDirectory{Path: path + "/config"},
-		stmt.MakeDirectory{Path: path + "/typical"},
-		stmt.MakeDirectory{Path: path + "/.typical"},
-		stmt.CreateContextMetadata{Metadata: metadata, Target: path + "/.typical/metadata.json"},
-		stmt.CreateTypicalContext{Metadata: metadata, Target: path + "/typical/init.go"},
-		stmt.CreateAppEntryPoint{Metadata: metadata, Target: path + "/cmd/app/main.go"},
-		stmt.CreateTypicalDevToolEntryPoint{Metadata: metadata, Target: path + "/cmd/typical-dev-tool/main.go"},
-		stmt.GoModInit{ProjectPath: path, PackageName: packageName},
-		stmt.GoFmt{ProjectPath: path},
+		stmt.MakeDirectory{Path: projectPath},
+		stmt.MakeDirectory{Path: projectPath + "/app"},
+		stmt.MakeDirectory{Path: projectPath + "/cmd"},
+		stmt.MakeDirectory{Path: projectPath + "/cmd/app"},
+		stmt.MakeDirectory{Path: projectPath + "/cmd/typical-dev-tool"},
+		stmt.MakeDirectory{Path: projectPath + "/config"},
+		stmt.MakeDirectory{Path: projectPath + "/typical"},
+		stmt.MakeDirectory{Path: projectPath + "/.typical"},
+		stmt.CreateContextMetadata{Metadata: metadata, Target: projectPath + "/.typical/metadata.json"},
+		stmt.CreateTypicalContext{Metadata: metadata, Target: projectPath + "/typical/init.go"},
+		stmt.CreateAppEntryPoint{Metadata: metadata, Target: projectPath + "/cmd/app/main.go"},
+		stmt.CreateTypicalDevToolEntryPoint{Metadata: metadata, Target: projectPath + "/cmd/typical-dev-tool/main.go"},
+		stmt.GoModInit{ProjectPath: projectPath, PackageName: packageName},
+		stmt.GoFmt{ProjectPath: projectPath},
 	)
 	return
 }
