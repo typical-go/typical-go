@@ -21,7 +21,7 @@ func NewProject(parentPath, packageName string) (err error) {
 
 	path := parentPath + "/" + metadata.Name
 
-	err = Start(
+	err = execute(
 		stmt.MakeDirectory{Path: path},
 		stmt.MakeDirectory{Path: path + "/app"},
 		stmt.MakeDirectory{Path: path + "/cmd"},

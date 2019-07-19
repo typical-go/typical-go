@@ -1,4 +1,4 @@
-package stmt
+package typicore
 
 // Statement statement
 type Statement interface {

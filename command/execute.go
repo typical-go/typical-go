@@ -5,11 +5,10 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/typical-go/typical-go/command/stmt"
+	"github.com/typical-go/typical-go/typicore"
 )
 
-// Start start statements
-func Start(cmds ...stmt.Statement) (err error) {
+func execute(cmds ...typicore.Statement) (err error) {
 	for _, cmd := range cmds {
 		execCmd, ok := cmd.(*exec.Cmd)
 		if ok {
