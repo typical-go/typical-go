@@ -31,9 +31,9 @@ func NewProject(parentPath, projectPath string) (err error) {
 		stmt.MakeDirectory{Path: path + "/typical"},
 		stmt.MakeDirectory{Path: path + "/.typical"},
 		stmt.CreateContextMetadata{Metadata: metadata, Target: path + "/.typical/metadata.json"},
-		// stmt.CreateEntryPoint{Tarath: path + "/cmd/typical-dev-tool/main.go"},
 		stmt.CreateTypicalContext{Metadata: metadata, Target: path + "/typical/init.go"},
 		stmt.CreateAppEntryPoint{Metadata: metadata, Target: path + "/cmd/app/main.go"},
+		stmt.CreateTypicalDevToolEntryPoint{Metadata: metadata, Target: path + "/cmd/typical-dev-tool/main.go"},
 	)
 	return
 }
