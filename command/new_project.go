@@ -35,6 +35,7 @@ func NewProject(parentPath, packageName string) (err error) {
 		stmt.CreateAppEntryPoint{Metadata: metadata, Target: path + "/cmd/app/main.go"},
 		stmt.CreateTypicalDevToolEntryPoint{Metadata: metadata, Target: path + "/cmd/typical-dev-tool/main.go"},
 		stmt.GoModInit{ProjectPath: path, PackageName: packageName},
+		stmt.GoFmt{ProjectPath: path},
 	)
 	return
 }
