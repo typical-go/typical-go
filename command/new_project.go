@@ -11,10 +11,11 @@ import (
 func NewProject(path string) (err error) {
 
 	metadata := &typicore.ContextMetadata{
-		Name:      getNameFromPath(path),
-		Version:   "0.0.1",
-		AppModule: "github.com/typical-go/EXPERIMENTAL/typictx.TypiApp",
-		Modules:   []string{},
+		Name:        getNameFromPath(path),
+		Version:     "0.0.1",
+		Description: "Hello world of typical generation",
+		AppModule:   "github.com/typical-go/EXPERIMENTAL/typictx.TypiApp",
+		Modules:     []string{},
 	}
 
 	err = Start(
@@ -29,6 +30,7 @@ func NewProject(path string) (err error) {
 		stmt.CreateContextMetadata{Metadata: metadata, Target: path + "/.typical/metadata.json"},
 		stmt.CreateEntryPoint{Target: path + "/cmd/app/main.go"},
 		stmt.CreateEntryPoint{Target: path + "/cmd/typical-dev-tool/main.go"},
+		stmt.CreateTypicalContext{Metadata: metadata, Target: path + "/typical/init.go"},
 	)
 	return
 }
