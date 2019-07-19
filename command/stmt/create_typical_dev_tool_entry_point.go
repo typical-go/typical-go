@@ -14,7 +14,7 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-rest-server/EXPERIMENTAL/typimain"
-	"{{ .ProjectPath }}/typical"
+	"{{ .PackageName }}/typical"
 )
 
 func main() {

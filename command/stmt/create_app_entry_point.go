@@ -13,7 +13,7 @@ import (
 	"log"
 	"os"
 
-	"{{ .ProjectPath }}/typical"
+	"{{ .PackageName }}/typical"
 	"github.com/typical-go/typical-rest-server/EXPERIMENTAL/typimain"
 )
 	

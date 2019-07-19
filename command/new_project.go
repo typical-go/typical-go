@@ -8,15 +8,15 @@ import (
 )
 
 // NewProject new project
-func NewProject(parentPath, projectPath string) (err error) {
+func NewProject(parentPath, packageName string) (err error) {
 
 	metadata := &typicore.ContextMetadata{
-		Name:        getNameFromPath(projectPath),
+		Name:        getNameFromPath(packageName),
 		Version:     "0.0.1",
 		Description: "Hello world of typical generation",
 		AppModule:   "github.com/typical-go/EXPERIMENTAL/typictx.TypiApp",
 		Modules:     []string{},
-		ProjectPath: projectPath,
+		PackageName: packageName,
 	}
 
 	path := parentPath + "/" + metadata.Name
@@ -34,6 +34,7 @@ func NewProject(parentPath, projectPath string) (err error) {
 		stmt.CreateTypicalContext{Metadata: metadata, Target: path + "/typical/init.go"},
 		stmt.CreateAppEntryPoint{Metadata: metadata, Target: path + "/cmd/app/main.go"},
 		stmt.CreateTypicalDevToolEntryPoint{Metadata: metadata, Target: path + "/cmd/typical-dev-tool/main.go"},
+		stmt.GoModInit{ProjectPath: path, PackageName: packageName},
 	)
 	return
 }
