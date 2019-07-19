@@ -1,10 +1,11 @@
 -include .env
 
-SAMPLE_FOLDER = sample/hello-world
+PARENT_PATH=sample
+SAMPLE_FOLDER = github.com/typical-go/hello-world
 
 new-sample:
 	@go build 
-	@rm -rf $(SAMPLE_FOLDER)
-	@./typical-go new $(SAMPLE_FOLDER)
+	@rm -rf $(PARENT_PATH)
+	@./typical-go new $(SAMPLE_FOLDER) -parentPath=$(PARENT_PATH)
 	
 	

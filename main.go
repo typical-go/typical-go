@@ -17,7 +17,18 @@ func main() {
 	app := cli.NewApp()
 	app.Version = version
 	app.Commands = []cli.Command{
-		cli.Command{Name: "new", Action: notImplement},
+		cli.Command{
+			Name:   "new",
+			Usage:  "create typical project",
+			Action: newProject,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "parentPath",
+					Usage: "set parent path for project path creation",
+					Value: ".",
+				},
+			},
+		},
 	}
 
 	err := app.Run(os.Args)
@@ -26,12 +37,13 @@ func main() {
 	}
 }
 
-func notImplement(ctx *cli.Context) error {
+func newProject(ctx *cli.Context) error {
 	projectName := ctx.Args().First()
 
 	if projectName == "" {
 		projectName = "."
 	}
-	return command.NewProject(projectName)
+
+	return command.NewProject(ctx.String("parentPath"), projectName)
 
 }
