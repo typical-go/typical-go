@@ -3,6 +3,7 @@ package command
 import (
 	"strings"
 
+	"github.com/typical-go/runn"
 	"github.com/typical-go/typical-go/command/stmt"
 	"github.com/typical-go/typical-go/typicore"
 )
@@ -27,7 +28,7 @@ func NewProject(parentPath, packageName string) (err error) {
 		ProjectPath: projectPath,
 	}
 
-	err = execute(
+	err = runn.Execute(
 		stmt.MakeDirectory{Path: projectPath},
 		stmt.MakeDirectory{Path: projectPath + "/app"},
 		stmt.MakeDirectory{Path: projectPath + "/cmd"},
