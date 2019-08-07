@@ -43,6 +43,7 @@ func NewProject(parentPath, packageName string) (err error) {
 		stmt.CreateTypicalContext{Project: proj, Target: proj.Path + "/typical/context.go"},
 		stmt.CreateAppEntryPoint{Project: proj, Target: proj.Path + "/cmd/typical-app/main.go"},
 		stmt.CreateTypicalDevToolEntryPoint{Project: proj, Target: proj.Path + "/cmd/typical-dev-tool/main.go"},
+		stmt.CreateTypicalWrapper{Target: proj.Path + "/typicalw"},
 		stmt.ChangeDirectory{ProjectPath: proj.Path},
 		stmt.GoModInit{ProjectPath: proj.Path, PackageName: packageName},
 		stmt.GoFmt{ProjectPath: proj.Path},
