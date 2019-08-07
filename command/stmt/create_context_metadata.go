@@ -4,15 +4,15 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	"github.com/typical-go/typical-go/typicore"
+	"github.com/typical-go/typical-go/typibuild"
 )
 
 type CreateContextMetadata struct {
-	Metadata *typicore.ContextMetadata
-	Target   string
+	Project *typibuild.Project
+	Target  string
 }
 
 func (c CreateContextMetadata) Run() error {
-	b, _ := json.MarshalIndent(c.Metadata, "", "    ")
+	b, _ := json.MarshalIndent(c.Project, "", "    ")
 	return ioutil.WriteFile(c.Target, b, 0644)
 }

@@ -4,7 +4,7 @@ import (
 	"html/template"
 	"os"
 
-	"github.com/typical-go/typical-go/typicore"
+	"github.com/typical-go/typical-go/typibuild"
 )
 
 const typicalDevToolEntryPointTemplate = `package main
@@ -27,8 +27,8 @@ func main() {
 `
 
 type CreateTypicalDevToolEntryPoint struct {
-	Metadata *typicore.ContextMetadata
-	Target   string
+	Project *typibuild.Project
+	Target  string
 }
 
 func (c CreateTypicalDevToolEntryPoint) Run() (err error) {
@@ -38,5 +38,5 @@ func (c CreateTypicalDevToolEntryPoint) Run() (err error) {
 	}
 
 	tmpl, _ := template.New("typical_context").Parse(typicalDevToolEntryPointTemplate)
-	return tmpl.Execute(f, c.Metadata)
+	return tmpl.Execute(f, c.Project)
 }

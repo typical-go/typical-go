@@ -1,11 +1,11 @@
-package typicore
+package typibuild
 
-type ContextMetadata struct {
+type Project struct {
 	Name        string    `json:"name"`
 	Version     string    `json:"version"`
 	Description string    `json:"description"`
 	ArcheType   ArcheType `json:"archetype"`
 	Modules     []string  `json:"module"`
 	PackageName string    `json:"package_name"`
-	ProjectPath string    `json:"project_path"`
+	Path        string    `json:"path"`
 }

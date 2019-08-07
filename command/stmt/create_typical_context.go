@@ -4,7 +4,7 @@ import (
 	"html/template"
 	"os"
 
-	"github.com/typical-go/typical-go/typicore"
+	"github.com/typical-go/typical-go/typibuild"
 )
 
 const typicalContextTemplate = `package typical
@@ -27,8 +27,8 @@ func init() {
 
 // CreateTypicalContext to create Typical Context in Target file
 type CreateTypicalContext struct {
-	Metadata *typicore.ContextMetadata
-	Target   string
+	Project *typibuild.Project
+	Target  string
 }
 
 // Run the create typical context
@@ -39,5 +39,5 @@ func (c CreateTypicalContext) Run() (err error) {
 	}
 
 	tmpl, _ := template.New("typical_context").Parse(typicalContextTemplate)
-	return tmpl.Execute(f, c.Metadata)
+	return tmpl.Execute(f, c.Project)
 }
