@@ -14,14 +14,10 @@ import(
 )
 
 // Context instance of Context
-var Context typictx.Context
-
-func init() {
-	Context = typictx.Context{
-		Name:        "{{ .Name }}",
-		Version:     "{{ .Version }}",
-		Description: "{{ .Description }}",
-	}
+var Context = typictx.Context{
+	Name:        "{{ .Name }}",
+	Version:     "{{ .Version }}",
+	Description: "{{ .Description }}",
 }
 `
 
