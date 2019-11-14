@@ -4,8 +4,8 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/archetypes/restful"
+	"github.com/typical-go/typical-go/pkg/runn"
 
-	"github.com/typical-go/runn"
 	"github.com/typical-go/typical-go/command/stmt"
 	"github.com/typical-go/typical-go/typibuild"
 )

@@ -1,8 +1,8 @@
 package restful
 
 import (
-	"github.com/typical-go/runn"
 	"github.com/typical-go/typical-go/command/stmt"
+	"github.com/typical-go/typical-go/pkg/runn"
 	"github.com/typical-go/typical-go/typibuild"
 
 	"github.com/typical-go/typical-rest-server/EXPERIMENTAL/typictx"
