@@ -11,7 +11,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/typical-go/typical-rest-server/EXPERIMENTAL/typimain"
+	"github.com/typical-go/typical-go/pkg/typimain"
 	"{{ .PackageName }}/typical"
 )
 

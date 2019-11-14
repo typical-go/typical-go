@@ -1,6 +1,6 @@
 package runn
 
-import "github.com/typical-go/typical-rest-server/EXPERIMENTAL/errkit"
+import "github.com/typical-go/typical-go/pkg/errkit"
 
 // Executor do the code statement execution
 type Executor struct {
