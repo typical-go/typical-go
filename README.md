@@ -1,41 +1,51 @@
 # Typical Project (WIP)
 
-Typical-project will help to generate golang project which have:
-- [ ] Simple and inituative project layout
-  - Dependency Injection
-- [ ] Auto-generation for documentations
-  - Readme
-  - Configuration
-  - etc
-- [ ] Builerplate code generator
-  - Add infrastructure layer
-  - Add controller layer
-  - HealthCheck API
-  - etc
-- [ ] Have one-off process for administration/development such as:
-  - Create/Drop database
-  - Execute/Rollback migration
-  - Generate mock
-  - Install dependency
-  - Run docker compose
-  - Custom task
-  - etc
+A Framework and Build Tool for Productive Go Development. <https://typical-go.github.io/>
 
-### Usage
+## Install
+
+*On Progress*
+
+## Usage
+
+### New Project
+
+*On Progress*
 
 ```bash
 typical-go new [project-name]
 ```
 
-### Learn More
+### Migrate Current Project
 
-Please check <https://github.com/typical-go/typical-rest-server>
+*On Progress*
 
-### Contributing
+```bash
+typical-go migrate-me
+```
 
-It's a baby born project right now. Please contact me directly at <iman.tung@gmail.com> for any contribution. Any help would be most welcome.
+### Upgrade typical-go tool
 
-### License
+*On Progress*
+
+```bash
+typical-go migrate-me
+```
+
+### Update current project to use latest framework
+
+*On Progress*
+
+```bash
+typical-go update
+```
+
+## Examples
+
+- [RESTful Server](https://github.com/typical-go/typical-rest-server)
+
+
+## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
