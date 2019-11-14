@@ -1,4 +1,4 @@
-# Typical Project (WIP)
+# Typical Go
 
 A Framework and Build Tool for Productive Go Development. <https://typical-go.github.io/>
 
