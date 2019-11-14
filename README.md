@@ -29,7 +29,7 @@ typical-go migrate-me
 *On Progress*
 
 ```bash
-typical-go migrate-me
+typical-go upgrade
 ```
 
 ### Update current project to use latest framework
