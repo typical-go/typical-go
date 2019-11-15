@@ -10,7 +10,7 @@ import (
 type Context struct {
 	Name            string
 	Description     string
-	Root            string
+	Package         string
 	AppModule       AppModule
 	Modules         collection.Interfaces
 	Release         Release
@@ -22,6 +22,7 @@ type Context struct {
 	}
 }
 
+// AppModule is application module
 type AppModule interface {
 	Run() interface{}
 }
@@ -31,8 +32,8 @@ func (c *Context) Validate() (err error) {
 	if c.Name == "" {
 		return invalidContextError("Name can't not empty")
 	}
-	if c.Root == "" {
-		return invalidContextError("Root can't not empty")
+	if c.Package == "" {
+		return invalidContextError("Package can't not empty")
 	}
 	if err = c.Release.Validate(); err != nil {
 		return fmt.Errorf("Release: %s", err.Error())

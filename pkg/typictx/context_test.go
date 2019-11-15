@@ -35,7 +35,7 @@ func TestContext_Validate(t *testing.T) {
 			typictx.Context{
 				AppModule: dummyApp{},
 				Name:      "some-name",
-				Root:      "some-root",
+				Package:   "some-package",
 				Release:   typictx.Release{Targets: []string{"linux/amd64"}},
 			},
 			"",
@@ -43,7 +43,7 @@ func TestContext_Validate(t *testing.T) {
 		{
 			typictx.Context{
 				AppModule: dummyApp{},
-				Root:      "some-root",
+				Package:   "some-package",
 				Release:   typictx.Release{Targets: []string{"linux/amd64"}},
 			},
 			"Invalid Context: Name can't not empty",
@@ -54,13 +54,13 @@ func TestContext_Validate(t *testing.T) {
 				Name:      "some-name",
 				Release:   typictx.Release{Targets: []string{"linux/amd64"}},
 			},
-			"Invalid Context: Root can't not empty",
+			"Invalid Context: Package can't not empty",
 		},
 		{
 			typictx.Context{
 				AppModule: dummyApp{},
 				Name:      "some-name",
-				Root:      "some-root",
+				Package:   "some-package",
 			},
 			"Release: Missing 'Targets'",
 		},
@@ -68,7 +68,7 @@ func TestContext_Validate(t *testing.T) {
 			typictx.Context{
 				AppModule: dummyApp{},
 				Name:      "some-name",
-				Root:      "some-root",
+				Package:   "some-package",
 				Release:   typictx.Release{Targets: []string{"invalid"}},
 			},
 			"Release: Missing '/' in target 'invalid'",

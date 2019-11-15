@@ -33,10 +33,10 @@ func (p *prebuilder) Initiate(ctx *typictx.Context) (err error) {
 	if p.ProjectFiles, err = walker.WalkProject(files); err != nil {
 		return
 	}
-	p.ContextImport = ctx.Root + "/typical"
+	p.ContextImport = ctx.Package + "/typical"
 	log.Debug("Create imports for Application")
 	for _, dir := range p.Dirs {
-		p.ApplicationImports.AddImport("", ctx.Root+"/"+dir)
+		p.ApplicationImports.AddImport("", ctx.Package+"/"+dir)
 	}
 	p.ApplicationImports.AddImport("", p.ContextImport)
 	p.ConfigFields = ConfigFields(ctx)
