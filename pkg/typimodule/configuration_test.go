@@ -1,10 +1,10 @@
-package typiobj_test
+package typimodule_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typiobj"
+	"github.com/typical-go/typical-go/pkg/typimodule"
 )
 
 type SampleSpec struct {
@@ -15,11 +15,11 @@ type SampleSpec struct {
 }
 
 func TestConfiguration(t *testing.T) {
-	configuration := typiobj.Configuration{
+	configuration := typimodule.Configuration{
 		Prefix: "TEST",
 		Spec:   &SampleSpec{},
 	}
-	require.EqualValues(t, []typiobj.ConfigField{
+	require.EqualValues(t, []typimodule.ConfigField{
 		{Name: "TEST_FIELD1", Type: "string", Default: "hello", Required: true},
 		{Name: "TEST_FIELD2", Type: "string", Default: "world", Required: false},
 		{Name: "TEST_ALIAS", Type: "int", Default: "", Required: false},

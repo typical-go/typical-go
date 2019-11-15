@@ -8,7 +8,7 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typictx"
 
-	"github.com/typical-go/typical-go/pkg/typiobj"
+	"github.com/typical-go/typical-go/pkg/typimodule"
 	"github.com/urfave/cli"
 	"go.uber.org/dig"
 )
@@ -52,7 +52,7 @@ func (c *ContextCli) provideDependency(di *dig.Container) (err error) {
 		return
 	}
 	for _, module := range c.AllModule() {
-		if provider, ok := module.(typiobj.Provider); ok {
+		if provider, ok := module.(typimodule.Provider); ok {
 			if err = provide(di, provider.Provide()...); err != nil {
 				return
 			}
@@ -63,7 +63,7 @@ func (c *ContextCli) provideDependency(di *dig.Container) (err error) {
 
 func (c *ContextCli) prepare(di *dig.Container) (err error) {
 	for _, module := range c.AllModule() {
-		if preparer, ok := module.(typiobj.Preparer); ok {
+		if preparer, ok := module.(typimodule.Preparer); ok {
 			if err = invoke(di, preparer.Prepare()...); err != nil {
 				return
 			}
@@ -74,7 +74,7 @@ func (c *ContextCli) prepare(di *dig.Container) (err error) {
 
 func (c *ContextCli) shutdown(di *dig.Container) (err error) {
 	for _, module := range c.AllModule() {
-		if destroyer, ok := module.(typiobj.Destroyer); ok {
+		if destroyer, ok := module.(typimodule.Destroyer); ok {
 			if err = invoke(di, destroyer.Destroy()...); err != nil {
 				return
 			}

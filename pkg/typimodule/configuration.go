@@ -1,4 +1,4 @@
-package typiobj
+package typimodule
 
 import (
 	"fmt"

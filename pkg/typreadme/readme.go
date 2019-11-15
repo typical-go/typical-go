@@ -7,7 +7,7 @@ import (
 	"github.com/iancoleman/strcase"
 	"github.com/typical-go/typical-go/pkg/typicmd/buildtool"
 	"github.com/typical-go/typical-go/pkg/typictx"
-	"github.com/typical-go/typical-go/pkg/typiobj"
+	"github.com/typical-go/typical-go/pkg/typimodule"
 	"github.com/typical-go/typical-go/pkg/typreadme/markdown"
 )
 
@@ -56,19 +56,19 @@ func releaseDistribution(md *markdown.Markdown) {
 }
 
 func application(md *markdown.Markdown, app interface{}) {
-	if configurer, ok := app.(typiobj.Configurer); ok {
+	if configurer, ok := app.(typimodule.Configurer); ok {
 		configTable(md, configurer.Configure().ConfigFields())
 	}
 }
 
 func module(md *markdown.Markdown, module interface{}) {
-	if name := typiobj.Name(module); name != "" {
+	if name := typimodule.Name(module); name != "" {
 		md.H3(strcase.ToCamel(name))
 	}
-	if description := typiobj.Description(module); description != "" {
+	if description := typimodule.Description(module); description != "" {
 		md.Writeln(description)
 	}
-	if configurer, ok := module.(typiobj.Configurer); ok {
+	if configurer, ok := module.(typimodule.Configurer); ok {
 		configTable(md, configurer.Configure().ConfigFields())
 	}
 	cmd := buildtool.Command(nil, module)
@@ -83,7 +83,7 @@ func module(md *markdown.Markdown, module interface{}) {
 	}
 }
 
-func configTable(md *markdown.Markdown, fields []typiobj.ConfigField) {
+func configTable(md *markdown.Markdown, fields []typimodule.ConfigField) {
 	md.WriteString("| Name | Type | Default | Required |\n")
 	md.WriteString("|---|---|---|:---:|\n")
 	for _, field := range fields {
