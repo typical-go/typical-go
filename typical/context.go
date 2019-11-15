@@ -11,7 +11,7 @@ var Context = &typictx.Context{
 	Description: "Example of typical and scalable RESTful API Server for Go",
 	Package:     "github.com/typical-go/typical-go",
 
-	AppModule: app.Module(),
+	AppModule: typictx.NewAppModule(app.Start),
 
 	Release: typictx.Release{
 		Version: "0.9.0",

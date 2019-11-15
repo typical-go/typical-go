@@ -2,7 +2,8 @@ package app
 
 import "os"
 
-func start() {
+// Start the application
+func Start() {
 	parentPath := "sample"
 	packageName := "github.com/typical-go/hello-world"
 	os.RemoveAll(parentPath)

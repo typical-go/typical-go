@@ -23,11 +23,6 @@ type Context struct {
 	}
 }
 
-// AppModule is application module
-type AppModule interface {
-	Run() interface{}
-}
-
 // Validate context
 func (c *Context) Validate() (err error) {
 	if c.Name == "" {
