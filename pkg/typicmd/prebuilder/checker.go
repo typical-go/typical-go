@@ -1,8 +1,10 @@
 package prebuilder
 
+import "github.com/typical-go/typical-go/pkg/typictx"
+
 type checker struct {
-	mockTarget bool
-	// constructor     bool
+	*typictx.Context
+	mockTarget      bool
 	configuration   bool
 	testTarget      bool
 	buildToolBinary bool
@@ -21,7 +23,6 @@ func (r *checker) checkBuildTool() bool {
 }
 
 func (r *checker) checkReadme() bool {
-	return r.buildCommands ||
-		r.configuration ||
-		r.readmeFile
+	return r.Context.ReadmeGenerator != nil &&
+		(r.buildCommands || r.configuration || r.readmeFile)
 }

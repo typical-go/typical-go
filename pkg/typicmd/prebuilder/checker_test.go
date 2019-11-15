@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/pkg/typictx"
 )
 
 func TestChecker_CheckBuildTool(t *testing.T) {
@@ -29,12 +30,48 @@ func TestChecker_CheckReadme(t *testing.T) {
 		checker     checker
 		checkReadme bool
 	}{
-		{checker{}, false},
-		{checker{configuration: true}, true},
-		{checker{buildCommands: true}, true},
-		{checker{readmeFile: true}, true},
+		{
+			checker{
+				Context: &typictx.Context{ReadmeGenerator: dummyReadmeGenerator{}},
+			},
+			false,
+		},
+		{
+			checker{
+				Context:       &typictx.Context{ReadmeGenerator: dummyReadmeGenerator{}},
+				configuration: true,
+			},
+			true,
+		},
+		{
+			checker{
+				Context:       &typictx.Context{ReadmeGenerator: dummyReadmeGenerator{}},
+				buildCommands: true,
+			},
+			true,
+		},
+		{
+			checker{
+				Context:    &typictx.Context{ReadmeGenerator: dummyReadmeGenerator{}},
+				readmeFile: true,
+			},
+			true,
+		},
+		{
+			checker{
+				Context:    &typictx.Context{},
+				readmeFile: false,
+			},
+			false,
+		},
 	}
-	for _, tt := range testcases {
-		require.Equal(t, tt.checkReadme, tt.checker.checkReadme())
+	for i, tt := range testcases {
+		require.Equal(t, tt.checkReadme, tt.checker.checkReadme(), i)
 	}
+}
+
+type dummyReadmeGenerator struct{}
+
+func (dummyReadmeGenerator) GenerateReadme(*typictx.Context) error {
+	return nil
 }

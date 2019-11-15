@@ -1,13 +1,14 @@
-package buildtool
+package typreadme
 
 import (
 	"fmt"
 	"io"
 
 	"github.com/iancoleman/strcase"
-	"github.com/typical-go/typical-go/pkg/typicmd/buildtool/markdown"
+	"github.com/typical-go/typical-go/pkg/typicmd/buildtool"
 	"github.com/typical-go/typical-go/pkg/typictx"
 	"github.com/typical-go/typical-go/pkg/typiobj"
+	"github.com/typical-go/typical-go/pkg/typreadme/markdown"
 )
 
 func readme(w io.Writer, ctx *typictx.Context) (err error) {
@@ -70,7 +71,7 @@ func module(md *markdown.Markdown, module interface{}) {
 	if configurer, ok := module.(typiobj.Configurer); ok {
 		configTable(md, configurer.Configure().ConfigFields())
 	}
-	cmd := command(nil, module)
+	cmd := buildtool.Command(nil, module)
 	if cmd != nil && len(cmd.Subcommands) > 0 {
 		md.WriteString("Commands:\n")
 		var cmdHelps []string

@@ -85,11 +85,15 @@ func (t buildtool) commands() (cmds []cli.Command) {
 			},
 			Action: t.generateMock,
 		},
-		{
-			Name:   "readme",
-			Usage:  "Generate readme document",
-			Action: t.generateReadme,
-		},
+	}
+	if t.ReadmeGenerator != nil {
+		cmds = append(cmds, cli.Command{
+			Name:  "readme",
+			Usage: "Generate readme document",
+			Action: func(*cli.Context) error {
+				return t.ReadmeGenerator.GenerateReadme(t.Context)
+			},
+		})
 	}
 	cmds = append(cmds, Commands(t.Context)...)
 	return
@@ -187,27 +191,18 @@ func (t buildtool) releaseDistribution(ctx *cli.Context) (err error) {
 	return
 }
 
-func (t buildtool) generateReadme(ctx *cli.Context) (err error) {
-	var file *os.File
-	log.Infof("Generate Readme: %s", typienv.Readme)
-	if file, err = os.Create(typienv.Readme); err != nil {
-		return
-	}
-	defer file.Close()
-	return readme(file, t.Context)
-}
-
 // Commands return list of command
 func Commands(ctx *typictx.Context) (cmds []cli.Command) {
 	for _, module := range ctx.AllModule() {
-		if cmd := command(ctx, module); cmd != nil {
+		if cmd := Command(ctx, module); cmd != nil {
 			cmds = append(cmds, *cmd)
 		}
 	}
 	return
 }
 
-func command(ctx *typictx.Context, module interface{}) *cli.Command {
+// Command of module
+func Command(ctx *typictx.Context, module interface{}) *cli.Command {
 	if commander, ok := module.(typicli.BuildCommander); ok {
 		cmd := commander.BuildCommand(&typicli.ContextCli{
 			Context: ctx,

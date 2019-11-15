@@ -29,6 +29,7 @@ func Run(ctx *typictx.Context) {
 	var err error
 	var preb prebuilder
 	checker := checker{
+		Context:         ctx,
 		contextChecksum: contextChecksum(),
 		buildToolBinary: !filekit.IsExist(typienv.BuildTool.BinPath),
 		readmeFile:      !filekit.IsExist(typienv.Readme),

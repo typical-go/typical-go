@@ -9,15 +9,18 @@ import (
 
 // Context of typical application
 type Context struct {
-	Name         string
-	Description  string
-	Root         string
-	AppModule    interface{}
-	Modules      collection.Interfaces
-	Release      Release
-	TestTargets  collection.Strings
-	MockTargets  collection.Strings
-	Constructors collection.Interfaces
+	Name            string
+	Description     string
+	Root            string
+	AppModule       interface{}
+	Modules         collection.Interfaces
+	Release         Release
+	TestTargets     collection.Strings
+	MockTargets     collection.Strings
+	Constructors    collection.Interfaces
+	ReadmeGenerator interface {
+		GenerateReadme(*Context) (err error)
+	}
 }
 
 // Validate context
