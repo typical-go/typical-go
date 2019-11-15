@@ -7,7 +7,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/runn"
 )
 
-// NewProject new project
+// NewProject new project [nowire]
 func NewProject(parentPath, packageName string) (err error) {
 	name := getNameFromPath(packageName)
 	projectPath := parentPath + "/" + name
