@@ -49,7 +49,7 @@ func init() {
 	}
 	Dependency = &applicationFolder{
 		Package: dependency,
-		SrcPath: cmd + "/internal/" + dependency,
+		SrcPath: "internal/" + dependency,
 	}
 	Mock = mockVar.Value()
 	Release = releaseVar.Value()
