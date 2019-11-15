@@ -7,6 +7,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/bash"
+	"github.com/typical-go/typical-go/pkg/typicli"
 
 	"github.com/typical-go/typical-go/pkg/typicmd/buildtool/releaser"
 	"github.com/typical-go/typical-go/pkg/typictx"
@@ -194,4 +195,30 @@ func (t buildtool) generateReadme(ctx *cli.Context) (err error) {
 	}
 	defer file.Close()
 	return readme(file, t.Context)
+}
+
+// Commands return list of command
+func Commands(ctx *typictx.Context) (cmds []cli.Command) {
+	for _, module := range ctx.AllModule() {
+		if cmd := command(ctx, module); cmd != nil {
+			cmds = append(cmds, *cmd)
+		}
+	}
+	return
+}
+
+func command(ctx *typictx.Context, module interface{}) *cli.Command {
+	if commander, ok := module.(typicli.BuildCommander); ok {
+		cmd := commander.BuildCommand(&typicli.ContextCli{
+			Context: ctx,
+		})
+		return &cmd
+	}
+	if commander, ok := module.(typicli.Commander); ok {
+		cmd := commander.Command(&typicli.Cli{
+			Obj: module,
+		})
+		return &cmd
+	}
+	return nil
 }
