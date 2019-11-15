@@ -1,8 +1,8 @@
 package prebuilder
 
 import (
-	"github.com/typical-go/typical-go/pkg/filekit"
 	"github.com/typical-go/typical-go/pkg/typicmd/prebuilder/metadata"
+	"github.com/typical-go/typical-go/pkg/utility/filekit"
 )
 
 type generator interface {

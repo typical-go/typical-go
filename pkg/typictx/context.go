@@ -3,7 +3,7 @@ package typictx
 import (
 	"fmt"
 
-	"github.com/typical-go/typical-go/pkg/collection"
+	"github.com/typical-go/typical-go/pkg/utility/collection"
 )
 
 // Context of typical application

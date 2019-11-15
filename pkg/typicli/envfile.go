@@ -1,7 +1,7 @@
 package typicli
 
 import (
-	"github.com/typical-go/typical-go/pkg/envfile"
+	"github.com/typical-go/typical-go/pkg/utility/envfile"
 	"github.com/urfave/cli"
 )
 

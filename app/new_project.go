@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/app/stmt"
-	"github.com/typical-go/typical-go/pkg/runn"
+	"github.com/typical-go/typical-go/pkg/utility/runn"
 )
 
 // NewProject new project [nowire]

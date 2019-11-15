@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/bash"
 	"github.com/typical-go/typical-go/pkg/typicli"
+	"github.com/typical-go/typical-go/pkg/utility/bash"
 
 	"github.com/typical-go/typical-go/pkg/typicmd/buildtool/releaser"
 	"github.com/typical-go/typical-go/pkg/typictx"

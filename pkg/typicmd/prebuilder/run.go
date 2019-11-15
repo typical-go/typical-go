@@ -6,11 +6,11 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/typical-go/typical-go/pkg/bash"
-	"github.com/typical-go/typical-go/pkg/filekit"
 	"github.com/typical-go/typical-go/pkg/typicmd/prebuilder/metadata"
 	"github.com/typical-go/typical-go/pkg/typictx"
 	"github.com/typical-go/typical-go/pkg/typienv"
+	"github.com/typical-go/typical-go/pkg/utility/bash"
+	"github.com/typical-go/typical-go/pkg/utility/filekit"
 )
 
 var (

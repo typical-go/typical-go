@@ -1,10 +1,10 @@
 package prebuilder
 
 import (
-	"github.com/typical-go/typical-go/pkg/bash"
-	"github.com/typical-go/typical-go/pkg/debugkit"
 	"github.com/typical-go/typical-go/pkg/typicmd/prebuilder/golang"
 	"github.com/typical-go/typical-go/pkg/typienv"
+	"github.com/typical-go/typical-go/pkg/utility/bash"
+	"github.com/typical-go/typical-go/pkg/utility/debugkit"
 )
 
 type mockTarget struct {

@@ -3,8 +3,8 @@ package prebuilder
 import (
 	"fmt"
 
-	"github.com/typical-go/typical-go/pkg/collection"
 	"github.com/typical-go/typical-go/pkg/typiobj"
+	"github.com/typical-go/typical-go/pkg/utility/collection"
 
 	"github.com/typical-go/typical-go/pkg/typicmd/buildtool"
 	"github.com/typical-go/typical-go/pkg/typicmd/prebuilder/golang"

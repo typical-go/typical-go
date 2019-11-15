@@ -7,7 +7,7 @@ import (
 
 // Context of project
 var Context = &typictx.Context{
-	Name:        "Typical-RESTful-Server",
+	Name:        "Typical-Go",
 	Description: "Example of typical and scalable RESTful API Server for Go",
 	Root:        "github.com/typical-go/typical-go",
 	AppModule:   app.Module(),

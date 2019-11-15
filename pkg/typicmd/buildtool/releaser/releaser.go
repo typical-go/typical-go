@@ -12,10 +12,10 @@ import (
 
 	"github.com/google/go-github/v27/github"
 
-	"github.com/typical-go/typical-go/pkg/bash"
-	"github.com/typical-go/typical-go/pkg/git"
 	"github.com/typical-go/typical-go/pkg/typictx"
 	"github.com/typical-go/typical-go/pkg/typienv"
+	"github.com/typical-go/typical-go/pkg/utility/bash"
+	"github.com/typical-go/typical-go/pkg/utility/git"
 	"golang.org/x/oauth2"
 )
 
