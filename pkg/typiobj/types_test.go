@@ -8,19 +8,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typiobj"
 )
 
-func TestIsRunner(t *testing.T) {
-	testCases := []struct {
-		obj      interface{}
-		isRunner bool
-	}{
-		{dummyObj{}, true},
-		{struct{}{}, false},
-	}
-	for i, tt := range testCases {
-		require.Equal(t, tt.isRunner, typiobj.IsRunner(tt.obj), i)
-	}
-}
-
 func TestIsProvider(t *testing.T) {
 	testCases := []struct {
 		obj        interface{}

@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/typictx"
-	"github.com/typical-go/typical-go/pkg/typiobj"
 	"github.com/urfave/cli"
 )
 
@@ -21,9 +20,7 @@ func Run(ctx *typictx.Context) {
 	app.Usage = ""
 	app.Description = ctx.Description
 	app.Version = ctx.Release.Version
-	if runner, ok := ctx.AppModule.(typiobj.Runner); ok {
-		app.Action = ctxCli.Action(runner.Run())
-	}
+	app.Action = ctxCli.Action(ctx.AppModule.Run())
 	app.Before = typicli.LoadEnvFile
 	if commander, ok := ctx.AppModule.(typicli.AppCommander); ok {
 		app.Commands = commander.AppCommands(ctxCli)

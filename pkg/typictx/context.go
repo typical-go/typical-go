@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/collection"
-	"github.com/typical-go/typical-go/pkg/typiobj"
 )
 
 // Context of typical application
@@ -12,7 +11,7 @@ type Context struct {
 	Name            string
 	Description     string
 	Root            string
-	AppModule       interface{}
+	AppModule       AppModule
 	Modules         collection.Interfaces
 	Release         Release
 	TestTargets     collection.Strings
@@ -23,6 +22,10 @@ type Context struct {
 	}
 }
 
+type AppModule interface {
+	Run() interface{}
+}
+
 // Validate context
 func (c *Context) Validate() (err error) {
 	if c.Name == "" {
@@ -30,9 +33,6 @@ func (c *Context) Validate() (err error) {
 	}
 	if c.Root == "" {
 		return invalidContextError("Root can't not empty")
-	}
-	if _, ok := c.AppModule.(typiobj.Runner); !ok {
-		return invalidContextError("Application must implement Runner")
 	}
 	if err = c.Release.Validate(); err != nil {
 		return fmt.Errorf("Release: %s", err.Error())

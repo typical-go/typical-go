@@ -1,7 +1,9 @@
 package app
 
+import "github.com/typical-go/typical-go/pkg/typictx"
+
 // Module of application
-func Module() interface{} {
+func Module() typictx.AppModule {
 	return applicationModule{}
 }
 

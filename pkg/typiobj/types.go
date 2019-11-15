@@ -1,10 +1,5 @@
 package typiobj
 
-// Runner responsible to run the application
-type Runner interface {
-	Run() interface{}
-}
-
 // Provider responsible to provide dependency
 type Provider interface {
 	Provide() []interface{}
@@ -23,12 +18,6 @@ type Destroyer interface {
 // Configurer responsible to create config
 type Configurer interface {
 	Configure() Configuration
-}
-
-// IsRunner return true if obj implement Runner
-func IsRunner(obj interface{}) (ok bool) {
-	_, ok = obj.(Runner)
-	return
 }
 
 // IsProvider return true if object implementation of provider

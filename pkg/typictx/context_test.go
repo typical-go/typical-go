@@ -42,15 +42,6 @@ func TestContext_Validate(t *testing.T) {
 		},
 		{
 			typictx.Context{
-				AppModule: invalidDummyApp{},
-				Name:      "some-name",
-				Root:      "some-root",
-				Release:   typictx.Release{Targets: []string{"linux/amd64"}},
-			},
-			"Invalid Context: Application must implement Runner",
-		},
-		{
-			typictx.Context{
 				AppModule: dummyApp{},
 				Root:      "some-root",
 				Release:   typictx.Release{Targets: []string{"linux/amd64"}},
@@ -92,9 +83,6 @@ func TestContext_Validate(t *testing.T) {
 			require.EqualError(t, err, tt.errMsg, msg)
 		}
 	}
-}
-
-type invalidDummyApp struct {
 }
 
 type dummyApp struct {
