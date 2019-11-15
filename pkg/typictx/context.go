@@ -2,6 +2,7 @@ package typictx
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/typical-go/typical-go/pkg/utility/collection"
 )
@@ -18,7 +19,7 @@ type Context struct {
 	MockTargets     collection.Strings
 	Constructors    collection.Interfaces
 	ReadmeGenerator interface {
-		GenerateReadme(*Context) (err error)
+		Generate(*Context, io.Writer) (err error)
 	}
 }
 

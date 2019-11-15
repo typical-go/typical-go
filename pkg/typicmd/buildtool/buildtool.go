@@ -88,11 +88,9 @@ func (t buildtool) commands() (cmds []cli.Command) {
 	}
 	if t.ReadmeGenerator != nil {
 		cmds = append(cmds, cli.Command{
-			Name:  "readme",
-			Usage: "Generate readme document",
-			Action: func(*cli.Context) error {
-				return t.ReadmeGenerator.GenerateReadme(t.Context)
-			},
+			Name:   "readme",
+			Usage:  "Generate readme document",
+			Action: t.generateReadme,
 		})
 	}
 	cmds = append(cmds, Commands(t.Context)...)
@@ -162,6 +160,16 @@ func (t buildtool) generateMock(ctx *cli.Context) (err error) {
 			"-package", mockPkg)
 	}
 	return
+}
+
+func (t buildtool) generateReadme(ctx *cli.Context) (err error) {
+	var file *os.File
+	log.Infof("Generate Readme: %s", typienv.Readme)
+	if file, err = os.Create(typienv.Readme); err != nil {
+		return
+	}
+	defer file.Close()
+	return t.ReadmeGenerator.Generate(t.Context, file)
 }
 
 func (t buildtool) releaseDistribution(ctx *cli.Context) (err error) {
