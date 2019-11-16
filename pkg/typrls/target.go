@@ -6,11 +6,11 @@ import (
 	"strings"
 )
 
-// ReleaseTarget is target OS/ARCH to be released
-type ReleaseTarget string
+// Target of release which is contain OS and Arch
+type Target string
 
 // Validate release target
-func (t ReleaseTarget) Validate() (err error) {
+func (t Target) Validate() (err error) {
 	s := string(t)
 	if s == "" {
 		return errors.New("Can't be empty")
@@ -25,7 +25,7 @@ func (t ReleaseTarget) Validate() (err error) {
 }
 
 // OS return the operating system information
-func (t ReleaseTarget) OS() string {
+func (t Target) OS() string {
 	s := string(t)
 	i := strings.Index(s, "/")
 	if i < 0 {
@@ -35,7 +35,7 @@ func (t ReleaseTarget) OS() string {
 }
 
 // Arch return the system architecture information
-func (t ReleaseTarget) Arch() string {
+func (t Target) Arch() string {
 	s := string(t)
 	i := strings.Index(s, "/")
 	if i < 0 {

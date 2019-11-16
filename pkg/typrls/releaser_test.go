@@ -18,7 +18,7 @@ func TestReleaser_Validate(t *testing.T) {
 		},
 		{
 			typrls.Releaser{
-				Targets: []typrls.ReleaseTarget{"invalid"},
+				Targets: []typrls.Target{"invalid"},
 			},
 			"Target: Missing OS: Please make sure 'invalid' using 'OS/ARCH' format",
 		},

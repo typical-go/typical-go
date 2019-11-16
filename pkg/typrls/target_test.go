@@ -7,14 +7,14 @@ import (
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
-func TestReleaseTarget(t *testing.T) {
+func TestTarget(t *testing.T) {
 	testcases := []struct {
-		typrls.ReleaseTarget
+		typrls.Target
 		os   string
 		arch string
 	}{
-		{typrls.ReleaseTarget(""), "", ""},
-		{typrls.ReleaseTarget("linux/amd"), "linux", "amd"},
+		{typrls.Target(""), "", ""},
+		{typrls.Target("linux/amd"), "linux", "amd"},
 	}
 	for i, tt := range testcases {
 		require.Equal(t, tt.os, tt.OS(), i)
@@ -22,21 +22,21 @@ func TestReleaseTarget(t *testing.T) {
 	}
 }
 
-func TestReleaseTarget_Validate(t *testing.T) {
+func TestTarget_Validate(t *testing.T) {
 	testcases := []struct {
-		typrls.ReleaseTarget
+		typrls.Target
 		errMsg string
 	}{
 		{
-			typrls.ReleaseTarget(""),
+			typrls.Target(""),
 			"Can't be empty",
 		},
 		{
-			typrls.ReleaseTarget("/amd"),
+			typrls.Target("/amd"),
 			"Missing OS: Please make sure '/amd' using 'OS/ARCH' format",
 		},
 		{
-			typrls.ReleaseTarget("linux/"),
+			typrls.Target("linux/"),
 			"Missing Arch: Please make sure 'linux/' using 'OS/ARCH' format",
 		},
 	}

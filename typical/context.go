@@ -15,7 +15,7 @@ var Context = &typctx.Context{
 
 	Releaser: typrls.Releaser{
 		Version:   "0.9.0",
-		Targets:   []typrls.ReleaseTarget{"linux/amd64", "darwin/amd64"},
+		Targets:   []typrls.Target{"linux/amd64", "darwin/amd64"},
 		Publisher: &typrls.Github{Owner: "typical-go", RepoName: "typical-go"},
 	},
 }

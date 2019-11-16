@@ -15,7 +15,7 @@ import (
 // Releaser responsible to release distruction
 type Releaser struct {
 	Name                string
-	Targets             []ReleaseTarget
+	Targets             []Target
 	Version             string
 	WithGitBranch       bool
 	WithLatestGitCommit bool
@@ -75,7 +75,7 @@ func (r *Releaser) Validate() (err error) {
 	return
 }
 
-func (r *Releaser) build(name, tag string, target ReleaseTarget) (binary string, err error) {
+func (r *Releaser) build(name, tag string, target Target) (binary string, err error) {
 	goos := target.OS()
 	goarch := target.Arch()
 	binary = strings.Join([]string{name, tag, goos, goarch}, "_")
