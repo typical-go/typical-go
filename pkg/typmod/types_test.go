@@ -1,10 +1,10 @@
-package typimod_test
+package typmod_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typimod"
+	"github.com/typical-go/typical-go/pkg/typmod"
 )
 
 func TestIsProvider(t *testing.T) {
@@ -16,7 +16,7 @@ func TestIsProvider(t *testing.T) {
 		{struct{}{}, false},
 	}
 	for i, tt := range testCases {
-		require.Equal(t, tt.isProvider, typimod.IsProvider(tt.obj), i)
+		require.Equal(t, tt.isProvider, typmod.IsProvider(tt.obj), i)
 	}
 }
 
@@ -29,7 +29,7 @@ func TestIsPreparer(t *testing.T) {
 		{struct{}{}, false},
 	}
 	for i, tt := range testCases {
-		require.Equal(t, tt.isPreparer, typimod.IsPreparer(tt.obj), i)
+		require.Equal(t, tt.isPreparer, typmod.IsPreparer(tt.obj), i)
 	}
 }
 
@@ -42,7 +42,7 @@ func TestIsDestroyer(t *testing.T) {
 		{struct{}{}, false},
 	}
 	for i, tt := range testCases {
-		require.Equal(t, tt.isDestroyer, typimod.IsDestroyer(tt.obj), i)
+		require.Equal(t, tt.isDestroyer, typmod.IsDestroyer(tt.obj), i)
 	}
 }
 
@@ -55,7 +55,7 @@ func TestConfigurer(t *testing.T) {
 		{struct{}{}, false},
 	}
 	for i, tt := range testCases {
-		require.Equal(t, tt.isConfigurer, typimod.IsConfigurer(tt.obj), i)
+		require.Equal(t, tt.isConfigurer, typmod.IsConfigurer(tt.obj), i)
 	}
 }
 
@@ -65,4 +65,4 @@ func (dummyObj) Run() interface{}                    { return nil }
 func (dummyObj) Prepare() []interface{}              { return nil }
 func (dummyObj) Provide() []interface{}              { return nil }
 func (dummyObj) Destroy() []interface{}              { return nil }
-func (dummyObj) Configure() typimod.Configuration { return typimod.Configuration{} }
+func (dummyObj) Configure() typmod.Configuration { return typmod.Configuration{} }

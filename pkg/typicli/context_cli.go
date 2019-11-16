@@ -8,7 +8,7 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typictx"
 
-	"github.com/typical-go/typical-go/pkg/typimod"
+	"github.com/typical-go/typical-go/pkg/typmod"
 	"github.com/urfave/cli"
 	"go.uber.org/dig"
 )
@@ -52,7 +52,7 @@ func (c *ContextCli) provideDependency(di *dig.Container) (err error) {
 		return
 	}
 	for _, module := range c.AllModule() {
-		if provider, ok := module.(typimod.Provider); ok {
+		if provider, ok := module.(typmod.Provider); ok {
 			if err = provide(di, provider.Provide()...); err != nil {
 				return
 			}
@@ -63,7 +63,7 @@ func (c *ContextCli) provideDependency(di *dig.Container) (err error) {
 
 func (c *ContextCli) prepare(di *dig.Container) (err error) {
 	for _, module := range c.AllModule() {
-		if preparer, ok := module.(typimod.Preparer); ok {
+		if preparer, ok := module.(typmod.Preparer); ok {
 			if err = invoke(di, preparer.Prepare()...); err != nil {
 				return
 			}
@@ -74,7 +74,7 @@ func (c *ContextCli) prepare(di *dig.Container) (err error) {
 
 func (c *ContextCli) shutdown(di *dig.Container) (err error) {
 	for _, module := range c.AllModule() {
-		if destroyer, ok := module.(typimod.Destroyer); ok {
+		if destroyer, ok := module.(typmod.Destroyer); ok {
 			if err = invoke(di, destroyer.Destroy()...); err != nil {
 				return
 			}
