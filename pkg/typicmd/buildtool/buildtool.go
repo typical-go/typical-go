@@ -192,7 +192,7 @@ func (t buildtool) releaseDistribution(ctx *cli.Context) (err error) {
 		return
 	}
 	if !ctx.Bool("no-github") {
-		if err = rel.ReleaseToGithub(binaries, changeLogs); err != nil {
+		if err = rel.ReleaseToGithub(binaries, rel.Filter(changeLogs)); err != nil {
 			return
 		}
 	}

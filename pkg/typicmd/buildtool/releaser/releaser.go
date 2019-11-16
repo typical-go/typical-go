@@ -75,6 +75,16 @@ func (r *Releaser) Distribution() (binaries []string, err error) {
 	return
 }
 
+// Filter change logs
+func (r *Releaser) Filter(changeLogs []string) (filtered []string) {
+	for _, log := range changeLogs {
+		if !ignoring(log) {
+			filtered = append(filtered, log)
+		}
+	}
+	return
+}
+
 // ReleaseToGithub to release to Github
 func (r *Releaser) ReleaseToGithub(binaries, changeLogs []string) (err error) {
 	if r.Github == nil {
@@ -93,17 +103,10 @@ func (r *Releaser) ReleaseToGithub(binaries, changeLogs []string) (err error) {
 		log.Info(msg)
 		return errors.New(msg)
 	}
-	log.Info("Generate release note")
-	var rn strings.Builder
-	for _, changelog := range changeLogs {
-		if !ignoring(changelog) {
-			rn.WriteString(changelog)
-			rn.WriteString("\n")
-		}
-	}
+	releaseNote := r.githubReleaseNote(changeLogs)
 	log.Infof("Create github release for %s/%s", owner, repo)
 	var release *github.RepositoryRelease
-	if release, err = r.createGithubRelease(ctx0, client.Repositories, rn.String()); err != nil {
+	if release, err = r.createGithubRelease(ctx0, client.Repositories, releaseNote); err != nil {
 		return
 	}
 	for _, binary := range binaries {
@@ -113,6 +116,15 @@ func (r *Releaser) ReleaseToGithub(binaries, changeLogs []string) (err error) {
 		}
 	}
 	return
+}
+
+func (r *Releaser) githubReleaseNote(changeLogs []string) string {
+	var b strings.Builder
+	for _, changelog := range changeLogs {
+		b.WriteString(changelog)
+		b.WriteString("\n")
+	}
+	return b.String()
 }
 
 func (r *Releaser) isGithubReleased(ctx context.Context, service *github.RepositoriesService) bool {
