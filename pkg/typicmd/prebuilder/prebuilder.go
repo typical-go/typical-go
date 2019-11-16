@@ -3,7 +3,7 @@ package prebuilder
 import (
 	"fmt"
 
-	"github.com/typical-go/typical-go/pkg/typimodule"
+	"github.com/typical-go/typical-go/pkg/typimod"
 	"github.com/typical-go/typical-go/pkg/utility/coll"
 
 	"github.com/typical-go/typical-go/pkg/typicmd/buildtool"
@@ -21,7 +21,7 @@ type prebuilder struct {
 	Dirs               coll.Strings
 	ApplicationImports golang.Imports
 	ContextImport      string
-	ConfigFields       []typimodule.ConfigField
+	ConfigFields       []typimod.ConfigField
 	BuildCommands      []string
 }
 

@@ -1,4 +1,4 @@
-package typimodule
+package typimod
 
 // Provider responsible to provide dependency
 type Provider interface {

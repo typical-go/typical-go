@@ -1,10 +1,10 @@
-package typimodule_test
+package typimod_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typimodule"
+	"github.com/typical-go/typical-go/pkg/typimod"
 )
 
 type SampleAttribute struct {
@@ -37,7 +37,7 @@ func TestName(t *testing.T) {
 		},
 	}
 	for _, tt := range testcases {
-		require.Equal(t, tt.name, typimodule.Name(tt.obj))
+		require.Equal(t, tt.name, typimod.Name(tt.obj))
 	}
 }
 
@@ -66,6 +66,6 @@ func TestDescription(t *testing.T) {
 		},
 	}
 	for _, tt := range testcases {
-		require.Equal(t, tt.description, typimodule.Description(tt.obj))
+		require.Equal(t, tt.description, typimod.Description(tt.obj))
 	}
 }

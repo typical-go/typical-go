@@ -1,4 +1,4 @@
-package typimodule
+package typimod
 
 import "reflect"
 
