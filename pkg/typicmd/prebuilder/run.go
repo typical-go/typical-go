@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/typical-go/typical-go/pkg/typicmd/prebuilder/metadata"
-	"github.com/typical-go/typical-go/pkg/typictx"
+	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/utility/bash"
 	"github.com/typical-go/typical-go/pkg/utility/filekit"
@@ -25,7 +25,7 @@ const (
 )
 
 // Run the prebuilder
-func Run(ctx *typictx.Context) {
+func Run(ctx *typctx.Context) {
 	var err error
 	var preb prebuilder
 	checker := checker{

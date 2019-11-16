@@ -6,12 +6,12 @@ import (
 
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/typictx"
+	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/urfave/cli"
 )
 
 // Run the application
-func Run(ctx *typictx.Context) {
+func Run(ctx *typctx.Context) {
 	ctxCli := &typicli.ContextCli{
 		Context: ctx,
 	}

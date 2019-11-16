@@ -1,4 +1,4 @@
-package typictx
+package typctx
 
 import (
 	"fmt"

@@ -1,16 +1,16 @@
-package typictx_test
+package typctx_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/typical-go/typical-go/pkg/typictx"
+	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
 func TestContext_AllModule(t *testing.T) {
-	ctx := typictx.Context{
+	ctx := typctx.Context{
 		AppModule: dummyApp{},
 		Modules: []interface{}{
 			struct{}{},
@@ -27,11 +27,11 @@ func TestContext_AllModule(t *testing.T) {
 
 func TestContext_Validate(t *testing.T) {
 	testcases := []struct {
-		context typictx.Context
+		context typctx.Context
 		errMsg  string
 	}{
 		{
-			typictx.Context{
+			typctx.Context{
 				AppModule: dummyApp{},
 				Name:      "some-name",
 				Package:   "some-package",
@@ -42,7 +42,7 @@ func TestContext_Validate(t *testing.T) {
 			"",
 		},
 		{
-			typictx.Context{
+			typctx.Context{
 				AppModule: dummyApp{},
 				Package:   "some-package",
 				Releaser: typrls.Releaser{
@@ -52,7 +52,7 @@ func TestContext_Validate(t *testing.T) {
 			"Invalid Context: Name can't not empty",
 		},
 		{
-			typictx.Context{
+			typctx.Context{
 				AppModule: dummyApp{},
 				Name:      "some-name",
 				Releaser: typrls.Releaser{
@@ -62,7 +62,7 @@ func TestContext_Validate(t *testing.T) {
 			"Invalid Context: Package can't not empty",
 		},
 		{
-			typictx.Context{
+			typctx.Context{
 				AppModule: dummyApp{},
 				Name:      "some-name",
 				Package:   "some-package",

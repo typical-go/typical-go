@@ -7,11 +7,11 @@ import (
 var typicalContextTemplate = []byte(`package typical
 
 import(
-	"github.com/typical-go/typical-go/pkg/typictx"
+	"github.com/typical-go/typical-go/pkg/typctx"
 )
 
 // Context instance of Context
-var Context = typictx.Context{
+var Context = typctx.Context{
 	Name:        "",
 	Description: "",
 }

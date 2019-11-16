@@ -1,9 +1,9 @@
 package prebuilder
 
-import "github.com/typical-go/typical-go/pkg/typictx"
+import "github.com/typical-go/typical-go/pkg/typctx"
 
 type checker struct {
-	*typictx.Context
+	*typctx.Context
 	mockTarget      bool
 	configuration   bool
 	testTarget      bool

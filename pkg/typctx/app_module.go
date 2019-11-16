@@ -1,4 +1,4 @@
-package typictx
+package typctx
 
 // AppModule is application module
 type AppModule interface {

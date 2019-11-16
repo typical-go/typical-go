@@ -5,7 +5,7 @@ import (
 	"os"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/typictx"
+	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typmod"
 )
 
@@ -14,7 +14,7 @@ const (
 )
 
 // ConfigFields return config list
-func ConfigFields(ctx *typictx.Context) (fields []typmod.ConfigField) {
+func ConfigFields(ctx *typctx.Context) (fields []typmod.ConfigField) {
 	for _, module := range ctx.AllModule() {
 		if configurer, ok := module.(typmod.Configurer); ok {
 			fields = append(fields, configurer.Configure().ConfigFields()...)
@@ -24,7 +24,7 @@ func ConfigFields(ctx *typictx.Context) (fields []typmod.ConfigField) {
 }
 
 // GenerateEnvfile to generate .env file if not exist
-func GenerateEnvfile(ctx *typictx.Context) (err error) {
+func GenerateEnvfile(ctx *typctx.Context) (err error) {
 	if _, err = os.Stat(defaultDotEnv); !os.IsNotExist(err) {
 		return
 	}

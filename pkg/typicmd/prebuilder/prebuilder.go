@@ -12,7 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/typical-go/typical-go/pkg/typicmd/prebuilder/walker"
-	"github.com/typical-go/typical-go/pkg/typictx"
+	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
@@ -25,7 +25,7 @@ type prebuilder struct {
 	BuildCommands      []string
 }
 
-func (p *prebuilder) Initiate(ctx *typictx.Context) (err error) {
+func (p *prebuilder) Initiate(ctx *typctx.Context) (err error) {
 	var files coll.Strings
 	if p.Dirs, files, err = scanProject(typenv.AppName); err != nil {
 		return

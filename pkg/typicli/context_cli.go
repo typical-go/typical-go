@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/typical-go/typical-go/pkg/typictx"
+	"github.com/typical-go/typical-go/pkg/typctx"
 
 	"github.com/typical-go/typical-go/pkg/typmod"
 	"github.com/urfave/cli"
@@ -15,7 +15,7 @@ import (
 
 // ContextCli implementation of CLI
 type ContextCli struct {
-	*typictx.Context
+	*typctx.Context
 }
 
 // Action to return action function

@@ -11,13 +11,13 @@ import (
 	"github.com/typical-go/typical-go/pkg/typicli"
 	"github.com/typical-go/typical-go/pkg/utility/bash"
 
-	"github.com/typical-go/typical-go/pkg/typictx"
+	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/urfave/cli"
 )
 
 type buildtool struct {
-	*typictx.Context
+	*typctx.Context
 }
 
 func (t buildtool) commands() (cmds []cli.Command) {
@@ -193,7 +193,7 @@ func (t buildtool) releaseDistribution(ctx *cli.Context) (err error) {
 }
 
 // Commands return list of command
-func Commands(ctx *typictx.Context) (cmds []cli.Command) {
+func Commands(ctx *typctx.Context) (cmds []cli.Command) {
 	for _, module := range ctx.AllModule() {
 		if cmd := Command(ctx, module); cmd != nil {
 			cmds = append(cmds, *cmd)
@@ -203,7 +203,7 @@ func Commands(ctx *typictx.Context) (cmds []cli.Command) {
 }
 
 // Command of module
-func Command(ctx *typictx.Context, module interface{}) *cli.Command {
+func Command(ctx *typctx.Context, module interface{}) *cli.Command {
 	if commander, ok := module.(typicli.BuildCommander); ok {
 		cmd := commander.BuildCommand(&typicli.ContextCli{
 			Context: ctx,
