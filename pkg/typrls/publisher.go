@@ -1,4 +1,4 @@
-package typirelease
+package typrls
 
 // Publisher reponsible to publish the release to external source
 type Publisher interface {

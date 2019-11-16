@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/typirelease"
+	"github.com/typical-go/typical-go/pkg/typrls"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typicli"
@@ -174,7 +174,7 @@ func (t buildtool) generateReadme(ctx *cli.Context) (err error) {
 }
 
 func (t buildtool) releaseDistribution(ctx *cli.Context) (err error) {
-	var rls *typirelease.Release
+	var rls *typrls.Release
 	log.Info("Release distribution")
 	if !ctx.Bool("no-test") {
 		if err = t.runTesting(ctx); err != nil {

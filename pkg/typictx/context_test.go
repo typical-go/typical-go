@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/typical-go/typical-go/pkg/typictx"
-	"github.com/typical-go/typical-go/pkg/typirelease"
+	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
 func TestContext_AllModule(t *testing.T) {
@@ -35,8 +35,8 @@ func TestContext_Validate(t *testing.T) {
 				AppModule: dummyApp{},
 				Name:      "some-name",
 				Package:   "some-package",
-				Releaser: typirelease.Releaser{
-					Targets: []typirelease.ReleaseTarget{"linux/amd64"},
+				Releaser: typrls.Releaser{
+					Targets: []typrls.ReleaseTarget{"linux/amd64"},
 				},
 			},
 			"",
@@ -45,8 +45,8 @@ func TestContext_Validate(t *testing.T) {
 			typictx.Context{
 				AppModule: dummyApp{},
 				Package:   "some-package",
-				Releaser: typirelease.Releaser{
-					Targets: []typirelease.ReleaseTarget{"linux/amd64"},
+				Releaser: typrls.Releaser{
+					Targets: []typrls.ReleaseTarget{"linux/amd64"},
 				},
 			},
 			"Invalid Context: Name can't not empty",
@@ -55,8 +55,8 @@ func TestContext_Validate(t *testing.T) {
 			typictx.Context{
 				AppModule: dummyApp{},
 				Name:      "some-name",
-				Releaser: typirelease.Releaser{
-					Targets: []typirelease.ReleaseTarget{"linux/amd64"},
+				Releaser: typrls.Releaser{
+					Targets: []typrls.ReleaseTarget{"linux/amd64"},
 				},
 			},
 			"Invalid Context: Package can't not empty",

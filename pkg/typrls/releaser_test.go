@@ -1,24 +1,24 @@
-package typirelease_test
+package typrls_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typirelease"
+	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
 func TestReleaser_Validate(t *testing.T) {
 	testcases := []struct {
-		typirelease.Releaser
+		typrls.Releaser
 		errMsg string
 	}{
 		{
-			typirelease.Releaser{},
+			typrls.Releaser{},
 			"Missing 'Targets'",
 		},
 		{
-			typirelease.Releaser{
-				Targets: []typirelease.ReleaseTarget{"invalid"},
+			typrls.Releaser{
+				Targets: []typrls.ReleaseTarget{"invalid"},
 			},
 			"Target: Missing OS: Please make sure 'invalid' using 'OS/ARCH' format",
 		},

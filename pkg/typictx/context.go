@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/typical-go/typical-go/pkg/typirelease"
+	"github.com/typical-go/typical-go/pkg/typrls"
 	"github.com/typical-go/typical-go/pkg/utility/coll"
 )
 
@@ -21,7 +21,7 @@ type Context struct {
 	ReadmeGenerator interface {
 		Generate(*Context, io.Writer) error
 	}
-	typirelease.Releaser
+	typrls.Releaser
 }
 
 // Validate context

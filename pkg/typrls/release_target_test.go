@@ -1,20 +1,20 @@
-package typirelease_test
+package typrls_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typirelease"
+	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
 func TestReleaseTarget(t *testing.T) {
 	testcases := []struct {
-		typirelease.ReleaseTarget
+		typrls.ReleaseTarget
 		os   string
 		arch string
 	}{
-		{typirelease.ReleaseTarget(""), "", ""},
-		{typirelease.ReleaseTarget("linux/amd"), "linux", "amd"},
+		{typrls.ReleaseTarget(""), "", ""},
+		{typrls.ReleaseTarget("linux/amd"), "linux", "amd"},
 	}
 	for i, tt := range testcases {
 		require.Equal(t, tt.os, tt.OS(), i)
@@ -24,19 +24,19 @@ func TestReleaseTarget(t *testing.T) {
 
 func TestReleaseTarget_Validate(t *testing.T) {
 	testcases := []struct {
-		typirelease.ReleaseTarget
+		typrls.ReleaseTarget
 		errMsg string
 	}{
 		{
-			typirelease.ReleaseTarget(""),
+			typrls.ReleaseTarget(""),
 			"Can't be empty",
 		},
 		{
-			typirelease.ReleaseTarget("/amd"),
+			typrls.ReleaseTarget("/amd"),
 			"Missing OS: Please make sure '/amd' using 'OS/ARCH' format",
 		},
 		{
-			typirelease.ReleaseTarget("linux/"),
+			typrls.ReleaseTarget("linux/"),
 			"Missing Arch: Please make sure 'linux/' using 'OS/ARCH' format",
 		},
 	}
