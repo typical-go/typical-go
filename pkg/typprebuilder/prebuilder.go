@@ -40,7 +40,7 @@ func (p *prebuilder) Initiate(ctx *typctx.Context) (err error) {
 	}
 	p.ApplicationImports.AddImport("", p.ContextImport)
 	p.ConfigFields = ConfigFields(ctx)
-	for _, command := range typbuildtool.Commands(ctx) {
+	for _, command := range typbuildtool.ModuleCommands(ctx) {
 		for _, subcommand := range command.Subcommands {
 			s := fmt.Sprintf("%s_%s", command.Name, subcommand.Name)
 			p.BuildCommands = append(p.BuildCommands, s)

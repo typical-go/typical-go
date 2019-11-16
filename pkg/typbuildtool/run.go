@@ -1,25 +1,33 @@
 package typbuildtool
 
 import (
-	"os"
-
 	log "github.com/sirupsen/logrus"
-
-	"github.com/typical-go/typical-go/pkg/typctx"
+	"github.com/typical-go/typical-go/pkg/typenv"
+	"github.com/typical-go/typical-go/pkg/utility/bash"
 	"github.com/urfave/cli"
 )
 
-// Run the build tool
-func Run(c *typctx.Context) {
-	buildtool := buildtool{Context: c}
-	app := cli.NewApp()
-	app.Name = c.Name
-	app.Usage = ""
-	app.Description = c.Description
-	app.Version = c.Version
-	app.Before = buildtool.cliBefore
-	app.Commands = buildtool.commands()
-	if err := app.Run(os.Args); err != nil {
-		log.Fatal(err.Error())
+func (t buildtool) cmdRun() cli.Command {
+	return cli.Command{
+		Name:      "run",
+		ShortName: "r",
+		Usage:     "Run the binary",
+		Flags: []cli.Flag{
+			cli.BoolFlag{
+				Name:  "no-build",
+				Usage: "Run the binary without build",
+			},
+		},
+		Action: t.runBinary,
 	}
+}
+
+func (t buildtool) runBinary(ctx *cli.Context) (err error) {
+	if !ctx.Bool("no-build") {
+		if err = t.buildBinary(ctx); err != nil {
+			return
+		}
+	}
+	log.Info("Run the application")
+	return bash.Run(typenv.App.BinPath, []string(ctx.Args())...)
 }
