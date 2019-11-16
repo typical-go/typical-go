@@ -14,13 +14,17 @@ import (
 
 // Releaser responsible to release distruction
 type Releaser struct {
-	Name                string
-	Targets             []Target
-	Version             string
-	WithGitBranch       bool
-	WithLatestGitCommit bool
-
+	Name       string
+	Targets    []Target
+	Version    string
 	Publishers []Publisher
+	Tagging
+}
+
+// Tagging release settings
+type Tagging struct {
+	IncludeBranch   bool
+	IncludeCommitID bool
 }
 
 // Release the distribution
@@ -101,11 +105,11 @@ func (r *Releaser) releaseTag(alpha bool) string {
 	var b strings.Builder
 	b.WriteString("v")
 	b.WriteString(r.Version)
-	if r.WithGitBranch {
+	if r.IncludeBranch {
 		b.WriteString("_")
 		b.WriteString(git.Branch())
 	}
-	if r.WithLatestGitCommit {
+	if r.IncludeCommitID {
 		b.WriteString("_")
 		b.WriteString(git.LatestCommit())
 	}
