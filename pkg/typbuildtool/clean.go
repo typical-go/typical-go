@@ -20,19 +20,19 @@ func (t buildtool) cmdClean() cli.Command {
 
 func (t buildtool) cleanProject(ctx *cli.Context) (err error) {
 	log.Info("Clean the application")
-	log.Infof("  Remove %s", typenv.Bin)
+	log.Infof("\tRemove %s", typenv.Bin)
 	if err = os.RemoveAll(typenv.Bin); err != nil {
 		return
 	}
-	log.Infof("  Remove %s", typenv.Metadata)
+	log.Infof("\tRemove %s", typenv.Metadata)
 	if err = os.RemoveAll(typenv.Metadata); err != nil {
 		return
 	}
-	log.Info("  Remove .env")
+	log.Info("\tRemove .env")
 	os.Remove(".env")
 	return filepath.Walk(typenv.Dependency.SrcPath, func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() {
-			log.Infof("  Remove %s", path)
+			log.Infof("\tRemove %s", path)
 			return os.Remove(path)
 		}
 		return nil
