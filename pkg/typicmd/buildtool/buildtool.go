@@ -5,9 +5,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/typical-go/typical-go/pkg/typirelease"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typicli"
-	"github.com/typical-go/typical-go/pkg/typirelease"
 	"github.com/typical-go/typical-go/pkg/utility/bash"
 
 	"github.com/typical-go/typical-go/pkg/typictx"
@@ -173,26 +174,18 @@ func (t buildtool) generateReadme(ctx *cli.Context) (err error) {
 }
 
 func (t buildtool) releaseDistribution(ctx *cli.Context) (err error) {
+	var rls *typirelease.Release
 	log.Info("Release distribution")
-	var binaries, changeLogs []string
 	if !ctx.Bool("no-test") {
 		if err = t.runTesting(ctx); err != nil {
 			return
 		}
 	}
-	rel := typirelease.Releaser{
-		Context: t.Context,
-		Force:   ctx.Bool("force"),
-		Alpha:   ctx.Bool("alpha"),
-	}
-	if changeLogs, err = rel.Git(); err != nil {
-		return
-	}
-	if binaries, err = rel.Distribution(); err != nil {
+	if rls, err = t.Release(ctx.Bool("force"), ctx.Bool("alpha")); err != nil {
 		return
 	}
 	if !ctx.Bool("no-github") {
-		if err = rel.ReleaseToGithub(binaries, rel.Filter(changeLogs)); err != nil {
+		if err = t.Publisher.Publish(rls); err != nil {
 			return
 		}
 	}

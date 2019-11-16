@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/typical-go/typical-go/pkg/typictx"
+	"github.com/typical-go/typical-go/pkg/typirelease"
 )
 
 func TestContext_AllModule(t *testing.T) {
@@ -23,7 +24,6 @@ func TestContext_AllModule(t *testing.T) {
 	for i, module := range ctx.Modules {
 		require.Equal(t, module, ctx.AllModule()[i+1])
 	}
-
 }
 
 func TestContext_Validate(t *testing.T) {
@@ -33,26 +33,32 @@ func TestContext_Validate(t *testing.T) {
 	}{
 		{
 			typictx.Context{
-				AppModule:      dummyApp{},
-				Name:           "some-name",
-				Package:        "some-package",
-				ReleaseTargets: []string{"linux/amd64"},
+				AppModule: dummyApp{},
+				Name:      "some-name",
+				Package:   "some-package",
+				Releaser: typirelease.Releaser{
+					Targets: []string{"linux/amd64"},
+				},
 			},
 			"",
 		},
 		{
 			typictx.Context{
-				AppModule:      dummyApp{},
-				Package:        "some-package",
-				ReleaseTargets: []string{"linux/amd64"},
+				AppModule: dummyApp{},
+				Package:   "some-package",
+				Releaser: typirelease.Releaser{
+					Targets: []string{"linux/amd64"},
+				},
 			},
 			"Invalid Context: Name can't not empty",
 		},
 		{
 			typictx.Context{
-				AppModule:      dummyApp{},
-				Name:           "some-name",
-				ReleaseTargets: []string{"linux/amd64"},
+				AppModule: dummyApp{},
+				Name:      "some-name",
+				Releaser: typirelease.Releaser{
+					Targets: []string{"linux/amd64"},
+				},
 			},
 			"Invalid Context: Package can't not empty",
 		},
@@ -66,10 +72,12 @@ func TestContext_Validate(t *testing.T) {
 		},
 		{
 			typictx.Context{
-				AppModule:      dummyApp{},
-				Name:           "some-name",
-				Package:        "some-package",
-				ReleaseTargets: []string{"invalid"},
+				AppModule: dummyApp{},
+				Name:      "some-name",
+				Package:   "some-package",
+				Releaser: typirelease.Releaser{
+					Targets: []string{"invalid"},
+				},
 			},
 			"Release: Missing '/' in target 'invalid'",
 		},

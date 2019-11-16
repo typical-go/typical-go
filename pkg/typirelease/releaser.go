@@ -1,82 +1,81 @@
 package typirelease
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
-
-	"github.com/google/go-github/v27/github"
-
-	"github.com/typical-go/typical-go/pkg/typictx"
 	"github.com/typical-go/typical-go/pkg/typienv"
 	"github.com/typical-go/typical-go/pkg/utility/bash"
 	"github.com/typical-go/typical-go/pkg/utility/git"
-	"golang.org/x/oauth2"
 )
 
 // Releaser responsible to release distruction
 type Releaser struct {
-	*typictx.Context
-	Force bool
-	Alpha bool
+	Name                string
+	Targets             []string // TODO: create type ReleaseTarget
+	Version             string
+	WithGitBranch       bool
+	WithLatestGitCommit bool
+
+	Publisher
 }
 
-// Git release and return change logs
-func (r *Releaser) Git() (changeLogs []string, err error) {
+// Release the distribution
+func (r *Releaser) Release(force, alpha bool) (rls *Release, err error) {
+	var latestTag string
+	var changeLogs []string
+	var binaries []string
 	git.Fetch()
 	defer git.Fetch()
-	status := git.Status()
-	if !r.Force && status != "" {
+	name := r.releaseName()
+	tag := r.releaseTag(alpha)
+	if status := git.Status(); status != "" && !force {
 		err = fmt.Errorf("Please commit changes first:\n%s", status)
 		return
 	}
-	latestTag := git.LatestTag()
-	if !r.Force && latestTag == r.ReleaseTag(r.Alpha) {
-		log.Errorf("%s already released", latestTag)
+	if latestTag = git.LatestTag(); latestTag == tag && !force {
+		err = fmt.Errorf("%s already released", latestTag)
 		return
 	}
-	changeLogs = git.Logs(latestTag)
-	if !r.Force && len(changeLogs) < 1 {
-		msg := "No change to be released"
-		log.Errorf(msg)
-		err = errors.New(msg)
+	if changeLogs = git.Logs(latestTag); len(changeLogs) < 1 && !force {
+		err = errors.New("No change to be released")
 		return
+	}
+	changeLogs = r.filter(changeLogs)
+	for _, target := range r.Targets {
+		var binary string
+		if binary, err = r.build(name, tag, target); err != nil {
+			return
+		}
+		binaries = append(binaries, binary)
+	}
+	rls = &Release{
+		Name:       name,
+		Tag:        tag,
+		Alpha:      alpha,
+		ChangeLogs: changeLogs,
+		Binaries:   binaries,
 	}
 	return
 }
 
-// Distribution to release the distribution
-func (r *Releaser) Distribution() (binaries []string, err error) {
-	mainPackage := typienv.App.SrcPath
-	for _, target := range r.ReleaseTargets {
-		chunks := strings.Split(target, "/")
-		if len(chunks) != 2 {
-			err = fmt.Errorf("Invalid target '%s': it should be '$GOOS/$GOARCH'", target)
-			return
-		}
-		binary := r.ReleaseBinary(chunks[0], chunks[1], r.Alpha)
-		binaryPath := fmt.Sprintf("%s/%s", typienv.Release, binary)
-		log.Infof("Create release binary for %s: %s", target, binaryPath)
-		// TODO: support cgo
-		envs := []string{
-			"GOOS=" + chunks[0],
-			"GOARCH=" + chunks[1],
-		}
-		if err = bash.GoBuild(binaryPath, mainPackage, envs...); err != nil {
-			return
-		}
-		binaries = append(binaries, binary)
+func (r *Releaser) build(name, tag, target string) (binary string, err error) {
+	chunks := strings.Split(target, "/")
+	binary = strings.Join([]string{name, tag, chunks[0], chunks[1]}, "_")
+	binaryPath := fmt.Sprintf("%s/%s", typienv.Release, binary)
+	// TODO: support cgo
+	envs := []string{"GOOS=" + chunks[0], "GOARCH=" + chunks[1]}
+	if err = bash.GoBuild(binaryPath, typienv.App.SrcPath, envs...); err != nil {
+		return
 	}
 	return
 }
 
 // Filter change logs
-func (r *Releaser) Filter(changeLogs []string) (filtered []string) {
+func (r *Releaser) filter(changeLogs []string) (filtered []string) {
 	for _, log := range changeLogs {
 		if !ignoring(log) {
 			filtered = append(filtered, log)
@@ -85,125 +84,31 @@ func (r *Releaser) Filter(changeLogs []string) (filtered []string) {
 	return
 }
 
-// ReleaseToGithub to release to Github
-func (r *Releaser) ReleaseToGithub(binaries, changeLogs []string) (err error) {
-	if r.Github == nil {
-		return errors.New("Missing Github field")
-	}
-	token := os.Getenv("GITHUB_TOKEN")
-	if token == "" {
-		return errors.New("Environment 'GITHUB_TOKEN' is missing")
-	}
-	owner := r.Github.Owner
-	repo := r.Github.RepoName
-	ctx0 := context.Background()
-	client := github.NewClient(oauth2.NewClient(ctx0, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})))
-	if r.isGithubReleased(ctx0, client.Repositories) {
-		msg := fmt.Sprintf("Release for %s/%s (%s) already exist", owner, repo, r.ReleaseTag(r.Alpha))
-		log.Info(msg)
-		return errors.New(msg)
-	}
-	releaseNote := r.githubReleaseNote(changeLogs)
-	log.Infof("Create github release for %s/%s", owner, repo)
-	var release *github.RepositoryRelease
-	if release, err = r.createGithubRelease(ctx0, client.Repositories, releaseNote); err != nil {
-		return
-	}
-	for _, binary := range binaries {
-		log.Infof("Upload asset: %s", binary)
-		if err = r.uploadToGithub(ctx0, client.Repositories, *release.ID, binary); err != nil {
-			return
-		}
-	}
-	return
-}
-
-func (r *Releaser) githubReleaseNote(changeLogs []string) string {
+// ReleaseTag to get release tag
+func (r *Releaser) releaseTag(alpha bool) string {
 	var b strings.Builder
-	for _, changelog := range changeLogs {
-		b.WriteString(changelog)
-		b.WriteString("\n")
+	b.WriteString("v")
+	b.WriteString(r.Version)
+	if r.WithGitBranch {
+		b.WriteString("_")
+		b.WriteString(git.Branch())
+	}
+	if r.WithLatestGitCommit {
+		b.WriteString("_")
+		b.WriteString(git.LatestCommit())
+	}
+	if alpha {
+		b.WriteString("-alpha")
 	}
 	return b.String()
 }
 
-func (r *Releaser) isGithubReleased(ctx context.Context, service *github.RepositoriesService) bool {
-	owner := r.Github.Owner
-	repo := r.Github.RepoName
-	tag := r.ReleaseTag(r.Alpha)
-	_, _, err := service.GetReleaseByTag(ctx, owner, repo, tag)
-	return err == nil
-}
-
-func (r *Releaser) createGithubRelease(ctx context.Context, service *github.RepositoriesService, releaseNote string) (release *github.RepositoryRelease, err error) {
-	releaseTag := r.ReleaseTag(r.Alpha)
-	release, _, err = service.CreateRelease(ctx,
-		r.Github.Owner,
-		r.Github.RepoName,
-		&github.RepositoryRelease{
-			Name:       github.String(fmt.Sprintf("%s - %s", r.ReleaseName(), releaseTag)),
-			TagName:    github.String(releaseTag),
-			Body:       github.String(releaseNote),
-			Draft:      github.Bool(false),
-			Prerelease: github.Bool(r.Alpha),
-		},
-	)
-	return
-}
-
-func (r *Releaser) uploadToGithub(ctx context.Context, service *github.RepositoriesService, repoID int64, binary string) (err error) {
-	binaryPath := fmt.Sprintf("%s/%s", typienv.Release, binary)
-	var file *os.File
-	if file, err = os.Open(binaryPath); err != nil {
-		return
-	}
-	_, _, err = service.UploadReleaseAsset(ctx,
-		r.Github.Owner,
-		r.Github.RepoName,
-		repoID,
-		&github.UploadOptions{
-			Name: binary,
-		},
-		file,
-	)
-	return
-}
-
-// ReleaseTag to get release tag
-func (r *Releaser) ReleaseTag(alpha bool) string {
-	var builder strings.Builder
-	builder.WriteString("v")
-	builder.WriteString(r.Version)
-	if alpha {
-		builder.WriteString("-alpha")
-	}
-	if r.WithGitBranch {
-		builder.WriteString("_")
-		builder.WriteString(git.Branch())
-	}
-	if r.WithLatestGitCommit {
-		builder.WriteString("_")
-		builder.WriteString(git.LatestCommit())
-	}
-	return builder.String()
-}
-
 // ReleaseName to get release name
-func (r *Releaser) ReleaseName() string {
+func (r *Releaser) releaseName() string {
 	name := r.Name
 	if name == "" {
 		dir, _ := os.Getwd()
 		name = filepath.Base(dir)
 	}
 	return name
-}
-
-// ReleaseBinary to get release binary
-func (r *Releaser) ReleaseBinary(os1, arch string, alpha bool) string {
-	return strings.Join([]string{
-		r.ReleaseName(),
-		r.ReleaseTag(alpha),
-		os1,
-		arch,
-	}, "_")
 }
