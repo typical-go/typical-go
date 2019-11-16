@@ -19,7 +19,7 @@ func Run(ctx *typictx.Context) {
 	app.Name = ctx.Name
 	app.Usage = ""
 	app.Description = ctx.Description
-	app.Version = ctx.Release.Version
+	app.Version = ctx.Version
 	app.Action = ctxCli.Action(ctx.AppModule.Run())
 	app.Before = typicli.LoadEnvFile
 	if commander, ok := ctx.AppModule.(typicli.AppCommander); ok {

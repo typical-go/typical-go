@@ -21,7 +21,7 @@ import (
 
 // Releaser responsible to release distruction
 type Releaser struct {
-	typictx.Release
+	*typictx.Context
 	Force bool
 	Alpha bool
 }
@@ -53,7 +53,7 @@ func (r *Releaser) Git() (changeLogs []string, err error) {
 // Distribution to release the distribution
 func (r *Releaser) Distribution() (binaries []string, err error) {
 	mainPackage := typienv.App.SrcPath
-	for _, target := range r.Targets {
+	for _, target := range r.ReleaseTargets {
 		chunks := strings.Split(target, "/")
 		if len(chunks) != 2 {
 			err = fmt.Errorf("Invalid target '%s': it should be '$GOOS/$GOARCH'", target)
@@ -116,8 +116,8 @@ func (r *Releaser) ReleaseToGithub(binaries, changeLogs []string) (err error) {
 }
 
 func (r *Releaser) isGithubReleased(ctx context.Context, service *github.RepositoriesService) bool {
-	owner := r.Release.Github.Owner
-	repo := r.Release.Github.RepoName
+	owner := r.Github.Owner
+	repo := r.Github.RepoName
 	tag := r.ReleaseTag(r.Alpha)
 	_, _, err := service.GetReleaseByTag(ctx, owner, repo, tag)
 	return err == nil
@@ -126,8 +126,8 @@ func (r *Releaser) isGithubReleased(ctx context.Context, service *github.Reposit
 func (r *Releaser) createGithubRelease(ctx context.Context, service *github.RepositoriesService, releaseNote string) (release *github.RepositoryRelease, err error) {
 	releaseTag := r.ReleaseTag(r.Alpha)
 	release, _, err = service.CreateRelease(ctx,
-		r.Release.Github.Owner,
-		r.Release.Github.RepoName,
+		r.Github.Owner,
+		r.Github.RepoName,
 		&github.RepositoryRelease{
 			Name:       github.String(fmt.Sprintf("%s - %s", r.ReleaseName(), releaseTag)),
 			TagName:    github.String(releaseTag),
@@ -146,8 +146,8 @@ func (r *Releaser) uploadToGithub(ctx context.Context, service *github.Repositor
 		return
 	}
 	_, _, err = service.UploadReleaseAsset(ctx,
-		r.Release.Github.Owner,
-		r.Release.Github.RepoName,
+		r.Github.Owner,
+		r.Github.RepoName,
 		repoID,
 		&github.UploadOptions{
 			Name: binary,

@@ -181,7 +181,7 @@ func (t buildtool) releaseDistribution(ctx *cli.Context) (err error) {
 		}
 	}
 	rel := releaser.Releaser{
-		Release: t.Release,
+		Context: t.Context,
 		Force:   ctx.Bool("force"),
 		Alpha:   ctx.Bool("alpha"),
 	}
