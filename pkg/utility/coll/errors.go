@@ -1,4 +1,4 @@
-package errkit
+package coll
 
 import "strings"
 
@@ -23,9 +23,4 @@ func (e Errors) Error() string {
 		builder.WriteString(err.Error())
 	}
 	return builder.String()
-}
-
-// IsEmpty return true if no error
-func (e Errors) IsEmpty() bool {
-	return len(e) < 1
 }

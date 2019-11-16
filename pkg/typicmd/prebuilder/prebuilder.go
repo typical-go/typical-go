@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/typimodule"
-	"github.com/typical-go/typical-go/pkg/utility/collection"
+	"github.com/typical-go/typical-go/pkg/utility/coll"
 
 	"github.com/typical-go/typical-go/pkg/typicmd/buildtool"
 	"github.com/typical-go/typical-go/pkg/typicmd/prebuilder/golang"
@@ -18,7 +18,7 @@ import (
 
 type prebuilder struct {
 	ProjectFiles       *walker.ProjectFiles
-	Dirs               collection.Strings
+	Dirs               coll.Strings
 	ApplicationImports golang.Imports
 	ContextImport      string
 	ConfigFields       []typimodule.ConfigField
@@ -26,7 +26,7 @@ type prebuilder struct {
 }
 
 func (p *prebuilder) Initiate(ctx *typictx.Context) (err error) {
-	var files collection.Strings
+	var files coll.Strings
 	if p.Dirs, files, err = scanProject(typienv.AppName); err != nil {
 		return
 	}

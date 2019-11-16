@@ -1,4 +1,4 @@
-package collection
+package coll
 
 // Strings is slice of string
 type Strings []string

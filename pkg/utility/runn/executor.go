@@ -1,6 +1,6 @@
 package runn
 
-import "github.com/typical-go/typical-go/pkg/utility/errkit"
+import "github.com/typical-go/typical-go/pkg/utility/coll"
 
 // Executor do the code statement execution
 type Executor struct {
@@ -9,7 +9,7 @@ type Executor struct {
 
 // Execute all statement
 func (e Executor) Execute(stmts ...interface{}) (err error) {
-	var errs errkit.Errors
+	var errs coll.Errors
 	for _, stmt := range stmts {
 		switch stmt.(type) {
 		case error:

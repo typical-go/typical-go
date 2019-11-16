@@ -5,7 +5,7 @@ import (
 	"io"
 
 	"github.com/typical-go/typical-go/pkg/typirelease"
-	"github.com/typical-go/typical-go/pkg/utility/collection"
+	"github.com/typical-go/typical-go/pkg/utility/coll"
 )
 
 // Context of typical application
@@ -14,10 +14,10 @@ type Context struct {
 	Description     string
 	Package         string
 	AppModule       AppModule
-	Modules         collection.Interfaces
-	TestTargets     collection.Strings
-	MockTargets     collection.Strings
-	Constructors    collection.Interfaces
+	Modules         coll.Interfaces
+	TestTargets     coll.Strings
+	MockTargets     coll.Strings
+	Constructors    coll.Interfaces
 	ReadmeGenerator interface {
 		Generate(*Context, io.Writer) error
 	}
