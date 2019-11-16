@@ -20,7 +20,7 @@ type Releaser struct {
 	WithGitBranch       bool
 	WithLatestGitCommit bool
 
-	Publisher
+	Publishers []Publisher
 }
 
 // Release the distribution

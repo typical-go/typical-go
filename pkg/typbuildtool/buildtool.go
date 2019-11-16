@@ -181,12 +181,16 @@ func (t buildtool) releaseDistribution(ctx *cli.Context) (err error) {
 			return
 		}
 	}
+	log.Info("Release the distribution")
 	if rls, err = t.Release(ctx.Bool("force"), ctx.Bool("alpha")); err != nil {
 		return
 	}
-	if !ctx.Bool("no-github") {
-		if err = t.Publisher.Publish(rls); err != nil {
-			return
+	if !ctx.Bool("no-publish") {
+		for _, publisher := range t.Publishers {
+			log.Info("Publish the distribution")
+			if err = publisher.Publish(rls); err != nil {
+				return
+			}
 		}
 	}
 	return
