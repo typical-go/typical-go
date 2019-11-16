@@ -1,6 +1,7 @@
 package prebuilder
 
 import (
+	"io"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -72,6 +73,6 @@ func TestChecker_CheckReadme(t *testing.T) {
 
 type dummyReadmeGenerator struct{}
 
-func (dummyReadmeGenerator) GenerateReadme(*typictx.Context) error {
+func (dummyReadmeGenerator) Generate(*typictx.Context, io.Writer) error {
 	return nil
 }
