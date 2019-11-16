@@ -15,7 +15,7 @@ var Context = &typictx.Context{
 
 	Releaser: typirelease.Releaser{
 		Version:   "0.9.0",
-		Targets:   []string{"linux/amd64", "darwin/amd64"},
+		Targets:   []typirelease.ReleaseTarget{"linux/amd64", "darwin/amd64"},
 		Publisher: &typirelease.Github{Owner: "typical-go", RepoName: "typical-go"},
 	},
 }

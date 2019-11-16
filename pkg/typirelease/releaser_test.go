@@ -18,12 +18,12 @@ func TestReleaser_Validate(t *testing.T) {
 		},
 		{
 			typirelease.Releaser{
-				Targets: []string{"invalid"},
+				Targets: []typirelease.ReleaseTarget{"invalid"},
 			},
-			"Invalid Target: invalid",
+			"Target: Missing OS: Please make sure 'invalid' using 'OS/ARCH' format",
 		},
 	}
-	for _, tt := range testcases {
-		require.EqualError(t, tt.Releaser.Validate(), tt.errMsg)
+	for i, tt := range testcases {
+		require.EqualError(t, tt.Releaser.Validate(), tt.errMsg, i)
 	}
 }

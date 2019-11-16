@@ -15,7 +15,7 @@ import (
 // Releaser responsible to release distruction
 type Releaser struct {
 	Name                string
-	Targets             []string // TODO: create type ReleaseTarget
+	Targets             []ReleaseTarget
 	Version             string
 	WithGitBranch       bool
 	WithLatestGitCommit bool
@@ -68,19 +68,20 @@ func (r *Releaser) Validate() (err error) {
 		return errors.New("Missing 'Targets'")
 	}
 	for _, target := range r.Targets {
-		if !strings.Contains(target, "/") {
-			return fmt.Errorf("Invalid Target: %s", target)
+		if err = target.Validate(); err != nil {
+			return fmt.Errorf("Target: %s", err.Error())
 		}
 	}
 	return
 }
 
-func (r *Releaser) build(name, tag, target string) (binary string, err error) {
-	chunks := strings.Split(target, "/")
-	binary = strings.Join([]string{name, tag, chunks[0], chunks[1]}, "_")
+func (r *Releaser) build(name, tag string, target ReleaseTarget) (binary string, err error) {
+	goos := target.OS()
+	goarch := target.Arch()
+	binary = strings.Join([]string{name, tag, goos, goarch}, "_")
 	binaryPath := fmt.Sprintf("%s/%s", typienv.Release, binary)
 	// TODO: Support CGO
-	envs := []string{"GOOS=" + chunks[0], "GOARCH=" + chunks[1]}
+	envs := []string{"GOOS=" + goos, "GOARCH=" + goarch}
 	if err = bash.GoBuild(binaryPath, typienv.App.SrcPath, envs...); err != nil {
 		return
 	}

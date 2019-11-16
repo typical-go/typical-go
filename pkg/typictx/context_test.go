@@ -36,7 +36,7 @@ func TestContext_Validate(t *testing.T) {
 				Name:      "some-name",
 				Package:   "some-package",
 				Releaser: typirelease.Releaser{
-					Targets: []string{"linux/amd64"},
+					Targets: []typirelease.ReleaseTarget{"linux/amd64"},
 				},
 			},
 			"",
@@ -46,7 +46,7 @@ func TestContext_Validate(t *testing.T) {
 				AppModule: dummyApp{},
 				Package:   "some-package",
 				Releaser: typirelease.Releaser{
-					Targets: []string{"linux/amd64"},
+					Targets: []typirelease.ReleaseTarget{"linux/amd64"},
 				},
 			},
 			"Invalid Context: Name can't not empty",
@@ -56,7 +56,7 @@ func TestContext_Validate(t *testing.T) {
 				AppModule: dummyApp{},
 				Name:      "some-name",
 				Releaser: typirelease.Releaser{
-					Targets: []string{"linux/amd64"},
+					Targets: []typirelease.ReleaseTarget{"linux/amd64"},
 				},
 			},
 			"Invalid Context: Package can't not empty",
