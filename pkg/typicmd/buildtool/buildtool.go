@@ -7,9 +7,9 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typicli"
+	"github.com/typical-go/typical-go/pkg/typirelease"
 	"github.com/typical-go/typical-go/pkg/utility/bash"
 
-	"github.com/typical-go/typical-go/pkg/typicmd/buildtool/releaser"
 	"github.com/typical-go/typical-go/pkg/typictx"
 	"github.com/typical-go/typical-go/pkg/typienv"
 	"github.com/urfave/cli"
@@ -180,7 +180,7 @@ func (t buildtool) releaseDistribution(ctx *cli.Context) (err error) {
 			return
 		}
 	}
-	rel := releaser.Releaser{
+	rel := typirelease.Releaser{
 		Context: t.Context,
 		Force:   ctx.Bool("force"),
 		Alpha:   ctx.Bool("alpha"),

@@ -1,4 +1,4 @@
-package releaser
+package typirelease
 
 import (
 	"context"
