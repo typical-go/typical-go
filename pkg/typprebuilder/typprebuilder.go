@@ -6,9 +6,9 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/typical-go/typical-go/pkg/typprebuilder/metadata"
 	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typenv"
+	"github.com/typical-go/typical-go/pkg/typprebuilder/metadata"
 	"github.com/typical-go/typical-go/pkg/utility/bash"
 	"github.com/typical-go/typical-go/pkg/utility/filekit"
 )
