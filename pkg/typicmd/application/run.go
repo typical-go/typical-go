@@ -2,7 +2,7 @@ package application
 
 import (
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/typicli"
+	"github.com/typical-go/typical-go/pkg/typcli"
 
 	"os"
 
@@ -12,7 +12,7 @@ import (
 
 // Run the application
 func Run(ctx *typctx.Context) {
-	ctxCli := &typicli.ContextCli{
+	ctxCli := &typcli.ContextCli{
 		Context: ctx,
 	}
 	app := cli.NewApp()
@@ -21,8 +21,8 @@ func Run(ctx *typctx.Context) {
 	app.Description = ctx.Description
 	app.Version = ctx.Version
 	app.Action = ctxCli.Action(ctx.AppModule.Run())
-	app.Before = typicli.LoadEnvFile
-	if commander, ok := ctx.AppModule.(typicli.AppCommander); ok {
+	app.Before = typcli.LoadEnvFile
+	if commander, ok := ctx.AppModule.(typcli.AppCommander); ok {
 		app.Commands = commander.AppCommands(ctxCli)
 	}
 	if err := app.Run(os.Args); err != nil {

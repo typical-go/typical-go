@@ -8,7 +8,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typrls"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/typicli"
+	"github.com/typical-go/typical-go/pkg/typcli"
 	"github.com/typical-go/typical-go/pkg/utility/bash"
 
 	"github.com/typical-go/typical-go/pkg/typctx"
@@ -204,14 +204,14 @@ func Commands(ctx *typctx.Context) (cmds []cli.Command) {
 
 // Command of module
 func Command(ctx *typctx.Context, module interface{}) *cli.Command {
-	if commander, ok := module.(typicli.BuildCommander); ok {
-		cmd := commander.BuildCommand(&typicli.ContextCli{
+	if commander, ok := module.(typcli.BuildCommander); ok {
+		cmd := commander.BuildCommand(&typcli.ContextCli{
 			Context: ctx,
 		})
 		return &cmd
 	}
-	if commander, ok := module.(typicli.Commander); ok {
-		cmd := commander.Command(&typicli.Cli{
+	if commander, ok := module.(typcli.Commander); ok {
+		cmd := commander.Command(&typcli.Cli{
 			Obj: module,
 		})
 		return &cmd

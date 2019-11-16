@@ -1,4 +1,4 @@
-package typicli
+package typcli
 
 import "github.com/urfave/cli"
 

@@ -1,4 +1,4 @@
-package typicli
+package typcli
 
 import (
 	"fmt"
