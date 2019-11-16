@@ -13,7 +13,7 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typicmd/prebuilder/walker"
 	"github.com/typical-go/typical-go/pkg/typictx"
-	"github.com/typical-go/typical-go/pkg/typienv"
+	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
 type prebuilder struct {
@@ -27,7 +27,7 @@ type prebuilder struct {
 
 func (p *prebuilder) Initiate(ctx *typictx.Context) (err error) {
 	var files coll.Strings
-	if p.Dirs, files, err = scanProject(typienv.AppName); err != nil {
+	if p.Dirs, files, err = scanProject(typenv.AppName); err != nil {
 		return
 	}
 	if p.ProjectFiles, err = walker.WalkProject(files); err != nil {

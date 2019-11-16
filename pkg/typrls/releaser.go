@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/typienv"
+	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/utility/bash"
 	"github.com/typical-go/typical-go/pkg/utility/git"
 )
@@ -79,10 +79,10 @@ func (r *Releaser) build(name, tag string, target ReleaseTarget) (binary string,
 	goos := target.OS()
 	goarch := target.Arch()
 	binary = strings.Join([]string{name, tag, goos, goarch}, "_")
-	binaryPath := fmt.Sprintf("%s/%s", typienv.Release, binary)
+	binaryPath := fmt.Sprintf("%s/%s", typenv.Release, binary)
 	// TODO: Support CGO
 	envs := []string{"GOOS=" + goos, "GOARCH=" + goarch}
-	if err = bash.GoBuild(binaryPath, typienv.App.SrcPath, envs...); err != nil {
+	if err = bash.GoBuild(binaryPath, typenv.App.SrcPath, envs...); err != nil {
 		return
 	}
 	return

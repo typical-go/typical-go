@@ -5,7 +5,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/utility/debugkit"
 
 	"github.com/typical-go/typical-go/pkg/typicmd/prebuilder/golang"
-	"github.com/typical-go/typical-go/pkg/typienv"
+	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
 type constructor struct {
@@ -15,7 +15,7 @@ type constructor struct {
 
 func (g constructor) generate(target string) (err error) {
 	defer debugkit.ElapsedTime("Generate constructor")()
-	src := golang.NewSourceCode(typienv.Dependency.Package)
+	src := golang.NewSourceCode(typenv.Dependency.Package)
 	src.Imports = g.ApplicationImports
 	src.AddConstructors(g.Constructors...)
 	if err = src.Cook(target); err != nil {

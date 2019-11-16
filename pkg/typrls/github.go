@@ -10,7 +10,7 @@ import (
 	"github.com/google/go-github/v27/github"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/typical-go/typical-go/pkg/typienv"
+	"github.com/typical-go/typical-go/pkg/typenv"
 	"golang.org/x/oauth2"
 )
 
@@ -53,7 +53,7 @@ func (g *Github) Publish(r *Release) (err error) {
 }
 
 func (g *Github) upload(ctx0 context.Context, service *github.RepositoriesService, id int64, binary string) (err error) {
-	binaryPath := fmt.Sprintf("%s/%s", typienv.Release, binary)
+	binaryPath := fmt.Sprintf("%s/%s", typenv.Release, binary)
 	var file *os.File
 	if file, err = os.Open(binaryPath); err != nil {
 		return

@@ -1,4 +1,4 @@
-package typienv
+package typenv
 
 var (
 	appVar        = EnvVar{"TYPICAL_APP", "app"}

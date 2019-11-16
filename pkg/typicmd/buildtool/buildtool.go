@@ -12,7 +12,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/utility/bash"
 
 	"github.com/typical-go/typical-go/pkg/typictx"
-	"github.com/typical-go/typical-go/pkg/typienv"
+	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/urfave/cli"
 )
 
@@ -104,22 +104,22 @@ func (t buildtool) cliBefore(ctx *cli.Context) (err error) {
 
 func (t buildtool) buildBinary(ctx *cli.Context) error {
 	log.Info("Build the application")
-	return bash.GoBuild(typienv.App.BinPath, typienv.App.SrcPath)
+	return bash.GoBuild(typenv.App.BinPath, typenv.App.SrcPath)
 }
 
 func (t buildtool) cleanProject(ctx *cli.Context) (err error) {
 	log.Info("Clean the application")
-	log.Infof("  Remove %s", typienv.Bin)
-	if err = os.RemoveAll(typienv.Bin); err != nil {
+	log.Infof("  Remove %s", typenv.Bin)
+	if err = os.RemoveAll(typenv.Bin); err != nil {
 		return
 	}
-	log.Infof("  Remove %s", typienv.Metadata)
-	if err = os.RemoveAll(typienv.Metadata); err != nil {
+	log.Infof("  Remove %s", typenv.Metadata)
+	if err = os.RemoveAll(typenv.Metadata); err != nil {
 		return
 	}
 	log.Info("  Remove .env")
 	os.Remove(".env")
-	return filepath.Walk(typienv.Dependency.SrcPath, func(path string, info os.FileInfo, err error) error {
+	return filepath.Walk(typenv.Dependency.SrcPath, func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() {
 			log.Infof("  Remove %s", path)
 			return os.Remove(path)
@@ -135,7 +135,7 @@ func (t buildtool) runBinary(ctx *cli.Context) (err error) {
 		}
 	}
 	log.Info("Run the application")
-	return bash.Run(typienv.App.BinPath, []string(ctx.Args())...)
+	return bash.Run(typenv.App.BinPath, []string(ctx.Args())...)
 }
 
 func (t buildtool) runTesting(ctx *cli.Context) error {
@@ -148,7 +148,7 @@ func (t buildtool) generateMock(ctx *cli.Context) (err error) {
 	if err = bash.GoGet("github.com/golang/mock/mockgen"); err != nil {
 		return
 	}
-	mockPkg := typienv.Mock
+	mockPkg := typenv.Mock
 	if !ctx.Bool("no-delete") {
 		log.Infof("Clean mock package '%s'", mockPkg)
 		os.RemoveAll(mockPkg)
@@ -165,8 +165,8 @@ func (t buildtool) generateMock(ctx *cli.Context) (err error) {
 
 func (t buildtool) generateReadme(ctx *cli.Context) (err error) {
 	var file *os.File
-	log.Infof("Generate Readme: %s", typienv.Readme)
-	if file, err = os.Create(typienv.Readme); err != nil {
+	log.Infof("Generate Readme: %s", typenv.Readme)
+	if file, err = os.Create(typenv.Readme); err != nil {
 		return
 	}
 	defer file.Close()

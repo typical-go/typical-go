@@ -8,15 +8,15 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typicmd/prebuilder/metadata"
 	"github.com/typical-go/typical-go/pkg/typictx"
-	"github.com/typical-go/typical-go/pkg/typienv"
+	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/utility/bash"
 	"github.com/typical-go/typical-go/pkg/utility/filekit"
 )
 
 var (
-	app        = typienv.App.SrcPath
-	buildTool  = typienv.BuildTool.SrcPath
-	dependency = typienv.Dependency.SrcPath
+	app        = typenv.App.SrcPath
+	buildTool  = typenv.BuildTool.SrcPath
+	dependency = typenv.Dependency.SrcPath
 )
 
 const (
@@ -31,8 +31,8 @@ func Run(ctx *typictx.Context) {
 	checker := checker{
 		Context:         ctx,
 		contextChecksum: contextChecksum(),
-		buildToolBinary: !filekit.IsExist(typienv.BuildTool.BinPath),
-		readmeFile:      !filekit.IsExist(typienv.Readme),
+		buildToolBinary: !filekit.IsExist(typenv.BuildTool.BinPath),
+		readmeFile:      !filekit.IsExist(typenv.Readme),
 	}
 	if os.Getenv(debugEnv) != "" {
 		log.SetLevel(log.DebugLevel)
@@ -72,13 +72,13 @@ func Run(ctx *typictx.Context) {
 	}
 	if checker.checkBuildTool() {
 		log.Info("Build the build-tool")
-		if err := bash.GoBuild(typienv.BuildTool.BinPath, typienv.BuildTool.SrcPath); err != nil {
+		if err := bash.GoBuild(typenv.BuildTool.BinPath, typenv.BuildTool.SrcPath); err != nil {
 			log.Fatal(err.Error())
 		}
 	}
 	if checker.checkReadme() {
 		log.Info("Generate readme")
-		cmd := exec.Command(typienv.BuildTool.BinPath, "readme")
+		cmd := exec.Command(typenv.BuildTool.BinPath, "readme")
 		if err := cmd.Run(); err != nil {
 			log.Fatal(err.Error())
 		}

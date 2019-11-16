@@ -1,4 +1,4 @@
-package typienv
+package typenv
 
 import "os"
 
