@@ -1,7 +1,7 @@
-package prebuilder
+package typprebuilder
 
 import (
-	"github.com/typical-go/typical-go/pkg/typicmd/prebuilder/metadata"
+	"github.com/typical-go/typical-go/pkg/typprebuilder/metadata"
 	"github.com/typical-go/typical-go/pkg/utility/filekit"
 )
 

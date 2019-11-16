@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typicmd/prebuilder/metadata"
+	"github.com/typical-go/typical-go/pkg/typprebuilder/metadata"
 )
 
 func TestUpdateJSON(t *testing.T) {

@@ -1,19 +1,19 @@
-package prebuilder
+package typprebuilder
 
 import (
 	"fmt"
 
+	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typmod"
 	"github.com/typical-go/typical-go/pkg/utility/coll"
 
-	"github.com/typical-go/typical-go/pkg/typicmd/buildtool"
-	"github.com/typical-go/typical-go/pkg/typicmd/prebuilder/golang"
+	"github.com/typical-go/typical-go/pkg/typprebuilder/golang"
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/typical-go/typical-go/pkg/typicmd/prebuilder/walker"
 	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typenv"
+	"github.com/typical-go/typical-go/pkg/typprebuilder/walker"
 )
 
 type prebuilder struct {
@@ -40,7 +40,7 @@ func (p *prebuilder) Initiate(ctx *typctx.Context) (err error) {
 	}
 	p.ApplicationImports.AddImport("", p.ContextImport)
 	p.ConfigFields = ConfigFields(ctx)
-	for _, command := range buildtool.Commands(ctx) {
+	for _, command := range typbuildtool.Commands(ctx) {
 		for _, subcommand := range command.Subcommands {
 			s := fmt.Sprintf("%s_%s", command.Name, subcommand.Name)
 			p.BuildCommands = append(p.BuildCommands, s)

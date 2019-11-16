@@ -1,4 +1,4 @@
-package prebuilder
+package typprebuilder
 
 import (
 	"fmt"

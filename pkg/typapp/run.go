@@ -1,4 +1,4 @@
-package application
+package typapp
 
 import (
 	log "github.com/sirupsen/logrus"
