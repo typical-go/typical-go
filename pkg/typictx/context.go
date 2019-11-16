@@ -1,10 +1,8 @@
 package typictx
 
 import (
-	"errors"
 	"fmt"
 	"io"
-	"strings"
 
 	"github.com/typical-go/typical-go/pkg/typirelease"
 	"github.com/typical-go/typical-go/pkg/utility/collection"
@@ -34,15 +32,10 @@ func (c *Context) Validate() (err error) {
 	if c.Package == "" {
 		return invalidContextError("Package can't not empty")
 	}
-	if len(c.Releaser.Targets) < 1 {
-		return errors.New("Missing 'Targets'")
+	if err = c.Releaser.Validate(); err != nil {
+		return fmt.Errorf("Releaser: %s", err.Error())
 	}
-	for _, target := range c.Releaser.Targets {
-		if !strings.Contains(target, "/") {
-			return fmt.Errorf("Missing '/' in Target '%s'", target)
-		}
-	}
-	return nil
+	return
 }
 
 // AllModule return app module and modules

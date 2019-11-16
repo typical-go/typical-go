@@ -1,7 +1,6 @@
 package typictx_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -68,27 +67,15 @@ func TestContext_Validate(t *testing.T) {
 				Name:      "some-name",
 				Package:   "some-package",
 			},
-			"Release: Missing 'Targets'",
-		},
-		{
-			typictx.Context{
-				AppModule: dummyApp{},
-				Name:      "some-name",
-				Package:   "some-package",
-				Releaser: typirelease.Releaser{
-					Targets: []string{"invalid"},
-				},
-			},
-			"Release: Missing '/' in target 'invalid'",
+			"Releaser: Missing 'Targets'",
 		},
 	}
 	for i, tt := range testcases {
-		msg := fmt.Sprintf("Failed in case-%d", i)
 		err := tt.context.Validate()
 		if tt.errMsg == "" {
-			require.NoError(t, err, msg)
+			require.NoError(t, err, i)
 		} else {
-			require.EqualError(t, err, tt.errMsg, msg)
+			require.EqualError(t, err, tt.errMsg, i)
 		}
 	}
 }

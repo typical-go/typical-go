@@ -62,11 +62,24 @@ func (r *Releaser) Release(force, alpha bool) (rls *Release, err error) {
 	return
 }
 
+// Validate the releaser
+func (r *Releaser) Validate() (err error) {
+	if len(r.Targets) < 1 {
+		return errors.New("Missing 'Targets'")
+	}
+	for _, target := range r.Targets {
+		if !strings.Contains(target, "/") {
+			return fmt.Errorf("Invalid Target: %s", target)
+		}
+	}
+	return
+}
+
 func (r *Releaser) build(name, tag, target string) (binary string, err error) {
 	chunks := strings.Split(target, "/")
 	binary = strings.Join([]string{name, tag, chunks[0], chunks[1]}, "_")
 	binaryPath := fmt.Sprintf("%s/%s", typienv.Release, binary)
-	// TODO: support cgo
+	// TODO: Support CGO
 	envs := []string{"GOOS=" + chunks[0], "GOARCH=" + chunks[1]}
 	if err = bash.GoBuild(binaryPath, typienv.App.SrcPath, envs...); err != nil {
 		return
@@ -74,7 +87,6 @@ func (r *Releaser) build(name, tag, target string) (binary string, err error) {
 	return
 }
 
-// Filter change logs
 func (r *Releaser) filter(changeLogs []string) (filtered []string) {
 	for _, log := range changeLogs {
 		if !ignoring(log) {
@@ -84,7 +96,6 @@ func (r *Releaser) filter(changeLogs []string) (filtered []string) {
 	return
 }
 
-// ReleaseTag to get release tag
 func (r *Releaser) releaseTag(alpha bool) string {
 	var b strings.Builder
 	b.WriteString("v")
@@ -103,7 +114,6 @@ func (r *Releaser) releaseTag(alpha bool) string {
 	return b.String()
 }
 
-// ReleaseName to get release name
 func (r *Releaser) releaseName() string {
 	name := r.Name
 	if name == "" {
