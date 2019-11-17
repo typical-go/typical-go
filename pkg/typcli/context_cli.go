@@ -6,6 +6,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/typical-go/typical-go/pkg/typcfg"
+
 	"github.com/typical-go/typical-go/pkg/typctx"
 
 	"github.com/typical-go/typical-go/pkg/typmod"
@@ -49,7 +51,7 @@ func (c *ContextCli) Action(fn interface{}) func(ctx *cli.Context) error {
 
 func (c *ContextCli) provideDependency(di *dig.Container) (err error) {
 	if c.ConfigLoader != nil {
-		if err = provide(di, c.ConfigLoader.Load); err != nil {
+		if err = provide(di, func() typcfg.Loader { return c.ConfigLoader }); err != nil {
 			return
 		}
 	}
