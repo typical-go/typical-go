@@ -4,25 +4,30 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/typical-go/typical-go/pkg/typcfg"
+
 	"github.com/typical-go/typical-go/pkg/typrls"
 	"github.com/typical-go/typical-go/pkg/utility/coll"
 )
 
 // Context of typical application
 type Context struct {
-	Name            string
-	Description     string
-	Package         string
-	Version         string
-	AppModule       AppModule
-	Modules         coll.Interfaces
-	TestTargets     coll.Strings
-	MockTargets     coll.Strings
-	Constructors    coll.Interfaces
+	Name         string
+	Description  string
+	Package      string
+	Version      string
+	AppModule    AppModule
+	Modules      coll.Interfaces
+	ConfigLoader typcfg.Loader
+	typrls.Releaser
+
+	TestTargets  coll.Strings
+	MockTargets  coll.Strings
+	Constructors coll.Interfaces
+
 	ReadmeGenerator interface {
 		Generate(*Context, io.Writer) error
 	}
-	typrls.Releaser
 }
 
 // Validate context

@@ -5,8 +5,6 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-
-	"github.com/kelseyhightower/envconfig"
 )
 
 // Configuration represent the configuration
@@ -44,12 +42,6 @@ func (c Configuration) ConfigFields() (infos []Field) {
 		}
 	}
 	return
-}
-
-// Load configuration
-func (c Configuration) Load() error {
-	// TODO: deprecate envconfig for consitency between doc, envfile and load config
-	return envconfig.Process(c.Prefix, c.Spec)
 }
 
 func fieldRequired(field reflect.StructField) (required bool) {

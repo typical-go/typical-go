@@ -48,6 +48,11 @@ func (c *ContextCli) Action(fn interface{}) func(ctx *cli.Context) error {
 }
 
 func (c *ContextCli) provideDependency(di *dig.Container) (err error) {
+	if c.ConfigLoader != nil {
+		if err = provide(di, c.ConfigLoader.Load); err != nil {
+			return
+		}
+	}
 	if err = provide(di, c.Constructors...); err != nil {
 		return
 	}
