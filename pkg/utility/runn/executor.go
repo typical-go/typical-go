@@ -1,6 +1,11 @@
 package runn
 
-import "github.com/typical-go/typical-go/pkg/utility/coll"
+import (
+	"fmt"
+	"reflect"
+
+	"github.com/typical-go/typical-go/pkg/utility/coll"
+)
 
 // Executor do the code statement execution
 type Executor struct {
@@ -10,14 +15,8 @@ type Executor struct {
 // Execute all statement
 func (e Executor) Execute(stmts ...interface{}) (err error) {
 	var errs coll.Errors
-	for _, stmt := range stmts {
+	for i, stmt := range stmts {
 		switch stmt.(type) {
-		case error:
-			stmtErr := stmt.(error)
-			if e.StopWhenError {
-				return stmtErr
-			}
-			errs.Add(stmtErr)
 		case Runner:
 			runner := stmt.(Runner)
 			runErr := runner.Run()
@@ -27,7 +26,11 @@ func (e Executor) Execute(stmts ...interface{}) (err error) {
 				}
 				errs.Add(runErr)
 			}
+		default:
+			err = fmt.Errorf("Statement-%d: Invalid: %s", i, reflect.TypeOf(stmt))
+			return
 		}
+
 	}
 	if len(errs) > 0 {
 		err = errs

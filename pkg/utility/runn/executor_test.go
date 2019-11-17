@@ -2,6 +2,7 @@ package runn_test
 
 import (
 	"errors"
+	"fmt"
 	"os/exec"
 	"testing"
 
@@ -9,80 +10,61 @@ import (
 	"github.com/typical-go/typical-go/pkg/utility/runn"
 )
 
-type RunnerImplementationWithError struct{}
-
-func (i RunnerImplementationWithError) Run() error { return errors.New("some-runner-error") }
-
-type RunnerImplementationNoError struct{}
-
-func (i RunnerImplementationNoError) Run() error { return nil }
-
 func TestExecutor_All(t *testing.T) {
 	testcases := []struct {
-		stopWhenError bool
-		stmts         []interface{}
-		err           error
+		stmts           []interface{}
+		stopableErrMsg  string
+		unstopaleErrMsg string
 	}{
 		{
-			false,
-			[]interface{}{
+			stmts: []interface{}{
+				runner{"some-error"},
+				exec.Command("wrong-command", "bad-argument"),
+			},
+			stopableErrMsg:  "some-error",
+			unstopaleErrMsg: "some-error; exec: \"wrong-command\": executable file not found in $PATH",
+		},
+		{
+			stmts: []interface{}{
 				errors.New("error1"),
-				RunnerImplementationWithError{},
 				errors.New("error2"),
-				exec.Command("wrong-command", "bad-argument"),
 			},
-			errors.New("error1; some-runner-error; error2; exec: \"wrong-command\": executable file not found in $PATH"),
+			stopableErrMsg:  "Statement-0: Invalid: *errors.errorString",
+			unstopaleErrMsg: "Statement-0: Invalid: *errors.errorString",
 		},
 		{
-			true,
-			[]interface{}{
-				errors.New("error1"),
-				errors.New("unreachable-error"),
+			stmts: []interface{}{
+				runner{"some-error-1"},
+				runner{"some-error-2"},
 			},
-			errors.New("error1"),
-		},
-		{
-			true,
-			[]interface{}{
-				RunnerImplementationWithError{},
-				errors.New("unreachable-error"),
-			},
-			errors.New("some-runner-error"),
-		},
-		{
-			true,
-			[]interface{}{
-				exec.Command("wrong-command", "bad-argument"),
-				errors.New("unreachable-error"),
-			},
-			errors.New("exec: \"wrong-command\": executable file not found in $PATH"),
-		},
-		{
-			false,
-			[]interface{}{},
-			nil,
-		},
-
-		{
-			false,
-			[]interface{}{
-				RunnerImplementationNoError{},
-				nil,
-				exec.Command("echo", "hello", "world"),
-			},
-			nil,
+			stopableErrMsg:  "some-error-1",
+			unstopaleErrMsg: "some-error-1; some-error-2",
 		},
 	}
 
-	for _, tt := range testcases {
-		err := runn.Executor{
-			StopWhenError: tt.stopWhenError,
-		}.Execute(tt.stmts...)
-
-		if tt.err == nil {
-			require.NoError(t, err)
+	for i, tt := range testcases {
+		err := runn.Executor{StopWhenError: true}.Execute(tt.stmts...)
+		if tt.stopableErrMsg == "" {
+			require.NoError(t, err, fmt.Sprintf("stopable-%d", i))
 		} else {
-			require.EqualError(t, err, tt.err.Error())
+			require.EqualError(t, err, tt.stopableErrMsg, fmt.Sprintf("stopable-%d", i))
+		}
+		err = runn.Executor{StopWhenError: false}.Execute(tt.stmts...)
+		if tt.unstopaleErrMsg == "" {
+			require.NoError(t, err, fmt.Sprintf("unstopable-%d", i))
+		} else {
+			require.EqualError(t, err, tt.unstopaleErrMsg, i, fmt.Sprintf("unstopable-%d", i))
 		}
 	}
+}
+
+type runner struct {
+	msg string
+}
+
+func (r runner) Run() error {
+	if r.msg == "" {
+		return nil
+	}
+	return errors.New(r.msg)
 }

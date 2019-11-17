@@ -1,7 +1,6 @@
 package runn_test
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -10,10 +9,9 @@ import (
 
 func TestExecute(t *testing.T) {
 	err := runn.Execute(
-		errors.New("some-error"),
-		errors.New("unreachable-error"),
+		runner{"some-error-2"},
+		runner{"some-error-1"},
 	)
-
-	require.EqualError(t, err, "some-error")
+	require.EqualError(t, err, "some-error-2")
 
 }
