@@ -5,8 +5,8 @@ import (
 	"os"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typctx"
-	"github.com/typical-go/typical-go/pkg/typmod"
 )
 
 const (
@@ -14,9 +14,9 @@ const (
 )
 
 // ConfigFields return config list
-func ConfigFields(ctx *typctx.Context) (fields []typmod.ConfigField) {
+func ConfigFields(ctx *typctx.Context) (fields []typcfg.Field) {
 	for _, module := range ctx.AllModule() {
-		if configurer, ok := module.(typmod.Configurer); ok {
+		if configurer, ok := module.(typcfg.Configurer); ok {
 			fields = append(fields, configurer.Configure().ConfigFields()...)
 		}
 	}

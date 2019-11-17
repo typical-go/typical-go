@@ -1,10 +1,10 @@
-package typmod_test
+package typcfg_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typmod"
+	"github.com/typical-go/typical-go/pkg/typcfg"
 )
 
 type SampleSpec struct {
@@ -15,11 +15,11 @@ type SampleSpec struct {
 }
 
 func TestConfiguration(t *testing.T) {
-	configuration := typmod.Configuration{
+	configuration := typcfg.Configuration{
 		Prefix: "TEST",
 		Spec:   &SampleSpec{},
 	}
-	require.EqualValues(t, []typmod.ConfigField{
+	require.EqualValues(t, []typcfg.ConfigField{
 		{Name: "TEST_FIELD1", Type: "string", Default: "hello", Required: true},
 		{Name: "TEST_FIELD2", Type: "string", Default: "world", Required: false},
 		{Name: "TEST_ALIAS", Type: "int", Default: "", Required: false},

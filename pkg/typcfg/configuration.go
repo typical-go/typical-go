@@ -1,4 +1,4 @@
-package typmod
+package typcfg
 
 import (
 	"fmt"
@@ -15,8 +15,8 @@ type Configuration struct {
 	Spec   interface{}
 }
 
-// ConfigField contain field information of spec
-type ConfigField struct {
+// Field contain field information of spec
+type Field struct {
 	Name     string
 	Type     string
 	Default  string
@@ -29,13 +29,13 @@ func (c Configuration) Configure() Configuration {
 }
 
 // ConfigFields return list of field information
-func (c Configuration) ConfigFields() (infos []ConfigField) {
+func (c Configuration) ConfigFields() (infos []Field) {
 	val := reflect.Indirect(reflect.ValueOf(c.Spec))
 	typ := val.Type()
 	for i := 0; i < typ.NumField(); i++ {
 		field := typ.Field(i)
 		if !fieldIgnored(field) {
-			infos = append(infos, ConfigField{
+			infos = append(infos, Field{
 				Name:     fmt.Sprintf("%s_%s", c.Prefix, fieldName(field)),
 				Type:     field.Type.Name(),
 				Default:  fieldDefault(field),

@@ -15,11 +15,6 @@ type Destroyer interface {
 	Destroy() []interface{}
 }
 
-// Configurer responsible to create config
-type Configurer interface {
-	Configure() Configuration
-}
-
 // IsProvider return true if object implementation of provider
 func IsProvider(obj interface{}) (ok bool) {
 	_, ok = obj.(Provider)
@@ -35,11 +30,5 @@ func IsPreparer(obj interface{}) (ok bool) {
 // IsDestroyer return true if object implementation of destructor
 func IsDestroyer(obj interface{}) (ok bool) {
 	_, ok = obj.(Destroyer)
-	return
-}
-
-// IsConfigurer return true if object implementation of configurer
-func IsConfigurer(obj interface{}) (ok bool) {
-	_, ok = obj.(Configurer)
 	return
 }
