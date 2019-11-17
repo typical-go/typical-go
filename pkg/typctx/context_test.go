@@ -32,9 +32,9 @@ func TestContext_Validate(t *testing.T) {
 	}{
 		{
 			typctx.Context{
-				AppModule: dummyApp{},
 				Name:      "some-name",
 				Package:   "some-package",
+				AppModule: dummyApp{},
 				Releaser: typrls.Releaser{
 					Targets: []typrls.Target{"linux/amd64"},
 				},
@@ -43,31 +43,41 @@ func TestContext_Validate(t *testing.T) {
 		},
 		{
 			typctx.Context{
-				AppModule: dummyApp{},
 				Package:   "some-package",
+				AppModule: dummyApp{},
 				Releaser: typrls.Releaser{
 					Targets: []typrls.Target{"linux/amd64"},
 				},
 			},
-			"Invalid Context: Name can't not empty",
+			"Invalid Context: Name can't be empty",
 		},
 		{
 			typctx.Context{
-				AppModule: dummyApp{},
 				Name:      "some-name",
+				AppModule: dummyApp{},
 				Releaser: typrls.Releaser{
 					Targets: []typrls.Target{"linux/amd64"},
 				},
 			},
-			"Invalid Context: Package can't not empty",
+			"Invalid Context: Package can't be empty",
 		},
 		{
 			typctx.Context{
-				AppModule: dummyApp{},
 				Name:      "some-name",
 				Package:   "some-package",
+				AppModule: dummyApp{},
 			},
 			"Releaser: Missing 'Targets'",
+		},
+		{
+			typctx.Context{
+				Name:    "some-name",
+				Package: "some-name",
+				Releaser: typrls.Releaser{
+					Targets: []typrls.Target{"linux/amd64"},
+				},
+			},
+			"Invalid Context: AppModule can't be empty",
 		},
 	}
 	for i, tt := range testcases {

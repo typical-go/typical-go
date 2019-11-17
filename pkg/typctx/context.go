@@ -28,10 +28,13 @@ type Context struct {
 // Validate context
 func (c *Context) Validate() (err error) {
 	if c.Name == "" {
-		return invalidContextError("Name can't not empty")
+		return invalidContextError("Name can't be empty")
 	}
 	if c.Package == "" {
-		return invalidContextError("Package can't not empty")
+		return invalidContextError("Package can't be empty")
+	}
+	if c.AppModule == nil {
+		return invalidContextError("AppModule can't be empty")
 	}
 	if err = c.Releaser.Validate(); err != nil {
 		return fmt.Errorf("Releaser: %s", err.Error())
