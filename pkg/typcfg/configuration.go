@@ -26,8 +26,8 @@ func (c Configuration) Configure() Configuration {
 	return c
 }
 
-// ConfigFields return list of field information
-func (c Configuration) ConfigFields() (infos []Field) {
+// Fields of config
+func (c Configuration) Fields() (infos []Field) {
 	val := reflect.Indirect(reflect.ValueOf(c.Spec))
 	typ := val.Type()
 	for i := 0; i < typ.NumField(); i++ {

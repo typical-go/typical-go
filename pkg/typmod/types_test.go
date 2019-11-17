@@ -3,6 +3,8 @@ package typmod_test
 import (
 	"testing"
 
+	"github.com/typical-go/typical-go/pkg/typcfg"
+
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typmod"
 )
@@ -55,14 +57,14 @@ func TestConfigurer(t *testing.T) {
 		{struct{}{}, false},
 	}
 	for i, tt := range testCases {
-		require.Equal(t, tt.isConfigurer, typmod.IsConfigurer(tt.obj), i)
+		require.Equal(t, tt.isConfigurer, typcfg.IsConfigurer(tt.obj), i)
 	}
 }
 
 type dummyObj struct{}
 
-func (dummyObj) Run() interface{}                    { return nil }
-func (dummyObj) Prepare() []interface{}              { return nil }
-func (dummyObj) Provide() []interface{}              { return nil }
-func (dummyObj) Destroy() []interface{}              { return nil }
-func (dummyObj) Configure() typmod.Configuration { return typmod.Configuration{} }
+func (dummyObj) Run() interface{}                { return nil }
+func (dummyObj) Prepare() []interface{}          { return nil }
+func (dummyObj) Provide() []interface{}          { return nil }
+func (dummyObj) Destroy() []interface{}          { return nil }
+func (dummyObj) Configure() typcfg.Configuration { return typcfg.Configuration{} }

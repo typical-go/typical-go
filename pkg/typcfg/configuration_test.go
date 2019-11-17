@@ -19,9 +19,9 @@ func TestConfiguration(t *testing.T) {
 		Prefix: "TEST",
 		Spec:   &SampleSpec{},
 	}
-	require.EqualValues(t, []typcfg.ConfigField{
+	require.EqualValues(t, []typcfg.Field{
 		{Name: "TEST_FIELD1", Type: "string", Default: "hello", Required: true},
 		{Name: "TEST_FIELD2", Type: "string", Default: "world", Required: false},
 		{Name: "TEST_ALIAS", Type: "int", Default: "", Required: false},
-	}, configuration.ConfigFields())
+	}, configuration.Fields())
 }
