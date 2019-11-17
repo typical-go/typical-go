@@ -8,10 +8,9 @@ import (
 
 // Context of project
 var Context = &typctx.Context{
-	Name:        "Typical-Go",
-	Description: "Example of typical and scalable RESTful API Server for Go",
-	Package:     "github.com/typical-go/typical-go",
-	AppModule:   typctx.NewAppModule(app.Start),
+	Name:      "Typical-Go",
+	Package:   "github.com/typical-go/typical-go",
+	AppModule: typctx.NewAppModule(app.Start),
 
 	Releaser: typrls.Releaser{
 		Version: "0.9.0",
