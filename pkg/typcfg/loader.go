@@ -11,7 +11,7 @@ type Loader interface {
 
 // DefaultLoader return default config loader
 func DefaultLoader() Loader {
-	return defaultLoader{}
+	return &defaultLoader{}
 }
 
 type defaultLoader struct{}
