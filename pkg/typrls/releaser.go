@@ -16,7 +16,6 @@ import (
 type Releaser struct {
 	Name       string
 	Targets    []Target
-	Version    string
 	Publishers []Publisher
 	Tagging
 }
@@ -28,14 +27,14 @@ type Tagging struct {
 }
 
 // Release the distribution
-func (r *Releaser) Release(force, alpha bool) (rls *Release, err error) {
+func (r *Releaser) Release(version string, force, alpha bool) (rls *Release, err error) {
 	var latestTag string
 	var changeLogs []string
 	var binaries []string
 	git.Fetch()
 	defer git.Fetch()
 	name := r.releaseName()
-	tag := r.releaseTag(alpha)
+	tag := r.releaseTag(version, alpha)
 	if status := git.Status(); status != "" && !force {
 		err = fmt.Errorf("Please commit changes first:\n%s", status)
 		return
@@ -101,10 +100,10 @@ func (r *Releaser) filter(changeLogs []string) (filtered []string) {
 	return
 }
 
-func (r *Releaser) releaseTag(alpha bool) string {
+func (r *Releaser) releaseTag(version string, alpha bool) string {
 	var b strings.Builder
 	b.WriteString("v")
-	b.WriteString(r.Version)
+	b.WriteString(version)
 	if r.IncludeBranch {
 		b.WriteString("_")
 		b.WriteString(git.Branch())

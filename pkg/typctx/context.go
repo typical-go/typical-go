@@ -13,6 +13,7 @@ type Context struct {
 	Name            string
 	Description     string
 	Package         string
+	Version         string
 	AppModule       AppModule
 	Modules         coll.Interfaces
 	TestTargets     coll.Strings
