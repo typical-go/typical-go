@@ -38,9 +38,6 @@ func (c *Context) Validate() (err error) {
 	if c.Package == "" {
 		return invalidContextError("Package can't be empty")
 	}
-	if c.AppModule == nil {
-		return invalidContextError("AppModule can't be empty")
-	}
 	if err = c.Releaser.Validate(); err != nil {
 		return fmt.Errorf("Releaser: %s", err.Error())
 	}

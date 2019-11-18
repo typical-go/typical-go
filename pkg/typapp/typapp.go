@@ -20,7 +20,9 @@ func Run(ctx *typctx.Context) {
 	app.Usage = ""
 	app.Description = ctx.Description
 	app.Version = ctx.Version
-	app.Action = ctxCli.Action(ctx.AppModule.Run())
+	if ctx.AppModule != nil {
+		app.Action = ctxCli.Action(ctx.AppModule.Run())
+	}
 	app.Before = typcli.LoadEnvFile
 	if commander, ok := ctx.AppModule.(typcli.AppCommander); ok {
 		app.Commands = commander.AppCommands(ctxCli)
