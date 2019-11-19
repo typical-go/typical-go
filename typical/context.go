@@ -2,9 +2,9 @@ package typical
 
 import (
 	"github.com/typical-go/typical-go/app"
+	"github.com/typical-go/typical-go/app/x"
 	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typrls"
-	"github.com/typical-go/typical-go/x"
 )
 
 // Context of project
