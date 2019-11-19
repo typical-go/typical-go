@@ -7,8 +7,8 @@ import (
 	"github.com/typical-go/typical-go/pkg/utility/runn"
 )
 
-// NewProject new project [nowire]
-func NewProject(parentPath, packageName string) (err error) {
+// InitProject iniate new project
+func InitProject(parentPath, packageName string) (err error) {
 	name := getNameFromPath(packageName)
 	projectPath := parentPath + "/" + name
 
