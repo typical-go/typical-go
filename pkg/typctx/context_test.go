@@ -69,16 +69,6 @@ func TestContext_Validate(t *testing.T) {
 			},
 			"Releaser: Missing 'Targets'",
 		},
-		{
-			typctx.Context{
-				Name:    "some-name",
-				Package: "some-name",
-				Releaser: typrls.Releaser{
-					Targets: []typrls.Target{"linux/amd64"},
-				},
-			},
-			"Invalid Context: AppModule can't be empty",
-		},
 	}
 	for i, tt := range testcases {
 		err := tt.context.Validate()
