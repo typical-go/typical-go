@@ -5,13 +5,10 @@ import "strings"
 // Errors to handle multiple error
 type Errors []error
 
-// Add the error if not nil
-func (e *Errors) Add(err error) bool {
-	if err == nil {
-		return false
-	}
-	*e = append(*e, err)
-	return true
+// Append error
+func (e *Errors) Append(errs ...error) Errors {
+	*e = append(*e, errs...)
+	return *e
 }
 
 func (e Errors) Error() string {
@@ -23,4 +20,12 @@ func (e Errors) Error() string {
 		builder.WriteString(err.Error())
 	}
 	return builder.String()
+}
+
+// ToError convert errors to error type
+func (e Errors) ToError() error {
+	if len(e) > 0 {
+		return e
+	}
+	return nil
 }

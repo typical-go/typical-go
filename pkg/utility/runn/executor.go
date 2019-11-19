@@ -13,27 +13,25 @@ type Executor struct {
 }
 
 // Execute all statement
-func (e Executor) Execute(stmts ...interface{}) (err error) {
+func (e Executor) Execute(stmts ...interface{}) error {
 	var errs coll.Errors
 	for i, stmt := range stmts {
+		var err error
 		switch stmt.(type) {
 		case Runner:
-			runner := stmt.(Runner)
-			runErr := runner.Run()
-			if runErr != nil {
-				if e.StopWhenError {
-					return runErr
-				}
-				errs.Add(runErr)
-			}
+			err = stmt.(Runner).Run()
+		case func() error:
+			err = stmt.(func() error)()
 		default:
-			err = fmt.Errorf("Statement-%d: Invalid: %s", i, reflect.TypeOf(stmt))
-			return
+			return fmt.Errorf("Statement-%d: Invalid: %s", i, reflect.TypeOf(stmt))
+		}
+		if err != nil {
+			if e.StopWhenError {
+				return err
+			}
+			errs.Append(err)
 		}
 
 	}
-	if len(errs) > 0 {
-		err = errs
-	}
-	return
+	return errs.ToError()
 }

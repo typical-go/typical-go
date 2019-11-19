@@ -40,6 +40,14 @@ func TestExecutor_All(t *testing.T) {
 			stopableErrMsg:  "some-error-1",
 			unstopaleErrMsg: "some-error-1; some-error-2",
 		},
+		{
+			stmts: []interface{}{
+				func() error { return errors.New("some-error-1") },
+				func() error { return errors.New("some-error-2") },
+			},
+			stopableErrMsg:  "some-error-1",
+			unstopaleErrMsg: "some-error-1; some-error-2",
+		},
 	}
 
 	for i, tt := range testcases {
