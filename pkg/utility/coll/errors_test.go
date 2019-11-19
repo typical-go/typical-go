@@ -11,7 +11,7 @@ import (
 
 func TestErrors(t *testing.T) {
 	testcases := []struct {
-		coll.Errors
+		*coll.Errors
 		errors []error
 		msg    string
 		error  error
@@ -42,14 +42,14 @@ func TestErrors(t *testing.T) {
 			error: errors.New("error1; error2"),
 		},
 		{
-			Errors: coll.Errors{},
+			Errors: &coll.Errors{},
 			errors: []error{},
 			msg:    "",
 			error:  nil,
 		},
 	}
 	for i, tt := range testcases {
-		require.EqualValues(t, tt.errors, tt.Errors)
+		require.EqualValues(t, tt.errors, *tt.Errors)
 		require.Equal(t, tt.msg, tt.Error(), i)
 		if err := tt.ToError(); err != nil {
 			require.EqualError(t, err, tt.error.Error(), i)

@@ -4,8 +4,7 @@ package coll
 type Strings []string
 
 // Append item
-func (s Strings) Append(item ...string) Strings {
-	ptr := &s
-	*ptr = append(*ptr, item...)
-	return *ptr
+func (s *Strings) Append(item ...string) *Strings {
+	*s = append(*s, item...)
+	return s
 }

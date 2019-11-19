@@ -4,8 +4,7 @@ package coll
 type Interfaces []interface{}
 
 // Append item
-func (i Interfaces) Append(item ...interface{}) Interfaces {
-	ptr := &i
-	*ptr = append(*ptr, item...)
-	return *ptr
+func (i *Interfaces) Append(item ...interface{}) *Interfaces {
+	*i = append(*i, item...)
+	return i
 }

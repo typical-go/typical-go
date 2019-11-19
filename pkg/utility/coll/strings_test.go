@@ -9,7 +9,7 @@ import (
 
 func TestStrings(t *testing.T) {
 	testcases := []struct {
-		coll.Strings
+		*coll.Strings
 		i []string
 	}{
 		{
@@ -26,6 +26,6 @@ func TestStrings(t *testing.T) {
 	}
 
 	for _, tt := range testcases {
-		require.EqualValues(t, tt.i, tt.Strings)
+		require.EqualValues(t, tt.i, *tt.Strings)
 	}
 }

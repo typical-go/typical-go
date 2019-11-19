@@ -31,7 +31,6 @@ func (e Executor) Execute(stmts ...interface{}) error {
 			}
 			errs.Append(err)
 		}
-
 	}
 	return errs.ToError()
 }

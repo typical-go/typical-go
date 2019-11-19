@@ -9,7 +9,7 @@ import (
 
 func TestInterfaces(t *testing.T) {
 	testcases := []struct {
-		coll.Interfaces
+		*coll.Interfaces
 		i []interface{}
 	}{
 		{
@@ -27,6 +27,6 @@ func TestInterfaces(t *testing.T) {
 	}
 
 	for _, tt := range testcases {
-		require.EqualValues(t, tt.i, tt.Interfaces)
+		require.EqualValues(t, tt.i, *tt.Interfaces)
 	}
 }

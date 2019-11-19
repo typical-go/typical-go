@@ -2,7 +2,6 @@ package runn_test
 
 import (
 	"errors"
-	"fmt"
 	"os/exec"
 	"testing"
 
@@ -53,15 +52,15 @@ func TestExecutor_All(t *testing.T) {
 	for i, tt := range testcases {
 		err := runn.Executor{StopWhenError: true}.Execute(tt.stmts...)
 		if tt.stopableErrMsg == "" {
-			require.NoError(t, err, fmt.Sprintf("stopable-%d", i))
+			require.NoError(t, err)
 		} else {
-			require.EqualError(t, err, tt.stopableErrMsg, fmt.Sprintf("stopable-%d", i))
+			require.EqualError(t, err, tt.stopableErrMsg)
 		}
 		err = runn.Executor{StopWhenError: false}.Execute(tt.stmts...)
 		if tt.unstopaleErrMsg == "" {
-			require.NoError(t, err, fmt.Sprintf("unstopable-%d", i))
+			require.NoError(t, err)
 		} else {
-			require.EqualError(t, err, tt.unstopaleErrMsg, i, fmt.Sprintf("unstopable-%d", i))
+			require.EqualError(t, err, tt.unstopaleErrMsg, i)
 		}
 	}
 }
