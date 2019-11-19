@@ -1,8 +1,8 @@
 package typprebuilder
 
 import (
-	"github.com/typical-go/typical-go/pkg/typprebuilder/golang"
 	"github.com/typical-go/typical-go/pkg/typenv"
+	"github.com/typical-go/typical-go/pkg/typprebuilder/golang"
 	"github.com/typical-go/typical-go/pkg/utility/bash"
 	"github.com/typical-go/typical-go/pkg/utility/debugkit"
 )

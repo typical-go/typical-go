@@ -37,7 +37,7 @@ func (i *Initialization) AddMockTargets(mockTargets ...string) {
 // AddTestTargets to add constructors
 func (i *Initialization) AddTestTargets(testTargets ...string) {
 	for _, testTarget := range testTargets {
-		i.AddStatement(fmt.Sprintf("typical.Context.TestTargets.Add(\"./%s\")", testTarget))
+		i.AddStatement(fmt.Sprintf("typical.Context.TestTargets.Append(\"./%s\")", testTarget))
 	}
 }
 

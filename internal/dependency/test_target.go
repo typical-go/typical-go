@@ -5,7 +5,7 @@ package dependency
 import "github.com/typical-go/typical-go/typical"
 
 func init() {
-	typical.Context.TestTargets.Add("./app")
-	typical.Context.TestTargets.Add("./app/stmt")
-	typical.Context.TestTargets.Add("./app/x")
+	typical.Context.TestTargets.Append("./app")
+	typical.Context.TestTargets.Append("./app/stmt")
+	typical.Context.TestTargets.Append("./app/x")
 }

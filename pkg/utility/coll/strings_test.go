@@ -8,8 +8,24 @@ import (
 )
 
 func TestStrings(t *testing.T) {
-	var coll coll.Strings
-	coll.Add("hello")
-	coll.Add("world")
-	require.EqualValues(t, []string{"hello", "world"}, coll)
+	testcases := []struct {
+		coll.Strings
+		i []string
+	}{
+		{
+			Strings: new(coll.Strings).
+				Append("hello", "world"),
+			i: []string{"hello", "world"},
+		},
+		{
+			Strings: new(coll.Strings).
+				Append("hello").
+				Append("world"),
+			i: []string{"hello", "world"},
+		},
+	}
+
+	for _, tt := range testcases {
+		require.EqualValues(t, tt.i, tt.Strings)
+	}
 }
