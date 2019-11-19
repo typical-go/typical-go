@@ -58,3 +58,15 @@ func TestErrors(t *testing.T) {
 		}
 	}
 }
+
+func TestErrors2(t *testing.T) {
+	t.Run("Non-pointer definition", func(t *testing.T) {
+		var s coll.Errors
+		s.Append(errors.New("Hello")).
+			Append(errors.New("World"))
+		require.EqualValues(t, []error{
+			errors.New("Hello"),
+			errors.New("World"),
+		}, s)
+	})
+}

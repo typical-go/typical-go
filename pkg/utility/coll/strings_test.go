@@ -24,8 +24,15 @@ func TestStrings(t *testing.T) {
 			i: []string{"hello", "world"},
 		},
 	}
-
 	for _, tt := range testcases {
 		require.EqualValues(t, tt.i, *tt.Strings)
 	}
+}
+
+func TestStrings2(t *testing.T) {
+	t.Run("Non-pointer definition", func(t *testing.T) {
+		var s coll.Strings
+		s.Append("mama").Append("mia")
+		require.EqualValues(t, []string{"mama", "mia"}, s)
+	})
 }

@@ -25,8 +25,15 @@ func TestInterfaces(t *testing.T) {
 			i: []interface{}{"some-item", 88, 3.14},
 		},
 	}
-
 	for _, tt := range testcases {
 		require.EqualValues(t, tt.i, *tt.Interfaces)
 	}
+}
+
+func TestInterfaces2(t *testing.T) {
+	t.Run("Non-pointer definition", func(t *testing.T) {
+		var s coll.Interfaces
+		s.Append("hello").Append(123456)
+		require.EqualValues(t, []interface{}{"hello", 123456}, s)
+	})
 }
