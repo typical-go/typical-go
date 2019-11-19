@@ -3,7 +3,7 @@ package typenv
 var (
 	appVar        = EnvVar{"TYPICAL_APP", "app"}
 	buildToolVar  = EnvVar{"TYPICAL_BUILD_TOOL", "build-tool"}
-	prebuilderVar = EnvVar{"TYPICAL_PREBUILDER", "prebuilder"}
+	prebuilderVar = EnvVar{"TYPICAL_PREBUILDER", "pre-builder"}
 	binVar        = EnvVar{"TYPICAL_BIN", "bin"}
 	cmdVar        = EnvVar{"TYPICAL_CMD", "cmd"}
 	mockVar       = EnvVar{"TYPICAL_MOCK", "mock"}
