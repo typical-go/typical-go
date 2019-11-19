@@ -8,9 +8,25 @@ import (
 )
 
 func TestInterfaces(t *testing.T) {
-	var coll coll.Interfaces
-	coll.Add("some-item")
-	coll.Add(88)
-	coll.Add(3.14)
-	require.EqualValues(t, []interface{}{"some-item", 88, 3.14}, coll)
+	testcases := []struct {
+		coll.Interfaces
+		i []interface{}
+	}{
+		{
+			Interfaces: new(coll.Interfaces).
+				Append("some-item", 88, 3.14),
+			i: []interface{}{"some-item", 88, 3.14},
+		},
+		{
+			Interfaces: new(coll.Interfaces).
+				Append("some-item").
+				Append(88).
+				Append(3.14),
+			i: []interface{}{"some-item", 88, 3.14},
+		},
+	}
+
+	for _, tt := range testcases {
+		require.EqualValues(t, tt.i, tt.Interfaces)
+	}
 }

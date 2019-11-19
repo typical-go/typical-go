@@ -23,14 +23,14 @@ func (i *Initialization) AddStatement(stmt string) {
 // AddConstructors to add constructors
 func (i *Initialization) AddConstructors(constructors ...string) {
 	for _, constructor := range constructors {
-		i.AddStatement(fmt.Sprintf("typical.Context.Constructors.Add(%s)", constructor))
+		i.AddStatement(fmt.Sprintf("typical.Context.Constructors.Append(%s)", constructor))
 	}
 }
 
 // AddMockTargets to add constructors
 func (i *Initialization) AddMockTargets(mockTargets ...string) {
 	for _, mockTarget := range mockTargets {
-		i.AddStatement(fmt.Sprintf("typical.Context.MockTargets.Add(\"%s\")", mockTarget))
+		i.AddStatement(fmt.Sprintf("typical.Context.MockTargets.Append(\"%s\")", mockTarget))
 	}
 }
 
