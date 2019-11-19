@@ -23,7 +23,7 @@ func (module) BuildCommand(c *typcli.ContextCli) cli.Command {
 		Name:  "x",
 		Usage: "Typical-Go Development Tool",
 		Subcommands: []cli.Command{
-			{Name: "init-project", ShortName: "i", Action: testInitProject},
+			{Name: "init-project", Action: testInitProject},
 		},
 	}
 }
@@ -31,10 +31,8 @@ func (module) BuildCommand(c *typcli.ContextCli) cli.Command {
 func testInitProject(*cli.Context) {
 	parent := "sample"
 	pkg := "github.com/typical-go/hello-world"
-
 	log.Infof("Remove: %s", parent)
 	os.RemoveAll(parent)
-
 	log.Infof("Init Project: %s", pkg)
 	app.InitProject(parent, pkg)
 }
