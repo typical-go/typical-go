@@ -6,9 +6,9 @@ import "strings"
 type Errors []error
 
 // Append error
-func (e *Errors) Append(errs ...error) Errors {
-	*e = append(*e, errs...)
-	return *e
+func (e Errors) Append(errs ...error) Errors {
+	e = append(e, errs...)
+	return e
 }
 
 func (e Errors) Error() string {
