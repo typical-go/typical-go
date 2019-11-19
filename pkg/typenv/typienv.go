@@ -2,11 +2,12 @@ package typenv
 
 var (
 	appVar        = EnvVar{"TYPICAL_APP", "app"}
+	buildToolVar  = EnvVar{"TYPICAL_BUILD_TOOL", "build-tool"}
+	prebuilderVar = EnvVar{"TYPICAL_PREBUILDER", "prebuilder"}
 	binVar        = EnvVar{"TYPICAL_BIN", "bin"}
 	cmdVar        = EnvVar{"TYPICAL_CMD", "cmd"}
 	mockVar       = EnvVar{"TYPICAL_MOCK", "mock"}
 	releaseVar    = EnvVar{"TYPICAL_RELEASE", "release"}
-	buildToolVar  = EnvVar{"TYPICAL_BUILD_TOOL", "build-tool"}
 	dependencyVar = EnvVar{"TYPICAL_DEPENDENCY", "dependency"}
 	metadataVar   = EnvVar{"TYPICAL_METADATA", ".typical-metadata"}
 	readmeVar     = EnvVar{"TYPICAL_README", "README.md"}
@@ -15,6 +16,7 @@ var (
 var (
 	App        *applicationFolder
 	BuildTool  *applicationFolder
+	Prebuilder *applicationFolder
 	Dependency *applicationFolder
 	Bin        string
 	Metadata   string
@@ -36,6 +38,7 @@ func init() {
 	Bin = binVar.Value()
 	Metadata = metadataVar.Value()
 	buildTool := buildToolVar.Value()
+	prebuilder := prebuilderVar.Value()
 	dependency := dependencyVar.Value()
 	App = &applicationFolder{
 		Package: "main",
@@ -50,6 +53,11 @@ func init() {
 	Dependency = &applicationFolder{
 		Package: dependency,
 		SrcPath: "internal/" + dependency,
+	}
+	Prebuilder = &applicationFolder{
+		Package: "main",
+		SrcPath: cmd + "/" + prebuilder,
+		BinPath: Bin + "/" + prebuilder,
 	}
 	Mock = mockVar.Value()
 	Release = releaseVar.Value()
