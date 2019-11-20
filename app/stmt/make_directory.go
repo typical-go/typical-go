@@ -4,10 +4,10 @@ import (
 	"os"
 )
 
-type MakeDirectory struct {
+type Mkdir struct {
 	Path string
 }
 
-func (md MakeDirectory) Run() error {
-	return os.MkdirAll(md.Path, os.ModePerm)
+func (md Mkdir) Run() error {
+	return os.MkdirAll(md.Path, 0700)
 }

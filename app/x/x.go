@@ -28,11 +28,11 @@ func (module) BuildCommand(c *typcli.ContextCli) cli.Command {
 	}
 }
 
-func testInitProject(*cli.Context) {
+func testInitProject(*cli.Context) error {
 	parent := "sample"
 	pkg := "github.com/typical-go/hello-world"
 	log.Infof("Remove: %s", parent)
 	os.RemoveAll(parent)
 	log.Infof("Init Project: %s", pkg)
-	app.InitProject(parent, pkg)
+	return app.InitProject(parent, pkg)
 }

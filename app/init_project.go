@@ -1,73 +1,78 @@
 package app
 
 import (
+	"fmt"
 	"strings"
+
+	"github.com/typical-go/typical-go/app/stmt"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/typical-go/typical-go/pkg/utility/runn"
 )
 
 // InitProject iniate new project
-func InitProject(parentPath, packageName string) error {
-	return initproject{}.Run()
+func InitProject(parent, pkg string) error {
+	return runn.Execute(initproject{
+		Name:   name(pkg),
+		Pkg:    pkg,
+		Parent: parent,
+	})
 }
 
-// 	name := getNameFromPath(packageName)
-// 	projectPath := parentPath + "/" + name
-
-// 	return runn.Execute(
-// 		stmt.MakeDirectory{Path: projectPath},
-// 		stmt.MakeDirectory{Path: projectPath + "/app"},
-// 		stmt.MakeDirectory{Path: projectPath + "/cmd"},
-// 		stmt.MakeDirectory{Path: projectPath + "/cmd/typical-app"},
-// 		stmt.MakeDirectory{Path: projectPath + "/cmd/typical-dev-tool"},
-// 		stmt.MakeDirectory{Path: projectPath + "/config"},
-// 		stmt.MakeDirectory{Path: projectPath + "/typical"},
-// 		stmt.MakeDirectory{Path: projectPath + "/.typical"},
-// 		stmt.CreateTypicalContext{Target: projectPath + "/typical/context.go"},
-// 		stmt.CreateAppEntryPoint{PackageName: packageName, Target: projectPath + "/cmd/typical-app/main.go"},
-// 		stmt.CreateTypicalDevToolEntryPoint{PackageName: packageName, Target: projectPath + "/cmd/typical-dev-tool/main.go"},
-// 		stmt.CreateTypicalWrapper{Target: projectPath + "/typicalw"},
-// 		stmt.ChangeDirectory{ProjectPath: projectPath},
-// 		stmt.GoModInit{ProjectPath: projectPath, PackageName: packageName},
-// 		stmt.GoFmt{ProjectPath: projectPath},
-// 	)
-// }
+func name(pkg string) string {
+	// TODO: handle window path format
+	chunks := strings.Split(pkg, "/")
+	return chunks[len(chunks)-1]
+}
 
 type initproject struct {
+	Name   string
+	Parent string
+	Pkg    string
+}
+
+func (i initproject) Path(s string) string {
+	return fmt.Sprintf("%s/%s/%s", i.Parent, i.Name, s)
 }
 
 func (i initproject) Run() (err error) {
 	return runn.Execute(
 		i.generateAppPackage,
-		i.generateTypicalContext,
 		i.generateCmdPackage,
+		i.generateTypicalContext,
 		i.generateIgnoreFile,
 		i.generateTypicalWrapper,
 	)
 }
 
-func (i initproject) generateAppPackage() (err error) {
-	return
+func (i initproject) generateAppPackage() error {
+	log.Info("Generate App Package")
+	return runn.Execute(
+		stmt.Mkdir{Path: i.Path("app")},
+	)
 }
 
-func (i initproject) generateTypicalContext() (err error) {
-	return
+func (i initproject) generateCmdPackage() error {
+	log.Info("Generate Cmd Package")
+	return runn.Execute(
+		stmt.Mkdir{Path: i.Path("cmd")},
+	)
 }
 
-func (i initproject) generateCmdPackage() (err error) {
-	return
+func (i initproject) generateTypicalContext() error {
+	log.Info("Generate Typical Context")
+	return runn.Execute(
+		stmt.Mkdir{Path: i.Path("typical")},
+	)
 }
 
-func (i initproject) generateIgnoreFile() (err error) {
-	return
+func (i initproject) generateIgnoreFile() error {
+	log.Info("Generate Ignore File")
+	return runn.Execute()
 }
 
-func (i initproject) generateTypicalWrapper() (err error) {
-	return
-}
-
-func getNameFromPath(path string) string {
-	// TODO: handle window path format
-	chunks := strings.Split(path, "/")
-	return chunks[len(chunks)-1]
+func (i initproject) generateTypicalWrapper() error {
+	log.Info("Generate Typical Wrapper")
+	return runn.Execute()
 }
