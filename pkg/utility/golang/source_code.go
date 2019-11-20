@@ -4,23 +4,24 @@ import (
 	"bytes"
 	"io"
 	"io/ioutil"
-
-	"github.com/typical-go/typical-go/pkg/utility/coll"
 )
 
 // SourceCode is source code recipe for generated.go in typical package
 type SourceCode struct {
-	Inits coll.Strings
 	Imports
 
 	PackageName string
 	Structs     []Struct
 	Codes       []string
+	Init        *Function
 }
 
 // NewSourceCode return new instance of SourceCode
 func NewSourceCode(pkgName string) *SourceCode {
-	return &SourceCode{PackageName: pkgName}
+	return &SourceCode{
+		PackageName: pkgName,
+		Init:        &Function{Name: "init"},
+	}
 }
 
 func (r SourceCode) Write(w io.Writer) {
@@ -32,12 +33,8 @@ func (r SourceCode) Write(w io.Writer) {
 	for i := range r.Structs {
 		r.Structs[i].Write(w)
 	}
-	if len(r.Inits) > 0 {
-		writeln(w, "func init() {")
-		for _, stmt := range r.Inits {
-			writeln(w, stmt)
-		}
-		writeln(w, "}")
+	if !r.Init.IsEmpty() {
+		r.Init.Write(w)
 	}
 	for _, code := range r.Codes {
 		writeln(w, code)

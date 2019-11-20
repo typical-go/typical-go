@@ -20,7 +20,7 @@ func (g constructor) generate(target string) (err error) {
 	src := golang.NewSourceCode(typenv.Dependency.Package)
 	src.Imports = g.ApplicationImports
 	for _, constructor := range g.Constructors {
-		src.Inits.Append(fmt.Sprintf("typical.Context.Constructors.Append(%s)", constructor))
+		src.Init.Append(fmt.Sprintf("typical.Context.Constructors.Append(%s)", constructor))
 	}
 	if err = src.Cook(target); err != nil {
 		return

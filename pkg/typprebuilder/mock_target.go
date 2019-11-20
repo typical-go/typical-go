@@ -19,7 +19,7 @@ func (g mockTarget) generate(target string) (err error) {
 	src := golang.NewSourceCode(typenv.Dependency.Package)
 	src.Imports = g.ApplicationImports
 	for _, mockTarget := range g.MockTargets {
-		src.Inits.Append(fmt.Sprintf("typical.Context.MockTargets.Append(\"%s\")", mockTarget))
+		src.Init.Append(fmt.Sprintf("typical.Context.MockTargets.Append(\"%s\")", mockTarget))
 	}
 	if err = src.Cook(target); err != nil {
 		return

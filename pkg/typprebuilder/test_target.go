@@ -19,7 +19,7 @@ func (g testTarget) generate(target string) (err error) {
 	src := golang.NewSourceCode(typenv.Dependency.Package)
 	src.AddImport("", g.ContextImport)
 	for _, pkg := range g.Packages {
-		src.Inits.Append(fmt.Sprintf("typical.Context.TestTargets.Append(\"./%s\")", pkg))
+		src.Init.Append(fmt.Sprintf("typical.Context.TestTargets.Append(\"./%s\")", pkg))
 	}
 	if err = src.Cook(target); err != nil {
 		return
