@@ -4,7 +4,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/utility/bash"
 	"github.com/typical-go/typical-go/pkg/utility/debugkit"
 
-	"github.com/typical-go/typical-go/pkg/typprebuilder/golang"
+	"github.com/typical-go/typical-go/pkg/utility/golang"
 	"github.com/typical-go/typical-go/pkg/typenv"
 )
 

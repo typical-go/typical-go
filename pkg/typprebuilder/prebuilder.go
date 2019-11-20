@@ -7,7 +7,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/utility/coll"
 
-	"github.com/typical-go/typical-go/pkg/typprebuilder/golang"
+	"github.com/typical-go/typical-go/pkg/utility/golang"
 
 	log "github.com/sirupsen/logrus"
 
