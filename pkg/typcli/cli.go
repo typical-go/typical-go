@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/typical-go/typical-go/pkg/typmod"
+	"github.com/typical-go/typical-go/pkg/typmodule"
 	"github.com/urfave/cli"
 	"go.uber.org/dig"
 )
@@ -46,7 +46,7 @@ func (c Cli) Action(fn interface{}) func(ctx *cli.Context) error {
 }
 
 func (c Cli) provideDependency(di *dig.Container) (err error) {
-	if provider, ok := c.Obj.(typmod.Provider); ok {
+	if provider, ok := c.Obj.(typmodule.Provider); ok {
 		if err = provide(di, provider.Provide()...); err != nil {
 			return
 		}
@@ -55,7 +55,7 @@ func (c Cli) provideDependency(di *dig.Container) (err error) {
 }
 
 func (c Cli) prepare(di *dig.Container) (err error) {
-	if preparer, ok := c.Obj.(typmod.Preparer); ok {
+	if preparer, ok := c.Obj.(typmodule.Preparer); ok {
 		if err = invoke(di, preparer.Prepare()...); err != nil {
 			return
 		}
@@ -64,7 +64,7 @@ func (c Cli) prepare(di *dig.Container) (err error) {
 }
 
 func (c Cli) shutdown(di *dig.Container) (err error) {
-	if destroyer, ok := c.Obj.(typmod.Destroyer); ok {
+	if destroyer, ok := c.Obj.(typmodule.Destroyer); ok {
 		if err = invoke(di, destroyer.Destroy()...); err != nil {
 			return
 		}

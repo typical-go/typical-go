@@ -1,10 +1,10 @@
-package typmod_test
+package typmodule_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typmod"
+	"github.com/typical-go/typical-go/pkg/typmodule"
 )
 
 type SampleAttribute struct {
@@ -37,7 +37,7 @@ func TestName(t *testing.T) {
 		},
 	}
 	for _, tt := range testcases {
-		require.Equal(t, tt.name, typmod.Name(tt.obj))
+		require.Equal(t, tt.name, typmodule.Name(tt.obj))
 	}
 }
 
@@ -66,6 +66,6 @@ func TestDescription(t *testing.T) {
 		},
 	}
 	for _, tt := range testcases {
-		require.Equal(t, tt.description, typmod.Description(tt.obj))
+		require.Equal(t, tt.description, typmodule.Description(tt.obj))
 	}
 }

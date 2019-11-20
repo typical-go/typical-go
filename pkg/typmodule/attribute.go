@@ -1,4 +1,4 @@
-package typmod
+package typmodule
 
 import "reflect"
 
