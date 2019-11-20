@@ -32,7 +32,7 @@ func (c *ContextCli) Action(fn interface{}) func(ctx *cli.Context) error {
 		}()
 		go func() {
 			<-gracefulStop
-			fmt.Print("\n\n\n[[Application stop]]\n")
+			fmt.Print("\n\n\n[[ Application stop ]]\n")
 			if err = c.shutdown(di); err != nil {
 				fmt.Println("Error: " + err.Error())
 				os.Exit(1)
