@@ -1,10 +1,12 @@
 package typprebuilder
 
 import (
-	"github.com/typical-go/typical-go/pkg/utility/golang"
+	"fmt"
+
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/utility/bash"
 	"github.com/typical-go/typical-go/pkg/utility/debugkit"
+	"github.com/typical-go/typical-go/pkg/utility/golang"
 )
 
 type testTarget struct {
@@ -16,7 +18,9 @@ func (g testTarget) generate(target string) (err error) {
 	defer debugkit.ElapsedTime("Generate test target")()
 	src := golang.NewSourceCode(typenv.Dependency.Package)
 	src.AddImport("", g.ContextImport)
-	src.AddTestTargets(g.Packages...)
+	for _, pkg := range g.Packages {
+		src.Inits.Append(fmt.Sprintf("typical.Context.TestTargets.Append(\"./%s\")", pkg))
+	}
 	if err = src.Cook(target); err != nil {
 		return
 	}
