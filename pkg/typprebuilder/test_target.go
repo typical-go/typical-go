@@ -16,7 +16,7 @@ type testTarget struct {
 
 func (g testTarget) generate(target string) (err error) {
 	defer debugkit.ElapsedTime("Generate test target")()
-	src := golang.NewSourceCode(typenv.Dependency.Package)
+	src := golang.NewSource(typenv.Dependency.Package)
 	src.AddImport("", g.ContextImport)
 	for _, pkg := range g.Packages {
 		src.Init.Append(fmt.Sprintf("typical.Context.TestTargets.Append(\"./%s\")", pkg))

@@ -7,10 +7,10 @@ import (
 // WriteSource to write source to file
 type WriteSource struct {
 	Target string
-	Source golang.SourceCode
+	golang.Source
 }
 
 // Run to write source
 func (w WriteSource) Run() (err error) {
-	return w.Source.WriteToFile(w.Target)
+	return w.WriteToFile(w.Target)
 }
