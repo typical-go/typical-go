@@ -15,6 +15,11 @@ type Destroyer interface {
 	Destroy() []interface{}
 }
 
+// Actionable is application module
+type Actionable interface {
+	Action() interface{}
+}
+
 // IsProvider return true if object implementation of provider
 func IsProvider(obj interface{}) (ok bool) {
 	_, ok = obj.(Provider)
@@ -31,4 +36,10 @@ func IsPreparer(obj interface{}) (ok bool) {
 func IsDestroyer(obj interface{}) (ok bool) {
 	_, ok = obj.(Destroyer)
 	return
+}
+
+// IsActionable return true if object is actionable
+func IsActionable(obj interface{}) bool {
+	_, ok := obj.(Actionable)
+	return ok
 }

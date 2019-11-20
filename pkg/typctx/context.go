@@ -16,7 +16,7 @@ type Context struct {
 	Description  string
 	Package      string
 	Version      string
-	AppModule    AppModule
+	AppModule    interface{}
 	Modules      coll.Interfaces
 	ConfigLoader typcfg.Loader
 	typrls.Releaser

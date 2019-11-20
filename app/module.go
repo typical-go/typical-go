@@ -4,18 +4,17 @@ import (
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/typcli"
-	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/urfave/cli"
 )
 
 // Module of application
-func Module() typctx.AppModule {
+func Module() interface{} {
 	return &module{}
 }
 
 type module struct{}
 
-func (module) Run() interface{} {
+func (module) Action() interface{} {
 	return underConstruction
 }
 
