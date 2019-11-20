@@ -37,8 +37,8 @@ func (r SourceCode) Write(w io.Writer) (err error) {
 	return
 }
 
-// Cook to generate the recipe into file
-func (r SourceCode) Cook(filename string) (err error) {
+// WriteToFile to write to file
+func (r SourceCode) WriteToFile(filename string) (err error) {
 	var f *os.File
 	if f, err = os.Create(filename); err != nil {
 		return

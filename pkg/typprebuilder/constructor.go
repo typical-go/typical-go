@@ -22,7 +22,7 @@ func (g constructor) generate(target string) (err error) {
 	for _, constructor := range g.Constructors {
 		src.Init.Append(fmt.Sprintf("typical.Context.Constructors.Append(%s)", constructor))
 	}
-	if err = src.Cook(target); err != nil {
+	if err = src.WriteToFile(target); err != nil {
 		return
 	}
 	return bash.GoImports(target)

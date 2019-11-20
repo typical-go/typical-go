@@ -21,7 +21,7 @@ func (g testTarget) generate(target string) (err error) {
 	for _, pkg := range g.Packages {
 		src.Init.Append(fmt.Sprintf("typical.Context.TestTargets.Append(\"./%s\")", pkg))
 	}
-	if err = src.Cook(target); err != nil {
+	if err = src.WriteToFile(target); err != nil {
 		return
 	}
 	return bash.GoImports(target)

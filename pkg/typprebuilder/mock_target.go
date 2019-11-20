@@ -21,7 +21,7 @@ func (g mockTarget) generate(target string) (err error) {
 	for _, mockTarget := range g.MockTargets {
 		src.Init.Append(fmt.Sprintf("typical.Context.MockTargets.Append(\"%s\")", mockTarget))
 	}
-	if err = src.Cook(target); err != nil {
+	if err = src.WriteToFile(target); err != nil {
 		return
 	}
 	return bash.GoImports(target)
