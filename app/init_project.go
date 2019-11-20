@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/typical-go/typical-go/app/stmt"
+	"github.com/typical-go/typical-go/app/common"
 
 	log "github.com/sirupsen/logrus"
 
@@ -49,21 +49,21 @@ func (i initproject) Run() (err error) {
 func (i initproject) generateAppPackage() error {
 	log.Info("Generate App Package")
 	return runn.Execute(
-		stmt.Mkdir{Path: i.Path("app")},
+		common.Mkdir{Path: i.Path("app")},
 	)
 }
 
 func (i initproject) generateCmdPackage() error {
 	log.Info("Generate Cmd Package")
 	return runn.Execute(
-		stmt.Mkdir{Path: i.Path("cmd")},
+		common.Mkdir{Path: i.Path("cmd")},
 	)
 }
 
 func (i initproject) generateTypicalContext() error {
 	log.Info("Generate Typical Context")
 	return runn.Execute(
-		stmt.Mkdir{Path: i.Path("typical")},
+		common.Mkdir{Path: i.Path("typical")},
 	)
 }
 

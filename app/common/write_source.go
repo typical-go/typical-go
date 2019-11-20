@@ -1,4 +1,4 @@
-package stmt
+package common
 
 import (
 	"github.com/typical-go/typical-go/pkg/utility/golang"

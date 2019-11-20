@@ -1,4 +1,4 @@
-package stmt
+package common
 
 import (
 	"html/template"
