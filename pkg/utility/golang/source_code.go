@@ -12,7 +12,6 @@ type SourceCode struct {
 
 	PackageName string
 	Structs     []Struct
-	Codes       []string
 	Init        *Function
 }
 
@@ -36,9 +35,6 @@ func (r SourceCode) Write(w io.Writer) {
 	if !r.Init.IsEmpty() {
 		r.Init.Write(w)
 	}
-	for _, code := range r.Codes {
-		writeln(w, code)
-	}
 }
 
 // Cook to generate the recipe into file
@@ -52,11 +48,5 @@ func (r SourceCode) Cook(file string) (err error) {
 // AddStruct to add struct
 func (r *SourceCode) AddStruct(structs ...Struct) *SourceCode {
 	r.Structs = append(r.Structs, structs...)
-	return r
-}
-
-// Put code to source code
-func (r *SourceCode) Put(code string) *SourceCode {
-	r.Codes = append(r.Codes, code)
 	return r
 }
