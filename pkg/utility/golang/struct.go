@@ -3,31 +3,27 @@ package golang
 import (
 	"io"
 	"strings"
+
+	"github.com/typical-go/typical-go/pkg/utility/coll"
 )
 
 // Struct is plain old go object for struct
 type Struct struct {
 	Name        string
-	Fields      []Field
+	Fields      coll.KeyStrings
 	Description string
-}
-
-// Field is struct field
-type Field struct {
-	Name string
-	Type string
 }
 
 // AddField to add field to struct
 func (s *Struct) AddField(name, typ string) {
-	s.Fields = append(s.Fields, Field{Name: name, Type: typ})
+	s.Fields.Append(coll.KeyString{Key: name, String: typ})
 }
 
 func (s Struct) Write(w io.Writer) {
 	writelnf(w, "// %s %s", s.Name, s.Description)
 	writelnf(w, "type %s struct{", s.Name)
 	for _, field := range s.Fields {
-		writelnf(w, "%s %s", field.Name, field.Type)
+		writelnf(w, field.SimpleFormat(" "))
 	}
 	writeln(w, "}")
 }
