@@ -16,6 +16,11 @@ type Function struct {
 	Returns []coll.KeyString
 }
 
+// NewFunction return new instance
+func NewFunction(name string) *Function {
+	return &Function{Name: name}
+}
+
 // Return statement
 func (f *Function) Return(s ...string) {
 	f.Append("return " + strings.Join(s, ", "))
