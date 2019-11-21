@@ -1,6 +1,7 @@
 package golang
 
 import (
+	"fmt"
 	"io"
 	"strings"
 
@@ -20,12 +21,12 @@ func (s *Struct) AddField(name, typ string) {
 }
 
 func (s Struct) Write(w io.Writer) {
-	writelnf(w, "// %s %s", s.Name, s.Description)
-	writelnf(w, "type %s struct{", s.Name)
+	fmt.Fprintf(w, "// %s %s\n", s.Name, s.Description)
+	fmt.Fprintf(w, "type %s struct{\n", s.Name)
 	for _, field := range s.Fields {
-		writelnf(w, field.SimpleFormat(" "))
+		fmt.Fprintln(w, field.SimpleFormat(" "))
 	}
-	writeln(w, "}")
+	fmt.Fprintln(w, "}")
 }
 
 func (s Struct) String() string {

@@ -22,29 +22,29 @@ func (f *Function) Return(s ...string) {
 }
 
 func (f *Function) Write(w io.Writer) {
-	w.Write([]byte(fmt.Sprintf("func %s", f.Name)))
-	w.Write([]byte("("))
+	fmt.Fprintf(w, "func %s", f.Name)
+	fmt.Fprint(w, "(")
 	for i, param := range f.Params {
 		if i > 0 {
-			w.Write([]byte(", "))
+			fmt.Fprint(w, ", ")
 		}
-		w.Write([]byte(param.SimpleFormat(" ")))
+		fmt.Fprint(w, param.SimpleFormat(" "))
 	}
-	w.Write([]byte(") "))
+	fmt.Fprint(w, ") ")
 	if len(f.Returns) > 0 {
-		w.Write([]byte("("))
+		fmt.Fprint(w, "(")
 		for i, ret := range f.Returns {
 			if i > 0 {
-				w.Write([]byte(", "))
+				fmt.Fprint(w, ", ")
 			}
-			w.Write([]byte(ret.SimpleFormat(" ")))
+			fmt.Fprint(w, ret.SimpleFormat(" "))
 		}
-		w.Write([]byte(") "))
+		fmt.Fprint(w, ") ")
 	}
-	w.Write([]byte("{\n"))
+	fmt.Fprintln(w, "{")
 	for _, s := range f.Strings {
-		w.Write([]byte(s))
-		w.Write([]byte("\n"))
+		fmt.Fprint(w, s)
+		fmt.Fprintln(w)
 	}
-	w.Write([]byte("}\n"))
+	fmt.Fprintln(w, "}")
 }
