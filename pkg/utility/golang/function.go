@@ -12,14 +12,8 @@ import (
 type Function struct {
 	coll.Strings
 	Name    string
-	Params  []Param
-	Returns []Param
-}
-
-// Param short from parameter
-type Param struct {
-	Name string
-	Type string
+	Params  []coll.KeyString
+	Returns []coll.KeyString
 }
 
 // Return statement
@@ -30,13 +24,21 @@ func (f *Function) Return(s ...string) {
 func (f *Function) Write(w io.Writer) {
 	w.Write([]byte(fmt.Sprintf("func %s", f.Name)))
 	w.Write([]byte("("))
-	if len(f.Params) > 0 {
-		w.Write([]byte(paramsString(f.Params)))
+	for i, param := range f.Params {
+		if i > 0 {
+			w.Write([]byte(", "))
+		}
+		w.Write([]byte(param.SimpleFormat(" ")))
 	}
 	w.Write([]byte(") "))
 	if len(f.Returns) > 0 {
 		w.Write([]byte("("))
-		w.Write([]byte(paramsString(f.Returns)))
+		for i, ret := range f.Returns {
+			if i > 0 {
+				w.Write([]byte(", "))
+			}
+			w.Write([]byte(ret.SimpleFormat(" ")))
+		}
 		w.Write([]byte(") "))
 	}
 	w.Write([]byte("{\n"))
@@ -45,15 +47,4 @@ func (f *Function) Write(w io.Writer) {
 		w.Write([]byte("\n"))
 	}
 	w.Write([]byte("}\n"))
-}
-
-func paramsString(params []Param) string {
-	var b strings.Builder
-	for i, param := range params {
-		if i > 0 {
-			b.Write([]byte(", "))
-		}
-		b.Write([]byte(fmt.Sprintf("%s %s", param.Name, param.Type)))
-	}
-	return b.String()
 }

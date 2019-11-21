@@ -57,6 +57,9 @@ func (i initproject) generateCmdPackage() error {
 	log.Info("Generate Cmd Package")
 	return runn.Execute(
 		common.Mkdir{Path: i.Path("cmd")},
+		common.Mkdir{Path: i.Path("cmd/app")},
+		common.Mkdir{Path: i.Path("cmd/pre-builder")},
+		common.Mkdir{Path: i.Path("cmd/build-tool")},
 	)
 }
 

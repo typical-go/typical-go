@@ -9,7 +9,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/utility/coll"
 )
 
-func TestErrors(t *testing.T) {
+func TestErrors_Append(t *testing.T) {
 	testcases := []struct {
 		*coll.Errors
 		errors []error
@@ -57,16 +57,4 @@ func TestErrors(t *testing.T) {
 			require.NoError(t, err, i)
 		}
 	}
-}
-
-func TestErrors2(t *testing.T) {
-	t.Run("Non-pointer definition", func(t *testing.T) {
-		var s coll.Errors
-		s.Append(errors.New("Hello")).
-			Append(errors.New("World"))
-		require.EqualValues(t, []error{
-			errors.New("Hello"),
-			errors.New("World"),
-		}, s)
-	})
 }

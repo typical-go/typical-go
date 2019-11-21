@@ -7,7 +7,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/utility/coll"
 )
 
-func TestStrings(t *testing.T) {
+func TestStrings_Append(t *testing.T) {
 	testcases := []struct {
 		*coll.Strings
 		i []string
@@ -27,12 +27,4 @@ func TestStrings(t *testing.T) {
 	for _, tt := range testcases {
 		require.EqualValues(t, tt.i, *tt.Strings)
 	}
-}
-
-func TestStrings2(t *testing.T) {
-	t.Run("Non-pointer definition", func(t *testing.T) {
-		var s coll.Strings
-		s.Append("mama").Append("mia")
-		require.EqualValues(t, []string{"mama", "mia"}, s)
-	})
 }

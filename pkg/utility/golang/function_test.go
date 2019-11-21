@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"github.com/typical-go/typical-go/pkg/utility/coll"
 	"github.com/typical-go/typical-go/pkg/utility/golang"
 )
 
@@ -13,13 +14,13 @@ func TestFunc(t *testing.T) {
 	t.Run("with param & return", func(t *testing.T) {
 		fn := golang.Function{
 			Name: "myFunction",
-			Params: []golang.Param{
-				{Name: "num", Type: "int"},
-				{Name: "text", Type: "string"},
+			Params: []coll.KeyString{
+				{Key: "num", String: "int"},
+				{Key: "text", String: "string"},
 			},
-			Returns: []golang.Param{
-				{Name: "altered", Type: "string"},
-				{Name: "err", Type: "error"},
+			Returns: []coll.KeyString{
+				{Key: "altered", String: "string"},
+				{Key: "err", String: "error"},
 			},
 		}
 		fn.Append(`fmt.Println("Hello World")`)
@@ -31,8 +32,8 @@ func TestFunc(t *testing.T) {
 	t.Run("with param & no return", func(t *testing.T) {
 		fn := golang.Function{
 			Name: "myFunction",
-			Params: []golang.Param{
-				{Name: "num", Type: "int"},
+			Params: []coll.KeyString{
+				{Key: "num", String: "int"},
 			},
 		}
 		fn.Append(`fmt.Println("Hello World")`)
