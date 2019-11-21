@@ -20,13 +20,14 @@ func (s *Struct) AddField(name, typ string) {
 	s.Fields.Append(coll.KeyString{Key: name, String: typ})
 }
 
-func (s Struct) Write(w io.Writer) {
+func (s Struct) Write(w io.Writer) (err error) {
 	fmt.Fprintf(w, "// %s %s\n", s.Name, s.Description)
 	fmt.Fprintf(w, "type %s struct{\n", s.Name)
 	for _, field := range s.Fields {
 		fmt.Fprintln(w, field.SimpleFormat(" "))
 	}
 	fmt.Fprintln(w, "}")
+	return
 }
 
 func (s Struct) String() string {

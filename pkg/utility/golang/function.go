@@ -21,7 +21,7 @@ func (f *Function) Return(s ...string) {
 	f.Append("return " + strings.Join(s, ", "))
 }
 
-func (f *Function) Write(w io.Writer) {
+func (f *Function) Write(w io.Writer) (err error) {
 	fmt.Fprintf(w, "func %s", f.Name)
 	fmt.Fprint(w, "(")
 	for i, param := range f.Params {
@@ -47,4 +47,5 @@ func (f *Function) Write(w io.Writer) {
 		fmt.Fprintln(w)
 	}
 	fmt.Fprintln(w, "}")
+	return
 }

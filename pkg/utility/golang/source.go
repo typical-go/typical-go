@@ -15,6 +15,9 @@ type Source struct {
 	Imports     coll.KeyStrings
 	Structs     []Struct
 	Init        *Function
+	Writables   []interface {
+		Write(w io.Writer) error
+	}
 }
 
 // NewSource return new instance of SourceCode
@@ -32,10 +35,19 @@ func (r Source) Write(w io.Writer) (err error) {
 		fmt.Fprintln(w, ks.Format(importFormat))
 	}
 	for i := range r.Structs {
-		r.Structs[i].Write(w)
+		if err = r.Structs[i].Write(w); err != nil {
+			return
+		}
 	}
 	if r.Init != nil && !r.Init.IsEmpty() {
-		r.Init.Write(w)
+		if err = r.Init.Write(w); err != nil {
+			return
+		}
+	}
+	for _, wr := range r.Writables {
+		if err = wr.Write(w); err != nil {
+			return
+		}
 	}
 	return
 }
