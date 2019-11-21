@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/utility/coll"
+	"github.com/typical-go/typical-go/pkg/utility/filekit"
 
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/utility/bash"
@@ -23,7 +24,7 @@ func (g mockTarget) generate(target string) (err error) {
 	for _, mockTarget := range g.MockTargets {
 		src.Init.Append(fmt.Sprintf("typical.Context.MockTargets.Append(\"%s\")", mockTarget))
 	}
-	if err = src.WriteToFile(target); err != nil {
+	if err = filekit.Write(target, src); err != nil {
 		return
 	}
 	return bash.GoImports(target)

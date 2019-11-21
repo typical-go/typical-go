@@ -6,6 +6,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/utility/bash"
 	"github.com/typical-go/typical-go/pkg/utility/debugkit"
+	"github.com/typical-go/typical-go/pkg/utility/filekit"
 	"github.com/typical-go/typical-go/pkg/utility/golang"
 )
 
@@ -21,7 +22,7 @@ func (g testTarget) generate(target string) (err error) {
 	for _, pkg := range g.Packages {
 		src.Init.Append(fmt.Sprintf("typical.Context.TestTargets.Append(\"./%s\")", pkg))
 	}
-	if err = src.WriteToFile(target); err != nil {
+	if err = filekit.Write(target, src); err != nil {
 		return
 	}
 	return bash.GoImports(target)

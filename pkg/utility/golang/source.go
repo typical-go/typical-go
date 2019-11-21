@@ -3,7 +3,6 @@ package golang
 import (
 	"fmt"
 	"io"
-	"os"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/utility/coll"
@@ -52,16 +51,6 @@ func (r Source) Write(w io.Writer) (err error) {
 	return
 }
 
-// WriteToFile to write to file
-func (r Source) WriteToFile(filename string) (err error) {
-	var f *os.File
-	if f, err = os.Create(filename); err != nil {
-		return
-	}
-	defer f.Close()
-	return r.Write(f)
-}
-
 // AddStruct to add struct
 func (r *Source) AddStruct(structs ...Struct) *Source {
 	r.Structs = append(r.Structs, structs...)
@@ -69,8 +58,8 @@ func (r *Source) AddStruct(structs ...Struct) *Source {
 }
 
 // AddImport to add import
-func (r *Source) AddImport(pkg, alias string) *Source {
-	r.Imports.Append(coll.KeyString{Key: pkg, String: alias})
+func (r *Source) AddImport(name, pkg string) *Source {
+	r.Imports.Append(coll.KeyString{Key: name, String: pkg})
 	return r
 }
 

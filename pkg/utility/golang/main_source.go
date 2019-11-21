@@ -1,6 +1,9 @@
 package golang
 
-import "io"
+import (
+	"fmt"
+	"io"
+)
 
 // MainSource is main source code
 type MainSource struct {
@@ -16,10 +19,20 @@ func NewMainSource() MainSource {
 	}
 }
 
-// Write to
-func (s MainSource) Write(w io.Writer) (err error) {
+// Write to apply the writer
+func (s *MainSource) Write(w io.Writer) (err error) {
+	fmt.Println("-------------------")
 	if err = s.Source.Write(w); err != nil {
 		return
 	}
-	return s.MainFunc.Write(w)
+	if err = s.MainFunc.Write(w); err != nil {
+		return
+	}
+	return
+}
+
+// Append codes
+func (s *MainSource) Append(codes ...string) *MainSource {
+	s.MainFunc.Append(codes...)
+	return s
 }
