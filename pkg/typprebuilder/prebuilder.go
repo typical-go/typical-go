@@ -7,8 +7,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/utility/coll"
 
-	"github.com/typical-go/typical-go/pkg/utility/golang"
-
 	log "github.com/sirupsen/logrus"
 
 	"github.com/typical-go/typical-go/pkg/typctx"
@@ -19,7 +17,7 @@ import (
 type prebuilder struct {
 	ProjectFiles       *walker.ProjectFiles
 	Dirs               coll.Strings
-	ApplicationImports golang.Imports
+	ApplicationImports coll.KeyStrings
 	ContextImport      string
 	ConfigFields       []typcfg.Field
 	BuildCommands      []string
@@ -36,9 +34,9 @@ func (p *prebuilder) Initiate(ctx *typctx.Context) (err error) {
 	p.ContextImport = ctx.Package + "/typical"
 	log.Debug("Create imports for Application")
 	for _, dir := range p.Dirs {
-		p.ApplicationImports.AddImport("", ctx.Package+"/"+dir)
+		p.ApplicationImports.Append(coll.KeyString{String: ctx.Package + "/" + dir})
 	}
-	p.ApplicationImports.AddImport("", p.ContextImport)
+	p.ApplicationImports.Append(coll.KeyString{String: p.ContextImport})
 	p.ConfigFields = ConfigFields(ctx)
 	for _, command := range typbuildtool.ModuleCommands(ctx) {
 		for _, subcommand := range command.Subcommands {

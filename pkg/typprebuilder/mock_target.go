@@ -3,6 +3,8 @@ package typprebuilder
 import (
 	"fmt"
 
+	"github.com/typical-go/typical-go/pkg/utility/coll"
+
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/utility/bash"
 	"github.com/typical-go/typical-go/pkg/utility/debugkit"
@@ -10,7 +12,7 @@ import (
 )
 
 type mockTarget struct {
-	ApplicationImports golang.Imports
+	ApplicationImports coll.KeyStrings
 	MockTargets        []string
 }
 

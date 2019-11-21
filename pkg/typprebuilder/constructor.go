@@ -3,6 +3,8 @@ package typprebuilder
 import (
 	"fmt"
 
+	"github.com/typical-go/typical-go/pkg/utility/coll"
+
 	"github.com/typical-go/typical-go/pkg/utility/bash"
 	"github.com/typical-go/typical-go/pkg/utility/debugkit"
 
@@ -11,7 +13,7 @@ import (
 )
 
 type constructor struct {
-	ApplicationImports golang.Imports
+	ApplicationImports coll.KeyStrings
 	Constructors       []string
 }
 
