@@ -2,17 +2,21 @@ package app
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
-	"github.com/typical-go/typical-go/app/common"
-
 	log "github.com/sirupsen/logrus"
-
+	"github.com/typical-go/typical-go/app/common"
 	"github.com/typical-go/typical-go/pkg/utility/runn"
+	"github.com/urfave/cli"
 )
 
-// InitProject iniate new project
-func InitProject(parent, pkg string) error {
+func initiateProject(ctx *cli.Context) error {
+	parent := "sample"
+	pkg := "github.com/typical-go/hello-world"
+	log.Infof("Remove: %s", parent)
+	os.RemoveAll(parent)
+	log.Infof("Init Project: %s", pkg)
 	return runn.Execute(initproject{
 		Name:   name(pkg),
 		Pkg:    pkg,
@@ -55,6 +59,10 @@ func (i initproject) generateAppPackage() error {
 
 func (i initproject) generateCmdPackage() error {
 	log.Info("Generate Cmd Package")
+	// 	_ "github.com/typical-go/typical-go/internal/dependency"
+	// 	"github.com/typical-go/typical-go/pkg/typapp"
+	// 	"github.com/typical-go/typical-go/typical"
+
 	return runn.Execute(
 		common.Mkdir{Path: i.Path("cmd")},
 		common.Mkdir{Path: i.Path("cmd/app")},
