@@ -1,6 +1,9 @@
 package coll
 
-import "strings"
+import (
+	"errors"
+	"strings"
+)
 
 // Errors to handle multiple error
 type Errors []error
@@ -11,21 +14,22 @@ func (e *Errors) Append(errs ...error) *Errors {
 	return e
 }
 
-func (e Errors) Error() string {
-	var builder strings.Builder
+// Join list of item to string
+func (e Errors) Join(sep string) string {
+	var b strings.Builder
 	for i, err := range e {
 		if i > 0 {
-			builder.WriteString("; ")
+			b.WriteString(sep)
 		}
-		builder.WriteString(err.Error())
+		b.WriteString(err.Error())
 	}
-	return builder.String()
+	return b.String()
 }
 
 // ToError convert errors to error type
 func (e Errors) ToError() error {
-	if len(e) > 0 {
-		return e
+	if len(e) < 1 {
+		return nil
 	}
-	return nil
+	return errors.New(e.Join("; "))
 }

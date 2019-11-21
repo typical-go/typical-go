@@ -9,10 +9,11 @@ import (
 	"github.com/typical-go/typical-go/pkg/utility/coll"
 )
 
-func TestErrors_Append(t *testing.T) {
+func TestErrors(t *testing.T) {
 	testcases := []struct {
 		*coll.Errors
 		errors []error
+		sep    string
 		msg    string
 		error  error
 	}{
@@ -27,7 +28,8 @@ func TestErrors_Append(t *testing.T) {
 				errors.New("error2"),
 				errors.New("error3"),
 			},
-			msg:   "error1; error2; error3",
+			sep:   "+",
+			msg:   "error1+error2+error3",
 			error: errors.New("error1; error2; error3"),
 		},
 		{
@@ -38,7 +40,8 @@ func TestErrors_Append(t *testing.T) {
 				errors.New("error1"),
 				errors.New("error2"),
 			},
-			msg:   "error1; error2",
+			sep:   "|",
+			msg:   "error1|error2",
 			error: errors.New("error1; error2"),
 		},
 		{
@@ -50,7 +53,7 @@ func TestErrors_Append(t *testing.T) {
 	}
 	for i, tt := range testcases {
 		require.EqualValues(t, tt.errors, *tt.Errors)
-		require.Equal(t, tt.msg, tt.Error(), i)
+		require.Equal(t, tt.msg, tt.Join(tt.sep), i)
 		if err := tt.ToError(); err != nil {
 			require.EqualError(t, err, tt.error.Error(), i)
 		} else {
