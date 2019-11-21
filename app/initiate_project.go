@@ -5,6 +5,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/typical-go/typical-go/pkg/utility/golang"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/app/common"
 	"github.com/typical-go/typical-go/pkg/utility/runn"
@@ -59,16 +61,42 @@ func (i initproject) generateAppPackage() error {
 
 func (i initproject) generateCmdPackage() error {
 	log.Info("Generate Cmd Package")
-	// 	_ "github.com/typical-go/typical-go/internal/dependency"
-	// 	"github.com/typical-go/typical-go/pkg/typapp"
-	// 	"github.com/typical-go/typical-go/typical"
 
 	return runn.Execute(
 		common.Mkdir{Path: i.Path("cmd")},
 		common.Mkdir{Path: i.Path("cmd/app")},
 		common.Mkdir{Path: i.Path("cmd/pre-builder")},
 		common.Mkdir{Path: i.Path("cmd/build-tool")},
+		common.WriteSource{Target: i.Path("cmd/app/main.go"), Source: i.appMainSrc()},
+		common.WriteSource{Target: i.Path("cmd/pre-builder/main.go"), Source: i.prebuilderMainSrc()},
+		common.WriteSource{Target: i.Path("cmd/build-tool/main.go"), Source: i.buildtoolMainSrc()},
 	)
+}
+
+func (i initproject) appMainSrc() (src *golang.MainSource) {
+	src = golang.NewMainSource()
+	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typapp")
+	src.Imports.Add("", i.Pkg+"/typical")
+	src.Imports.Add("_", i.Pkg+"/internal/dependency")
+	src.Append("typapp.Run(typical.Context)")
+	return
+}
+
+func (i initproject) prebuilderMainSrc() (src *golang.MainSource) {
+	src = golang.NewMainSource()
+	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typprebuilder")
+	src.Imports.Add("", i.Pkg+"/typical")
+	src.Append("typprebuilder.Run(typical.Context)")
+	return
+}
+
+func (i initproject) buildtoolMainSrc() (src *golang.MainSource) {
+	src = golang.NewMainSource()
+	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typbuildtool")
+	src.Imports.Add("", i.Pkg+"/typical")
+	src.Imports.Add("_", i.Pkg+"/internal/dependency")
+	src.Append("typbuildtool.Run(typical.Context)")
+	return
 }
 
 func (i initproject) generateTypicalContext() error {

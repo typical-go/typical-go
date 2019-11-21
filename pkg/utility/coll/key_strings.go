@@ -11,6 +11,12 @@ func (k *KeyStrings) Append(item ...KeyString) *KeyStrings {
 	return k
 }
 
+// Add item
+func (k *KeyStrings) Add(key, s string) *KeyStrings {
+	k.Append(KeyString{Key: key, String: s})
+	return k
+}
+
 // KeyString short from parameter
 type KeyString struct {
 	Key    string

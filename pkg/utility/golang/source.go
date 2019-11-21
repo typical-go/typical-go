@@ -57,12 +57,6 @@ func (r *Source) AddStruct(structs ...Struct) *Source {
 	return r
 }
 
-// AddImport to add import
-func (r *Source) AddImport(name, pkg string) *Source {
-	r.Imports.Append(coll.KeyString{Key: name, String: pkg})
-	return r
-}
-
 func importFormat(key, s string) string {
 	var b strings.Builder
 	b.WriteString("import ")
@@ -72,6 +66,6 @@ func importFormat(key, s string) string {
 	}
 	b.WriteString("\"")
 	b.WriteString(s)
-	b.WriteString("\"\n")
+	b.WriteString("\"")
 	return b.String()
 }

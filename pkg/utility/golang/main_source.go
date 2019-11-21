@@ -1,27 +1,25 @@
 package golang
 
 import (
-	"fmt"
 	"io"
 )
 
 // MainSource is main source code
 type MainSource struct {
-	*Source
+	Source
 	MainFunc *Function
 }
 
 // NewMainSource return new instance of MainSource
-func NewMainSource() MainSource {
-	return MainSource{
-		Source:   NewSource("main"),
+func NewMainSource() *MainSource {
+	return &MainSource{
+		Source:   Source{Package: "main"},
 		MainFunc: NewFunction("main"),
 	}
 }
 
 // Write to apply the writer
 func (s *MainSource) Write(w io.Writer) (err error) {
-	fmt.Println("-------------------")
 	if err = s.Source.Write(w); err != nil {
 		return
 	}
