@@ -1,15 +1,13 @@
 package typcli
 
 import (
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typcfg"
-
 	"github.com/typical-go/typical-go/pkg/typctx"
-
 	"github.com/typical-go/typical-go/pkg/typmodule"
 	"github.com/urfave/cli"
 	"go.uber.org/dig"
@@ -32,11 +30,10 @@ func (c *ContextCli) Action(fn interface{}) func(ctx *cli.Context) error {
 		}()
 		go func() {
 			<-gracefulStop
-			fmt.Print("\n\n\n[[ Application stop ]]\n")
 			if err = c.shutdown(di); err != nil {
-				fmt.Println("Error: " + err.Error())
-				os.Exit(1)
+				log.Fatal(err.Error())
 			}
+			// NOTE: Make sure the application is exit
 			os.Exit(0)
 		}()
 		if err = c.provideDependency(di); err != nil {
