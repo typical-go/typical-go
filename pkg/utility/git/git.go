@@ -1,9 +1,10 @@
 package git
 
 import (
-	"fmt"
 	"os/exec"
 	"strings"
+
+	"github.com/typical-go/typical-go/pkg/utility/coll"
 )
 
 // Status is same with `git status --porcelain`
@@ -34,7 +35,13 @@ func LatestTag() string {
 
 // Logs of commits
 func Logs(from string) []string {
-	data, err := Git("--no-pager", "log", fmt.Sprintf("%s..HEAD", from), "--oneline")
+	var args coll.Strings
+	args.Append("--no-pager", "log")
+	if from != "" {
+		args.Append(from + "..HEAD")
+	}
+	args.Append("--oneline")
+	data, err := Git(args...)
 	if err != nil {
 		return []string{}
 	}
