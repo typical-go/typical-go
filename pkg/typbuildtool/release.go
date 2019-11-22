@@ -16,7 +16,7 @@ func (t buildtool) cmdRelease() cli.Command {
 				Usage: "Release without run automated test",
 			},
 			cli.BoolFlag{
-				Name:  "no-github",
+				Name:  "no-publish",
 				Usage: "Release without create github release",
 			},
 			cli.BoolFlag{
