@@ -29,8 +29,8 @@ func (g *Github) Publish(r *Release) (err error) {
 
 	ctx0 := context.Background()
 	repo := github.NewClient(oauth2.NewClient(ctx0, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token}))).Repositories
-	if _, _, err = repo.GetReleaseByTag(ctx0, g.Owner, g.RepoName, r.Tag); err != nil {
-		return
+	if _, _, err = repo.GetReleaseByTag(ctx0, g.Owner, g.RepoName, r.Tag); err == nil {
+		return fmt.Errorf("Tag '%s' already published", r.Tag)
 	}
 	log.Infof("Create github release for %s/%s", g.Owner, g.RepoName)
 	githubRls := &github.RepositoryRelease{
