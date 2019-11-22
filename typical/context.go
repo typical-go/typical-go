@@ -9,7 +9,7 @@ import (
 // Context of project
 var Context = &typctx.Context{
 	Name:      "Typical-Go",
-	Version:   "0.9.0",
+	Version:   "0.9.1",
 	Package:   "github.com/typical-go/typical-go",
 	AppModule: app.Module(),
 
