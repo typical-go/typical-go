@@ -46,6 +46,7 @@ func (c *Context) Validate() (err error) {
 
 // AllModule return app module and modules
 func (c *Context) AllModule() (modules []interface{}) {
+	// NOTE: modules should be before app module to make sure it readiness
 	modules = append(modules, c.Modules...)
 	modules = append(modules, c.AppModule)
 	return
