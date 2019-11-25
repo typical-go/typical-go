@@ -49,8 +49,51 @@ func (i initproject) Run() (err error) {
 }
 
 func (i initproject) appPackage() error {
+	appSrc := `package app
+
+import "fmt"
+
+// Module of application
+func Module() interface{} {
+	return &module{}
+}
+
+type module struct{}
+
+func (module) Action() interface{} {
+	return func() {
+		fmt.Println("Hello World")
+	}
+}
+`
+	appSrcTest := `package app_test
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/pkg/typmodule"
+
+	"{{.Pkg}}/app"
+)
+
+func TestModule(t *testing.T) {
+	a := app.Module()
+	require.True(t, typmodule.IsActionable(a))
+}
+`
 	return runn.Execute(
 		common.Mkdir{Path: i.Path("app")},
+		common.WriteString{
+			Target:     i.Path("app/app.go"),
+			Content:    appSrc,
+			Permission: 0644,
+		},
+		common.WriteTemplate{
+			Target:   i.Path("app/app_test.go"),
+			Template: appSrcTest,
+			Data:     i,
+		},
 	)
 }
 
@@ -96,6 +139,7 @@ func (i initproject) typicalContext() error {
 	template := `package typical
 
 import (
+	"{{.Pkg}}/app"
 	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
@@ -105,6 +149,7 @@ var Context = &typctx.Context{
 	Name:    "{{.Name}}",
 	Version: "0.0.1",
 	Package: "{{.Pkg}}",
+	AppModule: app.Module(),
 	Releaser: typrls.Releaser{
 		Targets: []typrls.Target{"linux/amd64", "darwin/amd64"},
 	},
