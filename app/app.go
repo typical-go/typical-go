@@ -21,10 +21,10 @@ type module struct{}
 
 func (module) AppCommands(c *typcli.ContextCli) []cli.Command {
 	return []cli.Command{
-		{Name: "init", Usage: "Iniate new project", Action: initiateProject},
-		{Name: "migrate-me", Usage: "Migrate current project to using framework", Action: underConstruction},
-		{Name: "upgrade", Usage: "upgrade the typical-go", Action: underConstruction},
-		{Name: "update", Usage: "Update current project to use latest framework", Action: underConstruction},
+		cmdConstructProject(),
+		// {Name: "migrate-me", Usage: "Migrate current project to using framework", Action: underConstruction},
+		// {Name: "upgrade", Usage: "upgrade the typical-go", Action: underConstruction},
+		// {Name: "update", Usage: "Update current project to use latest framework", Action: underConstruction},
 	}
 }
 

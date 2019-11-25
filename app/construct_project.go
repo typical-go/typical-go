@@ -13,31 +13,38 @@ import (
 	"github.com/urfave/cli"
 )
 
-func initiateProject(ctx *cli.Context) error {
-	pkg := ctx.Args().First()
-	if pkg == "" {
-		return cli.ShowCommandHelp(ctx, "init")
+func cmdConstructProject() cli.Command {
+	return cli.Command{
+		Name:      "new",
+		Usage:     "Construct New Project",
+		UsageText: "app new [Package]",
+		Action: func(ctx *cli.Context) error {
+			pkg := ctx.Args().First()
+			if pkg == "" {
+				return cli.ShowCommandHelp(ctx, "new")
+			}
+			name := filepath.Base(pkg)
+			if filekit.IsExist(name) {
+				return fmt.Errorf("'%s' already exist", name)
+			}
+			return runn.Execute(constructproj{
+				Name: name,
+				Pkg:  pkg,
+			})
+		},
 	}
-	name := filepath.Base(pkg)
-	if filekit.IsExist(name) {
-		return fmt.Errorf("'%s' already exist", name)
-	}
-	return runn.Execute(initproject{
-		Name: name,
-		Pkg:  pkg,
-	})
 }
 
-type initproject struct {
+type constructproj struct {
 	Name string
 	Pkg  string
 }
 
-func (i initproject) Path(s string) string {
+func (i constructproj) Path(s string) string {
 	return fmt.Sprintf("%s/%s", i.Name, s)
 }
 
-func (i initproject) Run() (err error) {
+func (i constructproj) Run() (err error) {
 	return runn.Execute(
 		i.appPackage,
 		i.cmdPackage,
@@ -50,7 +57,7 @@ func (i initproject) Run() (err error) {
 	)
 }
 
-func (i initproject) appPackage() error {
+func (i constructproj) appPackage() error {
 	appSrc := `package app
 
 import "fmt"
@@ -99,7 +106,7 @@ func TestModule(t *testing.T) {
 	)
 }
 
-func (i initproject) cmdPackage() error {
+func (i constructproj) cmdPackage() error {
 	return runn.Execute(
 		common.Mkdir{Path: i.Path("cmd")},
 		common.Mkdir{Path: i.Path("cmd/app")},
@@ -111,7 +118,7 @@ func (i initproject) cmdPackage() error {
 	)
 }
 
-func (i initproject) appMainSrc() (src *golang.MainSource) {
+func (i constructproj) appMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typapp")
 	src.Imports.Add("", i.Pkg+"/typical")
@@ -120,7 +127,7 @@ func (i initproject) appMainSrc() (src *golang.MainSource) {
 	return
 }
 
-func (i initproject) prebuilderMainSrc() (src *golang.MainSource) {
+func (i constructproj) prebuilderMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typprebuilder")
 	src.Imports.Add("", i.Pkg+"/typical")
@@ -128,7 +135,7 @@ func (i initproject) prebuilderMainSrc() (src *golang.MainSource) {
 	return
 }
 
-func (i initproject) buildtoolMainSrc() (src *golang.MainSource) {
+func (i constructproj) buildtoolMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typbuildtool")
 	src.Imports.Add("", i.Pkg+"/typical")
@@ -137,7 +144,7 @@ func (i initproject) buildtoolMainSrc() (src *golang.MainSource) {
 	return
 }
 
-func (i initproject) typicalContext() error {
+func (i constructproj) typicalContext() error {
 	template := `package typical
 
 import (
@@ -167,11 +174,11 @@ var Context = &typctx.Context{
 	)
 }
 
-func (i initproject) ignoreFile() error {
+func (i constructproj) ignoreFile() error {
 	return runn.Execute()
 }
 
-func (i initproject) dependencyPackage() error {
+func (i constructproj) dependencyPackage() error {
 	return runn.Execute(
 		common.Mkdir{Path: i.Path("internal/dependency")},
 		common.WriteString{
@@ -182,7 +189,7 @@ func (i initproject) dependencyPackage() error {
 	)
 }
 
-func (i initproject) typicalWrapper() error {
+func (i constructproj) typicalWrapper() error {
 	content := `#!/bin/bash
 set -e
 
@@ -219,7 +226,7 @@ fi
 	)
 }
 
-func (i initproject) gomod() (err error) {
+func (i constructproj) gomod() (err error) {
 	template := `module {{.Pkg}}
 
 go 1.12
@@ -241,7 +248,7 @@ require github.com/typical-go/typical-go v{{.TypicalVersion}}
 	)
 }
 
-func (i initproject) gofmt() (err error) {
+func (i constructproj) gofmt() (err error) {
 	cmd := exec.Command("go", "fmt", "./...")
 	cmd.Dir = i.Name
 	return cmd.Run()

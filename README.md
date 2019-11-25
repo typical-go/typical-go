@@ -10,34 +10,8 @@ A Framework and Build Tool for Productive Go Development. <https://typical-go.gi
 
 ### New Project
 
-*On Progress*
-
 ```bash
-typical-go new [project-name]
-```
-
-### Migrate Current Project
-
-*On Progress*
-
-```bash
-typical-go migrate-me
-```
-
-### Upgrade typical-go tool
-
-*On Progress*
-
-```bash
-typical-go upgrade
-```
-
-### Update current project to use latest framework
-
-*On Progress*
-
-```bash
-typical-go update
+typical-go new [PACKAGE]
 ```
 
 ## Examples
