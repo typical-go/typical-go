@@ -55,15 +55,12 @@ func (i initproject) Run() (err error) {
 }
 
 func (i initproject) appPackage() error {
-	log.Info("Generate App Package")
 	return runn.Execute(
 		common.Mkdir{Path: i.Path("app")},
 	)
 }
 
 func (i initproject) cmdPackage() error {
-	log.Info("Generate Cmd Package")
-
 	return runn.Execute(
 		common.Mkdir{Path: i.Path("cmd")},
 		common.Mkdir{Path: i.Path("cmd/app")},
@@ -102,7 +99,6 @@ func (i initproject) buildtoolMainSrc() (src *golang.MainSource) {
 }
 
 func (i initproject) typicalContext() error {
-	log.Info("Generate Typical Context")
 	template := `package typical
 
 import (
@@ -120,7 +116,6 @@ var Context = &typctx.Context{
 	},
 }
 `
-
 	return runn.Execute(
 		common.Mkdir{Path: i.Path("typical")},
 		common.WriteTemplate{
@@ -147,7 +142,6 @@ func (i initproject) dependencyPackage() error {
 }
 
 func (i initproject) typicalWrapper() error {
-	log.Info("Generate Typical Wrapper")
 	content := `#!/bin/bash
 set -e
 
@@ -185,9 +179,19 @@ fi
 }
 
 func (i initproject) gomod() (err error) {
-	cmd := exec.Command("go", "mod", "init", i.Pkg)
-	cmd.Dir = i.Name
-	return cmd.Run()
+	template := `module {{.Pkg}}
+
+go 1.12
+
+require github.com/typical-go/typical-go v0.9.1
+`
+	return runn.Execute(
+		common.WriteTemplate{
+			Target:   i.Path("go.mod"),
+			Template: template,
+			Data:     i,
+		},
+	)
 }
 
 func (i initproject) gofmt() (err error) {
