@@ -2,24 +2,26 @@ package app
 
 import (
 	"fmt"
-	"os"
 	"os/exec"
 	"path/filepath"
 
+	"github.com/typical-go/typical-go/pkg/utility/filekit"
 	"github.com/typical-go/typical-go/pkg/utility/golang"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/app/common"
 	"github.com/typical-go/typical-go/pkg/utility/runn"
 	"github.com/urfave/cli"
 )
 
 func initiateProject(ctx *cli.Context) error {
-	pkg := "github.com/typical-go/sample"
+	pkg := ctx.Args().First()
+	if pkg == "" {
+		return cli.ShowCommandHelp(ctx, "init")
+	}
 	name := filepath.Base(pkg)
-	log.Infof("Remove: %s", name)
-	os.RemoveAll(name)
-	log.Infof("Init Project: %s", pkg)
+	if filekit.IsExist(name) {
+		return fmt.Errorf("'%s' already exist", name)
+	}
 	return runn.Execute(initproject{
 		Name: name,
 		Pkg:  pkg,
