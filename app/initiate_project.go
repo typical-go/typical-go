@@ -43,25 +43,25 @@ func (i initproject) Path(s string) string {
 
 func (i initproject) Run() (err error) {
 	return runn.Execute(
-		i.generateAppPackage,
-		i.generateCmdPackage,
-		i.generateTypicalContext,
-		i.generateDependency,
-		i.generateIgnoreFile,
-		i.generateTypicalWrapper,
-		i.initGoModule,
+		i.appPackage,
+		i.cmdPackage,
+		i.dependencyPackage,
+		i.typicalContext,
+		i.typicalWrapper,
+		i.ignoreFile,
+		i.gomod,
 		i.gofmt,
 	)
 }
 
-func (i initproject) generateAppPackage() error {
+func (i initproject) appPackage() error {
 	log.Info("Generate App Package")
 	return runn.Execute(
 		common.Mkdir{Path: i.Path("app")},
 	)
 }
 
-func (i initproject) generateCmdPackage() error {
+func (i initproject) cmdPackage() error {
 	log.Info("Generate Cmd Package")
 
 	return runn.Execute(
@@ -101,7 +101,7 @@ func (i initproject) buildtoolMainSrc() (src *golang.MainSource) {
 	return
 }
 
-func (i initproject) generateTypicalContext() error {
+func (i initproject) typicalContext() error {
 	log.Info("Generate Typical Context")
 	template := `package typical
 
@@ -131,11 +131,11 @@ var Context = &typctx.Context{
 	)
 }
 
-func (i initproject) generateIgnoreFile() error {
+func (i initproject) ignoreFile() error {
 	return runn.Execute()
 }
 
-func (i initproject) generateDependency() error {
+func (i initproject) dependencyPackage() error {
 	return runn.Execute(
 		common.Mkdir{Path: i.Path("internal/dependency")},
 		common.WriteString{
@@ -146,7 +146,7 @@ func (i initproject) generateDependency() error {
 	)
 }
 
-func (i initproject) generateTypicalWrapper() error {
+func (i initproject) typicalWrapper() error {
 	log.Info("Generate Typical Wrapper")
 	content := `#!/bin/bash
 set -e
@@ -184,7 +184,7 @@ fi
 	)
 }
 
-func (i initproject) initGoModule() (err error) {
+func (i initproject) gomod() (err error) {
 	cmd := exec.Command("go", "mod", "init", i.Pkg)
 	cmd.Dir = i.Name
 	return cmd.Run()
