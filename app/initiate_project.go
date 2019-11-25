@@ -142,7 +142,5 @@ func (i initproject) generateTypicalWrapper() error {
 func (i initproject) initGoModule() (err error) {
 	cmd := exec.Command("go", "mod", "init", i.Pkg)
 	cmd.Dir = i.Name
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
 	return cmd.Run()
 }
