@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"strings"
+	"path/filepath"
 
 	"github.com/typical-go/typical-go/pkg/utility/golang"
 
@@ -16,7 +16,7 @@ import (
 
 func initiateProject(ctx *cli.Context) error {
 	pkg := "github.com/typical-go/sample"
-	name := name(pkg)
+	name := filepath.Base(pkg)
 	log.Infof("Remove: %s", name)
 	os.RemoveAll(name)
 	log.Infof("Init Project: %s", pkg)
@@ -24,12 +24,6 @@ func initiateProject(ctx *cli.Context) error {
 		Name: name,
 		Pkg:  pkg,
 	})
-}
-
-func name(pkg string) string {
-	// TODO: handle window path format
-	chunks := strings.Split(pkg, "/")
-	return chunks[len(chunks)-1]
 }
 
 type initproject struct {
