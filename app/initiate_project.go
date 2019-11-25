@@ -183,13 +183,19 @@ func (i initproject) gomod() (err error) {
 
 go 1.12
 
-require github.com/typical-go/typical-go v0.9.1
+require github.com/typical-go/typical-go v{{.TypicalVersion}}
 `
 	return runn.Execute(
 		common.WriteTemplate{
 			Target:   i.Path("go.mod"),
 			Template: template,
-			Data:     i,
+			Data: struct {
+				Pkg            string
+				TypicalVersion string
+			}{
+				Pkg:            i.Pkg,
+				TypicalVersion: Version,
+			},
 		},
 	)
 }

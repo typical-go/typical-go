@@ -7,6 +7,11 @@ import (
 	"github.com/urfave/cli"
 )
 
+const (
+	// Version of Typical-Go
+	Version = "0.9.1"
+)
+
 // Module of application
 func Module() interface{} {
 	return &module{}
