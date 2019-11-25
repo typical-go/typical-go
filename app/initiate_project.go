@@ -46,9 +46,11 @@ func (i initproject) Run() (err error) {
 		i.generateAppPackage,
 		i.generateCmdPackage,
 		i.generateTypicalContext,
+		i.generateDependency,
 		i.generateIgnoreFile,
 		i.generateTypicalWrapper,
 		i.initGoModule,
+		i.gofmt,
 	)
 }
 
@@ -130,17 +132,66 @@ var Context = &typctx.Context{
 }
 
 func (i initproject) generateIgnoreFile() error {
-	log.Info("Generate Ignore File")
 	return runn.Execute()
+}
+
+func (i initproject) generateDependency() error {
+	return runn.Execute(
+		common.Mkdir{Path: i.Path("internal/dependency")},
+		common.WriteString{
+			Target:     i.Path("internal/dependency/constructors.go"),
+			Permission: 0644,
+			Content:    "package dependency",
+		},
+	)
 }
 
 func (i initproject) generateTypicalWrapper() error {
 	log.Info("Generate Typical Wrapper")
-	return runn.Execute()
+	content := `#!/bin/bash
+set -e
+
+BIN=${TYPICAL_BIN:-bin}
+CMD=${TYPICAL_CMD:-cmd}
+BUILD_TOOL=${TYPICAL_BUILD_TOOL:-build-tool}
+PRE_BUILDER=${TYPICAL_PRE_BUILDER:-pre-builder}
+METADATA=${TYPICAL_METADATA:-.typical-metadata}
+
+CHECKSUM_PATH="$METADATA/checksum "
+CHECKSUM_DATA=$(cksum typical/context.go)
+
+if ! [ -s .typical-metadata/checksum ]; then
+	mkdir -p $METADATA
+	cksum typical/context.go > $CHECKSUM_PATH
+else
+	CHECKSUM_UPDATED=$([ "$CHECKSUM_DATA" == "$(cat $CHECKSUM_PATH )" ] ; echo $?)
+fi
+
+if [ "$CHECKSUM_UPDATED" == "1" ] || ! [[ -f $BIN/$PRE_BUILDER ]] ; then 
+	echo $CHECKSUM_DATA > $CHECKSUM_PATH
+	echo "Build the pre-builder"
+	go build -o $BIN/$PRE_BUILDER ./$CMD/$PRE_BUILDER
+fi
+
+./$BIN/$PRE_BUILDER $CHECKSUM_UPDATED
+./$BIN/$BUILD_TOOL $@`
+	return runn.Execute(
+		common.WriteString{
+			Target:     i.Path("typicalw"),
+			Permission: 0700,
+			Content:    content,
+		},
+	)
 }
 
 func (i initproject) initGoModule() (err error) {
 	cmd := exec.Command("go", "mod", "init", i.Pkg)
+	cmd.Dir = i.Name
+	return cmd.Run()
+}
+
+func (i initproject) gofmt() (err error) {
+	cmd := exec.Command("go", "fmt", "./...")
 	cmd.Dir = i.Name
 	return cmd.Run()
 }
