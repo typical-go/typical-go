@@ -101,8 +101,31 @@ func (i initproject) buildtoolMainSrc() (src *golang.MainSource) {
 
 func (i initproject) generateTypicalContext() error {
 	log.Info("Generate Typical Context")
+	template := `package typical
+
+import (
+	"github.com/typical-go/typical-go/pkg/typctx"
+	"github.com/typical-go/typical-go/pkg/typrls"
+)
+
+// Context of Project
+var Context = &typctx.Context{
+	Name:    "{{.Name}}",
+	Version: "0.0.1",
+	Package: "{{.Pkg}}",
+	Releaser: typrls.Releaser{
+		Targets: []typrls.Target{"linux/amd64", "darwin/amd64"},
+	},
+}
+`
+
 	return runn.Execute(
 		common.Mkdir{Path: i.Path("typical")},
+		common.WriteTemplate{
+			Target:   i.Path("typical/context.go"),
+			Template: template,
+			Data:     i,
+		},
 	)
 }
 
