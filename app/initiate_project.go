@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/utility/golang"
@@ -14,15 +15,14 @@ import (
 )
 
 func initiateProject(ctx *cli.Context) error {
-	parent := "sample"
-	pkg := "github.com/typical-go/hello-world"
-	log.Infof("Remove: %s", parent)
-	os.RemoveAll(parent)
+	pkg := "github.com/typical-go/sample"
+	name := name(pkg)
+	log.Infof("Remove: %s", name)
+	os.RemoveAll(name)
 	log.Infof("Init Project: %s", pkg)
 	return runn.Execute(initproject{
-		Name:   name(pkg),
-		Pkg:    pkg,
-		Parent: parent,
+		Name: name,
+		Pkg:  pkg,
 	})
 }
 
@@ -33,13 +33,12 @@ func name(pkg string) string {
 }
 
 type initproject struct {
-	Name   string
-	Parent string
-	Pkg    string
+	Name string
+	Pkg  string
 }
 
 func (i initproject) Path(s string) string {
-	return fmt.Sprintf("%s/%s/%s", i.Parent, i.Name, s)
+	return fmt.Sprintf("%s/%s", i.Name, s)
 }
 
 func (i initproject) Run() (err error) {
@@ -49,6 +48,7 @@ func (i initproject) Run() (err error) {
 		i.generateTypicalContext,
 		i.generateIgnoreFile,
 		i.generateTypicalWrapper,
+		i.initGoModule,
 	)
 }
 
@@ -114,4 +114,12 @@ func (i initproject) generateIgnoreFile() error {
 func (i initproject) generateTypicalWrapper() error {
 	log.Info("Generate Typical Wrapper")
 	return runn.Execute()
+}
+
+func (i initproject) initGoModule() (err error) {
+	cmd := exec.Command("go", "mod", "init", i.Pkg)
+	cmd.Dir = i.Name
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
