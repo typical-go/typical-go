@@ -5,6 +5,8 @@ import (
 	"os"
 	"strings"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/joho/godotenv"
 )
 
@@ -19,19 +21,21 @@ func Load() (err error) {
 		envMap, _ = godotenv.Read()
 	} else {
 		configs = strings.Split(configSource, ",")
-		envMap, err = godotenv.Read(configs...)
-		if err != nil {
+		if envMap, err = godotenv.Read(configs...); err != nil {
 			return
 		}
 	}
-	var builder strings.Builder
+	var b strings.Builder
 	if len(envMap) > 0 {
-		builder.WriteString(fmt.Sprintf("Read the environment %s\n", configSource))
+		b.WriteString(fmt.Sprintf("Load environments %s: ", configSource))
 		for key, value := range envMap {
-			err = os.Setenv(key, value)
-			builder.WriteString(" +" + key)
+			if err = os.Setenv(key, value); err != nil {
+				return
+			}
+			b.WriteString(key)
+			b.WriteString("; ")
 		}
-		fmt.Println(builder.String())
+		log.Info(b.String())
 	}
 	return
 }
