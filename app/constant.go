@@ -2,18 +2,39 @@ package app
 
 const appSrc = `package app
 
-import "fmt"
+import (
+	"fmt"
+	"{{.Pkg}}/app/config"
+
+	"github.com/typical-go/typical-go/pkg/typcfg"
+)
 
 // Module of application
 func Module() interface{} {
-	return &module{}
+	return &module{
+		Configuration: typcfg.Configuration{
+			Prefix: "APP",
+			Spec:   &config.Config{},
+		},
+	}
 }
 
-type module struct{}
+type module struct {
+	typcfg.Configuration
+}
 
 func (module) Action() interface{} {
-	return func() {
-		fmt.Println("Hello World")
+	return func(cfg config.Config) {
+		fmt.Printf("Hello %s\n", cfg.Hello)
+	}
+}
+
+func (m module) Provide() []interface{} {
+	return []interface{}{
+		func(loader typcfg.Loader) (cfg config.Config, err error) {
+			err = loader.Load(m.Configuration, &cfg)
+			return
+		},
 	}
 }
 `
@@ -24,6 +45,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typmodule"
 
 	"{{.Pkg}}/app"
@@ -32,26 +54,32 @@ import (
 func TestModule(t *testing.T) {
 	a := app.Module()
 	require.True(t, typmodule.IsActionable(a))
+	require.True(t, typcfg.IsConfigurer(a))
 }
 `
+
+const configSrc = "package config\n\n// Config of app\ntype Config struct {\n	Hello string `default:\"World\"`\n}"
 
 const ctxSrc = `package typical
 
 import (
-	"{{.Pkg}}/app"
+	"sample/app"
+
+	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
 // Context of Project
 var Context = &typctx.Context{
-	Name:    "{{.Name}}",
-	Version: "0.0.1",
-	Package: "{{.Pkg}}",
+	Name:      "sample",
+	Version:   "0.0.1",
+	Package:   "sample",
 	AppModule: app.Module(),
 	Releaser: typrls.Releaser{
 		Targets: []typrls.Target{"linux/amd64", "darwin/amd64"},
 	},
+	ConfigLoader: typcfg.DefaultLoader(),
 }
 `
 

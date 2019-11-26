@@ -58,19 +58,14 @@ func (i constructproj) Run() (err error) {
 }
 
 func (i constructproj) appPackage() error {
-	return runn.Execute(
+	stmts := []interface{}{
 		runner.Mkdir{Path: i.Path("app")},
-		runner.WriteString{
-			Target:     i.Path("app/app.go"),
-			Content:    appSrc,
-			Permission: 0644,
-		},
-		runner.WriteTemplate{
-			Target:   i.Path("app/app_test.go"),
-			Template: appSrcTest,
-			Data:     i,
-		},
-	)
+		runner.Mkdir{Path: i.Path("app/config")},
+		runner.WriteString{Target: i.Path("app/config/config.go"), Content: configSrc, Permission: 0644},
+		runner.WriteTemplate{Target: i.Path("app/app.go"), Template: appSrc, Data: i},
+		runner.WriteTemplate{Target: i.Path("app/app_test.go"), Template: appSrcTest, Data: i},
+	}
+	return runn.Execute(stmts...)
 }
 
 func (i constructproj) cmdPackage() error {
