@@ -17,7 +17,10 @@ func cmdConstructProject() cli.Command {
 		Name:      "new",
 		Usage:     "Construct New Project",
 		UsageText: "app new [Package]",
-		Action:    constructProject,
+		Flags: []cli.Flag{
+			cli.BoolFlag{Name: "blank", Usage: "Create blank new project"},
+		},
+		Action: constructProject,
 	}
 }
 
@@ -30,14 +33,17 @@ func constructProject(ctx *cli.Context) (err error) {
 	if filekit.IsExist(name) {
 		return fmt.Errorf("'%s' already exist", name)
 	}
-	return runn.Execute(
-		constructproj{Name: name, Pkg: pkg},
-	)
+	return runn.Execute(constructproj{
+		Name:  name,
+		Pkg:   pkg,
+		blank: ctx.Bool("blank"),
+	})
 }
 
 type constructproj struct {
-	Name string
-	Pkg  string
+	Name  string
+	Pkg   string
+	blank bool
 }
 
 func (i constructproj) Path(s string) string {
@@ -60,12 +66,30 @@ func (i constructproj) Run() (err error) {
 func (i constructproj) appPackage() error {
 	stmts := []interface{}{
 		runner.Mkdir{Path: i.Path("app")},
-		runner.Mkdir{Path: i.Path("app/config")},
-		runner.WriteString{Target: i.Path("app/config/config.go"), Content: configSrc, Permission: 0644},
-		runner.WriteTemplate{Target: i.Path("app/app.go"), Template: appSrc, Data: i},
-		runner.WriteTemplate{Target: i.Path("app/app_test.go"), Template: appSrcTest, Data: i},
+	}
+	if !i.blank {
+		stmts = append(stmts,
+			runner.Mkdir{Path: i.Path("app/config")},
+			runner.WriteString{Target: i.Path("app/config/config.go"), Content: configSrc, Permission: 0644},
+			runner.WriteTemplate{Target: i.Path("app/app.go"), Template: appSrc, Data: i},
+			runner.WriteTemplate{Target: i.Path("app/app_test.go"), Template: appSrcTest, Data: i},
+		)
 	}
 	return runn.Execute(stmts...)
+}
+
+func (i constructproj) typicalContext() error {
+	var writeStmt interface{}
+	path := "typical/context.go"
+	if i.blank {
+		writeStmt = runner.WriteString{Target: i.Path(path), Content: blankCtxSrc, Permission: 0644}
+	} else {
+		writeStmt = runner.WriteTemplate{Target: i.Path(path), Template: ctxSrc, Data: i}
+	}
+	return runn.Execute(
+		runner.Mkdir{Path: i.Path("typical")},
+		writeStmt,
+	)
 }
 
 func (i constructproj) cmdPackage() error {
@@ -104,17 +128,6 @@ func (i constructproj) buildtoolMainSrc() (src *golang.MainSource) {
 	src.Imports.Add("_", i.Pkg+"/internal/dependency")
 	src.Append("typbuildtool.Run(typical.Context)")
 	return
-}
-
-func (i constructproj) typicalContext() error {
-	return runn.Execute(
-		runner.Mkdir{Path: i.Path("typical")},
-		runner.WriteTemplate{
-			Target:   i.Path("typical/context.go"),
-			Template: ctxSrc,
-			Data:     i,
-		},
-	)
 }
 
 func (i constructproj) ignoreFile() error {

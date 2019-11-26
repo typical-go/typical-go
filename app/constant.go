@@ -63,7 +63,7 @@ const configSrc = "package config\n\n// Config of app\ntype Config struct {\n	He
 const ctxSrc = `package typical
 
 import (
-	"sample/app"
+	"{{.Pkg}}/app"
 
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typctx"
@@ -80,6 +80,24 @@ var Context = &typctx.Context{
 		Targets: []typrls.Target{"linux/amd64", "darwin/amd64"},
 	},
 	ConfigLoader: typcfg.DefaultLoader(),
+}
+`
+
+const blankCtxSrc = `package typical
+
+import (
+	"github.com/typical-go/typical-go/pkg/typctx"
+	"github.com/typical-go/typical-go/pkg/typrls"
+)
+
+// Context of Project
+var Context = &typctx.Context{
+	Name:      "sample",
+	Version:   "0.0.1",
+	Package:   "sample",
+	Releaser: typrls.Releaser{
+		Targets: []typrls.Target{"linux/amd64", "darwin/amd64"},
+	},
 }
 `
 
