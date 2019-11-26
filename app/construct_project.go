@@ -58,39 +58,6 @@ func (i constructproj) Run() (err error) {
 }
 
 func (i constructproj) appPackage() error {
-	appSrc := `package app
-
-import "fmt"
-
-// Module of application
-func Module() interface{} {
-	return &module{}
-}
-
-type module struct{}
-
-func (module) Action() interface{} {
-	return func() {
-		fmt.Println("Hello World")
-	}
-}
-`
-	appSrcTest := `package app_test
-
-import (
-	"testing"
-
-	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typmodule"
-
-	"{{.Pkg}}/app"
-)
-
-func TestModule(t *testing.T) {
-	a := app.Module()
-	require.True(t, typmodule.IsActionable(a))
-}
-`
 	return runn.Execute(
 		common.Mkdir{Path: i.Path("app")},
 		common.WriteString{
@@ -145,30 +112,11 @@ func (i constructproj) buildtoolMainSrc() (src *golang.MainSource) {
 }
 
 func (i constructproj) typicalContext() error {
-	template := `package typical
-
-import (
-	"{{.Pkg}}/app"
-	"github.com/typical-go/typical-go/pkg/typctx"
-	"github.com/typical-go/typical-go/pkg/typrls"
-)
-
-// Context of Project
-var Context = &typctx.Context{
-	Name:    "{{.Name}}",
-	Version: "0.0.1",
-	Package: "{{.Pkg}}",
-	AppModule: app.Module(),
-	Releaser: typrls.Releaser{
-		Targets: []typrls.Target{"linux/amd64", "darwin/amd64"},
-	},
-}
-`
 	return runn.Execute(
 		common.Mkdir{Path: i.Path("typical")},
 		common.WriteTemplate{
 			Target:   i.Path("typical/context.go"),
-			Template: template,
+			Template: ctxSrc,
 			Data:     i,
 		},
 	)
@@ -190,53 +138,21 @@ func (i constructproj) dependencyPackage() error {
 }
 
 func (i constructproj) typicalWrapper() error {
-	content := `#!/bin/bash
-set -e
-
-BIN=${TYPICAL_BIN:-bin}
-CMD=${TYPICAL_CMD:-cmd}
-BUILD_TOOL=${TYPICAL_BUILD_TOOL:-build-tool}
-PRE_BUILDER=${TYPICAL_PRE_BUILDER:-pre-builder}
-METADATA=${TYPICAL_METADATA:-.typical-metadata}
-
-CHECKSUM_PATH="$METADATA/checksum "
-CHECKSUM_DATA=$(cksum typical/context.go)
-
-if ! [ -s .typical-metadata/checksum ]; then
-	mkdir -p $METADATA
-	cksum typical/context.go > $CHECKSUM_PATH
-else
-	CHECKSUM_UPDATED=$([ "$CHECKSUM_DATA" == "$(cat $CHECKSUM_PATH )" ] ; echo $?)
-fi
-
-if [ "$CHECKSUM_UPDATED" == "1" ] || ! [[ -f $BIN/$PRE_BUILDER ]] ; then 
-	echo $CHECKSUM_DATA > $CHECKSUM_PATH
-	echo "Build the pre-builder"
-	go build -o $BIN/$PRE_BUILDER ./$CMD/$PRE_BUILDER
-fi
-
-./$BIN/$PRE_BUILDER $CHECKSUM_UPDATED
-./$BIN/$BUILD_TOOL $@`
 	return runn.Execute(
 		common.WriteString{
 			Target:     i.Path("typicalw"),
 			Permission: 0700,
-			Content:    content,
+			Content:    wrapperSh,
 		},
 	)
 }
 
 func (i constructproj) gomod() (err error) {
-	template := `module {{.Pkg}}
 
-go 1.12
-
-require github.com/typical-go/typical-go v{{.TypicalVersion}}
-`
 	return runn.Execute(
 		common.WriteTemplate{
 			Target:   i.Path("go.mod"),
-			Template: template,
+			Template: gomodFile,
 			Data: struct {
 				Pkg            string
 				TypicalVersion string
