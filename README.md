@@ -4,12 +4,12 @@ A Framework and Build Tool for Productive Go Development. <https://typical-go.gi
 
 ## Install
 
-Check the [release page](https://github.com/typical-go/typical-go/releases)
+Download the latest release from [releases page](https://github.com/typical-go/typical-go/releases)
+
+For macOS:
 ```bash
-# Download typical-go for macOS
 curl -o typical-go -L https://github.com/typical-go/typical-go/releases/download/v0.9.2/typical-go_v0.9.2_darwin_amd64 && chmod +x typical-gos
 ```
-
 
 ## Usage
 
