@@ -17,21 +17,23 @@ func cmdConstructProject() cli.Command {
 		Name:      "new",
 		Usage:     "Construct New Project",
 		UsageText: "app new [Package]",
-		Action: func(ctx *cli.Context) error {
-			pkg := ctx.Args().First()
-			if pkg == "" {
-				return cli.ShowCommandHelp(ctx, "new")
-			}
-			name := filepath.Base(pkg)
-			if filekit.IsExist(name) {
-				return fmt.Errorf("'%s' already exist", name)
-			}
-			return runn.Execute(constructproj{
-				Name: name,
-				Pkg:  pkg,
-			})
-		},
+		Action:    constructProject,
 	}
+}
+
+func constructProject(ctx *cli.Context) (err error) {
+	pkg := ctx.Args().First()
+	if pkg == "" {
+		return cli.ShowCommandHelp(ctx, "new")
+	}
+	name := filepath.Base(pkg)
+	if filekit.IsExist(name) {
+		return fmt.Errorf("'%s' already exist", name)
+	}
+	return runn.Execute(constructproj{
+		Name: name,
+		Pkg:  pkg,
+	})
 }
 
 type constructproj struct {
@@ -49,10 +51,10 @@ func (i constructproj) Run() (err error) {
 		i.cmdPackage,
 		i.dependencyPackage,
 		i.typicalContext,
-		i.typicalWrapper,
 		i.ignoreFile,
 		i.gomod,
 		i.gofmt,
+		wrapRunner(i.Name),
 	)
 }
 
@@ -138,16 +140,6 @@ func (i constructproj) dependencyPackage() error {
 			Target:     i.Path("internal/dependency/constructors.go"),
 			Permission: 0644,
 			Content:    "package dependency",
-		},
-	)
-}
-
-func (i constructproj) typicalWrapper() error {
-	return runn.Execute(
-		runner.WriteString{
-			Target:     i.Path("typicalw"),
-			Permission: 0700,
-			Content:    typicalw,
 		},
 	)
 }
