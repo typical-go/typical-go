@@ -136,7 +136,7 @@ func (i constructproj) dependencyPackage() error {
 	return runn.Execute(
 		runner.Mkdir{Path: i.Path("internal/dependency")},
 		runner.WriteString{
-			Target:     i.Path("internal/dependency/constructors.go"),
+			Target:     i.Path("internal/dependency/constructor.go"),
 			Permission: 0644,
 			Content:    "package dependency",
 		},
