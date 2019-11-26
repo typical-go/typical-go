@@ -1,4 +1,4 @@
-package common
+package runner
 
 import (
 	"io/ioutil"

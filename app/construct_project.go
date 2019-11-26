@@ -7,9 +7,8 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/utility/filekit"
 	"github.com/typical-go/typical-go/pkg/utility/golang"
-
-	"github.com/typical-go/typical-go/app/common"
 	"github.com/typical-go/typical-go/pkg/utility/runn"
+	"github.com/typical-go/typical-go/pkg/utility/runner"
 	"github.com/urfave/cli"
 )
 
@@ -59,13 +58,13 @@ func (i constructproj) Run() (err error) {
 
 func (i constructproj) appPackage() error {
 	return runn.Execute(
-		common.Mkdir{Path: i.Path("app")},
-		common.WriteString{
+		runner.Mkdir{Path: i.Path("app")},
+		runner.WriteString{
 			Target:     i.Path("app/app.go"),
 			Content:    appSrc,
 			Permission: 0644,
 		},
-		common.WriteTemplate{
+		runner.WriteTemplate{
 			Target:   i.Path("app/app_test.go"),
 			Template: appSrcTest,
 			Data:     i,
@@ -75,13 +74,13 @@ func (i constructproj) appPackage() error {
 
 func (i constructproj) cmdPackage() error {
 	return runn.Execute(
-		common.Mkdir{Path: i.Path("cmd")},
-		common.Mkdir{Path: i.Path("cmd/app")},
-		common.Mkdir{Path: i.Path("cmd/pre-builder")},
-		common.Mkdir{Path: i.Path("cmd/build-tool")},
-		common.WriteSource{Target: i.Path("cmd/app/main.go"), Source: i.appMainSrc()},
-		common.WriteSource{Target: i.Path("cmd/pre-builder/main.go"), Source: i.prebuilderMainSrc()},
-		common.WriteSource{Target: i.Path("cmd/build-tool/main.go"), Source: i.buildtoolMainSrc()},
+		runner.Mkdir{Path: i.Path("cmd")},
+		runner.Mkdir{Path: i.Path("cmd/app")},
+		runner.Mkdir{Path: i.Path("cmd/pre-builder")},
+		runner.Mkdir{Path: i.Path("cmd/build-tool")},
+		runner.WriteSource{Target: i.Path("cmd/app/main.go"), Source: i.appMainSrc()},
+		runner.WriteSource{Target: i.Path("cmd/pre-builder/main.go"), Source: i.prebuilderMainSrc()},
+		runner.WriteSource{Target: i.Path("cmd/build-tool/main.go"), Source: i.buildtoolMainSrc()},
 	)
 }
 
@@ -113,8 +112,8 @@ func (i constructproj) buildtoolMainSrc() (src *golang.MainSource) {
 
 func (i constructproj) typicalContext() error {
 	return runn.Execute(
-		common.Mkdir{Path: i.Path("typical")},
-		common.WriteTemplate{
+		runner.Mkdir{Path: i.Path("typical")},
+		runner.WriteTemplate{
 			Target:   i.Path("typical/context.go"),
 			Template: ctxSrc,
 			Data:     i,
@@ -124,7 +123,7 @@ func (i constructproj) typicalContext() error {
 
 func (i constructproj) ignoreFile() error {
 	return runn.Execute(
-		common.WriteString{
+		runner.WriteString{
 			Target:     i.Path(".gitignore"),
 			Permission: 0700,
 			Content:    gitignore,
@@ -134,8 +133,8 @@ func (i constructproj) ignoreFile() error {
 
 func (i constructproj) dependencyPackage() error {
 	return runn.Execute(
-		common.Mkdir{Path: i.Path("internal/dependency")},
-		common.WriteString{
+		runner.Mkdir{Path: i.Path("internal/dependency")},
+		runner.WriteString{
 			Target:     i.Path("internal/dependency/constructors.go"),
 			Permission: 0644,
 			Content:    "package dependency",
@@ -145,7 +144,7 @@ func (i constructproj) dependencyPackage() error {
 
 func (i constructproj) typicalWrapper() error {
 	return runn.Execute(
-		common.WriteString{
+		runner.WriteString{
 			Target:     i.Path("typicalw"),
 			Permission: 0700,
 			Content:    typicalw,
@@ -155,7 +154,7 @@ func (i constructproj) typicalWrapper() error {
 
 func (i constructproj) gomod() (err error) {
 	return runn.Execute(
-		common.WriteTemplate{
+		runner.WriteTemplate{
 			Target:   i.Path("go.mod"),
 			Template: gomod,
 			Data: struct {

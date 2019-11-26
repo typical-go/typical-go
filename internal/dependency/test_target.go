@@ -6,5 +6,4 @@ import "github.com/typical-go/typical-go/typical"
 
 func init() {
 	typical.Context.TestTargets.Append("./app")
-	typical.Context.TestTargets.Append("./app/common")
 }
