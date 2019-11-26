@@ -6,18 +6,18 @@ import (
 	"github.com/urfave/cli"
 )
 
-func cmdWrap() cli.Command {
+func cmdCreateWrapper() cli.Command {
 	return cli.Command{
 		Name:  "wrapper",
 		Usage: "Create the wrapper",
 		Flags: []cli.Flag{
 			cli.StringFlag{Name: "path", Value: "."},
 		},
-		Action: wrapper,
+		Action: createWrapper,
 	}
 }
 
-func wrapper(ctx *cli.Context) error {
+func createWrapper(ctx *cli.Context) error {
 	return runn.Execute(
 		wrapperRunner(ctx.String("path")),
 	)

@@ -98,3 +98,70 @@ const gitignore = `/bin
 .env
 *.test
 *.out`
+
+const moduleSrc = `package {{.Name}}
+
+import "github.com/typical-go/typical-go/pkg/typcfg"
+
+// Config is configuration of module mymodule
+type Config struct {
+	// TODO:
+}
+
+// Module of {{.Name}}
+func Module() interface{} {
+	return &module{
+		typcfg.Configuration{
+			Prefix: "{{.Prefix}}",
+			Spec:   &Config{},
+		},
+	}
+}
+
+type module struct {
+	typcfg.Configuration
+}
+
+func (m *module) Provide() []interface{} {
+	return []interface{}{
+		m.loadConfig,
+		// TODO: functions to be provided as dependency
+	}
+}
+
+func (m *module) Prepare() []interface{} {
+	return []interface{}{
+		// TODO: functions to check/prepare the dependencies
+	}
+}
+
+func (m *module) Destroy() []interface{} {
+	return []interface{}{
+		// TODO: functions to destroy dependencies
+	}
+}
+
+func (m *module) loadConfig(loader typcfg.Loader) (cfg Config, err error) {
+	err = loader.Load(m.Configuration, &cfg)
+	return
+}
+`
+
+const moduleSrcTest = `package {{.Name}}
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typmodule"
+)
+
+func TestModule(t *testing.T) {
+	m := Module()
+	require.True(t, typmodule.IsProvider(m))
+	require.True(t, typmodule.IsDestroyer(m))
+	require.True(t, typmodule.IsProvider(m))
+	require.True(t, typcfg.IsConfigurer(m))
+}
+`

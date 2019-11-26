@@ -14,6 +14,13 @@ A Framework and Build Tool for Productive Go Development. <https://typical-go.gi
 typical-go new [PACKAGE]
 ```
 
+### New Module
+
+```bash
+typical-go module [MODULE_NAME]
+typical-go module [MODULE_NAME] -path=[PATH]
+```
+
 ### Create Wrapper
 
 ```bash

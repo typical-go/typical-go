@@ -30,10 +30,9 @@ func constructProject(ctx *cli.Context) (err error) {
 	if filekit.IsExist(name) {
 		return fmt.Errorf("'%s' already exist", name)
 	}
-	return runn.Execute(constructproj{
-		Name: name,
-		Pkg:  pkg,
-	})
+	return runn.Execute(
+		constructproj{Name: name, Pkg: pkg},
+	)
 }
 
 type constructproj struct {
