@@ -1,20 +1,10 @@
-# test releated
+/bin
+/release
+/.typical-metadata
+/vendor
+.envrc
+.env
 *.test
 *.out
 
-# 
-/vendor
-/bin
-/release
-
-# environment
-.envrc
-.env
-
-# ide
-.idea
-.vscode
-
-# typical
-/.typical-metadata
 sample

@@ -123,7 +123,13 @@ func (i constructproj) typicalContext() error {
 }
 
 func (i constructproj) ignoreFile() error {
-	return runn.Execute()
+	return runn.Execute(
+		common.WriteString{
+			Target:     i.Path(".gitignore"),
+			Permission: 0700,
+			Content:    gitignore,
+		},
+	)
 }
 
 func (i constructproj) dependencyPackage() error {
@@ -142,17 +148,16 @@ func (i constructproj) typicalWrapper() error {
 		common.WriteString{
 			Target:     i.Path("typicalw"),
 			Permission: 0700,
-			Content:    wrapperSh,
+			Content:    typicalw,
 		},
 	)
 }
 
 func (i constructproj) gomod() (err error) {
-
 	return runn.Execute(
 		common.WriteTemplate{
 			Target:   i.Path("go.mod"),
-			Template: gomodFile,
+			Template: gomod,
 			Data: struct {
 				Pkg            string
 				TypicalVersion string

@@ -55,7 +55,7 @@ var Context = &typctx.Context{
 }
 `
 
-const wrapperSh = `#!/bin/bash
+const typicalw = `#!/bin/bash
 set -e
 
 BIN=${TYPICAL_BIN:-bin}
@@ -83,9 +83,18 @@ fi
 ./$BIN/$PRE_BUILDER $CHECKSUM_UPDATED
 ./$BIN/$BUILD_TOOL $@`
 
-const gomodFile = `module {{.Pkg}}
+const gomod = `module {{.Pkg}}
 
 go 1.12
 
 require github.com/typical-go/typical-go v{{.TypicalVersion}}
 `
+
+const gitignore = `/bin
+/release
+/.typical-metadata
+/vendor
+.envrc
+.env
+*.test
+*.out`
