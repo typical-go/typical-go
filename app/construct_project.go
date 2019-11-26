@@ -54,7 +54,7 @@ func (i constructproj) Run() (err error) {
 		i.ignoreFile,
 		i.gomod,
 		i.gofmt,
-		wrapRunner(i.Name),
+		wrapperRunner(i.Name),
 	)
 }
 

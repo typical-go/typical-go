@@ -8,22 +8,22 @@ import (
 
 func cmdWrap() cli.Command {
 	return cli.Command{
-		Name:  "wrap",
+		Name:  "wrapper",
 		Usage: "Create the wrapper",
 		Flags: []cli.Flag{
 			cli.StringFlag{Name: "path", Value: "."},
 		},
-		Action: wrap,
+		Action: wrapper,
 	}
 }
 
-func wrap(ctx *cli.Context) error {
+func wrapper(ctx *cli.Context) error {
 	return runn.Execute(
-		wrapRunner(ctx.String("path")),
+		wrapperRunner(ctx.String("path")),
 	)
 }
 
-func wrapRunner(path string) runn.Runner {
+func wrapperRunner(path string) runn.Runner {
 	return runner.WriteString{
 		Target:     path + "/typicalw",
 		Permission: 0700,

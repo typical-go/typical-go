@@ -14,6 +14,14 @@ A Framework and Build Tool for Productive Go Development. <https://typical-go.gi
 typical-go new [PACKAGE]
 ```
 
+### Create Wrapper
+
+```bash
+typical-go wrapper
+typical-go wrapper -path=[Path]
+```
+
+
 ## Examples
 
 - [RESTful Server](https://github.com/typical-go/typical-rest-server)
