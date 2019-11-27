@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typmodule"
 	"github.com/urfave/cli"
 	"go.uber.org/dig"
@@ -13,7 +14,8 @@ import (
 
 // Cli for command line interface
 type Cli struct {
-	Obj interface{}
+	Obj          interface{}
+	ConfigLoader typcfg.Loader
 }
 
 // Action to return action function
@@ -46,6 +48,11 @@ func (c Cli) Action(fn interface{}) func(ctx *cli.Context) error {
 }
 
 func (c Cli) provideDependency(di *dig.Container) (err error) {
+	if c.ConfigLoader != nil {
+		if err = provide(di, func() typcfg.Loader { return c.ConfigLoader }); err != nil {
+			return
+		}
+	}
 	if provider, ok := c.Obj.(typmodule.Provider); ok {
 		if err = provide(di, provider.Provide()...); err != nil {
 			return
