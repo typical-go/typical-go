@@ -35,6 +35,7 @@ func (m module) Provide() []interface{} {
 			err = loader.Load(m.Configuration, &cfg)
 			return
 		},
+		// TODO: provide functions as the dependencies
 	}
 }
 `
@@ -170,7 +171,10 @@ type module struct {
 
 func (m *module) Provide() []interface{} {
 	return []interface{}{
-		m.loadConfig,
+		func (loader typcfg.Loader) (cfg Config, err error) {
+			err = loader.Load(m.Configuration, &cfg)
+			return
+		},
 		// TODO: functions to be provided as dependency
 	}
 }
@@ -185,11 +189,6 @@ func (m *module) Destroy() []interface{} {
 	return []interface{}{
 		// TODO: functions to destroy dependencies
 	}
-}
-
-func (m *module) loadConfig(loader typcfg.Loader) (cfg Config, err error) {
-	err = loader.Load(m.Configuration, &cfg)
-	return
 }
 `
 
