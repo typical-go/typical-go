@@ -13,14 +13,26 @@ import (
 	"go.uber.org/dig"
 )
 
-// Cli for command line interface
-type Cli struct {
+// Cli interface
+type Cli interface {
+	Action(fn interface{}) func(ctx *cli.Context) error
+}
+
+// NewCli return new constructor
+func NewCli(ctx *typctx.Context, obj interface{}) Cli {
+	return &cliImpl{
+		Context: ctx,
+		Obj:     obj,
+	}
+}
+
+type cliImpl struct {
 	*typctx.Context
 	Obj interface{}
 }
 
 // Action to return action function
-func (c Cli) Action(fn interface{}) func(ctx *cli.Context) error {
+func (c cliImpl) Action(fn interface{}) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) (err error) {
 		di := dig.New()
 		gracefulStop := make(chan os.Signal)
@@ -48,7 +60,7 @@ func (c Cli) Action(fn interface{}) func(ctx *cli.Context) error {
 	}
 }
 
-func (c Cli) provideDependency(di *dig.Container) (err error) {
+func (c cliImpl) provideDependency(di *dig.Container) (err error) {
 	if c.ConfigLoader != nil {
 		if err = provide(di, func() typcfg.Loader { return c.ConfigLoader }); err != nil {
 			return
@@ -62,7 +74,7 @@ func (c Cli) provideDependency(di *dig.Container) (err error) {
 	return
 }
 
-func (c Cli) prepare(di *dig.Container) (err error) {
+func (c cliImpl) prepare(di *dig.Container) (err error) {
 	if preparer, ok := c.Obj.(typmodule.Preparer); ok {
 		if err = invoke(di, preparer.Prepare()...); err != nil {
 			return
@@ -71,7 +83,7 @@ func (c Cli) prepare(di *dig.Container) (err error) {
 	return
 }
 
-func (c Cli) shutdown(di *dig.Container) (err error) {
+func (c cliImpl) shutdown(di *dig.Container) (err error) {
 	if destroyer, ok := c.Obj.(typmodule.Destroyer); ok {
 		if err = invoke(di, destroyer.Destroy()...); err != nil {
 			return

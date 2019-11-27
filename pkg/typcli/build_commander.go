@@ -6,7 +6,7 @@ import (
 
 // BuildCommander responsible to give command
 type BuildCommander interface {
-	BuildCommand(c *ContextCli) cli.Command
+	BuildCommand(c Cli) cli.Command
 }
 
 // IsBuildCommander return true if object implementation of BuildCLI

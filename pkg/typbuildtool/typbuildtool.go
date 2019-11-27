@@ -38,16 +38,11 @@ func ModuleCommands(ctx *typctx.Context) (cmds []cli.Command) {
 // Command of module
 func Command(ctx *typctx.Context, obj interface{}) *cli.Command {
 	if commander, ok := obj.(typcli.BuildCommander); ok {
-		cmd := commander.BuildCommand(&typcli.ContextCli{
-			Context: ctx,
-		})
+		cmd := commander.BuildCommand(typcli.NewContextCli(ctx))
 		return &cmd
 	}
 	if commander, ok := obj.(typcli.Commander); ok {
-		cmd := commander.Command(&typcli.Cli{
-			Obj:     obj,
-			Context: ctx,
-		})
+		cmd := commander.Command(typcli.NewCli(ctx, obj))
 		return &cmd
 	}
 	return nil

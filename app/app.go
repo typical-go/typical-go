@@ -19,7 +19,7 @@ func Module() interface{} {
 
 type module struct{}
 
-func (module) AppCommands(c *typcli.ContextCli) []cli.Command {
+func (module) AppCommands(c typcli.Cli) []cli.Command {
 	return []cli.Command{
 		cmdConstructProject(),
 		cmdConstructModule(),

@@ -13,9 +13,7 @@ import (
 
 // Run the application
 func Run(ctx *typctx.Context) {
-	ctxCli := &typcli.ContextCli{
-		Context: ctx,
-	}
+	ctxCli := typcli.NewContextCli(ctx)
 	app := cli.NewApp()
 	app.Name = ctx.Name
 	app.Usage = ""
