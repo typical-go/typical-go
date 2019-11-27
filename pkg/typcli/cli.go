@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typmodule"
 	"github.com/urfave/cli"
 	"go.uber.org/dig"
@@ -14,8 +15,8 @@ import (
 
 // Cli for command line interface
 type Cli struct {
-	Obj          interface{}
-	ConfigLoader typcfg.Loader
+	*typctx.Context
+	Obj interface{}
 }
 
 // Action to return action function

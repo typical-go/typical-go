@@ -45,8 +45,8 @@ func Command(ctx *typctx.Context, obj interface{}) *cli.Command {
 	}
 	if commander, ok := obj.(typcli.Commander); ok {
 		cmd := commander.Command(&typcli.Cli{
-			Obj:          obj,
-			ConfigLoader: ctx.ConfigLoader,
+			Obj:     obj,
+			Context: ctx,
 		})
 		return &cmd
 	}
