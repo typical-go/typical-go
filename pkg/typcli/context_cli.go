@@ -15,15 +15,16 @@ import (
 
 // NewContextCli return new instance of context cli
 func NewContextCli(ctx *typctx.Context) Cli {
-	return &contextCli{Context: ctx}
+	return &ContextCli{Context: ctx}
 }
 
-type contextCli struct {
+// ContextCli is cli for context
+type ContextCli struct {
 	*typctx.Context
 }
 
 // Action to return action function
-func (c *contextCli) Action(fn interface{}) func(ctx *cli.Context) error {
+func (c *ContextCli) Action(fn interface{}) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) (err error) {
 		di := dig.New()
 		gracefulStop := make(chan os.Signal)
@@ -50,7 +51,7 @@ func (c *contextCli) Action(fn interface{}) func(ctx *cli.Context) error {
 	}
 }
 
-func (c *contextCli) provideDependency(di *dig.Container) (err error) {
+func (c *ContextCli) provideDependency(di *dig.Container) (err error) {
 	if c.ConfigLoader != nil {
 		if err = provide(di, func() typcfg.Loader { return c.ConfigLoader }); err != nil {
 			return
@@ -69,7 +70,7 @@ func (c *contextCli) provideDependency(di *dig.Container) (err error) {
 	return
 }
 
-func (c *contextCli) prepare(di *dig.Container) (err error) {
+func (c *ContextCli) prepare(di *dig.Container) (err error) {
 	for _, module := range c.AllModule() {
 		if preparer, ok := module.(typmodule.Preparer); ok {
 			if err = invoke(di, preparer.Prepare()...); err != nil {
@@ -80,7 +81,7 @@ func (c *contextCli) prepare(di *dig.Container) (err error) {
 	return
 }
 
-func (c *contextCli) shutdown(di *dig.Container) (err error) {
+func (c *ContextCli) shutdown(di *dig.Container) (err error) {
 	for _, module := range c.AllModule() {
 		if destroyer, ok := module.(typmodule.Destroyer); ok {
 			if err = invoke(di, destroyer.Destroy()...); err != nil {
