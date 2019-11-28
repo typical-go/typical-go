@@ -5,6 +5,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/utility/filekit"
 	"github.com/typical-go/typical-go/pkg/utility/golang"
 	"github.com/typical-go/typical-go/pkg/utility/runn"
@@ -94,13 +95,13 @@ func (i constructproj) typicalContext() error {
 
 func (i constructproj) cmdPackage() error {
 	return runn.Execute(
-		runner.Mkdir{Path: i.Path("cmd")},
-		runner.Mkdir{Path: i.Path("cmd/app")},
-		runner.Mkdir{Path: i.Path("cmd/pre-builder")},
-		runner.Mkdir{Path: i.Path("cmd/build-tool")},
-		runner.WriteSource{Target: i.Path("cmd/app/main.go"), Source: i.appMainSrc()},
-		runner.WriteSource{Target: i.Path("cmd/pre-builder/main.go"), Source: i.prebuilderMainSrc()},
-		runner.WriteSource{Target: i.Path("cmd/build-tool/main.go"), Source: i.buildtoolMainSrc()},
+		runner.Mkdir{Path: i.Path(typenv.Cmd)},
+		runner.Mkdir{Path: i.Path(typenv.AppMain(i.Name))},
+		runner.Mkdir{Path: i.Path(typenv.BuildTool.SrcPath)},
+		runner.Mkdir{Path: i.Path(typenv.Prebuilder.SrcPath)},
+		runner.WriteSource{Target: i.Path(typenv.AppMain(i.Name) + "/main.go"), Source: i.appMainSrc()},
+		runner.WriteSource{Target: i.Path(typenv.BuildTool.SrcPath + "/main.go"), Source: i.prebuilderMainSrc()},
+		runner.WriteSource{Target: i.Path(typenv.Prebuilder.SrcPath + "/main.go"), Source: i.buildtoolMainSrc()},
 	)
 }
 
