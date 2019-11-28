@@ -100,8 +100,8 @@ func (i constructproj) cmdPackage() error {
 		runner.Mkdir{Path: i.Path(typenv.BuildToolMainPkg)},
 		runner.Mkdir{Path: i.Path(typenv.PrebuilderMainPkg)},
 		runner.WriteSource{Target: i.Path(typenv.AppMainPkg(i.Name) + "/main.go"), Source: i.appMainSrc()},
-		runner.WriteSource{Target: i.Path(typenv.BuildToolMainPkg + "/main.go"), Source: i.prebuilderMainSrc()},
-		runner.WriteSource{Target: i.Path(typenv.PrebuilderMainPkg + "/main.go"), Source: i.buildtoolMainSrc()},
+		runner.WriteSource{Target: i.Path(typenv.PrebuilderMainPkg + "/main.go"), Source: i.prebuilderMainSrc()},
+		runner.WriteSource{Target: i.Path(typenv.BuildToolMainPkg + "/main.go"), Source: i.buildtoolMainSrc()},
 	)
 }
 

@@ -26,6 +26,6 @@ func (t buildtool) buildBinary(ctx *cli.Context) error {
 		"./"+typenv.AppMainPkg(t.Name),
 	)
 	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stdout
+	cmd.Stderr = os.Stderr
 	return cmd.Run()
 }
