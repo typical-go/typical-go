@@ -1,8 +1,9 @@
 package typbuildtool
 
 import (
+	"os/exec"
+
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/utility/bash"
 	"github.com/urfave/cli"
 )
 
@@ -17,5 +18,11 @@ func (t buildtool) cmdTest() cli.Command {
 
 func (t buildtool) runTesting(ctx *cli.Context) error {
 	log.Info("Run testings")
-	return bash.GoTest(t.TestTargets)
+	args := []string{"test"}
+	args = append(args, t.TestTargets...)
+	args = append(args,
+		"-coverprofile=cover.out",
+		"-race")
+	cmd := exec.Command("go", args...)
+	return cmd.Run()
 }

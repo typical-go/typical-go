@@ -1,6 +1,8 @@
 package typprebuilder
 
 import (
+	"fmt"
+	"go/build"
 	"os"
 	"os/exec"
 
@@ -9,7 +11,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/typprebuilder/metadata"
-	"github.com/typical-go/typical-go/pkg/utility/bash"
 	"github.com/typical-go/typical-go/pkg/utility/filekit"
 )
 
@@ -72,7 +73,11 @@ func Run(ctx *typctx.Context) {
 	}
 	if checker.checkBuildTool() {
 		log.Info("Build the build-tool")
-		if err := bash.GoBuild(typenv.BuildToolBin, typenv.BuildToolMainPkg); err != nil {
+		cmd := exec.Command("go", "build",
+			"-o", typenv.BuildToolBin,
+			"./"+typenv.BuildToolMainPkg,
+		)
+		if err := cmd.Run(); err != nil {
 			log.Fatal(err.Error())
 		}
 	}
@@ -91,4 +96,10 @@ func contextChecksum() bool {
 		return os.Args[1] == "1"
 	}
 	return false
+}
+
+func goimports(filename string) error {
+	cmd := exec.Command(fmt.Sprintf("%s/bin/goimports", build.Default.GOPATH),
+		"-w", filename)
+	return cmd.Run()
 }

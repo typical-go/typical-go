@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/typenv"
-	"github.com/typical-go/typical-go/pkg/utility/bash"
 	"github.com/typical-go/typical-go/pkg/utility/debugkit"
 	"github.com/typical-go/typical-go/pkg/utility/filekit"
 	"github.com/typical-go/typical-go/pkg/utility/golang"
@@ -25,5 +24,5 @@ func (g testTarget) generate(target string) (err error) {
 	if err = filekit.Write(target, src); err != nil {
 		return
 	}
-	return bash.GoImports(target)
+	return goimports(target)
 }

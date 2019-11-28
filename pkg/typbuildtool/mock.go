@@ -1,12 +1,14 @@
 package typbuildtool
 
 import (
+	"go/build"
 	"os"
+	"os/exec"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typenv"
-	"github.com/typical-go/typical-go/pkg/utility/bash"
+	"github.com/typical-go/typical-go/pkg/utility/coll"
 	"github.com/urfave/cli"
 )
 
@@ -26,7 +28,7 @@ func (t buildtool) cmdMock() cli.Command {
 
 func (t buildtool) generateMock(ctx *cli.Context) (err error) {
 	log.Info("Generate mocks")
-	if err = bash.GoGet("github.com/golang/mock/mockgen"); err != nil {
+	if err = exec.Command("go", "get", "github.com/golang/mock/mockgen").Run(); err != nil {
 		return
 	}
 	mockPkg := typenv.Layout.Mock
@@ -34,12 +36,16 @@ func (t buildtool) generateMock(ctx *cli.Context) (err error) {
 		log.Infof("Clean mock package '%s'", mockPkg)
 		os.RemoveAll(mockPkg)
 	}
+	var errs coll.Errors
 	for _, mockTarget := range t.MockTargets {
 		dest := mockPkg + "/" + mockTarget[strings.LastIndex(mockTarget, "/")+1:]
-		err = bash.RunGoBin("mockgen",
+		cmd := exec.Command(build.Default.GOPATH+"/bin/mockgen",
 			"-source", mockTarget,
 			"-destination", dest,
 			"-package", mockPkg)
+		if err := cmd.Run(); err != nil {
+			errs.Append(err)
+		}
 	}
-	return
+	return errs.ToError()
 }

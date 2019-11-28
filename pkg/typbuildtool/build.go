@@ -1,9 +1,11 @@
 package typbuildtool
 
 import (
+	"os"
+	"os/exec"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typenv"
-	"github.com/typical-go/typical-go/pkg/utility/bash"
 
 	"github.com/urfave/cli"
 )
@@ -19,5 +21,11 @@ func (t buildtool) cmdBuild() cli.Command {
 
 func (t buildtool) buildBinary(ctx *cli.Context) error {
 	log.Info("Build the application")
-	return bash.GoBuild(typenv.AppBin(t.Name), typenv.AppMainPkg(t.Name))
+	cmd := exec.Command("go", "build",
+		"-o", typenv.AppBin(t.Name),
+		"./"+typenv.AppMainPkg(t.Name),
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stdout
+	return cmd.Run()
 }

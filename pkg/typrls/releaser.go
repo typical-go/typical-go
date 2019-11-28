@@ -4,11 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/typenv"
-	"github.com/typical-go/typical-go/pkg/utility/bash"
 	"github.com/typical-go/typical-go/pkg/utility/git"
 )
 
@@ -81,10 +81,16 @@ func (r *Releaser) build(name, tag string, target Target) (binary string, err er
 	goos := target.OS()
 	goarch := target.Arch()
 	binary = strings.Join([]string{name, tag, goos, goarch}, "_")
-	binaryPath := fmt.Sprintf("%s/%s", typenv.Layout.Release, binary)
 	// TODO: Support CGO
-	envs := []string{"GOOS=" + goos, "GOARCH=" + goarch}
-	if err = bash.GoBuild(binaryPath, typenv.AppMainPkg(name), envs...); err != nil {
+	cmd := exec.Command("go", "build",
+		"-o", fmt.Sprintf("%s/%s", typenv.Layout.Release, binary),
+		"-ldflags", "-w -s",
+		"./"+typenv.AppMainPkg(name),
+	)
+	cmd.Env = append(os.Environ(), "GOOS="+goos, "GOARCH="+goarch)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stdout
+	if err = cmd.Run(); err != nil {
 		return
 	}
 	return
