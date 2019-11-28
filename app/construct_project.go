@@ -53,9 +53,9 @@ func (i constructproj) Path(s string) string {
 
 func (i constructproj) Run() (err error) {
 	return runn.Execute(
+		i.dependencyPackage,
 		i.appPackage,
 		i.cmdPackage,
-		i.dependencyPackage,
 		i.typicalContext,
 		i.ignoreFile,
 		i.gomod,
@@ -109,7 +109,7 @@ func (i constructproj) appMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typapp")
 	src.Imports.Add("", i.Pkg+"/typical")
-	src.Imports.Add("_", i.Pkg+typenv.DependencyPkg)
+	src.Imports.Add("_", i.Pkg+"/"+typenv.DependencyPkg)
 	src.Append("typapp.Run(typical.Context)")
 	return
 }
@@ -126,7 +126,7 @@ func (i constructproj) buildtoolMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typbuildtool")
 	src.Imports.Add("", i.Pkg+"/typical")
-	src.Imports.Add("_", i.Pkg+typenv.DependencyPkg)
+	src.Imports.Add("_", i.Pkg+"/"+typenv.DependencyPkg)
 	src.Append("typbuildtool.Run(typical.Context)")
 	return
 }
