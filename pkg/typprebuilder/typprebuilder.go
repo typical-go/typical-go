@@ -77,6 +77,8 @@ func Run(ctx *typctx.Context) {
 			"-o", typenv.BuildToolBin,
 			"./"+typenv.BuildToolMainPkg,
 		)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
 		if err := cmd.Run(); err != nil {
 			log.Fatal(err.Error())
 		}
