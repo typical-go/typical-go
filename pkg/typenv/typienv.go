@@ -1,5 +1,11 @@
 package typenv
 
+import (
+	"fmt"
+
+	"github.com/iancoleman/strcase"
+)
+
 var (
 	appVar        = EnvVar{"TYPICAL_APP", "app"}
 	buildToolVar  = EnvVar{"TYPICAL_BUILD_TOOL", "build-tool"}
@@ -14,11 +20,11 @@ var (
 )
 
 var (
-	App        *applicationFolder
 	BuildTool  *applicationFolder
 	Prebuilder *applicationFolder
 	Dependency *applicationFolder
 	Bin        string
+	Cmd        string
 	Metadata   string
 	Mock       string
 	Release    string
@@ -34,20 +40,15 @@ type applicationFolder struct {
 
 func init() {
 	AppName = appVar.Value()
-	cmd := cmdVar.Value()
+	Cmd = cmdVar.Value()
 	Bin = binVar.Value()
 	Metadata = metadataVar.Value()
 	buildTool := buildToolVar.Value()
 	prebuilder := prebuilderVar.Value()
 	dependency := dependencyVar.Value()
-	App = &applicationFolder{
-		Package: "main",
-		SrcPath: cmd + "/" + AppName,
-		BinPath: Bin + "/" + AppName,
-	}
 	BuildTool = &applicationFolder{
 		Package: "main",
-		SrcPath: cmd + "/" + buildTool,
+		SrcPath: Cmd + "/" + buildTool,
 		BinPath: Bin + "/" + buildTool,
 	}
 	Dependency = &applicationFolder{
@@ -56,10 +57,20 @@ func init() {
 	}
 	Prebuilder = &applicationFolder{
 		Package: "main",
-		SrcPath: cmd + "/" + prebuilder,
+		SrcPath: Cmd + "/" + prebuilder,
 		BinPath: Bin + "/" + prebuilder,
 	}
 	Mock = mockVar.Value()
 	Release = releaseVar.Value()
 	Readme = readmeVar.Value()
+}
+
+// AppMain return main package of application
+func AppMain(name string) string {
+	return fmt.Sprintf("%s/%s", Cmd, strcase.ToKebab(name))
+}
+
+// AppBin return bin path of application
+func AppBin(name string) string {
+	return fmt.Sprintf("%s/%s", Bin, strcase.ToKebab(name))
 }

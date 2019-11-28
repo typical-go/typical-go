@@ -14,7 +14,6 @@ import (
 )
 
 var (
-	app        = typenv.App.SrcPath
 	buildTool  = typenv.BuildTool.SrcPath
 	dependency = typenv.Dependency.SrcPath
 )

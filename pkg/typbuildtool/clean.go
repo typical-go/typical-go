@@ -46,7 +46,7 @@ func (t buildtool) removePrebuilder(ctx *cli.Context) error {
 }
 
 func (t buildtool) removeApp(ctx *cli.Context) error {
-	removeFile(typenv.App.BinPath)
+	removeFile(typenv.AppBin(t.Name))
 	return nil
 }
 

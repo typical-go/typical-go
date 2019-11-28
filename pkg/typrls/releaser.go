@@ -27,13 +27,12 @@ type Tagging struct {
 }
 
 // Release the distribution
-func (r *Releaser) Release(version string, force, alpha bool) (rls *Release, err error) {
+func (r *Releaser) Release(name, version string, force, alpha bool) (rls *Release, err error) {
 	var latestTag string
 	var changeLogs []string
 	var binaries []string
 	git.Fetch()
 	defer git.Fetch()
-	name := r.releaseName()
 	tag := r.releaseTag(version, alpha)
 	if status := git.Status(); status != "" && !force {
 		err = fmt.Errorf("Please commit changes first:\n%s", status)
@@ -85,7 +84,7 @@ func (r *Releaser) build(name, tag string, target Target) (binary string, err er
 	binaryPath := fmt.Sprintf("%s/%s", typenv.Release, binary)
 	// TODO: Support CGO
 	envs := []string{"GOOS=" + goos, "GOARCH=" + goarch}
-	if err = bash.GoBuild(binaryPath, typenv.App.SrcPath, envs...); err != nil {
+	if err = bash.GoBuild(binaryPath, typenv.AppMain(name), envs...); err != nil {
 		return
 	}
 	return
