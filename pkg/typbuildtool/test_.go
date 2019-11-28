@@ -1,6 +1,7 @@
 package typbuildtool
 
 import (
+	"os"
 	"os/exec"
 
 	log "github.com/sirupsen/logrus"
@@ -24,5 +25,7 @@ func (t buildtool) runTesting(ctx *cli.Context) error {
 		"-coverprofile=cover.out",
 		"-race")
 	cmd := exec.Command("go", args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	return cmd.Run()
 }
