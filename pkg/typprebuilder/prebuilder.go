@@ -25,7 +25,7 @@ type prebuilder struct {
 
 func (p *prebuilder) Initiate(ctx *typctx.Context) (err error) {
 	var files coll.Strings
-	if p.Dirs, files, err = scanProject(typenv.AppName); err != nil {
+	if p.Dirs, files, err = scanProject(typenv.Layout.App); err != nil {
 		return
 	}
 	if p.ProjectFiles, err = walker.WalkProject(files); err != nil {

@@ -19,5 +19,5 @@ func (t buildtool) cmdBuild() cli.Command {
 
 func (t buildtool) buildBinary(ctx *cli.Context) error {
 	log.Info("Build the application")
-	return bash.GoBuild(typenv.AppBin(t.Name), typenv.AppMain(t.Name))
+	return bash.GoBuild(typenv.AppBin(t.Name), typenv.AppMainPkg(t.Name))
 }

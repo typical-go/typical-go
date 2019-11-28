@@ -18,7 +18,7 @@ type constructor struct {
 
 func (g constructor) generate(target string) (err error) {
 	defer debugkit.ElapsedTime("Generate constructor")()
-	src := golang.NewSource(typenv.Dependency.Package)
+	src := golang.NewSource(typenv.Dependency)
 	src.Imports = g.ApplicationImports
 	for _, constructor := range g.Constructors {
 		src.Init.Append(fmt.Sprintf("typical.Context.Constructors.Append(%s)", constructor))

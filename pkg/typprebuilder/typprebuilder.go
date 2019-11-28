@@ -14,8 +14,7 @@ import (
 )
 
 var (
-	buildTool  = typenv.BuildTool.SrcPath
-	dependency = typenv.Dependency.SrcPath
+	buildTool = typenv.BuildToolMainPkg
 )
 
 const (
@@ -27,12 +26,12 @@ const (
 func Run(ctx *typctx.Context) {
 	var err error
 	var preb prebuilder
-	os.Mkdir(typenv.Metadata, 0700)
-	os.Mkdir(typenv.Dependency.SrcPath, 0700)
+	os.Mkdir(typenv.Layout.Metadata, 0700)
+	os.Mkdir(typenv.DependencyPkg, 0700)
 	checker := checker{
 		Context:         ctx,
 		contextChecksum: contextChecksum(),
-		buildToolBinary: !filekit.IsExist(typenv.BuildTool.BinPath),
+		buildToolBinary: !filekit.IsExist(typenv.BuildToolBin),
 		readmeFile:      !filekit.IsExist(typenv.Readme),
 	}
 	if os.Getenv(debugEnv) != "" {
@@ -73,13 +72,13 @@ func Run(ctx *typctx.Context) {
 	}
 	if checker.checkBuildTool() {
 		log.Info("Build the build-tool")
-		if err := bash.GoBuild(typenv.BuildTool.BinPath, typenv.BuildTool.SrcPath); err != nil {
+		if err := bash.GoBuild(typenv.BuildToolBin, typenv.BuildToolMainPkg); err != nil {
 			log.Fatal(err.Error())
 		}
 	}
 	if checker.checkReadme() {
 		log.Info("Generate readme")
-		cmd := exec.Command(typenv.BuildTool.BinPath, "readme")
+		cmd := exec.Command(typenv.BuildToolBin, "readme")
 		if err := cmd.Run(); err != nil {
 			log.Fatal(err.Error())
 		}

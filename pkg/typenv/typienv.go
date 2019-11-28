@@ -16,61 +16,58 @@ var (
 	releaseVar    = EnvVar{"TYPICAL_RELEASE", "release"}
 	dependencyVar = EnvVar{"TYPICAL_DEPENDENCY", "dependency"}
 	metadataVar   = EnvVar{"TYPICAL_METADATA", ".typical-metadata"}
-	readmeVar     = EnvVar{"TYPICAL_README", "README.md"}
 )
 
 var (
-	BuildTool  *applicationFolder
-	Prebuilder *applicationFolder
-	Dependency *applicationFolder
-	Bin        string
-	Cmd        string
-	Metadata   string
-	Mock       string
-	Release    string
-	AppName    string
-	Readme     string
+	Layout struct {
+		App      string
+		Bin      string
+		Cmd      string
+		Metadata string
+		Mock     string
+		Release  string
+	}
+	Readme string
+
+	BuildTool        string
+	BuildToolBin     string
+	BuildToolMainPkg string
+
+	Prebuilder        string
+	PrebuilderBin     string
+	PrebuilderMainPkg string
+
+	Dependency    string
+	DependencyPkg string
 )
 
-type applicationFolder struct {
-	Package string
-	SrcPath string
-	BinPath string
-}
-
 func init() {
-	AppName = appVar.Value()
-	Cmd = cmdVar.Value()
-	Bin = binVar.Value()
-	Metadata = metadataVar.Value()
-	buildTool := buildToolVar.Value()
-	prebuilder := prebuilderVar.Value()
-	dependency := dependencyVar.Value()
-	BuildTool = &applicationFolder{
-		Package: "main",
-		SrcPath: Cmd + "/" + buildTool,
-		BinPath: Bin + "/" + buildTool,
-	}
-	Dependency = &applicationFolder{
-		Package: dependency,
-		SrcPath: "internal/" + dependency,
-	}
-	Prebuilder = &applicationFolder{
-		Package: "main",
-		SrcPath: Cmd + "/" + prebuilder,
-		BinPath: Bin + "/" + prebuilder,
-	}
-	Mock = mockVar.Value()
-	Release = releaseVar.Value()
-	Readme = readmeVar.Value()
+	Layout.App = appVar.Value()
+	Layout.Cmd = cmdVar.Value()
+	Layout.Bin = binVar.Value()
+	Layout.Mock = mockVar.Value()
+	Layout.Release = releaseVar.Value()
+	Layout.Metadata = metadataVar.Value()
+	Readme = "README.md"
+
+	BuildTool = buildToolVar.Value()
+	BuildToolMainPkg = Layout.Cmd + "/" + BuildTool
+	BuildToolBin = Layout.Bin + "/" + BuildTool
+
+	Prebuilder = prebuilderVar.Value()
+	PrebuilderMainPkg = Layout.Cmd + "/" + Prebuilder
+	PrebuilderBin = Layout.Bin + "/" + Prebuilder
+
+	Dependency = dependencyVar.Value()
+	DependencyPkg = "internal/" + Dependency
 }
 
-// AppMain return main package of application
-func AppMain(name string) string {
-	return fmt.Sprintf("%s/%s", Cmd, strcase.ToKebab(name))
+// AppMainPkg return main package of application
+func AppMainPkg(name string) string {
+	return fmt.Sprintf("%s/%s", Layout.Cmd, strcase.ToKebab(name))
 }
 
 // AppBin return bin path of application
 func AppBin(name string) string {
-	return fmt.Sprintf("%s/%s", Bin, strcase.ToKebab(name))
+	return fmt.Sprintf("%s/%s", Layout.Bin, strcase.ToKebab(name))
 }

@@ -3,8 +3,8 @@ package typbuildtool
 import (
 	"os"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typenv"
+
 	"github.com/urfave/cli"
 )
 
@@ -18,7 +18,6 @@ func (t buildtool) cmdReadme() cli.Command {
 
 func (t buildtool) generateReadme(ctx *cli.Context) (err error) {
 	var file *os.File
-	log.Infof("Generate Readme: %s", typenv.Readme)
 	if file, err = os.Create(typenv.Readme); err != nil {
 		return
 	}

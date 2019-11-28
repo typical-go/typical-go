@@ -29,7 +29,7 @@ func (t buildtool) generateMock(ctx *cli.Context) (err error) {
 	if err = bash.GoGet("github.com/golang/mock/mockgen"); err != nil {
 		return
 	}
-	mockPkg := typenv.Mock
+	mockPkg := typenv.Layout.Mock
 	if !ctx.Bool("no-delete") {
 		log.Infof("Clean mock package '%s'", mockPkg)
 		os.RemoveAll(mockPkg)

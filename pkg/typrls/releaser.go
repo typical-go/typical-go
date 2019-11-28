@@ -81,10 +81,10 @@ func (r *Releaser) build(name, tag string, target Target) (binary string, err er
 	goos := target.OS()
 	goarch := target.Arch()
 	binary = strings.Join([]string{name, tag, goos, goarch}, "_")
-	binaryPath := fmt.Sprintf("%s/%s", typenv.Release, binary)
+	binaryPath := fmt.Sprintf("%s/%s", typenv.Layout.Release, binary)
 	// TODO: Support CGO
 	envs := []string{"GOOS=" + goos, "GOARCH=" + goarch}
-	if err = bash.GoBuild(binaryPath, typenv.AppMain(name), envs...); err != nil {
+	if err = bash.GoBuild(binaryPath, typenv.AppMainPkg(name), envs...); err != nil {
 		return
 	}
 	return

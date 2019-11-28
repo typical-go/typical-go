@@ -36,12 +36,12 @@ func (t buildtool) cleanProject(ctx *cli.Context) error {
 }
 
 func (t buildtool) removeBuildTool(ctx *cli.Context) error {
-	removeFile(typenv.BuildTool.BinPath)
+	removeFile(typenv.BuildToolBin)
 	return nil
 }
 
 func (t buildtool) removePrebuilder(ctx *cli.Context) error {
-	removeFile(typenv.Prebuilder.BinPath)
+	removeFile(typenv.PrebuilderBin)
 	return nil
 }
 
@@ -51,7 +51,7 @@ func (t buildtool) removeApp(ctx *cli.Context) error {
 }
 
 func (t buildtool) removeMetadata(ctx *cli.Context) error {
-	removeAllFile(typenv.Metadata)
+	removeAllFile(typenv.Layout.Metadata)
 	return nil
 }
 
@@ -61,7 +61,7 @@ func (t buildtool) removeEnvFile(ctx *cli.Context) error {
 }
 
 func (t buildtool) removeDependency(ctx *cli.Context) error {
-	removeAllFile(typenv.Dependency.SrcPath)
+	removeAllFile(typenv.DependencyPkg)
 	return nil
 }
 

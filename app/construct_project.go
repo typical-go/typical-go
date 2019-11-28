@@ -95,13 +95,13 @@ func (i constructproj) typicalContext() error {
 
 func (i constructproj) cmdPackage() error {
 	return runn.Execute(
-		runner.Mkdir{Path: i.Path(typenv.Cmd)},
-		runner.Mkdir{Path: i.Path(typenv.AppMain(i.Name))},
-		runner.Mkdir{Path: i.Path(typenv.BuildTool.SrcPath)},
-		runner.Mkdir{Path: i.Path(typenv.Prebuilder.SrcPath)},
-		runner.WriteSource{Target: i.Path(typenv.AppMain(i.Name) + "/main.go"), Source: i.appMainSrc()},
-		runner.WriteSource{Target: i.Path(typenv.BuildTool.SrcPath + "/main.go"), Source: i.prebuilderMainSrc()},
-		runner.WriteSource{Target: i.Path(typenv.Prebuilder.SrcPath + "/main.go"), Source: i.buildtoolMainSrc()},
+		runner.Mkdir{Path: i.Path(typenv.Layout.Cmd)},
+		runner.Mkdir{Path: i.Path(typenv.AppMainPkg(i.Name))},
+		runner.Mkdir{Path: i.Path(typenv.BuildToolMainPkg)},
+		runner.Mkdir{Path: i.Path(typenv.PrebuilderMainPkg)},
+		runner.WriteSource{Target: i.Path(typenv.AppMainPkg(i.Name) + "/main.go"), Source: i.appMainSrc()},
+		runner.WriteSource{Target: i.Path(typenv.BuildToolMainPkg + "/main.go"), Source: i.prebuilderMainSrc()},
+		runner.WriteSource{Target: i.Path(typenv.PrebuilderMainPkg + "/main.go"), Source: i.buildtoolMainSrc()},
 	)
 }
 
@@ -109,7 +109,7 @@ func (i constructproj) appMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typapp")
 	src.Imports.Add("", i.Pkg+"/typical")
-	src.Imports.Add("_", i.Pkg+"/internal/dependency")
+	src.Imports.Add("_", i.Pkg+typenv.DependencyPkg)
 	src.Append("typapp.Run(typical.Context)")
 	return
 }
@@ -126,7 +126,7 @@ func (i constructproj) buildtoolMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typbuildtool")
 	src.Imports.Add("", i.Pkg+"/typical")
-	src.Imports.Add("_", i.Pkg+"/internal/dependency")
+	src.Imports.Add("_", i.Pkg+typenv.DependencyPkg)
 	src.Append("typbuildtool.Run(typical.Context)")
 	return
 }
@@ -143,7 +143,7 @@ func (i constructproj) ignoreFile() error {
 
 func (i constructproj) dependencyPackage() error {
 	return runn.Execute(
-		runner.Mkdir{Path: i.Path("internal/dependency")},
+		runner.Mkdir{Path: i.Path(typenv.DependencyPkg)},
 		runner.WriteString{
 			Target:     i.Path("internal/dependency/constructor.go"),
 			Permission: 0644,
