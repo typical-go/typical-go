@@ -20,7 +20,7 @@ fi
 if [ "$CHECKSUM_UPDATED" == "1" ] || ! [[ -f $BIN/$PRE_BUILDER ]] ; then 
 	echo $CHECKSUM_DATA > $CHECKSUM_PATH
 	echo "Build the pre-builder"
-	go build -o $BIN/$PRE_BUILDER ./$CMD/$PRE_BUILDER
+	go build -tags typical -o $BIN/$PRE_BUILDER ./$CMD/$PRE_BUILDER
 fi
 
 ./$BIN/$PRE_BUILDER $CHECKSUM_UPDATED

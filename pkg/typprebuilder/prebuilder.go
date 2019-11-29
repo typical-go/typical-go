@@ -38,10 +38,9 @@ func (p *prebuilder) Initiate(ctx *typctx.Context) (err error) {
 	}
 	p.ApplicationImports.Append(coll.KeyString{String: p.ContextImport})
 	p.ConfigFields = ConfigFields(ctx)
-	for _, command := range typbuildtool.ModuleCommands(ctx) {
-		for _, subcommand := range command.Subcommands {
-			s := fmt.Sprintf("%s_%s", command.Name, subcommand.Name)
-			p.BuildCommands = append(p.BuildCommands, s)
+	for _, cmd := range typbuildtool.ModuleCommands(ctx) {
+		for _, subcmd := range cmd.Subcommands {
+			p.BuildCommands = append(p.BuildCommands, fmt.Sprintf("%s_%s", cmd.Name, subcmd.Name))
 		}
 	}
 	return
