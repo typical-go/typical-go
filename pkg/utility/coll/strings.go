@@ -36,7 +36,7 @@ func (s Strings) Sorted() *Strings {
 	return &s
 }
 
-// ToSlice to convert back to slice of string
-func (s Strings) ToSlice() []string {
+// Slice of string
+func (s Strings) Slice() []string {
 	return []string(s)
 }
