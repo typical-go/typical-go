@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/google/go-github/v27/github"
+	"github.com/google/go-github/github"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/typical-go/typical-go/pkg/typenv"
