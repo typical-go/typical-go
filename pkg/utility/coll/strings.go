@@ -30,13 +30,13 @@ func (s *Strings) IsEmpty() bool {
 	return len(*s) < 1
 }
 
-// Sorted version
-func (s Strings) Sorted() *Strings {
-	sort.Strings(s)
-	return &s
+// Sort the slice
+func (s *Strings) Sort() *Strings {
+	sort.Strings(*s)
+	return s
 }
 
 // Slice of string
-func (s Strings) Slice() []string {
-	return []string(s)
+func (s *Strings) Slice() []string {
+	return *s
 }
