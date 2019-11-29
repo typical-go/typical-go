@@ -44,5 +44,5 @@ func (t buildtool) generateMock(ctx *cli.Context) (err error) {
 			errs.Append(err)
 		}
 	}
-	return errs.ToError()
+	return errs.Unwrap()
 }

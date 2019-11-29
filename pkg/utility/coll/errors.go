@@ -26,9 +26,9 @@ func (e Errors) Join(sep string) string {
 	return b.String()
 }
 
-// ToError convert errors to error type
-func (e Errors) ToError() error {
-	if len(e) < 1 {
+// Unwrap to error type https://blog.golang.org/go1.13-errors#TOC_3.1.
+func (e *Errors) Unwrap() error {
+	if len(*e) < 1 {
 		return nil
 	}
 	return errors.New(e.Join("; "))
