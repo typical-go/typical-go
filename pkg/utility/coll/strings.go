@@ -1,11 +1,18 @@
 package coll
 
 import (
+	"sort"
 	"strings"
 )
 
 // Strings is slice of string
 type Strings []string
+
+// NewStrings return new string
+func NewStrings(item ...string) *Strings {
+	var s Strings
+	return s.Append(item...)
+}
 
 // Append item
 func (s *Strings) Append(item ...string) *Strings {
@@ -21,4 +28,15 @@ func (s *Strings) Join(sep string) string {
 // IsEmpty return true is no element
 func (s *Strings) IsEmpty() bool {
 	return len(*s) < 1
+}
+
+// Sorted version
+func (s Strings) Sorted() *Strings {
+	sort.Strings(s)
+	return &s
+}
+
+// ToSlice to convert back to slice of string
+func (s Strings) ToSlice() []string {
+	return []string(s)
 }

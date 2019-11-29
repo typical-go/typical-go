@@ -10,21 +10,27 @@ import (
 func TestStrings_Append(t *testing.T) {
 	testcases := []struct {
 		*coll.Strings
-		i []string
+		slice  []string
+		sorted *coll.Strings
 	}{
 		{
-			Strings: new(coll.Strings).
-				Append("hello", "world"),
-			i: []string{"hello", "world"},
+			Strings: new(coll.Strings).Append("hello", "world"),
+			slice:   []string{"hello", "world"},
+			sorted:  coll.NewStrings("hello", "world"),
 		},
 		{
-			Strings: new(coll.Strings).
-				Append("hello").
-				Append("world"),
-			i: []string{"hello", "world"},
+			Strings: new(coll.Strings).Append("hello").Append("world"),
+			slice:   []string{"hello", "world"},
+			sorted:  coll.NewStrings("hello", "world"),
+		},
+		{
+			Strings: coll.NewStrings("aaa", "ccc", "bbb"),
+			slice:   []string{"aaa", "ccc", "bbb"},
+			sorted:  coll.NewStrings("aaa", "bbb", "ccc"),
 		},
 	}
 	for _, tt := range testcases {
-		require.EqualValues(t, tt.i, *tt.Strings)
+		require.EqualValues(t, tt.slice, tt.Strings.ToSlice())
+		require.EqualValues(t, tt.sorted, tt.Sorted())
 	}
 }
