@@ -31,6 +31,6 @@ func TestStrings_Append(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		require.EqualValues(t, tt.slice, tt.Strings.Slice())
-		require.EqualValues(t, tt.sorted, tt.Sorted())
+		require.EqualValues(t, tt.sorted, tt.Sort())
 	}
 }

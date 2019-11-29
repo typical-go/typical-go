@@ -9,6 +9,7 @@ func (i *Interfaces) Append(item ...interface{}) *Interfaces {
 	return i
 }
 
+// Slice of interface
 func (i *Interfaces) Slice() []interface{} {
 	return *i
 }
