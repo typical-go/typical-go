@@ -1,12 +1,12 @@
 package typcli
 
 import (
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 // BuildCommander responsible to give command
 type BuildCommander interface {
-	BuildCommand(c Cli) cli.Command
+	BuildCommand(c Cli) *cli.Command
 }
 
 // IsBuildCommander return true if object implementation of BuildCLI

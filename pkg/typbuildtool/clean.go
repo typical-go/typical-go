@@ -5,16 +5,16 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typenv"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
-func (t buildtool) cmdClean() cli.Command {
-	return cli.Command{
-		Name:      "clean",
-		ShortName: "c",
-		Usage:     "Clean the project from generated file during build time",
-		Action:    t.cleanProject,
-		Subcommands: []cli.Command{
+func (t buildtool) cmdClean() *cli.Command {
+	return &cli.Command{
+		Name:    "clean",
+		Aliases: []string{"c"},
+		Usage:   "Clean the project from generated file during build time",
+		Action:  t.cleanProject,
+		Subcommands: []*cli.Command{
 			{Name: "build-tool", Usage: "Remove build-tool", Action: t.removeBuildTool},
 			{Name: "prebuilder", Usage: "Remove prebuilder", Action: t.removePrebuilder},
 			{Name: "app", Usage: "Remove app", Action: t.removeApp},

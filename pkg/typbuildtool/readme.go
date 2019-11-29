@@ -5,11 +5,11 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typenv"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
-func (t buildtool) cmdReadme() cli.Command {
-	return cli.Command{
+func (t buildtool) cmdReadme() *cli.Command {
+	return &cli.Command{
 		Name:   "readme",
 		Usage:  "Generate readme document",
 		Action: t.generateReadme,

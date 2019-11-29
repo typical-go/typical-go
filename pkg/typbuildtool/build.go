@@ -7,15 +7,15 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typenv"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
-func (t buildtool) cmdBuild() cli.Command {
-	return cli.Command{
-		Name:      "build",
-		ShortName: "b",
-		Usage:     "Build the binary",
-		Action:    t.buildBinary,
+func (t buildtool) cmdBuild() *cli.Command {
+	return &cli.Command{
+		Name:    "build",
+		Aliases: []string{"b"},
+		Usage:   "Build the binary",
+		Action:  t.buildBinary,
 	}
 }
 

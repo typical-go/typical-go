@@ -6,16 +6,16 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/utility/runn"
 	"github.com/typical-go/typical-go/pkg/utility/runner"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
-func cmdConstructModule() cli.Command {
-	return cli.Command{
+func cmdConstructModule() *cli.Command {
+	return &cli.Command{
 		Name:      "module",
 		Usage:     "Construct New Module",
 		UsageText: "app module [Name]",
 		Flags: []cli.Flag{
-			cli.StringFlag{Name: "path", Value: "pkg"},
+			&cli.StringFlag{Name: "path", Value: "pkg"},
 		},
 		Action: constructModule,
 	}

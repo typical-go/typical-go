@@ -9,18 +9,15 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/utility/coll"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
-func (t buildtool) cmdMock() cli.Command {
-	return cli.Command{
+func (t buildtool) cmdMock() *cli.Command {
+	return &cli.Command{
 		Name:  "mock",
 		Usage: "Generate mock class",
 		Flags: []cli.Flag{
-			cli.BoolFlag{
-				Name:  "no-delete",
-				Usage: "Generate mock class with delete previous generation",
-			},
+			&cli.BoolFlag{Name: "no-delete", Usage: "Generate mock class with delete previous generation"},
 		},
 		Action: t.generateMock,
 	}

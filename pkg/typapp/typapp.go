@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/typctx"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 // Run the application

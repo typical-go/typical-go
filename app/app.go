@@ -1,10 +1,8 @@
 package app
 
 import (
-	"fmt"
-
 	"github.com/typical-go/typical-go/pkg/typcli"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 const (
@@ -19,17 +17,10 @@ func Module() interface{} {
 
 type module struct{}
 
-func (module) AppCommands(c typcli.Cli) []cli.Command {
-	return []cli.Command{
+func (module) AppCommands(c typcli.Cli) []*cli.Command {
+	return []*cli.Command{
 		cmdConstructProject(),
 		cmdConstructModule(),
 		cmdCreateWrapper(),
-		// {Name: "migrate-me", Usage: "Migrate current project to using framework", Action: underConstruction},
-		// {Name: "upgrade", Usage: "upgrade the typical-go", Action: underConstruction},
-		// {Name: "update", Usage: "Update current project to use latest framework", Action: underConstruction},
 	}
-}
-
-func underConstruction() {
-	fmt.Println("Under Construction")
 }

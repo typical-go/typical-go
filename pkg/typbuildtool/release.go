@@ -3,30 +3,18 @@ package typbuildtool
 import (
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typrls"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
-func (t buildtool) cmdRelease() cli.Command {
-	return cli.Command{
+func (t buildtool) cmdRelease() *cli.Command {
+	return &cli.Command{
 		Name:  "release",
 		Usage: "Release the distribution",
 		Flags: []cli.Flag{
-			cli.BoolFlag{
-				Name:  "no-test",
-				Usage: "Release without run automated test",
-			},
-			cli.BoolFlag{
-				Name:  "no-publish",
-				Usage: "Release without create github release",
-			},
-			cli.BoolFlag{
-				Name:  "force",
-				Usage: "Release by passed all validation",
-			},
-			cli.BoolFlag{
-				Name:  "alpha",
-				Usage: "Release for alpha version",
-			},
+			&cli.BoolFlag{Name: "no-test", Usage: "Release without run automated test"},
+			&cli.BoolFlag{Name: "no-publish", Usage: "Release without create github release"},
+			&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
+			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 		},
 		Action: t.releaseDistribution,
 	}

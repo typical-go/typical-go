@@ -2,7 +2,7 @@ package typcli
 
 import (
 	"github.com/typical-go/typical-go/pkg/utility/envfile"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 // LoadEnvFile is cli version of LoadEnvFile

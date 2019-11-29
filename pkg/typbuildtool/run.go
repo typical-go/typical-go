@@ -7,13 +7,13 @@ import (
 	"github.com/typical-go/typical-go/pkg/typenv"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
-func (t buildtool) cmdRun() cli.Command {
-	return cli.Command{
+func (t buildtool) cmdRun() *cli.Command {
+	return &cli.Command{
 		Name:            "run",
-		ShortName:       "r",
+		Aliases:         []string{"r"},
 		Usage:           "Run the binary",
 		SkipFlagParsing: true,
 		Action:          t.runBinary,
@@ -25,7 +25,7 @@ func (t buildtool) runBinary(ctx *cli.Context) (err error) {
 		return
 	}
 	log.Info("Run the application")
-	args := []string(ctx.Args())
+	args := []string(ctx.Args().Slice())
 	cmd := exec.Command(typenv.AppBin(t.Name), args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stdout

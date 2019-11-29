@@ -10,16 +10,16 @@ import (
 	"github.com/typical-go/typical-go/pkg/utility/golang"
 	"github.com/typical-go/typical-go/pkg/utility/runn"
 	"github.com/typical-go/typical-go/pkg/utility/runner"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
-func cmdConstructProject() cli.Command {
-	return cli.Command{
+func cmdConstructProject() *cli.Command {
+	return &cli.Command{
 		Name:      "new",
 		Usage:     "Construct New Project",
 		UsageText: "app new [Package]",
 		Flags: []cli.Flag{
-			cli.BoolFlag{Name: "blank", Usage: "Create blank new project"},
+			&cli.BoolFlag{Name: "blank", Usage: "Create blank new project"},
 		},
 		Action: constructProject,
 	}

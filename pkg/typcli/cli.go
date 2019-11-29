@@ -9,7 +9,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typmodule"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 	"go.uber.org/dig"
 )
 

@@ -7,7 +7,7 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typcli"
 	"github.com/typical-go/typical-go/pkg/typctx"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 // Run the build tool
@@ -26,10 +26,10 @@ func Run(c *typctx.Context) {
 }
 
 // ModuleCommands return list of command
-func ModuleCommands(ctx *typctx.Context) (cmds []cli.Command) {
+func ModuleCommands(ctx *typctx.Context) (cmds []*cli.Command) {
 	for _, module := range ctx.AllModule() {
 		if cmd := Command(ctx, module); cmd != nil {
-			cmds = append(cmds, *cmd)
+			cmds = append(cmds, cmd)
 		}
 	}
 	return
@@ -38,12 +38,10 @@ func ModuleCommands(ctx *typctx.Context) (cmds []cli.Command) {
 // Command of module
 func Command(ctx *typctx.Context, obj interface{}) *cli.Command {
 	if commander, ok := obj.(typcli.BuildCommander); ok {
-		cmd := commander.BuildCommand(typcli.NewContextCli(ctx))
-		return &cmd
+		return commander.BuildCommand(typcli.NewContextCli(ctx))
 	}
 	if commander, ok := obj.(typcli.Commander); ok {
-		cmd := commander.Command(typcli.NewCli(ctx, obj))
-		return &cmd
+		return commander.Command(typcli.NewCli(ctx, obj))
 	}
 	return nil
 }
@@ -52,8 +50,8 @@ type buildtool struct {
 	*typctx.Context
 }
 
-func (t buildtool) commands() (cmds []cli.Command) {
-	cmds = []cli.Command{
+func (t buildtool) commands() (cmds []*cli.Command) {
+	cmds = []*cli.Command{
 		t.cmdBuild(),
 		t.cmdClean(),
 		t.cmdRun(),

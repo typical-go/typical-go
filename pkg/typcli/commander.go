@@ -1,10 +1,10 @@
 package typcli
 
-import "github.com/urfave/cli"
+import "github.com/urfave/cli/v2"
 
 // Commander responsible to command
 type Commander interface {
-	Command(c Cli) cli.Command
+	Command(c Cli) *cli.Command
 }
 
 // IsCommander return true if obj implement commander

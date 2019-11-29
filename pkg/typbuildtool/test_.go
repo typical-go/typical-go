@@ -5,15 +5,15 @@ import (
 	"os/exec"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
-func (t buildtool) cmdTest() cli.Command {
-	return cli.Command{
-		Name:      "test",
-		ShortName: "t",
-		Usage:     "Run the testing",
-		Action:    t.runTesting,
+func (t buildtool) cmdTest() *cli.Command {
+	return &cli.Command{
+		Name:    "test",
+		Aliases: []string{"t"},
+		Usage:   "Run the testing",
+		Action:  t.runTesting,
 	}
 }
 
