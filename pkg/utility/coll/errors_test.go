@@ -54,7 +54,7 @@ func TestErrors(t *testing.T) {
 	for i, tt := range testcases {
 		require.EqualValues(t, tt.errors, *tt.Errors)
 		require.Equal(t, tt.msg, tt.Join(tt.sep), i)
-		if err := tt.ToError(); err != nil {
+		if err := tt.Unwrap(); err != nil {
 			require.EqualError(t, err, tt.error.Error(), i)
 		} else {
 			require.NoError(t, err, i)
