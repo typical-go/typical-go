@@ -10,22 +10,22 @@ import (
 func TestInterfaces_Append(t *testing.T) {
 	testcases := []struct {
 		*coll.Interfaces
-		i []interface{}
+		slice []interface{}
 	}{
 		{
 			Interfaces: new(coll.Interfaces).
 				Append("some-item", 88, 3.14),
-			i: []interface{}{"some-item", 88, 3.14},
+			slice: []interface{}{"some-item", 88, 3.14},
 		},
 		{
 			Interfaces: new(coll.Interfaces).
 				Append("some-item").
 				Append(88).
 				Append(3.14),
-			i: []interface{}{"some-item", 88, 3.14},
+			slice: []interface{}{"some-item", 88, 3.14},
 		},
 	}
 	for _, tt := range testcases {
-		require.EqualValues(t, tt.i, *tt.Interfaces)
+		require.EqualValues(t, tt.slice, tt.Interfaces.Slice())
 	}
 }
