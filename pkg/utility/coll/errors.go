@@ -15,9 +15,9 @@ func (e *Errors) Append(errs ...error) *Errors {
 }
 
 // Join list of item to string
-func (e Errors) Join(sep string) string {
+func (e *Errors) Join(sep string) string {
 	var b strings.Builder
-	for i, err := range e {
+	for i, err := range *e {
 		if i > 0 {
 			b.WriteString(sep)
 		}
@@ -32,4 +32,9 @@ func (e *Errors) Unwrap() error {
 		return nil
 	}
 	return errors.New(e.Join("; "))
+}
+
+// Slice of error
+func (e *Errors) Slice() []error {
+	return *e
 }

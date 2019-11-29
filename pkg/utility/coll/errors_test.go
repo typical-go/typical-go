@@ -12,10 +12,10 @@ import (
 func TestErrors(t *testing.T) {
 	testcases := []struct {
 		*coll.Errors
-		errors []error
-		sep    string
-		msg    string
-		error  error
+		slice []error
+		sep   string
+		msg   string
+		error error
 	}{
 		{
 			Errors: new(coll.Errors).Append(
@@ -23,7 +23,7 @@ func TestErrors(t *testing.T) {
 				errors.New("error2"),
 				errors.New("error3"),
 			),
-			errors: []error{
+			slice: []error{
 				errors.New("error1"),
 				errors.New("error2"),
 				errors.New("error3"),
@@ -36,7 +36,7 @@ func TestErrors(t *testing.T) {
 			Errors: new(coll.Errors).
 				Append(errors.New("error1")).
 				Append(errors.New("error2")),
-			errors: []error{
+			slice: []error{
 				errors.New("error1"),
 				errors.New("error2"),
 			},
@@ -46,13 +46,13 @@ func TestErrors(t *testing.T) {
 		},
 		{
 			Errors: &coll.Errors{},
-			errors: []error{},
+			slice:  []error{},
 			msg:    "",
 			error:  nil,
 		},
 	}
 	for i, tt := range testcases {
-		require.EqualValues(t, tt.errors, *tt.Errors)
+		require.EqualValues(t, tt.slice, tt.Errors.Slice())
 		require.Equal(t, tt.msg, tt.Join(tt.sep), i)
 		if err := tt.Unwrap(); err != nil {
 			require.EqualError(t, err, tt.error.Error(), i)
