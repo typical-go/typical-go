@@ -10,7 +10,7 @@ import (
 func TestKeyStrings(t *testing.T) {
 	testcases := []struct {
 		*coll.KeyStrings
-		i []coll.KeyString
+		slice []coll.KeyString
 	}{
 		{
 			KeyStrings: new(coll.KeyStrings).Append(
@@ -18,7 +18,7 @@ func TestKeyStrings(t *testing.T) {
 				coll.KeyString{"key-2", "string-2"},
 				coll.KeyString{"key-3", "string-3"},
 			),
-			i: []coll.KeyString{
+			slice: []coll.KeyString{
 				coll.KeyString{"key-1", "string-1"},
 				coll.KeyString{"key-2", "string-2"},
 				coll.KeyString{"key-3", "string-3"},
@@ -29,7 +29,7 @@ func TestKeyStrings(t *testing.T) {
 				Append(coll.KeyString{"key-1", "string-1"}).
 				Append(coll.KeyString{"key-2", "string-2"}).
 				Append(coll.KeyString{"key-3", "string-3"}),
-			i: []coll.KeyString{
+			slice: []coll.KeyString{
 				coll.KeyString{"key-1", "string-1"},
 				coll.KeyString{"key-2", "string-2"},
 				coll.KeyString{"key-3", "string-3"},
@@ -37,6 +37,6 @@ func TestKeyStrings(t *testing.T) {
 		},
 	}
 	for i, tt := range testcases {
-		require.EqualValues(t, tt.i, *tt.KeyStrings, i)
+		require.EqualValues(t, tt.slice, tt.KeyStrings.Slice(), i)
 	}
 }

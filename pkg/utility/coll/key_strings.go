@@ -14,3 +14,8 @@ func (k *KeyStrings) Add(key, s string) *KeyStrings {
 	k.Append(KeyString{Key: key, String: s})
 	return k
 }
+
+// Slice of Key-String
+func (k *KeyStrings) Slice() []KeyString {
+	return *k
+}
