@@ -4,7 +4,7 @@ import "github.com/urfave/cli/v2"
 
 // ModuleCommander responsible to command
 type ModuleCommander interface {
-	Command(c *ModuleCli) *cli.Command
+	Commands(c *ModuleCli) []*cli.Command
 }
 
 // IsModuleCommander return true if obj implement commander
