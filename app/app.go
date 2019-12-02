@@ -7,7 +7,7 @@ import (
 
 const (
 	// Version of Typical-Go
-	Version = "0.9.5"
+	Version = "0.9.6"
 )
 
 // Module of application
@@ -17,7 +17,7 @@ func Module() interface{} {
 
 type module struct{}
 
-func (module) AppCommands(c typcli.Cli) []*cli.Command {
+func (module) Commands(c *typcli.AppCli) []*cli.Command {
 	return []*cli.Command{
 		cmdConstructProject(),
 		cmdConstructModule(),

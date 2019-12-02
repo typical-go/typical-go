@@ -28,22 +28,11 @@ func Run(c *typctx.Context) {
 // ModuleCommands return list of command
 func ModuleCommands(ctx *typctx.Context) (cmds []*cli.Command) {
 	for _, module := range ctx.AllModule() {
-		if cmd := Command(ctx, module); cmd != nil {
-			cmds = append(cmds, cmd)
+		if commander, ok := module.(typcli.ModuleCommander); ok {
+			cmds = append(cmds, commander.Command(&typcli.ModuleCli{Context: ctx}))
 		}
 	}
 	return
-}
-
-// Command of module
-func Command(ctx *typctx.Context, obj interface{}) *cli.Command {
-	if commander, ok := obj.(typcli.BuildCommander); ok {
-		return commander.BuildCommand(typcli.NewContextCli(ctx))
-	}
-	if commander, ok := obj.(typcli.Commander); ok {
-		return commander.Command(typcli.NewCli(ctx, obj))
-	}
-	return nil
 }
 
 type buildtool struct {
