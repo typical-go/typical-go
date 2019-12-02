@@ -22,12 +22,6 @@ func (module) Action() interface{} {
 	}
 }
 
-func (m module) Provide() []interface{} {
-	return []interface{}{
-		// TODO: provide functions as the dependencies
-	}
-}
-
 func (module) Configure() (prefix string, spec, loadFn interface{}) {
 	prefix = "APP"
 	spec = &config.Config{}
@@ -161,6 +155,17 @@ func Module() interface{} {
 
 type module struct {}
 
+
+func (module) Configure() (prefix string, spec, loadFn interface{}) {
+	prefix = "{{.Prefix}}"
+	spec = &Config{}
+	loadFn = func(loader typcfg.Loader) (cfg Config, err error) {
+		err = loader.Load(prefix, &cfg)
+		return
+	}
+	return
+}
+
 func (m *module) Provide() []interface{} {
 	return []interface{}{
 		// TODO: functions to be provided as dependency
@@ -177,16 +182,6 @@ func (m *module) Destroy() []interface{} {
 	return []interface{}{
 		// TODO: functions to destroy dependencies
 	}
-}
-
-func (module) Configure() (prefix string, spec, loadFn interface{}) {
-	prefix = "{{.Prefix}}"
-	spec = &Config{}
-	loadFn = func(loader typcfg.Loader) (cfg Config, err error) {
-		err = loader.Load(prefix, &cfg)
-		return
-	}
-	return
 }
 `
 
