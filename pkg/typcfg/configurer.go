@@ -2,7 +2,7 @@ package typcfg
 
 // Configurer responsible to create config
 type Configurer interface {
-	Configure() Configuration
+	Configure() (prefix string, spec interface{}, loadFn interface{})
 }
 
 // IsConfigurer return true if object implementation of configurer

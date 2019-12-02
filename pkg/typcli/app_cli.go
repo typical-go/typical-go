@@ -48,7 +48,7 @@ func (c *AppCli) Action(fn interface{}) func(ctx *cli.Context) error {
 
 func (c *AppCli) provideDependency(di *dig.Container) (err error) {
 	if c.ConfigLoader != nil {
-		if err = provide(di, func() typcfg.Loader { return c.ConfigLoader }); err != nil {
+		if err = di.Provide(loaderFn(c.Context)); err != nil {
 			return
 		}
 	}
@@ -56,6 +56,12 @@ func (c *AppCli) provideDependency(di *dig.Container) (err error) {
 		return
 	}
 	for _, module := range c.AllModule() {
+		if configurer, ok := module.(typcfg.Configurer); ok {
+			_, _, loadFn := configurer.Configure()
+			if err = di.Provide(loadFn); err != nil {
+				return
+			}
+		}
 		if provider, ok := module.(typmodule.Provider); ok {
 			if err = provide(di, provider.Provide()...); err != nil {
 				return
@@ -103,4 +109,10 @@ func provide(di *dig.Container, fns ...interface{}) (err error) {
 		}
 	}
 	return
+}
+
+func loaderFn(c *typctx.Context) interface{} {
+	return func() typcfg.Loader {
+		return c.ConfigLoader
+	}
 }

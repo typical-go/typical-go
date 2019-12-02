@@ -7,12 +7,6 @@ import (
 	"strings"
 )
 
-// Configuration represent the configuration
-type Configuration struct {
-	Prefix string
-	Spec   interface{}
-}
-
 // Field contain field information of spec
 type Field struct {
 	Name     string
@@ -21,20 +15,15 @@ type Field struct {
 	Required bool
 }
 
-// Configure return config itself
-func (c Configuration) Configure() Configuration {
-	return c
-}
-
 // Fields of config
-func (c Configuration) Fields() (infos []Field) {
-	val := reflect.Indirect(reflect.ValueOf(c.Spec))
+func Fields(prefix string, spec interface{}) (infos []Field) {
+	val := reflect.Indirect(reflect.ValueOf(spec))
 	typ := val.Type()
 	for i := 0; i < typ.NumField(); i++ {
 		field := typ.Field(i)
 		if !fieldIgnored(field) {
 			infos = append(infos, Field{
-				Name:     fmt.Sprintf("%s_%s", c.Prefix, fieldName(field)),
+				Name:     fmt.Sprintf("%s_%s", prefix, fieldName(field)),
 				Type:     field.Type.Name(),
 				Default:  fieldDefault(field),
 				Required: fieldRequired(field),
@@ -51,9 +40,9 @@ func fieldRequired(field reflect.StructField) (required bool) {
 	return
 }
 
-func fieldIgnored(field reflect.StructField) (required bool) {
+func fieldIgnored(field reflect.StructField) (ignored bool) {
 	if v, ok := field.Tag.Lookup("ignored"); ok {
-		required, _ = strconv.ParseBool(v)
+		ignored, _ = strconv.ParseBool(v)
 	}
 	return
 }

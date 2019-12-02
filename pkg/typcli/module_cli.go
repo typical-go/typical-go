@@ -14,6 +14,7 @@ import (
 // ModuleCli command line module
 type ModuleCli struct {
 	*typctx.Context
+	module interface{}
 }
 
 // Action to return action function
@@ -27,7 +28,13 @@ func (c ModuleCli) Action(fn interface{}) func(ctx *cli.Context) error {
 			gracefulStop <- syscall.SIGTERM
 		}()
 		if c.ConfigLoader != nil {
-			if err = provide(di, func() typcfg.Loader { return c.ConfigLoader }); err != nil {
+			if err = provide(di, loaderFn(c.Context)); err != nil {
+				return
+			}
+		}
+		if configurer, ok := c.module.(typcfg.Configurer); ok {
+			_, _, loadFn := configurer.Configure()
+			if err = provide(di, loadFn); err != nil {
 				return
 			}
 		}

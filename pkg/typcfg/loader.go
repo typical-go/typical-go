@@ -6,7 +6,7 @@ import (
 
 // Loader responsible to load config
 type Loader interface {
-	Load(Configuration, interface{}) error
+	Load(string, interface{}) error
 }
 
 // DefaultLoader return default config loader
@@ -17,7 +17,7 @@ func DefaultLoader() Loader {
 type defaultLoader struct{}
 
 // Load configuration
-func (defaultLoader) Load(c Configuration, v interface{}) error {
+func (defaultLoader) Load(prefix string, v interface{}) error {
 	// TODO: deprecate envconfig for consitency between doc, envfile and load config
-	return envconfig.Process(c.Prefix, v)
+	return envconfig.Process(prefix, v)
 }

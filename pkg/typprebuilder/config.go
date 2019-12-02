@@ -17,7 +17,8 @@ const (
 func ConfigFields(ctx *typctx.Context) (fields []typcfg.Field) {
 	for _, module := range ctx.AllModule() {
 		if configurer, ok := module.(typcfg.Configurer); ok {
-			fields = append(fields, configurer.Configure().Fields()...)
+			prefix, spec, _ := configurer.Configure()
+			fields = append(fields, typcfg.Fields(prefix, spec)...)
 		}
 	}
 	return
