@@ -14,7 +14,7 @@ import (
 // ModuleCli command line module
 type ModuleCli struct {
 	*typctx.Context
-	module interface{}
+	Module interface{}
 }
 
 // Action to return action function
@@ -32,7 +32,7 @@ func (c ModuleCli) Action(fn interface{}) func(ctx *cli.Context) error {
 				return
 			}
 		}
-		if configurer, ok := c.module.(typcfg.Configurer); ok {
+		if configurer, ok := c.Module.(typcfg.Configurer); ok {
 			_, _, loadFn := configurer.Configure()
 			if err = provide(di, loadFn); err != nil {
 				return
