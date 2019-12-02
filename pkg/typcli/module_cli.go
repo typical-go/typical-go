@@ -27,6 +27,11 @@ func (c ModuleCli) Action(fn interface{}) func(ctx *cli.Context) error {
 		defer func() {
 			gracefulStop <- syscall.SIGTERM
 		}()
+		go func() {
+			<-gracefulStop
+			// NOTE: Make sure the application is exit
+			os.Exit(0)
+		}()
 		if c.ConfigLoader != nil {
 			if err = provide(di, loaderFn(c.Context)); err != nil {
 				return
