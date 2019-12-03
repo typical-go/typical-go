@@ -14,5 +14,8 @@ type WriteString struct {
 
 // Run to write file
 func (w WriteString) Run() (err error) {
+	if w.Permission == 0 {
+		w.Permission = 0644
+	}
 	return ioutil.WriteFile(w.Target, []byte(w.Content), w.Permission)
 }
