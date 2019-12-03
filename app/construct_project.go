@@ -83,7 +83,7 @@ func (i constructproj) typicalContext() error {
 	var writeStmt interface{}
 	path := "typical/context.go"
 	if i.blank {
-		writeStmt = runner.WriteString{Target: i.Path(path), Content: blankCtxSrc, Permission: 0644}
+		writeStmt = runner.WriteTemplate{Target: i.Path(path), Template: blankCtxSrc, Data: i}
 	} else {
 		writeStmt = runner.WriteTemplate{Target: i.Path(path), Template: ctxSrc, Data: i}
 	}

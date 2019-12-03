@@ -66,9 +66,9 @@ import (
 
 // Context of Project
 var Context = &typctx.Context{
-	Name:      "sample",
+	Name:      "{{.Name}}",
 	Version:   "0.0.1",
-	Package:   "sample",
+	Package:   "{{.Pkg}}",
 	AppModule: app.Module(),
 	Releaser: typrls.Releaser{
 		Targets: []typrls.Target{"linux/amd64", "darwin/amd64"},
@@ -86,9 +86,9 @@ import (
 
 // Context of Project
 var Context = &typctx.Context{
-	Name:      "sample",
+	Name:      "{{.Name}}",
 	Version:   "0.0.1",
-	Package:   "sample",
+	Package:   "{{.Pkg}}",
 	Releaser: typrls.Releaser{
 		Targets: []typrls.Target{"linux/amd64", "darwin/amd64"},
 	},
