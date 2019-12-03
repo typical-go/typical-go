@@ -7,18 +7,6 @@ import (
 )
 
 var (
-// appVar        = EnvVar{"TYPICAL_APP", "app"}
-// buildToolVar  = EnvVar{"TYPICAL_BUILD_TOOL", "build-tool"}
-// prebuilderVar = EnvVar{"TYPICAL_PREBUILDER", "pre-builder"}
-// binVar        = EnvVar{"TYPICAL_BIN", "bin"}
-// cmdVar        = EnvVar{"TYPICAL_CMD", "cmd"}
-// mockVar       = EnvVar{"TYPICAL_MOCK", "mock"}
-// releaseVar    = EnvVar{"TYPICAL_RELEASE", "release"}
-// dependencyVar = EnvVar{"TYPICAL_DEPENDENCY", "dependency"}
-// metadataVar   = EnvVar{"TYPICAL_METADATA", ".typical-metadata"}
-)
-
-var (
 	Layout = struct {
 		App      string
 		Bin      string
@@ -36,16 +24,13 @@ var (
 	}
 	Readme = "README.md"
 
-	BuildTool        = "build-tool"
-	BuildToolBin     = Layout.Bin + "/" + BuildTool
-	BuildToolMainPkg = Layout.Cmd + "/" + BuildTool
+	BuildToolBin     = Layout.Bin + "/build-tool"
+	BuildToolMainPkg = Layout.Cmd + "/build-tool"
 
-	Prebuilder        = "pre-builder"
-	PrebuilderBin     = Layout.Cmd + "/" + Prebuilder
-	PrebuilderMainPkg = Layout.Bin + "/" + Prebuilder
+	PrebuilderBin     = Layout.Cmd + "/pre-builder"
+	PrebuilderMainPkg = Layout.Bin + "/pre-builder"
 
-	Dependency    = "dependency"
-	DependencyPkg = "internal/" + Dependency
+	DependencyPkg = "internal/dependency"
 )
 
 // AppMainPkg return main package of application
