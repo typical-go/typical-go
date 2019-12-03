@@ -26,17 +26,20 @@ var (
 	Readme = "README.md"
 	Name   = name()
 
-	AppBin     = fmt.Sprintf("%s/%s", Layout.Bin, Name)
-	AppMainPkg = fmt.Sprintf("%s/%s", Layout.Cmd, Name)
+	AppBin      = fmt.Sprintf("%s/%s", Layout.Bin, Name)
+	AppMainPath = fmt.Sprintf("%s/%s", Layout.Cmd, Name)
 
-	BuildToolBin     = fmt.Sprintf("%s/%s-buildtool", Layout.Bin, Name)
-	BuildToolMainPkg = fmt.Sprintf("%s/%s-buildtool", Layout.Cmd, Name)
+	BuildToolBin      = fmt.Sprintf("%s/%s-buildtool", Layout.Bin, Name)
+	BuildToolMainPath = fmt.Sprintf("%s/%s-buildtool", Layout.Cmd, Name)
 
-	PrebuilderBin     = fmt.Sprintf("%s/%s-prebuilder", Layout.Bin, Name)
-	PrebuilderMainPkg = fmt.Sprintf("%s/%s-prebuilder", Layout.Cmd, Name)
+	PrebuilderBin      = fmt.Sprintf("%s/%s-prebuilder", Layout.Bin, Name)
+	PrebuilderMainPath = fmt.Sprintf("%s/%s-prebuilder", Layout.Cmd, Name)
 
-	Dependency    = "dependency"
-	DependencyPkg = fmt.Sprintf("internal/%s", Dependency)
+	Dependency     = "dependency"
+	DependencyPath = fmt.Sprintf("internal/%s", Dependency)
+
+	ContextFile  = "typical/context.go"
+	ChecksumFile = Layout.Metadata + "/checksum"
 )
 
 func name() (s string) {

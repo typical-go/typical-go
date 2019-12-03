@@ -98,30 +98,23 @@ var Context = &typctx.Context{
 const typicalw = `#!/bin/bash
 set -e
 
-BIN=${TYPICAL_BIN:-bin}
-CMD=${TYPICAL_CMD:-cmd}
-BUILD_TOOL=${TYPICAL_BUILD_TOOL:-build-tool}
-PRE_BUILDER=${TYPICAL_PRE_BUILDER:-pre-builder}
-METADATA=${TYPICAL_METADATA:-.typical-metadata}
+CHECKSUM_DATA=$(cksum {{.ContextFile}})
 
-CHECKSUM_PATH="$METADATA/checksum "
-CHECKSUM_DATA=$(cksum typical/context.go)
-
-if ! [ -s .typical-metadata/checksum ]; then
-	mkdir -p $METADATA
-	cksum typical/context.go > $CHECKSUM_PATH
+if ! [ -s {{.ChecksumFile}} ]; then
+	mkdir -p {{.LayoutMetadata}}
+	cksum typical/context.go > {{.ChecksumFile}}
 else
-	CHECKSUM_UPDATED=$([ "$CHECKSUM_DATA" == "$(cat $CHECKSUM_PATH )" ] ; echo $?)
+	CHECKSUM_UPDATED=$([ "$CHECKSUM_DATA" == "$(cat {{.ChecksumFile}} )" ] ; echo $?)
 fi
 
-if [ "$CHECKSUM_UPDATED" == "1" ] || ! [[ -f $BIN/$PRE_BUILDER ]] ; then 
-	echo $CHECKSUM_DATA > $CHECKSUM_PATH
-	echo "Build the pre-builder"
-	go build -o $BIN/$PRE_BUILDER ./$CMD/$PRE_BUILDER
+if [ "$CHECKSUM_UPDATED" == "1" ] || ! [[ -f {{.PrebuilderBin}} ]] ; then 
+	echo $CHECKSUM_DATA > {{.ChecksumFile}}
+	echo "Build the prebuilder"
+	go build -o {{.PrebuilderBin}} ./{{.PrebuilderMainPath}}
 fi
 
-./$BIN/$PRE_BUILDER $CHECKSUM_UPDATED
-./$BIN/$BUILD_TOOL $@`
+./{{.PrebuilderBin}} $CHECKSUM_UPDATED
+./{{.BuildtoolBin}} $@`
 
 const gomod = `module {{.Pkg}}
 

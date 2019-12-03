@@ -96,12 +96,12 @@ func (i constructproj) typicalContext() error {
 func (i constructproj) cmdPackage() error {
 	return runn.Execute(
 		runner.Mkdir{Path: i.Path(typenv.Layout.Cmd)},
-		runner.Mkdir{Path: i.Path(typenv.AppMainPkg)},
-		runner.Mkdir{Path: i.Path(typenv.BuildToolMainPkg)},
-		runner.Mkdir{Path: i.Path(typenv.PrebuilderMainPkg)},
-		runner.WriteSource{Target: i.Path(typenv.AppMainPkg + "/main.go"), Source: i.appMainSrc()},
-		runner.WriteSource{Target: i.Path(typenv.PrebuilderMainPkg + "/main.go"), Source: i.prebuilderMainSrc()},
-		runner.WriteSource{Target: i.Path(typenv.BuildToolMainPkg + "/main.go"), Source: i.buildtoolMainSrc()},
+		runner.Mkdir{Path: i.Path(typenv.AppMainPath)},
+		runner.Mkdir{Path: i.Path(typenv.BuildToolMainPath)},
+		runner.Mkdir{Path: i.Path(typenv.PrebuilderMainPath)},
+		runner.WriteSource{Target: i.Path(typenv.AppMainPath + "/main.go"), Source: i.appMainSrc()},
+		runner.WriteSource{Target: i.Path(typenv.PrebuilderMainPath + "/main.go"), Source: i.prebuilderMainSrc()},
+		runner.WriteSource{Target: i.Path(typenv.BuildToolMainPath + "/main.go"), Source: i.buildtoolMainSrc()},
 	)
 }
 
@@ -109,7 +109,7 @@ func (i constructproj) appMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typapp")
 	src.Imports.Add("", i.Pkg+"/typical")
-	src.Imports.Add("_", i.Pkg+"/"+typenv.DependencyPkg)
+	src.Imports.Add("_", i.Pkg+"/"+typenv.DependencyPath)
 	src.Append("typapp.Run(typical.Context)")
 	return
 }
@@ -126,7 +126,7 @@ func (i constructproj) buildtoolMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typbuildtool")
 	src.Imports.Add("", i.Pkg+"/typical")
-	src.Imports.Add("_", i.Pkg+"/"+typenv.DependencyPkg)
+	src.Imports.Add("_", i.Pkg+"/"+typenv.DependencyPath)
 	src.Append("typbuildtool.Run(typical.Context)")
 	return
 }
@@ -143,11 +143,11 @@ func (i constructproj) ignoreFile() error {
 
 func (i constructproj) dependencyPackage() error {
 	return runn.Execute(
-		runner.Mkdir{Path: i.Path(typenv.DependencyPkg)},
+		runner.Mkdir{Path: i.Path(typenv.DependencyPath)},
 		runner.WriteString{
-			Target:     i.Path("internal/dependency/constructor.go"),
+			Target:     i.Path(typenv.DependencyPath + "/constructor.go"),
 			Permission: 0644,
-			Content:    "package dependency",
+			Content:    "package " + typenv.Dependency,
 		},
 	)
 }

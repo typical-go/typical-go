@@ -85,7 +85,7 @@ func (r *Releaser) build(name, tag string, target Target) (binary string, err er
 	cmd := exec.Command("go", "build",
 		"-o", fmt.Sprintf("%s/%s", typenv.Layout.Release, binary),
 		"-ldflags", "-w -s",
-		"./"+typenv.AppMainPkg,
+		"./"+typenv.AppMainPath,
 	)
 	cmd.Env = append(os.Environ(), "GOOS="+goos, "GOARCH="+goarch)
 	cmd.Stdout = os.Stdout

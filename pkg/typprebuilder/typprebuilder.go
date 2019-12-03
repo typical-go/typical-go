@@ -14,12 +14,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/utility/filekit"
 )
 
-var (
-	buildTool = typenv.BuildToolMainPkg
-)
-
 const (
-	ctxPath  = "typical/context.go"
 	debugEnv = "PREBUILDER_DEBUG"
 )
 
@@ -28,7 +23,7 @@ func Run(ctx *typctx.Context) {
 	var err error
 	var preb prebuilder
 	os.Mkdir(typenv.Layout.Metadata, 0700)
-	os.Mkdir(typenv.DependencyPkg, 0700)
+	os.Mkdir(typenv.DependencyPath, 0700)
 	checker := checker{
 		Context:         ctx,
 		contextChecksum: contextChecksum(),
@@ -75,7 +70,7 @@ func Run(ctx *typctx.Context) {
 		log.Info("Build the build-tool")
 		cmd := exec.Command("go", "build",
 			"-o", typenv.BuildToolBin,
-			"./"+typenv.BuildToolMainPkg,
+			"./"+typenv.BuildToolMainPath,
 		)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr

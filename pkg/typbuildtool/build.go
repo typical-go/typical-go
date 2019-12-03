@@ -23,7 +23,7 @@ func (t buildtool) buildBinary(ctx *cli.Context) error {
 	log.Info("Build the application")
 	cmd := exec.Command("go", "build",
 		"-o", typenv.AppBin,
-		"./"+typenv.AppMainPkg,
+		"./"+typenv.AppMainPath,
 	)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

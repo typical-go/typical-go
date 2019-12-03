@@ -61,7 +61,7 @@ func (t buildtool) removeEnvFile(ctx *cli.Context) error {
 }
 
 func (t buildtool) removeDependency(ctx *cli.Context) error {
-	removeAllFile(typenv.DependencyPkg)
+	removeAllFile(typenv.DependencyPath)
 	return nil
 }
 
