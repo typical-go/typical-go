@@ -116,7 +116,6 @@ func (i constructproj) appMainSrc() (src *golang.MainSource) {
 
 func (i constructproj) prebuilderMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
-	src.BuildConstraints.Append("typical")
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typprebuilder")
 	src.Imports.Add("", i.Pkg+"/typical")
 	src.Append("typprebuilder.Run(typical.Context)")
@@ -125,7 +124,6 @@ func (i constructproj) prebuilderMainSrc() (src *golang.MainSource) {
 
 func (i constructproj) buildtoolMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
-	src.BuildConstraints.Append("typical")
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typbuildtool")
 	src.Imports.Add("", i.Pkg+"/typical")
 	src.Imports.Add("_", i.Pkg+"/"+typenv.DependencyPkg)

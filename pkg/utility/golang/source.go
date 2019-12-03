@@ -10,12 +10,11 @@ import (
 
 // Source is source code recipe for generated.go in typical package
 type Source struct {
-	BuildConstraints coll.Strings
-	Package          string
-	Imports          coll.KeyStrings
-	Structs          []Struct
-	Init             *Function
-	Writables        []interface {
+	Package   string
+	Imports   coll.KeyStrings
+	Structs   []Struct
+	Init      *Function
+	Writables []interface {
 		Write(w io.Writer) error
 	}
 }
@@ -29,9 +28,6 @@ func NewSource(pkg string) *Source {
 }
 
 func (r Source) Write(w io.Writer) (err error) {
-	if len(r.BuildConstraints) > 0 {
-		fmt.Fprintf(w, "// +build %s\n\n", r.BuildConstraints.Join(" "))
-	}
 	fmt.Fprintf(w, "package %s\n", r.Package)
 
 	for _, ks := range r.Imports {

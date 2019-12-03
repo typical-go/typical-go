@@ -74,7 +74,6 @@ func Run(ctx *typctx.Context) {
 	if checker.checkBuildTool() {
 		log.Info("Build the build-tool")
 		cmd := exec.Command("go", "build",
-			"-tags", "typical",
 			"-o", typenv.BuildToolBin,
 			"./"+typenv.BuildToolMainPkg,
 		)
