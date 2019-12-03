@@ -1,7 +1,6 @@
 package envfile
 
 import (
-	"fmt"
 	"os"
 	"strings"
 
@@ -25,15 +24,17 @@ func Load() (err error) {
 			return
 		}
 	}
-	var b strings.Builder
+
 	if len(envMap) > 0 {
-		b.WriteString(fmt.Sprintf("Load environments %s: ", configSource))
+		log.Infof("Load environments %s", configSource)
+		var b strings.Builder
 		for key, value := range envMap {
 			if err = os.Setenv(key, value); err != nil {
 				return
 			}
+			b.WriteString("+")
 			b.WriteString(key)
-			b.WriteString("; ")
+			b.WriteString(" ")
 		}
 		log.Info(b.String())
 	}
