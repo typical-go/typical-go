@@ -94,14 +94,17 @@ func (i constructproj) typicalContext() error {
 }
 
 func (i constructproj) cmdPackage() error {
+	appMainPath := fmt.Sprintf("%s/%s", typenv.Layout.Cmd, i.Name)
+	buildtoolMainPath := fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, i.Name, typenv.BuildTool)
+	prebuilderMainPath := fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, i.Name, typenv.Prebuilder)
 	return runn.Execute(
 		runner.Mkdir{Path: i.Path(typenv.Layout.Cmd)},
-		runner.Mkdir{Path: i.Path(typenv.AppMainPath)},
-		runner.Mkdir{Path: i.Path(typenv.BuildToolMainPath)},
-		runner.Mkdir{Path: i.Path(typenv.PrebuilderMainPath)},
-		runner.WriteSource{Target: i.Path(typenv.AppMainPath + "/main.go"), Source: i.appMainSrc()},
-		runner.WriteSource{Target: i.Path(typenv.PrebuilderMainPath + "/main.go"), Source: i.prebuilderMainSrc()},
-		runner.WriteSource{Target: i.Path(typenv.BuildToolMainPath + "/main.go"), Source: i.buildtoolMainSrc()},
+		runner.Mkdir{Path: i.Path(appMainPath)},
+		runner.Mkdir{Path: i.Path(buildtoolMainPath)},
+		runner.Mkdir{Path: i.Path(prebuilderMainPath)},
+		runner.WriteSource{Target: i.Path(appMainPath + "/main.go"), Source: i.appMainSrc()},
+		runner.WriteSource{Target: i.Path(prebuilderMainPath + "/main.go"), Source: i.prebuilderMainSrc()},
+		runner.WriteSource{Target: i.Path(buildtoolMainPath + "/main.go"), Source: i.buildtoolMainSrc()},
 	)
 }
 

@@ -1,6 +1,10 @@
 package app
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
+
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/utility/runn"
 	"github.com/typical-go/typical-go/pkg/utility/runner"
@@ -25,6 +29,14 @@ func createWrapper(ctx *cli.Context) error {
 }
 
 func wrapperRunner(path string) runn.Runner {
+	var name string
+	if path == "." {
+		dir, _ := os.Getwd()
+		name = filepath.Base(dir)
+	} else {
+		name = filepath.Base(path)
+	}
+
 	return runner.WriteTemplate{
 		Target:     path + "/typicalw",
 		Permission: 0700,
@@ -40,9 +52,9 @@ func wrapperRunner(path string) runn.Runner {
 			ContextFile:        typenv.ContextFile,
 			ChecksumFile:       typenv.ChecksumFile,
 			LayoutMetadata:     typenv.Layout.Metadata,
-			PrebuilderBin:      typenv.PrebuilderBin,
-			PrebuilderMainPath: typenv.PrebuilderMainPath,
-			BuildtoolBin:       typenv.BuildToolBin,
+			PrebuilderBin:      fmt.Sprintf("%s/%s-%s", typenv.Layout.Bin, name, typenv.Prebuilder),
+			PrebuilderMainPath: fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, name, typenv.Prebuilder),
+			BuildtoolBin:       fmt.Sprintf("%s/%s-%s", typenv.Layout.Bin, name, typenv.BuildTool),
 		},
 	}
 }

@@ -29,11 +29,13 @@ var (
 	AppBin      = fmt.Sprintf("%s/%s", Layout.Bin, Name)
 	AppMainPath = fmt.Sprintf("%s/%s", Layout.Cmd, Name)
 
-	BuildToolBin      = fmt.Sprintf("%s/%s-buildtool", Layout.Bin, Name)
-	BuildToolMainPath = fmt.Sprintf("%s/%s-buildtool", Layout.Cmd, Name)
+	BuildTool         = "buildtool"
+	BuildToolBin      = fmt.Sprintf("%s/%s-%s", Layout.Bin, Name, BuildTool)
+	BuildToolMainPath = fmt.Sprintf("%s/%s-%s", Layout.Cmd, Name, BuildTool)
 
-	PrebuilderBin      = fmt.Sprintf("%s/%s-prebuilder", Layout.Bin, Name)
-	PrebuilderMainPath = fmt.Sprintf("%s/%s-prebuilder", Layout.Cmd, Name)
+	Prebuilder         = "prebuilder"
+	PrebuilderBin      = fmt.Sprintf("%s/%s-%s", Layout.Bin, Name, Prebuilder)
+	PrebuilderMainPath = fmt.Sprintf("%s/%s-%s", Layout.Cmd, Name, Prebuilder)
 
 	Dependency     = "dependency"
 	DependencyPath = fmt.Sprintf("internal/%s", Dependency)
