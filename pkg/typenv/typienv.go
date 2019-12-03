@@ -24,11 +24,11 @@ var (
 	}
 	Readme = "README.md"
 
-	BuildToolBin     = Layout.Bin + "/build-tool"
-	BuildToolMainPkg = Layout.Cmd + "/build-tool"
+	BuildToolBin     = fmt.Sprintf("%s/build-tool", Layout.Bin)
+	BuildToolMainPkg = fmt.Sprintf("%s/build-tool", Layout.Cmd)
 
-	PrebuilderBin     = Layout.Cmd + "/pre-builder"
-	PrebuilderMainPkg = Layout.Bin + "/pre-builder"
+	PrebuilderBin     = fmt.Sprintf("%s/pre-builder", Layout.Bin)
+	PrebuilderMainPkg = fmt.Sprintf("%s/pre-builder", Layout.Cmd)
 
 	DependencyPkg = "internal/dependency"
 )
