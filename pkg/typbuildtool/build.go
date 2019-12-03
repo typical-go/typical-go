@@ -22,8 +22,8 @@ func (t buildtool) cmdBuild() *cli.Command {
 func (t buildtool) buildBinary(ctx *cli.Context) error {
 	log.Info("Build the application")
 	cmd := exec.Command("go", "build",
-		"-o", typenv.AppBin(t.Name),
-		"./"+typenv.AppMainPkg(t.Name),
+		"-o", typenv.AppBin,
+		"./"+typenv.AppMainPkg,
 	)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

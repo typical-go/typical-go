@@ -2,8 +2,8 @@ package typenv
 
 import (
 	"fmt"
-
-	"github.com/iancoleman/strcase"
+	"os"
+	"path/filepath"
 )
 
 var (
@@ -24,21 +24,24 @@ var (
 	}
 	Readme = "README.md"
 
+	App        = name()
+	AppBin     = fmt.Sprintf("%s/%s", Layout.Bin, App)
+	AppMainPkg = fmt.Sprintf("%s/%s", Layout.Cmd, App)
+
 	BuildToolBin     = fmt.Sprintf("%s/build-tool", Layout.Bin)
 	BuildToolMainPkg = fmt.Sprintf("%s/build-tool", Layout.Cmd)
 
 	PrebuilderBin     = fmt.Sprintf("%s/pre-builder", Layout.Bin)
 	PrebuilderMainPkg = fmt.Sprintf("%s/pre-builder", Layout.Cmd)
 
-	DependencyPkg = "internal/dependency"
+	Dependency    = "dependency"
+	DependencyPkg = fmt.Sprintf("internal/%s", Dependency)
 )
 
-// AppMainPkg return main package of application
-func AppMainPkg(name string) string {
-	return fmt.Sprintf("%s/%s", Layout.Cmd, strcase.ToKebab(name))
-}
-
-// AppBin return bin path of application
-func AppBin(name string) string {
-	return fmt.Sprintf("%s/%s", Layout.Bin, strcase.ToKebab(name))
+func name() (s string) {
+	var err error
+	if s, err = os.Getwd(); err != nil {
+		return "noname"
+	}
+	return filepath.Base(s)
 }

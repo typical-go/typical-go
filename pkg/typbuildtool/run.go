@@ -26,7 +26,7 @@ func (t buildtool) runBinary(ctx *cli.Context) (err error) {
 	}
 	log.Info("Run the application")
 	args := []string(ctx.Args().Slice())
-	cmd := exec.Command(typenv.AppBin(t.Name), args...)
+	cmd := exec.Command(typenv.AppBin, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stdout
 	cmd.Stdin = os.Stdin

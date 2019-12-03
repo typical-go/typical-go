@@ -96,10 +96,10 @@ func (i constructproj) typicalContext() error {
 func (i constructproj) cmdPackage() error {
 	return runn.Execute(
 		runner.Mkdir{Path: i.Path(typenv.Layout.Cmd)},
-		runner.Mkdir{Path: i.Path(typenv.AppMainPkg(i.Name))},
+		runner.Mkdir{Path: i.Path(typenv.AppMainPkg)},
 		runner.Mkdir{Path: i.Path(typenv.BuildToolMainPkg)},
 		runner.Mkdir{Path: i.Path(typenv.PrebuilderMainPkg)},
-		runner.WriteSource{Target: i.Path(typenv.AppMainPkg(i.Name) + "/main.go"), Source: i.appMainSrc()},
+		runner.WriteSource{Target: i.Path(typenv.AppMainPkg + "/main.go"), Source: i.appMainSrc()},
 		runner.WriteSource{Target: i.Path(typenv.PrebuilderMainPkg + "/main.go"), Source: i.prebuilderMainSrc()},
 		runner.WriteSource{Target: i.Path(typenv.BuildToolMainPkg + "/main.go"), Source: i.buildtoolMainSrc()},
 	)
