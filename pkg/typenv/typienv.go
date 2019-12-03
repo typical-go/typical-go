@@ -22,17 +22,18 @@ var (
 		Mock:     "mock",
 		Release:  "release",
 	}
+
 	Readme = "README.md"
+	Name   = name()
 
-	App        = name()
-	AppBin     = fmt.Sprintf("%s/%s", Layout.Bin, App)
-	AppMainPkg = fmt.Sprintf("%s/%s", Layout.Cmd, App)
+	AppBin     = fmt.Sprintf("%s/%s", Layout.Bin, Name)
+	AppMainPkg = fmt.Sprintf("%s/%s", Layout.Cmd, Name)
 
-	BuildToolBin     = fmt.Sprintf("%s/build-tool", Layout.Bin)
-	BuildToolMainPkg = fmt.Sprintf("%s/build-tool", Layout.Cmd)
+	BuildToolBin     = fmt.Sprintf("%s/%s-buildtool", Layout.Bin, Name)
+	BuildToolMainPkg = fmt.Sprintf("%s/%s-buildtool", Layout.Cmd, Name)
 
-	PrebuilderBin     = fmt.Sprintf("%s/pre-builder", Layout.Bin)
-	PrebuilderMainPkg = fmt.Sprintf("%s/pre-builder", Layout.Cmd)
+	PrebuilderBin     = fmt.Sprintf("%s/%s-prebuilder", Layout.Bin, Name)
+	PrebuilderMainPkg = fmt.Sprintf("%s/%s-prebuilder", Layout.Cmd, Name)
 
 	Dependency    = "dependency"
 	DependencyPkg = fmt.Sprintf("internal/%s", Dependency)
