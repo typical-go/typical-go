@@ -7,16 +7,20 @@ import (
 
 // WriteTemplate to write template to file
 type WriteTemplate struct {
-	Target   string
-	Template string
-	Data     interface{}
+	Target     string
+	Template   string
+	Data       interface{}
+	Permission os.FileMode
 }
 
 // Run to write file
 func (w WriteTemplate) Run() (err error) {
 	var f *os.File
 	var tmpl *template.Template
-	if f, err = os.Create(w.Target); err != nil {
+	if w.Permission == 0 {
+		w.Permission = 0666
+	}
+	if f, err = os.OpenFile(w.Target, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, w.Permission); err != nil {
 		return
 	}
 	if tmpl, err = template.New("").Parse(w.Template); err != nil {

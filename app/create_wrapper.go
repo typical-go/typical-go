@@ -26,8 +26,9 @@ func createWrapper(ctx *cli.Context) error {
 
 func wrapperRunner(path string) runn.Runner {
 	return runner.WriteTemplate{
-		Target:   path + "/typicalw",
-		Template: typicalw,
+		Target:     path + "/typicalw",
+		Permission: 0700,
+		Template:   typicalw,
 		Data: struct {
 			ContextFile        string
 			ChecksumFile       string
