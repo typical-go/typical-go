@@ -71,7 +71,7 @@ func (i constructproj) appPackage() error {
 	if !i.blank {
 		stmts = append(stmts,
 			runner.Mkdir{Path: i.Path("app/config")},
-			runner.WriteString{Target: i.Path("app/config/config.go"), Content: configSrc, Permission: 0644},
+			runner.WriteString{Target: i.Path("app/config/config.go"), Content: configSrc},
 			runner.WriteTemplate{Target: i.Path("app/app.go"), Template: appSrc, Data: i},
 			runner.WriteTemplate{Target: i.Path("app/app_test.go"), Template: appSrcTest, Data: i},
 		)
@@ -145,9 +145,8 @@ func (i constructproj) dependencyPackage() error {
 	return runn.Execute(
 		runner.Mkdir{Path: i.Path(typenv.DependencyPath)},
 		runner.WriteString{
-			Target:     i.Path(typenv.DependencyPath + "/constructor.go"),
-			Permission: 0644,
-			Content:    "package " + typenv.Dependency,
+			Target:  i.Path(typenv.DependencyPath + "/constructor.go"),
+			Content: "package " + typenv.Dependency,
 		},
 	)
 }
