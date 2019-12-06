@@ -35,6 +35,9 @@ func (c *Context) Validate() (err error) {
 	if c.Name == "" {
 		return invalidContextError("Name can't be empty")
 	}
+	if c.Version == "" {
+		c.Version = "0.0.1"
+	}
 	if c.Package == "" {
 		return invalidContextError("Package can't be empty")
 	}
@@ -42,6 +45,9 @@ func (c *Context) Validate() (err error) {
 		if err = c.Releaser.Validate(); err != nil {
 			return fmt.Errorf("Releaser: %s", err.Error())
 		}
+	}
+	if c.ConfigLoader == nil {
+		c.ConfigLoader = typcfg.DefaultLoader()
 	}
 	return
 }
