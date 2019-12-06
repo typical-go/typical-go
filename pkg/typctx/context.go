@@ -19,7 +19,7 @@ type Context struct {
 	AppModule    interface{}
 	Modules      coll.Interfaces
 	ConfigLoader typcfg.Loader
-	typrls.Releaser
+	Releaser     *typrls.Releaser
 
 	TestTargets  coll.Strings
 	MockTargets  coll.Strings
@@ -38,8 +38,10 @@ func (c *Context) Validate() (err error) {
 	if c.Package == "" {
 		return invalidContextError("Package can't be empty")
 	}
-	if err = c.Releaser.Validate(); err != nil {
-		return fmt.Errorf("Releaser: %s", err.Error())
+	if c.Releaser != nil {
+		if err = c.Releaser.Validate(); err != nil {
+			return fmt.Errorf("Releaser: %s", err.Error())
+		}
 	}
 	return
 }

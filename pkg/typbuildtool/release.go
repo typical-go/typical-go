@@ -29,11 +29,11 @@ func (t buildtool) releaseDistribution(ctx *cli.Context) (err error) {
 		}
 	}
 	log.Info("Release the distribution")
-	if rls, err = t.Release(t.Name, t.Version, ctx.Bool("force"), ctx.Bool("alpha")); err != nil {
+	if rls, err = t.Releaser.Release(t.Name, t.Version, ctx.Bool("force"), ctx.Bool("alpha")); err != nil {
 		return
 	}
 	if !ctx.Bool("no-publish") {
-		for _, publisher := range t.Publishers {
+		for _, publisher := range t.Releaser.Publishers {
 			log.Info("Publish the distribution")
 			if err = publisher.Publish(rls); err != nil {
 				return

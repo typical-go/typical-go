@@ -13,8 +13,7 @@ var Context = &typctx.Context{
 	Version:   app.Version,
 	Package:   "github.com/typical-go/typical-go",
 	AppModule: app.Module(),
-
-	Releaser: typrls.Releaser{
+	Releaser: &typrls.Releaser{
 		Targets: []typrls.Target{"linux/amd64", "darwin/amd64"},
 		Publishers: []typrls.Publisher{
 			&typrls.Github{Owner: "typical-go", RepoName: "typical-go"},

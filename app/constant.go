@@ -70,9 +70,6 @@ var Context = &typctx.Context{
 	Version:   "0.0.1",
 	Package:   "{{.Pkg}}",
 	AppModule: app.Module(),
-	Releaser: typrls.Releaser{
-		Targets: []typrls.Target{"linux/amd64", "darwin/amd64"},
-	},
 	ConfigLoader: typcfg.DefaultLoader(),
 }
 `
