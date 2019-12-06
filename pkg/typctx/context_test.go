@@ -11,18 +11,18 @@ import (
 
 func TestContext_AllModule(t *testing.T) {
 	ctx := typctx.Context{
-		AppModule: dummyApp{},
 		Modules: []interface{}{
 			struct{}{},
 			struct{}{},
 			struct{}{},
 		},
+		AppModule: dummyApp{},
 	}
 	require.Equal(t, 4, len(ctx.AllModule()))
-	require.Equal(t, ctx.AppModule, ctx.AllModule()[0])
 	for i, module := range ctx.Modules {
-		require.Equal(t, module, ctx.AllModule()[i+1])
+		require.Equal(t, module, ctx.AllModule()[i])
 	}
+	require.Equal(t, ctx.AppModule, ctx.AllModule()[3])
 }
 
 func TestContext_Validate(t *testing.T) {
@@ -35,7 +35,7 @@ func TestContext_Validate(t *testing.T) {
 				Name:      "some-name",
 				Package:   "some-package",
 				AppModule: dummyApp{},
-				Releaser: typrls.Releaser{
+				Releaser: &typrls.Releaser{
 					Targets: []typrls.Target{"linux/amd64"},
 				},
 			},
@@ -45,7 +45,7 @@ func TestContext_Validate(t *testing.T) {
 			typctx.Context{
 				Package:   "some-package",
 				AppModule: dummyApp{},
-				Releaser: typrls.Releaser{
+				Releaser: &typrls.Releaser{
 					Targets: []typrls.Target{"linux/amd64"},
 				},
 			},
@@ -55,7 +55,7 @@ func TestContext_Validate(t *testing.T) {
 			typctx.Context{
 				Name:      "some-name",
 				AppModule: dummyApp{},
-				Releaser: typrls.Releaser{
+				Releaser: &typrls.Releaser{
 					Targets: []typrls.Target{"linux/amd64"},
 				},
 			},
@@ -66,8 +66,11 @@ func TestContext_Validate(t *testing.T) {
 				Name:      "some-name",
 				Package:   "some-package",
 				AppModule: dummyApp{},
+				Releaser: &typrls.Releaser{
+					Targets: []typrls.Target{"linuxamd64"},
+				},
 			},
-			"Releaser: Missing 'Targets'",
+			"Releaser: Target: Missing OS: Please make sure 'linuxamd64' using 'OS/ARCH' format",
 		},
 	}
 	for i, tt := range testcases {

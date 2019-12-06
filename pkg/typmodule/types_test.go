@@ -63,8 +63,8 @@ func TestConfigurer(t *testing.T) {
 
 type dummyObj struct{}
 
-func (dummyObj) Run() interface{}                { return nil }
-func (dummyObj) Prepare() []interface{}          { return nil }
-func (dummyObj) Provide() []interface{}          { return nil }
-func (dummyObj) Destroy() []interface{}          { return nil }
-func (dummyObj) Configure() typcfg.Configuration { return typcfg.Configuration{} }
+func (dummyObj) Run() interface{}                                                 { return nil }
+func (dummyObj) Prepare() []interface{}                                           { return nil }
+func (dummyObj) Provide() []interface{}                                           { return nil }
+func (dummyObj) Destroy() []interface{}                                           { return nil }
+func (dummyObj) Configure() (prefix string, spec interface{}, loadFn interface{}) { return "", nil, nil }
