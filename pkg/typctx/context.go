@@ -43,7 +43,7 @@ func (c *Context) Validate() (err error) {
 	}
 	if c.Releaser != nil {
 		if err = c.Releaser.Validate(); err != nil {
-			return fmt.Errorf("Releaser: %s", err.Error())
+			return fmt.Errorf("Releaser: %w", err)
 		}
 	}
 	if c.ConfigLoader == nil {

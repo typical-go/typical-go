@@ -71,7 +71,7 @@ func (r *Releaser) Validate() (err error) {
 	}
 	for _, target := range r.Targets {
 		if err = target.Validate(); err != nil {
-			return fmt.Errorf("Target: %s", err.Error())
+			return fmt.Errorf("Target: %w", err)
 		}
 	}
 	return
