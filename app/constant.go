@@ -59,9 +59,7 @@ const ctxSrc = `package typical
 import (
 	"{{.Pkg}}/app"
 
-	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typctx"
-	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
 // Context of Project
@@ -70,7 +68,6 @@ var Context = &typctx.Context{
 	Version:   "0.0.1",
 	Package:   "{{.Pkg}}",
 	AppModule: app.Module(),
-	ConfigLoader: typcfg.DefaultLoader(),
 }
 `
 
@@ -78,7 +75,6 @@ const blankCtxSrc = `package typical
 
 import (
 	"github.com/typical-go/typical-go/pkg/typctx"
-	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
 // Context of Project
@@ -86,9 +82,6 @@ var Context = &typctx.Context{
 	Name:      "{{.Name}}",
 	Version:   "0.0.1",
 	Package:   "{{.Pkg}}",
-	Releaser: typrls.Releaser{
-		Targets: []typrls.Target{"linux/amd64", "darwin/amd64"},
-	},
 }
 `
 
@@ -145,8 +138,7 @@ func Module() interface{} {
 
 type module struct {}
 
-
-func (module) Configure() (prefix string, spec, loadFn interface{}) {
+func (m *module) Configure() (prefix string, spec, loadFn interface{}) {
 	prefix = "{{.Prefix}}"
 	spec = &Config{}
 	loadFn = func(loader typcfg.Loader) (cfg Config, err error) {
@@ -158,7 +150,7 @@ func (module) Configure() (prefix string, spec, loadFn interface{}) {
 
 func (m *module) Provide() []interface{} {
 	return []interface{}{
-		// TODO: functions to be provided as dependency
+		// TODO: functions to be provided as dependencies
 	}
 }
 
