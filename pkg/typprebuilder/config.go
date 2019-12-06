@@ -36,7 +36,13 @@ func GenerateEnvfile(ctx *typctx.Context) (err error) {
 	}
 	defer file.Close()
 	for _, field := range ConfigFields(ctx) {
-		s := fmt.Sprintf("%s=%s\n", field.Name, field.Default)
+		var v interface{}
+		if field.IsZero {
+			v = field.Default
+		} else {
+			v = field.Value
+		}
+		s := fmt.Sprintf("%s=%v\n", field.Name, v)
 		file.WriteString(s)
 	}
 	return

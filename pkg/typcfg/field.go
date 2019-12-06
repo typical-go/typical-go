@@ -12,6 +12,8 @@ type Field struct {
 	Name     string
 	Type     string
 	Default  string
+	Value    interface{}
+	IsZero   bool
 	Required bool
 }
 
@@ -27,6 +29,8 @@ func Fields(prefix string, spec interface{}) (infos []Field) {
 				Type:     field.Type.Name(),
 				Default:  fieldDefault(field),
 				Required: fieldRequired(field),
+				Value:    val.Field(i).Interface(),
+				IsZero:   val.Field(i).IsZero(),
 			})
 		}
 	}
