@@ -108,7 +108,7 @@ fi
 
 const gomod = `module {{.Pkg}}
 
-go 1.12
+go 1.13
 
 require github.com/typical-go/typical-go v{{.TypicalVersion}}
 `
