@@ -10,14 +10,11 @@ const (
 	Version = "0.9.8"
 )
 
-// Module of application
-func Module() interface{} {
-	return &module{}
-}
+// Module of app
+type Module struct{}
 
-type module struct{}
-
-func (module) Commands(c *typcli.AppCli) []*cli.Command {
+// Commands of module
+func (Module) Commands(c *typcli.AppCli) []*cli.Command {
 	return []*cli.Command{
 		cmdConstructProject(),
 		cmdConstructModule(),
@@ -25,14 +22,14 @@ func (module) Commands(c *typcli.AppCli) []*cli.Command {
 	}
 }
 
-// -- Uncomment to Debug --
-// func (module) Action() interface{} {
+// -- Uncomment to test action --
+// func (Module) Action() interface{} {
 // 	return func(cfg Config) {
 // 		fmt.Printf("Hello %s\n", cfg.Hello)
 // 	}
 // }
 
-// func (module) Configure() (prefix string, spec, loadFn interface{}) {
+// func (Module) Configure() (prefix string, spec, loadFn interface{}) {
 // 	prefix = "APP"
 // 	spec = &Config{}
 // 	loadFn = func(loader typcfg.Loader) (cfg Config, err error) {
