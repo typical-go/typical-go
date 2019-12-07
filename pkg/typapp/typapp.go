@@ -14,6 +14,9 @@ import (
 
 // Run the application
 func Run(ctx *typctx.Context) {
+	if err := ctx.Validate(); err != nil {
+		log.Fatal(err.Error())
+	}
 	app := cli.NewApp()
 	app.Name = ctx.Name
 	app.Usage = ""

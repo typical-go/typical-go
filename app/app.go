@@ -24,3 +24,24 @@ func (module) Commands(c *typcli.AppCli) []*cli.Command {
 		cmdCreateWrapper(),
 	}
 }
+
+// -- Uncomment to Debug --
+// func (module) Action() interface{} {
+// 	return func(cfg Config) {
+// 		fmt.Printf("Hello %s\n", cfg.Hello)
+// 	}
+// }
+
+// func (module) Configure() (prefix string, spec, loadFn interface{}) {
+// 	prefix = "APP"
+// 	spec = &Config{}
+// 	loadFn = func(loader typcfg.Loader) (cfg Config, err error) {
+// 		err = loader.Load(prefix, &cfg)
+// 		return
+// 	}
+// 	return
+// }
+
+// type Config struct {
+// 	Hello string `default:"world"`
+// }
