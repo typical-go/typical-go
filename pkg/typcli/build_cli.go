@@ -11,14 +11,14 @@ import (
 	"go.uber.org/dig"
 )
 
-// ModuleCli command line module
-type ModuleCli struct {
+// BuildCli command line module
+type BuildCli struct {
 	*typctx.Context
 	Module interface{}
 }
 
 // Action to return action function
-func (c ModuleCli) Action(fn interface{}) func(ctx *cli.Context) error {
+func (c BuildCli) Action(fn interface{}) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) (err error) {
 		di := dig.New()
 		gracefulStop := make(chan os.Signal)

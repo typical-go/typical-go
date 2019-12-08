@@ -4,7 +4,7 @@ import "github.com/urfave/cli/v2"
 
 // AppCommander return command
 type AppCommander interface {
-	Commands(c *AppCli) []*cli.Command
+	AppCommands(c *AppCli) []*cli.Command
 }
 
 // IsAppCommander return true if object implementation of AppCLI

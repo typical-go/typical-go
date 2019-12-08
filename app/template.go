@@ -171,8 +171,8 @@ func (m *Module) Destroy() []interface{} {
 	}
 }
 
-// Commands to execute from Build-Tool
-func (m *Module) Commands(c *typcli.ModuleCli) []*cli.Command {
+// BuildCommands is commands to exectuce from Build-Tool
+func (m *Module) BuildCommands(c *typcli.ModuleCli) []*cli.Command {
 	return []*cli.Command{
 		// TODO: (1) add command to execute from Build-Tool
 		// TODO: (2) remove this function if not required
@@ -198,6 +198,6 @@ func TestModule(t *testing.T) {
 	require.True(t, typmodule.IsDestroyer(m))
 	require.True(t, typmodule.IsProvider(m))
 	require.True(t, typcfg.IsConfigurer(m))
-	require.True(t, typcli.IsModuleCommander(m))
+	require.True(t, typcli.IsBuildCommander(m))
 }
 `

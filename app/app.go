@@ -13,8 +13,8 @@ const (
 // Module of app
 type Module struct{}
 
-// Commands of module
-func (Module) Commands(c *typcli.AppCli) []*cli.Command {
+// AppCommands is commands collection to execute application
+func (Module) AppCommands(c *typcli.AppCli) []*cli.Command {
 	return []*cli.Command{
 		cmdConstructProject(),
 		cmdConstructModule(),

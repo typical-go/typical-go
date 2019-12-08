@@ -28,12 +28,12 @@ func Run(c *typctx.Context) {
 // ModuleCommands return list of command
 func ModuleCommands(ctx *typctx.Context) (cmds []*cli.Command) {
 	for _, module := range ctx.AllModule() {
-		moduleCli := &typcli.ModuleCli{
+		buildCli := &typcli.BuildCli{
 			Context: ctx,
 			Module:  module,
 		}
-		if commander, ok := module.(typcli.ModuleCommander); ok {
-			for _, cmd := range commander.Commands(moduleCli) {
+		if commander, ok := module.(typcli.BuildCommander); ok {
+			for _, cmd := range commander.BuildCommands(buildCli) {
 				cmds = append(cmds, cmd)
 			}
 		}

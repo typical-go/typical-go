@@ -17,12 +17,14 @@ func Run(ctx *typctx.Context) {
 	if err := ctx.Validate(); err != nil {
 		log.Fatal(err.Error())
 	}
+	appCli := &typcli.AppCli{
+		Context: ctx,
+	}
 	app := cli.NewApp()
 	app.Name = ctx.Name
 	app.Usage = ""
 	app.Description = ctx.Description
 	app.Version = ctx.Version
-	appCli := &typcli.AppCli{Context: ctx}
 	if actionable, ok := ctx.AppModule.(typmodule.Actionable); ok {
 		app.Action = appCli.Action(actionable.Action())
 	}
@@ -30,7 +32,7 @@ func Run(ctx *typctx.Context) {
 		return envfile.Load()
 	}
 	if commander, ok := ctx.AppModule.(typcli.AppCommander); ok {
-		app.Commands = commander.Commands(appCli)
+		app.Commands = commander.AppCommands(appCli)
 	}
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err.Error())
