@@ -15,9 +15,14 @@ type Destroyer interface {
 	Destroy() []interface{}
 }
 
-// Actionable is application module
+// Actionable responsible to provide action
 type Actionable interface {
 	Action() interface{}
+}
+
+// Validator responsible to validate the struct
+type Validator interface {
+	Validate() error
 }
 
 // IsProvider return true if object implementation of provider
@@ -41,5 +46,11 @@ func IsDestroyer(obj interface{}) (ok bool) {
 // IsActionable return true if object is actionable
 func IsActionable(obj interface{}) bool {
 	_, ok := obj.(Actionable)
+	return ok
+}
+
+// IsValidator return true if object is actionable
+func IsValidator(obj interface{}) bool {
+	_, ok := obj.(Validator)
 	return ok
 }

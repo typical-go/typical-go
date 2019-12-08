@@ -61,6 +61,19 @@ func TestConfigurer(t *testing.T) {
 	}
 }
 
+func TestValidator(t *testing.T) {
+	testCases := []struct {
+		obj          interface{}
+		isConfigurer bool
+	}{
+		{dummyObj{}, true},
+		{struct{}{}, false},
+	}
+	for i, tt := range testCases {
+		require.Equal(t, tt.isConfigurer, typmodule.IsValidator(tt.obj), i)
+	}
+}
+
 type dummyObj struct{}
 
 func (dummyObj) Run() interface{}                                                 { return nil }
@@ -68,3 +81,4 @@ func (dummyObj) Prepare() []interface{}                                         
 func (dummyObj) Provide() []interface{}                                           { return nil }
 func (dummyObj) Destroy() []interface{}                                           { return nil }
 func (dummyObj) Configure() (prefix string, spec interface{}, loadFn interface{}) { return "", nil, nil }
+func (dummyObj) Validate() error                                                  { return nil }

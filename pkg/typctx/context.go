@@ -3,8 +3,10 @@ package typctx
 import (
 	"fmt"
 	"io"
+	"reflect"
 
 	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typmodule"
 
 	"github.com/typical-go/typical-go/pkg/typrls"
 	"github.com/typical-go/typical-go/pkg/utility/coll"
@@ -35,19 +37,22 @@ func (c *Context) Validate() (err error) {
 	if c.Name == "" {
 		return invalidContextError("Name can't be empty")
 	}
-	if c.Version == "" {
-		c.Version = "0.0.1"
-	}
 	if c.Package == "" {
 		return invalidContextError("Package can't be empty")
 	}
-	if c.Releaser != nil {
-		if err = c.Releaser.Validate(); err != nil {
-			return fmt.Errorf("Releaser: %w", err)
-		}
+	if c.Version == "" {
+		c.Version = "0.0.1"
 	}
 	if c.ConfigLoader == nil {
 		c.ConfigLoader = typcfg.DefaultLoader()
+	}
+	if err = validate(c.Releaser); err != nil {
+		return fmt.Errorf("Releaser: %w", err)
+	}
+	for _, module := range c.AllModule() {
+		if err = validate(module); err != nil {
+			return fmt.Errorf("%s: %w", typmodule.Name(module), err)
+		}
 	}
 	return
 }
@@ -58,4 +63,20 @@ func (c *Context) AllModule() (modules []interface{}) {
 	modules = append(modules, c.Modules...)
 	modules = append(modules, c.AppModule)
 	return
+}
+
+func validate(v interface{}) (err error) {
+	if isNil(v) {
+		return
+	}
+	if validator, ok := v.(typmodule.Validator); ok {
+		if err = validator.Validate(); err != nil {
+			return
+		}
+	}
+	return
+}
+
+func isNil(v interface{}) bool {
+	return v == nil || (reflect.ValueOf(v).Kind() == reflect.Ptr && reflect.ValueOf(v).IsNil())
 }

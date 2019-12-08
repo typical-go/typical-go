@@ -1,6 +1,7 @@
 package typctx_test
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 
@@ -17,7 +18,7 @@ func TestContext_AllModule(t *testing.T) {
 			struct{}{},
 			struct{}{},
 		},
-		AppModule: dummyApp{},
+		AppModule: struct{}{},
 	}
 	require.Equal(t, 4, len(ctx.AllModule()))
 	for i, module := range ctx.Modules {
@@ -26,82 +27,74 @@ func TestContext_AllModule(t *testing.T) {
 	require.Equal(t, ctx.AppModule, ctx.AllModule()[3])
 }
 
+func TestContext_Validate_DefaultValue(t *testing.T) {
+	ctx := &typctx.Context{
+		Name:    "some-name",
+		Package: "some-package",
+	}
+	require.NoError(t, ctx.Validate())
+	require.Equal(t, "0.0.1", ctx.Version)
+	require.Equal(t, "*typcfg.defaultLoader", reflect.TypeOf(ctx.ConfigLoader).String())
+}
+
 func TestContext_Validate(t *testing.T) {
-	t.Run("Missing optional attribute", func(t *testing.T) {
-		ctx := &typctx.Context{
-			Name:      "some-name",
-			Package:   "some-package",
-			AppModule: dummyApp{},
-			Releaser: &typrls.Releaser{
-				Targets: []typrls.Target{"linux/amd64"},
+	testcases := []struct {
+		context typctx.Context
+		errMsg  string
+	}{
+		{
+			typctx.Context{Name: "some-name", Package: "some-package", AppModule: &dummyModule{Name: "App"}},
+			"",
+		},
+		{
+			typctx.Context{Package: "some-package"},
+			"Invalid Context: Name can't be empty",
+		},
+		{
+			typctx.Context{Name: "some-name"},
+			"Invalid Context: Package can't be empty",
+		},
+		{
+			typctx.Context{
+				Name:    "some-name",
+				Package: "some-package",
+				Releaser: &typrls.Releaser{
+					Targets: []typrls.Target{"linuxamd64"},
+				},
 			},
+			"Releaser: Target: Missing OS: Please make sure 'linuxamd64' using 'OS/ARCH' format",
+		},
+		{
+			typctx.Context{
+				Name:      "some-name",
+				Package:   "some-package",
+				AppModule: &dummyModule{Name: "App", err: errors.New("some-error")},
+			},
+			"App: some-error",
+		},
+		{
+			typctx.Context{
+				Name:    "some-name",
+				Package: "some-package",
+				Modules: []interface{}{&dummyModule{Name: "Module", err: errors.New("some-error")}},
+			},
+			"Module: some-error",
+		},
+	}
+	for i, tt := range testcases {
+		err := tt.context.Validate()
+		if tt.errMsg == "" {
+			require.NoError(t, err, i)
+		} else {
+			require.EqualError(t, err, tt.errMsg, i)
 		}
-		require.NoError(t, ctx.Validate())
-		require.Equal(t, "0.0.1", ctx.Version)
-		require.Equal(t, "*typcfg.defaultLoader", reflect.TypeOf(ctx.ConfigLoader).String())
-	})
-	t.Run("Missing mandatory attribute", func(t *testing.T) {
-		testcases := []struct {
-			context typctx.Context
-			errMsg  string
-		}{
-			{
-				typctx.Context{
-					Name:      "some-name",
-					Package:   "some-package",
-					AppModule: dummyApp{},
-					Releaser: &typrls.Releaser{
-						Targets: []typrls.Target{"linux/amd64"},
-					},
-				},
-				"",
-			},
-			{
-				typctx.Context{
-					Package:   "some-package",
-					AppModule: dummyApp{},
-					Releaser: &typrls.Releaser{
-						Targets: []typrls.Target{"linux/amd64"},
-					},
-				},
-				"Invalid Context: Name can't be empty",
-			},
-			{
-				typctx.Context{
-					Name:      "some-name",
-					AppModule: dummyApp{},
-					Releaser: &typrls.Releaser{
-						Targets: []typrls.Target{"linux/amd64"},
-					},
-				},
-				"Invalid Context: Package can't be empty",
-			},
-			{
-				typctx.Context{
-					Name:      "some-name",
-					Package:   "some-package",
-					AppModule: dummyApp{},
-					Releaser: &typrls.Releaser{
-						Targets: []typrls.Target{"linuxamd64"},
-					},
-				},
-				"Releaser: Target: Missing OS: Please make sure 'linuxamd64' using 'OS/ARCH' format",
-			},
-		}
-		for i, tt := range testcases {
-			err := tt.context.Validate()
-			if tt.errMsg == "" {
-				require.NoError(t, err, i)
-			} else {
-				require.EqualError(t, err, tt.errMsg, i)
-			}
-		}
-	})
+
+	}
 }
 
-type dummyApp struct {
+type dummyModule struct {
+	Name string
+	err  error
 }
 
-func (dummyApp) Run() (runFn interface{}) {
-	return
-}
+func (m dummyModule) Validate() error { return m.err }
