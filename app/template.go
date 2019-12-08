@@ -10,19 +10,17 @@ import (
 )
 
 // Module of application
-func Module() interface{} {
-	return &module{}
-}
+type Module struct {}
 
-type module struct {}
-
-func (module) Action() interface{} {
+// Action of application
+func (*Module) Action() interface{} {
 	return func(cfg config.Config) {
 		fmt.Printf("Hello %s\n", cfg.Hello)
 	}
 }
 
-func (module) Configure() (prefix string, spec, loadFn interface{}) {
+// Configure the application
+func (*Module) Configure() (prefix string, spec, loadFn interface{}) {
 	prefix = "APP"
 	spec = &config.Config{}
 	loadFn = func(loader typcfg.Loader) (cfg config.Config, err error) {
@@ -46,7 +44,7 @@ import (
 )
 
 func TestModule(t *testing.T) {
-	a := app.Module()
+	a := &app.Module{}
 	require.True(t, typmodule.IsActionable(a))
 	require.True(t, typcfg.IsConfigurer(a))
 }
@@ -67,7 +65,7 @@ var Context = &typctx.Context{
 	Name:      "{{.Name}}",
 	Version:   "0.0.1",
 	Package:   "{{.Pkg}}",
-	AppModule: app.Module(),
+	AppModule: &app.Module{},
 }
 `
 
@@ -124,21 +122,22 @@ const gitignore = `/bin
 
 const moduleSrc = `package {{.Name}}
 
-import "github.com/typical-go/typical-go/pkg/typcfg"
+import (
+	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typcli"
+	"github.com/urfave/cli/v2"
+)
 
-// Config is configuration of module mymodule
+// Config of {{.Name}}
 type Config struct {
 	// TODO:
 }
 
 // Module of {{.Name}}
-func Module() interface{} {
-	return &module{}
-}
+type Module struct {}
 
-type module struct {}
-
-func (m *module) Configure() (prefix string, spec, loadFn interface{}) {
+// Configure the module
+func (m *Module) Configure() (prefix string, spec, loadFn interface{}) {
 	prefix = "{{.Prefix}}"
 	spec = &Config{}
 	loadFn = func(loader typcfg.Loader) (cfg Config, err error) {
@@ -148,23 +147,38 @@ func (m *module) Configure() (prefix string, spec, loadFn interface{}) {
 	return
 }
 
-func (m *module) Provide() []interface{} {
+// Provide the dependencies
+func (m *Module) Provide() []interface{} {
 	return []interface{}{
-		// TODO: functions to be provided as dependencies
+		// TODO: (1) put functions to be provided as dependencies
+		// TODO: (2) remove this function if not required
 	}
 }
 
-func (m *module) Prepare() []interface{} {
+// Prepare the module
+func (m *Module) Prepare() []interface{} {
 	return []interface{}{
-		// TODO: functions to check/prepare the dependencies
+		// TODO: (1) put functions that run before the application
+		// TODO: (2) remove this function if not required
 	}
 }
 
-func (m *module) Destroy() []interface{} {
+// Destroy the dependencies
+func (m *Module) Destroy() []interface{} {
 	return []interface{}{
-		// TODO: functions to destroy dependencies
+		// TODO: (1) functions to destroy dependencies
+		// TODO: (2) remove this function if not required
 	}
 }
+
+// Commands to execute from Build-Tool
+func (m *Module) Commands(c *typcli.ModuleCli) []*cli.Command {
+	return []*cli.Command{
+		// TODO: (1) add command to execute from Build-Tool
+		// TODO: (2) remove this function if not required
+	}
+}
+
 `
 
 const moduleSrcTest = `package {{.Name}}
@@ -174,14 +188,16 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typcli"
 	"github.com/typical-go/typical-go/pkg/typmodule"
 )
 
 func TestModule(t *testing.T) {
-	m := Module()
+	m := &Module{}
 	require.True(t, typmodule.IsProvider(m))
 	require.True(t, typmodule.IsDestroyer(m))
 	require.True(t, typmodule.IsProvider(m))
 	require.True(t, typcfg.IsConfigurer(m))
+	require.True(t, typcli.IsModuleCommander(m))
 }
 `
