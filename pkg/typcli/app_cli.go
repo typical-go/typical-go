@@ -20,6 +20,10 @@ type AppCli struct {
 
 // Action to return action function
 func (c *AppCli) Action(fn interface{}) func(ctx *cli.Context) error {
+	return preparedAction(fn, c.Context)
+}
+
+func preparedAction(fn interface{}, c *typctx.Context) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) (err error) {
 		di := dig.New()
 		gracefulStop := make(chan os.Signal)
@@ -30,37 +34,31 @@ func (c *AppCli) Action(fn interface{}) func(ctx *cli.Context) error {
 		}()
 		go func() {
 			<-gracefulStop
-			if err = c.shutdown(di); err != nil {
+			if err = destroyAll(di, c); err != nil {
 				log.Fatal(err.Error())
 			}
-			// NOTE: Make sure the application is exit
-			os.Exit(0)
+			os.Exit(0) // NOTE: Make sure the application is exit
 		}()
-		if err = c.provideDependency(di); err != nil {
+		if err = provideAll(di, c); err != nil {
 			return
 		}
-		if err = c.prepare(di); err != nil {
+		if err = prepareAll(di, c); err != nil {
 			return
 		}
 		return di.Invoke(fn)
 	}
 }
 
-func (c *AppCli) provideDependency(di *dig.Container) (err error) {
-	if c.ConfigLoader != nil {
-		if err = di.Provide(loaderFn(c.Context)); err != nil {
-			return
-		}
-	}
-	if err = provide(di, c.Constructors...); err != nil {
+func provideAll(di *dig.Container, ctx *typctx.Context) (err error) {
+	if err = provideLoader(di, ctx); err != nil {
 		return
 	}
-	for _, module := range c.AllModule() {
-		if configurer, ok := module.(typcfg.Configurer); ok {
-			_, _, loadFn := configurer.Configure()
-			if err = di.Provide(loadFn); err != nil {
-				return
-			}
+	if err = provide(di, ctx.Constructors...); err != nil {
+		return
+	}
+	for _, module := range ctx.AllModule() {
+		if err = provideConfigFn(di, module); err != nil {
+			return
 		}
 		if provider, ok := module.(typmodule.Provider); ok {
 			if err = provide(di, provider.Provide()...); err != nil {
@@ -71,8 +69,8 @@ func (c *AppCli) provideDependency(di *dig.Container) (err error) {
 	return
 }
 
-func (c *AppCli) prepare(di *dig.Container) (err error) {
-	for _, module := range c.AllModule() {
+func prepareAll(di *dig.Container, ctx *typctx.Context) (err error) {
+	for _, module := range ctx.AllModule() {
 		if preparer, ok := module.(typmodule.Preparer); ok {
 			if err = invoke(di, preparer.Prepare()...); err != nil {
 				return
@@ -82,8 +80,8 @@ func (c *AppCli) prepare(di *dig.Container) (err error) {
 	return
 }
 
-func (c *AppCli) shutdown(di *dig.Container) (err error) {
-	for _, module := range c.AllModule() {
+func destroyAll(di *dig.Container, ctx *typctx.Context) (err error) {
+	for _, module := range ctx.AllModule() {
 		if destroyer, ok := module.(typmodule.Destroyer); ok {
 			if err = invoke(di, destroyer.Destroy()...); err != nil {
 				return
@@ -115,4 +113,23 @@ func loaderFn(c *typctx.Context) interface{} {
 	return func() typcfg.Loader {
 		return c.ConfigLoader
 	}
+}
+
+func provideLoader(di *dig.Container, ctx *typctx.Context) (err error) {
+	if ctx.ConfigLoader != nil {
+		if err = provide(di, loaderFn(ctx)); err != nil {
+			return
+		}
+	}
+	return
+}
+
+func provideConfigFn(di *dig.Container, v interface{}) (err error) {
+	if configurer, ok := v.(typcfg.Configurer); ok {
+		_, _, loadFn := configurer.Configure()
+		if err = provide(di, loadFn); err != nil {
+			return
+		}
+	}
+	return
 }
