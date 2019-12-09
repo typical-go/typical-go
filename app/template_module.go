@@ -38,7 +38,7 @@ func (m *Module) Provide() []interface{} {
 // Prepare the module
 func (m *Module) Prepare() []interface{} {
 	return []interface{}{
-		// TODO: (1) put functions that run before the application
+		// TODO: (1) put functions that run before the application start
 		// TODO: (2) remove this function if not required
 	}
 }
@@ -46,13 +46,13 @@ func (m *Module) Prepare() []interface{} {
 // Destroy the dependencies
 func (m *Module) Destroy() []interface{} {
 	return []interface{}{
-		// TODO: (1) functions to destroy dependencies
+		// TODO: (1) functions to destroy dependencies after the application stop
 		// TODO: (2) remove this function if not required
 	}
 }
 
 // BuildCommands is commands to exectuce from Build-Tool
-func (m *Module) BuildCommands(c *typcli.ModuleCli) []*cli.Command {
+func (m *Module) BuildCommands(c *typcli.BuildCli) []*cli.Command {
 	return []*cli.Command{
 		// TODO: (1) add command to execute from Build-Tool
 		// TODO: (2) remove this function if not required
