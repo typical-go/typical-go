@@ -3,8 +3,6 @@ package typobj_test
 import (
 	"testing"
 
-	"github.com/typical-go/typical-go/pkg/typobj"
-
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typobj"
 )

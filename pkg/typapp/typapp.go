@@ -1,14 +1,13 @@
 package typapp
 
 import (
-	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/typcli"
-	"github.com/typical-go/typical-go/pkg/typobj"
-	"github.com/typical-go/typical-go/pkg/utility/envfile"
-
 	"os"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/typical-go/typical-go/pkg/typctx"
+	"github.com/typical-go/typical-go/pkg/typobj"
+	"github.com/typical-go/typical-go/pkg/utility/envfile"
 	"github.com/urfave/cli/v2"
 )
 
@@ -17,10 +16,7 @@ func Run(ctx *typctx.Context) {
 	if err := ctx.Validate(); err != nil {
 		log.Fatal(err.Error())
 	}
-	appCli := &typcli.Container{
-		Context: ctx,
-		Object:  ctx.AppModule,
-	}
+	appCli := typctx.NewCli(ctx, ctx.AppModule)
 	app := cli.NewApp()
 	app.Name = ctx.Name
 	app.Usage = ""
@@ -32,7 +28,7 @@ func Run(ctx *typctx.Context) {
 	app.Before = func(ctx *cli.Context) error {
 		return envfile.Load()
 	}
-	if commander, ok := ctx.AppModule.(typcli.AppCommander); ok {
+	if commander, ok := ctx.AppModule.(typobj.AppCommander); ok {
 		app.Commands = commander.AppCommands(appCli)
 	}
 	if err := app.Run(os.Args); err != nil {

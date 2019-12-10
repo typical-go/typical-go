@@ -1,4 +1,4 @@
-package typcli
+package typctx
 
 import (
 	"log"
@@ -6,20 +6,26 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/dig"
 )
 
-// Container contain context and object
-type Container struct {
-	*typctx.Context
-	Object interface{}
+// NewCli return new instance of Cli
+func NewCli(ctx *Context, obj interface{}) typobj.Cli {
+	return &cliImpl{
+		Context: ctx,
+		obj:     obj,
+	}
+}
+
+type cliImpl struct {
+	*Context
+	obj interface{}
 }
 
 // Action to return action function that required config and object only
-func (c Container) Action(fn interface{}) func(ctx *cli.Context) error {
+func (c *cliImpl) Action(fn interface{}) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) (err error) {
 		di := dig.New()
 		gracefulStop := make(chan os.Signal)
@@ -35,7 +41,7 @@ func (c Container) Action(fn interface{}) func(ctx *cli.Context) error {
 		if err = provideLoader(di, c.Context); err != nil {
 			return
 		}
-		if err = provideConfigFn(di, c.Object); err != nil {
+		if err = provideConfigFn(di, c.obj); err != nil {
 			return
 		}
 		return di.Invoke(fn)
@@ -43,7 +49,7 @@ func (c Container) Action(fn interface{}) func(ctx *cli.Context) error {
 }
 
 // PreparedAction to return function with preparation, provide and destroy dependencies from other module
-func (c Container) PreparedAction(fn interface{}) func(ctx *cli.Context) error {
+func (c *cliImpl) PreparedAction(fn interface{}) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) (err error) {
 		di := dig.New()
 		gracefulStop := make(chan os.Signal)
@@ -69,7 +75,7 @@ func (c Container) PreparedAction(fn interface{}) func(ctx *cli.Context) error {
 	}
 }
 
-func provideAll(di *dig.Container, ctx *typctx.Context) (err error) {
+func provideAll(di *dig.Container, ctx *Context) (err error) {
 	if err = provideLoader(di, ctx); err != nil {
 		return
 	}
@@ -89,7 +95,7 @@ func provideAll(di *dig.Container, ctx *typctx.Context) (err error) {
 	return
 }
 
-func prepareAll(di *dig.Container, ctx *typctx.Context) (err error) {
+func prepareAll(di *dig.Container, ctx *Context) (err error) {
 	for _, module := range ctx.AllModule() {
 		if preparer, ok := module.(typobj.Preparer); ok {
 			if err = invoke(di, preparer.Prepare()...); err != nil {
@@ -100,7 +106,7 @@ func prepareAll(di *dig.Container, ctx *typctx.Context) (err error) {
 	return
 }
 
-func destroyAll(di *dig.Container, ctx *typctx.Context) (err error) {
+func destroyAll(di *dig.Container, ctx *Context) (err error) {
 	for _, module := range ctx.AllModule() {
 		if destroyer, ok := module.(typobj.Destroyer); ok {
 			if err = invoke(di, destroyer.Destroy()...); err != nil {
@@ -129,13 +135,13 @@ func provide(di *dig.Container, fns ...interface{}) (err error) {
 	return
 }
 
-func loaderFn(c *typctx.Context) interface{} {
+func loaderFn(c *Context) interface{} {
 	return func() typobj.Loader {
 		return c.ConfigLoader
 	}
 }
 
-func provideLoader(di *dig.Container, ctx *typctx.Context) (err error) {
+func provideLoader(di *dig.Container, ctx *Context) (err error) {
 	if ctx.ConfigLoader != nil {
 		if err = provide(di, loaderFn(ctx)); err != nil {
 			return

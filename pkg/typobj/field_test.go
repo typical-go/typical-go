@@ -16,3 +16,10 @@ func TestField(t *testing.T) {
 		Field2: "mama",
 	}))
 }
+
+type SampleSpec struct {
+	Field1 string `default:"hello" required:"true"`
+	Field2 string `default:"world"`
+	Field3 string `ignored:"true"`
+	Field4 int    `envconfig:"ALIAS"`
+}

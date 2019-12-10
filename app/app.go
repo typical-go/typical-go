@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/typical-go/typical-go/pkg/typcli"
+	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/urfave/cli/v2"
 )
 
@@ -14,7 +14,7 @@ const (
 type Module struct{}
 
 // AppCommands is commands collection to execute application
-func (Module) AppCommands(c *typcli.Container) []*cli.Command {
+func (Module) AppCommands(c *typobj.Cli) []*cli.Command {
 	return []*cli.Command{
 		cmdConstructProject(),
 		cmdConstructModule(),

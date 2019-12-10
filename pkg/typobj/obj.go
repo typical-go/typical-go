@@ -1,5 +1,7 @@
 package typobj
 
+import "github.com/urfave/cli/v2"
+
 // Provider responsible to provide dependency
 type Provider interface {
 	Provide() []interface{}
@@ -28,6 +30,22 @@ type Validator interface {
 // Configurer responsible to create config
 type Configurer interface {
 	Configure() (prefix string, spec interface{}, loadFn interface{})
+}
+
+// BuildCommander responsible to command
+type BuildCommander interface {
+	BuildCommands(c Cli) []*cli.Command
+}
+
+// AppCommander return command
+type AppCommander interface {
+	AppCommands(c Cli) []*cli.Command
+}
+
+// Cli for command line
+type Cli interface {
+	Action(fn interface{}) func(ctx *cli.Context) error
+	PreparedAction(fn interface{}) func(ctx *cli.Context) error
 }
 
 // IsProvider return true if object implementation of provider
@@ -63,5 +81,17 @@ func IsValidator(obj interface{}) bool {
 // IsConfigurer return true if object implementation of configurer
 func IsConfigurer(obj interface{}) (ok bool) {
 	_, ok = obj.(Configurer)
+	return
+}
+
+// IsBuildCommander return true if obj implement commander
+func IsBuildCommander(obj interface{}) (ok bool) {
+	_, ok = obj.(BuildCommander)
+	return
+}
+
+// IsAppCommander return true if object implementation of AppCLI
+func IsAppCommander(obj interface{}) (ok bool) {
+	_, ok = obj.(AppCommander)
 	return
 }

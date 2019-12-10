@@ -5,8 +5,8 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/typical-go/typical-go/pkg/typcli"
 	"github.com/typical-go/typical-go/pkg/typctx"
+	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/urfave/cli/v2"
 )
 
@@ -28,11 +28,8 @@ func Run(c *typctx.Context) {
 // ModuleCommands return list of command
 func ModuleCommands(ctx *typctx.Context) (cmds []*cli.Command) {
 	for _, module := range ctx.AllModule() {
-		buildCli := &typcli.Container{
-			Context: ctx,
-			Object:  module,
-		}
-		if commander, ok := module.(typcli.BuildCommander); ok {
+		buildCli := typctx.NewCli(ctx, module)
+		if commander, ok := module.(typobj.BuildCommander); ok {
 			for _, cmd := range commander.BuildCommands(buildCli) {
 				cmds = append(cmds, cmd)
 			}
