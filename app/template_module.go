@@ -4,7 +4,6 @@ const moduleSrc = `package {{.Name}}
 
 import (
 	"github.com/typical-go/typical-go/pkg/typobj"
-	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/urfave/cli/v2"
 )
 
@@ -52,7 +51,7 @@ func (m *Module) Destroy() []interface{} {
 }
 
 // BuildCommands is commands to exectuce from Build-Tool
-func (m *Module) BuildCommands(c *typobj.BuildCli) []*cli.Command {
+func (m *Module) BuildCommands(c typobj.Cli) []*cli.Command {
 	return []*cli.Command{
 		// TODO: (1) add command to execute from Build-Tool
 		// TODO: (2) remove this function if not required
@@ -67,8 +66,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typobj"
-	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/typical-go/typical-go/pkg/typobj"
 )
 
