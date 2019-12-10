@@ -27,7 +27,7 @@ func Run(ctx *typctx.Context) {
 	app.Description = ctx.Description
 	app.Version = ctx.Version
 	if actionable, ok := ctx.AppModule.(typobj.Actionable); ok {
-		app.Action = appCli.Action(actionable.Action())
+		app.Action = appCli.PreparedAction(actionable.Action())
 	}
 	app.Before = func(ctx *cli.Context) error {
 		return envfile.Load()
