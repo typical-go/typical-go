@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"path/filepath"
 
@@ -52,15 +53,14 @@ func (i constructproj) Path(s string) string {
 }
 
 func (i constructproj) Run() (err error) {
-	return runn.Execute(
-		i.dependencyPackage,
+	return runn.Execute(i.dependencyPackage,
 		i.appPackage,
 		i.cmdPackage,
 		i.typicalContext,
 		i.ignoreFile,
+		wrapperRunner(i.Name),
 		i.gomod,
 		i.gofmt,
-		wrapperRunner(i.Name),
 	)
 }
 
@@ -173,5 +173,6 @@ func (i constructproj) gomod() (err error) {
 func (i constructproj) gofmt() (err error) {
 	cmd := exec.Command("go", "fmt", "./...")
 	cmd.Dir = i.Name
+	cmd.Stderr = os.Stderr
 	return cmd.Run()
 }
