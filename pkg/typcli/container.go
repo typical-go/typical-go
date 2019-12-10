@@ -8,7 +8,7 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typctx"
-	"github.com/typical-go/typical-go/pkg/typmodule"
+	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/dig"
 )
@@ -81,7 +81,7 @@ func provideAll(di *dig.Container, ctx *typctx.Context) (err error) {
 		if err = provideConfigFn(di, module); err != nil {
 			return
 		}
-		if provider, ok := module.(typmodule.Provider); ok {
+		if provider, ok := module.(typobj.Provider); ok {
 			if err = provide(di, provider.Provide()...); err != nil {
 				return
 			}
@@ -92,7 +92,7 @@ func provideAll(di *dig.Container, ctx *typctx.Context) (err error) {
 
 func prepareAll(di *dig.Container, ctx *typctx.Context) (err error) {
 	for _, module := range ctx.AllModule() {
-		if preparer, ok := module.(typmodule.Preparer); ok {
+		if preparer, ok := module.(typobj.Preparer); ok {
 			if err = invoke(di, preparer.Prepare()...); err != nil {
 				return
 			}
@@ -103,7 +103,7 @@ func prepareAll(di *dig.Container, ctx *typctx.Context) (err error) {
 
 func destroyAll(di *dig.Container, ctx *typctx.Context) (err error) {
 	for _, module := range ctx.AllModule() {
-		if destroyer, ok := module.(typmodule.Destroyer); ok {
+		if destroyer, ok := module.(typobj.Destroyer); ok {
 			if err = invoke(di, destroyer.Destroy()...); err != nil {
 				return
 			}

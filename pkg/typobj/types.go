@@ -1,4 +1,4 @@
-package typmodule
+package typobj
 
 // Provider responsible to provide dependency
 type Provider interface {

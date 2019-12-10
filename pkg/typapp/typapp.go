@@ -3,7 +3,7 @@ package typapp
 import (
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typcli"
-	"github.com/typical-go/typical-go/pkg/typmodule"
+	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/typical-go/typical-go/pkg/utility/envfile"
 
 	"os"
@@ -26,7 +26,7 @@ func Run(ctx *typctx.Context) {
 	app.Usage = ""
 	app.Description = ctx.Description
 	app.Version = ctx.Version
-	if actionable, ok := ctx.AppModule.(typmodule.Actionable); ok {
+	if actionable, ok := ctx.AppModule.(typobj.Actionable); ok {
 		app.Action = appCli.Action(actionable.Action())
 	}
 	app.Before = func(ctx *cli.Context) error {

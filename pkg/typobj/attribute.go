@@ -1,4 +1,4 @@
-package typmodule
+package typobj
 
 import "reflect"
 

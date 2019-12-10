@@ -6,7 +6,7 @@ import (
 	"reflect"
 
 	"github.com/typical-go/typical-go/pkg/typcfg"
-	"github.com/typical-go/typical-go/pkg/typmodule"
+	"github.com/typical-go/typical-go/pkg/typobj"
 
 	"github.com/typical-go/typical-go/pkg/typrls"
 	"github.com/typical-go/typical-go/pkg/utility/coll"
@@ -51,7 +51,7 @@ func (c *Context) Validate() (err error) {
 	}
 	for _, module := range c.AllModule() {
 		if err = validate(module); err != nil {
-			return fmt.Errorf("%s: %w", typmodule.Name(module), err)
+			return fmt.Errorf("%s: %w", typobj.Name(module), err)
 		}
 	}
 	return
@@ -69,7 +69,7 @@ func validate(v interface{}) (err error) {
 	if isNil(v) {
 		return
 	}
-	if validator, ok := v.(typmodule.Validator); ok {
+	if validator, ok := v.(typobj.Validator); ok {
 		if err = validator.Validate(); err != nil {
 			return
 		}

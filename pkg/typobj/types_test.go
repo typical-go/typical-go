@@ -1,4 +1,4 @@
-package typmodule_test
+package typobj_test
 
 import (
 	"testing"
@@ -6,7 +6,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcfg"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typmodule"
+	"github.com/typical-go/typical-go/pkg/typobj"
 )
 
 func TestIsProvider(t *testing.T) {
@@ -18,7 +18,7 @@ func TestIsProvider(t *testing.T) {
 		{struct{}{}, false},
 	}
 	for i, tt := range testCases {
-		require.Equal(t, tt.isProvider, typmodule.IsProvider(tt.obj), i)
+		require.Equal(t, tt.isProvider, typobj.IsProvider(tt.obj), i)
 	}
 }
 
@@ -31,7 +31,7 @@ func TestIsPreparer(t *testing.T) {
 		{struct{}{}, false},
 	}
 	for i, tt := range testCases {
-		require.Equal(t, tt.isPreparer, typmodule.IsPreparer(tt.obj), i)
+		require.Equal(t, tt.isPreparer, typobj.IsPreparer(tt.obj), i)
 	}
 }
 
@@ -44,7 +44,7 @@ func TestIsDestroyer(t *testing.T) {
 		{struct{}{}, false},
 	}
 	for i, tt := range testCases {
-		require.Equal(t, tt.isDestroyer, typmodule.IsDestroyer(tt.obj), i)
+		require.Equal(t, tt.isDestroyer, typobj.IsDestroyer(tt.obj), i)
 	}
 }
 
@@ -70,7 +70,7 @@ func TestValidator(t *testing.T) {
 		{struct{}{}, false},
 	}
 	for i, tt := range testCases {
-		require.Equal(t, tt.isConfigurer, typmodule.IsValidator(tt.obj), i)
+		require.Equal(t, tt.isConfigurer, typobj.IsValidator(tt.obj), i)
 	}
 }
 

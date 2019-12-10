@@ -38,14 +38,14 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typcfg"
-	"github.com/typical-go/typical-go/pkg/typmodule"
+	"github.com/typical-go/typical-go/pkg/typobj"
 
 	"{{.Pkg}}/app"
 )
 
 func TestModule(t *testing.T) {
 	a := &app.Module{}
-	require.True(t, typmodule.IsActionable(a))
+	require.True(t, typobj.IsActionable(a))
 	require.True(t, typcfg.IsConfigurer(a))
 }
 `
