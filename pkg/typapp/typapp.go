@@ -17,8 +17,9 @@ func Run(ctx *typctx.Context) {
 	if err := ctx.Validate(); err != nil {
 		log.Fatal(err.Error())
 	}
-	appCli := &typcli.AppCli{
+	appCli := &typcli.Container{
 		Context: ctx,
+		Object:  ctx.AppModule,
 	}
 	app := cli.NewApp()
 	app.Name = ctx.Name

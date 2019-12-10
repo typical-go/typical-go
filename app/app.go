@@ -7,14 +7,14 @@ import (
 
 const (
 	// Version of Typical-Go
-	Version = "0.9.10"
+	Version = "0.9.11"
 )
 
 // Module of app
 type Module struct{}
 
 // AppCommands is commands collection to execute application
-func (Module) AppCommands(c *typcli.AppCli) []*cli.Command {
+func (Module) AppCommands(c *typcli.Container) []*cli.Command {
 	return []*cli.Command{
 		cmdConstructProject(),
 		cmdConstructModule(),

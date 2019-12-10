@@ -1,11 +1,11 @@
 package typcli
 
 import (
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typmodule"
@@ -13,17 +13,14 @@ import (
 	"go.uber.org/dig"
 )
 
-// AppCli is cli for context
-type AppCli struct {
+// Container contain context and object
+type Container struct {
 	*typctx.Context
+	Object interface{}
 }
 
-// Action to return action function
-func (c *AppCli) Action(fn interface{}) func(ctx *cli.Context) error {
-	return preparedAction(fn, c.Context)
-}
-
-func preparedAction(fn interface{}, c *typctx.Context) func(ctx *cli.Context) error {
+// Action to return action function that required config and object only
+func (c Container) Action(fn interface{}) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) (err error) {
 		di := dig.New()
 		gracefulStop := make(chan os.Signal)
@@ -34,15 +31,39 @@ func preparedAction(fn interface{}, c *typctx.Context) func(ctx *cli.Context) er
 		}()
 		go func() {
 			<-gracefulStop
-			if err = destroyAll(di, c); err != nil {
+			os.Exit(0) // NOTE: Make sure the application is exit
+		}()
+		if err = provideLoader(di, c.Context); err != nil {
+			return
+		}
+		if err = provideConfigFn(di, c.Object); err != nil {
+			return
+		}
+		return di.Invoke(fn)
+	}
+}
+
+// PreparedAction to return function with preparation, provide and destroy dependencies from other module
+func (c Container) PreparedAction(fn interface{}) func(ctx *cli.Context) error {
+	return func(ctx *cli.Context) (err error) {
+		di := dig.New()
+		gracefulStop := make(chan os.Signal)
+		signal.Notify(gracefulStop, syscall.SIGTERM)
+		signal.Notify(gracefulStop, syscall.SIGINT)
+		defer func() {
+			gracefulStop <- syscall.SIGTERM
+		}()
+		go func() {
+			<-gracefulStop
+			if err = destroyAll(di, c.Context); err != nil {
 				log.Fatal(err.Error())
 			}
 			os.Exit(0) // NOTE: Make sure the application is exit
 		}()
-		if err = provideAll(di, c); err != nil {
+		if err = provideAll(di, c.Context); err != nil {
 			return
 		}
-		if err = prepareAll(di, c); err != nil {
+		if err = prepareAll(di, c.Context); err != nil {
 			return
 		}
 		return di.Invoke(fn)
