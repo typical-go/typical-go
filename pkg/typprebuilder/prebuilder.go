@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
-	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/typical-go/typical-go/pkg/utility/coll"
 
 	log "github.com/sirupsen/logrus"
@@ -19,7 +19,7 @@ type prebuilder struct {
 	Dirs               coll.Strings
 	ApplicationImports coll.KeyStrings
 	ContextImport      string
-	ConfigFields       []typcfg.Field
+	ConfigFields       []typobj.Field
 	BuildCommands      []string
 }
 

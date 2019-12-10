@@ -3,7 +3,7 @@ package typobj_test
 import (
 	"testing"
 
-	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typobj"
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typobj"
@@ -57,7 +57,7 @@ func TestConfigurer(t *testing.T) {
 		{struct{}{}, false},
 	}
 	for i, tt := range testCases {
-		require.Equal(t, tt.isConfigurer, typcfg.IsConfigurer(tt.obj), i)
+		require.Equal(t, tt.isConfigurer, typobj.IsConfigurer(tt.obj), i)
 	}
 }
 

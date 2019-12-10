@@ -34,7 +34,7 @@ func TestContext_Validate_DefaultValue(t *testing.T) {
 	}
 	require.NoError(t, ctx.Validate())
 	require.Equal(t, "0.0.1", ctx.Version)
-	require.Equal(t, "*typcfg.defaultLoader", reflect.TypeOf(ctx.ConfigLoader).String())
+	require.Equal(t, "*typobj.defaultLoader", reflect.TypeOf(ctx.ConfigLoader).String())
 }
 
 func TestContext_Validate(t *testing.T) {

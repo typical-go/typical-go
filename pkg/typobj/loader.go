@@ -1,4 +1,4 @@
-package typcfg
+package typobj
 
 import (
 	"github.com/kelseyhightower/envconfig"

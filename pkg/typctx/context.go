@@ -5,7 +5,6 @@ import (
 	"io"
 	"reflect"
 
-	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typobj"
 
 	"github.com/typical-go/typical-go/pkg/typrls"
@@ -20,7 +19,7 @@ type Context struct {
 	Version      string
 	AppModule    interface{}
 	Modules      coll.Interfaces
-	ConfigLoader typcfg.Loader
+	ConfigLoader typobj.Loader
 	Releaser     *typrls.Releaser
 
 	TestTargets  coll.Strings
@@ -44,7 +43,7 @@ func (c *Context) Validate() (err error) {
 		c.Version = "0.0.1"
 	}
 	if c.ConfigLoader == nil {
-		c.ConfigLoader = typcfg.DefaultLoader()
+		c.ConfigLoader = typobj.DefaultLoader()
 	}
 	if err = validate(c.Releaser); err != nil {
 		return fmt.Errorf("Releaser: %w", err)

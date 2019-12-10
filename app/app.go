@@ -32,7 +32,7 @@ func (Module) AppCommands(c *typcli.Container) []*cli.Command {
 // func (Module) Configure() (prefix string, spec, loadFn interface{}) {
 // 	prefix = "APP"
 // 	spec = &Config{}
-// 	loadFn = func(loader typcfg.Loader) (cfg Config, err error) {
+// 	loadFn = func(loader typobj.Loader) (cfg Config, err error) {
 // 		err = loader.Load(prefix, &cfg)
 // 		return
 // 	}

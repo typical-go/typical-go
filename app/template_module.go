@@ -3,7 +3,7 @@ package app
 const moduleSrc = `package {{.Name}}
 
 import (
-	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/typical-go/typical-go/pkg/typcli"
 	"github.com/urfave/cli/v2"
 )
@@ -20,7 +20,7 @@ type Module struct {}
 func (m *Module) Configure() (prefix string, spec, loadFn interface{}) {
 	prefix = "{{.Prefix}}"
 	spec = &Config{}
-	loadFn = func(loader typcfg.Loader) (cfg Config, err error) {
+	loadFn = func(loader typobj.Loader) (cfg Config, err error) {
 		err = loader.Load(prefix, &cfg)
 		return
 	}
@@ -67,7 +67,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/typical-go/typical-go/pkg/typcli"
 	"github.com/typical-go/typical-go/pkg/typobj"
 )
@@ -77,7 +77,7 @@ func TestModule(t *testing.T) {
 	require.True(t, typobj.IsProvider(m))
 	require.True(t, typobj.IsDestroyer(m))
 	require.True(t, typobj.IsProvider(m))
-	require.True(t, typcfg.IsConfigurer(m))
+	require.True(t, typobj.IsConfigurer(m))
 	require.True(t, typcli.IsBuildCommander(m))
 }
 `

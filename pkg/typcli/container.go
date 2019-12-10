@@ -6,7 +6,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/urfave/cli/v2"
@@ -131,7 +130,7 @@ func provide(di *dig.Container, fns ...interface{}) (err error) {
 }
 
 func loaderFn(c *typctx.Context) interface{} {
-	return func() typcfg.Loader {
+	return func() typobj.Loader {
 		return c.ConfigLoader
 	}
 }
@@ -146,7 +145,7 @@ func provideLoader(di *dig.Container, ctx *typctx.Context) (err error) {
 }
 
 func provideConfigFn(di *dig.Container, v interface{}) (err error) {
-	if configurer, ok := v.(typcfg.Configurer); ok {
+	if configurer, ok := v.(typobj.Configurer); ok {
 		_, _, loadFn := configurer.Configure()
 		if err = provide(di, loadFn); err != nil {
 			return
