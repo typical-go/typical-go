@@ -7,7 +7,7 @@ import (
 
 const (
 	// Version of Typical-Go
-	Version = "0.9.11"
+	Version = "0.9.12"
 )
 
 // Module of app
