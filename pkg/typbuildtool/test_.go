@@ -21,6 +21,7 @@ func (t buildtool) runTesting(ctx *cli.Context) error {
 	log.Info("Run testings")
 	targets := []string{
 		"./app/...",
+		"./pkg/...",
 	}
 	args := []string{"test", "-coverprofile=cover.out", "-race"}
 	args = append(args, targets...)
