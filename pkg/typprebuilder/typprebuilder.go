@@ -23,7 +23,6 @@ func Run(ctx *typctx.Context) {
 	var err error
 	var preb prebuilder
 	os.Mkdir(typenv.Layout.Metadata, 0700)
-	os.Mkdir(typenv.DependencyPath, 0700)
 	checker := checker{
 		Context:         ctx,
 		contextChecksum: contextChecksum(),

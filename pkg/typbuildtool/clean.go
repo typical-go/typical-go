@@ -31,7 +31,6 @@ func (t buildtool) cleanProject(ctx *cli.Context) error {
 	t.removeApp(ctx)
 	t.removeMetadata(ctx)
 	t.removeEnvFile(ctx)
-	t.removeDependency(ctx)
 	return nil
 }
 
@@ -57,11 +56,6 @@ func (t buildtool) removeMetadata(ctx *cli.Context) error {
 
 func (t buildtool) removeEnvFile(ctx *cli.Context) error {
 	removeFile(".env")
-	return nil
-}
-
-func (t buildtool) removeDependency(ctx *cli.Context) error {
-	removeAllFile(typenv.DependencyPath)
 	return nil
 }
 

@@ -53,7 +53,7 @@ func (i constructproj) Path(s string) string {
 }
 
 func (i constructproj) Run() (err error) {
-	return runn.Execute(i.dependencyPackage,
+	return runn.Execute(
 		i.appPackage,
 		i.cmdPackage,
 		i.typicalContext,
@@ -112,7 +112,6 @@ func (i constructproj) appMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typapp")
 	src.Imports.Add("", i.Pkg+"/typical")
-	src.Imports.Add("_", i.Pkg+"/"+typenv.DependencyPath)
 	src.Append("typapp.Run(typical.Context)")
 	return
 }
@@ -129,7 +128,6 @@ func (i constructproj) buildtoolMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typbuildtool")
 	src.Imports.Add("", i.Pkg+"/typical")
-	src.Imports.Add("_", i.Pkg+"/"+typenv.DependencyPath)
 	src.Append("typbuildtool.Run(typical.Context)")
 	return
 }
@@ -140,16 +138,6 @@ func (i constructproj) ignoreFile() error {
 			Target:     i.Path(".gitignore"),
 			Permission: 0700,
 			Content:    gitignore,
-		},
-	)
-}
-
-func (i constructproj) dependencyPackage() error {
-	return runn.Execute(
-		runner.Mkdir{Path: i.Path(typenv.DependencyPath)},
-		runner.WriteString{
-			Target:  i.Path(typenv.DependencyPath + "/constructor.go"),
-			Content: "package " + typenv.Dependency,
 		},
 	)
 }

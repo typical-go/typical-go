@@ -37,9 +37,6 @@ var (
 	PrebuilderBin      = fmt.Sprintf("%s/%s-%s", Layout.Bin, Name, Prebuilder)
 	PrebuilderMainPath = fmt.Sprintf("%s/%s-%s", Layout.Cmd, Name, Prebuilder)
 
-	Dependency     = "dependency"
-	DependencyPath = fmt.Sprintf("internal/%s", Dependency)
-
 	ContextFile  = "typical/context.go"
 	ChecksumFile = Layout.Metadata + "/checksum"
 )
