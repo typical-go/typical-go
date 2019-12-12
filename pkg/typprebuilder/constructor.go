@@ -18,6 +18,9 @@ func (g constructor) generate(target string) (err error) {
 	defer debugkit.ElapsedTime("Generate constructor")()
 	src := golang.NewSource("main")
 	src.Imports = g.ApplicationImports
+	if len(g.Constructors) < 1 {
+		return
+	}
 	for _, constructor := range g.Constructors {
 		src.Init.Append(fmt.Sprintf("typical.Context.Constructors.Append(%s)", constructor))
 	}
