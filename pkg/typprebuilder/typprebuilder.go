@@ -48,7 +48,7 @@ func Run(ctx *typctx.Context) {
 	if checker.buildCommands, err = metadata.Update("build_commands", preb.BuildCommands); err != nil {
 		log.Fatal(err.Error())
 	}
-	if checker.mockTarget, err = Generate("mock_target", mockTarget{ApplicationImports: preb.ApplicationImports, MockTargets: preb.ProjectFiles.Automocks()}); err != nil {
+	if checker.mockTarget, err = metadata.Update("mock_target", preb.ProjectFiles.Automocks()); err != nil {
 		log.Fatal(err.Error())
 	}
 	if _, err = Generate("constructor", constructor{ApplicationImports: preb.ApplicationImports, Constructors: preb.ProjectFiles.Autowires()}); err != nil {

@@ -1,10 +1,13 @@
 package typbuildtool
 
 import (
+	"encoding/json"
+	"fmt"
 	"go/build"
+	"io/ioutil"
 	"os"
 	"os/exec"
-	"strings"
+	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typenv"
@@ -25,7 +28,13 @@ func (t buildtool) cmdMock() *cli.Command {
 
 func (t buildtool) generateMock(ctx *cli.Context) (err error) {
 	log.Info("Generate mocks")
-	if err = exec.Command("go", "get", "github.com/golang/mock/mockgen").Run(); err != nil {
+	var targets []string
+	if targets, err = mockTargets(); err != nil {
+		return
+	}
+	targets = append(targets, t.MockTargets...)
+	var mockgen string
+	if mockgen, err = installMockgen(); err != nil {
 		return
 	}
 	mockPkg := typenv.Layout.Mock
@@ -34,16 +43,32 @@ func (t buildtool) generateMock(ctx *cli.Context) (err error) {
 		os.RemoveAll(mockPkg)
 	}
 	var errs coll.Errors
-	for _, mockTarget := range t.MockTargets {
-		dest := mockPkg + "/" + mockTarget[strings.LastIndex(mockTarget, "/")+1:]
-		cmd := exec.Command(build.Default.GOPATH+"/bin/mockgen",
-			"-source", mockTarget,
+	for _, target := range targets {
+		log.Infof("Mock '%s'", target)
+		dest := mockPkg + "/" + filepath.Base(target)
+		cmd := exec.Command(mockgen,
+			"-source", target,
 			"-destination", dest,
 			"-package", mockPkg)
 		cmd.Stderr = os.Stderr
 		if err := cmd.Run(); err != nil {
-			errs.Append(err)
+			errs.Append(fmt.Errorf("Mock '%s' failed: %w", target, err))
 		}
 	}
 	return errs.Unwrap()
+}
+
+func installMockgen() (path string, err error) {
+	path = build.Default.GOPATH + "/bin/mockgen"
+	err = exec.Command("go", "get", "github.com/golang/mock/mockgen").Run()
+	return
+}
+
+func mockTargets() (targets []string, err error) {
+	var data []byte
+	if data, err = ioutil.ReadFile(typenv.Layout.Metadata + "/mock_target.json"); err != nil {
+		return
+	}
+	err = json.Unmarshal(data, &targets)
+	return
 }
