@@ -40,6 +40,7 @@ func (t buildtool) generateMock(ctx *cli.Context) (err error) {
 			"-source", mockTarget,
 			"-destination", dest,
 			"-package", mockPkg)
+		cmd.Stderr = os.Stderr
 		if err := cmd.Run(); err != nil {
 			errs.Append(err)
 		}
