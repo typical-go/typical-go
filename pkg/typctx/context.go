@@ -22,7 +22,6 @@ type Context struct {
 	ConfigLoader typobj.Loader
 	Releaser     *typrls.Releaser
 
-	TestTargets  coll.Strings
 	MockTargets  coll.Strings
 	Constructors coll.Interfaces
 
