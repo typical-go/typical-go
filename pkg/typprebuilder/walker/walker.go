@@ -1,7 +1,6 @@
 package walker
 
 import (
-	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -10,7 +9,8 @@ import (
 
 // Walker responsible to walk the filenames
 type Walker struct {
-	filenames []string
+	filenames         []string
+	funcDeclListeners []FuncDeclListener
 }
 
 // New return new constructor of walker
@@ -20,6 +20,11 @@ func New(filenames []string) *Walker {
 	}
 }
 
+// AddFuncDeclListener to add function declaration listener
+func (w *Walker) AddFuncDeclListener(listener FuncDeclListener) {
+	w.funcDeclListeners = append(w.funcDeclListeners, listener)
+}
+
 // Walk the source code to get autowire and automock
 func (w *Walker) Walk() (files *ProjectFiles, err error) {
 	files = &ProjectFiles{}
@@ -27,8 +32,7 @@ func (w *Walker) Walk() (files *ProjectFiles, err error) {
 	for _, filename := range w.filenames {
 		if isWalkTarget(filename) {
 			var file ProjectFile
-			file, err = parse(fset, filename)
-			if err != nil {
+			if file, err = w.parse(fset, filename); err != nil {
 				return
 			}
 			if !file.IsEmpty() {
@@ -39,27 +43,26 @@ func (w *Walker) Walk() (files *ProjectFiles, err error) {
 	return
 }
 
-func isWalkTarget(filename string) bool {
-	return strings.HasSuffix(filename, ".go") &&
-		!strings.HasSuffix(filename, "_test.go")
-}
-
-func parse(fset *token.FileSet, filename string) (projFile ProjectFile, err error) {
+func (w *Walker) parse(fset *token.FileSet, filename string) (projFile ProjectFile, err error) {
 	f, err := parser.ParseFile(fset, filename, nil, parser.ParseComments)
 	if err != nil {
 		return
 	}
 	projFile.Name = filename
-	for objName, obj := range f.Scope.Objects {
+	for name, obj := range f.Scope.Objects {
 		switch obj.Decl.(type) {
 		case *ast.FuncDecl:
-			funcDecl := obj.Decl.(*ast.FuncDecl)
-			var godoc string
-			if funcDecl.Doc != nil {
-				godoc = funcDecl.Doc.Text()
+			e := &FuncDeclEvent{
+				Name:     name,
+				File:     f,
+				FuncDecl: obj.Decl.(*ast.FuncDecl),
 			}
-			if isAutoWire(objName, godoc) {
-				projFile.AddConstructor(fmt.Sprintf("%s.%s", f.Name, objName))
+			for _, listener := range w.funcDeclListeners {
+				if listener.IsAction(e) {
+					if err = listener.ActionPerformed(e); err != nil {
+						return
+					}
+				}
 			}
 		case *ast.TypeSpec:
 			typeSpec := obj.Decl.(*ast.TypeSpec)
@@ -77,12 +80,9 @@ func parse(fset *token.FileSet, filename string) (projFile ProjectFile, err erro
 	return
 }
 
-func isAutoWire(funcName, doc string) bool {
-	notations := ParseAnnotations(doc)
-	if strings.HasPrefix(funcName, "New") {
-		return !notations.Contain("nowire")
-	}
-	return notations.Contain("autowire")
+func isWalkTarget(filename string) bool {
+	return strings.HasSuffix(filename, ".go") &&
+		!strings.HasSuffix(filename, "_test.go")
 }
 
 func isAutoMock(doc string) bool {

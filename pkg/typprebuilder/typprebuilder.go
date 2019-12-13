@@ -44,10 +44,12 @@ func Run(ctx *typctx.Context) {
 	var cfgFields []typobj.Field
 	var buildCmds []string
 	var filenames coll.Strings
+	var autowire Autowires
 	if filenames, err = scanProject(typenv.Layout.App); err != nil {
 		return
 	}
 	walker := walker.New(filenames)
+	walker.AddFuncDeclListener(&autowire)
 	if projectFiles, err = walker.Walk(); err != nil {
 		return
 	}
@@ -66,7 +68,7 @@ func Run(ctx *typctx.Context) {
 	if checker.mockTarget, err = metadata.Update("mock_target", projectFiles.Automocks()); err != nil {
 		log.Fatal(err.Error())
 	}
-	if _, err = Generate("constructor", constructor{ProjectPackage: ctx.Package, Constructors: projectFiles.Autowires()}); err != nil {
+	if _, err = Generate("constructor", constructor{ProjectPackage: ctx.Package, Constructors: autowire}); err != nil {
 		log.Fatal(err.Error())
 	}
 	if checker.checkBuildTool() {
