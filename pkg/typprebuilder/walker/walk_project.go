@@ -66,7 +66,7 @@ func parse(fset *token.FileSet, filename string) (projFile ProjectFile, err erro
 }
 
 func isAutoWire(funcName, doc string) bool {
-	notations := ParseNotations(doc)
+	notations := ParseAnnotations(doc)
 	if strings.HasPrefix(funcName, "New") {
 		return !notations.Contain("nowire")
 	}
@@ -74,6 +74,6 @@ func isAutoWire(funcName, doc string) bool {
 }
 
 func isAutoMock(doc string) bool {
-	notations := ParseNotations(doc)
+	notations := ParseAnnotations(doc)
 	return !notations.Contain("nomock")
 }
