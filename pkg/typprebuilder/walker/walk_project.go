@@ -8,11 +8,23 @@ import (
 	"strings"
 )
 
-// WalkProject the source code to get autowire and automock
-func WalkProject(filenames []string) (files *ProjectFiles, err error) {
+// Walker responsible to walk the filenames
+type Walker struct {
+	filenames []string
+}
+
+// New return new constructor of walker
+func New(filenames []string) *Walker {
+	return &Walker{
+		filenames: filenames,
+	}
+}
+
+// Walk the source code to get autowire and automock
+func (w *Walker) Walk() (files *ProjectFiles, err error) {
 	files = &ProjectFiles{}
 	fset := token.NewFileSet() // positions are relative to fset
-	for _, filename := range filenames {
+	for _, filename := range w.filenames {
 		if isWalkTarget(filename) {
 			var file ProjectFile
 			file, err = parse(fset, filename)

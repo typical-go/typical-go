@@ -43,11 +43,12 @@ func Run(ctx *typctx.Context) {
 	var projectFiles *walker.ProjectFiles
 	var cfgFields []typobj.Field
 	var buildCmds []string
-	var files coll.Strings
-	if files, err = scanProject(typenv.Layout.App); err != nil {
+	var filenames coll.Strings
+	if filenames, err = scanProject(typenv.Layout.App); err != nil {
 		return
 	}
-	if projectFiles, err = walker.WalkProject(files); err != nil {
+	walker := walker.New(filenames)
+	if projectFiles, err = walker.Walk(); err != nil {
 		return
 	}
 	cfgFields = ConfigFields(ctx)
