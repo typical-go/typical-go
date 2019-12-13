@@ -8,9 +8,13 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typenv"
+	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/typical-go/typical-go/pkg/typprebuilder/metadata"
+	"github.com/typical-go/typical-go/pkg/typprebuilder/walker"
+	"github.com/typical-go/typical-go/pkg/utility/coll"
 	"github.com/typical-go/typical-go/pkg/utility/filekit"
 )
 
@@ -20,37 +24,48 @@ const (
 
 // Run the prebuilder
 func Run(ctx *typctx.Context) {
-	var err error
-	var preb prebuilder
-	os.Mkdir(typenv.Layout.Metadata, 0700)
-	checker := checker{
-		Context:         ctx,
-		contextChecksum: contextChecksum(),
-		buildToolBinary: !filekit.IsExist(typenv.BuildToolBin),
-		readmeFile:      !filekit.IsExist(typenv.Readme),
-	}
 	if os.Getenv(debugEnv) != "" {
 		log.SetLevel(log.DebugLevel)
 	}
+	var err error
 	if err = ctx.Validate(); err != nil {
 		log.Fatal(err.Error())
 	}
 	if err = GenerateEnvfile(ctx); err != nil {
 		log.Fatal(err.Error())
 	}
-	if err := preb.Initiate(ctx); err != nil {
+	checker := checker{
+		Context:         ctx,
+		contextChecksum: contextChecksum(),
+		buildToolBinary: !filekit.IsExist(typenv.BuildToolBin),
+		readmeFile:      !filekit.IsExist(typenv.Readme),
+	}
+	var projectFiles *walker.ProjectFiles
+	var cfgFields []typobj.Field
+	var buildCmds []string
+	var files coll.Strings
+	if files, err = scanProject(typenv.Layout.App); err != nil {
+		return
+	}
+	if projectFiles, err = walker.WalkProject(files); err != nil {
+		return
+	}
+	cfgFields = ConfigFields(ctx)
+	for _, cmd := range typbuildtool.ModuleCommands(ctx) {
+		for _, subcmd := range cmd.Subcommands {
+			buildCmds = append(buildCmds, fmt.Sprintf("%s_%s", cmd.Name, subcmd.Name))
+		}
+	}
+	if checker.configuration, err = metadata.Update("config_fields", cfgFields); err != nil {
 		log.Fatal(err.Error())
 	}
-	if checker.configuration, err = metadata.Update("config_fields", preb.ConfigFields); err != nil {
+	if checker.buildCommands, err = metadata.Update("build_commands", buildCmds); err != nil {
 		log.Fatal(err.Error())
 	}
-	if checker.buildCommands, err = metadata.Update("build_commands", preb.BuildCommands); err != nil {
+	if checker.mockTarget, err = metadata.Update("mock_target", projectFiles.Automocks()); err != nil {
 		log.Fatal(err.Error())
 	}
-	if checker.mockTarget, err = metadata.Update("mock_target", preb.ProjectFiles.Automocks()); err != nil {
-		log.Fatal(err.Error())
-	}
-	if _, err = Generate("constructor", constructor{ApplicationImports: preb.ApplicationImports, Constructors: preb.ProjectFiles.Autowires()}); err != nil {
+	if _, err = Generate("constructor", constructor{ProjectPackage: ctx.Package, Constructors: projectFiles.Autowires()}); err != nil {
 		log.Fatal(err.Error())
 	}
 	if checker.checkBuildTool() {
@@ -68,6 +83,7 @@ func Run(ctx *typctx.Context) {
 	if checker.checkReadme() {
 		log.Info("Generate readme")
 		cmd := exec.Command(typenv.BuildToolBin, "readme")
+		cmd.Stderr = os.Stderr
 		if err := cmd.Run(); err != nil {
 			log.Fatal(err.Error())
 		}
