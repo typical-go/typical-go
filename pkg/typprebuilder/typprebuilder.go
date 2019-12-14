@@ -34,18 +34,16 @@ func Run(ctx *typctx.Context) {
 	if err = GenerateEnvfile(ctx); err != nil {
 		log.Fatal(err.Error())
 	}
-	checker := checker{
-		Context:         ctx,
-		contextChecksum: contextChecksum(),
-		buildToolBinary: !filekit.IsExist(typenv.BuildToolBin),
-		readmeFile:      !filekit.IsExist(typenv.Readme),
-	}
+
 	var cfgFields []typobj.Field
 	var buildCmds []string
 	var filenames coll.Strings
 	var autowires Autowires
 	var automocks Automocks
-	if filenames, err = scanProject(typenv.Layout.App); err != nil {
+	var configuration bool
+	var buildCommands bool
+	readmeFile := !filekit.IsExist(typenv.Readme)
+	if filenames, err = projectFiles(typenv.Layout.App); err != nil {
 		return
 	}
 	walker := walker.New(filenames)
@@ -60,31 +58,31 @@ func Run(ctx *typctx.Context) {
 			buildCmds = append(buildCmds, fmt.Sprintf("%s_%s", cmd.Name, subcmd.Name))
 		}
 	}
-	if checker.configuration, err = metadata.Update("config_fields", cfgFields); err != nil {
+	if configuration, err = metadata.Update("config_fields", cfgFields); err != nil {
 		log.Fatal(err.Error())
 	}
-	if checker.buildCommands, err = metadata.Update("build_commands", buildCmds); err != nil {
+	if buildCommands, err = metadata.Update("build_commands", buildCmds); err != nil {
 		log.Fatal(err.Error())
 	}
-	if checker.mockTarget, err = metadata.Update("mock_target", automocks); err != nil {
+	if _, err = metadata.Update("mock_target", automocks); err != nil {
 		log.Fatal(err.Error())
 	}
 	if _, err = Generate("constructor", constructor{ProjectPackage: ctx.Package, Constructors: autowires}); err != nil {
 		log.Fatal(err.Error())
 	}
-	if checker.checkBuildTool() {
-		log.Info("Build the build-tool")
-		cmd := exec.Command("go", "build",
-			"-o", typenv.BuildToolBin,
-			"./"+typenv.BuildToolMainPath,
-		)
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		if err := cmd.Run(); err != nil {
-			log.Fatal(err.Error())
-		}
+
+	log.Info("Build the build-tool")
+	cmd := exec.Command("go", "build",
+		"-o", typenv.BuildToolBin,
+		"./"+typenv.BuildToolMainPath,
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		log.Fatal(err.Error())
 	}
-	if checker.checkReadme() {
+
+	if ctx.ReadmeGenerator != nil && (buildCommands || configuration || readmeFile) {
 		log.Info("Generate readme")
 		cmd := exec.Command(typenv.BuildToolBin, "readme")
 		cmd.Stderr = os.Stderr

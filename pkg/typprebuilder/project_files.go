@@ -2,7 +2,7 @@ package typprebuilder
 
 import "io/ioutil"
 
-func scanProject(root string) (files []string, err error) {
+func projectFiles(root string) (files []string, err error) {
 	err = scanDir(root, &files)
 	return
 }
