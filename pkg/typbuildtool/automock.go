@@ -1,4 +1,4 @@
-package typprebuilder
+package typbuildtool
 
 import (
 	"github.com/typical-go/typical-go/pkg/typprebuilder/walker"

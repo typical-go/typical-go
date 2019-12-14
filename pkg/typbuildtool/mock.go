@@ -1,16 +1,15 @@
 package typbuildtool
 
 import (
-	"encoding/json"
 	"fmt"
 	"go/build"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typenv"
+	"github.com/typical-go/typical-go/pkg/typprebuilder/walker"
 	"github.com/typical-go/typical-go/pkg/utility/coll"
 	"github.com/urfave/cli/v2"
 )
@@ -28,8 +27,10 @@ func (t buildtool) cmdMock() *cli.Command {
 
 func (t buildtool) generateMock(ctx *cli.Context) (err error) {
 	log.Info("Generate mocks")
-	var targets []string
-	if targets, err = mockTargets(); err != nil {
+	var targets Automocks
+	walker := walker.New(t.filenames)
+	walker.AddTypeSpecListener(&targets)
+	if err = walker.Walk(); err != nil {
 		return
 	}
 	targets = append(targets, t.MockTargets...)
@@ -64,11 +65,11 @@ func installMockgen() (path string, err error) {
 	return
 }
 
-func mockTargets() (targets []string, err error) {
-	var data []byte
-	if data, err = ioutil.ReadFile(typenv.Layout.Metadata + "/mock_target.json"); err != nil {
-		return
-	}
-	err = json.Unmarshal(data, &targets)
-	return
-}
+// func mockTargets() (targets []string, err error) {
+// 	var data []byte
+// 	if data, err = ioutil.ReadFile(typenv.Layout.Metadata + "/mock_target.json"); err != nil {
+// 		return
+// 	}
+// 	err = json.Unmarshal(data, &targets)
+// 	return
+// }

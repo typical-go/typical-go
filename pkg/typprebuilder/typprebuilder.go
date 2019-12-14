@@ -23,7 +23,6 @@ func Run(ctx *typctx.Context) {
 	var buildCmds []string
 	var filenames coll.Strings
 	var autowires Autowires
-	var automocks Automocks
 	var configuration bool
 	var buildCommands bool
 	readmeFile := !filekit.IsExist(typenv.Readme)
@@ -32,7 +31,6 @@ func Run(ctx *typctx.Context) {
 	}
 	walker := walker.New(filenames)
 	walker.AddFuncDeclListener(&autowires)
-	walker.AddTypeSpecListener(&automocks)
 	if err = walker.Walk(); err != nil {
 		return
 	}
@@ -42,9 +40,6 @@ func Run(ctx *typctx.Context) {
 		}
 	}
 	if buildCommands, err = metadata.Update("build_commands", buildCmds); err != nil {
-		log.Fatal(err.Error())
-	}
-	if _, err = metadata.Update("mock_target", automocks); err != nil {
 		log.Fatal(err.Error())
 	}
 	if _, err = Generate("constructor", constructor{ProjectPackage: ctx.Package, Constructors: autowires}); err != nil {

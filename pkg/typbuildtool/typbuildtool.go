@@ -6,13 +6,22 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/typical-go/typical-go/pkg/typctx"
+	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/urfave/cli/v2"
 )
 
 // Run the build tool
 func Run(c *typctx.Context) {
-	buildtool := buildtool{Context: c}
+	var filenames []string
+	var err error
+	if filenames, err = projectFiles(typenv.Layout.App); err != nil {
+		log.Fatal(err.Error())
+	}
+	buildtool := buildtool{
+		Context:   c,
+		filenames: filenames,
+	}
 	app := cli.NewApp()
 	app.Name = c.Name
 	app.Usage = ""
@@ -27,6 +36,7 @@ func Run(c *typctx.Context) {
 
 type buildtool struct {
 	*typctx.Context
+	filenames []string
 }
 
 func (t buildtool) commands() (cmds []*cli.Command) {
