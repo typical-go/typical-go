@@ -54,25 +54,26 @@ func (w *Walker) parse(fset *token.FileSet, filename string) (err error) {
 		case *ast.FuncDecl:
 			e := &FuncDeclEvent{
 				Name:     name,
+				Filename: filename,
 				File:     f,
 				FuncDecl: obj.Decl.(*ast.FuncDecl),
 			}
 			for _, listener := range w.funcDeclListeners {
-				if listener.IsAction(e) {
-					if err = listener.ActionPerformed(e); err != nil {
-						return
-					}
+				if err = listener.OnFuncDecl(e); err != nil {
+					return
 				}
 			}
 		case *ast.TypeSpec:
 			e := &TypeSpecEvent{
 				Name:     name,
-				File:     f,
 				Filename: filename,
+				File:     f,
 				TypeSpec: obj.Decl.(*ast.TypeSpec),
 			}
 			for _, listener := range w.typeSpecListeners {
-				listener.OnTypeSpec(e)
+				if err = listener.OnTypeSpec(e); err != nil {
+					return
+				}
 			}
 		}
 	}

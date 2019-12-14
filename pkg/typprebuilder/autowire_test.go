@@ -10,77 +10,84 @@ import (
 	"github.com/typical-go/typical-go/pkg/typprebuilder/walker"
 )
 
-func TestAutowire_IsAction(t *testing.T) {
+func TestAutowire(t *testing.T) {
 	testcases := []struct {
 		typprebuilder.Autowires
 		event    *walker.FuncDeclEvent
-		isAction bool
+		autowire []string
 	}{
 		{
 			event: &walker.FuncDeclEvent{
+				Name:     "SomeFunction",
 				FuncDecl: &ast.FuncDecl{},
+				File:     &ast.File{Name: &ast.Ident{Name: "pkg"}},
 			},
-			isAction: false,
 		},
 		{
 			event: &walker.FuncDeclEvent{
 				FuncDecl: &ast.FuncDecl{},
 				Name:     "NewSomething",
+				File:     &ast.File{Name: ast.NewIdent("pkg")},
 			},
-			isAction: true,
+			autowire: []string{"pkg.NewSomething"},
 		},
 		{
 			event: &walker.FuncDeclEvent{
 				FuncDecl: funcDeclWithComment("some doc"),
 				Name:     "SomeFunction",
+				File:     &ast.File{Name: ast.NewIdent("pkg")},
 			},
-			isAction: false,
 		},
 		{
 			event: &walker.FuncDeclEvent{
 				FuncDecl: funcDeclWithComment("some doc [autowire]"),
 				Name:     "SomeFunction",
+				File:     &ast.File{Name: ast.NewIdent("pkg")},
 			},
-			isAction: true,
+			autowire: []string{"pkg.SomeFunction"},
 		},
 		{
 			event: &walker.FuncDeclEvent{
 				FuncDecl: funcDeclWithComment("some doc [Autowire]"),
 				Name:     "SomeFunction",
+				File:     &ast.File{Name: ast.NewIdent("pkg")},
 			},
-			isAction: true,
+			autowire: []string{"pkg.SomeFunction"},
 		},
 		{
 			event: &walker.FuncDeclEvent{
 				FuncDecl: funcDeclWithComment("some doc [AUTOWIRE]"),
 				Name:     "SomeFunction",
+				File:     &ast.File{Name: ast.NewIdent("pkg")},
 			},
-			isAction: true,
+			autowire: []string{"pkg.SomeFunction"},
 		},
 		{
 			event: &walker.FuncDeclEvent{
 				FuncDecl: funcDeclWithComment("some doc [nowire]"),
 				Name:     "NewSomeFunction",
+				File:     &ast.File{Name: ast.NewIdent("pkg")},
 			},
-			isAction: false,
 		},
 		{
 			event: &walker.FuncDeclEvent{
 				FuncDecl: funcDeclWithComment("some doc [nowire][autowire]"),
 				Name:     "NewSomeFunction",
+				File:     &ast.File{Name: ast.NewIdent("pkg")},
 			},
-			isAction: false,
 		},
 		{
 			event: &walker.FuncDeclEvent{
 				FuncDecl: funcDeclWithComment("some doc [nowire][autowire]"),
 				Name:     "SomeFunction",
+				File:     &ast.File{Name: ast.NewIdent("pkg")},
 			},
-			isAction: true,
+			autowire: []string{"pkg.SomeFunction"},
 		},
 	}
 	for _, tt := range testcases {
-		require.Equal(t, tt.isAction, tt.IsAction(tt.event))
+		require.NoError(t, tt.OnFuncDecl(tt.event))
+		require.EqualValues(t, tt.autowire, tt.Autowires)
 	}
 }
 

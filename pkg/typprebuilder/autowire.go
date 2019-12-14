@@ -7,11 +7,11 @@ import (
 	"github.com/typical-go/typical-go/pkg/typprebuilder/walker"
 )
 
-// Autowires is list of function declarion for
+// Autowires is list of function declarion to be provided by dig
 type Autowires []string
 
-// IsAction return true if function declaration is eligble for autowrire
-func (a *Autowires) IsAction(e *walker.FuncDeclEvent) bool {
+// IsAutowire return true if function declaration is eligble for autowrire
+func (a *Autowires) isAutowire(e *walker.FuncDeclEvent) bool {
 	var godoc string
 	if e.Doc != nil {
 		godoc = e.Doc.Text()
@@ -24,8 +24,10 @@ func (a *Autowires) IsAction(e *walker.FuncDeclEvent) bool {
 
 }
 
-// ActionPerformed is when function is autowired
-func (a *Autowires) ActionPerformed(e *walker.FuncDeclEvent) (err error) {
-	*a = append(*a, fmt.Sprintf("%s.%s", e.File.Name, e.Name))
+// OnFuncDecl is when function is autowired
+func (a *Autowires) OnFuncDecl(e *walker.FuncDeclEvent) (err error) {
+	if a.isAutowire(e) {
+		*a = append(*a, fmt.Sprintf("%s.%s", e.File.Name, e.Name))
+	}
 	return
 }

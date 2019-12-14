@@ -4,6 +4,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typprebuilder/walker"
 )
 
+// Automocks is list of filename to be mocking by mockgen
 type Automocks []string
 
 // OnTypeSpec handle type specificatio event
