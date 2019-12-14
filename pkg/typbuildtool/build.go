@@ -2,14 +2,13 @@ package typbuildtool
 
 import (
 	"fmt"
-	"go/build"
 	"os"
 	"os/exec"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/typbuildtool/walker"
+	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/utility/debugkit"
 	"github.com/typical-go/typical-go/pkg/utility/filekit"
 	"github.com/typical-go/typical-go/pkg/utility/golang"
@@ -35,7 +34,9 @@ func (t buildtool) buildBinary(ctx *cli.Context) (err error) {
 		return
 	}
 	log.Info("Generate constructors")
-	t.generateConstructor(typenv.AppMainPath+"/constructor.go", autowires)
+	if err = t.generateConstructor(typenv.AppMainPath+"/constructor.go", autowires); err != nil {
+		return
+	}
 	log.Info("Build the application")
 	cmd := exec.Command("go", "build",
 		"-o", typenv.AppBin,
@@ -68,12 +69,8 @@ func (t buildtool) generateConstructor(target string, constructors []string) (er
 	if err = filekit.Write(target, src); err != nil {
 		return
 	}
-	return goimports(target)
-}
 
-func goimports(filename string) error {
-	// TODO: change ot gofmt
-	cmd := exec.Command(fmt.Sprintf("%s/bin/goimports", build.Default.GOPATH),
-		"-w", filename)
+	cmd := exec.Command("go", "fmt", target)
+	cmd.Stderr = os.Stderr
 	return cmd.Run()
 }
