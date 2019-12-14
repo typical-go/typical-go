@@ -33,10 +33,6 @@ var (
 	BuildToolBin      = fmt.Sprintf("%s/%s-%s", Layout.Bin, Name, BuildTool)
 	BuildToolMainPath = fmt.Sprintf("%s/%s-%s", Layout.Cmd, Name, BuildTool)
 
-	Prebuilder         = "prebuilder"
-	PrebuilderBin      = fmt.Sprintf("%s/%s-%s", Layout.Bin, Name, Prebuilder)
-	PrebuilderMainPath = fmt.Sprintf("%s/%s-%s", Layout.Cmd, Name, Prebuilder)
-
 	ContextFile  = "typical/context.go"
 	ChecksumFile = Layout.Metadata + "/checksum"
 )

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/typprebuilder/walker"
+	"github.com/typical-go/typical-go/pkg/typbuildtool/walker"
 )
 
 // Autowires is list of function declarion to be provided by dig

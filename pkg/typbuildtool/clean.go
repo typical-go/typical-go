@@ -16,7 +16,6 @@ func (t buildtool) cmdClean() *cli.Command {
 		Action:  t.cleanProject,
 		Subcommands: []*cli.Command{
 			{Name: "build-tool", Usage: "Remove build-tool", Action: t.removeBuildTool},
-			{Name: "prebuilder", Usage: "Remove prebuilder", Action: t.removePrebuilder},
 			{Name: "app", Usage: "Remove app", Action: t.removeApp},
 			{Name: "metadata", Usage: "Remove metadata", Action: t.removeMetadata},
 			{Name: "env", Usage: "Remove envfile", Action: t.removeEnvFile},
@@ -27,7 +26,6 @@ func (t buildtool) cmdClean() *cli.Command {
 
 func (t buildtool) cleanProject(ctx *cli.Context) error {
 	t.removeBuildTool(ctx)
-	t.removePrebuilder(ctx)
 	t.removeApp(ctx)
 	t.removeMetadata(ctx)
 	t.removeEnvFile(ctx)
@@ -36,11 +34,6 @@ func (t buildtool) cleanProject(ctx *cli.Context) error {
 
 func (t buildtool) removeBuildTool(ctx *cli.Context) error {
 	removeFile(typenv.BuildToolBin)
-	return nil
-}
-
-func (t buildtool) removePrebuilder(ctx *cli.Context) error {
-	removeFile(typenv.PrebuilderBin)
 	return nil
 }
 

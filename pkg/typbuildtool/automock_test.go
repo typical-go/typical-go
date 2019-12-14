@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
-	"github.com/typical-go/typical-go/pkg/typprebuilder/walker"
+	"github.com/typical-go/typical-go/pkg/typbuildtool/walker"
 )
 
 func TestAutomock(t *testing.T) {

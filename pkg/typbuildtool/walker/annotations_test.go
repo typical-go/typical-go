@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typprebuilder/walker"
+	"github.com/typical-go/typical-go/pkg/typbuildtool/walker"
 )
 
 func TestDocTags_ParseDocTag(t *testing.T) {

@@ -42,19 +42,17 @@ func wrapperRunner(path string) runn.Runner {
 		Permission: 0700,
 		Template:   typicalw,
 		Data: struct {
-			ContextFile        string
-			ChecksumFile       string
-			LayoutMetadata     string
-			PrebuilderBin      string
-			PrebuilderMainPath string
-			BuildtoolBin       string
+			ContextFile       string
+			ChecksumFile      string
+			LayoutMetadata    string
+			BuildtoolMainPath string
+			BuildtoolBin      string
 		}{
-			ContextFile:        typenv.ContextFile,
-			ChecksumFile:       typenv.ChecksumFile,
-			LayoutMetadata:     typenv.Layout.Metadata,
-			PrebuilderBin:      fmt.Sprintf("%s/%s-%s", typenv.Layout.Bin, name, typenv.Prebuilder),
-			PrebuilderMainPath: fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, name, typenv.Prebuilder),
-			BuildtoolBin:       fmt.Sprintf("%s/%s-%s", typenv.Layout.Bin, name, typenv.BuildTool),
+			ContextFile:       typenv.ContextFile,
+			ChecksumFile:      typenv.ChecksumFile,
+			LayoutMetadata:    typenv.Layout.Metadata,
+			BuildtoolMainPath: fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, name, typenv.BuildTool),
+			BuildtoolBin:      fmt.Sprintf("%s/%s-%s", typenv.Layout.Bin, name, typenv.BuildTool),
 		},
 	}
 }

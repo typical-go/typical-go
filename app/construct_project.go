@@ -96,14 +96,11 @@ func (i constructproj) typicalContext() error {
 func (i constructproj) cmdPackage() error {
 	appMainPath := fmt.Sprintf("%s/%s", typenv.Layout.Cmd, i.Name)
 	buildtoolMainPath := fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, i.Name, typenv.BuildTool)
-	prebuilderMainPath := fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, i.Name, typenv.Prebuilder)
 	return runn.Execute(
 		runner.Mkdir{Path: i.Path(typenv.Layout.Cmd)},
 		runner.Mkdir{Path: i.Path(appMainPath)},
 		runner.Mkdir{Path: i.Path(buildtoolMainPath)},
-		runner.Mkdir{Path: i.Path(prebuilderMainPath)},
 		runner.WriteSource{Target: i.Path(appMainPath + "/main.go"), Source: i.appMainSrc()},
-		runner.WriteSource{Target: i.Path(prebuilderMainPath + "/main.go"), Source: i.prebuilderMainSrc()},
 		runner.WriteSource{Target: i.Path(buildtoolMainPath + "/main.go"), Source: i.buildtoolMainSrc()},
 	)
 }
@@ -118,9 +115,9 @@ func (i constructproj) appMainSrc() (src *golang.MainSource) {
 
 func (i constructproj) prebuilderMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
-	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typprebuilder")
+	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typbuildtool")
 	src.Imports.Add("", i.Pkg+"/typical")
-	src.Append("typprebuilder.Run(typical.Context)")
+	src.Append("typbuildtool.Run(typical.Context)")
 	return
 }
 

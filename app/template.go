@@ -12,13 +12,12 @@ else
 	CHECKSUM_UPDATED=$([ "$CHECKSUM_DATA" == "$(cat {{.ChecksumFile}} )" ] ; echo $?)
 fi
 
-if [ "$CHECKSUM_UPDATED" == "1" ] || ! [[ -f {{.PrebuilderBin}} ]] ; then 
-	echo $CHECKSUM_DATA > {{.ChecksumFile}}
-	echo "Build the prebuilder"
-	go build -o {{.PrebuilderBin}} ./{{.PrebuilderMainPath}}
+if [ "$CHECKSUM_UPDATED" == "1" ] || ! [[ -f bin/typical-go-buildtool ]] ; then 
+	echo $CHECKSUM_DATA > .typical-metadata/checksum
+	echo "Compile Typical-Build"
+	go build -o bin/typical-go-buildtool ./cmd/typical-go-buildtool
 fi
 
-./{{.PrebuilderBin}} $CHECKSUM_UPDATED
 ./{{.BuildtoolBin}} $@`
 
 const gomod = `module {{.Pkg}}
