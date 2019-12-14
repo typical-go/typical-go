@@ -25,19 +25,6 @@ func Run(c *typctx.Context) {
 	}
 }
 
-// ModuleCommands return list of command
-func ModuleCommands(ctx *typctx.Context) (cmds []*cli.Command) {
-	for _, module := range ctx.AllModule() {
-		buildCli := typctx.NewCli(ctx, module)
-		if commander, ok := module.(typobj.BuildCommander); ok {
-			for _, cmd := range commander.BuildCommands(buildCli) {
-				cmds = append(cmds, cmd)
-			}
-		}
-	}
-	return
-}
-
 type buildtool struct {
 	*typctx.Context
 }
@@ -56,10 +43,19 @@ func (t buildtool) commands() (cmds []*cli.Command) {
 	if t.ReadmeGenerator != nil {
 		cmds = append(cmds, t.cmdReadme())
 	}
-	cmds = append(cmds, ModuleCommands(t.Context)...)
+	cmds = append(cmds, BuildCommands(t.Context)...)
 	return
 }
 
-func (t buildtool) before(ctx *cli.Context) (err error) {
-	return t.Context.Validate()
+// BuildCommands return list of command
+func BuildCommands(ctx *typctx.Context) (cmds []*cli.Command) {
+	for _, module := range ctx.AllModule() {
+		buildCli := typctx.NewCli(ctx, module)
+		if commander, ok := module.(typobj.BuildCommander); ok {
+			for _, cmd := range commander.BuildCommands(buildCli) {
+				cmds = append(cmds, cmd)
+			}
+		}
+	}
+	return
 }

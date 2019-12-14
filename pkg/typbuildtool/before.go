@@ -1,4 +1,4 @@
-package typprebuilder
+package typbuildtool
 
 import (
 	"fmt"
@@ -7,11 +7,26 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typctx"
 	"github.com/typical-go/typical-go/pkg/typobj"
+	"github.com/urfave/cli/v2"
 )
 
 const (
 	defaultDotEnv = ".env"
 )
+
+func (t buildtool) before(ctx *cli.Context) (err error) {
+	if err = t.Validate(); err != nil {
+		return
+	}
+	cfgFields := ConfigFields(t.Context)
+	// if _, err = metadata.Update("config_fields", cfgFields); err != nil {
+	// 	log.Fatal(err.Error())
+	// }
+	if err = GenerateEnvfile(cfgFields); err != nil {
+		return
+	}
+	return
+}
 
 // ConfigFields return config list
 func ConfigFields(ctx *typctx.Context) (fields []typobj.Field) {
@@ -25,7 +40,7 @@ func ConfigFields(ctx *typctx.Context) (fields []typobj.Field) {
 }
 
 // GenerateEnvfile to generate .env file if not exist
-func GenerateEnvfile(ctx *typctx.Context) (err error) {
+func GenerateEnvfile(fields []typobj.Field) (err error) {
 	if _, err = os.Stat(defaultDotEnv); !os.IsNotExist(err) {
 		return
 	}
@@ -35,7 +50,7 @@ func GenerateEnvfile(ctx *typctx.Context) (err error) {
 		return
 	}
 	defer file.Close()
-	for _, field := range ConfigFields(ctx) {
+	for _, field := range fields {
 		var v interface{}
 		if field.IsZero {
 			v = field.Default
