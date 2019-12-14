@@ -6,13 +6,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/typical-go/typical-go/pkg/typprebuilder"
+	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typprebuilder/walker"
 )
 
 func TestAutomock(t *testing.T) {
 	testcases := []struct {
-		typprebuilder.Automocks
+		typbuildtool.Automocks
 		e         *walker.TypeSpecEvent
 		automocks []string
 	}{

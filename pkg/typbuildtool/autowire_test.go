@@ -5,14 +5,14 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typprebuilder"
 
+	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typprebuilder/walker"
 )
 
 func TestAutowire(t *testing.T) {
 	testcases := []struct {
-		typprebuilder.Autowires
+		typbuildtool.Autowires
 		event    *walker.FuncDeclEvent
 		autowire []string
 	}{
