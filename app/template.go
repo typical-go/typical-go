@@ -12,10 +12,10 @@ else
 	CHECKSUM_UPDATED=$([ "$CHECKSUM_DATA" == "$(cat {{.ChecksumFile}} )" ] ; echo $?)
 fi
 
-if [ "$CHECKSUM_UPDATED" == "1" ] || ! [[ -f bin/typical-go-buildtool ]] ; then 
+if [ "$CHECKSUM_UPDATED" == "1" ] || ! [[ -f {{.BuildtoolBin}} ]] ; then 
 	echo $CHECKSUM_DATA > .typical-metadata/checksum
 	echo "Compile Typical-Build"
-	go build -o bin/typical-go-buildtool ./cmd/typical-go-buildtool
+	go build -o {{.BuildtoolBin}} ./{{.BuildtoolMainPath}}
 fi
 
 ./{{.BuildtoolBin}} $@`
