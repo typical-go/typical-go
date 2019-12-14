@@ -14,3 +14,10 @@ type FuncDeclEvent struct {
 	Name string
 	File *ast.File
 }
+
+func (e *FuncDeclEvent) CommentDoc() string {
+	if e.Doc != nil {
+		return e.Doc.Text()
+	}
+	return ""
+}

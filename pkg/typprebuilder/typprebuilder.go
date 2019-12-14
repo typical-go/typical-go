@@ -40,17 +40,18 @@ func Run(ctx *typctx.Context) {
 		buildToolBinary: !filekit.IsExist(typenv.BuildToolBin),
 		readmeFile:      !filekit.IsExist(typenv.Readme),
 	}
-	var projectFiles *walker.ProjectFiles
 	var cfgFields []typobj.Field
 	var buildCmds []string
 	var filenames coll.Strings
-	var autowire Autowires
+	var autowires Autowires
+	var automocks Automocks
 	if filenames, err = scanProject(typenv.Layout.App); err != nil {
 		return
 	}
 	walker := walker.New(filenames)
-	walker.AddFuncDeclListener(&autowire)
-	if projectFiles, err = walker.Walk(); err != nil {
+	walker.AddFuncDeclListener(&autowires)
+	walker.AddTypeSpecListener(&automocks)
+	if err = walker.Walk(); err != nil {
 		return
 	}
 	cfgFields = ConfigFields(ctx)
@@ -65,10 +66,10 @@ func Run(ctx *typctx.Context) {
 	if checker.buildCommands, err = metadata.Update("build_commands", buildCmds); err != nil {
 		log.Fatal(err.Error())
 	}
-	if checker.mockTarget, err = metadata.Update("mock_target", projectFiles.Automocks()); err != nil {
+	if checker.mockTarget, err = metadata.Update("mock_target", automocks); err != nil {
 		log.Fatal(err.Error())
 	}
-	if _, err = Generate("constructor", constructor{ProjectPackage: ctx.Package, Constructors: autowire}); err != nil {
+	if _, err = Generate("constructor", constructor{ProjectPackage: ctx.Package, Constructors: autowires}); err != nil {
 		log.Fatal(err.Error())
 	}
 	if checker.checkBuildTool() {

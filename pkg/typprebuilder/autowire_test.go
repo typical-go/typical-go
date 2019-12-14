@@ -86,10 +86,14 @@ func TestAutowire_IsAction(t *testing.T) {
 
 func funcDeclWithComment(text string) *ast.FuncDecl {
 	return &ast.FuncDecl{
-		Doc: &ast.CommentGroup{
-			List: []*ast.Comment{
-				{Text: text},
-			},
+		Doc: astComment(text),
+	}
+}
+
+func astComment(text string) *ast.CommentGroup {
+	return &ast.CommentGroup{
+		List: []*ast.Comment{
+			{Text: text},
 		},
 	}
 }
