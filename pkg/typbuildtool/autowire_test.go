@@ -1,4 +1,4 @@
-package typprebuilder_test
+package typbuildtool_test
 
 import (
 	"go/ast"

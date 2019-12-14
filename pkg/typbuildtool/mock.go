@@ -26,10 +26,10 @@ func (t buildtool) cmdMock() *cli.Command {
 }
 
 func (t buildtool) generateMock(ctx *cli.Context) (err error) {
-	log.Info("Generate mocks")
 	var targets Automocks
 	walker := walker.New(t.filenames)
 	walker.AddTypeSpecListener(&targets)
+	log.Info("Walk the project")
 	if err = walker.Walk(); err != nil {
 		return
 	}
