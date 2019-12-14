@@ -14,13 +14,15 @@ import (
 // Run the build tool
 func Run(c *typctx.Context) {
 	var filenames []string
+	var dirs []string
 	var err error
-	if filenames, err = projectFiles(typenv.Layout.App); err != nil {
+	if dirs, filenames, err = projectFiles(typenv.Layout.App); err != nil {
 		log.Fatal(err.Error())
 	}
 	buildtool := buildtool{
 		Context:   c,
 		filenames: filenames,
+		dirs:      dirs,
 	}
 	app := cli.NewApp()
 	app.Name = c.Name
@@ -37,6 +39,7 @@ func Run(c *typctx.Context) {
 type buildtool struct {
 	*typctx.Context
 	filenames []string
+	dirs      []string
 }
 
 func (t buildtool) commands() (cmds []*cli.Command) {

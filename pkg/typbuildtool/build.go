@@ -2,9 +2,9 @@ package typbuildtool
 
 import (
 	"fmt"
+	"go/build"
 	"os"
 	"os/exec"
-	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typbuildtool/walker"
@@ -55,12 +55,10 @@ func (t buildtool) generateConstructor(target string, constructors []string) (er
 	}
 	imports := make(map[string]struct{})
 	imports[t.Package+"/typical"] = struct{}{}
+	for _, dir := range t.dirs {
+		imports[t.Package+"/"+dir] = struct{}{}
+	}
 	for _, constructor := range constructors {
-		dotIndex := strings.Index(constructor, ".")
-		if dotIndex >= 0 {
-			pkg := constructor[:dotIndex]
-			imports[t.Package+"/"+pkg] = struct{}{}
-		}
 		src.Init.Append(fmt.Sprintf("typical.Context.Constructors.Append(%s)", constructor))
 	}
 	for key := range imports {
@@ -69,8 +67,8 @@ func (t buildtool) generateConstructor(target string, constructors []string) (er
 	if err = filekit.Write(target, src); err != nil {
 		return
 	}
-
-	cmd := exec.Command("go", "fmt", target)
+	cmd := exec.Command(fmt.Sprintf("%s/bin/goimports", build.Default.GOPATH),
+		"-w", target)
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
 }

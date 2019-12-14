@@ -19,7 +19,7 @@ func (t buildtool) cmdClean() *cli.Command {
 			{Name: "app", Usage: "Remove app", Action: t.removeApp},
 			{Name: "metadata", Usage: "Remove metadata", Action: t.removeMetadata},
 			{Name: "env", Usage: "Remove envfile", Action: t.removeEnvFile},
-			{Name: "dependency", Usage: "Remove dependency", Action: t.removeEnvFile},
+			{Name: "constructor", Usage: "Remove constructor", Action: t.removeConstructor},
 		},
 	}
 }
@@ -29,6 +29,7 @@ func (t buildtool) cleanProject(ctx *cli.Context) error {
 	t.removeApp(ctx)
 	t.removeMetadata(ctx)
 	t.removeEnvFile(ctx)
+	t.removeConstructor(ctx)
 	return nil
 }
 
@@ -49,6 +50,11 @@ func (t buildtool) removeMetadata(ctx *cli.Context) error {
 
 func (t buildtool) removeEnvFile(ctx *cli.Context) error {
 	removeFile(".env")
+	return nil
+}
+
+func (t buildtool) removeConstructor(ctx *cli.Context) error {
+	removeFile(typenv.AppMainPath + "/constructor.go")
 	return nil
 }
 
