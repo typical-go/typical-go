@@ -1,6 +1,12 @@
 # Typical Go
 
-A Framework and Build Tool for Productive Go Development. <https://typical-go.github.io/>
+![stability-unstable](https://img.shields.io/badge/stability-unstable-yellow.svg)
+
+A Framework + Build Tool for Productive Go Development. <https://typical-go.github.io/>
+
+## Concept
+
+![concept](concept.png)
 
 ## Install
 
