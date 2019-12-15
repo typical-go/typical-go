@@ -59,8 +59,8 @@ func (i constructproj) Run() (err error) {
 		i.typicalContext,
 		i.ignoreFile,
 		wrapperRunner(i.Name),
-		i.gomod,
 		i.gofmt,
+		i.gomod,
 	)
 }
 
