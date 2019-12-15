@@ -48,11 +48,11 @@ func TestContext_Validate(t *testing.T) {
 		},
 		{
 			typctx.Context{Package: "some-package"},
-			"Invalid Context: Name can't be empty",
+			"Context: Name can't be empty",
 		},
 		{
 			typctx.Context{Name: "some-name"},
-			"Invalid Context: Package can't be empty",
+			"Context: Package can't be empty",
 		},
 		{
 			typctx.Context{
@@ -62,7 +62,7 @@ func TestContext_Validate(t *testing.T) {
 					Targets: []typrls.Target{"linuxamd64"},
 				},
 			},
-			"Releaser: Target: Missing OS: Please make sure 'linuxamd64' using 'OS/ARCH' format",
+			"Context: Releaser: Target: Missing OS: Please make sure 'linuxamd64' using 'OS/ARCH' format",
 		},
 		{
 			typctx.Context{
@@ -70,7 +70,7 @@ func TestContext_Validate(t *testing.T) {
 				Package:   "some-package",
 				AppModule: &dummyModule{Name: "App", err: errors.New("some-error")},
 			},
-			"App: some-error",
+			"Context: App: some-error",
 		},
 		{
 			typctx.Context{
@@ -78,7 +78,7 @@ func TestContext_Validate(t *testing.T) {
 				Package: "some-package",
 				Modules: []interface{}{&dummyModule{Name: "Module", err: errors.New("some-error")}},
 			},
-			"Module: some-error",
+			"Context: Module: some-error",
 		},
 	}
 	for i, tt := range testcases {

@@ -1,6 +1,7 @@
 package typctx
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"reflect"
@@ -33,10 +34,10 @@ type Context struct {
 // Validate context
 func (c *Context) Validate() (err error) {
 	if c.Name == "" {
-		return invalidContextError("Name can't be empty")
+		return errors.New("Context: Name can't be empty")
 	}
 	if c.Package == "" {
-		return invalidContextError("Package can't be empty")
+		return errors.New("Context: Package can't be empty")
 	}
 	if c.Version == "" {
 		c.Version = "0.0.1"
@@ -45,11 +46,11 @@ func (c *Context) Validate() (err error) {
 		c.ConfigLoader = typobj.DefaultLoader()
 	}
 	if err = validate(c.Releaser); err != nil {
-		return fmt.Errorf("Releaser: %w", err)
+		return fmt.Errorf("Context: Releaser: %w", err)
 	}
 	for _, module := range c.AllModule() {
 		if err = validate(module); err != nil {
-			return fmt.Errorf("%s: %w", typobj.Name(module), err)
+			return fmt.Errorf("Context: %s: %w", typobj.Name(module), err)
 		}
 	}
 	return
