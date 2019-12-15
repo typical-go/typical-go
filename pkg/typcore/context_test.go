@@ -33,7 +33,7 @@ func TestContext_Validate_DefaultValue(t *testing.T) {
 	}
 	require.NoError(t, ctx.Validate())
 	require.Equal(t, "0.0.1", ctx.Version)
-	require.Equal(t, "*typcore.DefaultConfigLoader", reflect.TypeOf(ctx.ConfigLoader).String())
+	require.Equal(t, "*typcore.defaultConfigLoader", reflect.TypeOf(ctx.ConfigLoader).String())
 }
 
 func TestContext_Validate(t *testing.T) {
