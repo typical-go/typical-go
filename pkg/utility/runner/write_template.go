@@ -1,8 +1,8 @@
 package runner
 
 import (
-	"html/template"
 	"os"
+	"text/template"
 )
 
 // WriteTemplate to write template to file
