@@ -5,14 +5,14 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/typical-go/typical-go/pkg/typctx"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/urfave/cli/v2"
 )
 
 // Run the build tool
-func Run(c *typctx.Context) {
+func Run(c *typcore.Context) {
 	var filenames []string
 	var dirs []string
 	var err error
@@ -37,7 +37,7 @@ func Run(c *typctx.Context) {
 }
 
 type buildtool struct {
-	*typctx.Context
+	*typcore.Context
 	filenames []string
 	dirs      []string
 }
@@ -61,9 +61,9 @@ func (t buildtool) commands() (cmds []*cli.Command) {
 }
 
 // BuildCommands return list of command
-func BuildCommands(ctx *typctx.Context) (cmds []*cli.Command) {
+func BuildCommands(ctx *typcore.Context) (cmds []*cli.Command) {
 	for _, module := range ctx.AllModule() {
-		buildCli := typctx.NewCli(ctx, module)
+		buildCli := typcore.NewCli(ctx, module)
 		if commander, ok := module.(typobj.BuildCommander); ok {
 			for _, cmd := range commander.BuildCommands(buildCli) {
 				cmds = append(cmds, cmd)

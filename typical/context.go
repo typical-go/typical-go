@@ -2,12 +2,12 @@ package typical
 
 import (
 	"github.com/typical-go/typical-go/app"
-	"github.com/typical-go/typical-go/pkg/typctx"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
 // Context of project
-var Context = &typctx.Context{
+var Context = &typcore.Context{
 	Name:      "Typical-Go",
 	Version:   app.Version,
 	Package:   "github.com/typical-go/typical-go",

@@ -1,4 +1,4 @@
-package typctx_test
+package typcore_test
 
 import (
 	"errors"
@@ -7,12 +7,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/typical-go/typical-go/pkg/typctx"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
 func TestContext_AllModule(t *testing.T) {
-	ctx := typctx.Context{
+	ctx := typcore.Context{
 		Modules: []interface{}{
 			struct{}{},
 			struct{}{},
@@ -28,7 +28,7 @@ func TestContext_AllModule(t *testing.T) {
 }
 
 func TestContext_Validate_DefaultValue(t *testing.T) {
-	ctx := &typctx.Context{
+	ctx := &typcore.Context{
 		Name:    "some-name",
 		Package: "some-package",
 	}
@@ -39,23 +39,23 @@ func TestContext_Validate_DefaultValue(t *testing.T) {
 
 func TestContext_Validate(t *testing.T) {
 	testcases := []struct {
-		context typctx.Context
+		context typcore.Context
 		errMsg  string
 	}{
 		{
-			typctx.Context{Name: "some-name", Package: "some-package", AppModule: &dummyModule{Name: "App"}},
+			typcore.Context{Name: "some-name", Package: "some-package", AppModule: &dummyModule{Name: "App"}},
 			"",
 		},
 		{
-			typctx.Context{Package: "some-package"},
+			typcore.Context{Package: "some-package"},
 			"Context: Name can't be empty",
 		},
 		{
-			typctx.Context{Name: "some-name"},
+			typcore.Context{Name: "some-name"},
 			"Context: Package can't be empty",
 		},
 		{
-			typctx.Context{
+			typcore.Context{
 				Name:    "some-name",
 				Package: "some-package",
 				Releaser: &typrls.Releaser{
@@ -65,7 +65,7 @@ func TestContext_Validate(t *testing.T) {
 			"Context: Releaser: Target: Missing OS: Please make sure 'linuxamd64' using 'OS/ARCH' format",
 		},
 		{
-			typctx.Context{
+			typcore.Context{
 				Name:      "some-name",
 				Package:   "some-package",
 				AppModule: &dummyModule{Name: "App", err: errors.New("some-error")},
@@ -73,7 +73,7 @@ func TestContext_Validate(t *testing.T) {
 			"Context: App: some-error",
 		},
 		{
-			typctx.Context{
+			typcore.Context{
 				Name:    "some-name",
 				Package: "some-package",
 				Modules: []interface{}{&dummyModule{Name: "Module", err: errors.New("some-error")}},

@@ -1,4 +1,4 @@
-package typctx
+package typcore
 
 import (
 	"errors"

@@ -5,18 +5,18 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/typical-go/typical-go/pkg/typctx"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/typical-go/typical-go/pkg/utility/envfile"
 	"github.com/urfave/cli/v2"
 )
 
 // Run the application
-func Run(ctx *typctx.Context) {
+func Run(ctx *typcore.Context) {
 	if err := ctx.Validate(); err != nil {
 		log.Fatal(err.Error())
 	}
-	appCli := typctx.NewCli(ctx, ctx.AppModule)
+	appCli := typcore.NewCli(ctx, ctx.AppModule)
 	app := cli.NewApp()
 	app.Name = ctx.Name
 	app.Usage = ""

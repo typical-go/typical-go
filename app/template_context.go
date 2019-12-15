@@ -5,11 +5,11 @@ const ctxSrc = `package typical
 import (
 	"{{.Pkg}}/app"
 
-	"github.com/typical-go/typical-go/pkg/typctx"
+	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 // Context of Project
-var Context = &typctx.Context{
+var Context = &typcore.Context{
 	Name:      "{{.Name}}",
 	Version:   "0.0.1",
 	Package:   "{{.Pkg}}",
@@ -20,11 +20,11 @@ var Context = &typctx.Context{
 const blankCtxSrc = `package typical
 
 import (
-	"github.com/typical-go/typical-go/pkg/typctx"
+	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 // Context of Project
-var Context = &typctx.Context{
+var Context = &typcore.Context{
 	Name:      "{{.Name}}",
 	Version:   "0.0.1",
 	Package:   "{{.Pkg}}",

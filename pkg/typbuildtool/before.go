@@ -5,7 +5,7 @@ import (
 	"os"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/typctx"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/urfave/cli/v2"
 )
@@ -29,7 +29,7 @@ func (t buildtool) before(ctx *cli.Context) (err error) {
 }
 
 // ConfigFields return config list
-func ConfigFields(ctx *typctx.Context) (fields []typobj.Field) {
+func ConfigFields(ctx *typcore.Context) (fields []typobj.Field) {
 	for _, module := range ctx.AllModule() {
 		if configurer, ok := module.(typobj.Configurer); ok {
 			prefix, spec, _ := configurer.Configure()
