@@ -32,7 +32,7 @@ func (Module) AppCommands(c typcore.Cli) []*cli.Command {
 // func (Module) Configure() (prefix string, spec, loadFn interface{}) {
 // 	prefix = "APP"
 // 	spec = &Config{}
-// 	loadFn = func(loader typcore.Loader) (cfg Config, err error) {
+// 	loadFn = func(loader typcore.ConfigLoader) (cfg Config, err error) {
 // 		err = loader.Load(prefix, &cfg)
 // 		return
 // 	}

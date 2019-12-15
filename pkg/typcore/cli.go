@@ -147,7 +147,7 @@ func provide(di *dig.Container, fns ...interface{}) (err error) {
 }
 
 func loaderFn(c *Context) interface{} {
-	return func() Loader {
+	return func() ConfigLoader {
 		return c.ConfigLoader
 	}
 }

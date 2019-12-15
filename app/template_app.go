@@ -22,7 +22,7 @@ func (*Module) Action() interface{} {
 func (*Module) Configure() (prefix string, spec, loadFn interface{}) {
 	prefix = "APP"
 	spec = &config.Config{}
-	loadFn = func(loader typcore.Loader) (cfg config.Config, err error) {
+	loadFn = func(loader typcore.ConfigLoader) (cfg config.Config, err error) {
 		err = loader.Load(prefix, &cfg)
 		return
 	}

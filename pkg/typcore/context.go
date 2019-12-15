@@ -18,7 +18,7 @@ type Context struct {
 	Version      string
 	AppModule    interface{}
 	Modules      coll.Interfaces
-	ConfigLoader Loader
+	ConfigLoader ConfigLoader
 	Releaser     *typrls.Releaser
 
 	MockTargets  coll.Strings
@@ -41,7 +41,7 @@ func (c *Context) Validate() (err error) {
 		c.Version = "0.0.1"
 	}
 	if c.ConfigLoader == nil {
-		c.ConfigLoader = DefaultLoader()
+		c.ConfigLoader = DefaultConfigLoader()
 	}
 	if err = validate(c.Releaser); err != nil {
 		return fmt.Errorf("Context: Releaser: %w", err)
