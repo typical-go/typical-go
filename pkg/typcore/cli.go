@@ -15,6 +15,7 @@ type Cli interface {
 	Action(fn interface{}) func(ctx *cli.Context) error
 	PreparedAction(fn interface{}) func(ctx *cli.Context) error
 	Context() *Context
+	Object() interface{}
 }
 
 // NewCli return new instance of Cli
@@ -81,9 +82,14 @@ func (c *cliImpl) PreparedAction(fn interface{}) func(ctx *cli.Context) error {
 	}
 }
 
-// Context to return context of Cli
+// Context of Cli
 func (c *cliImpl) Context() *Context {
 	return c.ctx
+}
+
+// Object of Cli
+func (c *cliImpl) Object() interface{} {
+	return c.obj
 }
 
 func provideAll(di *dig.Container, ctx *Context) (err error) {
