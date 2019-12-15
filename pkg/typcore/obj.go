@@ -42,12 +42,6 @@ type AppCommander interface {
 	AppCommands(c Cli) []*cli.Command
 }
 
-// Cli for command line
-type Cli interface {
-	Action(fn interface{}) func(ctx *cli.Context) error
-	PreparedAction(fn interface{}) func(ctx *cli.Context) error
-}
-
 // IsProvider return true if object implementation of provider
 func IsProvider(obj interface{}) (ok bool) {
 	_, ok = obj.(Provider)

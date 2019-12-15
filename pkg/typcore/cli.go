@@ -10,16 +10,23 @@ import (
 	"go.uber.org/dig"
 )
 
+// Cli for command line
+type Cli interface {
+	Action(fn interface{}) func(ctx *cli.Context) error
+	PreparedAction(fn interface{}) func(ctx *cli.Context) error
+	Context() *Context
+}
+
 // NewCli return new instance of Cli
 func NewCli(ctx *Context, obj interface{}) Cli {
 	return &cliImpl{
-		Context: ctx,
-		obj:     obj,
+		ctx: ctx,
+		obj: obj,
 	}
 }
 
 type cliImpl struct {
-	*Context
+	ctx *Context
 	obj interface{}
 }
 
@@ -37,7 +44,7 @@ func (c *cliImpl) Action(fn interface{}) func(ctx *cli.Context) error {
 			<-gracefulStop
 			os.Exit(0) // NOTE: Make sure the application is exit
 		}()
-		if err = provideLoader(di, c.Context); err != nil {
+		if err = provideLoader(di, c.ctx); err != nil {
 			return
 		}
 		if err = provideConfigFn(di, c.obj); err != nil {
@@ -59,19 +66,24 @@ func (c *cliImpl) PreparedAction(fn interface{}) func(ctx *cli.Context) error {
 		}()
 		go func() {
 			<-gracefulStop
-			if err = destroyAll(di, c.Context); err != nil {
+			if err = destroyAll(di, c.ctx); err != nil {
 				log.Fatal(err.Error())
 			}
 			os.Exit(0) // NOTE: Make sure the application is exit
 		}()
-		if err = provideAll(di, c.Context); err != nil {
+		if err = provideAll(di, c.ctx); err != nil {
 			return
 		}
-		if err = prepareAll(di, c.Context); err != nil {
+		if err = prepareAll(di, c.ctx); err != nil {
 			return
 		}
 		return di.Invoke(fn)
 	}
+}
+
+// Context to return context of Cli
+func (c *cliImpl) Context() *Context {
+	return c.ctx
 }
 
 func provideAll(di *dig.Container, ctx *Context) (err error) {
