@@ -1,4 +1,4 @@
-package typobj
+package typcore
 
 import (
 	"fmt"

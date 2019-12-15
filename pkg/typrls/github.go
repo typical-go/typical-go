@@ -9,8 +9,8 @@ import (
 
 	"github.com/google/go-github/github"
 	log "github.com/sirupsen/logrus"
-
 	"github.com/typical-go/typical-go/pkg/typenv"
+
 	"golang.org/x/oauth2"
 )
 

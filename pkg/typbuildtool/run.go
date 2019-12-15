@@ -4,9 +4,8 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/typical-go/typical-go/pkg/typenv"
-
 	log "github.com/sirupsen/logrus"
+	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/urfave/cli/v2"
 )
 

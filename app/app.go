@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/typical-go/typical-go/pkg/typobj"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
@@ -14,7 +14,7 @@ const (
 type Module struct{}
 
 // AppCommands is commands collection to execute application
-func (Module) AppCommands(c typobj.Cli) []*cli.Command {
+func (Module) AppCommands(c typcore.Cli) []*cli.Command {
 	return []*cli.Command{
 		cmdConstructProject(),
 		cmdConstructModule(),
@@ -32,7 +32,7 @@ func (Module) AppCommands(c typobj.Cli) []*cli.Command {
 // func (Module) Configure() (prefix string, spec, loadFn interface{}) {
 // 	prefix = "APP"
 // 	spec = &Config{}
-// 	loadFn = func(loader typobj.Loader) (cfg Config, err error) {
+// 	loadFn = func(loader typcore.Loader) (cfg Config, err error) {
 // 		err = loader.Load(prefix, &cfg)
 // 		return
 // 	}

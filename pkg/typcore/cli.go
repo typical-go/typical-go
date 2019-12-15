@@ -6,13 +6,12 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/dig"
 )
 
 // NewCli return new instance of Cli
-func NewCli(ctx *Context, obj interface{}) typobj.Cli {
+func NewCli(ctx *Context, obj interface{}) Cli {
 	return &cliImpl{
 		Context: ctx,
 		obj:     obj,
@@ -86,7 +85,7 @@ func provideAll(di *dig.Container, ctx *Context) (err error) {
 		if err = provideConfigFn(di, module); err != nil {
 			return
 		}
-		if provider, ok := module.(typobj.Provider); ok {
+		if provider, ok := module.(Provider); ok {
 			if err = provide(di, provider.Provide()...); err != nil {
 				return
 			}
@@ -97,7 +96,7 @@ func provideAll(di *dig.Container, ctx *Context) (err error) {
 
 func prepareAll(di *dig.Container, ctx *Context) (err error) {
 	for _, module := range ctx.AllModule() {
-		if preparer, ok := module.(typobj.Preparer); ok {
+		if preparer, ok := module.(Preparer); ok {
 			if err = invoke(di, preparer.Prepare()...); err != nil {
 				return
 			}
@@ -108,7 +107,7 @@ func prepareAll(di *dig.Container, ctx *Context) (err error) {
 
 func destroyAll(di *dig.Container, ctx *Context) (err error) {
 	for _, module := range ctx.AllModule() {
-		if destroyer, ok := module.(typobj.Destroyer); ok {
+		if destroyer, ok := module.(Destroyer); ok {
 			if err = invoke(di, destroyer.Destroy()...); err != nil {
 				return
 			}
@@ -136,7 +135,7 @@ func provide(di *dig.Container, fns ...interface{}) (err error) {
 }
 
 func loaderFn(c *Context) interface{} {
-	return func() typobj.Loader {
+	return func() Loader {
 		return c.ConfigLoader
 	}
 }
@@ -151,7 +150,7 @@ func provideLoader(di *dig.Container, ctx *Context) (err error) {
 }
 
 func provideConfigFn(di *dig.Container, v interface{}) (err error) {
-	if configurer, ok := v.(typobj.Configurer); ok {
+	if configurer, ok := v.(Configurer); ok {
 		_, _, loadFn := configurer.Configure()
 		if err = provide(di, loadFn); err != nil {
 			return

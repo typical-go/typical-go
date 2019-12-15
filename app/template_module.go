@@ -3,7 +3,7 @@ package app
 const moduleSrc = `package {{.Name}}
 
 import (
-	"github.com/typical-go/typical-go/pkg/typobj"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
@@ -19,7 +19,7 @@ type Module struct {}
 func (m *Module) Configure() (prefix string, spec, loadFn interface{}) {
 	prefix = "{{.Prefix}}"
 	spec = &Config{}
-	loadFn = func(loader typobj.Loader) (cfg Config, err error) {
+	loadFn = func(loader typcore.Loader) (cfg Config, err error) {
 		err = loader.Load(prefix, &cfg)
 		return
 	}
@@ -51,7 +51,7 @@ func (m *Module) Destroy() []interface{} {
 }
 
 // BuildCommands is commands to exectuce from Build-Tool
-func (m *Module) BuildCommands(c typobj.Cli) []*cli.Command {
+func (m *Module) BuildCommands(c typcore.Cli) []*cli.Command {
 	return []*cli.Command{
 		// TODO: (1) add command to execute from Build-Tool
 		// TODO: (2) remove this function if not required
@@ -66,15 +66,15 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typobj"
+	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 func TestModule(t *testing.T) {
 	m := &Module{}
-	require.True(t, typobj.IsProvider(m))
-	require.True(t, typobj.IsDestroyer(m))
-	require.True(t, typobj.IsProvider(m))
-	require.True(t, typobj.IsConfigurer(m))
-	require.True(t, typobj.IsBuildCommander(m))
+	require.True(t, typcore.IsProvider(m))
+	require.True(t, typcore.IsDestroyer(m))
+	require.True(t, typcore.IsProvider(m))
+	require.True(t, typcore.IsConfigurer(m))
+	require.True(t, typcore.IsBuildCommander(m))
 }
 `

@@ -1,4 +1,4 @@
-package typobj
+package typcore
 
 import "github.com/urfave/cli/v2"
 

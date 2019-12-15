@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
@@ -34,7 +33,7 @@ func TestContext_Validate_DefaultValue(t *testing.T) {
 	}
 	require.NoError(t, ctx.Validate())
 	require.Equal(t, "0.0.1", ctx.Version)
-	require.Equal(t, "*typobj.defaultLoader", reflect.TypeOf(ctx.ConfigLoader).String())
+	require.Equal(t, "*typcore.defaultLoader", reflect.TypeOf(ctx.ConfigLoader).String())
 }
 
 func TestContext_Validate(t *testing.T) {

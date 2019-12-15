@@ -23,21 +23,21 @@ var (
 		Release:  "release",
 	}
 
-	Readme = "README.md"
-	Name   = name()
+	Readme      = "README.md"
+	ProjectName = projectName()
 
-	AppBin      = fmt.Sprintf("%s/%s", Layout.Bin, Name)
-	AppMainPath = fmt.Sprintf("%s/%s", Layout.Cmd, Name)
+	AppBin      = fmt.Sprintf("%s/%s", Layout.Bin, ProjectName)
+	AppMainPath = fmt.Sprintf("%s/%s", Layout.Cmd, ProjectName)
 
 	BuildTool         = "buildtool"
-	BuildToolBin      = fmt.Sprintf("%s/%s-%s", Layout.Bin, Name, BuildTool)
-	BuildToolMainPath = fmt.Sprintf("%s/%s-%s", Layout.Cmd, Name, BuildTool)
+	BuildToolBin      = fmt.Sprintf("%s/%s-%s", Layout.Bin, ProjectName, BuildTool)
+	BuildToolMainPath = fmt.Sprintf("%s/%s-%s", Layout.Cmd, ProjectName, BuildTool)
 
 	ContextFile  = "typical/context.go"
 	ChecksumFile = Layout.Metadata + "/checksum"
 )
 
-func name() (s string) {
+func projectName() (s string) {
 	var err error
 	if s, err = os.Getwd(); err != nil {
 		return "noname"

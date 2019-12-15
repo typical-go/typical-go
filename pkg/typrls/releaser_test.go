@@ -3,7 +3,7 @@ package typrls_test
 import (
 	"testing"
 
-	"github.com/typical-go/typical-go/pkg/typobj"
+	"github.com/typical-go/typical-go/pkg/typcore"
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typrls"
@@ -11,7 +11,7 @@ import (
 
 func TestReleaser(t *testing.T) {
 	releaser := &typrls.Releaser{}
-	require.True(t, typobj.IsValidator(releaser))
+	require.True(t, typcore.IsValidator(releaser))
 }
 
 func TestReleaser_Validate(t *testing.T) {

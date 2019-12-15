@@ -4,7 +4,6 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/typenv"
-
 	"github.com/urfave/cli/v2"
 )
 

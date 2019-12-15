@@ -7,7 +7,6 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typenv"
-	"github.com/typical-go/typical-go/pkg/typobj"
 	"github.com/urfave/cli/v2"
 )
 
@@ -64,7 +63,7 @@ func (t buildtool) commands() (cmds []*cli.Command) {
 func BuildCommands(ctx *typcore.Context) (cmds []*cli.Command) {
 	for _, module := range ctx.AllModule() {
 		buildCli := typcore.NewCli(ctx, module)
-		if commander, ok := module.(typobj.BuildCommander); ok {
+		if commander, ok := module.(typcore.BuildCommander); ok {
 			for _, cmd := range commander.BuildCommands(buildCli) {
 				cmds = append(cmds, cmd)
 			}
