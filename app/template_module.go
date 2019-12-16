@@ -73,7 +73,6 @@ func TestModule(t *testing.T) {
 	m := &Module{}
 	require.True(t, typcore.IsProvider(m))
 	require.True(t, typcore.IsDestroyer(m))
-	require.True(t, typcore.IsProvider(m))
 	require.True(t, typcore.IsConfigurer(m))
 	require.True(t, typcore.IsBuildCommander(m))
 }
