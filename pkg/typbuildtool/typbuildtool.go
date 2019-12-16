@@ -52,9 +52,6 @@ func (t buildtool) commands() (cmds []*cli.Command) {
 	if t.Releaser != nil {
 		cmds = append(cmds, t.cmdRelease())
 	}
-	if t.ReadmeGenerator != nil {
-		cmds = append(cmds, t.cmdReadme())
-	}
 	cmds = append(cmds, BuildCommands(t.Context)...)
 	return
 }

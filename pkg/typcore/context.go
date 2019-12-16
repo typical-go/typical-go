@@ -3,7 +3,6 @@ package typcore
 import (
 	"errors"
 	"fmt"
-	"io"
 	"reflect"
 
 	"github.com/typical-go/typical-go/pkg/typrls"
@@ -23,10 +22,6 @@ type Context struct {
 
 	MockTargets  coll.Strings
 	Constructors coll.Interfaces
-
-	ReadmeGenerator interface {
-		Generate(*Context, io.Writer) error
-	}
 }
 
 // Validate context
