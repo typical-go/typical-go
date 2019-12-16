@@ -1,6 +1,8 @@
 package typcore
 
-import "github.com/urfave/cli/v2"
+import (
+	"github.com/urfave/cli/v2"
+)
 
 // Provider responsible to provide dependency
 type Provider interface {
@@ -17,27 +19,31 @@ type Destroyer interface {
 	Destroy() []interface{}
 }
 
-// Actionable responsible to provide action
+// Actionable responsible to provide action. Only available for AppModule
 type Actionable interface {
 	Action() interface{}
 }
 
-// Validator responsible to validate the struct
+// Validator responsible to validate the struct or set default value.
+// `Validate()` will called when application bootstrap
 type Validator interface {
 	Validate() error
 }
 
 // Configurer responsible to create config
+// `Prefix` is used by ConfigLoader to retrieve configuration value
+// `Spec` (Specification) is used readme/env file generator. The value of spec will act as local environment value defined in .env file.
+// `LoadFn` (Load Function) is required to provide in dependecies-injection container
 type Configurer interface {
 	Configure() (prefix string, spec interface{}, loadFn interface{})
 }
 
-// BuildCommander responsible to command
+// BuildCommander responsible to return commands for Build-Tool
 type BuildCommander interface {
 	BuildCommands(c Cli) []*cli.Command
 }
 
-// AppCommander return command
+// AppCommander responsible to return commands for App
 type AppCommander interface {
 	AppCommands(c Cli) []*cli.Command
 }
