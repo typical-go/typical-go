@@ -1,11 +1,11 @@
 package typcore
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
+
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/urfave/cli/v2"
 	"go.uber.org/dig"
@@ -36,24 +36,26 @@ type cliImpl struct {
 func (c *cliImpl) Action(fn interface{}) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) (err error) {
 		di := dig.New()
-		gracefulStop := make(chan os.Signal)
-		signal.Notify(gracefulStop, syscall.SIGTERM)
-		signal.Notify(gracefulStop, syscall.SIGINT)
-		defer func() {
-			gracefulStop <- syscall.SIGTERM
-		}()
-		go func() {
-			<-gracefulStop
-			time.Sleep(200 * time.Millisecond)
-			os.Exit(0) // NOTE: Make sure the application is exit
-		}()
 		if err = provideLoader(di, c.ctx); err != nil {
 			return
 		}
 		if err = provideConfigFn(di, c.obj); err != nil {
 			return
 		}
-		return di.Invoke(fn)
+		gracefulStop := make(chan os.Signal)
+		signal.Notify(gracefulStop, syscall.SIGTERM)
+		signal.Notify(gracefulStop, syscall.SIGINT)
+		go func() {
+			defer func() {
+				gracefulStop <- syscall.SIGTERM
+			}()
+			err = di.Invoke(fn)
+		}()
+		<-gracefulStop
+		if err != nil {
+			log.Error(err.Error())
+		}
+		return
 	}
 }
 
@@ -61,27 +63,29 @@ func (c *cliImpl) Action(fn interface{}) func(ctx *cli.Context) error {
 func (c *cliImpl) PreparedAction(fn interface{}) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) (err error) {
 		di := dig.New()
-		gracefulStop := make(chan os.Signal)
-		signal.Notify(gracefulStop, syscall.SIGTERM)
-		signal.Notify(gracefulStop, syscall.SIGINT)
-		defer func() {
-			gracefulStop <- syscall.SIGTERM
-		}()
-		go func() {
-			<-gracefulStop
-			if err = destroyAll(di, c.ctx); err != nil {
-				log.Fatal(err.Error())
-			}
-			time.Sleep(200 * time.Millisecond)
-			os.Exit(0) // NOTE: Make sure the application is exit
-		}()
 		if err = provideAll(di, c.ctx); err != nil {
 			return
 		}
 		if err = prepareAll(di, c.ctx); err != nil {
 			return
 		}
-		return di.Invoke(fn)
+		gracefulStop := make(chan os.Signal)
+		signal.Notify(gracefulStop, syscall.SIGTERM)
+		signal.Notify(gracefulStop, syscall.SIGINT)
+		go func() {
+			defer func() {
+				gracefulStop <- syscall.SIGTERM
+			}()
+			err = di.Invoke(fn)
+		}()
+		<-gracefulStop
+		if err != nil {
+			log.Error(err.Error())
+		}
+		if err = destroyAll(di, c.ctx); err != nil {
+			log.Error(err.Error())
+		}
+		return
 	}
 }
 
