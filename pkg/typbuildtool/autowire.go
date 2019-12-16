@@ -12,11 +12,7 @@ type Autowires []string
 
 // IsAutowire return true if function declaration is eligble for autowrire
 func (a *Autowires) isAutowire(e *walker.FuncDeclEvent) bool {
-	var godoc string
-	if e.Doc != nil {
-		godoc = e.Doc.Text()
-	}
-	annotations := walker.ParseAnnotations(godoc)
+	annotations := e.Annotations()
 	if strings.HasPrefix(e.Name, "New") {
 		return !annotations.Contain("nowire")
 	}
