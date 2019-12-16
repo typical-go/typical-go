@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/urfave/cli/v2"
 	"go.uber.org/dig"
@@ -43,6 +44,7 @@ func (c *cliImpl) Action(fn interface{}) func(ctx *cli.Context) error {
 		}()
 		go func() {
 			<-gracefulStop
+			time.Sleep(200 * time.Millisecond)
 			os.Exit(0) // NOTE: Make sure the application is exit
 		}()
 		if err = provideLoader(di, c.ctx); err != nil {
@@ -70,6 +72,7 @@ func (c *cliImpl) PreparedAction(fn interface{}) func(ctx *cli.Context) error {
 			if err = destroyAll(di, c.ctx); err != nil {
 				log.Fatal(err.Error())
 			}
+			time.Sleep(200 * time.Millisecond)
 			os.Exit(0) // NOTE: Make sure the application is exit
 		}()
 		if err = provideAll(di, c.ctx); err != nil {
