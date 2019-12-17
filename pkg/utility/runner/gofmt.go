@@ -18,9 +18,10 @@ func NewGoFmt(targets ...string) *GoFmt {
 	}
 }
 
-// SetDir to set directory
-func (g *GoFmt) SetDir(dir string) {
+// WithDir to set directory anr return Gofmt
+func (g *GoFmt) WithDir(dir string) *GoFmt {
 	g.dir = dir
+	return g
 }
 
 // Run to making the directory
@@ -30,5 +31,5 @@ func (g *GoFmt) Run() error {
 	cmd := exec.Command("go", args...)
 	cmd.Dir = g.dir
 	cmd.Stderr = os.Stderr
-	return nil
+	return cmd.Run()
 }
