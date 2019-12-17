@@ -41,19 +41,9 @@ type constructmodule struct {
 
 func (c constructmodule) Run() error {
 	return runn.Execute(
-		runner.Mkdir{
-			Path: fmt.Sprintf("%s/%s", c.Path, c.Name),
-		},
-		runner.WriteTemplate{
-			Target:   c.path(c.Name + ".go"),
-			Template: moduleSrc,
-			Data:     c,
-		},
-		runner.WriteTemplate{
-			Target:   c.path(c.Name + "_test.go"),
-			Template: moduleSrcTest,
-			Data:     c,
-		},
+		runner.NewMkdir(fmt.Sprintf("%s/%s", c.Path, c.Name)),
+		runner.NewWriteTemplate(c.path(c.Name+".go"), moduleSrc, c),
+		runner.NewWriteTemplate(c.path(c.Name+"_test.go"), moduleSrcTest, c),
 	)
 }
 

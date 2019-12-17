@@ -7,15 +7,29 @@ import (
 
 // WriteString to write string to file
 type WriteString struct {
-	Target     string
-	Content    string
-	Permission os.FileMode
+	target     string
+	content    string
+	permission os.FileMode
+}
+
+// NewWriteString return new instance of WriteString
+func NewWriteString(target, content string) *WriteString {
+	return &WriteString{
+		target:  target,
+		content: content,
+	}
+}
+
+// WithPermission to set permission and return WriteString
+func (w *WriteString) WithPermission(permission os.FileMode) *WriteString {
+	w.permission = permission
+	return w
 }
 
 // Run to write file
 func (w WriteString) Run() (err error) {
-	if w.Permission == 0 {
-		w.Permission = 0666
+	if w.permission == 0 {
+		w.permission = 0666
 	}
-	return ioutil.WriteFile(w.Target, []byte(w.Content), w.Permission)
+	return ioutil.WriteFile(w.target, []byte(w.content), w.permission)
 }

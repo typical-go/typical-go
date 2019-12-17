@@ -6,11 +6,12 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/typical-go/typical-go/pkg/utility/runner"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typbuildtool/walker"
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/utility/debugkit"
-	"github.com/typical-go/typical-go/pkg/utility/filekit"
 	"github.com/typical-go/typical-go/pkg/utility/golang"
 
 	"github.com/urfave/cli/v2"
@@ -64,7 +65,7 @@ func (t buildtool) generateConstructor(target string, constructors []string) (er
 	for key := range imports {
 		src.Imports.Add("", key)
 	}
-	if err = filekit.Write(target, src); err != nil {
+	if err = runner.NewWriteSource(target, src).Run(); err != nil {
 		return
 	}
 	cmd := exec.Command(fmt.Sprintf("%s/bin/goimports", build.Default.GOPATH),

@@ -36,23 +36,18 @@ func wrapperRunner(path string) runn.Runner {
 	} else {
 		name = filepath.Base(path)
 	}
-
-	return runner.WriteTemplate{
-		Target:     path + "/typicalw",
-		Permission: 0700,
-		Template:   typicalw,
-		Data: struct {
-			ContextFile       string
-			ChecksumFile      string
-			LayoutMetadata    string
-			BuildtoolMainPath string
-			BuildtoolBin      string
-		}{
-			ContextFile:       typenv.ContextFile,
-			ChecksumFile:      typenv.ChecksumFile,
-			LayoutMetadata:    typenv.Layout.Metadata,
-			BuildtoolMainPath: fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, name, typenv.BuildTool),
-			BuildtoolBin:      fmt.Sprintf("%s/%s-%s", typenv.Layout.Bin, name, typenv.BuildTool),
-		},
+	data := struct {
+		ContextFile       string
+		ChecksumFile      string
+		LayoutMetadata    string
+		BuildtoolMainPath string
+		BuildtoolBin      string
+	}{
+		ContextFile:       typenv.ContextFile,
+		ChecksumFile:      typenv.ChecksumFile,
+		LayoutMetadata:    typenv.Layout.Metadata,
+		BuildtoolMainPath: fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, name, typenv.BuildTool),
+		BuildtoolBin:      fmt.Sprintf("%s/%s-%s", typenv.Layout.Bin, name, typenv.BuildTool),
 	}
+	return runner.NewWriteTemplate(path+"/typicalw", typicalw, data).WithPermission(0700)
 }
