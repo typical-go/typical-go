@@ -2,8 +2,6 @@ package app
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
 	"path/filepath"
 
 	"github.com/typical-go/typical-go/pkg/typenv"
@@ -59,7 +57,7 @@ func (i constructproj) Run() (err error) {
 		i.typicalContext,
 		i.ignoreFile,
 		wrapperRunner(i.Name),
-		i.gofmt,
+		runner.NewGoFmt("./..."),
 		i.gomod,
 	)
 }
@@ -153,11 +151,4 @@ func (i constructproj) gomod() (err error) {
 			},
 		},
 	)
-}
-
-func (i constructproj) gofmt() (err error) {
-	cmd := exec.Command("go", "fmt", "./...")
-	cmd.Dir = i.Name
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
 }
