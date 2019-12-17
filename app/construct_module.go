@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/typical-go/typical-go/app/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/utility/runn"
 	"github.com/typical-go/typical-go/pkg/utility/runner"
 	"github.com/urfave/cli/v2"
@@ -42,8 +43,8 @@ type constructmodule struct {
 func (c constructmodule) Run() error {
 	return runn.Execute(
 		runner.NewMkdir(fmt.Sprintf("%s/%s", c.Path, c.Name)),
-		runner.NewWriteTemplate(c.path(c.Name+".go"), moduleSrc, c),
-		runner.NewWriteTemplate(c.path(c.Name+"_test.go"), moduleSrcTest, c),
+		runner.NewWriteTemplate(c.path(c.Name+".go"), tmpl.Module, c),
+		runner.NewWriteTemplate(c.path(c.Name+"_test.go"), tmpl.ModuleTest, c),
 	)
 }
 

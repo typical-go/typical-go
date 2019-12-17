@@ -1,6 +1,7 @@
-package app
+package tmpl
 
-const appSrc = `package app
+// App template
+const App = `package app
 
 import (
 	"fmt"
@@ -29,23 +30,3 @@ func (*Module) Configure() (prefix string, spec, loadFn interface{}) {
 	return
 }
 `
-
-const appSrcTest = `package app_test
-
-import (
-	"testing"
-
-	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typcore"
-
-	"{{.Pkg}}/app"
-)
-
-func TestModule(t *testing.T) {
-	a := &app.Module{}
-	require.True(t, typcore.IsActionable(a))
-	require.True(t, typcore.IsConfigurer(a))
-}
-`
-
-const configSrc = "package config\n\n// Config of app\ntype Config struct {\n	Hello string `default:\"World\"`\n}"

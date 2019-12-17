@@ -1,6 +1,7 @@
-package app
+package tmpl
 
-const moduleSrc = `package {{.Name}}
+// Module template
+const Module = `package {{.Name}}
 
 import (
 	"github.com/typical-go/typical-go/pkg/typcore"
@@ -56,24 +57,5 @@ func (m *Module) BuildCommands(c typcore.Cli) []*cli.Command {
 		// TODO: (1) add command to execute from Build-Tool
 		// TODO: (2) remove this function if not required
 	}
-}
-
-`
-
-const moduleSrcTest = `package {{.Name}}
-
-import (
-	"testing"
-
-	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typcore"
-)
-
-func TestModule(t *testing.T) {
-	m := &Module{}
-	require.True(t, typcore.IsProvider(m))
-	require.True(t, typcore.IsDestroyer(m))
-	require.True(t, typcore.IsConfigurer(m))
-	require.True(t, typcore.IsBuildCommander(m))
 }
 `

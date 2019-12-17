@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/typical-go/typical-go/app/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/utility/filekit"
 	"github.com/typical-go/typical-go/pkg/utility/golang"
@@ -69,9 +70,9 @@ func (i constructproj) appPackage() error {
 	if !i.blank {
 		stmts = append(stmts,
 			runner.NewMkdir(i.Path("app/config")),
-			runner.NewWriteString(i.Path("app/config/config.go"), configSrc),
-			runner.NewWriteTemplate(i.Path("app/app.go"), appSrc, i),
-			runner.NewWriteTemplate(i.Path("app/app_test.go"), appSrcTest, i),
+			runner.NewWriteString(i.Path("app/config/config.go"), tmpl.Config),
+			runner.NewWriteTemplate(i.Path("app/app.go"), tmpl.App, i),
+			runner.NewWriteTemplate(i.Path("app/app_test.go"), tmpl.AppTest, i),
 		)
 	}
 	return runn.Execute(stmts...)
@@ -81,9 +82,9 @@ func (i constructproj) typicalContext() error {
 	var writeStmt interface{}
 	path := "typical/context.go"
 	if i.blank {
-		writeStmt = runner.NewWriteTemplate(i.Path(path), blankCtxSrc, i)
+		writeStmt = runner.NewWriteTemplate(i.Path(path), tmpl.Context, i)
 	} else {
-		writeStmt = runner.NewWriteTemplate(i.Path(path), ctxSrc, i)
+		writeStmt = runner.NewWriteTemplate(i.Path(path), tmpl.ContextWithAppModule, i)
 	}
 	return runn.Execute(
 		runner.NewMkdir(i.Path("typical")),
@@ -97,7 +98,7 @@ func (i constructproj) cmdPackage() error {
 	return runn.Execute(
 		runner.NewMkdir(i.Path(typenv.Layout.Cmd)),
 		runner.NewMkdir(i.Path(appMainPath)),
-		runner.NewMkdir(buildtoolMainPath),
+		runner.NewMkdir(i.Path(buildtoolMainPath)),
 		runner.NewWriteSource(i.Path(appMainPath+"/main.go"), i.appMainSrc()),
 		runner.NewWriteSource(i.Path(buildtoolMainPath+"/main.go"), i.buildtoolMainSrc()),
 	)
@@ -111,14 +112,6 @@ func (i constructproj) appMainSrc() (src *golang.MainSource) {
 	return
 }
 
-func (i constructproj) prebuilderMainSrc() (src *golang.MainSource) {
-	src = golang.NewMainSource()
-	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typbuildtool")
-	src.Imports.Add("", i.Pkg+"/typical")
-	src.Append("typbuildtool.Run(typical.Context)")
-	return
-}
-
 func (i constructproj) buildtoolMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typbuildtool")
@@ -129,7 +122,7 @@ func (i constructproj) buildtoolMainSrc() (src *golang.MainSource) {
 
 func (i constructproj) ignoreFile() error {
 	return runn.Execute(
-		runner.NewWriteString(i.Path(".gitignore"), gitignore).WithPermission(0700),
+		runner.NewWriteString(i.Path(".gitignore"), tmpl.Gitignore).WithPermission(0700),
 	)
 }
 
@@ -142,6 +135,6 @@ func (i constructproj) gomod() (err error) {
 		TypicalVersion: Version,
 	}
 	return runn.Execute(
-		runner.NewWriteTemplate(i.Path("go.mod"), gomod, data),
+		runner.NewWriteTemplate(i.Path("go.mod"), tmpl.GoMod, data),
 	)
 }

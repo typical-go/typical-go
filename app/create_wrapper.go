@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/typical-go/typical-go/app/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/utility/runn"
 	"github.com/typical-go/typical-go/pkg/utility/runner"
@@ -49,5 +50,5 @@ func wrapperRunner(path string) runn.Runner {
 		BuildtoolMainPath: fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, name, typenv.BuildTool),
 		BuildtoolBin:      fmt.Sprintf("%s/%s-%s", typenv.Layout.Bin, name, typenv.BuildTool),
 	}
-	return runner.NewWriteTemplate(path+"/typicalw", typicalw, data).WithPermission(0700)
+	return runner.NewWriteTemplate(path+"/typicalw", tmpl.Typicalw, data).WithPermission(0700)
 }

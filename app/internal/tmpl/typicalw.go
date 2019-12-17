@@ -1,6 +1,7 @@
-package app
+package tmpl
 
-const typicalw = `#!/bin/bash
+// Typicalw template
+const Typicalw = `#!/bin/bash
 set -e
 
 CHECKSUM_DATA=$(cksum {{.ContextFile}})
@@ -19,19 +20,3 @@ if [ "$CHECKSUM_UPDATED" == "1" ] || ! [[ -f {{.BuildtoolBin}} ]] ; then
 fi
 
 ./{{.BuildtoolBin}} $@`
-
-const gomod = `module {{.Pkg}}
-
-go 1.13
-
-require github.com/typical-go/typical-go v{{.TypicalVersion}}
-`
-
-const gitignore = `/bin
-/release
-/.typical-metadata
-/vendor
-.envrc
-.env
-*.test
-*.out`
