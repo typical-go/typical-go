@@ -17,7 +17,7 @@ type Struct struct {
 
 // AddField to add field to struct
 func (s *Struct) AddField(name, typ string) {
-	s.Fields.Append(coll.KeyString{Key: name, String: typ})
+	s.Fields.Add(name, typ)
 }
 
 func (s Struct) Write(w io.Writer) (err error) {
