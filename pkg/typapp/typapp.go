@@ -11,23 +11,23 @@ import (
 )
 
 // Run the application
-func Run(ctx *typcore.Context) {
-	if err := ctx.Validate(); err != nil {
+func Run(descr *typcore.ProjectDescriptor) {
+	if err := descr.Validate(); err != nil {
 		log.Fatal(err.Error())
 	}
-	appCli := typcore.NewCli(ctx, ctx.AppModule)
+	appCli := typcore.NewCli(descr, descr.AppModule)
 	app := cli.NewApp()
-	app.Name = ctx.Name
+	app.Name = descr.Name
 	app.Usage = ""
-	app.Description = ctx.Description
-	app.Version = ctx.Version
-	if actionable, ok := ctx.AppModule.(typcore.Actionable); ok {
+	app.Description = descr.Description
+	app.Version = descr.Version
+	if actionable, ok := descr.AppModule.(typcore.Actionable); ok {
 		app.Action = appCli.PreparedAction(actionable.Action())
 	}
 	app.Before = func(ctx *cli.Context) error {
 		return envfile.Load()
 	}
-	if commander, ok := ctx.AppModule.(typcore.AppCommander); ok {
+	if commander, ok := descr.AppModule.(typcore.AppCommander); ok {
 		app.Commands = commander.AppCommands(appCli)
 	}
 	if err := app.Run(os.Args); err != nil {

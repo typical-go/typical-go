@@ -55,7 +55,7 @@ func (i constructproj) Run() (err error) {
 	return runn.Execute(
 		i.appPackage,
 		i.cmdPackage,
-		i.typicalContext,
+		i.projectDescriptor,
 		i.ignoreFile,
 		wrapperRunner(i.Name),
 		runner.NewGoFmt("./..."),
@@ -78,9 +78,9 @@ func (i constructproj) appPackage() error {
 	return runn.Execute(stmts...)
 }
 
-func (i constructproj) typicalContext() error {
+func (i constructproj) projectDescriptor() error {
 	var writeStmt interface{}
-	path := "typical/context.go"
+	path := "typical/descriptor.go"
 	if i.blank {
 		writeStmt = runner.NewWriteTemplate(i.Path(path), tmpl.Context, i)
 	} else {
@@ -108,7 +108,7 @@ func (i constructproj) appMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typapp")
 	src.Imports.Add("", i.Pkg+"/typical")
-	src.Append("typapp.Run(typical.Context)")
+	src.Append("typapp.Run(typical.Descriptor)")
 	return
 }
 
@@ -116,7 +116,7 @@ func (i constructproj) buildtoolMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typbuildtool")
 	src.Imports.Add("", i.Pkg+"/typical")
-	src.Append("typbuildtool.Run(typical.Context)")
+	src.Append("typbuildtool.Run(typical.Descriptor)")
 	return
 }
 

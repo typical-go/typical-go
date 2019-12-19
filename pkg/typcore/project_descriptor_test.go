@@ -11,7 +11,7 @@ import (
 )
 
 func TestContext_AllModule(t *testing.T) {
-	ctx := typcore.Context{
+	ctx := typcore.ProjectDescriptor{
 		Modules: []interface{}{
 			struct{}{},
 			struct{}{},
@@ -27,34 +27,34 @@ func TestContext_AllModule(t *testing.T) {
 }
 
 func TestContext_Validate_DefaultValue(t *testing.T) {
-	ctx := &typcore.Context{
+	desc := &typcore.ProjectDescriptor{
 		Name:    "some-name",
 		Package: "some-package",
 	}
-	require.NoError(t, ctx.Validate())
-	require.Equal(t, "0.0.1", ctx.Version)
-	require.Equal(t, "*typcore.defaultConfigLoader", reflect.TypeOf(ctx.ConfigLoader).String())
+	require.NoError(t, desc.Validate())
+	require.Equal(t, "0.0.1", desc.Version)
+	require.Equal(t, "*typcore.defaultConfigLoader", reflect.TypeOf(desc.ConfigLoader).String())
 }
 
 func TestContext_Validate(t *testing.T) {
 	testcases := []struct {
-		context typcore.Context
-		errMsg  string
+		typcore.ProjectDescriptor
+		errMsg string
 	}{
 		{
-			typcore.Context{Name: "some-name", Package: "some-package", AppModule: &dummyModule{Name: "App"}},
+			typcore.ProjectDescriptor{Name: "some-name", Package: "some-package", AppModule: &dummyModule{Name: "App"}},
 			"",
 		},
 		{
-			typcore.Context{Package: "some-package"},
+			typcore.ProjectDescriptor{Package: "some-package"},
 			"Context: Name can't be empty",
 		},
 		{
-			typcore.Context{Name: "some-name"},
+			typcore.ProjectDescriptor{Name: "some-name"},
 			"Context: Package can't be empty",
 		},
 		{
-			typcore.Context{
+			typcore.ProjectDescriptor{
 				Name:    "some-name",
 				Package: "some-package",
 				Releaser: &typrls.Releaser{
@@ -64,7 +64,7 @@ func TestContext_Validate(t *testing.T) {
 			"Context: Releaser: Target: Missing OS: Please make sure 'linuxamd64' using 'OS/ARCH' format",
 		},
 		{
-			typcore.Context{
+			typcore.ProjectDescriptor{
 				Name:      "some-name",
 				Package:   "some-package",
 				AppModule: &dummyModule{Name: "App", err: errors.New("some-error")},
@@ -72,7 +72,7 @@ func TestContext_Validate(t *testing.T) {
 			"Context: App: some-error",
 		},
 		{
-			typcore.Context{
+			typcore.ProjectDescriptor{
 				Name:    "some-name",
 				Package: "some-package",
 				Modules: []interface{}{&dummyModule{Name: "Module", err: errors.New("some-error")}},
@@ -81,7 +81,7 @@ func TestContext_Validate(t *testing.T) {
 		},
 	}
 	for i, tt := range testcases {
-		err := tt.context.Validate()
+		err := tt.Validate()
 		if tt.errMsg == "" {
 			require.NoError(t, err, i)
 		} else {

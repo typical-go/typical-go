@@ -11,7 +11,7 @@ import (
 )
 
 // Run the build tool
-func Run(c *typcore.Context) {
+func Run(d *typcore.ProjectDescriptor) {
 	var filenames []string
 	var dirs []string
 	var err error
@@ -19,15 +19,15 @@ func Run(c *typcore.Context) {
 		log.Fatal(err.Error())
 	}
 	buildtool := buildtool{
-		Context:   c,
-		filenames: filenames,
-		dirs:      dirs,
+		ProjectDescriptor: d,
+		filenames:         filenames,
+		dirs:              dirs,
 	}
 	app := cli.NewApp()
-	app.Name = c.Name
+	app.Name = d.Name
 	app.Usage = ""
-	app.Description = c.Description
-	app.Version = c.Version
+	app.Description = d.Description
+	app.Version = d.Version
 	app.Before = buildtool.before
 	app.Commands = buildtool.commands()
 	if err := app.Run(os.Args); err != nil {
@@ -36,7 +36,7 @@ func Run(c *typcore.Context) {
 }
 
 type buildtool struct {
-	*typcore.Context
+	*typcore.ProjectDescriptor
 	filenames []string
 	dirs      []string
 }
@@ -52,14 +52,14 @@ func (t buildtool) commands() (cmds []*cli.Command) {
 	if t.Releaser != nil {
 		cmds = append(cmds, t.cmdRelease())
 	}
-	cmds = append(cmds, BuildCommands(t.Context)...)
+	cmds = append(cmds, BuildCommands(t.ProjectDescriptor)...)
 	return
 }
 
 // BuildCommands return list of command
-func BuildCommands(ctx *typcore.Context) (cmds []*cli.Command) {
-	for _, module := range ctx.AllModule() {
-		buildCli := typcore.NewCli(ctx, module)
+func BuildCommands(descr *typcore.ProjectDescriptor) (cmds []*cli.Command) {
+	for _, module := range descr.AllModule() {
+		buildCli := typcore.NewCli(descr, module)
 		if commander, ok := module.(typcore.BuildCommander); ok {
 			for _, cmd := range commander.BuildCommands(buildCli) {
 				cmds = append(cmds, cmd)

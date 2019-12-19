@@ -33,7 +33,7 @@ var (
 	BuildToolBin      = fmt.Sprintf("%s/%s-%s", Layout.Bin, ProjectName, BuildTool)
 	BuildToolMainPath = fmt.Sprintf("%s/%s-%s", Layout.Cmd, ProjectName, BuildTool)
 
-	ContextFile  = "typical/context.go"
+	ContextFile  = "typical/descriptor.go"
 	ChecksumFile = Layout.Metadata + "/checksum"
 )
 

@@ -60,7 +60,7 @@ func (t buildtool) generateConstructor(target string, constructors []string) (er
 		imports[t.Package+"/"+dir] = struct{}{}
 	}
 	for _, constructor := range constructors {
-		src.Init.Append(fmt.Sprintf("typical.Context.Constructors.Append(%s)", constructor))
+		src.Init.Append(fmt.Sprintf("typical.Descriptor.Constructors.Append(%s)", constructor))
 	}
 	for key := range imports {
 		src.Imports.Add("", key)

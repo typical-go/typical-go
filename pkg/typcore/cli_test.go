@@ -9,9 +9,9 @@ import (
 )
 
 func TestNewCli(t *testing.T) {
-	ctx := &typcore.Context{}
+	desc := &typcore.ProjectDescriptor{}
 	obj := struct{}{}
-	cli := typcore.NewCli(ctx, obj)
-	require.Equal(t, ctx, cli.Context())
+	cli := typcore.NewCli(desc, obj)
+	require.Equal(t, desc, cli.ProjectDescriptor())
 	require.Equal(t, obj, cli.Object())
 }

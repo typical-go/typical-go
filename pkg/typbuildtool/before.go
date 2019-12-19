@@ -17,7 +17,7 @@ func (t buildtool) before(ctx *cli.Context) (err error) {
 	if err = t.Validate(); err != nil {
 		return
 	}
-	cfgFields := ConfigFields(t.Context)
+	cfgFields := ConfigFields(t.ProjectDescriptor)
 	// if _, err = metadata.Update("config_fields", cfgFields); err != nil {
 	// 	log.Fatal(err.Error())
 	// }
@@ -28,8 +28,8 @@ func (t buildtool) before(ctx *cli.Context) (err error) {
 }
 
 // ConfigFields return config list
-func ConfigFields(ctx *typcore.Context) (fields []typcore.Field) {
-	for _, module := range ctx.AllModule() {
+func ConfigFields(d *typcore.ProjectDescriptor) (fields []typcore.Field) {
+	for _, module := range d.AllModule() {
 		if configurer, ok := module.(typcore.Configurer); ok {
 			prefix, spec, _ := configurer.Configure()
 			fields = append(fields, typcore.Fields(prefix, spec)...)

@@ -9,8 +9,8 @@ import (
 	"github.com/typical-go/typical-go/pkg/utility/coll"
 )
 
-// Context of typical application
-type Context struct {
+// ProjectDescriptor describe the project
+type ProjectDescriptor struct {
 	Name         string
 	Description  string
 	Package      string
@@ -25,7 +25,7 @@ type Context struct {
 }
 
 // Validate context
-func (c *Context) Validate() (err error) {
+func (c *ProjectDescriptor) Validate() (err error) {
 	if c.Name == "" {
 		return errors.New("Context: Name can't be empty")
 	}
@@ -50,7 +50,7 @@ func (c *Context) Validate() (err error) {
 }
 
 // AllModule return app module and modules
-func (c *Context) AllModule() (modules []interface{}) {
+func (c *ProjectDescriptor) AllModule() (modules []interface{}) {
 	// NOTE: modules should be before app module to make sure it readiness
 	modules = append(modules, c.Modules...)
 	modules = append(modules, c.AppModule)

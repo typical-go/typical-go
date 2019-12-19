@@ -8,7 +8,7 @@ CHECKSUM_DATA=$(cksum {{.ContextFile}})
 
 if ! [ -s {{.ChecksumFile}} ]; then
 	mkdir -p {{.LayoutMetadata}}
-	cksum typical/context.go > {{.ChecksumFile}}
+	cksum typical/descriptor.go > {{.ChecksumFile}}
 else
 	CHECKSUM_UPDATED=$([ "$CHECKSUM_DATA" == "$(cat {{.ChecksumFile}} )" ] ; echo $?)
 fi

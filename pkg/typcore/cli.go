@@ -15,28 +15,28 @@ import (
 type Cli interface {
 	Action(fn interface{}) func(ctx *cli.Context) error
 	PreparedAction(fn interface{}) func(ctx *cli.Context) error
-	Context() *Context
+	ProjectDescriptor() *ProjectDescriptor
 	Object() interface{}
 }
 
 // NewCli return new instance of Cli
-func NewCli(ctx *Context, obj interface{}) Cli {
+func NewCli(d *ProjectDescriptor, obj interface{}) Cli {
 	return &cliImpl{
-		ctx: ctx,
-		obj: obj,
+		desc: d,
+		obj:  obj,
 	}
 }
 
 type cliImpl struct {
-	ctx *Context
-	obj interface{}
+	desc *ProjectDescriptor
+	obj  interface{}
 }
 
 // Action to return action function that required config and object only
 func (c *cliImpl) Action(fn interface{}) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) (err error) {
 		di := dig.New()
-		if err = provideLoader(di, c.ctx); err != nil {
+		if err = provideLoader(di, c.desc); err != nil {
 			return
 		}
 		if err = provideConfigFn(di, c.obj); err != nil {
@@ -63,10 +63,10 @@ func (c *cliImpl) Action(fn interface{}) func(ctx *cli.Context) error {
 func (c *cliImpl) PreparedAction(fn interface{}) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) (err error) {
 		di := dig.New()
-		if err = provideAll(di, c.ctx); err != nil {
+		if err = provideAll(di, c.desc); err != nil {
 			return
 		}
-		if err = prepareAll(di, c.ctx); err != nil {
+		if err = prepareAll(di, c.desc); err != nil {
 			return
 		}
 		gracefulStop := make(chan os.Signal)
@@ -82,7 +82,7 @@ func (c *cliImpl) PreparedAction(fn interface{}) func(ctx *cli.Context) error {
 		if err != nil {
 			log.Error(err.Error())
 		}
-		if err = destroyAll(di, c.ctx); err != nil {
+		if err = destroyAll(di, c.desc); err != nil {
 			log.Error(err.Error())
 		}
 		return
@@ -90,8 +90,8 @@ func (c *cliImpl) PreparedAction(fn interface{}) func(ctx *cli.Context) error {
 }
 
 // Context of Cli
-func (c *cliImpl) Context() *Context {
-	return c.ctx
+func (c *cliImpl) ProjectDescriptor() *ProjectDescriptor {
+	return c.desc
 }
 
 // Object of Cli
@@ -99,14 +99,14 @@ func (c *cliImpl) Object() interface{} {
 	return c.obj
 }
 
-func provideAll(di *dig.Container, ctx *Context) (err error) {
-	if err = provideLoader(di, ctx); err != nil {
+func provideAll(di *dig.Container, desc *ProjectDescriptor) (err error) {
+	if err = provideLoader(di, desc); err != nil {
 		return
 	}
-	if err = provide(di, ctx.Constructors...); err != nil {
+	if err = provide(di, desc.Constructors...); err != nil {
 		return
 	}
-	for _, module := range ctx.AllModule() {
+	for _, module := range desc.AllModule() {
 		if err = provideConfigFn(di, module); err != nil {
 			return
 		}
@@ -119,8 +119,8 @@ func provideAll(di *dig.Container, ctx *Context) (err error) {
 	return
 }
 
-func prepareAll(di *dig.Container, ctx *Context) (err error) {
-	for _, module := range ctx.AllModule() {
+func prepareAll(di *dig.Container, desc *ProjectDescriptor) (err error) {
+	for _, module := range desc.AllModule() {
 		if preparer, ok := module.(Preparer); ok {
 			if err = invoke(di, preparer.Prepare()...); err != nil {
 				return
@@ -130,8 +130,8 @@ func prepareAll(di *dig.Container, ctx *Context) (err error) {
 	return
 }
 
-func destroyAll(di *dig.Container, ctx *Context) (err error) {
-	for _, module := range ctx.AllModule() {
+func destroyAll(di *dig.Container, desc *ProjectDescriptor) (err error) {
+	for _, module := range desc.AllModule() {
 		if destroyer, ok := module.(Destroyer); ok {
 			if err = invoke(di, destroyer.Destroy()...); err != nil {
 				return
@@ -159,15 +159,15 @@ func provide(di *dig.Container, fns ...interface{}) (err error) {
 	return
 }
 
-func loaderFn(c *Context) interface{} {
+func loaderFn(desc *ProjectDescriptor) interface{} {
 	return func() ConfigLoader {
-		return c.ConfigLoader
+		return desc.ConfigLoader
 	}
 }
 
-func provideLoader(di *dig.Container, ctx *Context) (err error) {
-	if ctx.ConfigLoader != nil {
-		if err = provide(di, loaderFn(ctx)); err != nil {
+func provideLoader(di *dig.Container, desc *ProjectDescriptor) (err error) {
+	if desc.ConfigLoader != nil {
+		if err = provide(di, loaderFn(desc)); err != nil {
 			return
 		}
 	}
