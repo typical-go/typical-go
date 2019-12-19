@@ -28,7 +28,7 @@ func (r *Application) Run() (errs coll.Errors) {
 		}
 	}()
 	<-gracefulStop
-	if r.StopFn == nil {
+	if r.StopFn != nil {
 		if err := r.StopFn(); err != nil {
 			errs.Append(err)
 		}

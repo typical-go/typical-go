@@ -30,6 +30,9 @@ func (c *Context) Action(obj, fn interface{}) func(ctx *cli.Context) error {
 		if err = provideLoadConfigFn(di, obj); err != nil {
 			return
 		}
+		if err = provideCliContextFn(di, ctx); err != nil {
+			return
+		}
 		app := common.Application{
 			StartFn: func() error { return di.Invoke(fn) },
 		}
@@ -54,6 +57,9 @@ func (c *Context) PreparedAction(fn interface{}) func(ctx *cli.Context) error {
 			return
 		}
 		if err = c.prepareModules(di); err != nil {
+			return
+		}
+		if err = provideCliContextFn(di, ctx); err != nil {
 			return
 		}
 		runner := common.Application{
@@ -141,4 +147,11 @@ func provideLoadConfigFn(di *dig.Container, v interface{}) (err error) {
 		}
 	}
 	return
+}
+
+func provideCliContextFn(di *dig.Container, ctx *cli.Context) error {
+	fn := func() *cli.Context {
+		return ctx
+	}
+	return provide(di, fn)
 }
