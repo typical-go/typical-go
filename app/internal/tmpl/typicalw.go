@@ -4,11 +4,11 @@ package tmpl
 const Typicalw = `#!/bin/bash
 set -e
 
-CHECKSUM_DATA=$(cksum {{.ContextFile}})
+CHECKSUM_DATA=$(cksum {{.DescriptorFile}})
 
 if ! [ -s {{.ChecksumFile}} ]; then
 	mkdir -p {{.LayoutMetadata}}
-	cksum typical/descriptor.go > {{.ChecksumFile}}
+	cksum {{.DescriptorFile}} > {{.ChecksumFile}}
 else
 	CHECKSUM_UPDATED=$([ "$CHECKSUM_DATA" == "$(cat {{.ChecksumFile}} )" ] ; echo $?)
 fi
