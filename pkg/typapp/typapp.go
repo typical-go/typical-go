@@ -15,7 +15,7 @@ func Run(d *typcore.ProjectDescriptor) {
 	if err := d.Validate(); err != nil {
 		log.Fatal(err.Error())
 	}
-	ctx := typcore.NewContext(d, d.AppModule)
+	ctx := typcore.NewContext(d)
 	app := cli.NewApp()
 	app.Name = d.Name
 	app.Usage = ""

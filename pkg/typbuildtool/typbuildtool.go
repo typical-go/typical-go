@@ -57,9 +57,9 @@ func (t buildtool) commands() (cmds []*cli.Command) {
 }
 
 // BuildCommands return list of command
-func BuildCommands(desc *typcore.ProjectDescriptor) (cmds []*cli.Command) {
-	for _, module := range desc.AllModule() {
-		ctx := typcore.NewContext(desc, module)
+func BuildCommands(d *typcore.ProjectDescriptor) (cmds []*cli.Command) {
+	ctx := typcore.NewContext(d)
+	for _, module := range d.AllModule() {
 		if commander, ok := module.(typcore.BuildCommander); ok {
 			for _, cmd := range commander.BuildCommands(ctx) {
 				cmds = append(cmds, cmd)
