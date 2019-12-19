@@ -11,32 +11,25 @@ import (
 	"go.uber.org/dig"
 )
 
-// Cli for command line
-type Cli interface {
-	Action(fn interface{}) func(ctx *cli.Context) error
-	PreparedAction(fn interface{}) func(ctx *cli.Context) error
-	ProjectDescriptor() *ProjectDescriptor
-	Object() interface{}
-}
-
-// NewCli return new instance of Cli
-func NewCli(d *ProjectDescriptor, obj interface{}) Cli {
-	return &cliImpl{
-		desc: d,
-		obj:  obj,
+// NewContext return new instance of Context
+func NewContext(d *ProjectDescriptor, obj interface{}) *Context {
+	return &Context{
+		ProjectDescriptor: d,
+		obj:               obj,
 	}
 }
 
-type cliImpl struct {
-	desc *ProjectDescriptor
-	obj  interface{}
+// Context of application
+type Context struct {
+	*ProjectDescriptor
+	obj interface{}
 }
 
 // Action to return action function that required config and object only
-func (c *cliImpl) Action(fn interface{}) func(ctx *cli.Context) error {
+func (c *Context) Action(fn interface{}) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) (err error) {
 		di := dig.New()
-		if err = provideLoader(di, c.desc); err != nil {
+		if err = c.provideConfigLoader(di); err != nil {
 			return
 		}
 		if err = provideConfigFn(di, c.obj); err != nil {
@@ -60,13 +53,16 @@ func (c *cliImpl) Action(fn interface{}) func(ctx *cli.Context) error {
 }
 
 // PreparedAction to return function with preparation, provide and destroy dependencies from other module
-func (c *cliImpl) PreparedAction(fn interface{}) func(ctx *cli.Context) error {
+func (c *Context) PreparedAction(fn interface{}) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) (err error) {
 		di := dig.New()
-		if err = provideAll(di, c.desc); err != nil {
+		if err = c.provideConfigLoader(di); err != nil {
 			return
 		}
-		if err = prepareAll(di, c.desc); err != nil {
+		if err = c.provideAll(di); err != nil {
+			return
+		}
+		if err = c.prepareAll(di); err != nil {
 			return
 		}
 		gracefulStop := make(chan os.Signal)
@@ -82,31 +78,41 @@ func (c *cliImpl) PreparedAction(fn interface{}) func(ctx *cli.Context) error {
 		if err != nil {
 			log.Error(err.Error())
 		}
-		if err = destroyAll(di, c.desc); err != nil {
+		if err = c.destroyAll(di); err != nil {
 			log.Error(err.Error())
 		}
 		return
 	}
 }
 
-// Context of Cli
-func (c *cliImpl) ProjectDescriptor() *ProjectDescriptor {
-	return c.desc
+func (c *Context) provideConfigLoader(di *dig.Container) (err error) {
+	fn := func() ConfigLoader {
+		return c.ConfigLoader
+	}
+	if c.ConfigLoader != nil {
+		if err = provide(di, fn); err != nil {
+			return
+		}
+	}
+	return
 }
 
-// Object of Cli
-func (c *cliImpl) Object() interface{} {
-	return c.obj
+func (c *Context) destroyAll(di *dig.Container) (err error) {
+	for _, module := range c.AllModule() {
+		if destroyer, ok := module.(Destroyer); ok {
+			if err = invoke(di, destroyer.Destroy()...); err != nil {
+				return
+			}
+		}
+	}
+	return
 }
 
-func provideAll(di *dig.Container, desc *ProjectDescriptor) (err error) {
-	if err = provideLoader(di, desc); err != nil {
+func (c *Context) provideAll(di *dig.Container) (err error) {
+	if err = provide(di, c.Constructors...); err != nil {
 		return
 	}
-	if err = provide(di, desc.Constructors...); err != nil {
-		return
-	}
-	for _, module := range desc.AllModule() {
+	for _, module := range c.AllModule() {
 		if err = provideConfigFn(di, module); err != nil {
 			return
 		}
@@ -119,21 +125,10 @@ func provideAll(di *dig.Container, desc *ProjectDescriptor) (err error) {
 	return
 }
 
-func prepareAll(di *dig.Container, desc *ProjectDescriptor) (err error) {
-	for _, module := range desc.AllModule() {
+func (c *Context) prepareAll(di *dig.Container) (err error) {
+	for _, module := range c.AllModule() {
 		if preparer, ok := module.(Preparer); ok {
 			if err = invoke(di, preparer.Prepare()...); err != nil {
-				return
-			}
-		}
-	}
-	return
-}
-
-func destroyAll(di *dig.Container, desc *ProjectDescriptor) (err error) {
-	for _, module := range desc.AllModule() {
-		if destroyer, ok := module.(Destroyer); ok {
-			if err = invoke(di, destroyer.Destroy()...); err != nil {
 				return
 			}
 		}
@@ -153,21 +148,6 @@ func invoke(di *dig.Container, fns ...interface{}) (err error) {
 func provide(di *dig.Container, fns ...interface{}) (err error) {
 	for _, fn := range fns {
 		if err = di.Provide(fn); err != nil {
-			return
-		}
-	}
-	return
-}
-
-func loaderFn(desc *ProjectDescriptor) interface{} {
-	return func() ConfigLoader {
-		return desc.ConfigLoader
-	}
-}
-
-func provideLoader(di *dig.Container, desc *ProjectDescriptor) (err error) {
-	if desc.ConfigLoader != nil {
-		if err = provide(di, loaderFn(desc)); err != nil {
 			return
 		}
 	}

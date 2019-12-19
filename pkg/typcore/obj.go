@@ -40,12 +40,12 @@ type Configurer interface {
 
 // BuildCommander responsible to return commands for Build-Tool
 type BuildCommander interface {
-	BuildCommands(c Cli) []*cli.Command
+	BuildCommands(c *Context) []*cli.Command
 }
 
 // AppCommander responsible to return commands for App
 type AppCommander interface {
-	AppCommands(c Cli) []*cli.Command
+	AppCommands(c *Context) []*cli.Command
 }
 
 // IsProvider return true if object implementation of provider

@@ -14,7 +14,7 @@ const (
 type Module struct{}
 
 // AppCommands is commands collection to execute application
-func (Module) AppCommands(c typcore.Cli) []*cli.Command {
+func (Module) AppCommands(c *typcore.Context) []*cli.Command {
 	return []*cli.Command{
 		cmdConstructProject(),
 		cmdConstructModule(),
