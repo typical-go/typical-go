@@ -1,4 +1,4 @@
-package envfile
+package common
 
 import (
 	"os"
@@ -11,8 +11,9 @@ import (
 
 const configKey = "CONFIG"
 
-// Load to load environment from .env file
-func Load() (err error) {
+// LoadEnvFile to load environment from .env file
+func LoadEnvFile() (err error) {
+	// TODO: don't use godotenv for flexibility
 	configSource := os.Getenv(configKey)
 	var configs []string
 	var envMap map[string]string

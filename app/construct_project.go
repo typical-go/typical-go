@@ -6,7 +6,7 @@ import (
 
 	"github.com/typical-go/typical-go/app/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/typenv"
-	"github.com/typical-go/typical-go/pkg/utility/filekit"
+	"github.com/typical-go/typical-go/pkg/utility/common"
 	"github.com/typical-go/typical-go/pkg/utility/golang"
 	"github.com/typical-go/typical-go/pkg/utility/runn"
 	"github.com/typical-go/typical-go/pkg/utility/runner"
@@ -31,7 +31,7 @@ func constructProject(ctx *cli.Context) (err error) {
 		return cli.ShowCommandHelp(ctx, "new")
 	}
 	name := filepath.Base(pkg)
-	if filekit.IsExist(name) {
+	if common.IsFileExist(name) {
 		return fmt.Errorf("'%s' already exist", name)
 	}
 	return runn.Execute(constructproj{

@@ -6,12 +6,12 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/typical-go/typical-go/pkg/utility/common"
 	"github.com/typical-go/typical-go/pkg/utility/runner"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typbuildtool/walker"
 	"github.com/typical-go/typical-go/pkg/typenv"
-	"github.com/typical-go/typical-go/pkg/utility/debugkit"
 	"github.com/typical-go/typical-go/pkg/utility/golang"
 
 	"github.com/urfave/cli/v2"
@@ -49,7 +49,7 @@ func (t buildtool) buildBinary(ctx *cli.Context) (err error) {
 }
 
 func (t buildtool) generateConstructor(target string, constructors []string) (err error) {
-	defer debugkit.ElapsedTime("Generate constructor")()
+	defer common.ElapsedTimeFn("Generate constructor")()
 	src := golang.NewSource("main")
 	if len(constructors) < 1 {
 		return

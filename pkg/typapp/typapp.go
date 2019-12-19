@@ -6,7 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/utility/envfile"
+	"github.com/typical-go/typical-go/pkg/utility/common"
 	"github.com/urfave/cli/v2"
 )
 
@@ -25,7 +25,7 @@ func Run(d *typcore.ProjectDescriptor) {
 		app.Action = ctx.PreparedAction(actionable.Action())
 	}
 	app.Before = func(ctx *cli.Context) error {
-		return envfile.Load()
+		return common.LoadEnvFile()
 	}
 	if commander, ok := d.AppModule.(typcore.AppCommander); ok {
 		app.Commands = commander.AppCommands(ctx)
