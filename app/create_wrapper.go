@@ -38,13 +38,13 @@ func wrapperRunner(path string) runn.Runner {
 		name = filepath.Base(path)
 	}
 	data := struct {
-		ContextFile       string
+		DescriptorFile    string
 		ChecksumFile      string
 		LayoutMetadata    string
 		BuildtoolMainPath string
 		BuildtoolBin      string
 	}{
-		ContextFile:       typenv.ContextFile,
+		DescriptorFile:    typenv.DescriptorFile,
 		ChecksumFile:      typenv.ChecksumFile,
 		LayoutMetadata:    typenv.Layout.Metadata,
 		BuildtoolMainPath: fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, name, typenv.BuildTool),
