@@ -1,24 +1,24 @@
-package coll_test
+package common_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/utility/coll"
+	"github.com/typical-go/typical-go/pkg/common"
 )
 
 func TestInterfaces_Append(t *testing.T) {
 	testcases := []struct {
-		*coll.Interfaces
+		*common.Interfaces
 		slice []interface{}
 	}{
 		{
-			Interfaces: new(coll.Interfaces).
+			Interfaces: new(common.Interfaces).
 				Append("some-item", 88, 3.14),
 			slice: []interface{}{"some-item", 88, 3.14},
 		},
 		{
-			Interfaces: new(coll.Interfaces).
+			Interfaces: new(common.Interfaces).
 				Append("some-item").
 				Append(88).
 				Append(3.14),

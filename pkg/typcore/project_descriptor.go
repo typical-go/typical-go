@@ -5,8 +5,7 @@ import (
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/typrls"
-	"github.com/typical-go/typical-go/pkg/utility/coll"
-	"github.com/typical-go/typical-go/pkg/utility/common"
+	"github.com/typical-go/typical-go/pkg/common"
 )
 
 // ProjectDescriptor describe the project
@@ -16,12 +15,12 @@ type ProjectDescriptor struct {
 	Package      string
 	Version      string
 	AppModule    interface{}
-	Modules      coll.Interfaces
+	Modules      common.Interfaces
 	ConfigLoader ConfigLoader
 	Releaser     *typrls.Releaser
 
-	MockTargets  coll.Strings
-	Constructors coll.Interfaces
+	MockTargets  common.Strings
+	Constructors common.Interfaces
 }
 
 // Validate context

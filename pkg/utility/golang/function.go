@@ -5,15 +5,15 @@ import (
 	"io"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/utility/coll"
+	"github.com/typical-go/typical-go/pkg/common"
 )
 
 // Function definition
 type Function struct {
-	coll.Strings
+	common.Strings
 	Name    string
-	Params  []coll.KeyString
-	Returns []coll.KeyString
+	Params  []common.KeyString
+	Returns []common.KeyString
 }
 
 // NewFunction return new instance

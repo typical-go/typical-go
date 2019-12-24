@@ -6,7 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/utility/common"
+	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/urfave/cli/v2"
 )
 

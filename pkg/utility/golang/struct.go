@@ -5,13 +5,13 @@ import (
 	"io"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/utility/coll"
+	"github.com/typical-go/typical-go/pkg/common"
 )
 
 // Struct is plain old go object for struct
 type Struct struct {
 	Name        string
-	Fields      coll.KeyStrings
+	Fields      common.KeyStrings
 	Description string
 }
 

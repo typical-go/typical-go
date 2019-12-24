@@ -4,7 +4,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/utility/coll"
+	"github.com/typical-go/typical-go/pkg/common"
 )
 
 // Status is same with `git status --porcelain`
@@ -35,7 +35,7 @@ func LatestTag() string {
 
 // Logs of commits
 func Logs(from string) []string {
-	var args coll.Strings
+	var args common.Strings
 	args.Append("--no-pager", "log")
 	if from != "" {
 		args.Append(from + "..HEAD")

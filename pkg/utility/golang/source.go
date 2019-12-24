@@ -5,13 +5,13 @@ import (
 	"io"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/utility/coll"
+	"github.com/typical-go/typical-go/pkg/common"
 )
 
 // Source is source code recipe for generated.go in typical package
 type Source struct {
 	Package   string
-	Imports   coll.KeyStrings
+	Imports   common.KeyStrings
 	Structs   []Struct
 	Init      *Function
 	Writables []interface {

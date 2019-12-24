@@ -4,8 +4,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-
-	"github.com/typical-go/typical-go/pkg/utility/coll"
 )
 
 // Application with start and graceful stop function
@@ -15,7 +13,7 @@ type Application struct {
 }
 
 // Run the application
-func (r *Application) Run() (errs coll.Errors) {
+func (r *Application) Run() (errs Errors) {
 	gracefulStop := make(chan os.Signal)
 	signal.Notify(gracefulStop, syscall.SIGTERM)
 	signal.Notify(gracefulStop, syscall.SIGINT)

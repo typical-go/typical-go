@@ -10,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typbuildtool/walker"
 	"github.com/typical-go/typical-go/pkg/typenv"
-	"github.com/typical-go/typical-go/pkg/utility/coll"
+	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/urfave/cli/v2"
 )
 
@@ -43,7 +43,7 @@ func (t buildtool) generateMock(ctx *cli.Context) (err error) {
 		log.Infof("Clean mock package '%s'", mockPkg)
 		os.RemoveAll(mockPkg)
 	}
-	var errs coll.Errors
+	var errs common.Errors
 	for _, target := range targets {
 		log.Infof("Mock '%s'", target)
 		dest := mockPkg + "/" + filepath.Base(target)

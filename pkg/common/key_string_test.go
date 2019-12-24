@@ -1,26 +1,26 @@
-package coll_test
+package common_test
 
 import (
 	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/utility/coll"
+	"github.com/typical-go/typical-go/pkg/common"
 )
 
 func TestKeyString_SimpleFormat(t *testing.T) {
 	testcases := []struct {
-		coll.KeyString
+		common.KeyString
 		sep    string
 		result string
 	}{
 		{
-			KeyString: coll.KeyString{Key: "key", String: "string"},
+			KeyString: common.KeyString{Key: "key", String: "string"},
 			sep:       "+",
 			result:    "key+string",
 		},
 		{
-			KeyString: coll.KeyString{Key: "hello", String: "world"},
+			KeyString: common.KeyString{Key: "hello", String: "world"},
 			sep:       " ",
 			result:    "hello world",
 		},
@@ -32,12 +32,12 @@ func TestKeyString_SimpleFormat(t *testing.T) {
 
 func TestKeyString_Format(t *testing.T) {
 	testcases := []struct {
-		coll.KeyString
+		common.KeyString
 		formatter func(key, s string) string
 		result    string
 	}{
 		{
-			KeyString: coll.KeyString{Key: "hello", String: "world"},
+			KeyString: common.KeyString{Key: "hello", String: "world"},
 			formatter: func(key, s string) string {
 				return fmt.Sprintf("%s is key; %s is string", key, s)
 			},

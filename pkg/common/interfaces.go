@@ -1,4 +1,4 @@
-package coll
+package common
 
 // Interfaces is slice of interface{}
 type Interfaces []interface{}

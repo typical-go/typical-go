@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/typical-go/typical-go/pkg/utility/common"
+	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/runn/stdrun"
 
 	log "github.com/sirupsen/logrus"

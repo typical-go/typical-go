@@ -1,4 +1,4 @@
-package coll_test
+package common_test
 
 import (
 	"errors"
@@ -6,19 +6,19 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/typical-go/typical-go/pkg/utility/coll"
+	"github.com/typical-go/typical-go/pkg/common"
 )
 
 func TestErrors(t *testing.T) {
 	testcases := []struct {
-		*coll.Errors
+		*common.Errors
 		slice []error
 		sep   string
 		msg   string
 		error error
 	}{
 		{
-			Errors: new(coll.Errors).Append(
+			Errors: new(common.Errors).Append(
 				errors.New("error1"),
 				errors.New("error2"),
 				errors.New("error3"),
@@ -33,7 +33,7 @@ func TestErrors(t *testing.T) {
 			error: errors.New("error1; error2; error3"),
 		},
 		{
-			Errors: new(coll.Errors).
+			Errors: new(common.Errors).
 				Append(errors.New("error1")).
 				Append(errors.New("error2")),
 			slice: []error{
@@ -45,7 +45,7 @@ func TestErrors(t *testing.T) {
 			error: errors.New("error1; error2"),
 		},
 		{
-			Errors: &coll.Errors{},
+			Errors: &common.Errors{},
 			slice:  []error{},
 			msg:    "",
 			error:  nil,

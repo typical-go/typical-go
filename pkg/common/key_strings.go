@@ -1,6 +1,6 @@
-package coll
+package common
 
-// KeyStrings is collection of key-string pair
+// KeyStrings is commonection of key-string pair
 type KeyStrings []*KeyString
 
 // Append item
