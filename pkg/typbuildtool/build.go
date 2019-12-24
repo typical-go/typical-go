@@ -7,7 +7,7 @@ import (
 	"os/exec"
 
 	"github.com/typical-go/typical-go/pkg/utility/common"
-	"github.com/typical-go/typical-go/pkg/utility/runner"
+	"github.com/typical-go/typical-go/pkg/runn/stdrun"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typbuildtool/walker"
@@ -65,7 +65,7 @@ func (t buildtool) generateConstructor(target string, constructors []string) (er
 	for key := range imports {
 		src.Imports.Add("", key)
 	}
-	if err = runner.NewWriteSource(target, src).Run(); err != nil {
+	if err = stdrun.NewWriteSource(target, src).Run(); err != nil {
 		return
 	}
 	cmd := exec.Command(fmt.Sprintf("%s/bin/goimports", build.Default.GOPATH),

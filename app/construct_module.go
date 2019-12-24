@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/app/internal/tmpl"
-	"github.com/typical-go/typical-go/pkg/utility/runn"
-	"github.com/typical-go/typical-go/pkg/utility/runner"
+	"github.com/typical-go/typical-go/pkg/runn"
+	"github.com/typical-go/typical-go/pkg/runn/stdrun"
 	"github.com/urfave/cli/v2"
 )
 
@@ -27,7 +27,7 @@ func constructModule(ctx *cli.Context) (err error) {
 	if name == "" {
 		return cli.ShowCommandHelp(ctx, "module")
 	}
-	return runn.Execute(constructmodule{
+	return runn.Run(constructmodule{
 		Prefix: strings.ToUpper(name),
 		Name:   strings.ToLower(name),
 		Path:   ctx.String("path"),
@@ -41,10 +41,10 @@ type constructmodule struct {
 }
 
 func (c constructmodule) Run() error {
-	return runn.Execute(
-		runner.NewMkdir(fmt.Sprintf("%s/%s", c.Path, c.Name)),
-		runner.NewWriteTemplate(c.path(c.Name+".go"), tmpl.Module, c),
-		runner.NewWriteTemplate(c.path(c.Name+"_test.go"), tmpl.ModuleTest, c),
+	return runn.Run(
+		stdrun.NewMkdir(fmt.Sprintf("%s/%s", c.Path, c.Name)),
+		stdrun.NewWriteTemplate(c.path(c.Name+".go"), tmpl.Module, c),
+		stdrun.NewWriteTemplate(c.path(c.Name+"_test.go"), tmpl.ModuleTest, c),
 	)
 }
 

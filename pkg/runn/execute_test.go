@@ -6,17 +6,17 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/utility/runn"
+	"github.com/typical-go/typical-go/pkg/runn"
 )
 
-func TestExecute(t *testing.T) {
+func TestRun(t *testing.T) {
 	testcases := []struct {
 		stmts  []interface{}
 		errMsg string
 	}{
 		{
 			stmts: []interface{}{
-				runner{"some-error"},
+				stdrun{"some-error"},
 				exec.Command("wrong-command", "bad-argument"),
 			},
 			errMsg: "some-error",
@@ -30,8 +30,8 @@ func TestExecute(t *testing.T) {
 		},
 		{
 			stmts: []interface{}{
-				runner{"some-error-1"},
-				runner{"some-error-2"},
+				stdrun{"some-error-1"},
+				stdrun{"some-error-2"},
 			},
 			errMsg: "some-error-1",
 		},
@@ -49,7 +49,7 @@ func TestExecute(t *testing.T) {
 	}
 
 	for i, tt := range testcases {
-		err := runn.Execute(tt.stmts...)
+		err := runn.Run(tt.stmts...)
 		if tt.errMsg == "" {
 			require.NoError(t, err)
 		} else {
@@ -58,11 +58,11 @@ func TestExecute(t *testing.T) {
 	}
 }
 
-type runner struct {
+type stdrun struct {
 	msg string
 }
 
-func (r runner) Run() error {
+func (r stdrun) Run() error {
 	if r.msg == "" {
 		return nil
 	}

@@ -8,8 +8,8 @@ import (
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/utility/common"
 	"github.com/typical-go/typical-go/pkg/utility/golang"
-	"github.com/typical-go/typical-go/pkg/utility/runn"
-	"github.com/typical-go/typical-go/pkg/utility/runner"
+	"github.com/typical-go/typical-go/pkg/runn"
+	"github.com/typical-go/typical-go/pkg/runn/stdrun"
 	"github.com/urfave/cli/v2"
 )
 
@@ -34,7 +34,7 @@ func constructProject(ctx *cli.Context) (err error) {
 	if common.IsFileExist(name) {
 		return fmt.Errorf("'%s' already exist", name)
 	}
-	return runn.Execute(constructproj{
+	return runn.Run(constructproj{
 		Name:  name,
 		Pkg:   pkg,
 		blank: ctx.Bool("blank"),
@@ -52,42 +52,42 @@ func (i constructproj) Path(s string) string {
 }
 
 func (i constructproj) Run() (err error) {
-	return runn.Execute(
+	return runn.Run(
 		i.appPackage,
 		i.cmdPackage,
 		i.projectDescriptor,
 		i.ignoreFile,
-		wrapperRunner(i.Name),
-		runner.NewGoFmt("./..."),
+		wrapper(i.Name),
+		stdrun.NewGoFmt("./..."),
 		i.gomod,
 	)
 }
 
 func (i constructproj) appPackage() error {
 	stmts := []interface{}{
-		runner.NewMkdir(i.Path("app")),
+		stdrun.NewMkdir(i.Path("app")),
 	}
 	if !i.blank {
 		stmts = append(stmts,
-			runner.NewMkdir(i.Path("app/config")),
-			runner.NewWriteString(i.Path("app/config/config.go"), tmpl.Config),
-			runner.NewWriteTemplate(i.Path("app/app.go"), tmpl.App, i),
-			runner.NewWriteTemplate(i.Path("app/app_test.go"), tmpl.AppTest, i),
+			stdrun.NewMkdir(i.Path("app/config")),
+			stdrun.NewWriteString(i.Path("app/config/config.go"), tmpl.Config),
+			stdrun.NewWriteTemplate(i.Path("app/app.go"), tmpl.App, i),
+			stdrun.NewWriteTemplate(i.Path("app/app_test.go"), tmpl.AppTest, i),
 		)
 	}
-	return runn.Execute(stmts...)
+	return runn.Run(stmts...)
 }
 
 func (i constructproj) projectDescriptor() error {
 	var writeStmt interface{}
 	path := "typical/descriptor.go"
 	if i.blank {
-		writeStmt = runner.NewWriteTemplate(i.Path(path), tmpl.Context, i)
+		writeStmt = stdrun.NewWriteTemplate(i.Path(path), tmpl.Context, i)
 	} else {
-		writeStmt = runner.NewWriteTemplate(i.Path(path), tmpl.ContextWithAppModule, i)
+		writeStmt = stdrun.NewWriteTemplate(i.Path(path), tmpl.ContextWithAppModule, i)
 	}
-	return runn.Execute(
-		runner.NewMkdir(i.Path("typical")),
+	return runn.Run(
+		stdrun.NewMkdir(i.Path("typical")),
 		writeStmt,
 	)
 }
@@ -95,12 +95,12 @@ func (i constructproj) projectDescriptor() error {
 func (i constructproj) cmdPackage() error {
 	appMainPath := fmt.Sprintf("%s/%s", typenv.Layout.Cmd, i.Name)
 	buildtoolMainPath := fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, i.Name, typenv.BuildTool)
-	return runn.Execute(
-		runner.NewMkdir(i.Path(typenv.Layout.Cmd)),
-		runner.NewMkdir(i.Path(appMainPath)),
-		runner.NewMkdir(i.Path(buildtoolMainPath)),
-		runner.NewWriteSource(i.Path(appMainPath+"/main.go"), i.appMainSrc()),
-		runner.NewWriteSource(i.Path(buildtoolMainPath+"/main.go"), i.buildtoolMainSrc()),
+	return runn.Run(
+		stdrun.NewMkdir(i.Path(typenv.Layout.Cmd)),
+		stdrun.NewMkdir(i.Path(appMainPath)),
+		stdrun.NewMkdir(i.Path(buildtoolMainPath)),
+		stdrun.NewWriteSource(i.Path(appMainPath+"/main.go"), i.appMainSrc()),
+		stdrun.NewWriteSource(i.Path(buildtoolMainPath+"/main.go"), i.buildtoolMainSrc()),
 	)
 }
 
@@ -121,8 +121,8 @@ func (i constructproj) buildtoolMainSrc() (src *golang.MainSource) {
 }
 
 func (i constructproj) ignoreFile() error {
-	return runn.Execute(
-		runner.NewWriteString(i.Path(".gitignore"), tmpl.Gitignore).WithPermission(0700),
+	return runn.Run(
+		stdrun.NewWriteString(i.Path(".gitignore"), tmpl.Gitignore).WithPermission(0700),
 	)
 }
 
@@ -134,7 +134,7 @@ func (i constructproj) gomod() (err error) {
 		Pkg:            i.Pkg,
 		TypicalVersion: Version,
 	}
-	return runn.Execute(
-		runner.NewWriteTemplate(i.Path("go.mod"), tmpl.GoMod, data),
+	return runn.Run(
+		stdrun.NewWriteTemplate(i.Path("go.mod"), tmpl.GoMod, data),
 	)
 }

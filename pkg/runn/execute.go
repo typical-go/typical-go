@@ -5,8 +5,13 @@ import (
 	"reflect"
 )
 
-// Execute all statement
-func Execute(stmts ...interface{}) (err error) {
+// Runner contain run function
+type Runner interface {
+	Run() error
+}
+
+// Run all stdrun
+func Run(stmts ...interface{}) (err error) {
 	for i, stmt := range stmts {
 		switch stmt.(type) {
 		case Runner:
