@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/typical-go/typical-go/pkg/git"
+	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
 // Releaser responsible to release distruction
@@ -27,7 +27,7 @@ type Tagging struct {
 }
 
 // Release the distribution
-func (r *Releaser) Release(name, version string, force, alpha bool) (rls *Release, err error) {
+func (r *Releaser) Release(name, version string, force, alpha, noPublish bool) (err error) {
 	var latestTag string
 	var changeLogs []string
 	var binaries []string
@@ -35,16 +35,13 @@ func (r *Releaser) Release(name, version string, force, alpha bool) (rls *Releas
 	defer git.Fetch()
 	tag := r.releaseTag(version, alpha)
 	if status := git.Status(); status != "" && !force {
-		err = fmt.Errorf("Please commit changes first:\n%s", status)
-		return
+		return fmt.Errorf("Please commit changes first:\n%s", status)
 	}
 	if latestTag = git.LatestTag(); latestTag == tag && !force {
-		err = fmt.Errorf("%s already released", latestTag)
-		return
+		return fmt.Errorf("%s already released", latestTag)
 	}
 	if changeLogs = git.Logs(latestTag); len(changeLogs) < 1 && !force {
-		err = errors.New("No change to be released")
-		return
+		return errors.New("No change to be released")
 	}
 	changeLogs = r.filter(changeLogs)
 	for _, target := range r.Targets {
@@ -54,12 +51,19 @@ func (r *Releaser) Release(name, version string, force, alpha bool) (rls *Releas
 		}
 		binaries = append(binaries, binary)
 	}
-	rls = &Release{
+	rls := &Release{
 		Name:       name,
 		Tag:        tag,
 		Alpha:      alpha,
 		ChangeLogs: changeLogs,
 		Binaries:   binaries,
+	}
+	if !noPublish {
+		for _, publisher := range r.Publishers {
+			if err = publisher.Publish(rls); err != nil {
+				return
+			}
+		}
 	}
 	return
 }

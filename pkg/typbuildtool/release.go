@@ -3,7 +3,6 @@ package typbuildtool
 import (
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typenv"
-	"github.com/typical-go/typical-go/pkg/typrls"
 	"github.com/urfave/cli/v2"
 )
 
@@ -22,7 +21,6 @@ func (t buildtool) cmdRelease() *cli.Command {
 }
 
 func (t buildtool) releaseDistribution(ctx *cli.Context) (err error) {
-	var rls *typrls.Release
 	log.Info("Release distribution")
 	if !ctx.Bool("no-test") {
 		if err = t.runTesting(ctx); err != nil {
@@ -30,16 +28,15 @@ func (t buildtool) releaseDistribution(ctx *cli.Context) (err error) {
 		}
 	}
 	log.Info("Release the distribution")
-	if rls, err = t.Releaser.Release(typenv.ProjectName, t.Version, ctx.Bool("force"), ctx.Bool("alpha")); err != nil {
+	if err = t.Releaser.Release(
+		typenv.ProjectName,
+		t.Version,
+		ctx.Bool("force"),
+		ctx.Bool("alpha"),
+		ctx.Bool("no-publish"),
+	); err != nil {
 		return
 	}
-	if !ctx.Bool("no-publish") {
-		for _, publisher := range t.Releaser.Publishers {
-			log.Info("Publish the distribution")
-			if err = publisher.Publish(rls); err != nil {
-				return
-			}
-		}
-	}
+
 	return
 }
