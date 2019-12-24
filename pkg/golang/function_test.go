@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/utility/golang"
+	"github.com/typical-go/typical-go/pkg/golang"
 )
 
 func TestFunc(t *testing.T) {

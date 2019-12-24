@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/typenv"
-	"github.com/typical-go/typical-go/pkg/utility/git"
+	"github.com/typical-go/typical-go/pkg/git"
 )
 
 // Releaser responsible to release distruction
