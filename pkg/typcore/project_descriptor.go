@@ -3,10 +3,10 @@ package typcore
 import (
 	"errors"
 	"fmt"
-	"reflect"
 
 	"github.com/typical-go/typical-go/pkg/typrls"
 	"github.com/typical-go/typical-go/pkg/utility/coll"
+	"github.com/typical-go/typical-go/pkg/utility/common"
 )
 
 // ProjectDescriptor describe the project
@@ -58,7 +58,7 @@ func (c *ProjectDescriptor) AllModule() (modules []interface{}) {
 }
 
 func validate(v interface{}) (err error) {
-	if isNil(v) {
+	if common.IsNil(v) {
 		return
 	}
 	if validator, ok := v.(Validator); ok {
@@ -67,8 +67,4 @@ func validate(v interface{}) (err error) {
 		}
 	}
 	return
-}
-
-func isNil(v interface{}) bool {
-	return v == nil || (reflect.ValueOf(v).Kind() == reflect.Ptr && reflect.ValueOf(v).IsNil())
 }
