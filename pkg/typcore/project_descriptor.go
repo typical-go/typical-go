@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/typical-go/typical-go/pkg/typrls"
 	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
 // ProjectDescriptor describe the project
