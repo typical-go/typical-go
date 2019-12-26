@@ -7,16 +7,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typbuildtool/walker"
 )
 
-func TestDocTags_ParseDocTag(t *testing.T) {
-	tags := walker.ParseAnnotations("[tag1] some text [tag2] then another text [tag3]")
-	require.Equal(t, walker.Annotations{
-		{Name: "tag1"},
-		{Name: "tag2"},
-		{Name: "tag3"},
-	}, tags)
-}
-
-func TestDocTags_Contain(t *testing.T) {
+func TestAnnotations_Contain(t *testing.T) {
 	testcases := []struct {
 		walker.Annotations
 		name    string

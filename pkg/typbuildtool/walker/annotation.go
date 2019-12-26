@@ -2,14 +2,20 @@ package walker
 
 // Annotation contain extra additional information
 type Annotation struct {
-	Name string
+	Name  string
+	Attrs map[string]string
 }
 
-// ParseAnnotation parse raw string to annotation
-func ParseAnnotation(raw string) *Annotation {
-	stripped := raw[1 : len(raw)-1]
-	// TODO: handle parameter. Annotation Format: [name{key1=value1 key2=value2}]
+// NewAnnotation return new instance of Annotation
+func NewAnnotation(name string) *Annotation {
 	return &Annotation{
-		Name: stripped,
+		Name:  name,
+		Attrs: make(map[string]string),
 	}
+}
+
+// Put attribute
+func (a *Annotation) Put(key, value string) *Annotation {
+	a.Attrs[key] = value
+	return a
 }
