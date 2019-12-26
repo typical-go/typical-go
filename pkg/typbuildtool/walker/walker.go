@@ -49,32 +49,42 @@ func (w *Walker) parse(fset *token.FileSet, filename string) (err error) {
 	if err != nil {
 		return
 	}
-	for name, obj := range f.Scope.Objects {
-		switch obj.Decl.(type) {
+	for _, decl := range f.Decls {
+		switch decl.(type) {
 		case *ast.FuncDecl:
+			funcDecl := decl.(*ast.FuncDecl)
 			e := &FuncDeclEvent{
-				Name:     name,
+				Name:     funcDecl.Name.Name,
 				Filename: filename,
 				File:     f,
-				FuncDecl: obj.Decl.(*ast.FuncDecl),
+				FuncDecl: funcDecl,
 			}
 			for _, listener := range w.funcDeclListeners {
 				if err = listener.OnFuncDecl(e); err != nil {
 					return
 				}
 			}
-		case *ast.TypeSpec:
-			e := &TypeSpecEvent{
-				Name:     name,
-				Filename: filename,
-				File:     f,
-				TypeSpec: obj.Decl.(*ast.TypeSpec),
-			}
-			for _, listener := range w.typeSpecListeners {
-				if err = listener.OnTypeSpec(e); err != nil {
-					return
+		case *ast.GenDecl:
+			genDecl := decl.(*ast.GenDecl)
+			for _, spec := range genDecl.Specs {
+				switch spec.(type) {
+				case *ast.TypeSpec:
+					typeSpec := spec.(*ast.TypeSpec)
+					e := &TypeSpecEvent{
+						Name:     typeSpec.Name.Name,
+						Filename: filename,
+						File:     f,
+						TypeSpec: typeSpec,
+						GenDecl:  genDecl,
+					}
+					for _, listener := range w.typeSpecListeners {
+						if err = listener.OnTypeSpec(e); err != nil {
+							return
+						}
+					}
 				}
 			}
+
 		}
 	}
 	return

@@ -1,6 +1,8 @@
 package walker
 
-import "go/ast"
+import (
+	"go/ast"
+)
 
 // TypeSpecListener handle when type specification
 type TypeSpecListener interface {
@@ -13,19 +15,21 @@ type TypeSpecEvent struct {
 	Name     string
 	Filename string
 	File     *ast.File
+	GenDecl  *ast.GenDecl
 }
 
 // CommentDoc return comment document of type
 func (e *TypeSpecEvent) CommentDoc() string {
-	if e.Doc != nil {
-		return e.Doc.Text()
+	if e.GenDecl.Doc != nil {
+		return e.GenDecl.Doc.Text()
 	}
 	return ""
 }
 
 // Annotations of type
 func (e *TypeSpecEvent) Annotations() Annotations {
-	return ParseAnnotations(e.CommentDoc())
+	doc := e.CommentDoc()
+	return ParseAnnotations(doc)
 }
 
 // IsInterface return true if type is interface type

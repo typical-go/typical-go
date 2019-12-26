@@ -64,12 +64,3 @@ func installMockgen() (path string, err error) {
 	err = exec.Command("go", "get", "github.com/golang/mock/mockgen").Run()
 	return
 }
-
-// func mockTargets() (targets []string, err error) {
-// 	var data []byte
-// 	if data, err = ioutil.ReadFile(typenv.Layout.Metadata + "/mock_target.json"); err != nil {
-// 		return
-// 	}
-// 	err = json.Unmarshal(data, &targets)
-// 	return
-// }

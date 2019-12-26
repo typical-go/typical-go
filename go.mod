@@ -3,6 +3,7 @@ module github.com/typical-go/typical-go
 go 1.13
 
 require (
+	github.com/golang/mock v1.3.1 // indirect
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/joho/godotenv v1.3.0
