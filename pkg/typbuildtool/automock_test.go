@@ -25,26 +25,21 @@ func TestAutomock(t *testing.T) {
 		{
 			e: &walker.TypeSpecEvent{
 				Filename: "filename.go",
-				TypeSpec: createInterfaceSpecWithComment("some doc"),
+				TypeSpec: &ast.TypeSpec{Type: &ast.InterfaceType{}},
+				GenDecl:  &ast.GenDecl{Doc: astComment("some doc")},
 			},
 			automocks: []string{"filename.go"},
 		},
 		{
 			e: &walker.TypeSpecEvent{
 				Filename: "filename.go",
-				TypeSpec: createInterfaceSpecWithComment("some doc [nomock]"),
+				TypeSpec: &ast.TypeSpec{Type: &ast.InterfaceType{}},
+				GenDecl:  &ast.GenDecl{Doc: astComment("some doc [nomock]")},
 			},
 		},
 	}
 	for _, tt := range testcases {
 		require.NoError(t, tt.OnTypeSpec(tt.e))
 		require.EqualValues(t, tt.automocks, tt.Automocks)
-	}
-}
-
-func createInterfaceSpecWithComment(comment string) *ast.TypeSpec {
-	return &ast.TypeSpec{
-		Type: &ast.InterfaceType{},
-		Doc:  astComment(comment),
 	}
 }
