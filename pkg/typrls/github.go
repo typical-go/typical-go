@@ -20,6 +20,14 @@ type Github struct {
 	RepoName string
 }
 
+// GithubPublisher to return new instance of Github
+func GithubPublisher(owner, repo string) *Github {
+	return &Github{
+		Owner:    owner,
+		RepoName: repo,
+	}
+}
+
 // Publish to github
 func (g *Github) Publish(r *Release) (err error) {
 	token := os.Getenv("GITHUB_TOKEN")

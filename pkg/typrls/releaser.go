@@ -20,10 +20,23 @@ type Releaser struct {
 	Tagging
 }
 
-// Tagging release settings
+// Tagging is setting how to make tag
 type Tagging struct {
 	IncludeBranch   bool
 	IncludeCommitID bool
+}
+
+// New return new instance of releaser
+func New(targets ...Target) *Releaser {
+	return &Releaser{
+		Targets: targets,
+	}
+}
+
+// WithPublisher to set the publisher and return its instance
+func (r *Releaser) WithPublisher(publishers ...Publisher) *Releaser {
+	r.Publishers = publishers
+	return r
 }
 
 // Release the distribution

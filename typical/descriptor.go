@@ -12,10 +12,10 @@ var Descriptor = &typcore.ProjectDescriptor{
 	Version:   app.Version,
 	Package:   "github.com/typical-go/typical-go",
 	AppModule: &app.Module{},
-	Releaser: &typrls.Releaser{
-		Targets: []typrls.Target{"linux/amd64", "darwin/amd64"},
-		Publishers: []typrls.Publisher{
-			&typrls.Github{Owner: "typical-go", RepoName: "typical-go"},
-		},
-	},
+	Releaser: typrls.New(
+		"linux/amd64",
+		"darwin/amd64",
+	).WithPublisher(
+		typrls.GithubPublisher("typical-go", "typical-go"),
+	),
 }
