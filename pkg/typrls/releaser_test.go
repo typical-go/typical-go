@@ -16,18 +16,16 @@ func TestReleaser(t *testing.T) {
 
 func TestReleaser_Validate(t *testing.T) {
 	testcases := []struct {
-		typrls.Releaser
+		*typrls.Releaser
 		errMsg string
 	}{
 		{
-			typrls.Releaser{},
+			typrls.New(),
 			"Missing 'Targets'",
 		},
 		{
-			typrls.Releaser{
-				Targets: []typrls.Target{"invalid"},
-			},
-			"Target: Missing OS: Please make sure 'invalid' using 'OS/ARCH' format",
+			typrls.New("invalid-target"),
+			"Target: Missing OS: Please make sure 'invalid-target' using 'OS/ARCH' format",
 		},
 	}
 	for i, tt := range testcases {
