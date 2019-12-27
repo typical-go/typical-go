@@ -1,8 +1,10 @@
 package typrls
 
+import "context"
+
 // Publisher reponsible to publish the release to external source
 type Publisher interface {
-	Publish(*Release) error
+	Publish(context.Context, *Release) error
 }
 
 // Release information

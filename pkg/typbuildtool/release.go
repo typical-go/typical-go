@@ -29,6 +29,7 @@ func (t buildtool) releaseDistribution(ctx *cli.Context) (err error) {
 	}
 	log.Info("Release the distribution")
 	if err = t.Releaser.Release(
+		ctx.Context,
 		typenv.ProjectName,
 		t.Version,
 		ctx.Bool("force"),
@@ -37,6 +38,5 @@ func (t buildtool) releaseDistribution(ctx *cli.Context) (err error) {
 	); err != nil {
 		return
 	}
-
 	return
 }

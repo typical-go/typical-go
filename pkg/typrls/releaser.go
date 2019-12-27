@@ -1,6 +1,7 @@
 package typrls
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -40,7 +41,7 @@ func (r *Releaser) WithPublisher(publishers ...Publisher) *Releaser {
 }
 
 // Release the distribution
-func (r *Releaser) Release(name, version string, force, alpha, noPublish bool) (err error) {
+func (r *Releaser) Release(ctx context.Context, name, version string, force, alpha, noPublish bool) (err error) {
 	var latestTag string
 	var changeLogs []string
 	var binaries []string
@@ -73,7 +74,7 @@ func (r *Releaser) Release(name, version string, force, alpha, noPublish bool) (
 	}
 	if !noPublish {
 		for _, publisher := range r.Publishers {
-			if err = publisher.Publish(rls); err != nil {
+			if err = publisher.Publish(ctx, rls); err != nil {
 				return
 			}
 		}
