@@ -21,9 +21,12 @@ type Tagging struct {
 }
 
 // New return new instance of releaser
-func New(targets ...Target) *Releaser {
+func New() *Releaser {
 	return &Releaser{
-		targets: targets,
+		targets: []Target{
+			"linux/amd64",
+			"darwin/amd64",
+		},
 		filter: &StandardFilter{
 			Ignorings: []string{
 				"merge",
@@ -33,6 +36,12 @@ func New(targets ...Target) *Releaser {
 				"wip",
 			}},
 	}
+}
+
+// WithTarget to set target and return its instance
+func (r *Releaser) WithTarget(targets ...Target) *Releaser {
+	r.targets = targets
+	return r
 }
 
 // WithName to set name and return its instance
