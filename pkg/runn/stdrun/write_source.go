@@ -3,6 +3,8 @@ package stdrun
 import (
 	"io"
 	"os"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // WriteSource to write source to file
@@ -25,6 +27,7 @@ func NewWriteSource(target string, source source) *WriteSource {
 
 // Run to write source
 func (w WriteSource) Run() (err error) {
+	log.Infof("Write File: %s", w.target)
 	var f *os.File
 	if f, err = os.Create(w.target); err != nil {
 		return

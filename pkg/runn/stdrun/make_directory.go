@@ -2,6 +2,8 @@ package stdrun
 
 import (
 	"os"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Mkdir to make directory
@@ -17,6 +19,7 @@ func NewMkdir(path string) *Mkdir {
 }
 
 // Run to making the directory
-func (md Mkdir) Run() error {
-	return os.MkdirAll(md.path, 0700)
+func (m Mkdir) Run() error {
+	log.Infof("Make directory: %s", m.path)
+	return os.MkdirAll(m.path, 0700)
 }

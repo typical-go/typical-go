@@ -3,6 +3,8 @@ package stdrun
 import (
 	"io/ioutil"
 	"os"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // WriteString to write string to file
@@ -28,6 +30,7 @@ func (w *WriteString) WithPermission(permission os.FileMode) *WriteString {
 
 // Run to write file
 func (w WriteString) Run() (err error) {
+	log.Infof("Write File: %s", w.target)
 	if w.permission == 0 {
 		w.permission = 0666
 	}

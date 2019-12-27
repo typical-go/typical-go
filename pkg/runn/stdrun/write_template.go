@@ -3,6 +3,8 @@ package stdrun
 import (
 	"os"
 	"text/template"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // WriteTemplate to write template to file
@@ -30,6 +32,7 @@ func (w *WriteTemplate) WithPermission(permission os.FileMode) *WriteTemplate {
 
 // Run to write file
 func (w *WriteTemplate) Run() (err error) {
+	log.Infof("Write File: %s", w.target)
 	var f *os.File
 	var tmpl *template.Template
 	if w.permission == 0 {
