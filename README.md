@@ -6,7 +6,7 @@ A Framework + Build Tool for Productive Go Development. <https://typical-go.gith
 
 ## Concept
 
-![concept](concept.png)
+<img src="./concept.png" style="width:100%; max-width:750px;"/>
 
 ## Install
 
