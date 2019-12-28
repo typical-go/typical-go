@@ -12,7 +12,7 @@ var (
 
 func init() {
 	wd, _ = os.Getwd()
-	metadataDir = wd + "/.typical-metadata"
+	metadataDir = wd + "/.typical-tmp"
 	os.Mkdir(metadataDir, 0777)
 }
 

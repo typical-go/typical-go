@@ -7,20 +7,21 @@ import (
 )
 
 var (
+	// Layout of project
 	Layout = struct {
-		App      string
-		Bin      string
-		Cmd      string
-		Metadata string
-		Mock     string
-		Release  string
+		App     string
+		Bin     string
+		Cmd     string
+		Temp    string
+		Mock    string
+		Release string
 	}{
-		App:      "app",
-		Cmd:      "cmd",
-		Bin:      "bin",
-		Metadata: ".typical-metadata",
-		Mock:     "mock",
-		Release:  "release",
+		App:     "app",
+		Cmd:     "cmd",
+		Bin:     "bin",
+		Temp:    ".typical-tmp",
+		Mock:    "mock",
+		Release: "release",
 	}
 
 	Readme      = "README.md"
@@ -34,7 +35,7 @@ var (
 	BuildToolMainPath = fmt.Sprintf("%s/%s-%s", Layout.Cmd, ProjectName, BuildTool)
 
 	DescriptorFile = "typical/descriptor.go"
-	ChecksumFile   = Layout.Metadata + "/checksum"
+	ChecksumFile   = Layout.Temp + "/checksum"
 )
 
 func projectName() (s string) {

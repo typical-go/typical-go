@@ -44,7 +44,7 @@ func (t buildtool) removeApp(c *cli.Context) error {
 }
 
 func (t buildtool) removeMetadata(c *cli.Context) error {
-	removeAllFile(typenv.Layout.Metadata)
+	removeAllFile(typenv.Layout.Temp)
 	return nil
 }
 
