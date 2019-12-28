@@ -20,11 +20,11 @@ func TestReleaser_Validate(t *testing.T) {
 		errMsg string
 	}{
 		{
-			typrls.New(),
+			typrls.New().WithTarget(),
 			"Missing 'Targets'",
 		},
 		{
-			typrls.New("invalid-target"),
+			typrls.New().WithTarget("invalid-target"),
 			"Target: Missing OS: Please make sure 'invalid-target' using 'OS/ARCH' format",
 		},
 	}
