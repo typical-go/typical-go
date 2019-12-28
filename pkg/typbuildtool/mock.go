@@ -1,6 +1,7 @@
 package typbuildtool
 
 import (
+	"context"
 	"fmt"
 	"go/build"
 	"os"
@@ -25,8 +26,13 @@ func (t buildtool) cmdMock() *cli.Command {
 	}
 }
 
-func (t buildtool) generateMock(ctx *cli.Context) (err error) {
-	var targets Automocks
+func (t buildtool) generateMock(c *cli.Context) (err error) {
+	var (
+		targets Automocks
+		mockgen string
+		errs    common.Errors
+		ctx     = c.Context
+	)
 	walker := walker.New(t.filenames)
 	walker.AddTypeSpecListener(&targets)
 	log.Info("Walk the project")
@@ -34,23 +40,23 @@ func (t buildtool) generateMock(ctx *cli.Context) (err error) {
 		return
 	}
 	targets = append(targets, t.MockTargets...)
-	var mockgen string
-	if mockgen, err = installMockgen(); err != nil {
+	if mockgen, err = installMockgen(ctx); err != nil {
 		return
 	}
 	mockPkg := typenv.Layout.Mock
-	if !ctx.Bool("no-delete") {
+	if !c.Bool("no-delete") {
 		log.Infof("Clean mock package '%s'", mockPkg)
 		os.RemoveAll(mockPkg)
 	}
-	var errs common.Errors
 	for _, target := range targets {
 		log.Infof("Mock '%s'", target)
 		dest := mockPkg + "/" + filepath.Base(target)
-		cmd := exec.Command(mockgen,
+		cmd := exec.CommandContext(ctx,
+			mockgen,
 			"-source", target,
 			"-destination", dest,
-			"-package", mockPkg)
+			"-package", mockPkg,
+		)
 		cmd.Stderr = os.Stderr
 		if err := cmd.Run(); err != nil {
 			errs.Append(fmt.Errorf("Mock '%s' failed: %w", target, err))
@@ -59,8 +65,8 @@ func (t buildtool) generateMock(ctx *cli.Context) (err error) {
 	return errs.Unwrap()
 }
 
-func installMockgen() (path string, err error) {
+func installMockgen(ctx context.Context) (path string, err error) {
 	path = build.Default.GOPATH + "/bin/mockgen"
-	err = exec.Command("go", "get", "github.com/golang/mock/mockgen").Run()
+	err = exec.CommandContext(ctx, "go", "get", "github.com/golang/mock/mockgen").Run()
 	return
 }

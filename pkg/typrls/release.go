@@ -38,17 +38,17 @@ func (r *Releaser) Publish(ctx context.Context, name, tag string, changeLogs, bi
 }
 
 // Tag return relase tag
-func (r *Releaser) Tag(version string, alpha bool) (tag string, err error) {
+func (r *Releaser) Tag(ctx context.Context, version string, alpha bool) (tag string, err error) {
 	var b strings.Builder
 	b.WriteString("v")
 	b.WriteString(version)
 	if r.IncludeBranch {
 		b.WriteString("_")
-		b.WriteString(git.Branch())
+		b.WriteString(git.Branch(ctx))
 	}
 	if r.IncludeCommitID {
 		b.WriteString("_")
-		b.WriteString(git.LatestCommit())
+		b.WriteString(git.LatestCommit(ctx))
 	}
 	if alpha {
 		b.WriteString("_alpha")

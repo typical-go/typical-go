@@ -1,6 +1,7 @@
 package stdrun
 
 import (
+	"context"
 	"os"
 	"os/exec"
 )
@@ -9,11 +10,13 @@ import (
 type GoFmt struct {
 	targets []string
 	dir     string
+	ctx     context.Context
 }
 
 // NewGoFmt return new instaence of GoFmt
-func NewGoFmt(targets ...string) *GoFmt {
+func NewGoFmt(ctx context.Context, targets ...string) *GoFmt {
 	return &GoFmt{
+		ctx:     ctx,
 		targets: targets,
 	}
 }
@@ -28,7 +31,7 @@ func (g *GoFmt) WithDir(dir string) *GoFmt {
 func (g *GoFmt) Run() error {
 	args := []string{"fmt"}
 	args = append(args, g.targets...)
-	cmd := exec.Command("go", args...)
+	cmd := exec.CommandContext(g.ctx, "go", args...)
 	cmd.Dir = g.dir
 	cmd.Stderr = os.Stderr
 	return cmd.Run()

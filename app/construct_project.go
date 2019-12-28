@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"path/filepath"
 
@@ -25,30 +26,32 @@ func cmdConstructProject() *cli.Command {
 	}
 }
 
-func constructProject(ctx *cli.Context) (err error) {
-	pkg := ctx.Args().First()
+func constructProject(c *cli.Context) (err error) {
+	pkg := c.Args().First()
 	if pkg == "" {
-		return cli.ShowCommandHelp(ctx, "new")
+		return cli.ShowCommandHelp(c, "new")
 	}
 	name := filepath.Base(pkg)
 	if common.IsFileExist(name) {
 		return fmt.Errorf("'%s' already exist", name)
 	}
 	return runn.Run(constructproj{
-		Name:  name,
-		Pkg:   pkg,
-		blank: ctx.Bool("blank"),
+		name:  name,
+		pkg:   pkg,
+		blank: c.Bool("blank"),
+		ctx:   c.Context,
 	})
 }
 
 type constructproj struct {
-	Name  string
-	Pkg   string
+	name  string
+	pkg   string
 	blank bool
+	ctx   context.Context
 }
 
 func (i constructproj) Path(s string) string {
-	return fmt.Sprintf("%s/%s", i.Name, s)
+	return fmt.Sprintf("%s/%s", i.name, s)
 }
 
 func (i constructproj) Run() (err error) {
@@ -57,8 +60,8 @@ func (i constructproj) Run() (err error) {
 		i.cmdPackage,
 		i.projectDescriptor,
 		i.ignoreFile,
-		wrapper(i.Name),
-		stdrun.NewGoFmt("./..."),
+		wrapper(i.name),
+		stdrun.NewGoFmt(i.ctx, "./..."),
 		i.gomod,
 	)
 }
@@ -93,8 +96,8 @@ func (i constructproj) projectDescriptor() error {
 }
 
 func (i constructproj) cmdPackage() error {
-	appMainPath := fmt.Sprintf("%s/%s", typenv.Layout.Cmd, i.Name)
-	buildtoolMainPath := fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, i.Name, typenv.BuildTool)
+	appMainPath := fmt.Sprintf("%s/%s", typenv.Layout.Cmd, i.name)
+	buildtoolMainPath := fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, i.name, typenv.BuildTool)
 	return runn.Run(
 		stdrun.NewMkdir(i.Path(typenv.Layout.Cmd)),
 		stdrun.NewMkdir(i.Path(appMainPath)),
@@ -107,7 +110,7 @@ func (i constructproj) cmdPackage() error {
 func (i constructproj) appMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typapp")
-	src.Imports.Add("", i.Pkg+"/typical")
+	src.Imports.Add("", i.pkg+"/typical")
 	src.Append("typapp.Run(typical.Descriptor)")
 	return
 }
@@ -115,7 +118,7 @@ func (i constructproj) appMainSrc() (src *golang.MainSource) {
 func (i constructproj) buildtoolMainSrc() (src *golang.MainSource) {
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typbuildtool")
-	src.Imports.Add("", i.Pkg+"/typical")
+	src.Imports.Add("", i.pkg+"/typical")
 	src.Append("typbuildtool.Run(typical.Descriptor)")
 	return
 }
@@ -131,7 +134,7 @@ func (i constructproj) gomod() (err error) {
 		Pkg            string
 		TypicalVersion string
 	}{
-		Pkg:            i.Pkg,
+		Pkg:            i.pkg,
 		TypicalVersion: Version,
 	}
 	return runn.Run(

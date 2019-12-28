@@ -58,7 +58,7 @@ func (g *Github) Publish(ctx context.Context, name, tag string, changeLogs, bina
 	return
 }
 
-func (g *Github) upload(ctx0 context.Context, service *github.RepositoriesService, id int64, binary string) (err error) {
+func (g *Github) upload(ctx context.Context, service *github.RepositoriesService, id int64, binary string) (err error) {
 	binaryPath := fmt.Sprintf("%s/%s", typenv.Layout.Release, binary)
 	var file *os.File
 	if file, err = os.Open(binaryPath); err != nil {
@@ -66,7 +66,7 @@ func (g *Github) upload(ctx0 context.Context, service *github.RepositoriesServic
 	}
 	defer file.Close()
 	opts := &github.UploadOptions{Name: binary}
-	_, _, err = service.UploadReleaseAsset(ctx0, g.Owner, g.RepoName, id, opts, file)
+	_, _, err = service.UploadReleaseAsset(ctx, g.Owner, g.RepoName, id, opts, file)
 	return
 }
 

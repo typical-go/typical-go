@@ -1,6 +1,7 @@
 package typbuildtool
 
 import (
+	"context"
 	"fmt"
 	"go/build"
 	"os"
@@ -26,20 +27,24 @@ func (t buildtool) cmdBuild() *cli.Command {
 	}
 }
 
-func (t buildtool) buildBinary(ctx *cli.Context) (err error) {
+func (t buildtool) buildBinary(c *cli.Context) (err error) {
 	log.Info("Walk the project")
-	var autowires Autowires
+	var (
+		autowires Autowires
+		ctx       = c.Context
+	)
 	walker := walker.New(t.filenames)
 	walker.AddFuncDeclListener(&autowires)
 	if err = walker.Walk(); err != nil {
 		return
 	}
 	log.Info("Generate constructors")
-	if err = t.generateConstructor(typenv.AppMainPath+"/constructor.go", autowires); err != nil {
+	if err = t.generateConstructor(ctx, typenv.AppMainPath+"/constructor.go", autowires); err != nil {
 		return
 	}
 	log.Info("Build the application")
-	cmd := exec.Command("go", "build",
+	cmd := exec.CommandContext(ctx, "go",
+		"build",
 		"-o", typenv.AppBin,
 		"./"+typenv.AppMainPath,
 	)
@@ -48,7 +53,7 @@ func (t buildtool) buildBinary(ctx *cli.Context) (err error) {
 	return cmd.Run()
 }
 
-func (t buildtool) generateConstructor(target string, constructors []string) (err error) {
+func (t buildtool) generateConstructor(ctx context.Context, target string, constructors []string) (err error) {
 	defer common.ElapsedTimeFn("Generate constructor")()
 	src := golang.NewSource("main")
 	if len(constructors) < 1 {
@@ -68,7 +73,8 @@ func (t buildtool) generateConstructor(target string, constructors []string) (er
 	if err = stdrun.NewWriteSource(target, src).Run(); err != nil {
 		return
 	}
-	cmd := exec.Command(fmt.Sprintf("%s/bin/goimports", build.Default.GOPATH),
+	cmd := exec.CommandContext(ctx,
+		fmt.Sprintf("%s/bin/goimports", build.Default.GOPATH),
 		"-w", target)
 	cmd.Stderr = os.Stderr
 	return cmd.Run()

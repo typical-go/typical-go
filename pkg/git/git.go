@@ -1,6 +1,7 @@
 package git
 
 import (
+	"context"
 	"os/exec"
 	"strings"
 
@@ -8,11 +9,11 @@ import (
 )
 
 // Status is same with `git status --porcelain`
-func Status(files ...string) string {
+func Status(ctx context.Context, files ...string) string {
 	args := []string{"status"}
 	args = append(args, files...)
 	args = append(args, "--porcelain")
-	status, err := Git(args...)
+	status, err := git(ctx, args...)
 	if err != nil {
 		return err.Error()
 	}
@@ -20,13 +21,13 @@ func Status(files ...string) string {
 }
 
 // Fetch is same with `get fetch`
-func Fetch() error {
-	return exec.Command("git", "fetch").Run()
+func Fetch(ctx context.Context) error {
+	return exec.CommandContext(ctx, "git", "fetch").Run()
 }
 
 // LatestTag to get latest tag and its hash key
-func LatestTag() string {
-	tag, err := Git("describe", "--tags", "--abbrev=0")
+func LatestTag(ctx context.Context) string {
+	tag, err := git(ctx, "describe", "--tags", "--abbrev=0")
 	if err != nil {
 		return ""
 	}
@@ -34,14 +35,14 @@ func LatestTag() string {
 }
 
 // Logs of commits
-func Logs(from string) []string {
+func Logs(ctx context.Context, from string) []string {
 	var args common.Strings
 	args.Append("--no-pager", "log")
 	if from != "" {
 		args.Append(from + "..HEAD")
 	}
 	args.Append("--oneline")
-	data, err := Git(args...)
+	data, err := git(ctx, args...)
 	if err != nil {
 		return []string{}
 	}
@@ -49,24 +50,24 @@ func Logs(from string) []string {
 }
 
 // Push files to git repo
-func Push(commitMessage string, files ...string) (err error) {
+func Push(ctx context.Context, commitMessage string, files ...string) (err error) {
 	args := []string{"add"}
 	args = append(args, files...)
-	_, err = Git(args...)
+	_, err = git(ctx, args...)
 	if err != nil {
 		return
 	}
-	_, err = Git("commit", "-m", commitMessage)
+	_, err = git(ctx, "commit", "-m", commitMessage)
 	if err != nil {
 		return
 	}
-	_, err = Git("push")
+	_, err = git(ctx, "push")
 	return
 }
 
 // Branch to return current branch
-func Branch() string {
-	branch, err := Git("rev-parse", "--abbrev-ref", "HEAD")
+func Branch(ctx context.Context) string {
+	branch, err := git(ctx, "rev-parse", "--abbrev-ref", "HEAD")
 	if err != nil {
 		return ""
 	}
@@ -74,18 +75,17 @@ func Branch() string {
 }
 
 // LatestCommit return latest commit in short hash
-func LatestCommit() string {
-	commit, err := Git("rev-parse", "--short", "HEAD")
+func LatestCommit(ctx context.Context) string {
+	commit, err := git(ctx, "rev-parse", "--short", "HEAD")
 	if err != nil {
 		return ""
 	}
 	return commit
 }
 
-// Git to execution git command
-func Git(args ...string) (s string, err error) {
+func git(ctx context.Context, args ...string) (s string, err error) {
 	var builder strings.Builder
-	cmd := exec.Command("git", args...)
+	cmd := exec.CommandContext(ctx, "git", args...)
 	cmd.Stdout = &builder
 	cmd.Stderr = &builder
 	err = cmd.Run()

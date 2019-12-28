@@ -26,7 +26,7 @@ func (t buildtool) cmdRelease() *cli.Command {
 func (t buildtool) releaseDistribution(c *cli.Context) (err error) {
 	var (
 		tag        string
-		latestTag  string
+		latest     string
 		changeLogs []string
 		binaries   []string
 		name       = typenv.ProjectName
@@ -41,20 +41,20 @@ func (t buildtool) releaseDistribution(c *cli.Context) (err error) {
 			return
 		}
 	}
-	if err = git.Fetch(); err != nil {
+	if err = git.Fetch(ctx); err != nil {
 		return fmt.Errorf("Failed git fetch: %w", err)
 	}
-	defer git.Fetch()
-	if tag, err = t.Releaser.Tag(t.Version, alpha); err != nil {
+	defer git.Fetch(ctx)
+	if tag, err = t.Releaser.Tag(ctx, t.Version, alpha); err != nil {
 		return fmt.Errorf("Failed generate tag: %w", err)
 	}
-	if status := git.Status(); status != "" && !force {
+	if status := git.Status(ctx); status != "" && !force {
 		return fmt.Errorf("Please commit changes first:\n%s", status)
 	}
-	if latestTag = git.LatestTag(); latestTag == tag && !force {
-		return fmt.Errorf("%s already released", latestTag)
+	if latest = git.LatestTag(ctx); latest == tag && !force {
+		return fmt.Errorf("%s already released", latest)
 	}
-	if changeLogs = git.Logs(latestTag); len(changeLogs) < 1 && !force {
+	if changeLogs = git.Logs(ctx, latest); len(changeLogs) < 1 && !force {
 		return errors.New("No change to be released")
 	}
 	if binaries, err = t.Releaser.BuildRelease(ctx, name, tag, changeLogs, alpha); err != nil {

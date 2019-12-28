@@ -19,13 +19,16 @@ func (t buildtool) cmdRun() *cli.Command {
 	}
 }
 
-func (t buildtool) runBinary(ctx *cli.Context) (err error) {
-	if err = t.buildBinary(ctx); err != nil {
+func (t buildtool) runBinary(c *cli.Context) (err error) {
+	var (
+		ctx = c.Context
+	)
+	if err = t.buildBinary(c); err != nil {
 		return
 	}
 	log.Info("Run the application")
-	args := []string(ctx.Args().Slice())
-	cmd := exec.Command(typenv.AppBin, args...)
+	args := []string(c.Args().Slice())
+	cmd := exec.CommandContext(ctx, typenv.AppBin, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stdout
 	cmd.Stdin = os.Stdin

@@ -17,7 +17,10 @@ func (t buildtool) cmdTest() *cli.Command {
 	}
 }
 
-func (t buildtool) runTesting(ctx *cli.Context) error {
+func (t buildtool) runTesting(c *cli.Context) error {
+	var (
+		ctx = c.Context
+	)
 	log.Info("Run testings")
 	targets := []string{
 		"./app/...",
@@ -25,7 +28,7 @@ func (t buildtool) runTesting(ctx *cli.Context) error {
 	}
 	args := []string{"test", "-coverprofile=cover.out", "-race"}
 	args = append(args, targets...)
-	cmd := exec.Command("go", args...)
+	cmd := exec.CommandContext(ctx, "go", args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()

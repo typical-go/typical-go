@@ -24,36 +24,36 @@ func (t buildtool) cmdClean() *cli.Command {
 	}
 }
 
-func (t buildtool) cleanProject(ctx *cli.Context) error {
-	t.removeBuildTool(ctx)
-	t.removeApp(ctx)
-	t.removeMetadata(ctx)
-	t.removeEnvFile(ctx)
-	t.removeConstructor(ctx)
+func (t buildtool) cleanProject(c *cli.Context) error {
+	t.removeBuildTool(c)
+	t.removeApp(c)
+	t.removeMetadata(c)
+	t.removeEnvFile(c)
+	t.removeConstructor(c)
 	return nil
 }
 
-func (t buildtool) removeBuildTool(ctx *cli.Context) error {
+func (t buildtool) removeBuildTool(c *cli.Context) error {
 	removeFile(typenv.BuildToolBin)
 	return nil
 }
 
-func (t buildtool) removeApp(ctx *cli.Context) error {
+func (t buildtool) removeApp(c *cli.Context) error {
 	removeFile(typenv.AppBin)
 	return nil
 }
 
-func (t buildtool) removeMetadata(ctx *cli.Context) error {
+func (t buildtool) removeMetadata(c *cli.Context) error {
 	removeAllFile(typenv.Layout.Metadata)
 	return nil
 }
 
-func (t buildtool) removeEnvFile(ctx *cli.Context) error {
+func (t buildtool) removeEnvFile(c *cli.Context) error {
 	removeFile(".env")
 	return nil
 }
 
-func (t buildtool) removeConstructor(ctx *cli.Context) error {
+func (t buildtool) removeConstructor(c *cli.Context) error {
 	removeFile(typenv.AppMainPath + "/constructor.go")
 	return nil
 }
