@@ -1,7 +1,10 @@
 package typbuildtool
 
 import (
-	log "github.com/sirupsen/logrus"
+	"errors"
+	"fmt"
+
+	"github.com/typical-go/typical-go/pkg/git"
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/urfave/cli/v2"
 )
@@ -20,23 +23,47 @@ func (t buildtool) cmdRelease() *cli.Command {
 	}
 }
 
-func (t buildtool) releaseDistribution(ctx *cli.Context) (err error) {
-	log.Info("Release distribution")
-	if !ctx.Bool("no-test") {
-		if err = t.runTesting(ctx); err != nil {
+func (t buildtool) releaseDistribution(c *cli.Context) (err error) {
+	var (
+		tag        string
+		latestTag  string
+		changeLogs []string
+		binaries   []string
+		name       = typenv.ProjectName
+		alpha      = c.Bool("alpha")
+		force      = c.Bool("force")
+		noTest     = c.Bool("no-test")
+		noPublish  = c.Bool("no-publish")
+		ctx        = c.Context
+	)
+	if !noTest {
+		if err = t.runTesting(c); err != nil {
 			return
 		}
 	}
-	log.Info("Release the distribution")
-	if err = t.Releaser.Release(
-		ctx.Context,
-		typenv.ProjectName,
-		t.Version,
-		ctx.Bool("force"),
-		ctx.Bool("alpha"),
-		ctx.Bool("no-publish"),
-	); err != nil {
-		return
+	if err = git.Fetch(); err != nil {
+		return fmt.Errorf("Failed git fetch: %w", err)
+	}
+	defer git.Fetch()
+	if tag, err = t.Releaser.Tag(t.Version, alpha); err != nil {
+		return fmt.Errorf("Failed generate tag: %w", err)
+	}
+	if status := git.Status(); status != "" && !force {
+		return fmt.Errorf("Please commit changes first:\n%s", status)
+	}
+	if latestTag = git.LatestTag(); latestTag == tag && !force {
+		return fmt.Errorf("%s already released", latestTag)
+	}
+	if changeLogs = git.Logs(latestTag); len(changeLogs) < 1 && !force {
+		return errors.New("No change to be released")
+	}
+	if binaries, err = t.Releaser.BuildRelease(ctx, name, tag, changeLogs, alpha); err != nil {
+		return fmt.Errorf("Failed build release: %w", err)
+	}
+	if !noPublish {
+		if err = t.Releaser.Publish(ctx, name, tag, changeLogs, binaries, alpha); err != nil {
+			return fmt.Errorf("Failed publish: %w", err)
+		}
 	}
 	return
 }

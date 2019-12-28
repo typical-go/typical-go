@@ -2,7 +2,6 @@ package typrls
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -13,35 +12,23 @@ import (
 	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
-// Release the distribution
-func (r *Releaser) Release(ctx context.Context, name, version string, force, alpha, noPublish bool) (err error) {
-	var (
-		latestTag  string
-		changeLogs []string
-		binaries   []string
-	)
-	git.Fetch()
-	defer git.Fetch()
-	tag := r.releaseTag(version, alpha)
-	if status := git.Status(); status != "" && !force {
-		return fmt.Errorf("Please commit changes first:\n%s", status)
-	}
-	if latestTag = git.LatestTag(); latestTag == tag && !force {
-		return fmt.Errorf("%s already released", latestTag)
-	}
-	if changeLogs = git.Logs(latestTag); len(changeLogs) < 1 && !force {
-		return errors.New("No change to be released")
-	}
+// BuildRelease the distribution
+func (r *Releaser) BuildRelease(ctx context.Context, name, tag string, changeLogs []string, alpha bool) (binaries []string, err error) {
 	if r.filter != nil {
 		changeLogs = r.filter.Filter(changeLogs)
 	}
 	for _, target := range r.targets {
 		var binary string
-		if binary, err = r.build(name, tag, target); err != nil {
+		if binary, err = r.build(ctx, name, tag, target); err != nil {
 			return
 		}
 		binaries = append(binaries, binary)
 	}
+	return
+}
+
+// Publish the release
+func (r *Releaser) Publish(ctx context.Context, name, tag string, changeLogs, binaries []string, alpha bool) (err error) {
 	rls := &Release{
 		Name:       name,
 		Tag:        tag,
@@ -49,36 +36,16 @@ func (r *Releaser) Release(ctx context.Context, name, version string, force, alp
 		ChangeLogs: changeLogs,
 		Binaries:   binaries,
 	}
-	if !noPublish {
-		for _, publisher := range r.publishers {
-			if err = publisher.Publish(ctx, rls); err != nil {
-				return
-			}
+	for _, publisher := range r.publishers {
+		if err = publisher.Publish(ctx, rls); err != nil {
+			return
 		}
 	}
 	return
 }
 
-func (r *Releaser) build(name, tag string, target Target) (binary string, err error) {
-	goos := target.OS()
-	goarch := target.Arch()
-	binary = strings.Join([]string{name, tag, goos, goarch}, "_")
-	// TODO: Support CGO
-	cmd := exec.Command("go", "build",
-		"-o", fmt.Sprintf("%s/%s", typenv.Layout.Release, binary),
-		"-ldflags", "-w -s",
-		"./"+typenv.AppMainPath,
-	)
-	cmd.Env = append(os.Environ(), "GOOS="+goos, "GOARCH="+goarch)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stdout
-	if err = cmd.Run(); err != nil {
-		return
-	}
-	return
-}
-
-func (r *Releaser) releaseTag(version string, alpha bool) string {
+// Tag return relase tag
+func (r *Releaser) Tag(version string, alpha bool) (tag string, err error) {
 	var b strings.Builder
 	b.WriteString("v")
 	b.WriteString(version)
@@ -91,9 +58,29 @@ func (r *Releaser) releaseTag(version string, alpha bool) string {
 		b.WriteString(git.LatestCommit())
 	}
 	if alpha {
-		b.WriteString("-alpha")
+		b.WriteString("_alpha")
 	}
-	return b.String()
+	tag = b.String()
+	return
+}
+
+func (r *Releaser) build(ctx context.Context, name, tag string, target Target) (binary string, err error) {
+	goos := target.OS()
+	goarch := target.Arch()
+	binary = strings.Join([]string{name, tag, goos, goarch}, "_")
+	// TODO: Support CGO
+	cmd := exec.CommandContext(ctx, "go", "build",
+		"-o", fmt.Sprintf("%s/%s", typenv.Layout.Release, binary),
+		"-ldflags", "-w -s",
+		"./"+typenv.AppMainPath,
+	)
+	cmd.Env = append(os.Environ(), "GOOS="+goos, "GOARCH="+goarch)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stdout
+	if err = cmd.Run(); err != nil {
+		return
+	}
+	return
 }
 
 func (r *Releaser) releaseName() string {
