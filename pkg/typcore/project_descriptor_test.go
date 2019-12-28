@@ -55,11 +55,9 @@ func TestContext_Validate(t *testing.T) {
 		},
 		{
 			typcore.ProjectDescriptor{
-				Name:    "some-name",
-				Package: "some-package",
-				Releaser: &typrls.Releaser{
-					Targets: []typrls.Target{"linuxamd64"},
-				},
+				Name:     "some-name",
+				Package:  "some-package",
+				Releaser: typrls.New().WithTarget("linuxamd64"),
 			},
 			"Context: Releaser: Target: Missing OS: Please make sure 'linuxamd64' using 'OS/ARCH' format",
 		},
