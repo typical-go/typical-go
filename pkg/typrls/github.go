@@ -29,27 +29,27 @@ func GithubPublisher(owner, repo string) *Github {
 }
 
 // Publish to github
-func (g *Github) Publish(ctx context.Context, r *Release) (err error) {
+func (g *Github) Publish(ctx context.Context, name, tag string, changeLogs, binaries []string, alpha bool) (err error) {
 	token := os.Getenv("GITHUB_TOKEN")
 	if token == "" {
 		return errors.New("Environment 'GITHUB_TOKEN' is missing")
 	}
 	repo := github.NewClient(oauth2.NewClient(ctx, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token}))).Repositories
-	if _, _, err = repo.GetReleaseByTag(ctx, g.Owner, g.RepoName, r.Tag); err == nil {
-		return fmt.Errorf("Tag '%s' already published", r.Tag)
+	if _, _, err = repo.GetReleaseByTag(ctx, g.Owner, g.RepoName, tag); err == nil {
+		return fmt.Errorf("Tag '%s' already published", tag)
 	}
 	log.Infof("Create github release for %s/%s", g.Owner, g.RepoName)
 	githubRls := &github.RepositoryRelease{
-		Name:       github.String(fmt.Sprintf("%s - %s", r.Name, r.Tag)),
-		TagName:    github.String(r.Tag),
-		Body:       github.String(releaseNote(r.ChangeLogs)),
+		Name:       github.String(fmt.Sprintf("%s - %s", name, tag)),
+		TagName:    github.String(tag),
+		Body:       github.String(releaseNote(changeLogs)),
 		Draft:      github.Bool(false),
-		Prerelease: github.Bool(r.Alpha),
+		Prerelease: github.Bool(alpha),
 	}
 	if githubRls, _, err = repo.CreateRelease(ctx, g.Owner, g.RepoName, githubRls); err != nil {
 		return
 	}
-	for _, binary := range r.Binaries {
+	for _, binary := range binaries {
 		log.Infof("Upload asset: %s", binary)
 		if err = g.upload(ctx, repo, *githubRls.ID, binary); err != nil {
 			return

@@ -1,6 +1,7 @@
 package typrls
 
 import (
+	"context"
 	"errors"
 	"fmt"
 )
@@ -12,6 +13,11 @@ type Releaser struct {
 	publishers []Publisher
 	filter     Filter
 	Tagging
+}
+
+// Publisher reponsible to publish the release to external source
+type Publisher interface {
+	Publish(ctx context.Context, name, tag string, changeLogs, binaries []string, alpha bool) error
 }
 
 // Tagging is setting how to make tag

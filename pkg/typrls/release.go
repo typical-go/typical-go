@@ -29,15 +29,8 @@ func (r *Releaser) BuildRelease(ctx context.Context, name, tag string, changeLog
 
 // Publish the release
 func (r *Releaser) Publish(ctx context.Context, name, tag string, changeLogs, binaries []string, alpha bool) (err error) {
-	rls := &Release{
-		Name:       name,
-		Tag:        tag,
-		Alpha:      alpha,
-		ChangeLogs: changeLogs,
-		Binaries:   binaries,
-	}
 	for _, publisher := range r.publishers {
-		if err = publisher.Publish(ctx, rls); err != nil {
+		if err = publisher.Publish(ctx, name, tag, changeLogs, binaries, alpha); err != nil {
 			return
 		}
 	}
