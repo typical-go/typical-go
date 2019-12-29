@@ -14,7 +14,8 @@ func (t buildtool) cmdRelease() *cli.Command {
 		Name:  "release",
 		Usage: "Release the distribution",
 		Flags: []cli.Flag{
-			&cli.BoolFlag{Name: "no-test", Usage: "Release without run automated test"},
+			&cli.BoolFlag{Name: "no-test", Usage: "Release without run unit test"},
+			&cli.BoolFlag{Name: "no-build", Usage: "Release without build"},
 			&cli.BoolFlag{Name: "no-publish", Usage: "Release without create github release"},
 			&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
 			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
@@ -33,9 +34,15 @@ func (t buildtool) releaseDistribution(c *cli.Context) (err error) {
 		alpha      = c.Bool("alpha")
 		force      = c.Bool("force")
 		noTest     = c.Bool("no-test")
+		noBuild    = c.Bool("no-build")
 		noPublish  = c.Bool("no-publish")
 		ctx        = c.Context
 	)
+	if !noBuild {
+		if err = t.buildBinary(c); err != nil {
+			return
+		}
+	}
 	if !noTest {
 		if err = t.runTesting(c); err != nil {
 			return
