@@ -14,50 +14,28 @@ const (
 )
 
 func (t buildtool) before(ctx *cli.Context) (err error) {
+	var (
+		f *os.File
+	)
 	if err = t.Validate(); err != nil {
 		return
 	}
-	cfgFields := ConfigFields(t.ProjectDescriptor)
-	// if _, err = metadata.Update("config_fields", cfgFields); err != nil {
-	// 	log.Fatal(err.Error())
-	// }
-	if err = GenerateEnvfile(cfgFields); err != nil {
-		return
-	}
-	return
-}
-
-// ConfigFields return config list
-func ConfigFields(d *typcore.ProjectDescriptor) (fields []typcore.Field) {
-	for _, module := range d.AllModule() {
-		if configurer, ok := module.(typcore.Configurer); ok {
-			prefix, spec, _ := configurer.Configure()
-			fields = append(fields, typcore.Fields(prefix, spec)...)
+	if _, err = os.Stat(defaultDotEnv); os.IsNotExist(err) {
+		log.Infof("Generate new project environment at '%s'", defaultDotEnv)
+		if f, err = os.Create(defaultDotEnv); err != nil {
+			return
 		}
-	}
-	return
-}
-
-// GenerateEnvfile to generate .env file if not exist
-func GenerateEnvfile(fields []typcore.Field) (err error) {
-	if _, err = os.Stat(defaultDotEnv); !os.IsNotExist(err) {
-		return
-	}
-	log.Infof("Generate new project environment at '%s'", defaultDotEnv)
-	var file *os.File
-	if file, err = os.Create(defaultDotEnv); err != nil {
-		return
-	}
-	defer file.Close()
-	for _, field := range fields {
-		var v interface{}
-		if field.IsZero {
-			v = field.Default
-		} else {
-			v = field.Value
+		defer f.Close()
+		_, configMap := typcore.CreateConfigMap(t.ProjectDescriptor)
+		for _, field := range configMap {
+			var v interface{}
+			if field.IsZero {
+				v = field.Default
+			} else {
+				v = field.Value
+			}
+			f.WriteString(fmt.Sprintf("%s=%v\n", field.Name, v))
 		}
-		s := fmt.Sprintf("%s=%v\n", field.Name, v)
-		file.WriteString(s)
 	}
 	return
 }

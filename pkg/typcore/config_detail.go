@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 
-// Field contain field information of spec
-type Field struct {
+// ConfigDetail is detail of config
+type ConfigDetail struct {
 	Name     string
 	Type     string
 	Default  string
@@ -17,14 +17,37 @@ type Field struct {
 	Required bool
 }
 
-// Fields of config
-func Fields(prefix string, spec interface{}) (infos []Field) {
+// ConfigMap is map of config detail
+type ConfigMap map[string]ConfigDetail
+
+// ConfigDetails is slice of ConfigDetail
+type ConfigDetails []ConfigDetail
+
+// CreateConfigMap return map of config based on descriptor
+func CreateConfigMap(d *ProjectDescriptor) (names []string, configMap ConfigMap) {
+	configMap = make(map[string]ConfigDetail)
+	for _, module := range d.AllModule() {
+		if configurer, ok := module.(Configurer); ok {
+			prefix, spec, _ := configurer.Configure()
+			details := CreateConfigDetails(prefix, spec)
+			for _, detail := range details {
+				name := detail.Name
+				configMap[name] = detail
+				names = append(names, name)
+			}
+		}
+	}
+	return
+}
+
+// CreateConfigDetails is mapping of config field
+func CreateConfigDetails(prefix string, spec interface{}) (details ConfigDetails) {
 	val := reflect.Indirect(reflect.ValueOf(spec))
 	typ := val.Type()
 	for i := 0; i < typ.NumField(); i++ {
 		field := typ.Field(i)
 		if !fieldIgnored(field) {
-			infos = append(infos, Field{
+			details = append(details, ConfigDetail{
 				Name:     fmt.Sprintf("%s_%s", prefix, fieldName(field)),
 				Type:     field.Type.Name(),
 				Default:  fieldDefault(field),
@@ -35,6 +58,12 @@ func Fields(prefix string, spec interface{}) (infos []Field) {
 		}
 	}
 	return
+}
+
+// Append ConfigDetail
+func (c *ConfigDetails) Append(detail ConfigDetail) *ConfigDetails {
+	*c = append(*c, detail)
+	return c
 }
 
 func fieldRequired(field reflect.StructField) (required bool) {
