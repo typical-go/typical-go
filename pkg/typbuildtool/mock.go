@@ -11,58 +11,61 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typbuildtool/walker"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/urfave/cli/v2"
 )
 
-func (t buildtool) cmdMock() *cli.Command {
+func cmdMock(d *typcore.ProjectDescriptor) *cli.Command {
 	return &cli.Command{
 		Name:  "mock",
 		Usage: "Generate mock class",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{Name: "no-delete", Usage: "Generate mock class with delete previous generation"},
 		},
-		Action: t.generateMock,
+		Action: func(c *cli.Context) (err error) {
+			var (
+				targets   Automocks
+				mockgen   string
+				errs      common.Errors
+				filenames []string
+				ctx       = c.Context
+			)
+			if _, filenames, err = projectFiles(typenv.Layout.App); err != nil {
+				log.Fatal(err.Error())
+			}
+			walker := walker.New(filenames).
+				AddTypeSpecListener(&targets)
+			log.Info("Walk the project")
+			if err = walker.Walk(); err != nil {
+				return
+			}
+			targets = append(targets, d.MockTargets...)
+			if mockgen, err = installMockgen(ctx); err != nil {
+				return
+			}
+			mockPkg := typenv.Layout.Mock
+			if !c.Bool("no-delete") {
+				log.Infof("Clean mock package '%s'", mockPkg)
+				os.RemoveAll(mockPkg)
+			}
+			for _, target := range targets {
+				log.Infof("Mock '%s'", target)
+				dest := mockPkg + "/" + filepath.Base(target)
+				cmd := exec.CommandContext(ctx,
+					mockgen,
+					"-source", target,
+					"-destination", dest,
+					"-package", mockPkg,
+				)
+				cmd.Stderr = os.Stderr
+				if err := cmd.Run(); err != nil {
+					errs.Append(fmt.Errorf("Mock '%s' failed: %w", target, err))
+				}
+			}
+			return errs.Unwrap()
+		},
 	}
-}
-
-func (t buildtool) generateMock(c *cli.Context) (err error) {
-	var (
-		targets Automocks
-		mockgen string
-		errs    common.Errors
-		ctx     = c.Context
-	)
-	walker := walker.New(t.filenames)
-	walker.AddTypeSpecListener(&targets)
-	log.Info("Walk the project")
-	if err = walker.Walk(); err != nil {
-		return
-	}
-	targets = append(targets, t.MockTargets...)
-	if mockgen, err = installMockgen(ctx); err != nil {
-		return
-	}
-	mockPkg := typenv.Layout.Mock
-	if !c.Bool("no-delete") {
-		log.Infof("Clean mock package '%s'", mockPkg)
-		os.RemoveAll(mockPkg)
-	}
-	for _, target := range targets {
-		log.Infof("Mock '%s'", target)
-		dest := mockPkg + "/" + filepath.Base(target)
-		cmd := exec.CommandContext(ctx,
-			mockgen,
-			"-source", target,
-			"-destination", dest,
-			"-package", mockPkg,
-		)
-		cmd.Stderr = os.Stderr
-		if err := cmd.Run(); err != nil {
-			errs.Append(fmt.Errorf("Mock '%s' failed: %w", target, err))
-		}
-	}
-	return errs.Unwrap()
 }
 
 func installMockgen(ctx context.Context) (path string, err error) {

@@ -22,13 +22,15 @@ func New(filenames []string) *Walker {
 }
 
 // AddFuncDeclListener to add function declaration listener
-func (w *Walker) AddFuncDeclListener(listener FuncDeclListener) {
+func (w *Walker) AddFuncDeclListener(listener FuncDeclListener) *Walker {
 	w.funcDeclListeners = append(w.funcDeclListeners, listener)
+	return w
 }
 
 // AddTypeSpecListener to add function declaration listener
-func (w *Walker) AddTypeSpecListener(listener TypeSpecListener) {
+func (w *Walker) AddTypeSpecListener(listener TypeSpecListener) *Walker {
 	w.typeSpecListeners = append(w.typeSpecListeners, listener)
+	return w
 }
 
 // Walk the source code to get autowire and automock

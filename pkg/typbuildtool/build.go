@@ -1,30 +1,35 @@
 package typbuildtool
 
 import (
+	"context"
 	"os"
 	"os/exec"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typenv"
 
 	"github.com/urfave/cli/v2"
 )
 
-func (t buildtool) cmdBuild() *cli.Command {
+func cmdBuild(d *typcore.ProjectDescriptor) *cli.Command {
 	return &cli.Command{
 		Name:    "build",
 		Aliases: []string{"b"},
 		Usage:   "Build the binary",
-		Action:  t.buildBinary,
+		Action: func(c *cli.Context) (err error) {
+			ctx := c.Context
+			log.Info("Build the application")
+			return buildProject(ctx, d)
+		},
 	}
 }
 
-func (t buildtool) buildBinary(c *cli.Context) (err error) {
-	if err = t.prebuild(c); err != nil {
+func buildProject(ctx context.Context, d *typcore.ProjectDescriptor) (err error) {
+	if err = prebuild(ctx, d); err != nil {
 		return
 	}
-	log.Info("Build the application")
-	cmd := exec.CommandContext(c.Context,
+	cmd := exec.CommandContext(ctx,
 		"go",
 		"build",
 		"-o", typenv.AppBin,

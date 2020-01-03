@@ -6,53 +6,58 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/urfave/cli/v2"
+)
+
+const (
+	defaultDotEnv = ".env"
 )
 
 // Run the build tool
 func Run(d *typcore.ProjectDescriptor) {
-	var filenames []string
-	var dirs []string
-	var err error
-	if dirs, filenames, err = projectFiles(typenv.Layout.App); err != nil {
-		log.Fatal(err.Error())
-	}
-	buildtool := buildtool{
-		ProjectDescriptor: d,
-		filenames:         filenames,
-		dirs:              dirs,
-	}
 	app := cli.NewApp()
 	app.Name = d.Name
 	app.Usage = ""
 	app.Description = d.Description
 	app.Version = d.Version
-	app.Before = buildtool.before
-	app.Commands = buildtool.commands(d)
+	app.Before = func(ctx *cli.Context) (err error) {
+		var (
+			f *os.File
+		)
+		if err = d.Validate(); err != nil {
+			return
+		}
+		if _, err = os.Stat(defaultDotEnv); os.IsNotExist(err) {
+			log.Infof("Generate new project environment at '%s'", defaultDotEnv)
+			if f, err = os.Create(defaultDotEnv); err != nil {
+				return
+			}
+			defer f.Close()
+			_, configMap := typcore.CreateConfigMap(d)
+			if err = WriteEnv(f, configMap); err != nil {
+				return
+			}
+		}
+		return
+	}
+	app.Commands = commands(d)
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err.Error())
 	}
 }
 
-type buildtool struct {
-	*typcore.ProjectDescriptor
-	filenames []string
-	dirs      []string
-}
-
-func (t buildtool) commands(d *typcore.ProjectDescriptor) (cmds []*cli.Command) {
+func commands(d *typcore.ProjectDescriptor) (cmds []*cli.Command) {
 	cmds = []*cli.Command{
-		t.cmdBuild(),
+		cmdBuild(d),
 		cmdClean(),
-		t.cmdRun(),
+		cmdRun(d),
 		cmdTest(),
-		t.cmdMock(),
+		cmdMock(d),
 	}
-	if t.Releaser != nil {
-		cmds = append(cmds, t.cmdRelease())
+	if d.Releaser != nil {
+		cmds = append(cmds, cmdRelease(d))
 	}
-	cmds = append(cmds, BuildCommands(t.ProjectDescriptor)...)
+	cmds = append(cmds, BuildCommands(d)...)
 	return
 }
 
