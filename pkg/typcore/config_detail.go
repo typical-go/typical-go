@@ -60,8 +60,8 @@ func CreateConfigDetails(prefix string, spec interface{}) (details ConfigDetails
 	return
 }
 
-// Slice to return slice of map
-func (c *ConfigMap) Slice(keys ...string) (details ConfigDetails) {
+// ValueBy to return values by key
+func (c *ConfigMap) ValueBy(keys ...string) (details ConfigDetails) {
 	for _, key := range keys {
 		if detail, ok := (*c)[key]; ok {
 			details = append(details, detail)

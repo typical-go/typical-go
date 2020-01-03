@@ -23,7 +23,7 @@ func TestCreateConfigDetails(t *testing.T) {
 	}, typcore.CreateConfigDetails("TEST", &spec))
 }
 
-func TestConfigMap_Slice(t *testing.T) {
+func TestConfigMap_ValueBy(t *testing.T) {
 	configMap := typcore.ConfigMap{
 		"key1": configDetail("key1"),
 		"key2": configDetail("key2"),
@@ -33,10 +33,10 @@ func TestConfigMap_Slice(t *testing.T) {
 	require.Equal(t, typcore.ConfigDetails{
 		configDetail("key4"),
 		configDetail("key1"),
-	}, configMap.Slice("key4", "key1"))
+	}, configMap.ValueBy("key4", "key1"))
 	require.Equal(t, typcore.ConfigDetails{
 		configDetail("key1"),
-	}, configMap.Slice("key1", "not-available"))
+	}, configMap.ValueBy("key1", "not-available"))
 }
 
 func configDetail(name string) typcore.ConfigDetail {
