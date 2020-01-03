@@ -11,7 +11,7 @@ import (
 // Struct is plain old go object for struct
 type Struct struct {
 	Name        string
-	Fields      common.KeyStrings
+	Fields      common.StringDictionary
 	Description string
 }
 
@@ -23,8 +23,8 @@ func (s *Struct) AddField(name, typ string) {
 func (s Struct) Write(w io.Writer) (err error) {
 	fmt.Fprintf(w, "// %s %s\n", s.Name, s.Description)
 	fmt.Fprintf(w, "type %s struct{\n", s.Name)
-	for _, field := range s.Fields {
-		fmt.Fprintln(w, field.SimpleFormat(" "))
+	for _, kv := range s.Fields {
+		fmt.Fprintf(w, "%s %s\n", kv.Key, kv.Value)
 	}
 	fmt.Fprintln(w, "}")
 	return

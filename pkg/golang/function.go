@@ -12,8 +12,8 @@ import (
 type Function struct {
 	common.Strings
 	Name    string
-	Params  []common.KeyString
-	Returns []common.KeyString
+	Params  common.StringDictionary
+	Returns common.StringDictionary
 }
 
 // NewFunction return new instance
@@ -29,20 +29,20 @@ func (f *Function) Return(s ...string) {
 func (f *Function) Write(w io.Writer) (err error) {
 	fmt.Fprintf(w, "func %s", f.Name)
 	fmt.Fprint(w, "(")
-	for i, param := range f.Params {
+	for i, kv := range f.Params {
 		if i > 0 {
 			fmt.Fprint(w, ", ")
 		}
-		fmt.Fprint(w, param.SimpleFormat(" "))
+		fmt.Fprintf(w, "%s %s", kv.Key, kv.Value)
 	}
 	fmt.Fprint(w, ") ")
 	if len(f.Returns) > 0 {
 		fmt.Fprint(w, "(")
-		for i, ret := range f.Returns {
+		for i, kv := range f.Returns {
 			if i > 0 {
 				fmt.Fprint(w, ", ")
 			}
-			fmt.Fprint(w, ret.SimpleFormat(" "))
+			fmt.Fprintf(w, "%s %s", kv.Key, kv.Value)
 		}
 		fmt.Fprint(w, ") ")
 	}
