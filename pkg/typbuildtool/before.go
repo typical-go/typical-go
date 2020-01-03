@@ -1,7 +1,6 @@
 package typbuildtool
 
 import (
-	"fmt"
 	"os"
 
 	log "github.com/sirupsen/logrus"
@@ -27,14 +26,8 @@ func (t buildtool) before(ctx *cli.Context) (err error) {
 		}
 		defer f.Close()
 		_, configMap := typcore.CreateConfigMap(t.ProjectDescriptor)
-		for _, field := range configMap {
-			var v interface{}
-			if field.IsZero {
-				v = field.Default
-			} else {
-				v = field.Value
-			}
-			f.WriteString(fmt.Sprintf("%s=%v\n", field.Name, v))
+		if err = WriteEnv(f, configMap); err != nil {
+			return
 		}
 	}
 	return
