@@ -9,15 +9,9 @@ type StringKV struct {
 	Value string
 }
 
-// Append item
-func (k *StringDictionary) Append(item ...*StringKV) *StringDictionary {
-	*k = append(*k, item...)
-	return k
-}
-
 // Add item
 func (k *StringDictionary) Add(key, s string) *StringDictionary {
-	k.Append(&StringKV{Key: key, Value: s})
+	*k = append(*k, &StringKV{Key: key, Value: s})
 	return k
 }
 

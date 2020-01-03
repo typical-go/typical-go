@@ -14,13 +14,13 @@ func TestFunc(t *testing.T) {
 	t.Run("with param & return", func(t *testing.T) {
 		fn := golang.Function{
 			Name: "myFunction",
-			Params: []common.KeyString{
-				{Key: "num", String: "int"},
-				{Key: "text", String: "string"},
+			Params: []*common.StringKV{
+				{Key: "num", Value: "int"},
+				{Key: "text", Value: "string"},
 			},
-			Returns: []common.KeyString{
-				{Key: "altered", String: "string"},
-				{Key: "err", String: "error"},
+			Returns: []*common.StringKV{
+				{Key: "altered", Value: "string"},
+				{Key: "err", Value: "error"},
 			},
 		}
 		fn.Append(`fmt.Println("Hello World")`)
@@ -32,8 +32,8 @@ func TestFunc(t *testing.T) {
 	t.Run("with param & no return", func(t *testing.T) {
 		fn := golang.Function{
 			Name: "myFunction",
-			Params: []common.KeyString{
-				{Key: "num", String: "int"},
+			Params: []*common.StringKV{
+				{Key: "num", Value: "int"},
 			},
 		}
 		fn.Append(`fmt.Println("Hello World")`)

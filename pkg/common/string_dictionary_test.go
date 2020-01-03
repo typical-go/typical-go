@@ -13,22 +13,10 @@ func TestStringDictionary(t *testing.T) {
 		slice []*common.StringKV
 	}{
 		{
-			StringDictionary: new(common.StringDictionary).Append(
-				&common.StringKV{"key-1", "value-1"},
-				&common.StringKV{"key-2", "value-2"},
-				&common.StringKV{"key-3", "value-3"},
-			),
-			slice: []*common.StringKV{
-				&common.StringKV{"key-1", "value-1"},
-				&common.StringKV{"key-2", "value-2"},
-				&common.StringKV{"key-3", "value-3"},
-			},
-		},
-		{
 			StringDictionary: new(common.StringDictionary).
-				Append(&common.StringKV{"key-1", "value-1"}).
-				Append(&common.StringKV{"key-2", "value-2"}).
-				Append(&common.StringKV{"key-3", "value-3"}),
+				Add("key-1", "value-1").
+				Add("key-2", "value-2").
+				Add("key-3", "value-3"),
 			slice: []*common.StringKV{
 				&common.StringKV{"key-1", "value-1"},
 				&common.StringKV{"key-2", "value-2"},
