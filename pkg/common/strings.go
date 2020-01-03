@@ -36,6 +36,14 @@ func (s *Strings) Sort() *Strings {
 	return s
 }
 
+// Reverse the slice
+func (s *Strings) Reverse() *Strings {
+	for i, j := 0, len(*s)-1; i < j; i, j = i+1, j-1 {
+		(*s)[i], (*s)[j] = (*s)[j], (*s)[i]
+	}
+	return s
+}
+
 // Slice of string
 func (s *Strings) Slice() []string {
 	return *s

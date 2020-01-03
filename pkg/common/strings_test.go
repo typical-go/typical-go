@@ -34,3 +34,15 @@ func TestStrings_Append(t *testing.T) {
 		require.EqualValues(t, tt.sorted, tt.Sort())
 	}
 }
+
+func TestStrings_Reverse(t *testing.T) {
+	testcases := []struct {
+		*common.Strings
+		reversed []string
+	}{
+		{common.NewStrings("a", "b", "c"), []string{"c", "b", "a"}},
+	}
+	for _, tt := range testcases {
+		require.Equal(t, tt.reversed, tt.Reverse().Slice())
+	}
+}
