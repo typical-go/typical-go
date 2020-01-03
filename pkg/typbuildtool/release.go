@@ -44,7 +44,7 @@ func (t buildtool) releaseDistribution(c *cli.Context) (err error) {
 		}
 	}
 	if !noTest {
-		if err = t.runTesting(c); err != nil {
+		if err = runTesting(c); err != nil {
 			return
 		}
 	}

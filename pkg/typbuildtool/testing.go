@@ -8,16 +8,16 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func (t buildtool) cmdTest() *cli.Command {
+func cmdTest() *cli.Command {
 	return &cli.Command{
 		Name:    "test",
 		Aliases: []string{"t"},
 		Usage:   "Run the testing",
-		Action:  t.runTesting,
+		Action:  runTesting,
 	}
 }
 
-func (t buildtool) runTesting(c *cli.Context) error {
+func runTesting(c *cli.Context) error {
 	var (
 		ctx = c.Context
 	)

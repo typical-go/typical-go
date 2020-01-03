@@ -29,7 +29,7 @@ func Run(d *typcore.ProjectDescriptor) {
 	app.Description = d.Description
 	app.Version = d.Version
 	app.Before = buildtool.before
-	app.Commands = buildtool.commands()
+	app.Commands = buildtool.commands(d)
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err.Error())
 	}
@@ -41,12 +41,12 @@ type buildtool struct {
 	dirs      []string
 }
 
-func (t buildtool) commands() (cmds []*cli.Command) {
+func (t buildtool) commands(d *typcore.ProjectDescriptor) (cmds []*cli.Command) {
 	cmds = []*cli.Command{
 		t.cmdBuild(),
-		t.cmdClean(),
+		cmdClean(),
 		t.cmdRun(),
-		t.cmdTest(),
+		cmdTest(),
 		t.cmdMock(),
 	}
 	if t.Releaser != nil {

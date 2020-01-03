@@ -8,52 +8,52 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func (t buildtool) cmdClean() *cli.Command {
+func cmdClean() *cli.Command {
 	return &cli.Command{
 		Name:    "clean",
 		Aliases: []string{"c"},
 		Usage:   "Clean the project from generated file during build time",
-		Action:  t.cleanProject,
+		Action:  cleanProject,
 		Subcommands: []*cli.Command{
-			{Name: "build-tool", Usage: "Remove build-tool", Action: t.removeBuildTool},
-			{Name: "app", Usage: "Remove app", Action: t.removeApp},
-			{Name: "metadata", Usage: "Remove metadata", Action: t.removeMetadata},
-			{Name: "env", Usage: "Remove envfile", Action: t.removeEnvFile},
-			{Name: "constructor", Usage: "Remove constructor", Action: t.removeConstructor},
+			{Name: "build-tool", Usage: "Remove build-tool", Action: removeBuildTool},
+			{Name: "app", Usage: "Remove app", Action: removeApp},
+			{Name: "metadata", Usage: "Remove metadata", Action: removeMetadata},
+			{Name: "env", Usage: "Remove envfile", Action: removeEnvFile},
+			{Name: "constructor", Usage: "Remove constructor", Action: removeConstructor},
 		},
 	}
 }
 
-func (t buildtool) cleanProject(c *cli.Context) error {
-	t.removeBuildTool(c)
-	t.removeApp(c)
-	t.removeMetadata(c)
-	t.removeEnvFile(c)
-	t.removeConstructor(c)
+func cleanProject(c *cli.Context) error {
+	removeBuildTool(c)
+	removeApp(c)
+	removeMetadata(c)
+	removeEnvFile(c)
+	removeConstructor(c)
 	return nil
 }
 
-func (t buildtool) removeBuildTool(c *cli.Context) error {
+func removeBuildTool(c *cli.Context) error {
 	removeFile(typenv.BuildToolBin)
 	return nil
 }
 
-func (t buildtool) removeApp(c *cli.Context) error {
+func removeApp(c *cli.Context) error {
 	removeFile(typenv.AppBin)
 	return nil
 }
 
-func (t buildtool) removeMetadata(c *cli.Context) error {
+func removeMetadata(c *cli.Context) error {
 	removeAllFile(typenv.Layout.Temp)
 	return nil
 }
 
-func (t buildtool) removeEnvFile(c *cli.Context) error {
+func removeEnvFile(c *cli.Context) error {
 	removeFile(".env")
 	return nil
 }
 
-func (t buildtool) removeConstructor(c *cli.Context) error {
+func removeConstructor(c *cli.Context) error {
 	removeFile(typenv.AppMainPath + "/constructor.go")
 	return nil
 }
