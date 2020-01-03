@@ -22,3 +22,25 @@ func TestCreateConfigDetails(t *testing.T) {
 		{Name: "TEST_ALIAS", Type: "int", Default: "", Value: 0, IsZero: true, Required: false},
 	}, typcore.CreateConfigDetails("TEST", &spec))
 }
+
+func TestConfigMap_Slice(t *testing.T) {
+	configMap := typcore.ConfigMap{
+		"key1": configDetail("key1"),
+		"key2": configDetail("key2"),
+		"key3": configDetail("key3"),
+		"key4": configDetail("key4"),
+	}
+	require.Equal(t, typcore.ConfigDetails{
+		configDetail("key4"),
+		configDetail("key1"),
+	}, configMap.Slice("key4", "key1"))
+	require.Equal(t, typcore.ConfigDetails{
+		configDetail("key1"),
+	}, configMap.Slice("key1", "not-available"))
+}
+
+func configDetail(name string) typcore.ConfigDetail {
+	return typcore.ConfigDetail{
+		Name: name,
+	}
+}

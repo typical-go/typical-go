@@ -24,7 +24,7 @@ type ConfigMap map[string]ConfigDetail
 type ConfigDetails []ConfigDetail
 
 // CreateConfigMap return map of config based on descriptor
-func CreateConfigMap(d *ProjectDescriptor) (names []string, configMap ConfigMap) {
+func CreateConfigMap(d *ProjectDescriptor) (keys []string, configMap ConfigMap) {
 	configMap = make(map[string]ConfigDetail)
 	for _, module := range d.AllModule() {
 		if configurer, ok := module.(Configurer); ok {
@@ -33,7 +33,7 @@ func CreateConfigMap(d *ProjectDescriptor) (names []string, configMap ConfigMap)
 			for _, detail := range details {
 				name := detail.Name
 				configMap[name] = detail
-				names = append(names, name)
+				keys = append(keys, name)
 			}
 		}
 	}
@@ -55,6 +55,16 @@ func CreateConfigDetails(prefix string, spec interface{}) (details ConfigDetails
 				Value:    val.Field(i).Interface(),
 				IsZero:   val.Field(i).IsZero(),
 			})
+		}
+	}
+	return
+}
+
+// Slice to return slice of map
+func (c *ConfigMap) Slice(keys ...string) (details ConfigDetails) {
+	for _, key := range keys {
+		if detail, ok := (*c)[key]; ok {
+			details = append(details, detail)
 		}
 	}
 	return
