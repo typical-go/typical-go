@@ -12,15 +12,20 @@ import (
 
 // Run the application
 func Run(d *typcore.ProjectDescriptor) {
-	if err := d.Validate(); err != nil {
-		log.Fatal(err.Error())
-	}
-	ctx := typcore.NewContext(d)
+	var (
+		ctx = typcore.NewContext(d)
+	)
 	app := cli.NewApp()
 	app.Name = d.Name
-	app.Usage = ""
+	app.Usage = d.Description
 	app.Description = d.Description
 	app.Version = d.Version
+	app.Before = func(c *cli.Context) (err error) {
+		if err = d.Validate(); err != nil {
+			return
+		}
+		return
+	}
 	if actionable, ok := d.AppModule.(typcore.Actionable); ok {
 		app.Action = ctx.PreparedAction(actionable.Action())
 	}
