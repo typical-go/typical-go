@@ -59,19 +59,6 @@ func TestConfigurer(t *testing.T) {
 	}
 }
 
-func TestValidator(t *testing.T) {
-	testCases := []struct {
-		obj          interface{}
-		isConfigurer bool
-	}{
-		{dummyObj{}, true},
-		{struct{}{}, false},
-	}
-	for i, tt := range testCases {
-		require.Equal(t, tt.isConfigurer, typcore.IsValidator(tt.obj), i)
-	}
-}
-
 type dummyObj struct{}
 
 func (dummyObj) Run() interface{}                                                 { return nil }

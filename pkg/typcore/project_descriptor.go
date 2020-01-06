@@ -36,10 +36,11 @@ func (c *ProjectDescriptor) Validate() (err error) {
 	if c.ConfigLoader == nil {
 		c.ConfigLoader = DefaultConfigLoader()
 	}
-	if err = c.Releaser.Validate(); err != nil {
-		return fmt.Errorf("Context: Releaser: %w", err)
+	if c.Releaser != nil {
+		if err = c.Releaser.Validate(); err != nil {
+			return fmt.Errorf("Context: Releaser: %w", err)
+		}
 	}
-
 	return
 }
 

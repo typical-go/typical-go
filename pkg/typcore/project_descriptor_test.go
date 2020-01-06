@@ -1,7 +1,6 @@
 package typcore_test
 
 import (
-	"errors"
 	"reflect"
 	"testing"
 
@@ -42,10 +41,6 @@ func TestContext_Validate(t *testing.T) {
 		errMsg string
 	}{
 		{
-			typcore.ProjectDescriptor{Name: "some-name", Package: "some-package", AppModule: &dummyModule{Name: "App"}},
-			"",
-		},
-		{
 			typcore.ProjectDescriptor{Package: "some-package"},
 			"Context: Name can't be empty",
 		},
@@ -61,22 +56,6 @@ func TestContext_Validate(t *testing.T) {
 			},
 			"Context: Releaser: Target: Missing OS: Please make sure 'linuxamd64' using 'OS/ARCH' format",
 		},
-		{
-			typcore.ProjectDescriptor{
-				Name:      "some-name",
-				Package:   "some-package",
-				AppModule: &dummyModule{Name: "App", err: errors.New("some-error")},
-			},
-			"Context: App: some-error",
-		},
-		{
-			typcore.ProjectDescriptor{
-				Name:    "some-name",
-				Package: "some-package",
-				Modules: []interface{}{&dummyModule{Name: "Module", err: errors.New("some-error")}},
-			},
-			"Context: Module: some-error",
-		},
 	}
 	for i, tt := range testcases {
 		err := tt.Validate()
@@ -88,10 +67,3 @@ func TestContext_Validate(t *testing.T) {
 
 	}
 }
-
-type dummyModule struct {
-	Name string
-	err  error
-}
-
-func (m dummyModule) Validate() error { return m.err }
