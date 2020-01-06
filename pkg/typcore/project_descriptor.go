@@ -36,14 +36,10 @@ func (c *ProjectDescriptor) Validate() (err error) {
 	if c.ConfigLoader == nil {
 		c.ConfigLoader = DefaultConfigLoader()
 	}
-	if err = validate(c.Releaser); err != nil {
+	if err = c.Releaser.Validate(); err != nil {
 		return fmt.Errorf("Context: Releaser: %w", err)
 	}
-	for _, module := range c.AllModule() {
-		if err = validate(module); err != nil {
-			return fmt.Errorf("Context: %s: %w", Name(module), err)
-		}
-	}
+
 	return
 }
 
@@ -52,17 +48,5 @@ func (c *ProjectDescriptor) AllModule() (modules []interface{}) {
 	// NOTE: modules should be before app module to make sure it readiness
 	modules = append(modules, c.Modules...)
 	modules = append(modules, c.AppModule)
-	return
-}
-
-func validate(v interface{}) (err error) {
-	if common.IsNil(v) {
-		return
-	}
-	if validator, ok := v.(Validator); ok {
-		if err = validator.Validate(); err != nil {
-			return
-		}
-	}
 	return
 }

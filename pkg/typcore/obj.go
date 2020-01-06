@@ -24,12 +24,6 @@ type Actionable interface {
 	Action() interface{}
 }
 
-// Validator responsible to validate the struct or set default value.
-// `Validate()` will called when application bootstrap
-type Validator interface {
-	Validate() error
-}
-
 // Configurer responsible to create config
 // `Prefix` is used by ConfigLoader to retrieve configuration value
 // `Spec` (Specification) is used readme/env file generator. The value of spec will act as local environment value defined in .env file.
@@ -69,12 +63,6 @@ func IsDestroyer(obj interface{}) (ok bool) {
 // IsActionable return true if object is actionable
 func IsActionable(obj interface{}) bool {
 	_, ok := obj.(Actionable)
-	return ok
-}
-
-// IsValidator return true if object is actionable
-func IsValidator(obj interface{}) bool {
-	_, ok := obj.(Validator)
 	return ok
 }
 
