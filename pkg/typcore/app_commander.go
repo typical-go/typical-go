@@ -41,9 +41,7 @@ func (a *AppContext) ActionFunc(fn interface{}) func(*cli.Context) error {
 func (a *AppContext) Invoke(c *cli.Context, fn interface{}) (err error) {
 	di := dig.New()
 	if c != nil {
-		if err = di.Provide(func() *cli.Context {
-			return c
-		}); err != nil {
+		if err = di.Provide(func() *cli.Context { return c }); err != nil {
 			return
 		}
 	}
@@ -61,11 +59,14 @@ func (a *AppContext) Invoke(c *cli.Context, fn interface{}) (err error) {
 	if err = invoke(di, a.App.Prepare()...); err != nil {
 		return
 	}
-	if err := common.NewApplication(func() error {
+	startFn := func() error {
 		return di.Invoke(fn)
-	}).WithStopFn(func() error {
+	}
+	stopFn := func() error {
 		return invoke(di, a.App.Destroy()...)
-	}).Run(); err != nil {
+	}
+	if err := common.NewApplication(startFn).
+		WithStopFn(stopFn).Run(); err != nil {
 		log.Error(err.Error())
 	}
 	return

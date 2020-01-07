@@ -63,9 +63,9 @@ func commands(d *typcore.ProjectDescriptor) (cmds []*cli.Command) {
 
 // BuildCommands return list of command
 func BuildCommands(d *typcore.ProjectDescriptor) (cmds []*cli.Command) {
-	ctx := typcore.NewContext(d)
+	bc := typcore.NewBuildContext(d)
 	for _, commander := range d.BuildCommands {
-		for _, cmd := range commander.BuildCommands(ctx) {
+		for _, cmd := range commander.BuildCommands(bc) {
 			cmds = append(cmds, cmd)
 		}
 	}

@@ -1,9 +1,5 @@
 package typcore
 
-import (
-	"github.com/urfave/cli/v2"
-)
-
 // EntryPointer responsible to handle entry point
 type EntryPointer interface {
 	EntryPoint() interface{}
@@ -32,11 +28,6 @@ type Configurer interface {
 	Configure() (prefix string, spec interface{}, loadFn interface{})
 }
 
-// BuildCommander responsible to return commands for Build-Tool
-type BuildCommander interface {
-	BuildCommands(c *Context) []*cli.Command
-}
-
 // IsProvider return true if object implementation of provider
 func IsProvider(obj interface{}) (ok bool) {
 	_, ok = obj.(Provider)
@@ -58,11 +49,5 @@ func IsDestroyer(obj interface{}) (ok bool) {
 // IsConfigurer return true if object implementation of configurer
 func IsConfigurer(obj interface{}) (ok bool) {
 	_, ok = obj.(Configurer)
-	return
-}
-
-// IsBuildCommander return true if obj implement commander
-func IsBuildCommander(obj interface{}) (ok bool) {
-	_, ok = obj.(BuildCommander)
 	return
 }
