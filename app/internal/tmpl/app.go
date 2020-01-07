@@ -25,10 +25,10 @@ func (*Module) EntryPoint() interface{} {
 }
 
 // Configure the application
-func (*Module) Configure() (prefix string, spec, loadFn interface{}) {
+func (*Module) Configure(loader typcore.ConfigLoader) (prefix string, spec, loadFn interface{}) {
 	prefix = "APP"
 	spec = &config.Config{}
-	loadFn = func(loader typcore.ConfigLoader) (cfg config.Config, err error) {
+	loadFn = func() (cfg config.Config, err error) {
 		err = loader.Load(prefix, &cfg)
 		return
 	}
