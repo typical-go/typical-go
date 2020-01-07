@@ -8,12 +8,25 @@ import (
 
 // Application with start and graceful stop function
 type Application struct {
-	StartFn func() error
-	StopFn  func() error
+	startFn func() error
+	stopFn  func() error
+}
+
+// NewApplication to return new instance of Application
+func NewApplication(startFn func() error) *Application {
+	return &Application{
+		startFn: startFn,
+	}
+}
+
+// WithStopFn to set stop function
+func (a *Application) WithStopFn(stopFn func() error) *Application {
+	a.stopFn = stopFn
+	return a
 }
 
 // Run the application
-func (r *Application) Run() (errs Errors) {
+func (a *Application) Run() (err error) {
 	gracefulStop := make(chan os.Signal)
 	signal.Notify(gracefulStop, syscall.SIGTERM)
 	signal.Notify(gracefulStop, syscall.SIGINT)
@@ -21,14 +34,15 @@ func (r *Application) Run() (errs Errors) {
 		defer func() {
 			gracefulStop <- syscall.SIGTERM
 		}()
-		if err := r.StartFn(); err != nil {
-			errs.Append(err)
-		}
+		err = a.startFn()
 	}()
 	<-gracefulStop
-	if r.StopFn != nil {
-		if err := r.StopFn(); err != nil {
-			errs.Append(err)
+	if err != nil {
+		return
+	}
+	if a.stopFn != nil {
+		if err = a.stopFn(); err != nil {
+			return
 		}
 	}
 	return

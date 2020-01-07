@@ -61,11 +61,11 @@ func (a *AppContext) Invoke(c *cli.Context, fn interface{}) (err error) {
 	if err = invoke(di, a.App.Prepare()...); err != nil {
 		return
 	}
-	runner := common.Application{
-		StartFn: func() error { return di.Invoke(fn) },
-		StopFn:  func() error { return invoke(di, a.App.Destroy()...) },
-	}
-	for _, err := range runner.Run() {
+	if err := common.NewApplication(func() error {
+		return di.Invoke(fn)
+	}).WithStopFn(func() error {
+		return invoke(di, a.App.Destroy()...)
+	}).Run(); err != nil {
 		log.Error(err.Error())
 	}
 	return

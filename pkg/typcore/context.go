@@ -34,10 +34,9 @@ func (c *Context) Action(obj, fn interface{}) func(ctx *cli.Context) error {
 				return
 			}
 		}
-		app := common.Application{
-			StartFn: func() error { return di.Invoke(fn) },
-		}
-		for _, err := range app.Run() {
+		if err := common.NewApplication(func() error {
+			return di.Invoke(fn)
+		}).Run(); err != nil {
 			log.Error(err.Error())
 		}
 		return
