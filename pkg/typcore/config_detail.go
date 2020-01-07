@@ -24,17 +24,15 @@ type ConfigMap map[string]ConfigDetail
 type ConfigDetails []ConfigDetail
 
 // CreateConfigMap return map of config based on descriptor
-func CreateConfigMap(d *ProjectDescriptor) (keys []string, configMap ConfigMap) {
+func CreateConfigMap(c *Configuration) (keys []string, configMap ConfigMap) {
 	configMap = make(map[string]ConfigDetail)
-	for _, module := range d.AllModule() {
-		if configurer, ok := module.(Configurer); ok {
-			prefix, spec, _ := configurer.Configure()
-			details := CreateConfigDetails(prefix, spec)
-			for _, detail := range details {
-				name := detail.Name
-				configMap[name] = detail
-				keys = append(keys, name)
-			}
+	for _, configurer := range c.configurers {
+		prefix, spec, _ := configurer.Configure()
+		details := CreateConfigDetails(prefix, spec)
+		for _, detail := range details {
+			name := detail.Name
+			configMap[name] = detail
+			keys = append(keys, name)
 		}
 	}
 	return

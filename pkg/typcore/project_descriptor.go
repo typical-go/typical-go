@@ -9,16 +9,18 @@ import (
 
 // ProjectDescriptor describe the project
 type ProjectDescriptor struct {
-	Name         string
-	Description  string
-	Package      string
-	Version      string
-	AppModule    interface{}
-	Modules      common.Interfaces
-	ConfigLoader ConfigLoader
-	Releaser     Releaser
+	Name        string
+	Description string
+	Package     string
+	Version     string
 
-	MockTargets  common.Strings
+	App           *App
+	BuildCommands []BuildCommander
+	Configuration *Configuration
+
+	Releaser Releaser
+
+	MockTargets  common.Strings // TODO: remove this
 	Constructors common.Interfaces
 }
 
@@ -33,21 +35,10 @@ func (c *ProjectDescriptor) Validate() (err error) {
 	if c.Version == "" {
 		c.Version = "0.0.1"
 	}
-	if c.ConfigLoader == nil {
-		c.ConfigLoader = DefaultConfigLoader()
-	}
 	if c.Releaser != nil {
 		if err = c.Releaser.Validate(); err != nil {
 			return fmt.Errorf("Context: Releaser: %w", err)
 		}
 	}
-	return
-}
-
-// AllModule return app module and modules
-func (c *ProjectDescriptor) AllModule() (modules []interface{}) {
-	// NOTE: modules should be before app module to make sure it readiness
-	modules = append(modules, c.Modules...)
-	modules = append(modules, c.AppModule)
 	return
 }

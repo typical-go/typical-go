@@ -12,28 +12,26 @@ import (
 
 // Run the application
 func Run(d *typcore.ProjectDescriptor) {
-	var (
-		ctx = typcore.NewContext(d)
-	)
+	appCtx := typcore.NewAppContext(d)
 	app := cli.NewApp()
 	app.Name = d.Name
-	app.Usage = d.Description
+	app.Usage = "" // NOTE: intentionally blank
 	app.Description = d.Description
 	app.Version = d.Version
 	app.Before = func(c *cli.Context) (err error) {
 		if err = d.Validate(); err != nil {
 			return
 		}
+		if err = common.LoadEnvFile(); err != nil {
+			return
+		}
 		return
 	}
-	if actionable, ok := d.AppModule.(typcore.Actionable); ok {
-		app.Action = ctx.PreparedAction(actionable.Action())
+	if action := d.App.Action(); action != nil {
+		app.Action = appCtx.ActionFunc(action)
 	}
-	app.Before = func(ctx *cli.Context) error {
-		return common.LoadEnvFile()
-	}
-	if commander, ok := d.AppModule.(typcore.AppCommander); ok {
-		app.Commands = commander.AppCommands(ctx)
+	for _, cmd := range d.App.AppCommands(appCtx) {
+		app.Commands = append(app.Commands, cmd)
 	}
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err.Error())

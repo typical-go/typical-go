@@ -10,14 +10,16 @@ const (
 	Version = "0.9.23"
 )
 
-// Module of Typical-Go
-func Module() interface{} {
-	return &module{}
+// New of Typical-Go
+func New() *Module {
+	return &Module{}
 }
 
-type module struct{}
+// Module of Typical-Go
+type Module struct{}
 
-func (m module) AppCommands(c *typcore.Context) []*cli.Command {
+// AppCommands return command
+func (m Module) AppCommands(a *typcore.AppContext) []*cli.Command {
 	return []*cli.Command{
 		cmdConstructProject(),
 		cmdConstructModule(),

@@ -1,29 +1,12 @@
 package typcore_test
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
-
-func TestContext_AllModule(t *testing.T) {
-	ctx := typcore.ProjectDescriptor{
-		Modules: []interface{}{
-			struct{}{},
-			struct{}{},
-			struct{}{},
-		},
-		AppModule: struct{}{},
-	}
-	require.Equal(t, 4, len(ctx.AllModule()))
-	for i, module := range ctx.Modules {
-		require.Equal(t, module, ctx.AllModule()[i])
-	}
-	require.Equal(t, ctx.AppModule, ctx.AllModule()[3])
-}
 
 func TestContext_Validate_DefaultValue(t *testing.T) {
 	desc := &typcore.ProjectDescriptor{
@@ -32,7 +15,6 @@ func TestContext_Validate_DefaultValue(t *testing.T) {
 	}
 	require.NoError(t, desc.Validate())
 	require.Equal(t, "0.0.1", desc.Version)
-	require.Equal(t, "*typcore.defaultConfigLoader", reflect.TypeOf(desc.ConfigLoader).String())
 }
 
 func TestContext_Validate(t *testing.T) {

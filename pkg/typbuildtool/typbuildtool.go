@@ -21,21 +21,21 @@ func Run(d *typcore.ProjectDescriptor) {
 	app.Description = d.Description
 	app.Version = d.Version
 	app.Before = func(ctx *cli.Context) (err error) {
-		var (
-			f *os.File
-		)
+		var f *os.File
 		if err = d.Validate(); err != nil {
 			return
 		}
-		if _, err = os.Stat(defaultDotEnv); os.IsNotExist(err) {
-			log.Infof("Generate new project environment at '%s'", defaultDotEnv)
-			if f, err = os.Create(defaultDotEnv); err != nil {
-				return
-			}
-			defer f.Close()
-			_, configMap := typcore.CreateConfigMap(d)
-			if err = WriteEnv(f, configMap); err != nil {
-				return
+		if d.Configuration != nil {
+			if _, err = os.Stat(defaultDotEnv); os.IsNotExist(err) {
+				log.Infof("Generate new project environment at '%s'", defaultDotEnv)
+				if f, err = os.Create(defaultDotEnv); err != nil {
+					return
+				}
+				defer f.Close()
+				_, configMap := typcore.CreateConfigMap(d.Configuration)
+				if err = WriteEnv(f, configMap); err != nil {
+					return
+				}
 			}
 		}
 		return
@@ -64,11 +64,9 @@ func commands(d *typcore.ProjectDescriptor) (cmds []*cli.Command) {
 // BuildCommands return list of command
 func BuildCommands(d *typcore.ProjectDescriptor) (cmds []*cli.Command) {
 	ctx := typcore.NewContext(d)
-	for _, module := range d.AllModule() {
-		if commander, ok := module.(typcore.BuildCommander); ok {
-			for _, cmd := range commander.BuildCommands(ctx) {
-				cmds = append(cmds, cmd)
-			}
+	for _, commander := range d.BuildCommands {
+		for _, cmd := range commander.BuildCommands(ctx) {
+			cmds = append(cmds, cmd)
 		}
 	}
 	return

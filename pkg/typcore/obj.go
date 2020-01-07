@@ -37,11 +37,6 @@ type BuildCommander interface {
 	BuildCommands(c *Context) []*cli.Command
 }
 
-// AppCommander responsible to return commands for App
-type AppCommander interface {
-	AppCommands(c *Context) []*cli.Command
-}
-
 // IsProvider return true if object implementation of provider
 func IsProvider(obj interface{}) (ok bool) {
 	_, ok = obj.(Provider)
@@ -75,11 +70,5 @@ func IsConfigurer(obj interface{}) (ok bool) {
 // IsBuildCommander return true if obj implement commander
 func IsBuildCommander(obj interface{}) (ok bool) {
 	_, ok = obj.(BuildCommander)
-	return
-}
-
-// IsAppCommander return true if object implementation of AppCLI
-func IsAppCommander(obj interface{}) (ok bool) {
-	_, ok = obj.(AppCommander)
 	return
 }
