@@ -27,8 +27,8 @@ func Run(d *typcore.ProjectDescriptor) {
 		}
 		return
 	}
-	if action := d.App.Action(); action != nil {
-		app.Action = appCtx.ActionFunc(action)
+	if entryPoint := d.App.EntryPoint(); entryPoint != nil {
+		app.Action = appCtx.ActionFunc(entryPoint)
 	}
 	for _, cmd := range d.App.AppCommands(appCtx) {
 		app.Commands = append(app.Commands, cmd)

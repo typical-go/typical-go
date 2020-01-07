@@ -108,18 +108,20 @@ func (i constructproj) cmdPackage() error {
 }
 
 func (i constructproj) appMainSrc() (src *golang.MainSource) {
+	// TODO: using template instead
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typapp")
 	src.Imports.Add("", i.Pkg+"/typical")
-	src.Append("typapp.Run(typical.Descriptor)")
+	src.Append("typapp.Run(&typical.Descriptor)")
 	return
 }
 
 func (i constructproj) buildtoolMainSrc() (src *golang.MainSource) {
+	// TODO: using template instead
 	src = golang.NewMainSource()
 	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typbuildtool")
 	src.Imports.Add("", i.Pkg+"/typical")
-	src.Append("typbuildtool.Run(typical.Descriptor)")
+	src.Append("typbuildtool.Run(&typical.Descriptor)")
 	return
 }
 

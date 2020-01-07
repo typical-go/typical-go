@@ -13,6 +13,11 @@ type Config struct {
 	// TODO:
 }
 
+// New to return new instance of module
+func New() *Module{
+	return &Module{}
+}
+
 // Module of {{.Name}}
 type Module struct {}
 

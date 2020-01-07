@@ -7,10 +7,13 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
-// Descriptor of {{.Name}}
-var Descriptor = &typcore.ProjectDescriptor{
-	Name:      "{{.Name}}",
-	Version:   "0.0.1",
-	Package:   "{{.Pkg}}",
-}
+var (
+
+	// Descriptor of {{.Name}}
+	Descriptor = typcore.ProjectDescriptor{
+		Name:      "{{.Name}}",
+		Version:   "0.0.1",
+		Package:   "{{.Pkg}}",
+	}
+)
 `

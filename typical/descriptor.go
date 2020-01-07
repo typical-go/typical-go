@@ -10,7 +10,7 @@ import (
 var (
 	application = app.New()
 
-	Descriptor = &typcore.ProjectDescriptor{
+	Descriptor = typcore.ProjectDescriptor{
 		Name:    "Typical-Go",
 		Version: app.Version,
 		Package: "github.com/typical-go/typical-go",

@@ -4,6 +4,11 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+// EntryPointer responsible to handle entry point
+type EntryPointer interface {
+	EntryPoint() interface{}
+}
+
 // Provider responsible to provide dependency
 type Provider interface {
 	Provide() []interface{}
@@ -17,11 +22,6 @@ type Preparer interface {
 // Destroyer responsible to destruct dependency
 type Destroyer interface {
 	Destroy() []interface{}
-}
-
-// Actionable responsible to provide action. Only available for AppModule
-type Actionable interface {
-	Action() interface{}
 }
 
 // Configurer responsible to create config
@@ -53,12 +53,6 @@ func IsPreparer(obj interface{}) (ok bool) {
 func IsDestroyer(obj interface{}) (ok bool) {
 	_, ok = obj.(Destroyer)
 	return
-}
-
-// IsActionable return true if object is actionable
-func IsActionable(obj interface{}) bool {
-	_, ok := obj.(Actionable)
-	return ok
 }
 
 // IsConfigurer return true if object implementation of configurer

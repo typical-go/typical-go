@@ -12,8 +12,13 @@ import (
 // Module of application
 type Module struct {}
 
-// Action of application
-func (*Module) Action() interface{} {
+// New return new instance of application
+func New() *Module{
+	return &Module{}
+}
+
+// EntryPoint of application
+func (*Module) EntryPoint() interface{} {
 	return func(cfg config.Config) {
 		fmt.Printf("Hello %s\n", cfg.Hello)
 	}

@@ -4,11 +4,11 @@ import "github.com/urfave/cli/v2"
 
 // App is application
 type App struct {
-	action   interface{}
-	provides []Provider
-	prepares []Preparer
-	destroys []Destroyer
-	commands []AppCommander
+	entryPoint EntryPointer
+	provides   []Provider
+	prepares   []Preparer
+	destroys   []Destroyer
+	commands   []AppCommander
 }
 
 // NewApp return new instance of app
@@ -16,9 +16,9 @@ func NewApp() *App {
 	return &App{}
 }
 
-// WithAction to set action
-func (a *App) WithAction(action interface{}) *App {
-	a.action = action
+// WithEntryPoint to set entry point
+func (a *App) WithEntryPoint(entryPoint EntryPointer) *App {
+	a.entryPoint = entryPoint
 	return a
 }
 
@@ -45,9 +45,12 @@ func (a *App) WithCommand(commands ...AppCommander) *App {
 	return a
 }
 
-// Action of app
-func (a *App) Action() interface{} {
-	return a.action
+// EntryPoint of app
+func (a *App) EntryPoint() interface{} {
+	if a.entryPoint != nil {
+		return a.entryPoint.EntryPoint()
+	}
+	return nil
 }
 
 // Provide to return constructors
