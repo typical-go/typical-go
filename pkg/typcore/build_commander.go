@@ -45,7 +45,8 @@ func (b *BuildContext) Invoke(c *cli.Context, fn interface{}) (err error) {
 	startFn := func() error {
 		return di.Invoke(fn)
 	}
-	if err := common.NewApplication(startFn).Run(); err != nil {
+	errs := common.NewApplication(startFn).Run()
+	for _, err := range errs {
 		log.Error(err.Error())
 	}
 	return

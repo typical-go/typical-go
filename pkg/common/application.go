@@ -26,7 +26,7 @@ func (a *Application) WithStopFn(stopFn func() error) *Application {
 }
 
 // Run the application
-func (a *Application) Run() (err error) {
+func (a *Application) Run() (errs Errors) {
 	gracefulStop := make(chan os.Signal)
 	signal.Notify(gracefulStop, syscall.SIGTERM)
 	signal.Notify(gracefulStop, syscall.SIGINT)
@@ -34,15 +34,15 @@ func (a *Application) Run() (err error) {
 		defer func() {
 			gracefulStop <- syscall.SIGTERM
 		}()
-		err = a.startFn()
+		if err := a.startFn(); err != nil {
+			// NOTE: if startFn got error, it should still execute stopFn
+			errs.Append(err)
+		}
 	}()
 	<-gracefulStop
-	if err != nil {
-		return
-	}
 	if a.stopFn != nil {
-		if err = a.stopFn(); err != nil {
-			return
+		if err := a.stopFn(); err != nil {
+			errs.Append(err)
 		}
 	}
 	return

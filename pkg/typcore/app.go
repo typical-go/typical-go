@@ -48,6 +48,7 @@ func (a *App) WithPrepare(prepares ...Preparer) *App {
 
 // WithDestroy to set destroy
 func (a *App) WithDestroy(destroys ...Destroyer) *App {
+	a.destroys = destroys
 	return a
 }
 
