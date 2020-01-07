@@ -13,12 +13,6 @@ type BuildCommander interface {
 	BuildCommands(c *BuildContext) []*cli.Command
 }
 
-// IsBuildCommander return true if obj implement commander
-func IsBuildCommander(obj interface{}) (ok bool) {
-	_, ok = obj.(BuildCommander)
-	return
-}
-
 // BuildContext is context for build tool
 type BuildContext struct {
 	*ProjectDescriptor

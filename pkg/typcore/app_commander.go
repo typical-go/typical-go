@@ -12,12 +12,6 @@ type AppCommander interface {
 	AppCommands(*AppContext) []*cli.Command
 }
 
-// IsAppCommander return true if object implementation of AppCLI
-func IsAppCommander(obj interface{}) (ok bool) {
-	_, ok = obj.(AppCommander)
-	return
-}
-
 // AppContext is context of app
 type AppContext struct {
 	*ProjectDescriptor

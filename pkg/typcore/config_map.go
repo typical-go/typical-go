@@ -23,21 +23,6 @@ type ConfigMap map[string]ConfigDetail
 // ConfigDetails is slice of ConfigDetail
 type ConfigDetails []ConfigDetail
 
-// CreateConfigMap return map of config based on descriptor
-func CreateConfigMap(c *Configuration) (keys []string, configMap ConfigMap) {
-	configMap = make(map[string]ConfigDetail)
-	for _, configurer := range c.configurers {
-		prefix, spec, _ := configurer.Configure()
-		details := CreateConfigDetails(prefix, spec)
-		for _, detail := range details {
-			name := detail.Name
-			configMap[name] = detail
-			keys = append(keys, name)
-		}
-	}
-	return
-}
-
 // CreateConfigDetails is mapping of config field
 func CreateConfigDetails(prefix string, spec interface{}) (details ConfigDetails) {
 	val := reflect.Indirect(reflect.ValueOf(spec))
