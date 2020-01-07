@@ -8,9 +8,12 @@ import (
 )
 
 // WriteEnv to write env file
-func WriteEnv(w io.Writer, configMap typcore.ConfigMap) (err error) {
-	for _, cfgDetail := range configMap {
-		var v interface{}
+func WriteEnv(w io.Writer, keys []string, configMap typcore.ConfigMap) (err error) {
+	for _, key := range keys {
+		var (
+			v         interface{}
+			cfgDetail = configMap[key]
+		)
 		if cfgDetail.IsZero {
 			v = cfgDetail.Default
 		} else {

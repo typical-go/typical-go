@@ -32,8 +32,8 @@ func Run(d *typcore.ProjectDescriptor) {
 					return
 				}
 				defer f.Close()
-				_, configMap := typcore.CreateConfigMap(d.Configuration)
-				if err = WriteEnv(f, configMap); err != nil {
+				keys, configMap := typcore.CreateConfigMap(d.Configuration)
+				if err = WriteEnv(f, keys, configMap); err != nil {
 					return
 				}
 			}
