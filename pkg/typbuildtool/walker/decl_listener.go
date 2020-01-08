@@ -2,13 +2,14 @@ package walker
 
 import "go/ast"
 
-// DeclType is declaration type
-type DeclType int
+// EventType is declaration type
+type EventType string
 
 const (
-	FuncDeclType DeclType = iota + 1
-	InterfaceSpecType
-	GenSpecType
+	FunctionType  = EventType("Function")
+	InterfaceType = EventType("Interface")
+	StructType    = EventType("Struct")
+	GenericType   = EventType("Generic")
 )
 
 // DeclListener listen declaration event
@@ -18,12 +19,12 @@ type DeclListener interface {
 
 // DeclEvent happen when declarion
 type DeclEvent struct {
-	Name     string
-	Filename string
-	File     *ast.File
-	Doc      Doc
-	Type     DeclType
-	Source   interface{}
+	Name      string
+	Filename  string
+	File      *ast.File
+	Doc       Doc
+	EventType EventType
+	Source    interface{}
 }
 
 // Doc is go documentation

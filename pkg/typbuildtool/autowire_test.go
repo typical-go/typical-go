@@ -59,17 +59,3 @@ func TestAutowire(t *testing.T) {
 		require.EqualValues(t, tt.autowire, tt.Autowires)
 	}
 }
-
-func funcDeclWithComment(text string) *ast.FuncDecl {
-	return &ast.FuncDecl{
-		Doc: astComment(text),
-	}
-}
-
-func astComment(text string) *ast.CommentGroup {
-	return &ast.CommentGroup{
-		List: []*ast.Comment{
-			{Text: text},
-		},
-	}
-}

@@ -9,9 +9,8 @@ import (
 
 // Walker responsible to walk the filenames
 type Walker struct {
-	filenames         []string
-	declListeners     []DeclListener
-	typeSpecListeners []TypeSpecListener // TODO: remove
+	filenames     []string
+	declListeners []DeclListener
 }
 
 // New return new constructor of walker
@@ -24,12 +23,6 @@ func New(filenames []string) *Walker {
 // AddDeclListener to add function declaration listener
 func (w *Walker) AddDeclListener(listener DeclListener) *Walker {
 	w.declListeners = append(w.declListeners, listener)
-	return w
-}
-
-// AddTypeSpecListener to add function declaration listener
-func (w *Walker) AddTypeSpecListener(listener TypeSpecListener) *Walker {
-	w.typeSpecListeners = append(w.typeSpecListeners, listener)
 	return w
 }
 
@@ -54,45 +47,66 @@ func (w *Walker) parse(fset *token.FileSet, filename string) (err error) {
 	for _, decl := range f.Decls {
 		switch decl.(type) {
 		case *ast.FuncDecl:
-			funcDecl := decl.(*ast.FuncDecl)
-			var doc string
+			var (
+				doc      string
+				funcDecl = decl.(*ast.FuncDecl)
+			)
 			if funcDecl.Doc != nil {
 				doc = funcDecl.Doc.Text()
 			}
-			e := &DeclEvent{
-				Name:     funcDecl.Name.Name,
-				Filename: filename,
-				File:     f,
-				Doc:      Doc(doc),
-				Type:     FuncDeclType,
-				Source:   funcDecl,
-			}
-			for _, listener := range w.declListeners {
-				if err = listener.OnDecl(e); err != nil {
-					return
-				}
+			if err = w.fireEvent(&DeclEvent{
+				Name:      funcDecl.Name.Name,
+				Filename:  filename,
+				File:      f,
+				Doc:       Doc(doc),
+				EventType: FunctionType,
+				Source:    funcDecl,
+			}); err != nil {
+				return
 			}
 		case *ast.GenDecl:
-			genDecl := decl.(*ast.GenDecl)
+			var (
+				doc     string
+				genDecl = decl.(*ast.GenDecl)
+			)
+			if genDecl.Doc != nil {
+				doc = genDecl.Doc.Text()
+			}
 			for _, spec := range genDecl.Specs {
 				switch spec.(type) {
 				case *ast.TypeSpec:
-					typeSpec := spec.(*ast.TypeSpec)
-					e := &TypeSpecEvent{
-						Name:     typeSpec.Name.Name,
-						Filename: filename,
-						File:     f,
-						TypeSpec: typeSpec,
-						GenDecl:  genDecl,
+					var (
+						typeSpec  = spec.(*ast.TypeSpec)
+						eventType = GenericType
+					)
+					switch typeSpec.Type.(type) {
+					case *ast.InterfaceType:
+						eventType = InterfaceType
+					case *ast.StructType:
+						eventType = StructType
 					}
-					for _, listener := range w.typeSpecListeners {
-						if err = listener.OnTypeSpec(e); err != nil {
-							return
-						}
+					if err = w.fireEvent(&DeclEvent{
+						Name:      typeSpec.Name.Name,
+						Filename:  filename,
+						File:      f,
+						Doc:       Doc(doc),
+						EventType: eventType,
+						Source:    typeSpec,
+					}); err != nil {
+						return
 					}
 				}
 			}
 
+		}
+	}
+	return
+}
+
+func (w *Walker) fireEvent(e *DeclEvent) (err error) {
+	for _, listener := range w.declListeners {
+		if err = listener.OnDecl(e); err != nil {
+			return
 		}
 	}
 	return

@@ -1,7 +1,6 @@
 package typbuildtool_test
 
 import (
-	"go/ast"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -13,33 +12,32 @@ import (
 func TestAutomock(t *testing.T) {
 	testcases := []struct {
 		typbuildtool.Automocks
-		e         *walker.TypeSpecEvent
+		e         *walker.DeclEvent
 		automocks []string
 	}{
 		{
-			e: &walker.TypeSpecEvent{
+			e: &walker.DeclEvent{
 				Filename: "filename.go",
-				TypeSpec: &ast.TypeSpec{},
 			},
 		},
 		{
-			e: &walker.TypeSpecEvent{
-				Filename: "filename.go",
-				TypeSpec: &ast.TypeSpec{Type: &ast.InterfaceType{}},
-				GenDecl:  &ast.GenDecl{Doc: astComment("some doc")},
+			e: &walker.DeclEvent{
+				Filename:  "filename.go",
+				EventType: walker.InterfaceType,
+				Doc:       "some doc [mock]",
 			},
 			automocks: []string{"filename.go"},
 		},
 		{
-			e: &walker.TypeSpecEvent{
-				Filename: "filename.go",
-				TypeSpec: &ast.TypeSpec{Type: &ast.InterfaceType{}},
-				GenDecl:  &ast.GenDecl{Doc: astComment("some doc [nomock]")},
+			e: &walker.DeclEvent{
+				Filename:  "filename.go",
+				EventType: walker.InterfaceType,
+				Doc:       "some doc",
 			},
 		},
 	}
 	for _, tt := range testcases {
-		require.NoError(t, tt.OnTypeSpec(tt.e))
+		require.NoError(t, tt.OnDecl(tt.e))
 		require.EqualValues(t, tt.automocks, tt.Automocks)
 	}
 }
