@@ -13,50 +13,49 @@ import (
 func TestAutowire(t *testing.T) {
 	testcases := []struct {
 		typbuildtool.Autowires
-		event    *walker.FuncDeclEvent
+		event    *walker.DeclEvent
 		autowire []string
 	}{
 		{
-			event: &walker.FuncDeclEvent{
-				Name:     "SomeFunction",
-				FuncDecl: &ast.FuncDecl{},
-				File:     &ast.File{Name: &ast.Ident{Name: "pkg"}},
+			event: &walker.DeclEvent{
+				Name: "SomeFunction",
+				File: &ast.File{Name: &ast.Ident{Name: "pkg"}},
 			},
 		},
 		{
-			event: &walker.FuncDeclEvent{
-				FuncDecl: funcDeclWithComment("some doc"),
-				Name:     "SomeFunction",
-				File:     &ast.File{Name: ast.NewIdent("pkg")},
+			event: &walker.DeclEvent{
+				Name: "SomeFunction",
+				Doc:  "some doc",
+				File: &ast.File{Name: ast.NewIdent("pkg")},
 			},
 		},
 		{
-			event: &walker.FuncDeclEvent{
-				FuncDecl: funcDeclWithComment("some doc [autowire]"),
-				Name:     "SomeFunction",
-				File:     &ast.File{Name: ast.NewIdent("pkg")},
-			},
-			autowire: []string{"pkg.SomeFunction"},
-		},
-		{
-			event: &walker.FuncDeclEvent{
-				FuncDecl: funcDeclWithComment("some doc [Autowire]"),
-				Name:     "SomeFunction",
-				File:     &ast.File{Name: ast.NewIdent("pkg")},
+			event: &walker.DeclEvent{
+				Name: "SomeFunction",
+				Doc:  "some doc [autowire]",
+				File: &ast.File{Name: ast.NewIdent("pkg")},
 			},
 			autowire: []string{"pkg.SomeFunction"},
 		},
 		{
-			event: &walker.FuncDeclEvent{
-				FuncDecl: funcDeclWithComment("some doc [AUTOWIRE]"),
-				Name:     "SomeFunction",
-				File:     &ast.File{Name: ast.NewIdent("pkg")},
+			event: &walker.DeclEvent{
+				Name: "SomeFunction",
+				Doc:  "some doc [Autowire]",
+				File: &ast.File{Name: ast.NewIdent("pkg")},
+			},
+			autowire: []string{"pkg.SomeFunction"},
+		},
+		{
+			event: &walker.DeclEvent{
+				Name: "SomeFunction",
+				Doc:  "some doc [AUTOWIRE]",
+				File: &ast.File{Name: ast.NewIdent("pkg")},
 			},
 			autowire: []string{"pkg.SomeFunction"},
 		},
 	}
 	for _, tt := range testcases {
-		require.NoError(t, tt.OnFuncDecl(tt.event))
+		require.NoError(t, tt.OnDecl(tt.event))
 		require.EqualValues(t, tt.autowire, tt.Autowires)
 	}
 }

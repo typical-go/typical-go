@@ -11,7 +11,8 @@ type Autowires []string
 
 // OnDecl to handle declaration event
 func (a *Autowires) OnDecl(e *walker.DeclEvent) (err error) {
-	if e.Annotations.Contain("autowire") {
+	annotations := e.Doc.Annotations()
+	if annotations.Contain("autowire") {
 		*a = append(*a, fmt.Sprintf("%s.%s", e.File.Name, e.Name))
 	}
 	return

@@ -56,21 +56,16 @@ func (w *Walker) parse(fset *token.FileSet, filename string) (err error) {
 		case *ast.FuncDecl:
 			funcDecl := decl.(*ast.FuncDecl)
 			var doc string
-			var annotations Annotations
 			if funcDecl.Doc != nil {
 				doc = funcDecl.Doc.Text()
 			}
-			if doc != "" {
-				annotations = ParseAnnotations(doc)
-			}
 			e := &DeclEvent{
-				Name:        funcDecl.Name.Name,
-				Filename:    filename,
-				File:        f,
-				Doc:         doc,
-				Annotations: annotations,
-				Type:        FuncDeclType,
-				Source:      funcDecl,
+				Name:     funcDecl.Name.Name,
+				Filename: filename,
+				File:     f,
+				Doc:      Doc(doc),
+				Type:     FuncDeclType,
+				Source:   funcDecl,
 			}
 			for _, listener := range w.declListeners {
 				if err = listener.OnDecl(e); err != nil {
