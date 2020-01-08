@@ -25,14 +25,6 @@ func TestAutowire(t *testing.T) {
 		},
 		{
 			event: &walker.FuncDeclEvent{
-				FuncDecl: &ast.FuncDecl{},
-				Name:     "NewSomething",
-				File:     &ast.File{Name: ast.NewIdent("pkg")},
-			},
-			autowire: []string{"pkg.NewSomething"},
-		},
-		{
-			event: &walker.FuncDeclEvent{
 				FuncDecl: funcDeclWithComment("some doc"),
 				Name:     "SomeFunction",
 				File:     &ast.File{Name: ast.NewIdent("pkg")},
@@ -57,28 +49,6 @@ func TestAutowire(t *testing.T) {
 		{
 			event: &walker.FuncDeclEvent{
 				FuncDecl: funcDeclWithComment("some doc [AUTOWIRE]"),
-				Name:     "SomeFunction",
-				File:     &ast.File{Name: ast.NewIdent("pkg")},
-			},
-			autowire: []string{"pkg.SomeFunction"},
-		},
-		{
-			event: &walker.FuncDeclEvent{
-				FuncDecl: funcDeclWithComment("some doc [nowire]"),
-				Name:     "NewSomeFunction",
-				File:     &ast.File{Name: ast.NewIdent("pkg")},
-			},
-		},
-		{
-			event: &walker.FuncDeclEvent{
-				FuncDecl: funcDeclWithComment("some doc [nowire][autowire]"),
-				Name:     "NewSomeFunction",
-				File:     &ast.File{Name: ast.NewIdent("pkg")},
-			},
-		},
-		{
-			event: &walker.FuncDeclEvent{
-				FuncDecl: funcDeclWithComment("some doc [nowire][autowire]"),
 				Name:     "SomeFunction",
 				File:     &ast.File{Name: ast.NewIdent("pkg")},
 			},
