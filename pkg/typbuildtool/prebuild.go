@@ -28,7 +28,7 @@ func prebuild(ctx context.Context, d *typcore.ProjectDescriptor) (err error) {
 	}
 	log.Info("Walk the project")
 	walker := walker.New(filenames).
-		AddFuncDeclListener(&autowires)
+		AddDeclListener(&autowires)
 	if err = walker.Walk(); err != nil {
 		return
 	}

@@ -9,10 +9,9 @@ import (
 // Autowires is list of function declarion to be provided by dig
 type Autowires []string
 
-// OnFuncDecl is when function is autowired
-func (a *Autowires) OnFuncDecl(e *walker.FuncDeclEvent) (err error) {
-	annotations := e.Annotations()
-	if annotations.Contain("autowire") {
+// OnDecl to handle declaration event
+func (a *Autowires) OnDecl(e *walker.DeclEvent) (err error) {
+	if e.Annotations.Contain("autowire") {
 		*a = append(*a, fmt.Sprintf("%s.%s", e.File.Name, e.Name))
 	}
 	return

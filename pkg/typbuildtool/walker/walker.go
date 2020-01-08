@@ -10,8 +10,8 @@ import (
 // Walker responsible to walk the filenames
 type Walker struct {
 	filenames         []string
-	funcDeclListeners []FuncDeclListener
-	typeSpecListeners []TypeSpecListener
+	declListeners     []DeclListener
+	typeSpecListeners []TypeSpecListener // TODO: remove
 }
 
 // New return new constructor of walker
@@ -21,9 +21,9 @@ func New(filenames []string) *Walker {
 	}
 }
 
-// AddFuncDeclListener to add function declaration listener
-func (w *Walker) AddFuncDeclListener(listener FuncDeclListener) *Walker {
-	w.funcDeclListeners = append(w.funcDeclListeners, listener)
+// AddDeclListener to add function declaration listener
+func (w *Walker) AddDeclListener(listener DeclListener) *Walker {
+	w.declListeners = append(w.declListeners, listener)
 	return w
 }
 
@@ -55,14 +55,25 @@ func (w *Walker) parse(fset *token.FileSet, filename string) (err error) {
 		switch decl.(type) {
 		case *ast.FuncDecl:
 			funcDecl := decl.(*ast.FuncDecl)
-			e := &FuncDeclEvent{
-				Name:     funcDecl.Name.Name,
-				Filename: filename,
-				File:     f,
-				FuncDecl: funcDecl,
+			var doc string
+			var annotations Annotations
+			if funcDecl.Doc != nil {
+				doc = funcDecl.Doc.Text()
 			}
-			for _, listener := range w.funcDeclListeners {
-				if err = listener.OnFuncDecl(e); err != nil {
+			if doc != "" {
+				annotations = ParseAnnotations(doc)
+			}
+			e := &DeclEvent{
+				Name:        funcDecl.Name.Name,
+				Filename:    filename,
+				File:        f,
+				Doc:         doc,
+				Annotations: annotations,
+				Type:        FuncDeclType,
+				Source:      funcDecl,
+			}
+			for _, listener := range w.declListeners {
+				if err = listener.OnDecl(e); err != nil {
 					return
 				}
 			}
