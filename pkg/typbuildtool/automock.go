@@ -11,7 +11,7 @@ type Automocks []string
 func (a *Automocks) OnTypeSpec(e *walker.TypeSpecEvent) (err error) {
 	if e.IsInterface() {
 		annotations := e.Annotations()
-		if !annotations.Contain("nomock") {
+		if annotations.Contain("mock") {
 			*a = append(*a, e.Filename)
 		}
 	}
