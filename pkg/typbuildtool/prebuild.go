@@ -34,7 +34,7 @@ func prebuild(ctx context.Context, d *typcore.ProjectDescriptor) (err error) {
 	}
 	// TODO: generate imports
 	log.Info("Generate constructors")
-	if err = generateConstructor(ctx, d, typenv.AppMainPath+"/constructor.go", autowires, dirs); err != nil {
+	if err = generateConstructor(ctx, d, typenv.GeneratedConstructor, autowires, dirs); err != nil {
 		return
 	}
 	return

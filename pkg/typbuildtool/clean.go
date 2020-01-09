@@ -54,7 +54,7 @@ func removeEnvFile(c *cli.Context) error {
 }
 
 func removeConstructor(c *cli.Context) error {
-	removeFile(typenv.AppMainPath + "/constructor.go")
+	removeFile(typenv.GeneratedConstructor)
 	return nil
 }
 

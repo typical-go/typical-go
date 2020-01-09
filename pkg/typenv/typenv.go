@@ -24,11 +24,12 @@ var (
 		Release: "release",
 	}
 
-	Readme      = "README.md"
 	ProjectName = projectName()
 
 	AppBin      = fmt.Sprintf("%s/%s", Layout.Bin, ProjectName)
 	AppMainPath = fmt.Sprintf("%s/%s", Layout.Cmd, ProjectName)
+
+	GeneratedConstructor = fmt.Sprintf("%s/%s/constructor_do_not_edit.go", Layout.Cmd, ProjectName)
 
 	BuildTool         = "buildtool"
 	BuildToolBin      = fmt.Sprintf("%s/%s-%s", Layout.Bin, ProjectName, BuildTool)
