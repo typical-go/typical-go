@@ -12,32 +12,23 @@ import (
 func TestAutomock(t *testing.T) {
 	testcases := []struct {
 		typbuildtool.Automocks
-		e         *walker.DeclEvent
+		e         *walker.AnnotationEvent
 		automocks []string
 	}{
 		{
-			e: &walker.DeclEvent{
-				Filename: "filename.go",
-			},
-		},
-		{
-			e: &walker.DeclEvent{
-				Filename:  "filename.go",
-				EventType: walker.InterfaceType,
-				Doc:       "some doc [mock]",
+			e: &walker.AnnotationEvent{
+				Annotation: &walker.Annotation{
+					Name: "mock",
+				},
+				DeclEvent: &walker.DeclEvent{
+					Filename: "filename.go",
+				},
 			},
 			automocks: []string{"filename.go"},
 		},
-		{
-			e: &walker.DeclEvent{
-				Filename:  "filename.go",
-				EventType: walker.InterfaceType,
-				Doc:       "some doc",
-			},
-		},
 	}
-	for _, tt := range testcases {
-		require.NoError(t, tt.OnDecl(tt.e))
-		require.EqualValues(t, tt.automocks, tt.Automocks)
+	for i, tt := range testcases {
+		require.NoError(t, tt.OnAnnotation(tt.e), i)
+		require.EqualValues(t, tt.automocks, tt.Automocks, i)
 	}
 }
