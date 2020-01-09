@@ -26,6 +26,11 @@ func (w *Walker) AddDeclListener(listener DeclListener) *Walker {
 	return w
 }
 
+// AddAnnotationListener to add annotation listener
+func (w *Walker) AddAnnotationListener(name string, eventType EventType, listener AnnotationListener) *Walker {
+	return w.AddDeclListener(NewAnnotationDeclListener(name, eventType, listener))
+}
+
 // Walk the source code to get autowire and automock
 func (w *Walker) Walk() (err error) {
 	fset := token.NewFileSet() // positions are relative to fset
@@ -55,12 +60,12 @@ func (w *Walker) parse(fset *token.FileSet, filename string) (err error) {
 				doc = funcDecl.Doc.Text()
 			}
 			if err = w.fireEvent(&DeclEvent{
-				Name:      funcDecl.Name.Name,
-				Filename:  filename,
-				File:      f,
-				Doc:       Doc(doc),
-				EventType: FunctionType,
-				Source:    funcDecl,
+				EventType:   FunctionType,
+				SourceName:  funcDecl.Name.Name,
+				SourceObj:   funcDecl,
+				Filename:    filename,
+				File:        f,
+				Annotations: ParseAnnotations(doc),
 			}); err != nil {
 				return
 			}
@@ -86,12 +91,13 @@ func (w *Walker) parse(fset *token.FileSet, filename string) (err error) {
 						eventType = StructType
 					}
 					if err = w.fireEvent(&DeclEvent{
-						Name:      typeSpec.Name.Name,
-						Filename:  filename,
-						File:      f,
-						Doc:       Doc(doc),
-						EventType: eventType,
-						Source:    typeSpec,
+						EventType:   eventType,
+						SourceName:  typeSpec.Name.Name,
+						SourceObj:   typeSpec,
+						Filename:    filename,
+						File:        f,
+						Doc:         doc,
+						Annotations: ParseAnnotations(doc),
 					}); err != nil {
 						return
 					}

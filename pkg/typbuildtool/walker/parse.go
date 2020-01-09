@@ -7,6 +7,9 @@ import (
 
 // ParseAnnotations to parse godoc comment to list of annotation
 func ParseAnnotations(doc string) (annotations Annotations) {
+	if doc == "" {
+		return
+	}
 	r, _ := regexp.Compile("\\[(.*?)\\]")
 	for _, s := range r.FindAllString(doc, -1) {
 		var a *Annotation

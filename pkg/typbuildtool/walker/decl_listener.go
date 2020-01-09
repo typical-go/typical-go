@@ -19,21 +19,11 @@ type DeclListener interface {
 
 // DeclEvent happen when declarion
 type DeclEvent struct {
-	Name      string
-	Filename  string
-	File      *ast.File
-	Doc       Doc
-	EventType EventType
-	Source    interface{}
-}
-
-// Doc is go documentation
-type Doc string
-
-// Annotations of doc
-func (d Doc) Annotations() (annotations Annotations) {
-	if d == "" {
-		return
-	}
-	return ParseAnnotations(string(d))
+	Filename    string
+	File        *ast.File
+	Doc         string
+	Annotations Annotations
+	EventType   EventType
+	SourceName  string
+	SourceObj   interface{}
 }

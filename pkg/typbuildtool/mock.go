@@ -35,7 +35,7 @@ func cmdMock(d *typcore.ProjectDescriptor) *cli.Command {
 				log.Fatal(err.Error())
 			}
 			walker := walker.New(filenames).
-				AddDeclListener(&targets)
+				AddAnnotationListener("mock", walker.InterfaceType, &targets)
 			log.Info("Walk the project")
 			if err = walker.Walk(); err != nil {
 				return
