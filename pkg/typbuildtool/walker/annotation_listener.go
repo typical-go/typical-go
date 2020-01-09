@@ -43,7 +43,7 @@ func (a *AnnotationDeclListener) OnDecl(e *DeclEvent) (err error) {
 				return
 			}
 		} else {
-			log.Warnf("[%s] has no effect to %s:%s", a.name, e.EventType, a.name)
+			log.Warnf("[%s] has no effect to %s:%s", a.name, e.EventType, e.SourceName)
 		}
 	}
 	return
