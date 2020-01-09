@@ -7,7 +7,7 @@
 *.test
 *.out
 
-sample
+sample*
 
 # experimental
 app/sample.go
