@@ -75,7 +75,6 @@ func (i constructproj) appPackage() error {
 			stdrun.NewMkdir(i.Path("app/config")),
 			stdrun.NewWriteString(i.Path("app/config/config.go"), tmpl.Config),
 			stdrun.NewWriteTemplate(i.Path("app/app.go"), tmpl.App, i),
-			stdrun.NewWriteTemplate(i.Path("app/app_test.go"), tmpl.AppTest, i),
 		)
 	}
 	return runn.Run(stmts...)
