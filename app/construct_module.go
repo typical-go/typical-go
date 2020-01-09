@@ -44,7 +44,6 @@ func (c constructmodule) Run() error {
 	return runn.Run(
 		stdrun.NewMkdir(fmt.Sprintf("%s/%s", c.Path, c.Name)),
 		stdrun.NewWriteTemplate(c.path(c.Name+".go"), tmpl.Module, c),
-		stdrun.NewWriteTemplate(c.path(c.Name+"_test.go"), tmpl.ModuleTest, c),
 	)
 }
 
