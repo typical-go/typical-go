@@ -7,7 +7,6 @@ import (
 
 	"github.com/typical-go/typical-go/app/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/golang"
 	"github.com/typical-go/typical-go/pkg/runn"
 	"github.com/typical-go/typical-go/pkg/runn/stdrun"
 	"github.com/typical-go/typical-go/pkg/typenv"
@@ -97,31 +96,14 @@ func (i constructproj) projectDescriptor() error {
 func (i constructproj) cmdPackage() error {
 	appMainPath := fmt.Sprintf("%s/%s", typenv.Layout.Cmd, i.Name)
 	buildtoolMainPath := fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, i.Name, typenv.BuildTool)
+	data := tmpl.MainData{ImportTypical: i.Pkg + "/typical"}
 	return runn.Run(
 		stdrun.NewMkdir(i.Path(typenv.Layout.Cmd)),
 		stdrun.NewMkdir(i.Path(appMainPath)),
 		stdrun.NewMkdir(i.Path(buildtoolMainPath)),
-		stdrun.NewWriteSource(i.Path(appMainPath+"/main.go"), i.appMainSrc()),
-		stdrun.NewWriteSource(i.Path(buildtoolMainPath+"/main.go"), i.buildtoolMainSrc()),
+		stdrun.NewWriteTemplate(i.Path(appMainPath+"/main.go"), tmpl.MainAppSrc, data),
+		stdrun.NewWriteTemplate(i.Path(buildtoolMainPath+"/main.go"), tmpl.MainBuildToolSrc, data),
 	)
-}
-
-func (i constructproj) appMainSrc() (src *golang.MainSource) {
-	// TODO: using template instead
-	src = golang.NewMainSource()
-	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typapp")
-	src.Imports.Add("", i.Pkg+"/typical")
-	src.Append("typapp.Run(&typical.Descriptor)")
-	return
-}
-
-func (i constructproj) buildtoolMainSrc() (src *golang.MainSource) {
-	// TODO: using template instead
-	src = golang.NewMainSource()
-	src.Imports.Add("", "github.com/typical-go/typical-go/pkg/typbuildtool")
-	src.Imports.Add("", i.Pkg+"/typical")
-	src.Append("typbuildtool.Run(&typical.Descriptor)")
-	return
 }
 
 func (i constructproj) ignoreFile() error {
