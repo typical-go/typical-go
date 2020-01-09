@@ -37,18 +37,15 @@ func wrapper(path string) runn.Runner {
 	} else {
 		name = filepath.Base(path)
 	}
-	data := struct {
-		DescriptorFile    string
-		ChecksumFile      string
-		LayoutTemp        string
-		BuildtoolMainPath string
-		BuildtoolBin      string
-	}{
-		DescriptorFile:    typenv.DescriptorFile,
-		ChecksumFile:      typenv.ChecksumFile,
-		LayoutTemp:        typenv.Layout.Temp,
-		BuildtoolMainPath: fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, name, typenv.BuildTool),
-		BuildtoolBin:      fmt.Sprintf("%s/%s-%s", typenv.Layout.Bin, name, typenv.BuildTool),
-	}
-	return stdrun.NewWriteTemplate(path+"/typicalw", tmpl.Typicalw, data).WithPermission(0700)
+	return stdrun.NewWriteTemplate(
+		path+"/typicalw",
+		tmpl.Typicalw,
+		tmpl.TypicalwData{
+			DescriptorFile:    typenv.DescriptorFile,
+			ChecksumFile:      typenv.ChecksumFile,
+			LayoutTemp:        typenv.Layout.Temp,
+			BuildtoolMainPath: fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, name, typenv.BuildTool),
+			BuildtoolBin:      fmt.Sprintf("%s/%s-%s", typenv.Layout.Bin, name, typenv.BuildTool),
+		},
+	).WithPermission(0700)
 }

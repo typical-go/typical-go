@@ -1,5 +1,14 @@
 package tmpl
 
+// TypicalwData is data for typicalw template
+type TypicalwData struct {
+	DescriptorFile    string
+	ChecksumFile      string
+	LayoutTemp        string
+	BuildtoolMainPath string
+	BuildtoolBin      string
+}
+
 // Typicalw template
 const Typicalw = `#!/bin/bash
 set -e

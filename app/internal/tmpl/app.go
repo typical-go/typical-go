@@ -1,5 +1,11 @@
 package tmpl
 
+// TemplateData is general template data
+type TemplateData struct {
+	Name string
+	Pkg  string
+}
+
 // App template
 const App = `package app
 

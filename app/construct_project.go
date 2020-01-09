@@ -35,16 +35,17 @@ func constructProject(c *cli.Context) (err error) {
 		return fmt.Errorf("'%s' already exist", name)
 	}
 	return runn.Run(constructproj{
-		Name:  name,
-		Pkg:   pkg,
+		TemplateData: tmpl.TemplateData{
+			Name: name,
+			Pkg:  pkg,
+		},
 		blank: c.Bool("blank"),
 		ctx:   c.Context,
 	})
 }
 
 type constructproj struct {
-	Name  string
-	Pkg   string
+	tmpl.TemplateData
 	blank bool
 	ctx   context.Context
 }
@@ -73,7 +74,7 @@ func (i constructproj) appPackage() error {
 		stmts = append(stmts,
 			stdrun.NewMkdir(i.Path("app/config")),
 			stdrun.NewWriteString(i.Path("app/config/config.go"), tmpl.Config),
-			stdrun.NewWriteTemplate(i.Path("app/app.go"), tmpl.App, i),
+			stdrun.NewWriteTemplate(i.Path("app/app.go"), tmpl.App, i.TemplateData),
 		)
 	}
 	return runn.Run(stmts...)
@@ -83,9 +84,9 @@ func (i constructproj) projectDescriptor() error {
 	var writeStmt interface{}
 	path := "typical/descriptor.go"
 	if i.blank {
-		writeStmt = stdrun.NewWriteTemplate(i.Path(path), tmpl.Context, i)
+		writeStmt = stdrun.NewWriteTemplate(i.Path(path), tmpl.Context, i.TemplateData)
 	} else {
-		writeStmt = stdrun.NewWriteTemplate(i.Path(path), tmpl.ContextWithAppModule, i)
+		writeStmt = stdrun.NewWriteTemplate(i.Path(path), tmpl.ContextWithAppModule, i.TemplateData)
 	}
 	return runn.Run(
 		stdrun.NewMkdir(i.Path("typical")),
@@ -96,13 +97,15 @@ func (i constructproj) projectDescriptor() error {
 func (i constructproj) cmdPackage() error {
 	appMainPath := fmt.Sprintf("%s/%s", typenv.Layout.Cmd, i.Name)
 	buildtoolMainPath := fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, i.Name, typenv.BuildTool)
-	data := tmpl.MainData{ImportTypical: i.Pkg + "/typical"}
+	data := tmpl.MainSrcData{
+		ImportTypical: i.Pkg + "/typical",
+	}
 	return runn.Run(
 		stdrun.NewMkdir(i.Path(typenv.Layout.Cmd)),
 		stdrun.NewMkdir(i.Path(appMainPath)),
 		stdrun.NewMkdir(i.Path(buildtoolMainPath)),
-		stdrun.NewWriteTemplate(i.Path(appMainPath+"/main.go"), tmpl.MainAppSrc, data),
-		stdrun.NewWriteTemplate(i.Path(buildtoolMainPath+"/main.go"), tmpl.MainBuildToolSrc, data),
+		stdrun.NewWriteTemplate(i.Path(appMainPath+"/main.go"), tmpl.MainSrcApp, data),
+		stdrun.NewWriteTemplate(i.Path(buildtoolMainPath+"/main.go"), tmpl.MainSrcBuildTool, data),
 	)
 }
 
@@ -113,14 +116,10 @@ func (i constructproj) ignoreFile() error {
 }
 
 func (i constructproj) gomod() (err error) {
-	data := struct {
-		Pkg            string
-		TypicalVersion string
-	}{
-		Pkg:            i.Pkg,
-		TypicalVersion: Version,
-	}
 	return runn.Run(
-		stdrun.NewWriteTemplate(i.Path("go.mod"), tmpl.GoMod, data),
+		stdrun.NewWriteTemplate(i.Path("go.mod"), tmpl.GoMod, tmpl.GoModData{
+			Pkg:            i.Pkg,
+			TypicalVersion: Version,
+		}),
 	)
 }
