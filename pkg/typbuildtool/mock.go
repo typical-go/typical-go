@@ -29,15 +29,20 @@ func cmdMock(d *typcore.ProjectDescriptor) *cli.Command {
 				mockgen   string
 				errs      common.Errors
 				filenames []string
+				events    walker.DeclEvents
 				ctx       = c.Context
 			)
 			if _, filenames, err = projectFiles(typenv.Layout.App); err != nil {
 				log.Fatal(err.Error())
 			}
-			walker := walker.New(filenames).
-				AddAnnotationListener("mock", walker.InterfaceType, &targets)
+			w := walker.New(filenames)
 			log.Info("Walk the project")
-			if err = walker.Walk(); err != nil {
+			if events, err = w.Walk(); err != nil {
+				return
+			}
+			if err = events.Send(
+				walker.NewAnnotationDeclListener("mock", walker.InterfaceType, &targets),
+			); err != nil {
 				return
 			}
 			targets = append(targets, d.MockTargets...)

@@ -27,3 +27,29 @@ type DeclEvent struct {
 	SourceName  string
 	SourceObj   interface{}
 }
+
+// Send event to listeners
+func (e *DeclEvent) Send(listeners ...DeclListener) (err error) {
+	for _, listener := range listeners {
+		if err = listener.OnDecl(e); err != nil {
+			return
+		}
+	}
+	return
+}
+
+type DeclEvents []*DeclEvent
+
+// Append event
+func (d *DeclEvents) Append(e ...*DeclEvent) *DeclEvents {
+	*d = append(*d, e...)
+	return d
+}
+
+// Send events to listeners
+func (d *DeclEvents) Send(listeners ...DeclListener) (err error) {
+	for _, event := range *d {
+		event.Send(listeners...)
+	}
+	return
+}

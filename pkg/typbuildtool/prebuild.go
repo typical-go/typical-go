@@ -22,14 +22,19 @@ func prebuild(ctx context.Context, d *typcore.ProjectDescriptor) (err error) {
 		constructors Constructors
 		filenames    []string
 		dirs         []string
+		events       walker.DeclEvents
 	)
 	if dirs, filenames, err = projectFiles(typenv.Layout.App); err != nil {
 		log.Fatal(err.Error())
 	}
 	log.Info("Walk the project")
-	walker := walker.New(filenames).
-		AddAnnotationListener("constructor", walker.FunctionType, &constructors)
-	if err = walker.Walk(); err != nil {
+	w := walker.New(filenames)
+	if events, err = w.Walk(); err != nil {
+		return
+	}
+	if err = events.Send(
+		walker.NewAnnotationDeclListener("constructor", walker.FunctionType, &constructors),
+	); err != nil {
 		return
 	}
 	// TODO: generate imports
