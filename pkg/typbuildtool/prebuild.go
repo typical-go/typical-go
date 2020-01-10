@@ -57,7 +57,7 @@ import (
 )
 
 func init() {
-	{{if .Constructors}}typical.Descriptor.Constructors.Append({{range $constructor := .Constructors}}
+	{{if .Constructors}}typical.Descriptor.AppendConstructor({{range $constructor := .Constructors}}
 		{{$constructor}},{{end}}
 	)
 {{end}}}`

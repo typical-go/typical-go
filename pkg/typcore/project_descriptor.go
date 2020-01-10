@@ -21,7 +21,7 @@ type ProjectDescriptor struct {
 	Releaser Releaser
 
 	MockTargets  common.Strings // TODO: remove this
-	Constructors common.Interfaces
+	constructors common.Interfaces
 }
 
 // Validate context
@@ -41,4 +41,14 @@ func (c *ProjectDescriptor) Validate() (err error) {
 		}
 	}
 	return
+}
+
+// AppendConstructor to append constructor
+func (c *ProjectDescriptor) AppendConstructor(constructors ...interface{}) {
+	c.constructors.Append(constructors...)
+}
+
+// Constructors return contruction functions
+func (c *ProjectDescriptor) Constructors() []interface{} {
+	return c.constructors.Slice()
 }

@@ -47,7 +47,7 @@ func (a *AppContext) Invoke(c *cli.Context, fn interface{}) (err error) {
 	if err = provide(di, a.App.Provide()...); err != nil {
 		return
 	}
-	if err = provide(di, a.Constructors...); err != nil {
+	if err = provide(di, a.Constructors()...); err != nil {
 		return
 	}
 	if err = invoke(di, a.App.Prepare()...); err != nil {
