@@ -2,6 +2,15 @@ package typcore
 
 import "github.com/urfave/cli/v2"
 
+// AppInterface is interface of app
+type AppInterface interface {
+	EntryPointer
+	Provider
+	Preparer
+	Destroyer
+	AppCommander
+}
+
 // App is application
 type App struct {
 	entryPoint EntryPointer

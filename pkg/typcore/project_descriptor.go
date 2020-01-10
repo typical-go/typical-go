@@ -14,7 +14,7 @@ type ProjectDescriptor struct {
 	Package     string
 	Version     string
 
-	App           *App
+	App           AppInterface
 	BuildCommands []BuildCommander
 	Configuration *Configuration
 
