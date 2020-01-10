@@ -12,9 +12,9 @@ import (
 
 func TestConstructors(t *testing.T) {
 	testcases := []struct {
-		typbuildtool.Autowires
-		event    *walker.AnnotationEvent
-		autowire []string
+		typbuildtool.Constructors
+		event        *walker.AnnotationEvent
+		constructors []string
 	}{
 		{
 			event: &walker.AnnotationEvent{
@@ -26,11 +26,11 @@ func TestConstructors(t *testing.T) {
 					File:       &ast.File{Name: &ast.Ident{Name: "pkg"}},
 				},
 			},
-			autowire: []string{"pkg.SomeFunction"},
+			constructors: []string{"pkg.SomeFunction"},
 		},
 	}
 	for _, tt := range testcases {
 		require.NoError(t, tt.OnAnnotation(tt.event))
-		require.EqualValues(t, tt.autowire, tt.Autowires)
+		require.EqualValues(t, tt.constructors, tt.Constructors)
 	}
 }
