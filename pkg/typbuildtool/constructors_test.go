@@ -10,7 +10,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typbuildtool/walker"
 )
 
-func TestAutowire(t *testing.T) {
+func TestConstructors(t *testing.T) {
 	testcases := []struct {
 		typbuildtool.Autowires
 		event    *walker.AnnotationEvent

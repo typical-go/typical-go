@@ -19,22 +19,22 @@ import (
 
 func prebuild(ctx context.Context, d *typcore.ProjectDescriptor) (err error) {
 	var (
-		autowires Autowires
-		filenames []string
-		dirs      []string
+		constructors Constructors
+		filenames    []string
+		dirs         []string
 	)
 	if dirs, filenames, err = projectFiles(typenv.Layout.App); err != nil {
 		log.Fatal(err.Error())
 	}
 	log.Info("Walk the project")
 	walker := walker.New(filenames).
-		AddAnnotationListener("autowire", walker.FunctionType, &autowires)
+		AddAnnotationListener("constructor", walker.FunctionType, &constructors)
 	if err = walker.Walk(); err != nil {
 		return
 	}
 	// TODO: generate imports
 	log.Info("Generate constructors")
-	if err = generateConstructor(ctx, d, typenv.GeneratedConstructor, autowires, dirs); err != nil {
+	if err = generateConstructor(ctx, d, typenv.GeneratedConstructor, constructors, dirs); err != nil {
 		return
 	}
 	return
@@ -42,9 +42,6 @@ func prebuild(ctx context.Context, d *typcore.ProjectDescriptor) (err error) {
 
 func generateConstructor(ctx context.Context, d *typcore.ProjectDescriptor, target string, constructors, dirs []string) (err error) {
 	defer common.ElapsedTimeFn("Generate constructor")()
-	if len(constructors) < 1 {
-		return
-	}
 	var imports common.Strings
 	imports.Append(d.Package + "/typical")
 	for _, dir := range dirs {
