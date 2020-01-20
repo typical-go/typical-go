@@ -60,7 +60,7 @@ func (i constructproj) Run() (err error) {
 		i.cmdPackage,
 		i.projectDescriptor,
 		i.ignoreFile,
-		wrapper(i.Name),
+		wrapper(i.Name, i.Pkg),
 		stdrun.NewGoFmt(i.ctx, "./..."),
 		i.gomod,
 	)
@@ -96,16 +96,13 @@ func (i constructproj) projectDescriptor() error {
 
 func (i constructproj) cmdPackage() error {
 	appMainPath := fmt.Sprintf("%s/%s", typenv.Layout.Cmd, i.Name)
-	buildtoolMainPath := fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, i.Name, typenv.BuildTool)
 	data := tmpl.MainSrcData{
 		ImportTypical: i.Pkg + "/typical",
 	}
 	return runn.Run(
 		stdrun.NewMkdir(i.Path(typenv.Layout.Cmd)),
 		stdrun.NewMkdir(i.Path(appMainPath)),
-		stdrun.NewMkdir(i.Path(buildtoolMainPath)),
 		stdrun.NewWriteTemplate(i.Path(appMainPath+"/main.go"), tmpl.MainSrcApp, data),
-		stdrun.NewWriteTemplate(i.Path(buildtoolMainPath+"/main.go"), tmpl.MainSrcBuildTool, data),
 	)
 }
 

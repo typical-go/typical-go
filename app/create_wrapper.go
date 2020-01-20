@@ -2,8 +2,6 @@ package app
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
 
 	"github.com/typical-go/typical-go/app/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/runn"
@@ -23,29 +21,25 @@ func cmdCreateWrapper() *cli.Command {
 	}
 }
 
-func createWrapper(ctx *cli.Context) error {
+func createWrapper(c *cli.Context) error {
+	pkg := c.Args().First()
+	if pkg == "" {
+		return cli.ShowCommandHelp(c, "wrapper")
+	}
 	return runn.Run(
-		wrapper(ctx.String("path")),
+		wrapper(c.String("path"), pkg),
 	)
 }
 
-func wrapper(path string) runn.Runner {
-	var name string
-	if path == "." {
-		dir, _ := os.Getwd()
-		name = filepath.Base(dir)
-	} else {
-		name = filepath.Base(path)
-	}
+func wrapper(path, pkg string) runn.Runner {
 	return stdrun.NewWriteTemplate(
 		path+"/typicalw",
 		tmpl.Typicalw,
 		tmpl.TypicalwData{
+			DescriptorPackage: fmt.Sprintf("%s/typical", pkg),
 			DescriptorFile:    typenv.DescriptorFile,
 			ChecksumFile:      typenv.ChecksumFile,
 			LayoutTemp:        typenv.Layout.Temp,
-			BuildtoolMainPath: fmt.Sprintf("%s/%s-%s", typenv.Layout.Cmd, name, typenv.BuildTool),
-			BuildtoolBin:      fmt.Sprintf("%s/%s-%s", typenv.Layout.Bin, name, typenv.BuildTool),
 		},
 	).WithPermission(0700)
 }

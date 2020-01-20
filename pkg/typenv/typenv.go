@@ -31,10 +31,6 @@ var (
 
 	GeneratedConstructor = fmt.Sprintf("%s/%s/constructor_do_not_edit.go", Layout.Cmd, ProjectName)
 
-	BuildTool         = "buildtool"
-	BuildToolBin      = fmt.Sprintf("%s/%s-%s", Layout.Bin, ProjectName, BuildTool)
-	BuildToolMainPath = fmt.Sprintf("%s/%s-%s", Layout.Cmd, ProjectName, BuildTool)
-
 	DescriptorFile = "typical/descriptor.go"
 	ChecksumFile   = Layout.Temp + "/checksum"
 )
