@@ -2,15 +2,6 @@ package typcore
 
 import "github.com/urfave/cli/v2"
 
-// AppInterface is interface of app
-type AppInterface interface {
-	EntryPointer
-	Provider
-	Preparer
-	Destroyer
-	AppCommander
-}
-
 // App is application
 type App struct {
 	entryPoint EntryPointer
@@ -19,18 +10,6 @@ type App struct {
 	destroys   []Destroyer
 	commands   []AppCommander
 }
-
-// EntryPointer responsible to handle entry point
-type EntryPointer interface{ EntryPoint() interface{} }
-
-// Provider responsible to provide dependency
-type Provider interface{ Provide() []interface{} }
-
-// Preparer responsible to prepare
-type Preparer interface{ Prepare() []interface{} }
-
-// Destroyer responsible to destruct dependency
-type Destroyer interface{ Destroy() []interface{} }
 
 // NewApp return new instance of app
 func NewApp() *App {
@@ -45,25 +24,25 @@ func (a *App) WithEntryPoint(entryPoint EntryPointer) *App {
 
 // WithProvide to set provide
 func (a *App) WithProvide(provides ...Provider) *App {
-	a.provides = provides
+	a.provides = append(a.provides, provides...)
 	return a
 }
 
 // WithPrepare to set prepare
 func (a *App) WithPrepare(prepares ...Preparer) *App {
-	a.prepares = prepares
+	a.prepares = append(a.prepares, prepares...)
 	return a
 }
 
 // WithDestroy to set destroy
 func (a *App) WithDestroy(destroys ...Destroyer) *App {
-	a.destroys = destroys
+	a.destroys = append(a.destroys, destroys...)
 	return a
 }
 
 // WithCommand to set commanders
 func (a *App) WithCommand(commands ...AppCommander) *App {
-	a.commands = commands
+	a.commands = append(a.commands, commands...)
 	return a
 }
 
