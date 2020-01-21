@@ -14,7 +14,7 @@ func prebuild(ctx context.Context, d *typcore.ProjectDescriptor) (err error) {
 	var (
 		stdPrebuilder typcore.StandardPrebuilder
 		projInfo      typcore.ProjectInfo
-		events        walker.DeclEvents
+		events        walker.Declarations
 	)
 	if projInfo, err = typcore.ReadProject(typenv.Layout.App); err != nil {
 		log.Fatal(err.Error())
@@ -27,7 +27,7 @@ func prebuild(ctx context.Context, d *typcore.ProjectDescriptor) (err error) {
 		Context:           ctx,
 		ProjectDescriptor: d,
 		ProjectInfo:       projInfo,
-		DeclEvents:        events,
+		Declarations:      events,
 	}
 	if err = stdPrebuilder.Prebuild(pc); err != nil {
 		return

@@ -8,7 +8,7 @@ import (
 type Automocks []string
 
 // OnAnnotation handle type specificatio event
-func (a *Automocks) OnAnnotation(e *walker.AnnotationEvent) (err error) {
-	*a = append(*a, e.Filename)
+func (a *Automocks) OnAnnotation(decl *walker.Declaration, ann *walker.Annotation) (err error) {
+	*a = append(*a, decl.Filename)
 	return
 }

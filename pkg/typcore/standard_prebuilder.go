@@ -23,12 +23,12 @@ type PrebuildContext struct {
 	context.Context
 	*ProjectDescriptor
 	ProjectInfo
-	walker.DeclEvents
+	walker.Declarations
 }
 
 // Prebuild process
 func (a *StandardPrebuilder) Prebuild(pc *PrebuildContext) (err error) {
-	if err = pc.Send(walker.NewAnnotationDeclListener("constructor", walker.FunctionType, a)); err != nil {
+	if err = pc.EachAnnotation("constructor", walker.FunctionType, a.OnAnnotation); err != nil {
 		return
 	}
 	log.Info("Generate constructors")
@@ -39,8 +39,8 @@ func (a *StandardPrebuilder) Prebuild(pc *PrebuildContext) (err error) {
 }
 
 // OnAnnotation to handle annotation event
-func (a *StandardPrebuilder) OnAnnotation(e *walker.AnnotationEvent) (err error) {
-	a.constructors = append(a.constructors, fmt.Sprintf("%s.%s", e.File.Name, e.SourceName))
+func (a *StandardPrebuilder) OnAnnotation(decl *walker.Declaration, ann *walker.Annotation) (err error) {
+	a.constructors = append(a.constructors, fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
 	return
 }
 

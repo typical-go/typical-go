@@ -7,7 +7,7 @@ import (
 )
 
 // Walk the source code to get autowire and automock
-func Walk(filenames []string) (events DeclEvents, err error) {
+func Walk(filenames []string) (declarations Declarations, err error) {
 	fset := token.NewFileSet() // positions are relative to fset
 	for _, filename := range filenames {
 		var f *ast.File
@@ -15,13 +15,13 @@ func Walk(filenames []string) (events DeclEvents, err error) {
 			return
 		}
 		for _, decl := range f.Decls {
-			events.Append(declaration(filename, f, decl)...)
+			declarations.Append(declaration(filename, f, decl)...)
 		}
 	}
 	return
 }
 
-func declaration(filename string, f *ast.File, decl ast.Decl) (events DeclEvents) {
+func declaration(filename string, f *ast.File, decl ast.Decl) (declarations Declarations) {
 	switch decl.(type) {
 	case *ast.FuncDecl:
 		var (
@@ -31,8 +31,8 @@ func declaration(filename string, f *ast.File, decl ast.Decl) (events DeclEvents
 		if funcDecl.Doc != nil {
 			doc = funcDecl.Doc.Text()
 		}
-		events = append(events, &DeclEvent{
-			EventType:   FunctionType,
+		declarations.Append(&Declaration{
+			Type:        FunctionType,
 			SourceName:  funcDecl.Name.Name,
 			SourceObj:   funcDecl,
 			Filename:    filename,
@@ -52,17 +52,17 @@ func declaration(filename string, f *ast.File, decl ast.Decl) (events DeclEvents
 			switch spec.(type) {
 			case *ast.TypeSpec:
 				var (
-					typeSpec  = spec.(*ast.TypeSpec)
-					eventType = GenericType
+					typeSpec = spec.(*ast.TypeSpec)
+					declType = GenericType
 				)
 				switch typeSpec.Type.(type) {
 				case *ast.InterfaceType:
-					eventType = InterfaceType
+					declType = InterfaceType
 				case *ast.StructType:
-					eventType = StructType
+					declType = StructType
 				}
-				events = append(events, &DeclEvent{
-					EventType:   eventType,
+				declarations = append(declarations, &Declaration{
+					Type:        declType,
 					SourceName:  typeSpec.Name.Name,
 					SourceObj:   typeSpec,
 					Filename:    filename,
