@@ -20,16 +20,14 @@ import (
 func prebuild(ctx context.Context, d *typcore.ProjectDescriptor) (err error) {
 	var (
 		constructors Constructors
-		filenames    []string
-		dirs         []string
+		projInfo     ProjectInfo
 		events       walker.DeclEvents
 	)
-	if dirs, filenames, err = projectFiles(typenv.Layout.App); err != nil {
+	if projInfo, err = readProject(typenv.Layout.App); err != nil {
 		log.Fatal(err.Error())
 	}
 	log.Info("Walk the project")
-	w := walker.New(filenames)
-	if events, err = w.Walk(); err != nil {
+	if events, err = walker.Walk(projInfo.Files); err != nil {
 		return
 	}
 	if err = events.Send(
@@ -39,7 +37,7 @@ func prebuild(ctx context.Context, d *typcore.ProjectDescriptor) (err error) {
 	}
 	// TODO: generate imports
 	log.Info("Generate constructors")
-	if err = generateConstructor(ctx, d, typenv.GeneratedConstructor, constructors, dirs); err != nil {
+	if err = generateConstructor(ctx, d, typenv.GeneratedConstructor, constructors, projInfo.Dirs); err != nil {
 		return
 	}
 	return

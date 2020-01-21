@@ -4,39 +4,24 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
-	"strings"
 )
 
-// Walker responsible to walk the filenames
-type Walker struct {
-	filenames []string
-}
-
-// New return new constructor of walker
-func New(filenames []string) *Walker {
-	return &Walker{
-		filenames: filenames,
-	}
-}
-
 // Walk the source code to get autowire and automock
-func (w *Walker) Walk() (events DeclEvents, err error) {
+func Walk(filenames []string) (events DeclEvents, err error) {
 	fset := token.NewFileSet() // positions are relative to fset
-	for _, filename := range w.filenames {
-		if isWalkTarget(filename) {
-			var f *ast.File
-			if f, err = parser.ParseFile(fset, filename, nil, parser.ParseComments); err != nil {
-				return
-			}
-			for _, decl := range f.Decls {
-				events.Append(w.declaration(filename, f, decl)...)
-			}
+	for _, filename := range filenames {
+		var f *ast.File
+		if f, err = parser.ParseFile(fset, filename, nil, parser.ParseComments); err != nil {
+			return
+		}
+		for _, decl := range f.Decls {
+			events.Append(declaration(filename, f, decl)...)
 		}
 	}
 	return
 }
 
-func (w *Walker) declaration(filename string, f *ast.File, decl ast.Decl) (events DeclEvents) {
+func declaration(filename string, f *ast.File, decl ast.Decl) (events DeclEvents) {
 	switch decl.(type) {
 	case *ast.FuncDecl:
 		var (
@@ -89,9 +74,4 @@ func (w *Walker) declaration(filename string, f *ast.File, decl ast.Decl) (event
 		}
 	}
 	return
-}
-
-func isWalkTarget(filename string) bool { //  TODO: move out from walker package
-	return strings.HasSuffix(filename, ".go") &&
-		!strings.HasSuffix(filename, "_test.go")
 }

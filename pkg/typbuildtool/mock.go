@@ -25,19 +25,18 @@ func cmdMock(d *typcore.ProjectDescriptor) *cli.Command {
 		},
 		Action: func(c *cli.Context) (err error) {
 			var (
-				targets   Automocks
-				mockgen   string
-				errs      common.Errors
-				filenames []string
-				events    walker.DeclEvents
-				ctx       = c.Context
+				targets  Automocks
+				mockgen  string
+				errs     common.Errors
+				projInfo ProjectInfo
+				events   walker.DeclEvents
+				ctx      = c.Context
 			)
-			if _, filenames, err = projectFiles(typenv.Layout.App); err != nil {
+			if projInfo, err = readProject(typenv.Layout.App); err != nil {
 				log.Fatal(err.Error())
 			}
-			w := walker.New(filenames)
 			log.Info("Walk the project")
-			if events, err = w.Walk(); err != nil {
+			if events, err = walker.Walk(projInfo.Files); err != nil {
 				return
 			}
 			if err = events.Send(
