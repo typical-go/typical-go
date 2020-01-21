@@ -16,7 +16,6 @@ import (
 )
 
 type StandardPrebuilder struct {
-	constructors []string
 }
 
 type PrebuildContext struct {
@@ -28,23 +27,21 @@ type PrebuildContext struct {
 
 // Prebuild process
 func (a *StandardPrebuilder) Prebuild(pc *PrebuildContext) (err error) {
-	if err = pc.EachAnnotation("constructor", walker.FunctionType, a.OnAnnotation); err != nil {
+	var constructors common.Strings
+	if err = pc.EachAnnotation("constructor", walker.FunctionType, func(decl *walker.Declaration, ann *walker.Annotation) (err error) {
+		constructors.Append(fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
+		return
+	}); err != nil {
 		return
 	}
 	log.Info("Generate constructors")
-	if err = a.generateConstructor(typenv.GeneratedConstructor, pc); err != nil {
+	if err = a.generateConstructor(typenv.GeneratedConstructor, pc, constructors); err != nil {
 		return
 	}
 	return
 }
 
-// OnAnnotation to handle annotation event
-func (a *StandardPrebuilder) OnAnnotation(decl *walker.Declaration, ann *walker.Annotation) (err error) {
-	a.constructors = append(a.constructors, fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
-	return
-}
-
-func (a *StandardPrebuilder) generateConstructor(target string, pc *PrebuildContext) (err error) {
+func (a *StandardPrebuilder) generateConstructor(target string, pc *PrebuildContext, constructors common.Strings) (err error) {
 	defer common.ElapsedTimeFn("Generate constructor")()
 	var (
 		imports common.Strings
@@ -75,7 +72,7 @@ func init() {
 		Constructors []string
 	}{
 		Imports:      imports.Slice(),
-		Constructors: a.constructors,
+		Constructors: constructors,
 	}).Run(); err != nil {
 		return
 	}

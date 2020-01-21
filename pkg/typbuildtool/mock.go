@@ -10,8 +10,8 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typcore/walker"
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typcore/walker"
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/urfave/cli/v2"
 )
@@ -25,7 +25,7 @@ func cmdMock(d *typcore.ProjectDescriptor) *cli.Command {
 		},
 		Action: func(c *cli.Context) (err error) {
 			var (
-				targets  Automocks
+				targets  common.Strings
 				mockgen  string
 				errs     common.Errors
 				projInfo typcore.ProjectInfo
@@ -39,7 +39,10 @@ func cmdMock(d *typcore.ProjectDescriptor) *cli.Command {
 			if events, err = walker.Walk(projInfo.Files); err != nil {
 				return
 			}
-			if err = events.EachAnnotation("mock", walker.InterfaceType, targets.OnAnnotation); err != nil {
+			if err = events.EachAnnotation("mock", walker.InterfaceType, func(decl *walker.Declaration, ann *walker.Annotation) (err error) {
+				targets.Append(decl.Filename)
+				return
+			}); err != nil {
 				return
 			}
 			targets = append(targets, d.MockTargets...)
