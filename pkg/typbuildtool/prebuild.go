@@ -13,7 +13,7 @@ import (
 func prebuild(ctx context.Context, d *typcore.ProjectDescriptor) (err error) {
 	var (
 		stdPrebuilder typcore.StandardPrebuilder
-		projInfo      typcore.ProjectInfo
+		projInfo      *typcore.ProjectInfo
 		events        walker.Declarations
 	)
 	if projInfo, err = typcore.ReadProject(typenv.Layout.App); err != nil {

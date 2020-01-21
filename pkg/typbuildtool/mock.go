@@ -28,7 +28,7 @@ func cmdMock(d *typcore.ProjectDescriptor) *cli.Command {
 				targets  common.Strings
 				mockgen  string
 				errs     common.Errors
-				projInfo typcore.ProjectInfo
+				projInfo *typcore.ProjectInfo
 				events   walker.Declarations
 				ctx      = c.Context
 			)

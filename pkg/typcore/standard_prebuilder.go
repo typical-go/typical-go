@@ -15,15 +15,16 @@ import (
 	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
-type StandardPrebuilder struct {
-}
-
+// PrebuildContext is context of prebuild
 type PrebuildContext struct {
 	context.Context
 	*ProjectDescriptor
-	ProjectInfo
+	*ProjectInfo
 	walker.Declarations
 }
+
+// StandardPrebuilder is standard prebuilder
+type StandardPrebuilder struct{}
 
 // Prebuild process
 func (a *StandardPrebuilder) Prebuild(pc *PrebuildContext) (err error) {
