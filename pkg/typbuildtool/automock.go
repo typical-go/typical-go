@@ -1,7 +1,7 @@
 package typbuildtool
 
 import (
-	"github.com/typical-go/typical-go/pkg/typbuildtool/walker"
+	"github.com/typical-go/typical-go/pkg/typcore/walker"
 )
 
 // Automocks is list of filename to be mocking by mockgen

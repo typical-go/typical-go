@@ -10,7 +10,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typbuildtool/walker"
+	"github.com/typical-go/typical-go/pkg/typcore/walker"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/urfave/cli/v2"

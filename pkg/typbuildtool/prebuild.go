@@ -6,7 +6,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/typbuildtool/walker"
+	"github.com/typical-go/typical-go/pkg/typcore/walker"
 	"github.com/typical-go/typical-go/pkg/typenv"
 )
 

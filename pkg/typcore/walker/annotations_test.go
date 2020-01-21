@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typbuildtool/walker"
+	"github.com/typical-go/typical-go/pkg/typcore/walker"
 )
 
 func TestAnnotations_Contain(t *testing.T) {
