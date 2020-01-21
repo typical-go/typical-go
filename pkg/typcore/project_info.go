@@ -1,4 +1,4 @@
-package typbuildtool
+package typcore
 
 import (
 	"os"
@@ -33,7 +33,8 @@ func (p *ProjectInfo) Walk(path string, info os.FileInfo, err error) error {
 	return nil
 }
 
-func readProject(root string) (proj ProjectInfo, err error) {
+// ReadProject to read the project to get Project Info
+func ReadProject(root string) (proj ProjectInfo, err error) {
 	proj.AppendDir(root)
 	err = filepath.Walk(root, proj.Walk)
 	return

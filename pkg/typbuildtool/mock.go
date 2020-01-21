@@ -28,11 +28,11 @@ func cmdMock(d *typcore.ProjectDescriptor) *cli.Command {
 				targets  Automocks
 				mockgen  string
 				errs     common.Errors
-				projInfo ProjectInfo
+				projInfo typcore.ProjectInfo
 				events   walker.DeclEvents
 				ctx      = c.Context
 			)
-			if projInfo, err = readProject(typenv.Layout.App); err != nil {
+			if projInfo, err = typcore.ReadProject(typenv.Layout.App); err != nil {
 				log.Fatal(err.Error())
 			}
 			log.Info("Walk the project")
