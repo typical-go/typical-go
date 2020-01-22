@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/urfave/cli/v2"
 )
 
 // ProjectDescriptor describe the project
@@ -22,6 +23,11 @@ type ProjectDescriptor struct {
 
 	MockTargets  common.Strings // TODO: remove this
 	constructors common.Interfaces
+}
+
+// BuildCommander responsible to return commands for Build-Tool
+type BuildCommander interface {
+	BuildCommands(c *BuildContext) []*cli.Command
 }
 
 // Validate context

@@ -1,7 +1,6 @@
 package typcore
 
 import (
-	"context"
 	"fmt"
 	"go/build"
 	"os"
@@ -14,14 +13,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore/walker"
 	"github.com/typical-go/typical-go/pkg/typenv"
 )
-
-// PrebuildContext is context of prebuild
-type PrebuildContext struct {
-	context.Context
-	*ProjectDescriptor
-	*ProjectInfo
-	walker.Declarations
-}
 
 // StandardPrebuilder is standard prebuilder
 type StandardPrebuilder struct{}

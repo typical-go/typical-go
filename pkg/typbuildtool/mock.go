@@ -25,21 +25,16 @@ func cmdMock(d *typcore.ProjectDescriptor) *cli.Command {
 		},
 		Action: func(c *cli.Context) (err error) {
 			var (
-				targets  common.Strings
-				mockgen  string
-				errs     common.Errors
-				projInfo *typcore.ProjectInfo
-				events   walker.Declarations
-				ctx      = c.Context
+				targets common.Strings
+				mockgen string
+				errs    common.Errors
+				pc      *typcore.PrebuildContext
+				ctx     = c.Context
 			)
-			if projInfo, err = typcore.ReadProject(typenv.Layout.App); err != nil {
-				log.Fatal(err.Error())
-			}
-			log.Info("Walk the project")
-			if events, err = walker.Walk(projInfo.Files); err != nil {
+			if pc, err = typcore.CreatePrebuildContext(ctx, d); err != nil {
 				return
 			}
-			if err = events.EachAnnotation("mock", walker.InterfaceType, func(decl *walker.Declaration, ann *walker.Annotation) (err error) {
+			if err = pc.EachAnnotation("mock", walker.InterfaceType, func(decl *walker.Declaration, ann *walker.Annotation) (err error) {
 				targets.Append(decl.Filename)
 				return
 			}); err != nil {

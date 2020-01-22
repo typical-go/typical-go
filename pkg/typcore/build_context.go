@@ -8,11 +8,6 @@ import (
 	"go.uber.org/dig"
 )
 
-// BuildCommander responsible to return commands for Build-Tool
-type BuildCommander interface {
-	BuildCommands(c *BuildContext) []*cli.Command
-}
-
 // BuildContext is context for build tool
 type BuildContext struct {
 	*ProjectDescriptor

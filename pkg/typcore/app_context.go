@@ -7,11 +7,6 @@ import (
 	"go.uber.org/dig"
 )
 
-// AppCommander responsible to return commands for App
-type AppCommander interface {
-	AppCommands(*AppContext) []*cli.Command
-}
-
 // AppContext is context of app
 type AppContext struct {
 	*ProjectDescriptor
