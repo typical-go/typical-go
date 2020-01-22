@@ -2,22 +2,71 @@ package typcore
 
 import (
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/common"
-
 	"github.com/urfave/cli/v2"
 	"go.uber.org/dig"
+
+	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/typcore/walker"
+	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
-// BuildContext is context for build tool
+// BuildContext is context of prebuild
 type BuildContext struct {
 	*ProjectDescriptor
+	*ProjectInfo
+	Declarations []*walker.Declaration
 }
 
-// NewBuildContext to return new instance of BuildContext
-func NewBuildContext(desc *ProjectDescriptor) *BuildContext {
-	return &BuildContext{
-		ProjectDescriptor: desc,
+// DeclFunc to handle declaration
+type DeclFunc func(*walker.Declaration) error
+
+// AnnotationFunc to handle annotation
+type AnnotationFunc func(decl *walker.Declaration, ann *walker.Annotation) error
+
+// CreateBuildContext to create PrebuildContext
+func CreateBuildContext(d *ProjectDescriptor) (pc *BuildContext, err error) {
+	var (
+		projInfo     *ProjectInfo
+		declarations []*walker.Declaration
+	)
+	if projInfo, err = ReadProject(typenv.Layout.App); err != nil {
+		return
 	}
+	if declarations, err = walker.Walk(projInfo.Files); err != nil {
+		return
+	}
+	return &BuildContext{
+		ProjectDescriptor: d,
+		Declarations:      declarations,
+		ProjectInfo:       projInfo,
+	}, nil
+}
+
+// EachDecl to handle each declaration
+func (b *BuildContext) EachDecl(fn DeclFunc) (err error) {
+	for _, decl := range b.Declarations {
+		if err = fn(decl); err != nil {
+			return
+		}
+	}
+	return
+}
+
+// EachAnnotation to handle each annotation
+func (b *BuildContext) EachAnnotation(name string, declType walker.DeclType, fn AnnotationFunc) (err error) {
+	return b.EachDecl(func(decl *walker.Declaration) (err error) {
+		annotation := decl.Annotations.Get(name)
+		if annotation != nil {
+			if decl.Type == declType {
+				if err = fn(decl, annotation); err != nil {
+					return
+				}
+			} else {
+				log.Warnf("[%s] has no effect to %s:%s", name, declType, decl.SourceName)
+			}
+		}
+		return
+	})
 }
 
 // Invoke function

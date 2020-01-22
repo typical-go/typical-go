@@ -10,7 +10,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func cmdRun(d *typcore.ProjectDescriptor) *cli.Command {
+func cmdRun(bc *typcore.BuildContext) *cli.Command {
 	return &cli.Command{
 		Name:            "run",
 		Aliases:         []string{"r"},
@@ -18,7 +18,7 @@ func cmdRun(d *typcore.ProjectDescriptor) *cli.Command {
 		SkipFlagParsing: true,
 		Action: func(c *cli.Context) (err error) {
 			ctx := c.Context
-			if err = buildProject(ctx, d); err != nil {
+			if err = buildProject(ctx, bc); err != nil {
 				return
 			}
 			log.Info("Run the application")

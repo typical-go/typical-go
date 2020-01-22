@@ -1,6 +1,7 @@
 package typcore
 
 import (
+	"context"
 	"fmt"
 	"go/build"
 	"os"
@@ -18,28 +19,27 @@ import (
 type StandardPrebuilder struct{}
 
 // Prebuild process
-func (a *StandardPrebuilder) Prebuild(pc *PrebuildContext) (err error) {
+func (a *StandardPrebuilder) Prebuild(ctx context.Context, bc *BuildContext) (err error) {
 	var constructors common.Strings
-	if err = pc.EachAnnotation("constructor", walker.FunctionType, func(decl *walker.Declaration, ann *walker.Annotation) (err error) {
+	if err = bc.EachAnnotation("constructor", walker.FunctionType, func(decl *walker.Declaration, ann *walker.Annotation) (err error) {
 		constructors.Append(fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
 		return
 	}); err != nil {
 		return
 	}
 	log.Info("Generate constructors")
-	if err = a.generateConstructor(typenv.GeneratedConstructor, pc, constructors); err != nil {
+	if err = a.generateConstructor(ctx, typenv.GeneratedConstructor, bc, constructors); err != nil {
 		return
 	}
 	return
 }
 
-func (a *StandardPrebuilder) generateConstructor(target string, pc *PrebuildContext, constructors common.Strings) (err error) {
+func (a *StandardPrebuilder) generateConstructor(ctx context.Context, target string, bc *BuildContext, constructors common.Strings) (err error) {
 	defer common.ElapsedTimeFn("Generate constructor")()
 	var (
 		imports common.Strings
-		pkg     = pc.Package
-		dirs    = pc.Dirs
-		ctx     = pc.Context
+		pkg     = bc.Package
+		dirs    = bc.Dirs
 	)
 	imports.Append(pkg + "/typical")
 	for _, dir := range dirs {

@@ -16,7 +16,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func cmdMock(d *typcore.ProjectDescriptor) *cli.Command {
+func cmdMock(bc *typcore.BuildContext) *cli.Command {
 	return &cli.Command{
 		Name:  "mock",
 		Usage: "Generate mock class",
@@ -28,19 +28,15 @@ func cmdMock(d *typcore.ProjectDescriptor) *cli.Command {
 				targets common.Strings
 				mockgen string
 				errs    common.Errors
-				pc      *typcore.PrebuildContext
 				ctx     = c.Context
 			)
-			if pc, err = typcore.CreatePrebuildContext(ctx, d); err != nil {
-				return
-			}
-			if err = pc.EachAnnotation("mock", walker.InterfaceType, func(decl *walker.Declaration, ann *walker.Annotation) (err error) {
+			if err = bc.EachAnnotation("mock", walker.InterfaceType, func(decl *walker.Declaration, ann *walker.Annotation) (err error) {
 				targets.Append(decl.Filename)
 				return
 			}); err != nil {
 				return
 			}
-			targets = append(targets, d.MockTargets...)
+			targets = append(targets, bc.MockTargets...)
 			if mockgen, err = installMockgen(ctx); err != nil {
 				return
 			}

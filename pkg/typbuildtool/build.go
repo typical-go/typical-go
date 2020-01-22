@@ -13,21 +13,23 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func cmdBuild(d *typcore.ProjectDescriptor) *cli.Command {
+func cmdBuild(bc *typcore.BuildContext) *cli.Command {
 	return &cli.Command{
 		Name:    "build",
 		Aliases: []string{"b"},
 		Usage:   "Build the binary",
 		Action: func(c *cli.Context) (err error) {
-			ctx := c.Context
 			log.Info("Build the application")
-			return buildProject(ctx, d)
+			return buildProject(c.Context, bc)
 		},
 	}
 }
 
-func buildProject(ctx context.Context, d *typcore.ProjectDescriptor) (err error) {
-	if err = prebuild(ctx, d); err != nil {
+func buildProject(ctx context.Context, bc *typcore.BuildContext) (err error) {
+	var (
+		stdPrebuilder typcore.StandardPrebuilder
+	)
+	if err = stdPrebuilder.Prebuild(ctx, bc); err != nil {
 		return
 	}
 	cmd := exec.CommandContext(ctx,
