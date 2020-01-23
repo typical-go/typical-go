@@ -67,7 +67,7 @@ func (a *App) WithCommand(commands ...AppCommander) *App {
 // WithDependency to set dependency
 func (a *App) WithDependency(dependencies ...Dependency) *App {
 	for _, dep := range dependencies {
-		a.WithPrepare(dep.(Preparer))
+		a.WithProvide(dep.(Provider))
 		a.WithDestroy(dep.(Destroyer))
 	}
 	return a
