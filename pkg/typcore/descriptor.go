@@ -32,7 +32,9 @@ func (c *Descriptor) Validate() (err error) {
 	if c.Version == "" {
 		c.Version = "0.0.1"
 	}
-	if c.Build != nil {
+	if c.Build == nil {
+		c.Build = NewBuild()
+	} else {
 		if err = c.Build.Validate(); err != nil {
 			return fmt.Errorf("Context: %w", err)
 		}

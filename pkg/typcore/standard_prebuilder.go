@@ -18,6 +18,11 @@ import (
 // StandardPrebuilder is standard prebuilder
 type StandardPrebuilder struct{}
 
+// NewStandardPrebuilder to return new instance of StandardPrebuilder
+func NewStandardPrebuilder() *StandardPrebuilder {
+	return &StandardPrebuilder{}
+}
+
 // Prebuild process
 func (a *StandardPrebuilder) Prebuild(ctx context.Context, bc *BuildContext) (err error) {
 	var constructors common.Strings

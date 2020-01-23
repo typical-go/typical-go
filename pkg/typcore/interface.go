@@ -1,6 +1,10 @@
 package typcore
 
-import "github.com/urfave/cli/v2"
+import (
+	"context"
+
+	"github.com/urfave/cli/v2"
+)
 
 // AppInterface is interface of app
 type AppInterface interface {
@@ -14,6 +18,7 @@ type AppInterface interface {
 // BuildInterface is interface of build
 type BuildInterface interface {
 	BuildCommander
+	Prebuilder
 	Validate() (err error)
 	Releaser() Releaser
 }
@@ -35,6 +40,11 @@ type Preparer interface{ Prepare() []interface{} }
 
 // Destroyer responsible to destruct dependency
 type Destroyer interface{ Destroy() []interface{} }
+
+// Prebuilder responsible to prebuild task
+type Prebuilder interface {
+	Prebuild(ctx context.Context, bc *BuildContext) error
+}
 
 // AppCommander responsible to return commands for App
 type AppCommander interface {

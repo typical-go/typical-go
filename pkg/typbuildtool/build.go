@@ -26,11 +26,10 @@ func cmdBuild(bc *typcore.BuildContext) *cli.Command {
 }
 
 func buildProject(ctx context.Context, bc *typcore.BuildContext) (err error) {
-	var (
-		stdPrebuilder typcore.StandardPrebuilder
-	)
-	if err = stdPrebuilder.Prebuild(ctx, bc); err != nil {
-		return
+	if bc.Build != nil {
+		if err = bc.Build.Prebuild(ctx, bc); err != nil {
+			return
+		}
 	}
 	cmd := exec.CommandContext(ctx,
 		"go",
