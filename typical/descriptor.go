@@ -6,22 +6,22 @@ import (
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
+// Descriptor of typical-go
+var Descriptor = typcore.Descriptor{
+	Name:    "Typical-Go",
+	Version: app.Version,
+	Package: "github.com/typical-go/typical-go",
+
+	App: typcore.NewApp(application),
+
+	Build: typcore.NewBuild().
+		WithRelease(typrls.New().
+			WithPublisher(
+				typrls.GithubPublisher("typical-go", "typical-go"),
+			),
+		),
+}
+
 var (
 	application = app.New()
-
-	// Descriptor of project
-	Descriptor = typcore.Descriptor{
-		Name:    "Typical-Go",
-		Version: app.Version,
-		Package: "github.com/typical-go/typical-go",
-
-		App: typcore.NewApp(application),
-
-		Build: typcore.NewBuild().
-			WithRelease(typrls.New().
-				WithPublisher(
-					typrls.GithubPublisher("typical-go", "typical-go"),
-				),
-			),
-	}
 )
