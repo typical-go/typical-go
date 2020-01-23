@@ -21,7 +21,6 @@ type ProjectDescriptor struct {
 
 	Releaser Releaser
 
-	MockTargets  common.Strings // TODO: remove this
 	constructors common.Interfaces
 }
 

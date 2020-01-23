@@ -36,7 +36,6 @@ func cmdMock(bc *typcore.BuildContext) *cli.Command {
 			}); err != nil {
 				return
 			}
-			targets = append(targets, bc.MockTargets...)
 			if mockgen, err = installMockgen(ctx); err != nil {
 				return
 			}
