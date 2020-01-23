@@ -11,6 +11,12 @@ type AppInterface interface {
 	AppCommander
 }
 
+// Dependency of app
+type Dependency interface {
+	Provider
+	Destroyer
+}
+
 // EntryPointer responsible to handle entry point
 type EntryPointer interface{ EntryPoint() interface{} }
 

@@ -1,6 +1,8 @@
 package typcore
 
-import "github.com/urfave/cli/v2"
+import (
+	"github.com/urfave/cli/v2"
+)
 
 // App is application
 type App struct {
@@ -43,6 +45,15 @@ func (a *App) WithDestroy(destroys ...Destroyer) *App {
 // WithCommand to set commanders
 func (a *App) WithCommand(commands ...AppCommander) *App {
 	a.commands = append(a.commands, commands...)
+	return a
+}
+
+// WithDependency to set dependency
+func (a *App) WithDependency(dependencies ...Dependency) *App {
+	for _, dep := range dependencies {
+		a.WithPrepare(dep.(Preparer))
+		a.WithDestroy(dep.(Destroyer))
+	}
 	return a
 }
 
