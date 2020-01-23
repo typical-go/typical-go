@@ -9,7 +9,7 @@ import (
 )
 
 func TestContext_Validate_DefaultValue(t *testing.T) {
-	desc := &typcore.ProjectDescriptor{
+	desc := &typcore.Descriptor{
 		Name:    "some-name",
 		Package: "some-package",
 	}
@@ -19,19 +19,19 @@ func TestContext_Validate_DefaultValue(t *testing.T) {
 
 func TestContext_Validate(t *testing.T) {
 	testcases := []struct {
-		typcore.ProjectDescriptor
+		typcore.Descriptor
 		errMsg string
 	}{
 		{
-			typcore.ProjectDescriptor{Package: "some-package"},
+			typcore.Descriptor{Package: "some-package"},
 			"Context: Name can't be empty",
 		},
 		{
-			typcore.ProjectDescriptor{Name: "some-name"},
+			typcore.Descriptor{Name: "some-name"},
 			"Context: Package can't be empty",
 		},
 		{
-			typcore.ProjectDescriptor{
+			typcore.Descriptor{
 				Name:    "some-name",
 				Package: "some-package",
 				Build:   typcore.NewBuild().WithRelease(typrls.New().WithTarget("linuxamd64")),

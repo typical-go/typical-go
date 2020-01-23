@@ -9,13 +9,13 @@ import (
 
 // AppContext is context of app
 type AppContext struct {
-	*ProjectDescriptor
+	*Descriptor
 }
 
 // NewAppContext return new instance of AppContext
-func NewAppContext(desc *ProjectDescriptor) *AppContext {
+func NewAppContext(desc *Descriptor) *AppContext {
 	return &AppContext{
-		ProjectDescriptor: desc,
+		Descriptor: desc,
 	}
 }
 

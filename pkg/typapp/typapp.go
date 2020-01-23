@@ -11,7 +11,7 @@ import (
 )
 
 // Run the application
-func Run(d *typcore.ProjectDescriptor) {
+func Run(d *typcore.Descriptor) {
 	appCtx := typcore.NewAppContext(d)
 	app := cli.NewApp()
 	app.Name = d.Name

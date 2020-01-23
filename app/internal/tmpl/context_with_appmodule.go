@@ -13,7 +13,7 @@ var (
 	application = app.New()
 	
 	// Descriptor of {{.Name}}
-	Descriptor = typcore.ProjectDescriptor{
+	Descriptor = typcore.Descriptor{
 		Name:      "{{.Name}}",
 		Version:   "0.0.1",
 		Package:   "{{.Pkg}}",

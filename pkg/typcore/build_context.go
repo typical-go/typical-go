@@ -12,7 +12,7 @@ import (
 
 // BuildContext is context of prebuild
 type BuildContext struct {
-	*ProjectDescriptor
+	*Descriptor
 	*ProjectInfo
 	Declarations []*walker.Declaration
 }
@@ -24,7 +24,7 @@ type DeclFunc func(*walker.Declaration) error
 type AnnotationFunc func(decl *walker.Declaration, ann *walker.Annotation) error
 
 // CreateBuildContext to create PrebuildContext
-func CreateBuildContext(d *ProjectDescriptor) (pc *BuildContext, err error) {
+func CreateBuildContext(d *Descriptor) (pc *BuildContext, err error) {
 	var (
 		projInfo     *ProjectInfo
 		declarations []*walker.Declaration
@@ -36,7 +36,7 @@ func CreateBuildContext(d *ProjectDescriptor) (pc *BuildContext, err error) {
 		return
 	}
 	return &BuildContext{
-		ProjectDescriptor: d,
+		Descriptor: d,
 		Declarations:      declarations,
 		ProjectInfo:       projInfo,
 	}, nil

@@ -14,7 +14,7 @@ const (
 )
 
 // Run the build tool
-func Run(d *typcore.ProjectDescriptor) {
+func Run(d *typcore.Descriptor) {
 	var (
 		f   *os.File
 		err error

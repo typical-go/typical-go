@@ -58,7 +58,7 @@ func (i constructproj) Run() (err error) {
 	return runn.Run(
 		i.appPackage,
 		i.cmdPackage,
-		i.projectDescriptor,
+		i.descriptor,
 		i.ignoreFile,
 		wrapper(i.Name, i.Pkg),
 		stdrun.NewGoFmt(i.ctx, "./..."),
@@ -80,7 +80,7 @@ func (i constructproj) appPackage() error {
 	return runn.Run(stmts...)
 }
 
-func (i constructproj) projectDescriptor() error {
+func (i constructproj) descriptor() error {
 	var writeStmt interface{}
 	path := "typical/descriptor.go"
 	if i.blank {

@@ -7,8 +7,8 @@ import (
 	"github.com/typical-go/typical-go/pkg/common"
 )
 
-// ProjectDescriptor describe the project
-type ProjectDescriptor struct {
+// Descriptor describe the project
+type Descriptor struct {
 	Name        string
 	Description string
 	Package     string
@@ -22,7 +22,7 @@ type ProjectDescriptor struct {
 }
 
 // Validate context
-func (c *ProjectDescriptor) Validate() (err error) {
+func (c *Descriptor) Validate() (err error) {
 	if c.Name == "" {
 		return errors.New("Context: Name can't be empty")
 	}
@@ -41,11 +41,11 @@ func (c *ProjectDescriptor) Validate() (err error) {
 }
 
 // AppendConstructor to append constructor
-func (c *ProjectDescriptor) AppendConstructor(constructors ...interface{}) {
+func (c *Descriptor) AppendConstructor(constructors ...interface{}) {
 	c.constructors.Append(constructors...)
 }
 
 // Constructors return contruction functions
-func (c *ProjectDescriptor) Constructors() []interface{} {
+func (c *Descriptor) Constructors() []interface{} {
 	return c.constructors.Slice()
 }
