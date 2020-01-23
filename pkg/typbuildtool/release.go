@@ -23,6 +23,9 @@ func cmdRelease(bc *typcore.BuildContext) *cli.Command {
 			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 		},
 		Action: func(c *cli.Context) (err error) {
+			if bc.Build == nil || bc.Build.Releaser() == nil {
+				return errors.New("Releaser is missing")
+			}
 			var (
 				tag        string
 				latest     string
@@ -50,7 +53,7 @@ func cmdRelease(bc *typcore.BuildContext) *cli.Command {
 				return fmt.Errorf("Failed git fetch: %w", err)
 			}
 			defer git.Fetch(ctx)
-			if tag, err = bc.Releaser.Tag(ctx, bc.Version, alpha); err != nil {
+			if tag, err = bc.Build.Releaser().Tag(ctx, bc.Version, alpha); err != nil {
 				return fmt.Errorf("Failed generate tag: %w", err)
 			}
 			if status := git.Status(ctx); status != "" && !force {
@@ -62,11 +65,11 @@ func cmdRelease(bc *typcore.BuildContext) *cli.Command {
 			if changeLogs = git.Logs(ctx, latest); len(changeLogs) < 1 && !force {
 				return errors.New("No change to be released")
 			}
-			if binaries, err = bc.Releaser.BuildRelease(ctx, name, tag, changeLogs, alpha); err != nil {
+			if binaries, err = bc.Build.Releaser().BuildRelease(ctx, name, tag, changeLogs, alpha); err != nil {
 				return fmt.Errorf("Failed build release: %w", err)
 			}
 			if !noPublish {
-				if err = bc.Releaser.Publish(ctx, name, tag, changeLogs, binaries, alpha); err != nil {
+				if err = bc.Build.Releaser().Publish(ctx, name, tag, changeLogs, binaries, alpha); err != nil {
 					return fmt.Errorf("Failed publish: %w", err)
 				}
 			}

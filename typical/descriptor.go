@@ -20,9 +20,11 @@ var (
 				application,
 			),
 
-		Releaser: typrls.New().
-			WithPublisher(
-				typrls.GithubPublisher("typical-go", "typical-go"),
+		Build: typcore.NewBuild().
+			WithRelease(typrls.New().
+				WithPublisher(
+					typrls.GithubPublisher("typical-go", "typical-go"),
+				),
 			),
 	}
 )

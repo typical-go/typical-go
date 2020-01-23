@@ -59,14 +59,10 @@ func BuildCommands(bc *typcore.BuildContext) (cmds []*cli.Command) {
 		cmdRun(bc),
 		cmdTest(),
 		cmdMock(bc),
+		cmdRelease(bc),
 	}
-	if bc.Releaser != nil {
-		cmds = append(cmds, cmdRelease(bc))
-	}
-	for _, commander := range bc.BuildCommands {
-		for _, cmd := range commander.BuildCommands(bc) {
-			cmds = append(cmds, cmd)
-		}
+	if bc.Build != nil {
+		cmds = append(cmds, bc.Build.BuildCommands(bc)...)
 	}
 	return
 }

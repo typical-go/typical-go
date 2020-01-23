@@ -11,6 +11,13 @@ type AppInterface interface {
 	AppCommander
 }
 
+// BuildInterface is interface of build
+type BuildInterface interface {
+	BuildCommander
+	Validate() (err error)
+	Releaser() Releaser
+}
+
 // Dependency of app
 type Dependency interface {
 	Provider
@@ -32,4 +39,9 @@ type Destroyer interface{ Destroy() []interface{} }
 // AppCommander responsible to return commands for App
 type AppCommander interface {
 	AppCommands(*AppContext) []*cli.Command
+}
+
+// BuildCommander responsible to return commands for Build-Tool
+type BuildCommander interface {
+	BuildCommands(c *BuildContext) []*cli.Command
 }

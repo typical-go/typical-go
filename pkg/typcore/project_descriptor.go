@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/urfave/cli/v2"
 )
 
 // ProjectDescriptor describe the project
@@ -16,17 +15,10 @@ type ProjectDescriptor struct {
 	Version     string
 
 	App           AppInterface
-	BuildCommands []BuildCommander
+	Build         BuildInterface
 	Configuration ConfigurationInterface
 
-	Releaser Releaser
-
 	constructors common.Interfaces
-}
-
-// BuildCommander responsible to return commands for Build-Tool
-type BuildCommander interface {
-	BuildCommands(c *BuildContext) []*cli.Command
 }
 
 // Validate context
@@ -40,9 +32,9 @@ func (c *ProjectDescriptor) Validate() (err error) {
 	if c.Version == "" {
 		c.Version = "0.0.1"
 	}
-	if c.Releaser != nil {
-		if err = c.Releaser.Validate(); err != nil {
-			return fmt.Errorf("Context: Releaser: %w", err)
+	if c.Build != nil {
+		if err = c.Build.Validate(); err != nil {
+			return fmt.Errorf("Context: Build: %w", err)
 		}
 	}
 	return
