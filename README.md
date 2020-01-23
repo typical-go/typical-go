@@ -25,20 +25,6 @@ go get -u github.com/typical-go/typical-go/cmd/typical-go
 typical-go new [PACKAGE]
 ```
 
-### New Module
-
-```bash
-typical-go module [MODULE_NAME]
-typical-go module [MODULE_NAME] -path=[PATH]
-```
-
-### Create Wrapper
-
-```bash
-typical-go wrapper
-typical-go wrapper -path=[Path]
-```
-
 
 ## Examples
 
