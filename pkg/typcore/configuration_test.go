@@ -8,8 +8,13 @@ import (
 )
 
 func TestNewConfiguration(t *testing.T) {
-	require.IsType(t, &typcore.DefaultConfigLoader{},
-		typcore.NewConfiguration().Loader())
+	t.Run("New configuration instance using default config loader", func(t *testing.T) {
+		require.IsType(t, &typcore.DefaultConfigLoader{},
+			typcore.NewConfiguration().Loader())
+	})
+	t.Run("Configuration must implement of ConfigurationInterface", func(t *testing.T) {
+		var _ typcore.ConfigurationInterface = typcore.NewConfiguration()
+	})
 }
 
 func TestConfiguration(t *testing.T) {

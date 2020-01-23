@@ -17,7 +17,7 @@ type ProjectDescriptor struct {
 
 	App           AppInterface
 	BuildCommands []BuildCommander
-	Configuration *Configuration
+	Configuration ConfigurationInterface
 
 	Releaser Releaser
 
