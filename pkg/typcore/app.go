@@ -7,15 +7,31 @@ import (
 // App is application
 type App struct {
 	entryPoint EntryPointer
-	provides   []Provider
-	prepares   []Preparer
-	destroys   []Destroyer
-	commands   []AppCommander
+	providers  []Provider
+	preparers  []Preparer
+	destroyers []Destroyer
+	commanders []AppCommander
 }
 
 // NewApp return new instance of app
-func NewApp() *App {
-	return &App{}
+func NewApp(v interface{}) *App {
+	app := new(App)
+	if entryPoint, ok := v.(EntryPointer); ok {
+		app.entryPoint = entryPoint
+	}
+	if provider, ok := v.(Provider); ok {
+		app.providers = []Provider{provider}
+	}
+	if preparer, ok := v.(Preparer); ok {
+		app.preparers = []Preparer{preparer}
+	}
+	if destroyer, ok := v.(Destroyer); ok {
+		app.destroyers = []Destroyer{destroyer}
+	}
+	if commander, ok := v.(AppCommander); ok {
+		app.commanders = []AppCommander{commander}
+	}
+	return app
 }
 
 // WithEntryPoint to set entry point
@@ -26,25 +42,25 @@ func (a *App) WithEntryPoint(entryPoint EntryPointer) *App {
 
 // WithProvide to set provide
 func (a *App) WithProvide(provides ...Provider) *App {
-	a.provides = append(a.provides, provides...)
+	a.providers = append(a.providers, provides...)
 	return a
 }
 
 // WithPrepare to set prepare
 func (a *App) WithPrepare(prepares ...Preparer) *App {
-	a.prepares = append(a.prepares, prepares...)
+	a.preparers = append(a.preparers, prepares...)
 	return a
 }
 
 // WithDestroy to set destroy
 func (a *App) WithDestroy(destroys ...Destroyer) *App {
-	a.destroys = append(a.destroys, destroys...)
+	a.destroyers = append(a.destroyers, destroys...)
 	return a
 }
 
 // WithCommand to set commanders
 func (a *App) WithCommand(commands ...AppCommander) *App {
-	a.commands = append(a.commands, commands...)
+	a.commanders = append(a.commanders, commands...)
 	return a
 }
 
@@ -67,7 +83,7 @@ func (a *App) EntryPoint() interface{} {
 
 // Provide to return constructors
 func (a *App) Provide() (constructors []interface{}) {
-	for _, provider := range a.provides {
+	for _, provider := range a.providers {
 		constructors = append(constructors, provider.Provide()...)
 	}
 	return
@@ -75,7 +91,7 @@ func (a *App) Provide() (constructors []interface{}) {
 
 //Destroy to return destructor
 func (a *App) Destroy() (destructors []interface{}) {
-	for _, destroyer := range a.destroys {
+	for _, destroyer := range a.destroyers {
 		destructors = append(destructors, destroyer.Destroy()...)
 	}
 	return
@@ -83,7 +99,7 @@ func (a *App) Destroy() (destructors []interface{}) {
 
 // Prepare to return preparations
 func (a *App) Prepare() (preparations []interface{}) {
-	for _, preparer := range a.prepares {
+	for _, preparer := range a.preparers {
 		preparations = append(preparations, preparer.Prepare()...)
 	}
 	return
@@ -91,7 +107,7 @@ func (a *App) Prepare() (preparations []interface{}) {
 
 // AppCommands to return commands
 func (a *App) AppCommands(ac *AppContext) (cmds []*cli.Command) {
-	for _, commander := range a.commands {
+	for _, commander := range a.commanders {
 		cmds = append(cmds, commander.AppCommands(ac)...)
 	}
 	return

@@ -32,11 +32,11 @@ func TestContext_Validate(t *testing.T) {
 		},
 		{
 			typcore.ProjectDescriptor{
-				Name:     "some-name",
-				Package:  "some-package",
-				Releaser: typrls.New().WithTarget("linuxamd64"),
+				Name:    "some-name",
+				Package: "some-package",
+				Build:   typcore.NewBuild().WithRelease(typrls.New().WithTarget("linuxamd64")),
 			},
-			"Context: Releaser: Target: Missing OS: Please make sure 'linuxamd64' using 'OS/ARCH' format",
+			"Context: Build: Releaser: Target: Missing OS: Please make sure 'linuxamd64' using 'OS/ARCH' format",
 		},
 	}
 	for i, tt := range testcases {

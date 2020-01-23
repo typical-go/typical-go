@@ -18,8 +18,7 @@ var (
 		Version:   "0.0.1",
 		Package:   "{{.Pkg}}",
 
-		App: typcore.NewApp().
-			WithEntryPoint(application),
+		App: typcore.NewApp(application),
 		
 		Configuration: typcore.NewConfiguration().
 			WithConfigure(

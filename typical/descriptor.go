@@ -15,10 +15,7 @@ var (
 		Version: app.Version,
 		Package: "github.com/typical-go/typical-go",
 
-		App: typcore.NewApp().
-			WithCommand(
-				application,
-			),
+		App: typcore.NewApp(application),
 
 		Build: typcore.NewBuild().
 			WithRelease(typrls.New().

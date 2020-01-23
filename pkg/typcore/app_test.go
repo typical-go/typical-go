@@ -8,23 +8,35 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func TestApp(t *testing.T) {
-	m := &module{}
-	app := typcore.NewApp().
-		WithEntryPoint(m).
-		WithProvide(m).
-		WithDestroy(m).
-		WithPrepare(m).
-		WithCommand(m)
-	require.Equal(t, "some-entry-point", app.EntryPoint())
-	require.Equal(t, []interface{}{"provide1", "provide2"}, app.Provide())
-	require.Equal(t, []interface{}{"prepare1", "prepare2"}, app.Prepare())
-	require.Equal(t, []interface{}{"destroy1", "destroy2"}, app.Destroy())
-	require.Equal(t, []*cli.Command{
-		{Name: "cmd1"},
-		{Name: "cmd2"},
-	}, app.AppCommands(nil))
-
+func TestNewApp(t *testing.T) {
+	t.Run("Constructor parameter", func(t *testing.T) {
+		app := typcore.NewApp(&module{})
+		require.Equal(t, "some-entry-point", app.EntryPoint())
+		require.Equal(t, []interface{}{"provide1", "provide2"}, app.Provide())
+		require.Equal(t, []interface{}{"prepare1", "prepare2"}, app.Prepare())
+		require.Equal(t, []interface{}{"destroy1", "destroy2"}, app.Destroy())
+		require.Equal(t, []*cli.Command{
+			{Name: "cmd1"},
+			{Name: "cmd2"},
+		}, app.AppCommands(nil))
+	})
+	t.Run("With- function", func(t *testing.T) {
+		m := &module{}
+		app := typcore.NewApp(nil).
+			WithEntryPoint(m).
+			WithProvide(m).
+			WithDestroy(m).
+			WithPrepare(m).
+			WithCommand(m)
+		require.Equal(t, "some-entry-point", app.EntryPoint())
+		require.Equal(t, []interface{}{"provide1", "provide2"}, app.Provide())
+		require.Equal(t, []interface{}{"prepare1", "prepare2"}, app.Prepare())
+		require.Equal(t, []interface{}{"destroy1", "destroy2"}, app.Destroy())
+		require.Equal(t, []*cli.Command{
+			{Name: "cmd1"},
+			{Name: "cmd2"},
+		}, app.AppCommands(nil))
+	})
 }
 
 type module struct{}

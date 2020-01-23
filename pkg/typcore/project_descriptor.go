@@ -34,7 +34,7 @@ func (c *ProjectDescriptor) Validate() (err error) {
 	}
 	if c.Build != nil {
 		if err = c.Build.Validate(); err != nil {
-			return fmt.Errorf("Context: Build: %w", err)
+			return fmt.Errorf("Context: %w", err)
 		}
 	}
 	return
