@@ -22,7 +22,6 @@ type Module struct{}
 func (m Module) AppCommands(a *typcore.AppContext) []*cli.Command {
 	return []*cli.Command{
 		cmdConstructProject(),
-		cmdConstructModule(),
 		cmdCreateWrapper(),
 	}
 }
