@@ -14,39 +14,13 @@ func cmdClean() *cli.Command {
 		Aliases: []string{"c"},
 		Usage:   "Clean the project from generated file during build time",
 		Action:  cleanProject,
-		Subcommands: []*cli.Command{
-			{Name: "app", Usage: "Remove app", Action: removeApp},
-			{Name: "metadata", Usage: "Remove metadata", Action: removeTmp},
-			{Name: "env", Usage: "Remove envfile", Action: removeEnvFile},
-			{Name: "constructor", Usage: "Remove constructor", Action: removeConstructor},
-		},
 	}
 }
 
 func cleanProject(c *cli.Context) error {
-	removeApp(c)
-	removeTmp(c)
-	removeEnvFile(c)
-	removeConstructor(c)
-	return nil
-}
-
-func removeApp(c *cli.Context) error {
 	removeFile(typenv.AppBin)
-	return nil
-}
-
-func removeTmp(c *cli.Context) error {
 	removeAllFile(typenv.Layout.Temp)
-	return nil
-}
-
-func removeEnvFile(c *cli.Context) error {
 	removeFile(".env")
-	return nil
-}
-
-func removeConstructor(c *cli.Context) error {
 	removeFile(typenv.GeneratedConstructor)
 	return nil
 }
