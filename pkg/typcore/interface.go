@@ -30,16 +30,24 @@ type Dependency interface {
 }
 
 // EntryPointer responsible to handle entry point
-type EntryPointer interface{ EntryPoint() interface{} }
+type EntryPointer interface {
+	EntryPoint() interface{}
+}
 
 // Provider responsible to provide dependency
-type Provider interface{ Provide() []interface{} }
+type Provider interface {
+	Provide() []interface{}
+}
 
 // Preparer responsible to prepare
-type Preparer interface{ Prepare() []interface{} }
+type Preparer interface {
+	Prepare() []interface{}
+}
 
-// Destroyer responsible to destruct dependency
-type Destroyer interface{ Destroy() []interface{} }
+// Destroyer responsible to destroy dependency
+type Destroyer interface {
+	Destroy() []interface{}
+}
 
 // Prebuilder responsible to prebuild task
 type Prebuilder interface {
