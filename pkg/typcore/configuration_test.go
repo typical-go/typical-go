@@ -1,6 +1,7 @@
 package typcore_test
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -9,8 +10,8 @@ import (
 
 func TestNewConfiguration(t *testing.T) {
 	t.Run("New configuration instance using default config loader", func(t *testing.T) {
-		require.IsType(t, &typcore.DefaultConfigLoader{},
-			typcore.NewConfiguration().Loader())
+		loader := typcore.NewConfiguration().Loader()
+		require.Equal(t, "*typcore.defaultConfigLoader", reflect.TypeOf(loader).String())
 	})
 	t.Run("Configuration must implement of ConfigurationInterface", func(t *testing.T) {
 		var _ typcore.ConfigurationInterface = typcore.NewConfiguration()
