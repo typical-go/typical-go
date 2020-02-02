@@ -15,16 +15,13 @@ import (
 	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
-// StandardPrebuilder is standard prebuilder
-type StandardPrebuilder struct{}
+type standardPrebuilder struct{}
 
-// NewStandardPrebuilder to return new instance of StandardPrebuilder
-func NewStandardPrebuilder() *StandardPrebuilder {
-	return &StandardPrebuilder{}
+func newStandardPrebuilder() *standardPrebuilder {
+	return &standardPrebuilder{}
 }
 
-// Prebuild process
-func (a *StandardPrebuilder) Prebuild(ctx context.Context, bc *BuildContext) (err error) {
+func (a *standardPrebuilder) Prebuild(ctx context.Context, bc *BuildContext) (err error) {
 	var constructors common.Strings
 	if err = bc.EachAnnotation("constructor", walker.FunctionType, func(decl *walker.Declaration, ann *walker.Annotation) (err error) {
 		constructors.Append(fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
@@ -39,7 +36,7 @@ func (a *StandardPrebuilder) Prebuild(ctx context.Context, bc *BuildContext) (er
 	return
 }
 
-func (a *StandardPrebuilder) generateConstructor(ctx context.Context, target string, bc *BuildContext, constructors common.Strings) (err error) {
+func (a *standardPrebuilder) generateConstructor(ctx context.Context, target string, bc *BuildContext, constructors common.Strings) (err error) {
 	defer common.ElapsedTimeFn("Generate constructor")()
 	var (
 		imports common.Strings

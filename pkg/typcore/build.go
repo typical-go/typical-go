@@ -18,7 +18,7 @@ type Build struct {
 func NewBuild() *Build {
 	return &Build{
 		prebuilders: []Prebuilder{
-			NewStandardPrebuilder(),
+			newStandardPrebuilder(),
 		},
 	}
 }

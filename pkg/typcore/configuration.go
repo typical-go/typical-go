@@ -22,7 +22,7 @@ type Configurer interface {
 // NewConfiguration return new instance of Configuration
 func NewConfiguration() *Configuration {
 	return &Configuration{
-		loader: NewDefaultConfigLoader(),
+		loader: newDefaultConfigLoader(),
 	}
 }
 

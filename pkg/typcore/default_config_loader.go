@@ -5,15 +5,13 @@ import (
 )
 
 // DefaultConfigLoader is default config loader
-type DefaultConfigLoader struct{}
+type defaultConfigLoader struct{}
 
-// NewDefaultConfigLoader return default config loader
-func NewDefaultConfigLoader() *DefaultConfigLoader {
-	return &DefaultConfigLoader{}
+func newDefaultConfigLoader() *defaultConfigLoader {
+	return &defaultConfigLoader{}
 }
 
-// Load configuration
-func (*DefaultConfigLoader) Load(prefix string, v interface{}) error {
+func (*defaultConfigLoader) Load(prefix string, v interface{}) error {
 	// TODO: deprecate envconfig for consitency between doc, envfile and load config
 	return envconfig.Process(prefix, v)
 }
