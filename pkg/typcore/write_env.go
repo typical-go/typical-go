@@ -1,14 +1,12 @@
-package typbuildtool
+package typcore
 
 import (
 	"fmt"
 	"io"
-
-	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 // WriteEnv to write env file
-func WriteEnv(w io.Writer, keys []string, configMap typcore.ConfigMap) (err error) {
+func WriteEnv(w io.Writer, keys []string, configMap ConfigMap) (err error) {
 	for _, key := range keys {
 		var (
 			v         interface{}

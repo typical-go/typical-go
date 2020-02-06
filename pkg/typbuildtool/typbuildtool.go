@@ -6,6 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typcore/stdbuild"
 	"github.com/urfave/cli/v2"
 )
 
@@ -23,9 +24,6 @@ func Run(d *typcore.Descriptor) {
 	if err = d.Validate(); err != nil {
 		log.Fatal(err.Error())
 	}
-	if bc, err = typcore.CreateBuildContext(d); err != nil {
-		log.Fatal(err.Error())
-	}
 	if d.Configuration != nil {
 		if _, err = os.Stat(defaultDotEnv); os.IsNotExist(err) {
 			log.Infof("Generate new project environment at '%s'", defaultDotEnv)
@@ -34,10 +32,13 @@ func Run(d *typcore.Descriptor) {
 			}
 			defer f.Close()
 			keys, configMap := d.Configuration.ConfigMap()
-			if err = WriteEnv(f, keys, configMap); err != nil {
+			if err = typcore.WriteEnv(f, keys, configMap); err != nil {
 				log.Fatal(err.Error())
 			}
 		}
+	}
+	if bc, err = typcore.CreateBuildContext(d); err != nil {
+		log.Fatal(err.Error())
 	}
 
 	app := cli.NewApp()
@@ -54,12 +55,12 @@ func Run(d *typcore.Descriptor) {
 // BuildCommands return list of command
 func BuildCommands(bc *typcore.BuildContext) (cmds []*cli.Command) {
 	cmds = []*cli.Command{
-		cmdBuild(bc),
-		cmdClean(),
-		cmdRun(bc),
-		cmdTest(),
-		cmdMock(bc),
-		cmdRelease(bc),
+		stdbuild.CmdBuild(bc),
+		stdbuild.CmdClean(),
+		stdbuild.CmdRun(bc),
+		stdbuild.CmdTest(),
+		stdbuild.CmdMock(bc),
+		stdbuild.CmdRelease(bc),
 	}
 	if bc.Build != nil {
 		cmds = append(cmds, bc.Build.BuildCommands(bc)...)

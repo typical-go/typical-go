@@ -1,4 +1,4 @@
-package typbuildtool
+package stdbuild
 
 import (
 	"context"
@@ -13,7 +13,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func cmdBuild(bc *typcore.BuildContext) *cli.Command {
+// CmdBuild is command for build
+func CmdBuild(bc *typcore.BuildContext) *cli.Command {
 	return &cli.Command{
 		Name:    "build",
 		Aliases: []string{"b"},

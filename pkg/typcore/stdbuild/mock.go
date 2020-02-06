@@ -1,4 +1,4 @@
-package typbuildtool
+package stdbuild
 
 import (
 	"context"
@@ -16,7 +16,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func cmdMock(bc *typcore.BuildContext) *cli.Command {
+// CmdMock is command for mock
+func CmdMock(bc *typcore.BuildContext) *cli.Command {
 	return &cli.Command{
 		Name:  "mock",
 		Usage: "Generate mock class",

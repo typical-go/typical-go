@@ -1,4 +1,4 @@
-package typbuildtool
+package stdbuild
 
 import (
 	"os"
@@ -10,7 +10,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func cmdRun(bc *typcore.BuildContext) *cli.Command {
+// CmdRun is command to run
+func CmdRun(bc *typcore.BuildContext) *cli.Command {
 	return &cli.Command{
 		Name:            "run",
 		Aliases:         []string{"r"},

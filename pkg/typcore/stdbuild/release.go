@@ -1,4 +1,4 @@
-package typbuildtool
+package stdbuild
 
 import (
 	"errors"
@@ -11,7 +11,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func cmdRelease(bc *typcore.BuildContext) *cli.Command {
+// CmdRelease is command to release
+func CmdRelease(bc *typcore.BuildContext) *cli.Command {
 	return &cli.Command{
 		Name:  "release",
 		Usage: "Release the distribution",

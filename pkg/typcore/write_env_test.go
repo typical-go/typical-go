@@ -1,4 +1,4 @@
-package typbuildtool_test
+package typcore_test
 
 import (
 	"strings"
@@ -6,13 +6,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 func TestWriteEnv(t *testing.T) {
 	var w strings.Builder
-	typbuildtool.WriteEnv(&w,
+	typcore.WriteEnv(&w,
 		[]string{"some-name1", "some-name2"},
 		typcore.ConfigMap{
 			"some-name1": typcore.ConfigDetail{

@@ -1,4 +1,4 @@
-package typbuildtool
+package stdbuild
 
 import (
 	"os"
@@ -8,7 +8,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func cmdTest() *cli.Command {
+// CmdTest is command to test
+func CmdTest() *cli.Command {
 	return &cli.Command{
 		Name:    "test",
 		Aliases: []string{"t"},
