@@ -44,7 +44,7 @@ func (a *standardPrebuilder) generateConstructor(ctx context.Context, target str
 		pkg     = bc.Package
 		dirs    = bc.Dirs
 	)
-	imports.Append(pkg + "/typical")
+	imports.Append("github.com/typical-go/typical-go/pkg/typapp")
 	for _, dir := range dirs {
 		imports.Append(pkg + "/" + dir)
 	}
@@ -58,7 +58,7 @@ import (
 )
 
 func init() {
-	{{if .Constructors}}typical.Descriptor.AppendConstructor({{range $constructor := .Constructors}}
+	{{if .Constructors}}typapp.AppendConstructor({{range $constructor := .Constructors}}
 		{{$constructor}},{{end}}
 	)
 {{end}}}`

@@ -90,6 +90,7 @@ func (a *App) EntryPoint() interface{} {
 
 // Provide to return constructors
 func (a *App) Provide() (constructors []interface{}) {
+	constructors = append(constructors, appCtors...)
 	for _, provider := range a.providers {
 		constructors = append(constructors, provider.Provide()...)
 	}

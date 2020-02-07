@@ -40,13 +40,3 @@ func (c *Descriptor) Validate() (err error) {
 	}
 	return
 }
-
-// AppendConstructor to append constructor
-func (c *Descriptor) AppendConstructor(constructors ...interface{}) {
-	c.constructors.Append(constructors...)
-}
-
-// Constructors return contruction functions
-func (c *Descriptor) Constructors() []interface{} {
-	return c.constructors.Slice()
-}

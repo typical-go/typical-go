@@ -35,16 +35,16 @@ func (a *AppContext) Invoke(c *cli.Context, fn interface{}) (err error) {
 		}
 	}
 	if a.Configuration != nil {
+		// provide configuration to dependency-injection container
 		if err = provide(di, a.Configuration.Provide()...); err != nil {
 			return
 		}
 	}
+	// provide registered function in descriptor to dependency-injection container
 	if err = provide(di, a.App.Provide()...); err != nil {
 		return
 	}
-	if err = provide(di, a.Constructors()...); err != nil {
-		return
-	}
+	// invoke preparation as register in descriptor
 	if err = invoke(di, a.App.Prepare()...); err != nil {
 		return
 	}
@@ -54,9 +54,7 @@ func (a *AppContext) Invoke(c *cli.Context, fn interface{}) (err error) {
 	stopFn := func() error {
 		return invoke(di, a.App.Destroy()...)
 	}
-	errs := common.NewApplication(startFn).
-		WithStopFn(stopFn).
-		Run()
+	errs := common.NewApplication(startFn).WithStopFn(stopFn).Run()
 	for _, err := range errs {
 		log.Error(err.Error())
 	}
