@@ -36,9 +36,9 @@ func CreateBuildContext(d *Descriptor) (pc *BuildContext, err error) {
 		return
 	}
 	return &BuildContext{
-		Descriptor: d,
-		Declarations:      declarations,
-		ProjectInfo:       projInfo,
+		Descriptor:   d,
+		Declarations: declarations,
+		ProjectInfo:  projInfo,
 	}, nil
 }
 

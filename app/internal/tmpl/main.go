@@ -9,12 +9,12 @@ type MainSrcData struct {
 const MainSrcApp = `package main
 
 import (
-	"github.com/typical-go/typical-go/pkg/typapp"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"{{.ImportTypical}}"
 )
 
 func main() {
-	typapp.Run(&typical.Descriptor)
+	typcore.RunApp(&typical.Descriptor)
 }
 `
 
@@ -22,7 +22,7 @@ func main() {
 const MainSrcBuildTool = `package main
 
 import (
-	"github.com/typical-go/typical-go/pkg/typbuild"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"{{.ImportTypical}}"
 )
 

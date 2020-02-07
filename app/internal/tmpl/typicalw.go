@@ -18,7 +18,7 @@ if ! [ -s .typical-tmp/build-tool/main.go ]; then
 	echo "package main
 
 import (
-	\"github.com/typical-go/typical-go/pkg/typbuild\"
+	\"github.com/typical-go/typical-go/pkg/typcore\"
 	\"{{.DescriptorPackage}}\"
 )
 
