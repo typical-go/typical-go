@@ -1,25 +1,26 @@
-package typcore_test
+package typcfg_test
 
 import (
 	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 func TestNewConfiguration(t *testing.T) {
 	t.Run("New configuration instance using default config loader", func(t *testing.T) {
-		loader := typcore.NewConfiguration().Loader()
-		require.Equal(t, "*typcore.defaultConfigLoader", reflect.TypeOf(loader).String())
+		loader := typcfg.New().Loader()
+		require.Equal(t, "*typcfg.defaultConfigLoader", reflect.TypeOf(loader).String())
 	})
 	t.Run("Configuration must implement of ConfigurationInterface", func(t *testing.T) {
-		var _ typcore.ConfigurationInterface = typcore.NewConfiguration()
+		var _ typcore.ConfigurationInterface = typcfg.New()
 	})
 }
 
 func TestConfiguration(t *testing.T) {
-	configuration := typcore.NewConfiguration().
+	configuration := typcfg.New().
 		WithLoader(&dummyLoader{}).
 		WithConfigure(&dummyConfigurer1{}, &dummyConfigurer2{})
 	require.IsType(t, &dummyLoader{}, configuration.Loader())

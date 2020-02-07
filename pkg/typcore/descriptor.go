@@ -16,7 +16,7 @@ type Descriptor struct {
 
 	App           App
 	Build         Build
-	Configuration ConfigurationInterface
+	Configuration Configuration
 
 	constructors common.Interfaces
 }
