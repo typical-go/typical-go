@@ -6,8 +6,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// AppInterface is interface of app
-type AppInterface interface {
+// App is interface of app
+type App interface {
 	EntryPointer
 	Provider
 	Preparer
@@ -23,10 +23,11 @@ type BuildInterface interface {
 	Releaser() Releaser
 }
 
-// Dependency of app
-type Dependency interface {
+// ConfigurationInterface is interface of configuration
+type ConfigurationInterface interface {
 	Provider
-	Destroyer
+	Loader() ConfigLoader
+	ConfigMap() (keys []string, configMap ConfigMap)
 }
 
 // EntryPointer responsible to handle entry point

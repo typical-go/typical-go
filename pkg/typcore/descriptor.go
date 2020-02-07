@@ -14,9 +14,26 @@ type Descriptor struct {
 	Package     string
 	Version     string
 
-	App           AppInterface
-	Build         BuildInterface
-	Configuration ConfigurationInterface
+	App interface {
+		EntryPointer
+		Provider
+		Preparer
+		Destroyer
+		AppCommander
+	}
+
+	Build interface {
+		BuildCommander
+		Prebuilder
+		Validate() (err error)
+		Releaser() Releaser
+	}
+
+	Configuration interface {
+		Provider
+		Loader() ConfigLoader
+		ConfigMap() (keys []string, configMap ConfigMap)
+	}
 
 	constructors common.Interfaces
 }

@@ -2,6 +2,7 @@ package typical
 
 import (
 	"github.com/typical-go/typical-go/app"
+	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
@@ -12,7 +13,7 @@ var Descriptor = typcore.Descriptor{
 	Version: app.Version,
 	Package: "github.com/typical-go/typical-go",
 
-	App: typcore.NewApp(application),
+	App: typapp.New(application),
 
 	Build: typcore.NewBuild().
 		WithRelease(typrls.New().
