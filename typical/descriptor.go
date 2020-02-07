@@ -23,7 +23,3 @@ var Descriptor = typcore.Descriptor{
 			),
 		),
 }
-
-var (
-	application = app.New()
-)

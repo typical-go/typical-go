@@ -14,8 +14,8 @@ func TestNewConfiguration(t *testing.T) {
 		loader := typcfg.New().Loader()
 		require.Equal(t, "*typcfg.defaultConfigLoader", reflect.TypeOf(loader).String())
 	})
-	t.Run("Configuration must implement of ConfigurationInterface", func(t *testing.T) {
-		var _ typcore.ConfigurationInterface = typcfg.New()
+	t.Run("Configuration must implement of typcore.Configuration", func(t *testing.T) {
+		var _ typcore.Configuration = typcfg.New()
 	})
 }
 
