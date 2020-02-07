@@ -7,7 +7,7 @@ import (
 
 const (
 	// Version of Typical-Go
-	Version = "0.9.29"
+	Version = "0.9.30"
 )
 
 // New of Typical-Go
