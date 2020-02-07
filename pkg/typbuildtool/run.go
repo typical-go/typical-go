@@ -46,14 +46,13 @@ func Run(d *typcore.Descriptor) {
 	app.Usage = "" // NOTE: intentionally blank
 	app.Description = d.Description
 	app.Version = d.Version
-	app.Commands = BuildCommands(bc)
+	app.Commands = buildCommands(bc)
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err.Error())
 	}
 }
 
-// BuildCommands return list of command
-func BuildCommands(bc *typcore.BuildContext) (cmds []*cli.Command) {
+func buildCommands(bc *typcore.BuildContext) (cmds []*cli.Command) {
 	cmds = []*cli.Command{
 		stdbuild.CmdBuild(bc),
 		stdbuild.CmdClean(),
