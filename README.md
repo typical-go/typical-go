@@ -4,17 +4,13 @@
 
 A Framework + Build Tool for Productive Go Development. <https://typical-go.github.io/>
 
-## Concept
-
-<img src="./concept.png" style="width:100%; max-width:750px;"/>
-
 ## Install
 
 Download the latest release from [releases page](https://github.com/typical-go/typical-go/releases)
 
 Or 
 ```bash
-go get -u github.com/typical-go/typical-go/cmd/typical-go
+go get -u github.com/typical-go/typical-go/cmd/...
 ```
 
 ## Usage
