@@ -3,7 +3,7 @@ package typical
 import (
 	"github.com/typical-go/typical-go/app"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typbuildtool/stdrelease"
+	"github.com/typical-go/typical-go/pkg/typbuild/stdrelease"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 

@@ -18,12 +18,12 @@ if ! [ -s .typical-tmp/build-tool/main.go ]; then
 	echo "package main
 
 import (
-	\"github.com/typical-go/typical-go/pkg/typbuildtool\"
+	\"github.com/typical-go/typical-go/pkg/typbuild\"
 	\"{{.DescriptorPackage}}\"
 )
 
 func main() {
-	typbuildtool.Run(&typical.Descriptor)
+	typbuild.Run(&typical.Descriptor)
 }" >> .typical-tmp/build-tool/main.go
 fi
 
