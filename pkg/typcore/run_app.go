@@ -1,4 +1,4 @@
-package typapp
+package typcore
 
 import (
 	"os"
@@ -6,13 +6,12 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
-// Run the application
-func Run(d *typcore.Descriptor) {
-	appCtx := typcore.NewAppContext(d)
+// RunApp the application
+func RunApp(d *Descriptor) {
+	appCtx := NewAppContext(d)
 	app := cli.NewApp()
 	app.Name = d.Name
 	app.Usage = "" // NOTE: intentionally blank
