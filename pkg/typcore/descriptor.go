@@ -23,14 +23,14 @@ type Descriptor struct {
 
 // Validate context
 func (c *Descriptor) Validate() (err error) {
+	if c.Version == "" {
+		c.Version = "0.0.1"
+	}
 	if c.Name == "" {
 		return errors.New("Context: Name can't be empty")
 	}
 	if c.Package == "" {
 		return errors.New("Context: Package can't be empty")
-	}
-	if c.Version == "" {
-		c.Version = "0.0.1"
 	}
 	if c.Build == nil {
 		return errors.New("Context: Build can't be empty")

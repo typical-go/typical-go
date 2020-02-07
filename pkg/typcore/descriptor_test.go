@@ -4,14 +4,16 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/pkg/typbuild"
+	"github.com/typical-go/typical-go/pkg/typbuild/stdrelease"
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/stdrelease"
 )
 
 func TestContext_Validate_DefaultValue(t *testing.T) {
 	desc := &typcore.Descriptor{
 		Name:    "some-name",
 		Package: "some-package",
+		Build:   typbuild.New(),
 	}
 	require.NoError(t, desc.Validate())
 	require.Equal(t, "0.0.1", desc.Version)
@@ -34,7 +36,7 @@ func TestContext_Validate(t *testing.T) {
 			typcore.Descriptor{
 				Name:    "some-name",
 				Package: "some-package",
-				Build:   typcore.NewBuild().WithRelease(stdrelease.New().WithTarget("linuxamd64")),
+				Build:   typbuild.New().WithRelease(stdrelease.New().WithTarget("linuxamd64")),
 			},
 			"Context: Build: Releaser: Target: Missing OS: Please make sure 'linuxamd64' using 'OS/ARCH' format",
 		},
