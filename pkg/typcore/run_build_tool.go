@@ -1,12 +1,10 @@
-package typbuild
+package typcore
 
 import (
 	"os"
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/typical-go/typical-go/pkg/typbuild/stdbuild"
-	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
@@ -14,12 +12,12 @@ const (
 	defaultDotEnv = ".env"
 )
 
-// Run the build tool
-func Run(d *typcore.Descriptor) {
+// RunBuildTool the build tool
+func RunBuildTool(d *Descriptor) {
 	var (
 		f   *os.File
 		err error
-		bc  *typcore.BuildContext
+		bc  *BuildContext
 	)
 	if err = d.Validate(); err != nil {
 		log.Fatal(err.Error())
@@ -32,12 +30,12 @@ func Run(d *typcore.Descriptor) {
 			}
 			defer f.Close()
 			keys, configMap := d.Configuration.ConfigMap()
-			if err = typcore.WriteEnv(f, keys, configMap); err != nil {
+			if err = WriteEnv(f, keys, configMap); err != nil {
 				log.Fatal(err.Error())
 			}
 		}
 	}
-	if bc, err = typcore.CreateBuildContext(d); err != nil {
+	if bc, err = CreateBuildContext(d); err != nil {
 		log.Fatal(err.Error())
 	}
 
@@ -46,23 +44,8 @@ func Run(d *typcore.Descriptor) {
 	app.Usage = "" // NOTE: intentionally blank
 	app.Description = d.Description
 	app.Version = d.Version
-	app.Commands = buildCommands(bc)
+	app.Commands = bc.Build.BuildCommands(bc)
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err.Error())
 	}
-}
-
-func buildCommands(bc *typcore.BuildContext) (cmds []*cli.Command) {
-	cmds = []*cli.Command{
-		stdbuild.CmdBuild(bc),
-		stdbuild.CmdClean(),
-		stdbuild.CmdRun(bc),
-		stdbuild.CmdTest(),
-		stdbuild.CmdMock(bc),
-		stdbuild.CmdRelease(bc),
-	}
-	if bc.Build != nil {
-		cmds = append(cmds, bc.Build.BuildCommands(bc)...)
-	}
-	return
 }

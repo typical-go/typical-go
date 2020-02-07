@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/typical-go/typical-go/pkg/typbuild/stdbuild"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
@@ -48,11 +49,19 @@ func (b *Build) Releaser() typcore.Releaser {
 }
 
 // BuildCommands to return command
-func (b *Build) BuildCommands(bc *typcore.BuildContext) (cmds []*cli.Command) {
+func (b *Build) BuildCommands(bc *typcore.BuildContext) []*cli.Command {
+	cmds := []*cli.Command{
+		stdbuild.CmdBuild(bc),
+		stdbuild.CmdClean(),
+		stdbuild.CmdRun(bc),
+		stdbuild.CmdTest(),
+		stdbuild.CmdMock(bc),
+		stdbuild.CmdRelease(bc),
+	}
 	for _, commanders := range b.commanders {
 		cmds = append(cmds, commanders.BuildCommands(bc)...)
 	}
-	return
+	return cmds
 }
 
 // Validate build

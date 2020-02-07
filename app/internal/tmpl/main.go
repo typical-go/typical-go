@@ -27,6 +27,6 @@ import (
 )
 
 func main() {
-	typbuild.Run(&typical.Descriptor)
+	typcore.RunBuildTool(&typical.Descriptor)
 }
 `

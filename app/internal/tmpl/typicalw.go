@@ -23,7 +23,7 @@ import (
 )
 
 func main() {
-	typbuild.Run(&typical.Descriptor)
+	typcore.RunBuildTool(&typical.Descriptor)
 }" >> .typical-tmp/build-tool/main.go
 fi
 
