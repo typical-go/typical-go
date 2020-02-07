@@ -1,4 +1,4 @@
-package typcore
+package typbuild
 
 import (
 	"context"
@@ -9,6 +9,7 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/runn/stdrun"
+	"github.com/typical-go/typical-go/pkg/typcore"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typcore/walker"
@@ -21,7 +22,7 @@ func newStandardPrebuilder() *standardPrebuilder {
 	return &standardPrebuilder{}
 }
 
-func (a *standardPrebuilder) Prebuild(ctx context.Context, bc *BuildContext) (err error) {
+func (a *standardPrebuilder) Prebuild(ctx context.Context, bc *typcore.BuildContext) (err error) {
 	var constructors common.Strings
 	if err = bc.EachAnnotation("constructor", walker.FunctionType, func(decl *walker.Declaration, ann *walker.Annotation) (err error) {
 		constructors.Append(fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
@@ -36,7 +37,7 @@ func (a *standardPrebuilder) Prebuild(ctx context.Context, bc *BuildContext) (er
 	return
 }
 
-func (a *standardPrebuilder) generateConstructor(ctx context.Context, target string, bc *BuildContext, constructors common.Strings) (err error) {
+func (a *standardPrebuilder) generateConstructor(ctx context.Context, target string, bc *typcore.BuildContext, constructors common.Strings) (err error) {
 	defer common.ElapsedTimeFn("Generate constructor")()
 	var (
 		imports common.Strings

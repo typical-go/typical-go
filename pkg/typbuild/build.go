@@ -1,53 +1,54 @@
-package typcore
+package typbuild
 
 import (
 	"context"
 	"fmt"
 
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
 // Build tool
 type Build struct {
-	commanders  []BuildCommander
-	prebuilders []Prebuilder
-	releaser    Releaser
+	commanders  []typcore.BuildCommander
+	prebuilders []typcore.Prebuilder
+	releaser    typcore.Releaser
 }
 
-// NewBuild return new instance of build
-func NewBuild() *Build {
+// New return new instance of build
+func New() *Build {
 	return &Build{
-		prebuilders: []Prebuilder{
+		prebuilders: []typcore.Prebuilder{
 			newStandardPrebuilder(),
 		},
 	}
 }
 
 // WithCommands to set command
-func (b *Build) WithCommands(commanders ...BuildCommander) *Build {
+func (b *Build) WithCommands(commanders ...typcore.BuildCommander) *Build {
 	b.commanders = append(b.commanders, commanders...)
 	return b
 }
 
 // WithRelease to set releaser
-func (b *Build) WithRelease(releaser Releaser) *Build {
+func (b *Build) WithRelease(releaser typcore.Releaser) *Build {
 	b.releaser = releaser
 	return b
 }
 
 // WithPrebuild to set prebuilder
-func (b *Build) WithPrebuild(prebuilders ...Prebuilder) *Build {
+func (b *Build) WithPrebuild(prebuilders ...typcore.Prebuilder) *Build {
 	b.prebuilders = append(b.prebuilders, prebuilders...)
 	return b
 }
 
 // Releaser return the releaser
-func (b *Build) Releaser() Releaser {
+func (b *Build) Releaser() typcore.Releaser {
 	return b.releaser
 }
 
 // BuildCommands to return command
-func (b *Build) BuildCommands(bc *BuildContext) (cmds []*cli.Command) {
+func (b *Build) BuildCommands(bc *typcore.BuildContext) (cmds []*cli.Command) {
 	for _, commanders := range b.commanders {
 		cmds = append(cmds, commanders.BuildCommands(bc)...)
 	}
@@ -65,7 +66,7 @@ func (b *Build) Validate() (err error) {
 }
 
 // Prebuild process
-func (b *Build) Prebuild(ctx context.Context, bc *BuildContext) (err error) {
+func (b *Build) Prebuild(ctx context.Context, bc *typcore.BuildContext) (err error) {
 	for _, prebuilder := range b.prebuilders {
 		if err = prebuilder.Prebuild(ctx, bc); err != nil {
 			return

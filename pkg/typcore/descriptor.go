@@ -14,26 +14,9 @@ type Descriptor struct {
 	Package     string
 	Version     string
 
-	App interface {
-		EntryPointer
-		Provider
-		Preparer
-		Destroyer
-		AppCommander
-	}
-
-	Build interface {
-		BuildCommander
-		Prebuilder
-		Validate() (err error)
-		Releaser() Releaser
-	}
-
-	Configuration interface {
-		Provider
-		Loader() ConfigLoader
-		ConfigMap() (keys []string, configMap ConfigMap)
-	}
+	App           App
+	Build         Build
+	Configuration ConfigurationInterface
 
 	constructors common.Interfaces
 }
@@ -50,11 +33,10 @@ func (c *Descriptor) Validate() (err error) {
 		c.Version = "0.0.1"
 	}
 	if c.Build == nil {
-		c.Build = NewBuild()
-	} else {
-		if err = c.Build.Validate(); err != nil {
-			return fmt.Errorf("Context: %w", err)
-		}
+		return errors.New("Context: Build can't be empty")
+	}
+	if err = c.Build.Validate(); err != nil {
+		return fmt.Errorf("Context: %w", err)
 	}
 	return
 }
