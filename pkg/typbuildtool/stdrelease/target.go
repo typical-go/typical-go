@@ -1,4 +1,4 @@
-package typrls
+package stdrelease
 
 import (
 	"errors"

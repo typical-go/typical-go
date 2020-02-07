@@ -1,23 +1,23 @@
-package typrls_test
+package stdrelease_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typrls"
+	"github.com/typical-go/typical-go/pkg/stdrelease"
 )
 
 func TestReleaser_Validate(t *testing.T) {
 	testcases := []struct {
-		*typrls.Releaser
+		*stdrelease.Releaser
 		errMsg string
 	}{
 		{
-			typrls.New().WithTarget(),
+			stdrelease.New().WithTarget(),
 			"Missing 'Targets'",
 		},
 		{
-			typrls.New().WithTarget("invalid-target"),
+			stdrelease.New().WithTarget("invalid-target"),
 			"Target: Missing OS: Please make sure 'invalid-target' using 'OS/ARCH' format",
 		},
 	}

@@ -1,10 +1,10 @@
-package typrls_test
+package stdrelease_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typrls"
+	"github.com/typical-go/typical-go/pkg/stdrelease"
 )
 
 func TestStandardFilter(t *testing.T) {
@@ -30,7 +30,7 @@ func TestStandardFilter(t *testing.T) {
 		},
 	}
 	for _, tt := range testcases {
-		filter := typrls.StandardFilter{tt.ignorings}
+		filter := stdrelease.StandardFilter{tt.ignorings}
 		require.Equal(t, tt.filtereds, filter.Filter(tt.messages))
 	}
 }
@@ -44,7 +44,7 @@ func TestCleanMessage(t *testing.T) {
 		{message: "some message\n\nCo-Authored-By: xx <xx@users.noreply.github.com>", cleaned: "some message"},
 	}
 	for _, tt := range testcases {
-		require.Equal(t, tt.cleaned, typrls.CleanMessage(tt.message))
+		require.Equal(t, tt.cleaned, stdrelease.CleanMessage(tt.message))
 	}
 }
 
@@ -62,6 +62,6 @@ func TestMessage(t *testing.T) {
 		{"", ""},
 	}
 	for _, tt := range testcases {
-		require.Equal(t, tt.message, typrls.MessageText(tt.changelog))
+		require.Equal(t, tt.message, stdrelease.MessageText(tt.changelog))
 	}
 }

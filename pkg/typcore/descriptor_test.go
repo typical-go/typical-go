@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/typrls"
+	"github.com/typical-go/typical-go/pkg/stdrelease"
 )
 
 func TestContext_Validate_DefaultValue(t *testing.T) {
@@ -34,7 +34,7 @@ func TestContext_Validate(t *testing.T) {
 			typcore.Descriptor{
 				Name:    "some-name",
 				Package: "some-package",
-				Build:   typcore.NewBuild().WithRelease(typrls.New().WithTarget("linuxamd64")),
+				Build:   typcore.NewBuild().WithRelease(stdrelease.New().WithTarget("linuxamd64")),
 			},
 			"Context: Build: Releaser: Target: Missing OS: Please make sure 'linuxamd64' using 'OS/ARCH' format",
 		},
