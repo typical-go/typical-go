@@ -11,6 +11,7 @@ type Build interface {
 	BuildCommander
 	Prebuilder
 	Releaser() Releaser
+	Run(*BuildContext) error
 }
 
 // BuildCommander responsible to return commands for Build-Tool

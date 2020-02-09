@@ -4,8 +4,6 @@ import (
 	"os"
 
 	log "github.com/sirupsen/logrus"
-
-	"github.com/urfave/cli/v2"
 )
 
 const (
@@ -15,12 +13,12 @@ const (
 // RunBuildTool the build tool
 func RunBuildTool(d *Descriptor) {
 	var (
-		f   *os.File
-		err error
-		bc  *BuildContext
+		f    *os.File
+		err  error
+		bctx *BuildContext
 	)
 
-	if bc, err = d.BuildContext(); err != nil {
+	if bctx, err = d.BuildContext(); err != nil {
 		log.Fatal(err.Error())
 	}
 	if d.Configuration != nil {
@@ -35,14 +33,7 @@ func RunBuildTool(d *Descriptor) {
 			}
 		}
 	}
-
-	app := cli.NewApp()
-	app.Name = d.Name
-	app.Usage = "" // NOTE: intentionally blank
-	app.Description = d.Description
-	app.Version = d.Version
-	app.Commands = bc.Build.BuildCommands(bc)
-	if err := app.Run(os.Args); err != nil {
+	if err = d.Build.Run(bctx); err != nil {
 		log.Fatal(err.Error())
 	}
 }

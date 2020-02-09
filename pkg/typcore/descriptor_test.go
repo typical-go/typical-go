@@ -83,6 +83,10 @@ func (i invalidBuild) Releaser() typcore.Releaser {
 	return nil
 }
 
+func (i invalidBuild) Run(*typcore.BuildContext) error {
+	return nil
+}
+
 type invalidApp struct {
 	errMessage string
 }
@@ -108,5 +112,9 @@ func (i invalidApp) Destroy() []interface{} {
 }
 
 func (i invalidApp) AppCommands(*typcore.AppContext) []*cli.Command {
+	return nil
+}
+
+func (i invalidApp) Run(*typcore.AppContext) error {
 	return nil
 }
