@@ -1,13 +1,11 @@
 package typcore
 
-import "io"
-
 // Configuration is interface of configuration
 type Configuration interface {
 	Provider
 	Loader() ConfigLoader
 	ConfigMap() (keys []string, configMap ConfigMap)
-	Write(io.Writer) error
+	Setup() error
 }
 
 // ConfigLoader responsible to load config
