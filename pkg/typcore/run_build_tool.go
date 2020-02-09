@@ -19,7 +19,8 @@ func RunBuildTool(d *Descriptor) {
 		err error
 		bc  *BuildContext
 	)
-	if err = d.Validate(); err != nil {
+
+	if bc, err = d.BuildContext(); err != nil {
 		log.Fatal(err.Error())
 	}
 	if d.Configuration != nil {
@@ -34,9 +35,6 @@ func RunBuildTool(d *Descriptor) {
 				log.Fatal(err.Error())
 			}
 		}
-	}
-	if bc, err = CreateBuildContext(d); err != nil {
-		log.Fatal(err.Error())
 	}
 
 	app := cli.NewApp()

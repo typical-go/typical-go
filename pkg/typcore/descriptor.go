@@ -3,6 +3,9 @@ package typcore
 import (
 	"errors"
 	"fmt"
+
+	"github.com/typical-go/typical-go/pkg/typcore/walker"
+	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
 // Descriptor describe the project
@@ -18,32 +21,54 @@ type Descriptor struct {
 }
 
 // Validate context
-func (c *Descriptor) Validate() (err error) {
+func (d *Descriptor) Validate() (err error) {
 	//
 	// Default value
 	//
-	if c.Version == "" {
-		c.Version = "0.0.1"
+	if d.Version == "" {
+		d.Version = "0.0.1"
 	}
 
 	//
 	// Mandatory field
 	//
-	if c.Name == "" {
+	if d.Name == "" {
 		return errors.New("Context: Name can't be empty")
 	}
-	if c.Package == "" {
+	if d.Package == "" {
 		return errors.New("Context: Package can't be empty")
 	}
-	if c.Build == nil {
+	if d.Build == nil {
 		return errors.New("Context: Build can't be empty")
 	}
 
 	//
 	// Validate object field
 	//
-	if err = c.Build.Validate(); err != nil {
+	if err = d.Build.Validate(); err != nil {
 		return fmt.Errorf("Context: %w", err)
 	}
 	return
+}
+
+// BuildContext return build context of descriptor
+func (d *Descriptor) BuildContext() (bctx *BuildContext, err error) {
+	var (
+		projInfo     *ProjectInfo
+		declarations []*walker.Declaration
+	)
+	if err = d.Validate(); err != nil {
+		return
+	}
+	if projInfo, err = ReadProject(typenv.Layout.App); err != nil {
+		return
+	}
+	if declarations, err = walker.Walk(projInfo.Files); err != nil {
+		return
+	}
+	return &BuildContext{
+		Descriptor:   d,
+		Declarations: declarations,
+		ProjectInfo:  projInfo,
+	}, nil
 }

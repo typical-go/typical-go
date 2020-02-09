@@ -7,7 +7,6 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcore/walker"
-	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
 // BuildContext is context of prebuild
@@ -22,25 +21,6 @@ type DeclFunc func(*walker.Declaration) error
 
 // AnnotationFunc to handle annotation
 type AnnotationFunc func(decl *walker.Declaration, ann *walker.Annotation) error
-
-// CreateBuildContext to create PrebuildContext
-func CreateBuildContext(d *Descriptor) (pc *BuildContext, err error) {
-	var (
-		projInfo     *ProjectInfo
-		declarations []*walker.Declaration
-	)
-	if projInfo, err = ReadProject(typenv.Layout.App); err != nil {
-		return
-	}
-	if declarations, err = walker.Walk(projInfo.Files); err != nil {
-		return
-	}
-	return &BuildContext{
-		Descriptor:   d,
-		Declarations: declarations,
-		ProjectInfo:  projInfo,
-	}, nil
-}
 
 // EachDecl to handle each declaration
 func (b *BuildContext) EachDecl(fn DeclFunc) (err error) {
