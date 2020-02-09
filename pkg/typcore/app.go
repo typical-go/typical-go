@@ -37,8 +37,3 @@ type Destroyer interface {
 type AppCommander interface {
 	AppCommands(*AppContext) []*cli.Command
 }
-
-// BuildCommander responsible to return commands for Build-Tool
-type BuildCommander interface {
-	BuildCommands(c *BuildContext) []*cli.Command
-}

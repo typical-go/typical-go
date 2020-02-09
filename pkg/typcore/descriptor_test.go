@@ -1,44 +1,56 @@
 package typcore_test
 
 import (
+	"context"
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typbuild"
-	"github.com/typical-go/typical-go/pkg/typbuild/stdrelease"
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/urfave/cli/v2"
 )
 
-func TestContext_Validate_DefaultValue(t *testing.T) {
-	desc := &typcore.Descriptor{
+func TestDescriptor_Validate_DefaultValue(t *testing.T) {
+	d := &typcore.Descriptor{
 		Name:    "some-name",
 		Package: "some-package",
 		Build:   typbuild.New(),
 	}
-	require.NoError(t, desc.Validate())
-	require.Equal(t, "0.0.1", desc.Version)
+	require.True(t, typcore.IsValidator(d))
+	require.NoError(t, typcore.Validate(d))
+	require.Equal(t, "0.0.1", d.Version)
 }
 
-func TestContext_Validate(t *testing.T) {
+func TestDecriptor_Validate_ReturnError(t *testing.T) {
 	testcases := []struct {
 		typcore.Descriptor
 		errMsg string
 	}{
 		{
 			typcore.Descriptor{Package: "some-package"},
-			"Context: Name can't be empty",
+			"Descriptor: Name can't be empty",
 		},
 		{
 			typcore.Descriptor{Name: "some-name"},
-			"Context: Package can't be empty",
+			"Descriptor: Package can't be empty",
 		},
 		{
 			typcore.Descriptor{
 				Name:    "some-name",
 				Package: "some-package",
-				Build:   typbuild.New().WithRelease(stdrelease.New().WithTarget("linuxamd64")),
+				Build:   invalidBuild{"Build: some-error"},
 			},
-			"Context: Build: Releaser: Target: Missing OS: Please make sure 'linuxamd64' using 'OS/ARCH' format",
+			"Descriptor: Build: some-error",
+		},
+		{
+			typcore.Descriptor{
+				Name:    "some-name",
+				Package: "some-package",
+				Build:   typbuild.New(),
+				App:     invalidApp{"App: some-error"},
+			},
+			"Descriptor: App: some-error",
 		},
 	}
 	for i, tt := range testcases {
@@ -48,6 +60,53 @@ func TestContext_Validate(t *testing.T) {
 		} else {
 			require.EqualError(t, err, tt.errMsg, i)
 		}
-
 	}
+}
+
+type invalidBuild struct {
+	errMessage string
+}
+
+func (i invalidBuild) Validate() error {
+	return errors.New(i.errMessage)
+}
+
+func (i invalidBuild) Prebuild(ctx context.Context, b *typcore.BuildContext) error {
+	return nil
+}
+
+func (i invalidBuild) BuildCommands(b *typcore.BuildContext) []*cli.Command {
+	return nil
+}
+
+func (i invalidBuild) Releaser() typcore.Releaser {
+	return nil
+}
+
+type invalidApp struct {
+	errMessage string
+}
+
+func (i invalidApp) Validate() error {
+	return errors.New(i.errMessage)
+}
+
+func (i invalidApp) EntryPoint() interface{} {
+	return nil
+}
+
+func (i invalidApp) Provide() []interface{} {
+	return nil
+}
+
+func (i invalidApp) Prepare() []interface{} {
+	return nil
+}
+
+func (i invalidApp) Destroy() []interface{} {
+	return nil
+}
+
+func (i invalidApp) AppCommands(*typcore.AppContext) []*cli.Command {
+	return nil
 }

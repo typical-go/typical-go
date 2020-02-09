@@ -33,20 +33,23 @@ func (d *Descriptor) Validate() (err error) {
 	// Mandatory field
 	//
 	if d.Name == "" {
-		return errors.New("Context: Name can't be empty")
+		return errors.New("Descriptor: Name can't be empty")
 	}
 	if d.Package == "" {
-		return errors.New("Context: Package can't be empty")
+		return errors.New("Descriptor: Package can't be empty")
 	}
 	if d.Build == nil {
-		return errors.New("Context: Build can't be empty")
+		return errors.New("Descriptor: Build can't be empty")
 	}
 
 	//
 	// Validate object field
 	//
-	if err = d.Build.Validate(); err != nil {
-		return fmt.Errorf("Context: %w", err)
+	if err = Validate(d.Build); err != nil {
+		return fmt.Errorf("Descriptor: %w", err)
+	}
+	if err = Validate(d.App); err != nil {
+		return fmt.Errorf("Descriptor: %w", err)
 	}
 	return
 }

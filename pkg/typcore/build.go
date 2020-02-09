@@ -1,13 +1,21 @@
 package typcore
 
-import "context"
+import (
+	"context"
+
+	"github.com/urfave/cli/v2"
+)
 
 // Build is interface of build
 type Build interface {
 	BuildCommander
 	Prebuilder
-	Validate() (err error)
 	Releaser() Releaser
+}
+
+// BuildCommander responsible to return commands for Build-Tool
+type BuildCommander interface {
+	BuildCommands(c *BuildContext) []*cli.Command
 }
 
 // Prebuilder responsible to prebuild task
