@@ -30,8 +30,7 @@ func RunBuildTool(d *Descriptor) {
 				log.Fatal(err.Error())
 			}
 			defer f.Close()
-			keys, configMap := d.Configuration.ConfigMap()
-			if err = WriteEnv(f, keys, configMap); err != nil {
+			if err = d.Configuration.Write(f); err != nil {
 				log.Fatal(err.Error())
 			}
 		}

@@ -1,6 +1,11 @@
 package typcfg
 
-import "github.com/typical-go/typical-go/pkg/typcore"
+import (
+	"fmt"
+	"io"
+
+	"github.com/typical-go/typical-go/pkg/typcore"
+)
 
 // Configuration of typical project
 type Configuration struct {
@@ -51,6 +56,25 @@ func (c *Configuration) ConfigMap() (keys []string, configMap typcore.ConfigMap)
 			name := detail.Name
 			configMap[name] = detail
 			keys = append(keys, name)
+		}
+	}
+	return
+}
+
+func (c *Configuration) Write(w io.Writer) (err error) {
+	keys, configMap := c.ConfigMap()
+	for _, key := range keys {
+		var (
+			v         interface{}
+			cfgDetail = configMap[key]
+		)
+		if cfgDetail.IsZero {
+			v = cfgDetail.Default
+		} else {
+			v = cfgDetail.Value
+		}
+		if _, err = fmt.Fprintf(w, "%s=%v\n", cfgDetail.Name, v); err != nil {
+			return
 		}
 	}
 	return
