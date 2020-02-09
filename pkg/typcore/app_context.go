@@ -12,13 +12,6 @@ type AppContext struct {
 	*Descriptor
 }
 
-// NewAppContext return new instance of AppContext
-func NewAppContext(desc *Descriptor) *AppContext {
-	return &AppContext{
-		Descriptor: desc,
-	}
-}
-
 // ActionFunc to return ActionFunc to invoke function fn
 func (a *AppContext) ActionFunc(fn interface{}) func(*cli.Context) error {
 	return func(c *cli.Context) (err error) {

@@ -72,3 +72,13 @@ func (d *Descriptor) BuildContext() (bctx *BuildContext, err error) {
 		ProjectInfo:  projInfo,
 	}, nil
 }
+
+// AppContext return app context of descriptor
+func (d *Descriptor) AppContext() (actx *AppContext, err error) {
+	if err = d.Validate(); err != nil {
+		return
+	}
+	return &AppContext{
+		Descriptor: d,
+	}, nil
+}

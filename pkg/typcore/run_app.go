@@ -11,25 +11,28 @@ import (
 
 // RunApp the application
 func RunApp(d *Descriptor) {
-	appCtx := NewAppContext(d)
+	var (
+		actx *AppContext
+		err  error
+	)
+	if actx, err = d.AppContext(); err != nil {
+		log.Fatal(err.Error())
+	}
 	app := cli.NewApp()
 	app.Name = d.Name
 	app.Usage = "" // NOTE: intentionally blank
 	app.Description = d.Description
 	app.Version = d.Version
 	app.Before = func(c *cli.Context) (err error) {
-		if err = d.Validate(); err != nil {
-			return
-		}
 		if err = common.LoadEnvFile(); err != nil {
 			return
 		}
 		return
 	}
 	if entryPoint := d.App.EntryPoint(); entryPoint != nil {
-		app.Action = appCtx.ActionFunc(entryPoint)
+		app.Action = actx.ActionFunc(entryPoint)
 	}
-	for _, cmd := range d.App.AppCommands(appCtx) {
+	for _, cmd := range d.App.AppCommands(actx) {
 		app.Commands = append(app.Commands, cmd)
 	}
 	if err := app.Run(os.Args); err != nil {
