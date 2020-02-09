@@ -11,6 +11,7 @@ type App interface {
 	Preparer
 	Destroyer
 	AppCommander
+	Run(*AppContext) error
 }
 
 // EntryPointer responsible to handle entry point
