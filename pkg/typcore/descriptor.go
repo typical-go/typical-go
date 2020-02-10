@@ -6,6 +6,7 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typcore/walker"
 	"github.com/typical-go/typical-go/pkg/typenv"
+	"github.com/urfave/cli/v2"
 )
 
 // Descriptor describe the project
@@ -18,6 +19,12 @@ type Descriptor struct {
 	App           App
 	Build         Build
 	Configuration Configuration
+}
+
+// Build is interface of build
+type Build interface {
+	Invoke(*BuildContext, *cli.Context, interface{}) (err error)
+	Run(*BuildContext) error
 }
 
 // Validate context

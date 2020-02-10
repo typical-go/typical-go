@@ -53,3 +53,21 @@ func (a *AppContext) Invoke(c *cli.Context, fn interface{}) (err error) {
 	}
 	return
 }
+
+func invoke(di *dig.Container, fns ...interface{}) (err error) {
+	for _, fn := range fns {
+		if err = di.Invoke(fn); err != nil {
+			return
+		}
+	}
+	return
+}
+
+func provide(di *dig.Container, fns ...interface{}) (err error) {
+	for _, fn := range fns {
+		if err = di.Provide(fn); err != nil {
+			return
+		}
+	}
+	return
+}

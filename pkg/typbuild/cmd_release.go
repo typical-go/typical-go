@@ -1,18 +1,16 @@
-package stdbuild
+package typbuild
 
 import (
 	"errors"
 	"fmt"
 
-	"github.com/typical-go/typical-go/pkg/typcore"
-
 	"github.com/typical-go/typical-go/pkg/git"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/urfave/cli/v2"
 )
 
-// CmdRelease is command to release
-func CmdRelease(bc *typcore.BuildContext) *cli.Command {
+func (b *Build) cmdRelease(bctx *typcore.BuildContext) *cli.Command {
 	return &cli.Command{
 		Name:  "release",
 		Usage: "Release the distribution",
@@ -24,7 +22,7 @@ func CmdRelease(bc *typcore.BuildContext) *cli.Command {
 			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 		},
 		Action: func(c *cli.Context) (err error) {
-			if bc.Build == nil || bc.Build.Releaser() == nil {
+			if b.releaser == nil {
 				return errors.New("Releaser is missing")
 			}
 			var (
@@ -41,7 +39,7 @@ func CmdRelease(bc *typcore.BuildContext) *cli.Command {
 				ctx        = c.Context
 			)
 			if !noBuild {
-				if err = buildProject(ctx, bc); err != nil {
+				if err = b.buildProject(ctx, bctx); err != nil {
 					return
 				}
 			}
@@ -54,7 +52,7 @@ func CmdRelease(bc *typcore.BuildContext) *cli.Command {
 				return fmt.Errorf("Failed git fetch: %w", err)
 			}
 			defer git.Fetch(ctx)
-			if tag, err = bc.Build.Releaser().Tag(ctx, bc.Version, alpha); err != nil {
+			if tag, err = b.releaser.Tag(ctx, bctx.Version, alpha); err != nil {
 				return fmt.Errorf("Failed generate tag: %w", err)
 			}
 			if status := git.Status(ctx); status != "" && !force {
@@ -66,11 +64,11 @@ func CmdRelease(bc *typcore.BuildContext) *cli.Command {
 			if changeLogs = git.Logs(ctx, latest); len(changeLogs) < 1 && !force {
 				return errors.New("No change to be released")
 			}
-			if binaries, err = bc.Build.Releaser().BuildRelease(ctx, name, tag, changeLogs, alpha); err != nil {
+			if binaries, err = b.releaser.BuildRelease(ctx, name, tag, changeLogs, alpha); err != nil {
 				return fmt.Errorf("Failed build release: %w", err)
 			}
 			if !noPublish {
-				if err = bc.Build.Releaser().Publish(ctx, name, tag, changeLogs, binaries, alpha); err != nil {
+				if err = b.releaser.Publish(ctx, name, tag, changeLogs, binaries, alpha); err != nil {
 					return fmt.Errorf("Failed publish: %w", err)
 				}
 			}

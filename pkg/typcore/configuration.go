@@ -2,7 +2,7 @@ package typcore
 
 // Configuration is interface of configuration
 type Configuration interface {
-	Provider
+	Provide() []interface{}
 	Loader() ConfigLoader
 	ConfigMap() (keys []string, configMap ConfigMap)
 	Setup() error

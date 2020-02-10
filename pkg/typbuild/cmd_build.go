@@ -1,4 +1,4 @@
-package stdbuild
+package typbuild
 
 import (
 	"context"
@@ -13,24 +13,21 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// CmdBuild is command for build
-func CmdBuild(bc *typcore.BuildContext) *cli.Command {
+func (b *Build) cmdBuild(bc *typcore.BuildContext) *cli.Command {
 	return &cli.Command{
 		Name:    "build",
 		Aliases: []string{"b"},
 		Usage:   "Build the binary",
 		Action: func(c *cli.Context) (err error) {
 			log.Info("Build the application")
-			return buildProject(c.Context, bc)
+			return b.buildProject(c.Context, bc)
 		},
 	}
 }
 
-func buildProject(ctx context.Context, bc *typcore.BuildContext) (err error) {
-	if bc.Build != nil {
-		if err = bc.Build.Prebuild(ctx, bc); err != nil {
-			return
-		}
+func (b *Build) buildProject(ctx context.Context, bc *typcore.BuildContext) (err error) {
+	if err = b.Prebuild(ctx, bc); err != nil {
+		return
 	}
 	cmd := exec.CommandContext(ctx,
 		"go",

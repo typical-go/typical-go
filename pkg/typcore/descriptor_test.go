@@ -1,7 +1,6 @@
 package typcore_test
 
 import (
-	"context"
 	"errors"
 	"testing"
 
@@ -67,24 +66,16 @@ type invalidBuild struct {
 	errMessage string
 }
 
-func (i invalidBuild) Validate() error {
-	return errors.New(i.errMessage)
-}
-
-func (i invalidBuild) Prebuild(ctx context.Context, b *typcore.BuildContext) error {
-	return nil
-}
-
-func (i invalidBuild) BuildCommands(b *typcore.BuildContext) []*cli.Command {
-	return nil
-}
-
-func (i invalidBuild) Releaser() typcore.Releaser {
+func (i invalidBuild) Invoke(bctx *typcore.BuildContext, c *cli.Context, fn interface{}) (err error) {
 	return nil
 }
 
 func (i invalidBuild) Run(*typcore.BuildContext) error {
 	return nil
+}
+
+func (i invalidBuild) Validate() error {
+	return errors.New(i.errMessage)
 }
 
 type invalidApp struct {

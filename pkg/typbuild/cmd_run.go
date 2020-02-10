@@ -1,4 +1,4 @@
-package stdbuild
+package typbuild
 
 import (
 	"os"
@@ -10,8 +10,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// CmdRun is command to run
-func CmdRun(bc *typcore.BuildContext) *cli.Command {
+func (b *Build) cmdRun(bc *typcore.BuildContext) *cli.Command {
 	return &cli.Command{
 		Name:            "run",
 		Aliases:         []string{"r"},
@@ -19,7 +18,7 @@ func CmdRun(bc *typcore.BuildContext) *cli.Command {
 		SkipFlagParsing: true,
 		Action: func(c *cli.Context) (err error) {
 			ctx := c.Context
-			if err = buildProject(ctx, bc); err != nil {
+			if err = b.buildProject(ctx, bc); err != nil {
 				return
 			}
 			log.Info("Run the application")

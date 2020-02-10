@@ -1,4 +1,4 @@
-package stdbuild
+package typbuild
 
 import (
 	"os"
@@ -8,8 +8,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// CmdClean is command to  clean
-func CmdClean() *cli.Command {
+func (*Build) cmdClean() *cli.Command {
 	return &cli.Command{
 		Name:    "clean",
 		Aliases: []string{"c"},
