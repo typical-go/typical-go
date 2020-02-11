@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/urfave/cli/v2"
 )
 
 func TestDescriptor_Validate_DefaultValue(t *testing.T) {
@@ -19,6 +18,7 @@ func TestDescriptor_Validate_DefaultValue(t *testing.T) {
 	require.True(t, typcore.IsValidator(d))
 	require.NoError(t, typcore.Validate(d))
 	require.Equal(t, "0.0.1", d.Version)
+	require.Equal(t, []string{"app"}, d.Sources)
 }
 
 func TestDecriptor_Validate_ReturnError(t *testing.T) {
@@ -69,10 +69,6 @@ func (i invalidBuild) Validate() error {
 	return errors.New(i.errMessage)
 }
 
-func (i invalidBuild) Invoke(bctx *typcore.BuildContext, c *cli.Context, fn interface{}) (err error) {
-	return nil
-}
-
 func (i invalidBuild) Run(*typcore.BuildContext) error {
 	return nil
 }
@@ -85,10 +81,10 @@ func (i invalidApp) Validate() error {
 	return errors.New(i.errMessage)
 }
 
-func (i invalidApp) Invoke(actx *typcore.AppContext, c *cli.Context, fn interface{}) (err error) {
+func (i invalidApp) Run(*typcore.AppContext) error {
 	return nil
 }
 
-func (i invalidApp) Run(*typcore.AppContext) error {
+func (i invalidApp) Sources() []string {
 	return nil
 }

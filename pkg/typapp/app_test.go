@@ -23,11 +23,11 @@ func TestNewApp(t *testing.T) {
 	t.Run("With- function", func(t *testing.T) {
 		m := &module{}
 		app := typapp.New(nil).
-			WithEntryPoint(m).
-			WithProvide(m).
-			WithDestroy(m).
-			WithPrepare(m).
-			WithCommand(m)
+			WithEntryPointer(m).
+			AppendProvider(m).
+			AppendDestroyer(m).
+			AppendPreparer(m).
+			AppendCommander(m)
 		require.Equal(t, "some-entry-point", app.EntryPoint())
 		require.Equal(t, []interface{}{"provide1", "provide2"}, app.Provide())
 		require.Equal(t, []interface{}{"prepare1", "prepare2"}, app.Prepare())

@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 
 	"github.com/typical-go/typical-go/pkg/typcore/walker"
-	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
 // Descriptor describe the project
@@ -15,6 +14,7 @@ type Descriptor struct {
 	Description string
 	Package     string
 	Version     string
+	Sources     []string
 
 	App           App
 	Build         Build
@@ -28,6 +28,9 @@ func (d *Descriptor) Validate() (err error) {
 	//
 	if d.Version == "" {
 		d.Version = "0.0.1"
+	}
+	if len(d.Sources) < 1 {
+		d.Sources = []string{"app"}
 	}
 
 	//
@@ -54,17 +57,17 @@ func (d *Descriptor) Validate() (err error) {
 
 // BuildContext return build context of descriptor
 func (d *Descriptor) BuildContext() (c *BuildContext, err error) {
-	root := typenv.Layout.App
-
-	c = &BuildContext{
-		Descriptor: d,
-		Dirs:       []string{root},
-	}
 	if err = d.Validate(); err != nil {
 		return
 	}
-	if err = filepath.Walk(root, c.addFile); err != nil {
-		return
+	c = &BuildContext{
+		Descriptor: d,
+		Dirs:       d.Sources,
+	}
+	for _, dir := range c.Dirs {
+		if err = filepath.Walk(dir, c.addFile); err != nil {
+			return
+		}
 	}
 	if c.Declarations, err = walker.Walk(c.Files); err != nil {
 		return

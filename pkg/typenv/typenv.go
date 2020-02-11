@@ -9,14 +9,12 @@ import (
 var (
 	// Layout of project
 	Layout = struct {
-		App     string
 		Bin     string
 		Cmd     string
 		Temp    string
 		Mock    string
 		Release string
 	}{
-		App:     "app",
 		Cmd:     "cmd",
 		Bin:     "bin",
 		Temp:    ".typical-tmp",

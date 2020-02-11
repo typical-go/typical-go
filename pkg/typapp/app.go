@@ -65,41 +65,46 @@ func New(v interface{}) *App {
 	return app
 }
 
-// WithEntryPoint to set entry point
-func (a *App) WithEntryPoint(entryPoint EntryPointer) *App {
+// WithEntryPointer return app with new entry pointer
+func (a *App) WithEntryPointer(entryPoint EntryPointer) *App {
 	a.entryPoint = entryPoint
 	return a
 }
 
-// WithProvide to set provide
-func (a *App) WithProvide(provides ...Provider) *App {
+// WithSources return app with new source
+func (a *App) WithSources(sources ...string) *App {
+	return a
+}
+
+// AppendProvider return app with appended provider
+func (a *App) AppendProvider(provides ...Provider) *App {
 	a.providers = append(a.providers, provides...)
 	return a
 }
 
-// WithPrepare to set prepare
-func (a *App) WithPrepare(prepares ...Preparer) *App {
+// AppendPreparer return app with appended preparer
+func (a *App) AppendPreparer(prepares ...Preparer) *App {
 	a.preparers = append(a.preparers, prepares...)
 	return a
 }
 
-// WithDestroy to set destroy
-func (a *App) WithDestroy(destroys ...Destroyer) *App {
+// AppendDestroyer return app with appended destroyer
+func (a *App) AppendDestroyer(destroys ...Destroyer) *App {
 	a.destroyers = append(a.destroyers, destroys...)
 	return a
 }
 
-// WithCommand to set commanders
-func (a *App) WithCommand(commands ...AppCommander) *App {
+// AppendCommander return app with appended commander
+func (a *App) AppendCommander(commands ...AppCommander) *App {
 	a.commanders = append(a.commanders, commands...)
 	return a
 }
 
-// WithDependency to set dependency
-func (a *App) WithDependency(dependencies ...Dependency) *App {
+// AppendDependency return app with appended dependency
+func (a *App) AppendDependency(dependencies ...Dependency) *App {
 	for _, dep := range dependencies {
-		a.WithProvide(dep.(Provider))
-		a.WithDestroy(dep.(Destroyer))
+		a.AppendProvider(dep.(Provider))
+		a.AppendDestroyer(dep.(Destroyer))
 	}
 	return a
 }
