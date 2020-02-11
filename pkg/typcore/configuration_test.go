@@ -7,7 +7,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
-func TestConfigMap_ValueBy(t *testing.T) {
+func TestConfigFieldsBy(t *testing.T) {
 	m := map[string]typcore.ConfigDetail{
 		"key1": configDetail("key1"),
 		"key2": configDetail("key2"),

@@ -13,7 +13,7 @@ import (
 func TestNewConfiguration(t *testing.T) {
 	t.Run("New configuration instance using default config loader", func(t *testing.T) {
 		loader := typcfg.New().Loader()
-		require.Equal(t, "*typcfg.defaultConfigLoader", reflect.TypeOf(loader).String())
+		require.Equal(t, "*typcfg.defaultLoader", reflect.TypeOf(loader).String())
 	})
 	t.Run("Configuration must implement of typcore.Configuration", func(t *testing.T) {
 		var _ typcore.Configuration = typcfg.New()
