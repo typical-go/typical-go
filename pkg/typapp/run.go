@@ -10,7 +10,7 @@ import (
 
 // Run application
 func (a *App) Run(actx *typcore.AppContext) (err error) {
-	c := Context{
+	c := &Context{
 		AppContext: actx,
 		App:        a,
 	}
@@ -28,6 +28,6 @@ func (a *App) Run(actx *typcore.AppContext) (err error) {
 	if entryPoint := a.EntryPoint(); entryPoint != nil {
 		app.Action = c.ActionFunc(entryPoint)
 	}
-	app.Commands = a.AppCommands(actx)
+	app.Commands = a.AppCommands(c)
 	return app.Run(os.Args)
 }

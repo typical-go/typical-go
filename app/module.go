@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/urfave/cli/v2"
 )
 
@@ -19,7 +19,7 @@ func New() *Module {
 type Module struct{}
 
 // AppCommands return command
-func (m Module) AppCommands(a *typcore.AppContext) []*cli.Command {
+func (m Module) AppCommands(a *typapp.Context) []*cli.Command {
 	return []*cli.Command{
 		cmdConstructProject(),
 		cmdCreateWrapper(),

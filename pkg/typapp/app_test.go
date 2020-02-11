@@ -5,7 +5,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
@@ -50,7 +49,7 @@ func (*module) Destroy() []interface{} { return []interface{}{"destroy1", "destr
 
 func (*module) Prepare() []interface{} { return []interface{}{"prepare1", "prepare2"} }
 
-func (*module) AppCommands(c *typcore.AppContext) []*cli.Command {
+func (*module) AppCommands(c *typapp.Context) []*cli.Command {
 	return []*cli.Command{
 		{Name: "cmd1"},
 		{Name: "cmd2"},
