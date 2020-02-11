@@ -17,9 +17,9 @@ func (*Build) cmdTest() *cli.Command {
 	}
 }
 
-func runTesting(c *cli.Context) error {
+func runTesting(cliCtx *cli.Context) error {
 	var (
-		ctx = c.Context
+		ctx = cliCtx.Context
 	)
 	log.Info("Run testings")
 	targets := []string{

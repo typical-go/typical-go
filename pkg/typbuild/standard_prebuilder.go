@@ -9,7 +9,6 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/runn/stdrun"
-	"github.com/typical-go/typical-go/pkg/typcore"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typcore/walker"
@@ -22,27 +21,27 @@ func newStandardPrebuilder() *standardPrebuilder {
 	return &standardPrebuilder{}
 }
 
-func (a *standardPrebuilder) Prebuild(ctx context.Context, bc *typcore.BuildContext) (err error) {
+func (a *standardPrebuilder) Prebuild(ctx context.Context, c *Context) (err error) {
 	var constructors common.Strings
-	if err = bc.EachAnnotation("constructor", walker.FunctionType, func(decl *walker.Declaration, ann *walker.Annotation) (err error) {
+	if err = c.EachAnnotation("constructor", walker.FunctionType, func(decl *walker.Declaration, ann *walker.Annotation) (err error) {
 		constructors.Append(fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
 		return
 	}); err != nil {
 		return
 	}
 	log.Info("Generate constructors")
-	if err = a.generateConstructor(ctx, typenv.GeneratedConstructor, bc, constructors); err != nil {
+	if err = a.generateConstructor(ctx, typenv.GeneratedConstructor, c, constructors); err != nil {
 		return
 	}
 	return
 }
 
-func (a *standardPrebuilder) generateConstructor(ctx context.Context, target string, bc *typcore.BuildContext, constructors common.Strings) (err error) {
+func (a *standardPrebuilder) generateConstructor(ctx context.Context, target string, c *Context, constructors common.Strings) (err error) {
 	defer common.ElapsedTimeFn("Generate constructor")()
 	var (
 		imports common.Strings
-		pkg     = bc.Package
-		dirs    = bc.Dirs
+		pkg     = c.Package
+		dirs    = c.Dirs
 	)
 	imports.Append("github.com/typical-go/typical-go/pkg/typapp")
 	for _, dir := range dirs {

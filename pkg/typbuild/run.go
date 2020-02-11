@@ -14,7 +14,7 @@ func (b *Build) Run(bctx *typcore.BuildContext) (err error) {
 	app.Usage = "" // NOTE: intentionally blank
 	app.Description = bctx.Description
 	app.Version = bctx.Version
-	app.Commands = b.BuildCommands(bctx)
+	app.Commands = b.BuildCommands(&Context{bctx})
 
 	return app.Run(os.Args)
 }

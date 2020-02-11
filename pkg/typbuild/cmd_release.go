@@ -5,12 +5,11 @@ import (
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/git"
-	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typenv"
 	"github.com/urfave/cli/v2"
 )
 
-func (b *Build) cmdRelease(bctx *typcore.BuildContext) *cli.Command {
+func (b *Build) cmdRelease(c *Context) *cli.Command {
 	return &cli.Command{
 		Name:  "release",
 		Usage: "Release the distribution",
@@ -21,7 +20,7 @@ func (b *Build) cmdRelease(bctx *typcore.BuildContext) *cli.Command {
 			&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
 			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 		},
-		Action: func(c *cli.Context) (err error) {
+		Action: func(cliCtx *cli.Context) (err error) {
 			if b.releaser == nil {
 				return errors.New("Releaser is missing")
 			}
@@ -31,20 +30,20 @@ func (b *Build) cmdRelease(bctx *typcore.BuildContext) *cli.Command {
 				changeLogs []string
 				binaries   []string
 				name       = typenv.ProjectName
-				alpha      = c.Bool("alpha")
-				force      = c.Bool("force")
-				noTest     = c.Bool("no-test")
-				noBuild    = c.Bool("no-build")
-				noPublish  = c.Bool("no-publish")
-				ctx        = c.Context
+				alpha      = cliCtx.Bool("alpha")
+				force      = cliCtx.Bool("force")
+				noTest     = cliCtx.Bool("no-test")
+				noBuild    = cliCtx.Bool("no-build")
+				noPublish  = cliCtx.Bool("no-publish")
+				ctx        = cliCtx.Context
 			)
 			if !noBuild {
-				if err = b.buildProject(ctx, bctx); err != nil {
+				if err = b.buildProject(ctx, c); err != nil {
 					return
 				}
 			}
 			if !noTest {
-				if err = runTesting(c); err != nil {
+				if err = runTesting(cliCtx); err != nil {
 					return
 				}
 			}
@@ -52,7 +51,7 @@ func (b *Build) cmdRelease(bctx *typcore.BuildContext) *cli.Command {
 				return fmt.Errorf("Failed git fetch: %w", err)
 			}
 			defer git.Fetch(ctx)
-			if tag, err = b.releaser.Tag(ctx, bctx.Version, alpha); err != nil {
+			if tag, err = b.releaser.Tag(ctx, c.Version, alpha); err != nil {
 				return fmt.Errorf("Failed generate tag: %w", err)
 			}
 			if status := git.Status(ctx); status != "" && !force {

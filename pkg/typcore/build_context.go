@@ -2,7 +2,6 @@ package typcore
 
 import (
 	log "github.com/sirupsen/logrus"
-	"github.com/urfave/cli/v2"
 
 	"github.com/typical-go/typical-go/pkg/typcore/walker"
 )
@@ -45,11 +44,4 @@ func (b *BuildContext) EachAnnotation(name string, declType walker.DeclType, fn 
 		}
 		return
 	})
-}
-
-// ActionFunc to return action function that required config and object only
-func (b *BuildContext) ActionFunc(fn interface{}) func(ctx *cli.Context) error {
-	return func(c *cli.Context) (err error) {
-		return b.Build.Invoke(b, c, fn)
-	}
 }

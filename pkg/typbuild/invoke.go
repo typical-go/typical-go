@@ -8,25 +8,35 @@ import (
 	"go.uber.org/dig"
 )
 
+// Context of build
+type Context struct {
+	*typcore.BuildContext
+}
+
+// ActionFunc to return action function that required config and object only
+func (c *Context) ActionFunc(fn interface{}) func(cliCtx *cli.Context) error {
+	return func(cliCtx *cli.Context) (err error) {
+		return c.Invoke(cliCtx, fn)
+	}
+}
+
 // Invoke function
-func (b *Build) Invoke(bctx *typcore.BuildContext, c *cli.Context, fn interface{}) (err error) {
+func (c *Context) Invoke(cliCtx *cli.Context, fn interface{}) (err error) {
 	di := dig.New()
 
 	// provide the cli.Context
-	if err = di.Provide(func() *cli.Context { return c }); err != nil {
+	if err = di.Provide(func() *cli.Context { return cliCtx }); err != nil {
 		return
 	}
 
 	// provide functions
-	if bctx.Configuration != nil {
-		if err = provide(di, bctx.Configuration.Provide()...); err != nil {
+	if c.Configuration != nil {
+		if err = provide(di, c.Configuration.Provide()...); err != nil {
 			return
 		}
 	}
 
-	startFn := func() error {
-		return di.Invoke(fn)
-	}
+	startFn := func() error { return di.Invoke(fn) }
 	for _, err := range common.StartGracefully(startFn, nil) {
 		log.Error(err.Error())
 	}

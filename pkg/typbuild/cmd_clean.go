@@ -17,7 +17,7 @@ func (*Build) cmdClean() *cli.Command {
 	}
 }
 
-func cleanProject(c *cli.Context) error {
+func cleanProject(cliCtx *cli.Context) error {
 	removeFile(typenv.AppBin)
 	removeAllFile(typenv.Layout.Temp)
 	removeFile(".env")

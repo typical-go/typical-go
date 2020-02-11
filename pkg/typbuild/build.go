@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
@@ -25,12 +24,12 @@ type Releaser interface {
 
 // Prebuilder responsible to prebuild task
 type Prebuilder interface {
-	Prebuild(ctx context.Context, bc *typcore.BuildContext) error
+	Prebuild(ctx context.Context, c *Context) error
 }
 
 // BuildCommander responsible to return commands for Build-Tool
 type BuildCommander interface {
-	BuildCommands(c *typcore.BuildContext) []*cli.Command
+	BuildCommands(c *Context) []*cli.Command
 }
 
 // New return new instance of build
@@ -61,7 +60,7 @@ func (b *Build) WithPrebuild(prebuilders ...Prebuilder) *Build {
 }
 
 // BuildCommands to return command
-func (b *Build) BuildCommands(bc *typcore.BuildContext) []*cli.Command {
+func (b *Build) BuildCommands(bc *Context) []*cli.Command {
 	cmds := []*cli.Command{
 		b.cmdBuild(bc),
 		b.cmdClean(),
@@ -87,9 +86,9 @@ func (b *Build) Validate() (err error) {
 }
 
 // Prebuild process
-func (b *Build) Prebuild(ctx context.Context, bc *typcore.BuildContext) (err error) {
+func (b *Build) Prebuild(ctx context.Context, c *Context) (err error) {
 	for _, prebuilder := range b.prebuilders {
-		if err = prebuilder.Prebuild(ctx, bc); err != nil {
+		if err = prebuilder.Prebuild(ctx, c); err != nil {
 			return
 		}
 	}

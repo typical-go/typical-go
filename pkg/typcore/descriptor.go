@@ -23,7 +23,6 @@ type Descriptor struct {
 
 // Build is interface of build
 type Build interface {
-	Invoke(*BuildContext, *cli.Context, interface{}) (err error)
 	Run(*BuildContext) error
 }
 
