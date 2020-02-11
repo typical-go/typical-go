@@ -3,6 +3,7 @@ package typcore
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
 
 	"github.com/typical-go/typical-go/pkg/typcore/walker"
 	"github.com/typical-go/typical-go/pkg/typenv"
@@ -52,25 +53,23 @@ func (d *Descriptor) Validate() (err error) {
 }
 
 // BuildContext return build context of descriptor
-func (d *Descriptor) BuildContext() (bctx *BuildContext, err error) {
-	var (
-		projInfo     *ProjectInfo
-		declarations []*walker.Declaration
-	)
+func (d *Descriptor) BuildContext() (c *BuildContext, err error) {
+	root := typenv.Layout.App
+
+	c = &BuildContext{
+		Descriptor: d,
+		Dirs:       []string{root},
+	}
 	if err = d.Validate(); err != nil {
 		return
 	}
-	if projInfo, err = ReadProject(typenv.Layout.App); err != nil {
+	if err = filepath.Walk(root, c.addFile); err != nil {
 		return
 	}
-	if declarations, err = walker.Walk(projInfo.Files); err != nil {
+	if c.Declarations, err = walker.Walk(c.Files); err != nil {
 		return
 	}
-	return &BuildContext{
-		Descriptor:   d,
-		Declarations: declarations,
-		ProjectInfo:  projInfo,
-	}, nil
+	return c, nil
 }
 
 // AppContext return app context of descriptor
