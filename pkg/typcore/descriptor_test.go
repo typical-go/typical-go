@@ -46,7 +46,6 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 			typcore.Descriptor{
 				Name:    "some-name",
 				Package: "some-package",
-				Build:   typbuild.New(),
 				App:     invalidApp{"App: some-error"},
 			},
 			"Descriptor: App: some-error",
