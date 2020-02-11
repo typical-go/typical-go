@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
@@ -15,8 +16,7 @@ func TestDescriptor_Validate_DefaultValue(t *testing.T) {
 		Package: "some-package",
 		Build:   typbuild.New(),
 	}
-	require.True(t, typcore.IsValidator(d))
-	require.NoError(t, typcore.Validate(d))
+	require.NoError(t, common.Validate(d))
 	require.Equal(t, "0.0.1", d.Version)
 	require.Equal(t, []string{"app"}, d.Sources)
 }

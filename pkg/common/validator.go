@@ -1,4 +1,4 @@
-package typcore
+package common
 
 // Validator responsible to validate object
 type Validator interface {
@@ -11,10 +11,4 @@ func Validate(obj interface{}) error {
 		return validator.Validate()
 	}
 	return nil
-}
-
-// IsValidator return true is object
-func IsValidator(obj interface{}) bool {
-	_, ok := obj.(Validator)
-	return ok
 }

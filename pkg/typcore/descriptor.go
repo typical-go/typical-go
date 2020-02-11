@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcore/walker"
 )
 
@@ -46,10 +47,10 @@ func (d *Descriptor) Validate() (err error) {
 	//
 	// Validate object field
 	//
-	if err = Validate(d.Build); err != nil {
+	if err = common.Validate(d.Build); err != nil {
 		return fmt.Errorf("Descriptor: %w", err)
 	}
-	if err = Validate(d.App); err != nil {
+	if err = common.Validate(d.App); err != nil {
 		return fmt.Errorf("Descriptor: %w", err)
 	}
 	return
