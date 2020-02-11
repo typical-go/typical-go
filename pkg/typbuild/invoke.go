@@ -27,8 +27,7 @@ func (b *Build) Invoke(bctx *typcore.BuildContext, c *cli.Context, fn interface{
 	startFn := func() error {
 		return di.Invoke(fn)
 	}
-	errs := common.NewApplication(startFn).Run()
-	for _, err := range errs {
+	for _, err := range common.StartGracefully(startFn, nil) {
 		log.Error(err.Error())
 	}
 	return

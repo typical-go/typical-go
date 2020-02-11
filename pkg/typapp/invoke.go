@@ -31,14 +31,14 @@ func (a *App) Invoke(actx *typcore.AppContext, c *cli.Context, fn interface{}) (
 	if err = invoke(di, a.Prepare()...); err != nil {
 		return
 	}
+
 	startFn := func() error {
 		return di.Invoke(fn)
 	}
 	stopFn := func() error {
 		return invoke(di, a.Destroy()...)
 	}
-	errs := common.NewApplication(startFn).WithStopFn(stopFn).Run()
-	for _, err := range errs {
+	for _, err := range common.StartGracefully(startFn, stopFn) {
 		log.Error(err.Error())
 	}
 	return
