@@ -27,6 +27,12 @@ type Build interface {
 	Run(*BuildContext) error
 }
 
+// App is interface of app
+type App interface {
+	Invoke(actx *AppContext, c *cli.Context, fn interface{}) (err error)
+	Run(*AppContext) error
+}
+
 // Validate context
 func (d *Descriptor) Validate() (err error) {
 	//

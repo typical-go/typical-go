@@ -66,16 +66,16 @@ type invalidBuild struct {
 	errMessage string
 }
 
+func (i invalidBuild) Validate() error {
+	return errors.New(i.errMessage)
+}
+
 func (i invalidBuild) Invoke(bctx *typcore.BuildContext, c *cli.Context, fn interface{}) (err error) {
 	return nil
 }
 
 func (i invalidBuild) Run(*typcore.BuildContext) error {
 	return nil
-}
-
-func (i invalidBuild) Validate() error {
-	return errors.New(i.errMessage)
 }
 
 type invalidApp struct {
@@ -86,23 +86,7 @@ func (i invalidApp) Validate() error {
 	return errors.New(i.errMessage)
 }
 
-func (i invalidApp) EntryPoint() interface{} {
-	return nil
-}
-
-func (i invalidApp) Provide() []interface{} {
-	return nil
-}
-
-func (i invalidApp) Prepare() []interface{} {
-	return nil
-}
-
-func (i invalidApp) Destroy() []interface{} {
-	return nil
-}
-
-func (i invalidApp) AppCommands(*typcore.AppContext) []*cli.Command {
+func (i invalidApp) Invoke(actx *typcore.AppContext, c *cli.Context, fn interface{}) (err error) {
 	return nil
 }
 

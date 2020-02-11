@@ -1,10 +1,7 @@
 package typcore
 
 import (
-	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/urfave/cli/v2"
-	"go.uber.org/dig"
 )
 
 // AppContext is context of app
@@ -15,59 +12,6 @@ type AppContext struct {
 // ActionFunc to return ActionFunc to invoke function fn
 func (a *AppContext) ActionFunc(fn interface{}) func(*cli.Context) error {
 	return func(c *cli.Context) (err error) {
-		return a.Invoke(c, fn)
+		return a.App.Invoke(a, c, fn)
 	}
-}
-
-// Invoke function with Dependency Injection
-func (a *AppContext) Invoke(c *cli.Context, fn interface{}) (err error) {
-	di := dig.New()
-	if c != nil {
-		if err = di.Provide(func() *cli.Context { return c }); err != nil {
-			return
-		}
-	}
-	if a.Configuration != nil {
-		// provide configuration to dependency-injection container
-		if err = provide(di, a.Configuration.Provide()...); err != nil {
-			return
-		}
-	}
-	// provide registered function in descriptor to dependency-injection container
-	if err = provide(di, a.App.Provide()...); err != nil {
-		return
-	}
-	// invoke preparation as register in descriptor
-	if err = invoke(di, a.App.Prepare()...); err != nil {
-		return
-	}
-	startFn := func() error {
-		return di.Invoke(fn)
-	}
-	stopFn := func() error {
-		return invoke(di, a.App.Destroy()...)
-	}
-	errs := common.NewApplication(startFn).WithStopFn(stopFn).Run()
-	for _, err := range errs {
-		log.Error(err.Error())
-	}
-	return
-}
-
-func invoke(di *dig.Container, fns ...interface{}) (err error) {
-	for _, fn := range fns {
-		if err = di.Invoke(fn); err != nil {
-			return
-		}
-	}
-	return
-}
-
-func provide(di *dig.Container, fns ...interface{}) (err error) {
-	for _, fn := range fns {
-		if err = di.Provide(fn); err != nil {
-			return
-		}
-	}
-	return
 }
