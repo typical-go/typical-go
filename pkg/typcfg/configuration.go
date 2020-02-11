@@ -13,7 +13,7 @@ type Configuration struct {
 // New return new instance of Configuration
 func New() *Configuration {
 	return &Configuration{
-		loader: newDefaultConfigLoader(),
+		loader: &defaultLoader{},
 	}
 }
 

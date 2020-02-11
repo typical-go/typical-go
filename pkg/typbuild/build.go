@@ -35,9 +35,7 @@ type BuildCommander interface {
 // New return new instance of build
 func New() *Build {
 	return &Build{
-		prebuilders: []Prebuilder{
-			newStandardPrebuilder(),
-		},
+		prebuilders: []Prebuilder{&standardPrebuilder{}},
 	}
 }
 

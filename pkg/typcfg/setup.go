@@ -6,8 +6,6 @@ import (
 	"os"
 
 	log "github.com/sirupsen/logrus"
-
-	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 const (
@@ -47,21 +45,6 @@ func (c *Configuration) Write(w io.Writer) (err error) {
 		}
 		if _, err = fmt.Fprintf(w, "%s=%v\n", cfgDetail.Name, v); err != nil {
 			return
-		}
-	}
-	return
-}
-
-// ConfigMap return map of config detail
-func (c *Configuration) ConfigMap() (keys []string, configMap typcore.ConfigMap) {
-	configMap = make(map[string]typcore.ConfigDetail)
-	for _, configurer := range c.configurers {
-		prefix, spec, _ := configurer.Configure(c.loader)
-		details := typcore.CreateConfigDetails(prefix, spec)
-		for _, detail := range details {
-			name := detail.Name
-			configMap[name] = detail
-			keys = append(keys, name)
 		}
 	}
 	return

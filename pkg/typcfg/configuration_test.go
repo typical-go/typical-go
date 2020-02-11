@@ -28,12 +28,12 @@ func TestConfiguration(t *testing.T) {
 	require.Equal(t, []interface{}{"loadFn1", "loadFn2"}, configuration.Provide())
 
 	keys, configMap := configuration.ConfigMap()
-	require.Equal(t, typcore.ConfigDetails{
+	require.Equal(t, []typcore.ConfigDetail{
 		{Name: "prefix1_ID", Type: "int64", Default: "", Value: int64(0), IsZero: true, Required: false},
 		{Name: "prefix1_VOLUME", Type: "int", Default: "", Value: 0, IsZero: true, Required: false},
 		{Name: "prefix2_TITLE", Type: "string", Default: "default-title", Value: "", IsZero: true, Required: false},
 		{Name: "prefix2_CONTENT", Type: "string", Default: "default-content", Value: "", IsZero: true, Required: false},
-	}, configMap.ValueBy(keys...))
+	}, typcore.ConfigDetailsBy(configMap, keys...))
 
 	var b strings.Builder
 	require.NoError(t, configuration.Write(&b))

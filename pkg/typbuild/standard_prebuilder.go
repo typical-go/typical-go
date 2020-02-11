@@ -17,10 +17,6 @@ import (
 
 type standardPrebuilder struct{}
 
-func newStandardPrebuilder() *standardPrebuilder {
-	return &standardPrebuilder{}
-}
-
 func (a *standardPrebuilder) Prebuild(ctx context.Context, c *Context) (err error) {
 	var constructors common.Strings
 	if err = c.EachAnnotation("constructor", walker.FunctionType, func(decl *walker.Declaration, ann *walker.Annotation) (err error) {
