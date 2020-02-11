@@ -6,6 +6,11 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore/walker"
 )
 
+// Build is interface of build
+type Build interface {
+	Run(*BuildContext) error
+}
+
 // BuildContext is context of prebuild
 type BuildContext struct {
 	*Descriptor

@@ -1,43 +1,57 @@
-package typbuild
+package typapp
 
 import (
 	log "github.com/sirupsen/logrus"
+
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/dig"
 )
 
-// Context of build
+// Context of App
 type Context struct {
-	*typcore.BuildContext
+	*typcore.AppContext
+	*App
 }
 
-// ActionFunc to return action function that required config and object only
-func (c *Context) ActionFunc(fn interface{}) func(cliCtx *cli.Context) error {
+// ActionFunc to return ActionFunc to invoke function fn
+func (c *Context) ActionFunc(fn interface{}) func(*cli.Context) error {
 	return func(cliCtx *cli.Context) (err error) {
 		return c.Invoke(cliCtx, fn)
 	}
 }
 
-// Invoke function
+// Invoke function with Dependency Injection
 func (c *Context) Invoke(cliCtx *cli.Context, fn interface{}) (err error) {
 	di := dig.New()
-
-	// provide the cli.Context
-	if err = di.Provide(func() *cli.Context { return cliCtx }); err != nil {
-		return
+	if cliCtx != nil {
+		if err = di.Provide(func() *cli.Context { return cliCtx }); err != nil {
+			return
+		}
 	}
-
-	// provide functions
 	if c.Configuration != nil {
+		// provide configuration to dependency-injection container
 		if err = provide(di, c.Configuration.Provide()...); err != nil {
 			return
 		}
 	}
+	// provide registered function in descriptor to dependency-injection container
+	if err = provide(di, c.Provide()...); err != nil {
+		return
+	}
+	// invoke preparation as register in descriptor
+	if err = invoke(di, c.Prepare()...); err != nil {
+		return
+	}
 
-	startFn := func() error { return di.Invoke(fn) }
-	for _, err := range common.StartGracefully(startFn, nil) {
+	startFn := func() error {
+		return di.Invoke(fn)
+	}
+	stopFn := func() error {
+		return invoke(di, c.Destroy()...)
+	}
+	for _, err := range common.StartGracefully(startFn, stopFn) {
 		log.Error(err.Error())
 	}
 	return

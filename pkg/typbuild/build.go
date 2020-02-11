@@ -60,17 +60,17 @@ func (b *Build) WithPrebuild(prebuilders ...Prebuilder) *Build {
 }
 
 // BuildCommands to return command
-func (b *Build) BuildCommands(bc *Context) []*cli.Command {
+func (b *Build) BuildCommands(c *Context) []*cli.Command {
 	cmds := []*cli.Command{
-		b.cmdBuild(bc),
+		b.cmdBuild(c),
 		b.cmdClean(),
-		b.cmdRun(bc),
+		b.cmdRun(c),
 		b.cmdTest(),
-		b.cmdMock(bc),
-		b.cmdRelease(bc),
+		b.cmdMock(c),
+		b.cmdRelease(c),
 	}
 	for _, commanders := range b.commanders {
-		cmds = append(cmds, commanders.BuildCommands(bc)...)
+		cmds = append(cmds, commanders.BuildCommands(c)...)
 	}
 	return cmds
 }

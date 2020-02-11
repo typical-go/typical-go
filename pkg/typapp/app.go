@@ -1,7 +1,6 @@
 package typapp
 
 import (
-	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
@@ -42,7 +41,7 @@ type Destroyer interface {
 
 // AppCommander responsible to return commands for App
 type AppCommander interface {
-	AppCommands(*typcore.AppContext) []*cli.Command
+	AppCommands(*Context) []*cli.Command
 }
 
 // New return new instance of app
@@ -139,9 +138,9 @@ func (a *App) Prepare() (preparations []interface{}) {
 }
 
 // AppCommands to return commands
-func (a *App) AppCommands(ac *typcore.AppContext) (cmds []*cli.Command) {
+func (a *App) AppCommands(c *Context) (cmds []*cli.Command) {
 	for _, commander := range a.commanders {
-		cmds = append(cmds, commander.AppCommands(ac)...)
+		cmds = append(cmds, commander.AppCommands(c)...)
 	}
 	return
 }

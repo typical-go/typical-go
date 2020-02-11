@@ -10,6 +10,10 @@ import (
 
 // Run application
 func (a *App) Run(actx *typcore.AppContext) (err error) {
+	c := Context{
+		AppContext: actx,
+		App:        a,
+	}
 	app := cli.NewApp()
 	app.Name = actx.Name
 	app.Usage = "" // NOTE: intentionally blank
@@ -22,7 +26,7 @@ func (a *App) Run(actx *typcore.AppContext) (err error) {
 		return
 	}
 	if entryPoint := a.EntryPoint(); entryPoint != nil {
-		app.Action = actx.ActionFunc(entryPoint)
+		app.Action = c.ActionFunc(entryPoint)
 	}
 	app.Commands = a.AppCommands(actx)
 	return app.Run(os.Args)
