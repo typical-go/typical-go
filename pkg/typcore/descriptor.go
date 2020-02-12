@@ -3,7 +3,9 @@ package typcore
 import (
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
+	"regexp"
 
 	"github.com/typical-go/typical-go/pkg/common"
 )
@@ -19,40 +21,6 @@ type Descriptor struct {
 	App           App
 	Build         Build
 	Configuration Configuration
-}
-
-// Validate context
-func (d *Descriptor) Validate() (err error) {
-	//
-	// Default value
-	//
-	if d.Version == "" {
-		d.Version = "0.0.1"
-	}
-	if len(d.Sources) < 1 {
-		d.Sources = []string{"app"}
-	}
-
-	//
-	// Mandatory field
-	//
-	if d.Name == "" {
-		return errors.New("Descriptor: Name can't be empty")
-	}
-	if d.Package == "" {
-		return errors.New("Descriptor: Package can't be empty")
-	}
-
-	//
-	// Validate object field
-	//
-	if err = common.Validate(d.Build); err != nil {
-		return fmt.Errorf("Descriptor: %w", err)
-	}
-	if err = common.Validate(d.App); err != nil {
-		return fmt.Errorf("Descriptor: %w", err)
-	}
-	return
 }
 
 // RunApp to run app
@@ -76,12 +44,12 @@ func (d *Descriptor) RunBuild() (err error) {
 	if err = d.Validate(); err != nil {
 		return
 	}
-	bctx := &BuildContext{
+	c := &BuildContext{
 		Descriptor: d,
 		Dirs:       d.Sources,
 	}
-	for _, dir := range bctx.Dirs {
-		if err = filepath.Walk(dir, bctx.addFile); err != nil {
+	for _, dir := range c.Dirs {
+		if err = filepath.Walk(dir, c.addFile); err != nil {
 			return
 		}
 	}
@@ -90,5 +58,48 @@ func (d *Descriptor) RunBuild() (err error) {
 			return
 		}
 	}
-	return d.Build.Run(bctx)
+	return d.Build.Run(c)
+}
+
+// Validate context
+func (d *Descriptor) Validate() (err error) {
+
+	if d.Name == "" {
+		d.Name = defaultName()
+	} else {
+		r, _ := regexp.Compile(`^[a-zA-Z\_\-]+$`)
+		if !r.MatchString(d.Name) {
+			return errors.New("Descriptor: Invalid `Name`")
+		}
+	}
+
+	if d.Version == "" {
+		d.Version = "0.0.1"
+	}
+
+	if len(d.Sources) < 1 {
+		d.Sources = []string{"app"}
+	}
+
+	if d.Package == "" {
+		return errors.New("Descriptor: Package can't be empty")
+	}
+
+	if err = common.Validate(d.Build); err != nil {
+		return fmt.Errorf("Descriptor: %w", err)
+	}
+
+	if err = common.Validate(d.App); err != nil {
+		return fmt.Errorf("Descriptor: %w", err)
+	}
+
+	return
+}
+
+func defaultName() (s string) {
+	var err error
+	if s, err = os.Getwd(); err != nil {
+		return "noname"
+	}
+	return filepath.Base(s)
 }

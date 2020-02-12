@@ -6,19 +6,43 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 func TestDescriptor_Validate_DefaultValue(t *testing.T) {
 	d := &typcore.Descriptor{
-		Name:    "some-name",
 		Package: "some-package",
-		Build:   typbuild.New(),
 	}
 	require.NoError(t, common.Validate(d))
+
+	require.Equal(t, "typcore", d.Name)
 	require.Equal(t, "0.0.1", d.Version)
 	require.Equal(t, []string{"app"}, d.Sources)
+}
+
+func TestDescriptor_ValidateName(t *testing.T) {
+	t.Run("Valid Names", func(t *testing.T) {
+		valids := []string{
+			"asdf",
+			"Asdf",
+			"As_df",
+			"as-df",
+		}
+		for _, name := range valids {
+			require.NoError(t, common.Validate(&typcore.Descriptor{Name: name, Package: "some-package"}))
+		}
+	})
+	t.Run("Invalid Names", func(t *testing.T) {
+		invalids := []string{
+			"Asdf!",
+		}
+		for _, name := range invalids {
+			require.EqualError(t,
+				common.Validate(&typcore.Descriptor{Name: name, Package: "some-package"}),
+				"Descriptor: Invalid `Name`",
+			)
+		}
+	})
 }
 
 func TestDecriptor_Validate_ReturnError(t *testing.T) {
@@ -27,8 +51,8 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 		errMsg string
 	}{
 		{
-			typcore.Descriptor{Package: "some-package"},
-			"Descriptor: Name can't be empty",
+			typcore.Descriptor{Name: "Asdf", Package: "some-package"},
+			"Descriptor: Name: 'Asdf' must be lower case and contain aplabhet or underscore ('_')",
 		},
 		{
 			typcore.Descriptor{Name: "some-name"},
