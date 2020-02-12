@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
+
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
@@ -71,24 +73,24 @@ func (b *Build) Validate() (err error) {
 
 // Run build tool
 func (b *Build) Run(bctx *typcore.BuildContext) (err error) {
+	var decls []*prebld.Declaration
+	if decls, err = prebld.Walk(bctx.Files); err != nil {
+		return
+	}
+
+	c := &Context{
+		BuildContext: bctx,
+		Declarations: decls,
+	}
+
 	app := cli.NewApp()
 	app.Name = bctx.Name
 	app.Usage = "" // NOTE: intentionally blank
 	app.Description = bctx.Description
 	app.Version = bctx.Version
-	app.Commands = b.BuildCommands(&Context{bctx})
+	app.Commands = b.BuildCommands(c)
 
 	return app.Run(os.Args)
-}
-
-// Prebuild process
-func (b *Build) Prebuild(ctx context.Context, c *Context) (err error) {
-	for _, prebuilder := range b.prebuilders {
-		if err = prebuilder.Prebuild(ctx, c); err != nil {
-			return
-		}
-	}
-	return
 }
 
 // BuildCommands to return command

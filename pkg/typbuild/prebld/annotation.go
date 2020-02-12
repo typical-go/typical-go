@@ -1,4 +1,4 @@
-package walker
+package prebld
 
 // Annotation contain extra additional information
 type Annotation struct {

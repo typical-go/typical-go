@@ -4,6 +4,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/dig"
 )
@@ -11,6 +12,40 @@ import (
 // Context of build
 type Context struct {
 	*typcore.BuildContext
+	Declarations []*prebld.Declaration
+}
+
+// DeclFunc to handle declaration
+type DeclFunc func(*prebld.Declaration) error
+
+// AnnotationFunc to handle annotation
+type AnnotationFunc func(decl *prebld.Declaration, ann *prebld.Annotation) error
+
+// EachDecl to handle each declaration
+func (b *Context) EachDecl(fn DeclFunc) (err error) {
+	for _, decl := range b.Declarations {
+		if err = fn(decl); err != nil {
+			return
+		}
+	}
+	return
+}
+
+// EachAnnotation to handle each annotation
+func (b *Context) EachAnnotation(name string, declType prebld.DeclType, fn AnnotationFunc) (err error) {
+	return b.EachDecl(func(decl *prebld.Declaration) (err error) {
+		annotation := decl.Annotations.Get(name)
+		if annotation != nil {
+			if decl.Type == declType {
+				if err = fn(decl, annotation); err != nil {
+					return
+				}
+			} else {
+				log.Warnf("[%s] has no effect to %s:%s", name, declType, decl.SourceName)
+			}
+		}
+		return
+	})
 }
 
 // ActionFunc to return ActionFunc to invoke function fn

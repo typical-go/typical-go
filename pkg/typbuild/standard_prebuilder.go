@@ -10,9 +10,9 @@ import (
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/runn/stdrun"
 	"github.com/typical-go/typical-go/pkg/typbuild/internal/tmpl"
+	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/typcore/walker"
 	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
@@ -20,7 +20,7 @@ type standardPrebuilder struct{}
 
 func (a *standardPrebuilder) Prebuild(ctx context.Context, c *Context) (err error) {
 	var constructors common.Strings
-	if err = c.EachAnnotation("constructor", walker.FunctionType, func(decl *walker.Declaration, ann *walker.Annotation) (err error) {
+	if err = c.EachAnnotation("constructor", prebld.FunctionType, func(decl *prebld.Declaration, ann *prebld.Annotation) (err error) {
 		constructors.Append(fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
 		return
 	}); err != nil {
@@ -39,11 +39,10 @@ func (a *standardPrebuilder) generateConstructor(ctx context.Context, target str
 	for _, dir := range c.Dirs {
 		imports = append(imports, fmt.Sprintf("%s/%s", c.Package, dir))
 	}
-	data := tmpl.ConstructorData{
+	if err = stdrun.NewWriteTemplate(target, tmpl.Constructor, tmpl.ConstructorData{
 		Imports:      imports,
 		Constructors: constructors,
-	}
-	if err = stdrun.NewWriteTemplate(target, tmpl.Constructor, data).Run(); err != nil {
+	}).Run(); err != nil {
 		return
 	}
 	cmd := exec.CommandContext(ctx,

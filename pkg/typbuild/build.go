@@ -10,7 +10,7 @@ import (
 )
 
 func (b *Build) buildProject(ctx context.Context, c *Context) (err error) {
-	if err = b.Prebuild(ctx, c); err != nil {
+	if err = b.prebuild(ctx, c); err != nil {
 		return
 	}
 	log.Info("Build the application")
@@ -23,4 +23,13 @@ func (b *Build) buildProject(ctx context.Context, c *Context) (err error) {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
+}
+
+func (b *Build) prebuild(ctx context.Context, c *Context) (err error) {
+	for _, prebuilder := range b.prebuilders {
+		if err = prebuilder.Prebuild(ctx, c); err != nil {
+			return
+		}
+	}
+	return
 }

@@ -1,4 +1,4 @@
-package walker
+package prebld
 
 import (
 	"go/ast"

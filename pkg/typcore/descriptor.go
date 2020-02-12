@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typcore/walker"
 )
 
 // Descriptor describe the project
@@ -69,9 +68,6 @@ func (d *Descriptor) BuildContext() (c *BuildContext, err error) {
 		if err = filepath.Walk(dir, c.addFile); err != nil {
 			return
 		}
-	}
-	if c.Declarations, err = walker.Walk(c.Files); err != nil {
-		return
 	}
 	return c, nil
 }

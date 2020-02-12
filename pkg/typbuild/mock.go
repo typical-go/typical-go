@@ -10,7 +10,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typcore/walker"
+	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
 	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
@@ -31,7 +31,7 @@ func (b *Build) mock(ctx context.Context, c *Context, opt *MockOption) (err erro
 		log.Infof("Clean mock package '%s'", mockPkg)
 		os.RemoveAll(mockPkg)
 	}
-	if err = c.EachAnnotation("mock", walker.InterfaceType, func(decl *walker.Declaration, ann *walker.Annotation) (err error) {
+	if err = c.EachAnnotation("mock", prebld.InterfaceType, func(decl *prebld.Declaration, ann *prebld.Annotation) (err error) {
 		targets.Append(decl.Filename)
 		return
 	}); err != nil {
