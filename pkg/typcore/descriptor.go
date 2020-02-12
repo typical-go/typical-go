@@ -55,57 +55,35 @@ func (d *Descriptor) Validate() (err error) {
 	return
 }
 
-// BuildContext return build context of descriptor
-func (d *Descriptor) BuildContext() (c *BuildContext, err error) {
-	if err = d.Validate(); err != nil {
-		return
-	}
-	c = &BuildContext{
-		Descriptor: d,
-		Dirs:       d.Sources,
-	}
-	for _, dir := range c.Dirs {
-		if err = filepath.Walk(dir, c.addFile); err != nil {
-			return
-		}
-	}
-	return c, nil
-}
-
-// AppContext return app context of descriptor
-func (d *Descriptor) AppContext() (actx *AppContext, err error) {
-	if err = d.Validate(); err != nil {
-		return
-	}
-	return &AppContext{
-		Descriptor: d,
-	}, nil
-}
-
 // RunApp to run app
 func (d *Descriptor) RunApp() (err error) {
-	var (
-		actx *AppContext
-	)
 	if d.App == nil {
 		return errors.New("Descriptor is missing `App`")
 	}
-	if actx, err = d.AppContext(); err != nil {
+	if err = d.Validate(); err != nil {
 		return
 	}
-	return d.App.Run(actx)
+	return d.App.Run(&AppContext{
+		Descriptor: d,
+	})
 }
 
 // RunBuild to run build
 func (d *Descriptor) RunBuild() (err error) {
-	var (
-		bctx *BuildContext
-	)
 	if d.Build == nil {
 		return errors.New("Descriptor is missing `Build`")
 	}
-	if bctx, err = d.BuildContext(); err != nil {
+	if err = d.Validate(); err != nil {
 		return
+	}
+	bctx := &BuildContext{
+		Descriptor: d,
+		Dirs:       d.Sources,
+	}
+	for _, dir := range bctx.Dirs {
+		if err = filepath.Walk(dir, bctx.addFile); err != nil {
+			return
+		}
 	}
 	if d.Configuration != nil {
 		if err = d.Configuration.Setup(); err != nil {
