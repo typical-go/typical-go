@@ -1,20 +1,22 @@
 package typbuild
 
 import (
+	"context"
 	"os"
+	"os/exec"
 
-	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/urfave/cli/v2"
+	log "github.com/sirupsen/logrus"
+	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
-// Run build tool
-func (b *Build) Run(bctx *typcore.BuildContext) (err error) {
-	app := cli.NewApp()
-	app.Name = bctx.Name
-	app.Usage = "" // NOTE: intentionally blank
-	app.Description = bctx.Description
-	app.Version = bctx.Version
-	app.Commands = b.BuildCommands(&Context{bctx})
-
-	return app.Run(os.Args)
+func (b *Build) run(ctx context.Context, c *Context, args []string) (err error) {
+	if err = b.buildProject(ctx, c); err != nil {
+		return
+	}
+	log.Info("Run the application")
+	cmd := exec.CommandContext(ctx, typenv.AppBin, args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	return cmd.Run()
 }

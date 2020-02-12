@@ -1,23 +1,14 @@
 package typbuild
 
 import (
+	"context"
 	"os"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typenv"
-	"github.com/urfave/cli/v2"
 )
 
-func (*Build) cmdClean() *cli.Command {
-	return &cli.Command{
-		Name:    "clean",
-		Aliases: []string{"c"},
-		Usage:   "Clean the project from generated file during build time",
-		Action:  cleanProject,
-	}
-}
-
-func cleanProject(cliCtx *cli.Context) error {
+func (b *Build) clean(ctx context.Context, c *Context) error {
 	removeFile(typenv.AppBin)
 	removeAllFile(typenv.Layout.Temp)
 	removeFile(".env")

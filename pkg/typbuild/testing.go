@@ -1,26 +1,14 @@
 package typbuild
 
 import (
+	"context"
 	"os"
 	"os/exec"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/urfave/cli/v2"
 )
 
-func (*Build) cmdTest() *cli.Command {
-	return &cli.Command{
-		Name:    "test",
-		Aliases: []string{"t"},
-		Usage:   "Run the testing",
-		Action:  runTesting,
-	}
-}
-
-func runTesting(cliCtx *cli.Context) error {
-	var (
-		ctx = cliCtx.Context
-	)
+func (b *Build) test(ctx context.Context, c *Context) error {
 	log.Info("Run testings")
 	targets := []string{
 		"./app/...",
