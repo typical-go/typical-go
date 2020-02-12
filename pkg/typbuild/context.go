@@ -23,7 +23,7 @@ type AnnotationFunc func(decl *prebld.Declaration, ann *prebld.Annotation) error
 
 // EachDecl to handle each declaration
 func (c *Context) EachDecl(fn DeclFunc) (err error) {
-	for _, decl := range b.Declarations {
+	for _, decl := range c.Declarations {
 		if err = fn(decl); err != nil {
 			return
 		}
@@ -33,7 +33,7 @@ func (c *Context) EachDecl(fn DeclFunc) (err error) {
 
 // EachAnnotation to handle each annotation
 func (c *Context) EachAnnotation(name string, declType prebld.DeclType, fn AnnotationFunc) (err error) {
-	return b.EachDecl(func(decl *prebld.Declaration) (err error) {
+	return c.EachDecl(func(decl *prebld.Declaration) (err error) {
 		annotation := decl.Annotations.Get(name)
 		if annotation != nil {
 			if decl.Type == declType {
