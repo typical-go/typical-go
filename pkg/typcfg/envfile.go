@@ -1,4 +1,4 @@
-package common
+package typcfg
 
 import (
 	"os"

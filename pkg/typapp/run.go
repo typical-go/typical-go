@@ -3,7 +3,7 @@ package typapp
 import (
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
@@ -20,7 +20,7 @@ func (a *App) Run(actx *typcore.AppContext) (err error) {
 	app.Description = actx.Description
 	app.Version = actx.Version
 	app.Before = func(c *cli.Context) (err error) {
-		if err = common.LoadEnvFile(); err != nil {
+		if err = typcfg.LoadEnvFile(); err != nil {
 			return
 		}
 		return
