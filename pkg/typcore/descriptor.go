@@ -14,7 +14,7 @@ import (
 type Descriptor struct {
 	Name        string
 	Description string
-	Package     string
+	Package     string // TODO: get package from gomod file
 	Version     string
 	Sources     []string
 
@@ -45,8 +45,9 @@ func (d *Descriptor) RunBuild() (err error) {
 		return
 	}
 	c := &BuildContext{
-		Descriptor: d,
-		Dirs:       d.Sources,
+		Descriptor:    d,
+		ProjectLayout: DefaultLayout,
+		Dirs:          d.Sources,
 	}
 	for _, dir := range c.Dirs {
 		if err = filepath.Walk(dir, c.addFile); err != nil {

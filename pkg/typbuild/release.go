@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/git"
-	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
 // ReleaseOption is option for release
@@ -28,7 +27,6 @@ func (b *Build) release(ctx context.Context, c *Context, opt *ReleaseOption) (er
 		latest     string
 		changeLogs []string
 		binaries   []string
-		name       = typenv.ProjectName
 	)
 
 	if !opt.NoBuild {
@@ -36,15 +34,18 @@ func (b *Build) release(ctx context.Context, c *Context, opt *ReleaseOption) (er
 			return
 		}
 	}
+
 	if !opt.NoTest {
 		if err = b.test(ctx, c); err != nil {
 			return
 		}
 	}
+
 	if err = git.Fetch(ctx); err != nil {
 		return fmt.Errorf("Failed git fetch: %w", err)
 	}
 	defer git.Fetch(ctx)
+
 	if tag, err = b.releaser.Tag(ctx, c.Version, opt.Alpha); err != nil {
 		return fmt.Errorf("Failed generate tag: %w", err)
 	}
@@ -57,11 +58,19 @@ func (b *Build) release(ctx context.Context, c *Context, opt *ReleaseOption) (er
 	if changeLogs = git.Logs(ctx, latest); len(changeLogs) < 1 && !opt.Force {
 		return errors.New("No change to be released")
 	}
-	if binaries, err = b.releaser.BuildRelease(ctx, name, tag, changeLogs, opt.Alpha); err != nil {
+
+	rls := &ReleaseContext{
+		Context:    c,
+		Name:       c.Name,
+		Tag:        tag,
+		ChangeLogs: changeLogs,
+		Alpha:      opt.Alpha,
+	}
+	if binaries, err = b.releaser.Build(ctx, rls); err != nil {
 		return fmt.Errorf("Failed build release: %w", err)
 	}
 	if !opt.NoPublish {
-		if err = b.releaser.Publish(ctx, name, tag, changeLogs, binaries, opt.Alpha); err != nil {
+		if err = b.releaser.Publish(ctx, rls, binaries); err != nil {
 			return fmt.Errorf("Failed publish: %w", err)
 		}
 	}

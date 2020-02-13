@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
+	"github.com/typical-go/typical-go/pkg/typbuild"
 )
 
 // Releaser responsible to release distruction
@@ -11,13 +13,13 @@ type Releaser struct {
 	name       string
 	targets    []Target
 	publishers []Publisher
-	filter     Filter
+	filter     Filter // TODO: move to github publisher
 	Tagging
 }
 
 // Publisher reponsible to publish the release to external source
 type Publisher interface {
-	Publish(ctx context.Context, name, tag string, changeLogs, binaries []string, alpha bool) error
+	Publish(ctx context.Context, rel *typbuild.ReleaseContext, binaries []string) error
 }
 
 // Tagging is setting how to make tag

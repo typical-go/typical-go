@@ -6,7 +6,7 @@ import (
 	"github.com/typical-go/typical-go/app/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/runn"
 	"github.com/typical-go/typical-go/pkg/runn/stdrun"
-	"github.com/typical-go/typical-go/pkg/typenv"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
@@ -37,9 +37,9 @@ func wrapper(path, pkg string) runn.Runner {
 		tmpl.Typicalw,
 		tmpl.TypicalwData{
 			DescriptorPackage: fmt.Sprintf("%s/typical", pkg),
-			DescriptorFile:    typenv.DescriptorFile,
-			ChecksumFile:      typenv.ChecksumFile,
-			LayoutTemp:        typenv.Layout.Temp,
+			DescriptorFile:    "typical/descriptor.go",
+			ChecksumFile:      ".typical-tmp/checksum",
+			LayoutTemp:        typcore.DefaultLayout.Temp,
 		},
 	).WithPermission(0700)
 }

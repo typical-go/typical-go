@@ -5,14 +5,13 @@ import (
 	"os"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
 func (b *Build) clean(ctx context.Context, c *Context) error {
-	removeFile(typenv.AppBin)
-	removeAllFile(typenv.Layout.Temp)
-	removeFile(".env")
-	removeFile(typenv.GeneratedConstructor)
+	removeAllFile(c.Bin)
+	removeAllFile(c.Temp)
+	removeFile(".env") // TODO: configuration clean
+	// removeFile(typenv.GeneratedConstructor) // TODO: app clean
 	return nil
 }
 

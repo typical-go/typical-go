@@ -2,11 +2,11 @@ package typbuild
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/exec"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
 func (b *Build) buildProject(ctx context.Context, c *Context) (err error) {
@@ -17,8 +17,8 @@ func (b *Build) buildProject(ctx context.Context, c *Context) (err error) {
 	cmd := exec.CommandContext(ctx,
 		"go",
 		"build",
-		"-o", typenv.AppBin,
-		"./"+typenv.AppMainPath,
+		"-o", fmt.Sprintf("%s/%s", c.Bin, c.Name),
+		fmt.Sprintf("./%s/%s", c.Cmd, c.Name),
 	)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

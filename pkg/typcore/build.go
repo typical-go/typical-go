@@ -13,6 +13,7 @@ type Build interface {
 // BuildContext is context of prebuild
 type BuildContext struct {
 	*Descriptor
+	ProjectLayout
 	Dirs  []string
 	Files []string
 }

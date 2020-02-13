@@ -7,9 +7,11 @@ import (
 	"os"
 	"strings"
 
+	"github.com/typical-go/typical-go/pkg/typbuild"
+
 	"github.com/google/go-github/github"
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/typenv"
+	"github.com/typical-go/typical-go/pkg/typcore"
 
 	"golang.org/x/oauth2"
 )
@@ -29,22 +31,22 @@ func GithubPublisher(owner, repo string) *Github {
 }
 
 // Publish to github
-func (g *Github) Publish(ctx context.Context, name, tag string, changeLogs, binaries []string, alpha bool) (err error) {
+func (g *Github) Publish(ctx context.Context, rel *typbuild.ReleaseContext, binaries []string) (err error) {
 	token := os.Getenv("GITHUB_TOKEN")
 	if token == "" {
 		return errors.New("Environment 'GITHUB_TOKEN' is missing")
 	}
 	repo := github.NewClient(oauth2.NewClient(ctx, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token}))).Repositories
-	if _, _, err = repo.GetReleaseByTag(ctx, g.Owner, g.RepoName, tag); err == nil {
-		return fmt.Errorf("Tag '%s' already published", tag)
+	if _, _, err = repo.GetReleaseByTag(ctx, g.Owner, g.RepoName, rel.Tag); err == nil {
+		return fmt.Errorf("Tag '%s' already published", rel.Tag)
 	}
 	log.Infof("Create github release for %s/%s", g.Owner, g.RepoName)
 	githubRls := &github.RepositoryRelease{
-		Name:       github.String(fmt.Sprintf("%s - %s", name, tag)),
-		TagName:    github.String(tag),
-		Body:       github.String(releaseNote(changeLogs)),
+		Name:       github.String(fmt.Sprintf("%s - %s", rel.Name, rel.Tag)),
+		TagName:    github.String(rel.Tag),
+		Body:       github.String(releaseNote(rel.ChangeLogs)),
 		Draft:      github.Bool(false),
-		Prerelease: github.Bool(alpha),
+		Prerelease: github.Bool(rel.Alpha),
 	}
 	if githubRls, _, err = repo.CreateRelease(ctx, g.Owner, g.RepoName, githubRls); err != nil {
 		return
@@ -59,7 +61,7 @@ func (g *Github) Publish(ctx context.Context, name, tag string, changeLogs, bina
 }
 
 func (g *Github) upload(ctx context.Context, service *github.RepositoriesService, id int64, binary string) (err error) {
-	binaryPath := fmt.Sprintf("%s/%s", typenv.Layout.Release, binary)
+	binaryPath := fmt.Sprintf("%s/%s", typcore.DefaultLayout.Release, binary)
 	var file *os.File
 	if file, err = os.Open(binaryPath); err != nil {
 		return

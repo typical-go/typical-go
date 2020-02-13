@@ -11,7 +11,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
-	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
 // MockOption is option for generate mock
@@ -24,7 +23,7 @@ func (b *Build) mock(ctx context.Context, c *Context, opt *MockOption) (err erro
 		targets common.Strings
 		mockgen string
 		errs    common.Errors
-		mockPkg = typenv.Layout.Mock
+		mockPkg = c.Mock
 	)
 
 	if !opt.NoDelete {

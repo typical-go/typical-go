@@ -13,7 +13,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/typenv"
 )
 
 type standardPrebuilder struct{}
@@ -27,7 +26,8 @@ func (a *standardPrebuilder) Prebuild(ctx context.Context, c *Context) (err erro
 		return
 	}
 	log.Info("Generate constructors")
-	if err = a.generateConstructor(ctx, typenv.GeneratedConstructor, c, constructors); err != nil {
+	target := fmt.Sprintf("%s/%s/constructor_do_not_edit.go", c.Cmd, c.Name)
+	if err = a.generateConstructor(ctx, target, c, constructors); err != nil {
 		return
 	}
 	return

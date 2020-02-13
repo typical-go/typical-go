@@ -9,7 +9,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/runn"
 	"github.com/typical-go/typical-go/pkg/runn/stdrun"
-	"github.com/typical-go/typical-go/pkg/typenv"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
@@ -95,12 +95,12 @@ func (i constructproj) descriptor() error {
 }
 
 func (i constructproj) cmdPackage() error {
-	appMainPath := fmt.Sprintf("%s/%s", typenv.Layout.Cmd, i.Name)
+	appMainPath := fmt.Sprintf("%s/%s", typcore.DefaultLayout.Cmd, i.Name)
 	data := tmpl.MainSrcData{
 		ImportTypical: i.Pkg + "/typical",
 	}
 	return runn.Run(
-		stdrun.NewMkdir(i.Path(typenv.Layout.Cmd)),
+		stdrun.NewMkdir(i.Path(typcore.DefaultLayout.Cmd)),
 		stdrun.NewMkdir(i.Path(appMainPath)),
 		stdrun.NewWriteTemplate(i.Path(appMainPath+"/main.go"), tmpl.MainSrcApp, data),
 	)

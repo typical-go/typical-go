@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
@@ -26,14 +27,6 @@ type Prebuilder interface {
 // BuildCommander responsible to return commands for Build-Tool
 type BuildCommander interface {
 	BuildCommands(c *Context) []*cli.Command
-}
-
-// Releaser responsible to release
-type Releaser interface {
-	BuildRelease(ctx context.Context, name, tag string, changeLogs []string, alpha bool) (binaries []string, err error)
-	Publish(ctx context.Context, name, tag string, changeLogs, binaries []string, alpha bool) (err error)
-	Tag(ctx context.Context, version string, alpha bool) (tag string, err error)
-	Validate() error
 }
 
 // New return new instance of build
@@ -64,7 +57,7 @@ func (b *Build) WithPrebuild(prebuilders ...Prebuilder) *Build {
 // Validate build
 func (b *Build) Validate() (err error) {
 	if b.releaser != nil {
-		if err = b.releaser.Validate(); err != nil {
+		if err = common.Validate(b.releaser); err != nil {
 			return fmt.Errorf("Build: Releaser: %w", err)
 		}
 	}
