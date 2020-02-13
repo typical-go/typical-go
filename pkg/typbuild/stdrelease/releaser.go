@@ -55,18 +55,6 @@ func (r *Releaser) WithPublisher(publishers ...Publisher) *Releaser {
 	return r
 }
 
-// WithFilter to set filter and return its instance
-func (r *Releaser) WithFilter(filter Filter) *Releaser {
-	r.filter = filter
-	return r
-}
-
-// WithStandardFilter to set filter and return its instance
-func (r *Releaser) WithStandardFilter(ignorings ...string) *Releaser {
-	r.filter = &StandardFilter{ignorings}
-	return r
-}
-
 // Validate the releaser
 func (r *Releaser) Validate() (err error) {
 	if len(r.targets) < 1 {
