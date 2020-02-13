@@ -20,6 +20,7 @@ import (
 type Github struct {
 	Owner    string
 	RepoName string
+	Filter   Filter
 }
 
 // GithubPublisher to return new instance of Github
@@ -27,7 +28,14 @@ func GithubPublisher(owner, repo string) *Github {
 	return &Github{
 		Owner:    owner,
 		RepoName: repo,
+		Filter:   DefaultNoPrefix(),
 	}
+}
+
+// WithFilter return github with filter
+func (g *Github) WithFilter(filter Filter) *Github {
+	g.Filter = filter
+	return g
 }
 
 // Publish to github
@@ -44,7 +52,7 @@ func (g *Github) Publish(ctx context.Context, rel *typbuild.ReleaseContext, bina
 	githubRls := &github.RepositoryRelease{
 		Name:       github.String(fmt.Sprintf("%s - %s", rel.Name, rel.Tag)),
 		TagName:    github.String(rel.Tag),
-		Body:       github.String(releaseNote(rel.ChangeLogs)),
+		Body:       github.String(g.releaseNote(rel.ChangeLogs)),
 		Draft:      github.Bool(false),
 		Prerelease: github.Bool(rel.Alpha),
 	}
@@ -60,23 +68,27 @@ func (g *Github) Publish(ctx context.Context, rel *typbuild.ReleaseContext, bina
 	return
 }
 
-func (g *Github) upload(ctx context.Context, service *github.RepositoriesService, id int64, binary string) (err error) {
-	binaryPath := fmt.Sprintf("%s/%s", typcore.DefaultLayout.Release, binary)
-	var file *os.File
+func (g *Github) upload(ctx context.Context, svc *github.RepositoriesService, id int64, binary string) (err error) {
+	var (
+		file       *os.File
+		binaryPath = fmt.Sprintf("%s/%s", typcore.DefaultLayout.Release, binary)
+	)
 	if file, err = os.Open(binaryPath); err != nil {
 		return
 	}
 	defer file.Close()
 	opts := &github.UploadOptions{Name: binary}
-	_, _, err = service.UploadReleaseAsset(ctx, g.Owner, g.RepoName, id, opts, file)
+	_, _, err = svc.UploadReleaseAsset(ctx, g.Owner, g.RepoName, id, opts, file)
 	return
 }
 
-func releaseNote(changeLogs []string) string {
+func (g *Github) releaseNote(changeLogs []string) string {
 	var b strings.Builder
 	for _, changelog := range changeLogs {
-		b.WriteString(changelog)
-		b.WriteString("\n")
+		if m := g.Filter.Filter(changelog); m != "" {
+			b.WriteString(changelog)
+			b.WriteString("\n")
+		}
 	}
 	return b.String()
 }

@@ -13,7 +13,6 @@ type Releaser struct {
 	name       string
 	targets    []Target
 	publishers []Publisher
-	filter     Filter // TODO: move to github publisher
 	Tagging
 }
 
@@ -35,14 +34,6 @@ func New() *Releaser {
 			"linux/amd64",
 			"darwin/amd64",
 		},
-		filter: &StandardFilter{
-			Ignorings: []string{
-				"merge",
-				"bump",
-				"revision",
-				"generate",
-				"wip",
-			}},
 	}
 }
 
