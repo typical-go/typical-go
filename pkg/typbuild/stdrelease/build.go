@@ -8,13 +8,10 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/typbuild"
-
-	"github.com/typical-go/typical-go/pkg/git"
 )
 
 // Build the distribution
 func (r *Releaser) Build(ctx context.Context, rel *typbuild.ReleaseContext) (binaries []string, err error) {
-
 	for _, target := range r.targets {
 		var binary string
 		if binary, err = r.build(ctx, rel, target); err != nil {
@@ -22,37 +19,6 @@ func (r *Releaser) Build(ctx context.Context, rel *typbuild.ReleaseContext) (bin
 		}
 		binaries = append(binaries, binary)
 	}
-	return
-}
-
-// Publish the release
-func (r *Releaser) Publish(ctx context.Context, rel *typbuild.ReleaseContext, binaries []string) (err error) {
-
-	for _, publisher := range r.publishers {
-		if err = publisher.Publish(ctx, rel, binaries); err != nil {
-			return
-		}
-	}
-	return
-}
-
-// Tag return relase tag
-func (r *Releaser) Tag(ctx context.Context, version string, alpha bool) (tag string, err error) {
-	var b strings.Builder
-	b.WriteString("v")
-	b.WriteString(version)
-	if r.IncludeBranch {
-		b.WriteString("_")
-		b.WriteString(git.Branch(ctx))
-	}
-	if r.IncludeCommitID {
-		b.WriteString("_")
-		b.WriteString(git.LatestCommit(ctx))
-	}
-	if alpha {
-		b.WriteString("_alpha")
-	}
-	tag = b.String()
 	return
 }
 
@@ -74,12 +40,3 @@ func (r *Releaser) build(ctx context.Context, rel *typbuild.ReleaseContext, targ
 	}
 	return
 }
-
-// func (r *Releaser) releaseName() string {
-// 	name := r.name
-// 	if name == "" {
-// 		dir, _ := os.Getwd()
-// 		name = filepath.Base(dir)
-// 	}
-// 	return name
-// }

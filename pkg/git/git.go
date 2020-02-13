@@ -20,7 +20,7 @@ func Status(ctx context.Context, files ...string) string {
 	return status
 }
 
-// Fetch is same with `get fetch`
+// Fetch is same with `git fetch`
 func Fetch(ctx context.Context) error {
 	return exec.CommandContext(ctx, "git", "fetch").Run()
 }
@@ -35,30 +35,38 @@ func LatestTag(ctx context.Context) string {
 }
 
 // Logs of commits
-func Logs(ctx context.Context, from string) []string {
-	var args common.Strings
+func Logs(ctx context.Context, from string) (logs []*Log) {
+	var (
+		data string
+		err  error
+		args common.Strings
+	)
+
 	args.Append("--no-pager", "log")
 	if from != "" {
 		args.Append(from + "..HEAD")
 	}
 	args.Append("--oneline")
-	data, err := git(ctx, args...)
-	if err != nil {
-		return []string{}
+
+	if data, err = git(ctx, args...); err != nil {
+		return
 	}
-	return strings.Split(data, "\n")
+	for _, s := range strings.Split(data, "\n") {
+		if log := CreateLog(s); log != nil {
+			logs = append(logs, log)
+		}
+	}
+	return
 }
 
 // Push files to git repo
 func Push(ctx context.Context, commitMessage string, files ...string) (err error) {
 	args := []string{"add"}
 	args = append(args, files...)
-	_, err = git(ctx, args...)
-	if err != nil {
+	if _, err = git(ctx, args...); err != nil {
 		return
 	}
-	_, err = git(ctx, "commit", "-m", commitMessage)
-	if err != nil {
+	if _, err = git(ctx, "commit", "-m", commitMessage); err != nil {
 		return
 	}
 	_, err = git(ctx, "push")
@@ -67,8 +75,11 @@ func Push(ctx context.Context, commitMessage string, files ...string) (err error
 
 // Branch to return current branch
 func Branch(ctx context.Context) string {
-	branch, err := git(ctx, "rev-parse", "--abbrev-ref", "HEAD")
-	if err != nil {
+	var (
+		branch string
+		err    error
+	)
+	if branch, err = git(ctx, "rev-parse", "--abbrev-ref", "HEAD"); err != nil {
 		return ""
 	}
 	return branch
@@ -76,8 +87,11 @@ func Branch(ctx context.Context) string {
 
 // LatestCommit return latest commit in short hash
 func LatestCommit(ctx context.Context) string {
-	commit, err := git(ctx, "rev-parse", "--short", "HEAD")
-	if err != nil {
+	var (
+		commit string
+		err    error
+	)
+	if commit, err = git(ctx, "rev-parse", "--short", "HEAD"); err != nil {
 		return ""
 	}
 	return commit

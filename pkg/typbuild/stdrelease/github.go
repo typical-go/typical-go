@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/typical-go/typical-go/pkg/git"
 	"github.com/typical-go/typical-go/pkg/typbuild"
 
 	"github.com/google/go-github/github"
@@ -52,7 +53,7 @@ func (g *Github) Publish(ctx context.Context, rel *typbuild.ReleaseContext, bina
 	githubRls := &github.RepositoryRelease{
 		Name:       github.String(fmt.Sprintf("%s - %s", rel.Name, rel.Tag)),
 		TagName:    github.String(rel.Tag),
-		Body:       github.String(g.releaseNote(rel.ChangeLogs)),
+		Body:       github.String(g.releaseNote(rel.GitLogs)),
 		Draft:      github.Bool(false),
 		Prerelease: github.Bool(rel.Alpha),
 	}
@@ -82,11 +83,13 @@ func (g *Github) upload(ctx context.Context, svc *github.RepositoriesService, id
 	return
 }
 
-func (g *Github) releaseNote(changeLogs []string) string {
+func (g *Github) releaseNote(gitLogs []*git.Log) string {
 	var b strings.Builder
-	for _, changelog := range changeLogs {
-		if m := g.Filter.Filter(changelog); m != "" {
-			b.WriteString(changelog)
+	for _, log := range gitLogs {
+		if m := g.Filter.Filter(log.Message); m != "" {
+			b.WriteString(log.Short)
+			b.WriteString(" ")
+			b.WriteString(log.Message)
 			b.WriteString("\n")
 		}
 	}

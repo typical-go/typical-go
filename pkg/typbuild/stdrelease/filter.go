@@ -38,39 +38,18 @@ func (f *NoPrefixFilter) Append(prefixes ...string) *NoPrefixFilter {
 
 // Filter the messages
 func (f *NoPrefixFilter) Filter(msg string) string {
-	msg = cleanMessage(msg)
 	if f.exclude(msg) {
 		return ""
 	}
 	return msg
 }
 
-func (f *NoPrefixFilter) exclude(changelog string) bool {
-	var (
-		text  = messageText(changelog)
-		lower = strings.ToLower(text)
-	)
+func (f *NoPrefixFilter) exclude(msg string) bool {
+	msg = strings.ToLower(msg)
 	for _, prefix := range f.prefixes {
-		if strings.HasPrefix(lower, strings.ToLower(prefix)) {
+		if strings.HasPrefix(msg, strings.ToLower(prefix)) {
 			return true
 		}
 	}
 	return false
-}
-
-func cleanMessage(message string) string {
-	iCoAuthor := strings.Index(message, "Co-Authored-By")
-	if iCoAuthor > 0 {
-		message = message[0:strings.Index(message, "Co-Authored-By")]
-	}
-	message = strings.TrimSpace(message)
-	return message
-}
-
-// MessageText to return text from message
-func messageText(changelog string) string {
-	if len(changelog) < 7 { // TODO: use token instead of fixed length
-		return ""
-	}
-	return strings.TrimSpace(changelog[7:])
 }

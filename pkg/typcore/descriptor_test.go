@@ -51,8 +51,8 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 		errMsg string
 	}{
 		{
-			typcore.Descriptor{Name: "Asdf", Package: "some-package"},
-			"Descriptor: Name: 'Asdf' must be lower case and contain aplabhet or underscore ('_')",
+			typcore.Descriptor{Name: "Typical Go", Package: "some-package"},
+			"Descriptor: Invalid `Name`",
 		},
 		{
 			typcore.Descriptor{Name: "some-name"},

@@ -23,10 +23,10 @@ func (b *Build) release(ctx context.Context, c *Context, opt *ReleaseOption) (er
 	}
 
 	var (
-		tag        string
-		latest     string
-		changeLogs []string
-		binaries   []string
+		tag      string
+		latest   string
+		gitLogs  []*git.Log
+		binaries []string
 	)
 
 	if !opt.NoBuild {
@@ -46,25 +46,22 @@ func (b *Build) release(ctx context.Context, c *Context, opt *ReleaseOption) (er
 	}
 	defer git.Fetch(ctx)
 
-	if tag, err = b.releaser.Tag(ctx, c.Version, opt.Alpha); err != nil {
-		return fmt.Errorf("Failed generate tag: %w", err)
-	}
 	if status := git.Status(ctx); status != "" && !opt.Force {
 		return fmt.Errorf("Please commit changes first:\n%s", status)
 	}
 	if latest = git.LatestTag(ctx); latest == tag && !opt.Force {
 		return fmt.Errorf("%s already released", latest)
 	}
-	if changeLogs = git.Logs(ctx, latest); len(changeLogs) < 1 && !opt.Force {
+	if gitLogs = git.Logs(ctx, latest); len(gitLogs) < 1 && !opt.Force {
 		return errors.New("No change to be released")
 	}
 
 	rls := &ReleaseContext{
-		Context:    c,
-		Name:       c.Name,
-		Tag:        tag,
-		ChangeLogs: changeLogs,
-		Alpha:      opt.Alpha,
+		Context: c,
+		Name:    c.Name,
+		Tag:     b.releaser.Tag(ctx, c.Version, opt.Alpha),
+		GitLogs: gitLogs,
+		Alpha:   opt.Alpha,
 	}
 	if binaries, err = b.releaser.Build(ctx, rls); err != nil {
 		return fmt.Errorf("Failed build release: %w", err)

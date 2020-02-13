@@ -7,61 +7,27 @@ import (
 	"github.com/typical-go/typical-go/pkg/typbuild/stdrelease"
 )
 
-func TestStandardFilter(t *testing.T) {
+func TestNoPrefix(t *testing.T) {
 	testcases := []struct {
-		ignorings []string
-		messages  []string
-		filtereds []string
+		prefixes []string
+		message  string
+		expected string
 	}{
 		{
-			[]string{"revision"},
-			[]string{"5378feb revision: something"},
-			[]string{},
+			prefixes: []string{"revision"},
+			message:  "revision: something",
 		},
 		{
-			[]string{"revision"},
-			[]string{"5378feb REVISION: something"},
-			[]string{},
+			prefixes: []string{"revision"},
+			message:  "REVISION: something",
 		},
 		{
-			[]string{},
-			[]string{"5378feb something \n\nCo-Authored-By: xx <xx@users.noreply.github.com>"},
-			[]string{"5378feb something"},
+			message:  "something",
+			expected: "something",
 		},
 	}
 	for _, tt := range testcases {
-		filter := stdrelease.StandardFilter{tt.ignorings}
-		require.Equal(t, tt.filtereds, filter.Filter(tt.messages))
-	}
-}
-
-func TestCleanMessage(t *testing.T) {
-	testcases := []struct {
-		message string
-		cleaned string
-	}{
-		{message: "    abcde    \n", cleaned: "abcde"},
-		{message: "some message\n\nCo-Authored-By: xx <xx@users.noreply.github.com>", cleaned: "some message"},
-	}
-	for _, tt := range testcases {
-		require.Equal(t, tt.cleaned, stdrelease.CleanMessage(tt.message))
-	}
-}
-
-func TestMessage(t *testing.T) {
-	testcases := []struct {
-		changelog string
-		message   string
-	}{
-		{
-			"5378feb rename versioning to tagging and combine goos and goarch as target",
-			"rename versioning to tagging and combine goos and goarch as target",
-		},
-		{"5378feb ", ""},
-		{"5378feb", ""},
-		{"", ""},
-	}
-	for _, tt := range testcases {
-		require.Equal(t, tt.message, stdrelease.MessageText(tt.changelog))
+		filter := stdrelease.NoPrefix(tt.prefixes...)
+		require.Equal(t, tt.expected, filter.Filter(tt.message))
 	}
 }
