@@ -1,20 +1,20 @@
-package stdrelease_test
+package stdrls_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typbuild/stdrelease"
+	"github.com/typical-go/typical-go/pkg/typbuild/stdrls"
 )
 
 func TestTarget(t *testing.T) {
 	testcases := []struct {
-		stdrelease.Target
+		stdrls.Target
 		os   string
 		arch string
 	}{
-		{stdrelease.Target(""), "", ""},
-		{stdrelease.Target("linux/amd"), "linux", "amd"},
+		{stdrls.Target(""), "", ""},
+		{stdrls.Target("linux/amd"), "linux", "amd"},
 	}
 	for i, tt := range testcases {
 		require.Equal(t, tt.os, tt.OS(), i)
@@ -24,19 +24,19 @@ func TestTarget(t *testing.T) {
 
 func TestTarget_Validate(t *testing.T) {
 	testcases := []struct {
-		stdrelease.Target
+		stdrls.Target
 		errMsg string
 	}{
 		{
-			stdrelease.Target(""),
+			stdrls.Target(""),
 			"Can't be empty",
 		},
 		{
-			stdrelease.Target("/amd"),
+			stdrls.Target("/amd"),
 			"Missing OS: Please make sure '/amd' using 'OS/ARCH' format",
 		},
 		{
-			stdrelease.Target("linux/"),
+			stdrls.Target("linux/"),
 			"Missing Arch: Please make sure 'linux/' using 'OS/ARCH' format",
 		},
 	}

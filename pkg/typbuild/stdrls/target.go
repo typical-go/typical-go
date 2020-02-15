@@ -1,4 +1,4 @@
-package stdrelease
+package stdrls
 
 import (
 	"errors"

@@ -1,10 +1,10 @@
-package stdrelease_test
+package stdrls_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typbuild/stdrelease"
+	"github.com/typical-go/typical-go/pkg/typbuild/stdrls"
 )
 
 func TestNoPrefix(t *testing.T) {
@@ -27,7 +27,7 @@ func TestNoPrefix(t *testing.T) {
 		},
 	}
 	for _, tt := range testcases {
-		filter := stdrelease.NoPrefix(tt.prefixes...)
+		filter := stdrls.NoPrefix(tt.prefixes...)
 		require.Equal(t, tt.expected, filter.Filter(tt.message))
 	}
 }
