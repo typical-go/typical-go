@@ -1,4 +1,4 @@
-package typbuild
+package typbuildtool
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/git"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 )
 
 // ReleaseOption is option for release
@@ -17,7 +18,7 @@ type ReleaseOption struct {
 	NoPublish bool
 }
 
-func (b *Build) release(ctx context.Context, c *Context, opt *ReleaseOption) (err error) {
+func (b *Build) release(ctx context.Context, c *typbuild.Context, opt *ReleaseOption) (err error) {
 	if b.releaser == nil {
 		return errors.New("Releaser is missing")
 	}
@@ -56,7 +57,7 @@ func (b *Build) release(ctx context.Context, c *Context, opt *ReleaseOption) (er
 		return errors.New("No change to be released")
 	}
 
-	rls := &ReleaseContext{
+	rls := &typbuild.ReleaseContext{
 		Context: c,
 		Name:    c.Name,
 		Tag:     b.releaser.Tag(ctx, c.Version, opt.Alpha),

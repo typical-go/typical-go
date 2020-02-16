@@ -1,13 +1,14 @@
-package typbuild
+package typbuildtool
 
 import (
 	"context"
 	"os"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 )
 
-func (b *Build) clean(ctx context.Context, c *Context) error {
+func (b *Build) clean(ctx context.Context, c *typbuild.Context) error {
 	removeAllFile(c.Bin)
 	removeAllFile(c.Temp)
 	removeFile(".env") // TODO: configuration clean

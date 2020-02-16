@@ -3,8 +3,8 @@ package typical
 import (
 	"github.com/typical-go/typical-go/app"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typbuild"
-	"github.com/typical-go/typical-go/pkg/typbuild/stdrls"
+	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typbuildtool/stdrls"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
@@ -16,7 +16,7 @@ var Descriptor = typcore.Descriptor{
 
 	App: typapp.New(application),
 
-	Build: typbuild.New().
+	BuildTool: typbuildtool.New().
 		WithRelease(stdrls.New().
 			WithPublisher(
 				stdrls.GithubPublisher("typical-go", "typical-go"),

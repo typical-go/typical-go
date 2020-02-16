@@ -1,4 +1,4 @@
-package typbuild
+package typbuildtool
 
 import (
 	"context"
@@ -7,9 +7,10 @@ import (
 	"os/exec"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 )
 
-func (b *Build) run(ctx context.Context, c *Context, args []string) (err error) {
+func (b *Build) run(ctx context.Context, c *typbuild.Context, args []string) (err error) {
 	if err = b.buildProject(ctx, c); err != nil {
 		return
 	}

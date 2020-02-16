@@ -1,4 +1,4 @@
-package typbuild
+package typbuildtool
 
 import (
 	"context"
@@ -7,9 +7,10 @@ import (
 	"os/exec"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 )
 
-func (b *Build) buildProject(ctx context.Context, c *Context) (err error) {
+func (b *Build) buildProject(ctx context.Context, c *typbuild.Context) (err error) {
 	if err = b.prebuild(ctx, c); err != nil {
 		return
 	}
@@ -25,7 +26,7 @@ func (b *Build) buildProject(ctx context.Context, c *Context) (err error) {
 	return cmd.Run()
 }
 
-func (b *Build) prebuild(ctx context.Context, c *Context) (err error) {
+func (b *Build) prebuild(ctx context.Context, c *typbuild.Context) (err error) {
 	for _, prebuilder := range b.prebuilders {
 		if err = prebuilder.Prebuild(ctx, c); err != nil {
 			return

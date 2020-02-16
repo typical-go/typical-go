@@ -1,4 +1,4 @@
-package typbuild
+package typbuildtool
 
 import (
 	"context"
@@ -9,15 +9,16 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/runn/stdrun"
-	"github.com/typical-go/typical-go/pkg/typbuild/internal/tmpl"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
+	"github.com/typical-go/typical-go/pkg/typbuildtool/internal/tmpl"
 
 	log "github.com/sirupsen/logrus"
 )
 
 type standardPrebuilder struct{}
 
-func (a *standardPrebuilder) Prebuild(ctx context.Context, c *Context) (err error) {
+func (a *standardPrebuilder) Prebuild(ctx context.Context, c *typbuild.Context) (err error) {
 	var constructors common.Strings
 	if err = c.EachAnnotation("constructor", prebld.FunctionType, func(decl *prebld.Declaration, ann *prebld.Annotation) (err error) {
 		constructors.Append(fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
@@ -33,7 +34,7 @@ func (a *standardPrebuilder) Prebuild(ctx context.Context, c *Context) (err erro
 	return
 }
 
-func (a *standardPrebuilder) generateConstructor(ctx context.Context, target string, c *Context, constructors common.Strings) (err error) {
+func (a *standardPrebuilder) generateConstructor(ctx context.Context, target string, c *typbuild.Context, constructors common.Strings) (err error) {
 	defer common.ElapsedTimeFn("Generate constructor")()
 	imports := []string{"github.com/typical-go/typical-go/pkg/typapp"}
 	for _, dir := range c.Dirs {

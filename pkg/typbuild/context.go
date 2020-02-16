@@ -11,7 +11,7 @@ import (
 
 // Context of build
 type Context struct {
-	*typcore.BuildContext
+	*typcore.TypicalContext
 	Declarations []*prebld.Declaration
 }
 

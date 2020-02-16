@@ -60,9 +60,9 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 		},
 		{
 			typcore.Descriptor{
-				Name:    "some-name",
-				Package: "some-package",
-				Build:   invalidBuild{"Build: some-error"},
+				Name:      "some-name",
+				Package:   "some-package",
+				BuildTool: invalidBuildTool{"Build: some-error"},
 			},
 			"Descriptor: Build: some-error",
 		},
@@ -85,15 +85,15 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 	}
 }
 
-type invalidBuild struct {
+type invalidBuildTool struct {
 	errMessage string
 }
 
-func (i invalidBuild) Validate() error {
+func (i invalidBuildTool) Validate() error {
 	return errors.New(i.errMessage)
 }
 
-func (i invalidBuild) Run(*typcore.BuildContext) error {
+func (i invalidBuildTool) Run(*typcore.TypicalContext) error {
 	return nil
 }
 
@@ -105,7 +105,7 @@ func (i invalidApp) Validate() error {
 	return errors.New(i.errMessage)
 }
 
-func (i invalidApp) Run(*typcore.AppContext) error {
+func (i invalidApp) Run(*typcore.Descriptor) error {
 	return nil
 }
 

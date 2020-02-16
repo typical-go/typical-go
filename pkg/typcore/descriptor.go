@@ -19,8 +19,18 @@ type Descriptor struct {
 	Sources     []string
 
 	App           App
-	Build         Build
+	BuildTool     BuildTool
 	Configuration Configuration
+}
+
+// App is interface of app
+type App interface {
+	Run(*Descriptor) error
+}
+
+// BuildTool interface
+type BuildTool interface {
+	Run(*TypicalContext) error
 }
 
 // RunApp to run app
@@ -31,20 +41,18 @@ func (d *Descriptor) RunApp() (err error) {
 	if err = d.Validate(); err != nil {
 		return
 	}
-	return d.App.Run(&AppContext{
-		Descriptor: d,
-	})
+	return d.App.Run(d)
 }
 
 // RunBuild to run build
 func (d *Descriptor) RunBuild() (err error) {
-	if d.Build == nil {
-		return errors.New("Descriptor is missing `Build`")
+	if d.BuildTool == nil {
+		return errors.New("Descriptor is missing `BuildTool`")
 	}
 	if err = d.Validate(); err != nil {
 		return
 	}
-	c := &BuildContext{
+	c := &TypicalContext{
 		Descriptor:    d,
 		ProjectLayout: DefaultLayout,
 		Dirs:          d.Sources,
@@ -59,7 +67,7 @@ func (d *Descriptor) RunBuild() (err error) {
 			return
 		}
 	}
-	return d.Build.Run(c)
+	return d.BuildTool.Run(c)
 }
 
 // Validate context
@@ -86,7 +94,7 @@ func (d *Descriptor) Validate() (err error) {
 		return errors.New("Descriptor: Package can't be empty")
 	}
 
-	if err = common.Validate(d.Build); err != nil {
+	if err = common.Validate(d.BuildTool); err != nil {
 		return fmt.Errorf("Descriptor: %w", err)
 	}
 

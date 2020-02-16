@@ -1,4 +1,4 @@
-package typbuild
+package typbuildtool
 
 import (
 	"context"
@@ -6,9 +6,10 @@ import (
 	"os/exec"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 )
 
-func (b *Build) test(ctx context.Context, c *Context) error {
+func (b *Build) test(ctx context.Context, c *typbuild.Context) error {
 	log.Info("Run testings")
 	targets := []string{
 		"./app/...",

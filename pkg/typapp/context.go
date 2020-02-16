@@ -11,7 +11,7 @@ import (
 
 // Context of App
 type Context struct {
-	*typcore.AppContext
+	*typcore.Descriptor
 	*App
 }
 

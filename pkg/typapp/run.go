@@ -9,16 +9,16 @@ import (
 )
 
 // Run application
-func (a *App) Run(actx *typcore.AppContext) (err error) {
+func (a *App) Run(d *typcore.Descriptor) (err error) {
 	c := &Context{
-		AppContext: actx,
+		Descriptor: d,
 		App:        a,
 	}
 	app := cli.NewApp()
-	app.Name = actx.Name
+	app.Name = d.Name
 	app.Usage = "" // NOTE: intentionally blank
-	app.Description = actx.Description
-	app.Version = actx.Version
+	app.Description = d.Description
+	app.Version = d.Version
 	app.Before = func(c *cli.Context) (err error) {
 		if err = typcfg.LoadEnvFile(); err != nil {
 			return

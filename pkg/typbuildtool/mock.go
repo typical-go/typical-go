@@ -1,4 +1,4 @@
-package typbuild
+package typbuildtool
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
 )
 
@@ -18,7 +19,7 @@ type MockOption struct {
 	NoDelete bool
 }
 
-func (b *Build) mock(ctx context.Context, c *Context, opt *MockOption) (err error) {
+func (b *Build) mock(ctx context.Context, c *typbuild.Context, opt *MockOption) (err error) {
 	var (
 		targets common.Strings
 		mockgen string

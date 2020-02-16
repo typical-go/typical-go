@@ -1,11 +1,11 @@
-package typbuild
+package typbuildtool
 
 import (
-	"context"
 	"fmt"
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
@@ -14,42 +14,32 @@ import (
 
 // Build tool
 type Build struct {
-	commanders  []BuildCommander
-	prebuilders []Prebuilder
-	releaser    Releaser
-}
-
-// Prebuilder responsible to prebuild task
-type Prebuilder interface {
-	Prebuild(ctx context.Context, c *Context) error
-}
-
-// BuildCommander responsible to return commands for Build-Tool
-type BuildCommander interface {
-	BuildCommands(c *Context) []*cli.Command
+	commanders  []typbuild.BuildCommander
+	prebuilders []typbuild.Prebuilder
+	releaser    typbuild.Releaser
 }
 
 // New return new instance of build
 func New() *Build {
 	return &Build{
-		prebuilders: []Prebuilder{&standardPrebuilder{}},
+		prebuilders: []typbuild.Prebuilder{&standardPrebuilder{}},
 	}
 }
 
 // AppendCommander to return build with appended commander
-func (b *Build) AppendCommander(commanders ...BuildCommander) *Build {
+func (b *Build) AppendCommander(commanders ...typbuild.BuildCommander) *Build {
 	b.commanders = append(b.commanders, commanders...)
 	return b
 }
 
 // WithRelease to set releaser
-func (b *Build) WithRelease(releaser Releaser) *Build {
+func (b *Build) WithRelease(releaser typbuild.Releaser) *Build {
 	b.releaser = releaser
 	return b
 }
 
 // WithPrebuild to set prebuilder
-func (b *Build) WithPrebuild(prebuilders ...Prebuilder) *Build {
+func (b *Build) WithPrebuild(prebuilders ...typbuild.Prebuilder) *Build {
 	b.prebuilders = append(b.prebuilders, prebuilders...)
 	return b
 }
@@ -65,29 +55,29 @@ func (b *Build) Validate() (err error) {
 }
 
 // Run build tool
-func (b *Build) Run(bctx *typcore.BuildContext) (err error) {
+func (b *Build) Run(typCtx *typcore.TypicalContext) (err error) {
 	var decls []*prebld.Declaration
-	if decls, err = prebld.Walk(bctx.Files); err != nil {
+	if decls, err = prebld.Walk(typCtx.Files); err != nil {
 		return
 	}
 
-	c := &Context{
-		BuildContext: bctx,
-		Declarations: decls,
+	c := &typbuild.Context{
+		TypicalContext: typCtx,
+		Declarations:   decls,
 	}
 
 	app := cli.NewApp()
-	app.Name = bctx.Name
+	app.Name = c.Name
 	app.Usage = "" // NOTE: intentionally blank
-	app.Description = bctx.Description
-	app.Version = bctx.Version
+	app.Description = c.Description
+	app.Version = c.Version
 	app.Commands = b.BuildCommands(c)
 
 	return app.Run(os.Args)
 }
 
 // BuildCommands to return command
-func (b *Build) BuildCommands(c *Context) []*cli.Command {
+func (b *Build) BuildCommands(c *typbuild.Context) []*cli.Command {
 	cmds := []*cli.Command{
 		{
 			Name:    "build",

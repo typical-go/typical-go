@@ -4,7 +4,18 @@ import (
 	"context"
 
 	"github.com/typical-go/typical-go/pkg/git"
+	"github.com/urfave/cli/v2"
 )
+
+// Prebuilder responsible to prebuild task
+type Prebuilder interface {
+	Prebuild(ctx context.Context, c *Context) error
+}
+
+// BuildCommander responsible to return commands for Build-Tool
+type BuildCommander interface {
+	BuildCommands(c *Context) []*cli.Command
+}
 
 // ReleaseContext is release context
 type ReleaseContext struct {

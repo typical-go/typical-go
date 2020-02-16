@@ -1,6 +1,7 @@
 package typcore
 
 // Configuration is interface of configuration
+// TODO: refactor to minimum function requirement
 type Configuration interface {
 	Provide() []interface{}
 	Loader() ConfigLoader
