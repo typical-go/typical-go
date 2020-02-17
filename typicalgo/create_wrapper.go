@@ -1,9 +1,9 @@
-package app
+package typicalgo
 
 import (
 	"fmt"
 
-	"github.com/typical-go/typical-go/app/internal/tmpl"
+	"github.com/typical-go/typical-go/typicalgo/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/runn"
 	"github.com/typical-go/typical-go/pkg/runn/stdrun"
 	"github.com/typical-go/typical-go/pkg/typcore"

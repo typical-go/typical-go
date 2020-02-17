@@ -46,7 +46,7 @@ func (*dummyLoader) Load(string, interface{}) error { return nil }
 
 type dummyConfigurer1 struct{}
 
-func (*dummyConfigurer1) Configure(loader typcore.ConfigLoader) (string, interface{}, interface{}) {
+func (*dummyConfigurer1) Configure(loader typcfg.Loader) (string, interface{}, interface{}) {
 	return "prefix1",
 		&struct {
 			ID     int64 ``
@@ -57,7 +57,7 @@ func (*dummyConfigurer1) Configure(loader typcore.ConfigLoader) (string, interfa
 
 type dummyConfigurer2 struct{}
 
-func (*dummyConfigurer2) Configure(loader typcore.ConfigLoader) (string, interface{}, interface{}) {
+func (*dummyConfigurer2) Configure(loader typcfg.Loader) (string, interface{}, interface{}) {
 	return "prefix2", &struct {
 		Title   string `default:"default-title"`
 		Content string `default:"default-content"`

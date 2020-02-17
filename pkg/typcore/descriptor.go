@@ -87,7 +87,10 @@ func (d *Descriptor) Validate() (err error) {
 	}
 
 	if len(d.Sources) < 1 {
+		// TODO: sources provided by app type or the package name where app belongs
 		d.Sources = []string{"app"}
+
+		// TODO: then validate if sources if exist in the project
 	}
 
 	if d.Package == "" {
