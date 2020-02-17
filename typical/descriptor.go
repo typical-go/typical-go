@@ -23,5 +23,5 @@ var Descriptor = typcore.Descriptor{
 		),
 
 	// TODO: remove this when default sources implemented
-	Sources: []string{"typicalgo"},
+	Sources: []string{"typicalgo", "pkg"},
 }
