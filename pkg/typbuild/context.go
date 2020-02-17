@@ -66,7 +66,7 @@ func (c *Context) Invoke(cliCtx *cli.Context, fn interface{}) (err error) {
 
 	// provide functions
 	if c.Configuration != nil {
-		if err = provide(di, c.Configuration.Provide()...); err != nil {
+		if err = provide(di, c.Configuration.Store().Provide()...); err != nil {
 			return
 		}
 	}

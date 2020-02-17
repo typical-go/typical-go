@@ -12,11 +12,11 @@ type Loader interface {
 }
 
 // Configurer responsible to create config
-// `Prefix` is used by ConfigLoader to retrieve configuration value
-// `Spec` (Specification) is used readme/env file generator. The value of spec will act as local environment value defined in .env file.
-// `LoadFn` (Load Function) is required to provide in dependecies-injection container
+// `prefix` is used by ConfigLoader to retrieve configuration value
+// `spec` (Specification) is used readme/env file generator. The value of spec will act as local environment value defined in .env file.
+// `constructor` (Constructor Function) to be provided in dependecies-injection container
 type Configurer interface {
-	Configure(loader Loader) (prefix string, spec interface{}, loadFn interface{})
+	Configure(loader Loader) (prefix string, spec interface{}, constructor interface{})
 }
 
 // New return new instance of Configuration
@@ -41,13 +41,4 @@ func (c *Configuration) WithConfigure(configurers ...Configurer) *Configuration 
 // Loader of configuration
 func (c *Configuration) Loader() Loader {
 	return c.loader
-}
-
-// Provide the constructors
-func (c *Configuration) Provide() (constructors []interface{}) {
-	for _, configurer := range c.configurers {
-		_, _, loadFn := configurer.Configure(c.loader)
-		constructors = append(constructors, loadFn)
-	}
-	return
 }

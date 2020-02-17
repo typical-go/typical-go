@@ -33,6 +33,12 @@ type BuildTool interface {
 	Run(*TypicalContext) error
 }
 
+// Configuration is interface of configuration
+type Configuration interface {
+	Store() *ConfigStore
+	Setup() error
+}
+
 // RunApp to run app
 func (d *Descriptor) RunApp() (err error) {
 	if d.App == nil {

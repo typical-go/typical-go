@@ -33,9 +33,14 @@ type ProjectLayout struct {
 
 // Walk function
 func (b *TypicalContext) addFile(path string, info os.FileInfo, err error) error {
-	if info.IsDir() {
-		b.Dirs = append(b.Dirs, path)
-	} else if isWalkTarget(path) {
+	if info != nil {
+		if info.IsDir() {
+			b.Dirs = append(b.Dirs, path)
+			return nil
+		}
+	}
+
+	if isWalkTarget(path) {
 		b.Files = append(b.Files, path)
 	}
 	return nil

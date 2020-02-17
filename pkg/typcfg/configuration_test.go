@@ -24,16 +24,16 @@ func TestConfiguration(t *testing.T) {
 	configuration := typcfg.New().
 		WithLoader(&dummyLoader{}).
 		WithConfigure(&dummyConfigurer1{}, &dummyConfigurer2{})
+	store := configuration.Store()
 	require.IsType(t, &dummyLoader{}, configuration.Loader())
-	require.Equal(t, []interface{}{"loadFn1", "loadFn2"}, configuration.Provide())
+	require.Equal(t, []interface{}{"loadFn1", "loadFn2"}, store.Provide())
 
-	keys, configMap := configuration.ConfigMap()
-	require.Equal(t, []typcore.ConfigDetail{
+	require.EqualValues(t, []*typcore.ConfigField{
 		{Name: "prefix1_ID", Type: "int64", Default: "", Value: int64(0), IsZero: true, Required: false},
 		{Name: "prefix1_VOLUME", Type: "int", Default: "", Value: 0, IsZero: true, Required: false},
 		{Name: "prefix2_TITLE", Type: "string", Default: "default-title", Value: "", IsZero: true, Required: false},
 		{Name: "prefix2_CONTENT", Type: "string", Default: "default-content", Value: "", IsZero: true, Required: false},
-	}, typcore.ConfigDetailsBy(configMap, keys...))
+	}, store.Fields(store.Keys()...))
 
 	var b strings.Builder
 	require.NoError(t, configuration.Write(&b))

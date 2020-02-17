@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/typical-go/typical-go/typicalgo/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/runn"
 	"github.com/typical-go/typical-go/pkg/runn/stdrun"
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/typicalgo/internal/tmpl"
 	"github.com/urfave/cli/v2"
 )
 

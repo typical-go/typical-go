@@ -32,7 +32,7 @@ func (c *Context) Invoke(cliCtx *cli.Context, fn interface{}) (err error) {
 	}
 	if c.Configuration != nil {
 		// provide configuration to dependency-injection container
-		if err = provide(di, c.Configuration.Provide()...); err != nil {
+		if err = provide(di, c.Configuration.Store().Provide()...); err != nil {
 			return
 		}
 	}

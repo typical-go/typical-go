@@ -17,7 +17,7 @@ func TestDescriptor_Validate_DefaultValue(t *testing.T) {
 
 	require.Equal(t, "typcore", d.Name)
 	require.Equal(t, "0.0.1", d.Version)
-	require.Equal(t, []string{"app"}, d.Sources)
+	require.EqualValues(t, []string{"app", "pkg"}, d.Sources)
 }
 
 func TestDescriptor_ValidateName(t *testing.T) {

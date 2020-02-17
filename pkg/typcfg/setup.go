@@ -32,18 +32,15 @@ func (c *Configuration) Setup() (err error) {
 }
 
 func (c *Configuration) Write(w io.Writer) (err error) {
-	keys, configMap := c.ConfigMap()
-	for _, key := range keys {
-		var (
-			v         interface{}
-			cfgDetail = configMap[key]
-		)
-		if cfgDetail.IsZero {
-			v = cfgDetail.Default
+	store := c.Store()
+	for _, field := range store.Fields(store.Keys()...) {
+		var v interface{}
+		if field.IsZero {
+			v = field.Default
 		} else {
-			v = cfgDetail.Value
+			v = field.Value
 		}
-		if _, err = fmt.Fprintf(w, "%s=%v\n", cfgDetail.Name, v); err != nil {
+		if _, err = fmt.Fprintf(w, "%s=%v\n", field.Name, v); err != nil {
 			return
 		}
 	}
