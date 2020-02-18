@@ -12,40 +12,40 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// Build tool
-type Build struct {
+// BuildTool is typical Build Tool for golang
+type BuildTool struct {
 	commanders  []typbuild.BuildCommander
 	prebuilders []typbuild.Prebuilder
 	releaser    typbuild.Releaser
 }
 
 // New return new instance of build
-func New() *Build {
-	return &Build{
+func New() *BuildTool {
+	return &BuildTool{
 		prebuilders: []typbuild.Prebuilder{&standardPrebuilder{}},
 	}
 }
 
 // AppendCommander to return build with appended commander
-func (b *Build) AppendCommander(commanders ...typbuild.BuildCommander) *Build {
+func (b *BuildTool) AppendCommander(commanders ...typbuild.BuildCommander) *BuildTool {
 	b.commanders = append(b.commanders, commanders...)
 	return b
 }
 
 // WithRelease to set releaser
-func (b *Build) WithRelease(releaser typbuild.Releaser) *Build {
+func (b *BuildTool) WithRelease(releaser typbuild.Releaser) *BuildTool {
 	b.releaser = releaser
 	return b
 }
 
 // WithPrebuild to set prebuilder
-func (b *Build) WithPrebuild(prebuilders ...typbuild.Prebuilder) *Build {
+func (b *BuildTool) WithPrebuild(prebuilders ...typbuild.Prebuilder) *BuildTool {
 	b.prebuilders = append(b.prebuilders, prebuilders...)
 	return b
 }
 
 // Validate build
-func (b *Build) Validate() (err error) {
+func (b *BuildTool) Validate() (err error) {
 	if b.releaser != nil {
 		if err = common.Validate(b.releaser); err != nil {
 			return fmt.Errorf("Build: Releaser: %w", err)
@@ -55,7 +55,7 @@ func (b *Build) Validate() (err error) {
 }
 
 // Run build tool
-func (b *Build) Run(typCtx *typcore.TypicalContext) (err error) {
+func (b *BuildTool) Run(typCtx *typcore.TypicalContext) (err error) {
 	var decls []*prebld.Declaration
 	if decls, err = prebld.Walk(typCtx.Files); err != nil {
 		return
@@ -77,7 +77,7 @@ func (b *Build) Run(typCtx *typcore.TypicalContext) (err error) {
 }
 
 // BuildCommands to return command
-func (b *Build) BuildCommands(c *typbuild.Context) []*cli.Command {
+func (b *BuildTool) BuildCommands(c *typbuild.Context) []*cli.Command {
 	cmds := []*cli.Command{
 		{
 			Name:    "build",

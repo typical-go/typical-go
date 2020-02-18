@@ -8,7 +8,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typbuild"
 )
 
-func (b *Build) clean(ctx context.Context, c *typbuild.Context) error {
+func (b *BuildTool) clean(ctx context.Context, c *typbuild.Context) error {
 	removeAllFile(c.Bin)
 	removeAllFile(c.Temp)
 	removeFile(".env") // TODO: configuration clean

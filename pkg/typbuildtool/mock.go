@@ -19,7 +19,7 @@ type MockOption struct {
 	NoDelete bool
 }
 
-func (b *Build) mock(ctx context.Context, c *typbuild.Context, opt *MockOption) (err error) {
+func (b *BuildTool) mock(ctx context.Context, c *typbuild.Context, opt *MockOption) (err error) {
 	var (
 		targets common.Strings
 		mockgen string

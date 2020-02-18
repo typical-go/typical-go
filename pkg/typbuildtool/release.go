@@ -18,7 +18,7 @@ type ReleaseOption struct {
 	NoPublish bool
 }
 
-func (b *Build) release(ctx context.Context, c *typbuild.Context, opt *ReleaseOption) (err error) {
+func (b *BuildTool) release(ctx context.Context, c *typbuild.Context, opt *ReleaseOption) (err error) {
 	if b.releaser == nil {
 		return errors.New("Releaser is missing")
 	}

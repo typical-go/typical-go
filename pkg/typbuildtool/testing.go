@@ -10,7 +10,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typbuild"
 )
 
-func (b *Build) test(ctx context.Context, c *typbuild.Context) error {
+func (b *BuildTool) test(ctx context.Context, c *typbuild.Context) error {
 	log.Info("Run testings")
 	var targets []string
 	for _, source := range c.Sources {

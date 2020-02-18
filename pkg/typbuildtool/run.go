@@ -10,7 +10,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typbuild"
 )
 
-func (b *Build) run(ctx context.Context, c *typbuild.Context, args []string) (err error) {
+func (b *BuildTool) run(ctx context.Context, c *typbuild.Context, args []string) (err error) {
 	if err = b.buildProject(ctx, c); err != nil {
 		return
 	}
