@@ -13,10 +13,13 @@ import (
 func (c *Configuration) Store() *typcore.ConfigStore {
 	store := new(typcore.ConfigStore)
 	for _, configurer := range c.configurers {
-		prefix, spec, constructor := configurer.Configure(c.loader)
-		keys, fieldMap := c.fieldmap(prefix, spec)
+		detail := configurer.Configure(c.loader)
+		if detail == nil {
+			panic("Configure return nil detail")
+		}
+		keys, fieldMap := c.fieldmap(detail.Prefix, detail.Spec)
 		store.Add(&typcore.ConfigBean{
-			Constructor: constructor,
+			Constructor: detail.Constructor,
 			Keys:        keys,
 			FieldMap:    fieldMap,
 		})

@@ -12,11 +12,20 @@ type Loader interface {
 }
 
 // Configurer responsible to create config
-// `prefix` is used by ConfigLoader to retrieve configuration value
-// `spec` (Specification) is used readme/env file generator. The value of spec will act as local environment value defined in .env file.
-// `constructor` (Constructor Function) to be provided in dependecies-injection container
 type Configurer interface {
-	Configure(loader Loader) (prefix string, spec interface{}, constructor interface{})
+	Configure(loader Loader) *Detail
+}
+
+// Detail contain detail of config
+type Detail struct {
+	// Prefix is used by ConfigLoader to retrieve configuration value
+	Prefix string
+
+	// Spec is specification of config object
+	Spec interface{}
+
+	// Constructor is constructor function to create config object
+	Constructor interface{}
 }
 
 // New return new instance of Configuration

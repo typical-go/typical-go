@@ -46,20 +46,26 @@ func (*dummyLoader) Load(string, interface{}) error { return nil }
 
 type dummyConfigurer1 struct{}
 
-func (*dummyConfigurer1) Configure(loader typcfg.Loader) (string, interface{}, interface{}) {
-	return "prefix1",
-		&struct {
+func (*dummyConfigurer1) Configure(loader typcfg.Loader) *typcfg.Detail {
+	return &typcfg.Detail{
+		Prefix: "prefix1",
+		Spec: &struct {
 			ID     int64 ``
 			Volume int   ``
 		}{},
-		"loadFn1"
+		Constructor: "loadFn1",
+	}
 }
 
 type dummyConfigurer2 struct{}
 
-func (*dummyConfigurer2) Configure(loader typcfg.Loader) (string, interface{}, interface{}) {
-	return "prefix2", &struct {
-		Title   string `default:"default-title"`
-		Content string `default:"default-content"`
-	}{}, "loadFn2"
+func (*dummyConfigurer2) Configure(loader typcfg.Loader) *typcfg.Detail {
+	return &typcfg.Detail{
+		Prefix: "prefix2",
+		Spec: &struct {
+			Title   string `default:"default-title"`
+			Content string `default:"default-content"`
+		}{},
+		Constructor: "loadFn2",
+	}
 }
