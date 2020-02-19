@@ -149,3 +149,8 @@ func (a *App) AppCommands(c *Context) (cmds []*cli.Command) {
 	}
 	return
 }
+
+// Sources return source for app
+func (a *App) Sources() []string {
+	return []string{"app"}
+}

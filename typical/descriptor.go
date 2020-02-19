@@ -21,7 +21,4 @@ var Descriptor = typcore.Descriptor{
 				stdrls.GithubPublisher("typical-go", "typical-go"),
 			),
 		),
-
-	// TODO: remove this when default sources implemented
-	Sources: []string{"typicalgo", "pkg"},
 }

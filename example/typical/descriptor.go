@@ -28,7 +28,7 @@ var (
 
 		// Package of the project (MANDATORY)
 		// It should be same with go.mod file
-		Package: "github.com/typical-go/typical-go/example", // TODO: remove this when retrieve package from go.mod implementation done
+		Package: "github.com/typical-go/typical-go/example",
 
 		// App of the project (MANDATORY)
 		App: typapp.New(application),
