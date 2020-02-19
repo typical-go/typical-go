@@ -14,7 +14,7 @@ import (
 type Descriptor struct {
 	Name        string
 	Description string
-	Package     string // TODO: get package from gomod file
+	Package     string
 	Version     string
 	Sources     []string
 
@@ -79,13 +79,15 @@ func (d *Descriptor) RunBuild() (err error) {
 // Validate context
 func (d *Descriptor) Validate() (err error) {
 
+	var root string
+	if root, err = os.Getwd(); err != nil {
+		return errors.New("Descriptor: Fail to get working directory")
+	}
+
 	if d.Name == "" {
-		d.Name = defaultName()
-	} else {
-		r, _ := regexp.Compile(`^[a-zA-Z\_\-]+$`)
-		if !r.MatchString(d.Name) {
-			return errors.New("Descriptor: Invalid `Name`")
-		}
+		d.Name = filepath.Base(root)
+	} else if err = validateName(d.Name); err != nil {
+		return
 	}
 
 	if d.Version == "" {
@@ -95,11 +97,16 @@ func (d *Descriptor) Validate() (err error) {
 	if len(d.Sources) < 1 {
 		// TODO: sources provided by app type or the package name where app belongs
 		d.Sources = []string{"app", "pkg"}
-
-		// TODO: then validate if sources if exist in the project
 	}
 
+	if err = validateSources(d.Sources); err != nil {
+		return fmt.Errorf("Descriptor: %w", err)
+	}
+
+	// TODO: then validate if sources if exist in the project
+
 	if d.Package == "" {
+		// TODO: get package from gomod file
 		return errors.New("Descriptor: Package can't be empty")
 	}
 
@@ -114,10 +121,19 @@ func (d *Descriptor) Validate() (err error) {
 	return
 }
 
-func defaultName() (s string) {
-	var err error
-	if s, err = os.Getwd(); err != nil {
-		return "noname"
+func validateName(name string) (err error) {
+	r, _ := regexp.Compile(`^[a-zA-Z\_\-]+$`)
+	if !r.MatchString(name) {
+		return errors.New("Descriptor: Invalid `Name`")
 	}
-	return filepath.Base(s)
+	return
+}
+
+func validateSources(sources []string) (err error) {
+	for _, source := range sources {
+		if _, err = os.Stat(source); os.IsNotExist(err) {
+			return
+		}
+	}
+	return
 }
