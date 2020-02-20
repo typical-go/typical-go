@@ -1,4 +1,4 @@
-package runn_test
+package common_test
 
 import (
 	"errors"
@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/runn"
+	"github.com/typical-go/typical-go/pkg/common"
 )
 
 func TestRun(t *testing.T) {
@@ -49,7 +49,7 @@ func TestRun(t *testing.T) {
 	}
 
 	for i, tt := range testcases {
-		err := runn.Run(tt.stmts...)
+		err := common.Run(tt.stmts...)
 		if tt.errMsg == "" {
 			require.NoError(t, err)
 		} else {

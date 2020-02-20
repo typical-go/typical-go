@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/runn/stdrun"
+	"github.com/typical-go/typical-go/pkg/common/stdrun"
 	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
 	"github.com/typical-go/typical-go/pkg/typbuildtool/internal/tmpl"

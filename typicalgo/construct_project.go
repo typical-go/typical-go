@@ -6,8 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/runn"
-	"github.com/typical-go/typical-go/pkg/runn/stdrun"
+	"github.com/typical-go/typical-go/pkg/common/stdrun"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/typicalgo/internal/tmpl"
 	"github.com/urfave/cli/v2"
@@ -34,7 +33,7 @@ func constructProject(c *cli.Context) (err error) {
 	if common.IsFileExist(name) {
 		return fmt.Errorf("'%s' already exist", name)
 	}
-	return runn.Run(constructproj{
+	return common.Run(constructproj{
 		TemplateData: tmpl.TemplateData{
 			Name: name,
 			Pkg:  pkg,
@@ -55,7 +54,7 @@ func (i constructproj) Path(s string) string {
 }
 
 func (i constructproj) Run() (err error) {
-	return runn.Run(
+	return common.Run(
 		i.appPackage,
 		i.cmdPackage,
 		i.descriptor,
@@ -77,7 +76,7 @@ func (i constructproj) appPackage() error {
 			stdrun.NewWriteTemplate(i.Path("app/app.go"), tmpl.App, i.TemplateData),
 		)
 	}
-	return runn.Run(stmts...)
+	return common.Run(stmts...)
 }
 
 func (i constructproj) descriptor() error {
@@ -88,7 +87,7 @@ func (i constructproj) descriptor() error {
 	} else {
 		writeStmt = stdrun.NewWriteTemplate(i.Path(path), tmpl.ContextWithAppModule, i.TemplateData)
 	}
-	return runn.Run(
+	return common.Run(
 		stdrun.NewMkdir(i.Path("typical")),
 		writeStmt,
 	)
@@ -99,7 +98,7 @@ func (i constructproj) cmdPackage() error {
 	data := tmpl.MainSrcData{
 		ImportTypical: i.Pkg + "/typical",
 	}
-	return runn.Run(
+	return common.Run(
 		stdrun.NewMkdir(i.Path(typcore.DefaultLayout.Cmd)),
 		stdrun.NewMkdir(i.Path(appMainPath)),
 		stdrun.NewWriteTemplate(i.Path(appMainPath+"/main.go"), tmpl.MainSrcApp, data),
@@ -107,13 +106,13 @@ func (i constructproj) cmdPackage() error {
 }
 
 func (i constructproj) ignoreFile() error {
-	return runn.Run(
+	return common.Run(
 		stdrun.NewWriteString(i.Path(".gitignore"), tmpl.Gitignore).WithPermission(0700),
 	)
 }
 
 func (i constructproj) gomod() (err error) {
-	return runn.Run(
+	return common.Run(
 		stdrun.NewWriteTemplate(i.Path("go.mod"), tmpl.GoMod, tmpl.GoModData{
 			Pkg:            i.Pkg,
 			TypicalVersion: Version,

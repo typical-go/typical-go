@@ -3,8 +3,8 @@ package typicalgo
 import (
 	"fmt"
 
-	"github.com/typical-go/typical-go/pkg/runn"
-	"github.com/typical-go/typical-go/pkg/runn/stdrun"
+	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/common/stdrun"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/typicalgo/internal/tmpl"
 	"github.com/urfave/cli/v2"
@@ -26,12 +26,12 @@ func createWrapper(c *cli.Context) error {
 	if pkg == "" {
 		return cli.ShowCommandHelp(c, "wrapper")
 	}
-	return runn.Run(
+	return common.Run(
 		wrapper(c.String("path"), pkg),
 	)
 }
 
-func wrapper(path, pkg string) runn.Runner {
+func wrapper(path, pkg string) common.Runner {
 	return stdrun.NewWriteTemplate(
 		path+"/typicalw",
 		tmpl.Typicalw,

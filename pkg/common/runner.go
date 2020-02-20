@@ -1,4 +1,4 @@
-package runn
+package common
 
 import (
 	"fmt"
