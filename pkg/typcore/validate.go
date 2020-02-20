@@ -6,7 +6,6 @@ import (
 	"go/build"
 	"os"
 	"path/filepath"
-	"reflect"
 	"regexp"
 	"strings"
 
@@ -61,9 +60,9 @@ func (d *Descriptor) Validate() (err error) {
 
 func (d *Descriptor) defaultProjectSources() (sources []string) {
 	if sourceable, ok := d.App.(Sourceable); ok {
-		sources = append(sources, sourceable.Sources()...)
+		sources = append(sources, sourceable.ProjectSources()...)
 	} else {
-		sources = append(sources, pkgName(d.App))
+		sources = append(sources, common.PackageName(d.App))
 	}
 	if _, err := os.Stat("pkg"); !os.IsNotExist(err) {
 		sources = append(sources, "pkg")
@@ -103,15 +102,4 @@ func validateProjectSources(sources []string) (err error) {
 		}
 	}
 	return
-}
-
-func pkgName(v interface{}) string {
-	s := reflect.TypeOf(v).String()
-	if dot := strings.Index(s, "."); dot > 0 {
-		if strings.HasPrefix(s, "*") {
-			return s[1:dot]
-		}
-		return s[:dot]
-	}
-	return ""
 }

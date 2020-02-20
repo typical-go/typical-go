@@ -1,4 +1,4 @@
-package app
+package helloworld
 
 // SomeInterface is just some interface
 // [mock]

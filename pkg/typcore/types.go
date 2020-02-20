@@ -18,5 +18,5 @@ type Configuration interface {
 
 // Sourceable mean the object can return the sources
 type Sourceable interface {
-	Sources() []string
+	ProjectSources() []string
 }

@@ -1,9 +1,9 @@
-package app
+package helloworld
 
 import (
 	"fmt"
 
-	"github.com/typical-go/typical-go/example/app/config"
+	"github.com/typical-go/typical-go/example/helloworld/config"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 )
 

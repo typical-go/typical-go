@@ -1,8 +1,7 @@
 package typical
 
 import (
-	"github.com/typical-go/typical-go/example/app"
-
+	"github.com/typical-go/typical-go/example/helloworld"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcfg"
@@ -10,7 +9,7 @@ import (
 )
 
 var (
-	application = app.New()
+	hello = helloworld.New()
 
 	// Descriptor of sample
 	Descriptor = typcore.Descriptor{
@@ -26,12 +25,12 @@ var (
 		// Version of the project (MANDATORY)
 		Version: "0.0.1",
 
-		// Package of the project (MANDATORY)
-		// Normally package should not be set as it will retrieve from `go.mod` file or project path after the $GOPATH
-		Package: "github.com/typical-go/typical-go/example",
+		// ModulePackage of the project (MANDATORY)
+		// Normally it should not be set as it will retrieve from `go.mod` file or project path after the $GOPATH
+		ModulePackage: "github.com/typical-go/typical-go/example",
 
 		// App of the project (MANDATORY)
-		App: typapp.New(application),
+		App: typapp.New(hello),
 
 		// BuildTool of the project (MANDATORY)
 		BuildTool: typbuildtool.New(),
@@ -39,7 +38,7 @@ var (
 		// Configuration of the project (OPTIONAL)
 		Configuration: typcfg.New().
 			WithConfigure(
-				application,
+				hello,
 			),
 	}
 )

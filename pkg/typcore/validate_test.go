@@ -182,6 +182,6 @@ func (a app) Run(*typcore.Descriptor) error {
 	return nil
 }
 
-func (a app) Sources() []string {
+func (a app) ProjectSources() []string {
 	return a.sources
 }

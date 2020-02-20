@@ -1,16 +1,18 @@
 package typapp
 
 import (
+	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/urfave/cli/v2"
 )
 
 // App is application
 type App struct {
-	entryPoint EntryPointer
-	providers  []Provider
-	preparers  []Preparer
-	destroyers []Destroyer
-	commanders []AppCommander
+	entryPoint     EntryPointer
+	providers      []Provider
+	preparers      []Preparer
+	destroyers     []Destroyer
+	commanders     []AppCommander
+	projectSources []string
 }
 
 // Dependency of app
@@ -46,7 +48,9 @@ type AppCommander interface {
 
 // New return new instance of app
 func New(v interface{}) *App {
-	app := new(App)
+	app := &App{
+		projectSources: []string{common.PackageName(v)},
+	}
 	if entryPoint, ok := v.(EntryPointer); ok {
 		app.entryPoint = entryPoint
 	}
@@ -109,6 +113,12 @@ func (a *App) AppendDependency(dependencies ...Dependency) *App {
 	return a
 }
 
+// AppendProjectSource return app with appended project sources
+func (a *App) AppendProjectSource(sources ...string) *App {
+	a.projectSources = append(a.projectSources, sources...)
+	return a
+}
+
 // EntryPoint of app
 func (a *App) EntryPoint() interface{} {
 	if a.entryPoint != nil {
@@ -150,7 +160,7 @@ func (a *App) AppCommands(c *Context) (cmds []*cli.Command) {
 	return
 }
 
-// Sources return source for app
-func (a *App) Sources() []string {
-	return []string{"app"}
+// ProjectSources return source for app
+func (a *App) ProjectSources() []string {
+	return a.projectSources
 }

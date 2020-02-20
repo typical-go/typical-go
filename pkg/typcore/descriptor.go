@@ -8,33 +8,34 @@ import (
 // Descriptor describe the project
 type Descriptor struct {
 
-	// Name of the project (OPTIONAL)
+	// Name of the project (OPTIONAL).
 	// It should be a characters with/without underscore or dash.
 	// By default, project name is same with project folder
 	Name string
 
-	// Description of the project (OPTIONAL)
+	// Description of the project (OPTIONAL).
 	Description string
 
-	// Version of the project (MANDATORY)
+	// Version of the project (OPTIONAL).
+	// By default it is 0.0.1
 	Version string
 
-	// ModulePackage of the project (OPTIONAL)
-	// Normally package should not be set as it will retrieve from `go.mod` file or project path after the $GOPATH
+	// ModulePackage of the project (OPTIONAL).
+	// Normally it should not be set as it will retrieve from `go.mod` file or project path after the $GOPATH
 	ModulePackage string
 
-	// ProjectSources of project (OPTIONAL)
-	// Normally source should not be set as it will retrieve from `App` if it's sourceable or package name of `App` type.
+	// ProjectSources of project (OPTIONAL) which is target for test and prebuild scanner.
+	// Normally it should not be set as it will retrieve from `App` if it's sourceable or package name of `App` type.
 	// `pkg` folder will be also added to sources when available.
 	ProjectSources []string
 
-	// App of the project (MANDATORY)
+	// App of the project (MANDATORY).
 	App App
 
-	// BuildTool of the project (MANDATORY)
+	// BuildTool of the project (MANDATORY).
 	BuildTool BuildTool
 
-	// Configuration of the project (OPTIONAL)
+	// Configuration of the project (OPTIONAL).
 	Configuration Configuration
 }
 
