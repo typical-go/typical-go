@@ -7,11 +7,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-const (
-	// Version of Typical-Go
-	Version = "0.9.32"
-)
-
 // TypicalGo is app of typical-go
 type TypicalGo struct{}
 
