@@ -11,7 +11,7 @@ import (
 var Descriptor = typcore.Descriptor{
 
 	Version: typicalgo.Version,
-	Package: "github.com/typical-go/typical-go",
+	// Package: "github.com/typical-go/typical-go",
 
 	App: typicalgo.New(),
 

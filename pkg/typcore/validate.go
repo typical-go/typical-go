@@ -3,6 +3,7 @@ package typcore
 import (
 	"errors"
 	"fmt"
+	"go/build"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -30,9 +31,10 @@ func (d *Descriptor) Validate() (err error) {
 		d.Version = "0.0.1"
 	}
 
-	if d.Package == "" {
-		// TODO: get package from gomod file
-		return errors.New("Descriptor: Package can't be empty")
+	if d.ModulePackage == "" {
+		if d.ModulePackage, err = defaultModulePackage(root); err != nil {
+			return
+		}
 	}
 
 	if d.App == nil {
@@ -47,17 +49,17 @@ func (d *Descriptor) Validate() (err error) {
 		return fmt.Errorf("Descriptor: %w", err)
 	}
 
-	if len(d.Sources) < 1 {
-		d.Sources = d.defaultSources()
+	if len(d.ProjectSources) < 1 {
+		d.ProjectSources = d.defaultProjectSources()
 	}
-	if err = validateSources(d.Sources); err != nil {
+	if err = validateProjectSources(d.ProjectSources); err != nil {
 		return fmt.Errorf("Descriptor: %w", err)
 	}
 
 	return
 }
 
-func (d *Descriptor) defaultSources() (sources []string) {
+func (d *Descriptor) defaultProjectSources() (sources []string) {
 	if sourceable, ok := d.App.(Sourceable); ok {
 		sources = append(sources, sourceable.Sources()...)
 	} else {
@@ -69,6 +71,23 @@ func (d *Descriptor) defaultSources() (sources []string) {
 	return
 }
 
+func defaultModulePackage(root string) (pkg string, err error) {
+	var (
+		gomod *common.GoMod
+	)
+	if gomod, err = common.CreateGoMod(root + "/go.mod"); err != nil {
+		// NOTE: go.mod is not exist. Check if the project sit in $GOPATH
+		gopath := build.Default.GOPATH
+		if strings.HasPrefix(root, gopath) {
+			return root[len(gopath):], nil
+		}
+
+		return "", errors.New("`go.mod` is missing and the project not in $GOPATH")
+	}
+
+	return gomod.ModulePackage, nil
+}
+
 func validateName(name string) (err error) {
 	r, _ := regexp.Compile(`^[a-zA-Z\_\-]+$`)
 	if !r.MatchString(name) {
@@ -77,7 +96,7 @@ func validateName(name string) (err error) {
 	return
 }
 
-func validateSources(sources []string) (err error) {
+func validateProjectSources(sources []string) (err error) {
 	for _, source := range sources {
 		if _, err = os.Stat(source); os.IsNotExist(err) {
 			return fmt.Errorf("Source '%s' is not exist", source)

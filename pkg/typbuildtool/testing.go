@@ -13,7 +13,7 @@ import (
 func (b *BuildTool) test(ctx context.Context, c *typbuild.Context) error {
 	log.Info("Run testings")
 	var targets []string
-	for _, source := range c.Sources {
+	for _, source := range c.ProjectSources {
 		targets = append(targets, fmt.Sprintf("./%s/...", source))
 	}
 	args := []string{"test", "-coverprofile=cover.out", "-race"}

@@ -2,6 +2,7 @@ package typcore_test
 
 import (
 	"errors"
+	"io/ioutil"
 	"os"
 	"testing"
 
@@ -16,13 +17,14 @@ import (
 func TestDescriptor_Validate_DefaultValue(t *testing.T) {
 	os.Mkdir("typicalgo", os.ModePerm)
 	os.Mkdir("pkg", os.ModePerm)
+	ioutil.WriteFile("go.mod", []byte("module github.com/typical-go/typical-go\ngo 1.13"), 0644)
 	defer func() {
 		os.Remove("typicalgo")
 		os.Remove("pkg")
+		os.Remove("go.mod")
 	}()
 
 	d := &typcore.Descriptor{
-		Package:   "some-package",
 		App:       typicalgo.New(),
 		BuildTool: typbuildtool.New(),
 	}
@@ -30,7 +32,8 @@ func TestDescriptor_Validate_DefaultValue(t *testing.T) {
 
 	require.Equal(t, "typcore", d.Name)
 	require.Equal(t, "0.0.1", d.Version)
-	require.EqualValues(t, []string{"typicalgo", "pkg"}, d.Sources)
+	require.EqualValues(t, []string{"typicalgo", "pkg"}, d.ProjectSources)
+	require.EqualValues(t, "github.com/typical-go/typical-go", d.ModulePackage)
 }
 
 func TestDescriptor_ValidateName(t *testing.T) {
@@ -43,10 +46,10 @@ func TestDescriptor_ValidateName(t *testing.T) {
 		}
 		for _, name := range valids {
 			d := &typcore.Descriptor{
-				Name:      name,
-				Package:   "some-package",
-				App:       app{},
-				BuildTool: typbuildtool.New(),
+				Name:          name,
+				ModulePackage: "some-package",
+				App:           app{},
+				BuildTool:     typbuildtool.New(),
 			}
 			require.NoError(t, common.Validate(d))
 		}
@@ -57,10 +60,10 @@ func TestDescriptor_ValidateName(t *testing.T) {
 		}
 		for _, name := range invalids {
 			d := &typcore.Descriptor{
-				Name:      name,
-				Package:   "some-package",
-				App:       app{},
-				BuildTool: typbuildtool.New(),
+				Name:          name,
+				ModulePackage: "some-package",
+				App:           app{},
+				BuildTool:     typbuildtool.New(),
 			}
 			require.EqualError(t, common.Validate(d), "Descriptor: Invalid `Name`")
 		}
@@ -74,10 +77,10 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 	}{
 		{
 			typcore.Descriptor{
-				Name:      "Typical Go",
-				Package:   "some-package",
-				App:       typapp.New(nil),
-				BuildTool: typbuildtool.New(),
+				Name:          "Typical Go",
+				ModulePackage: "some-package",
+				App:           typapp.New(nil),
+				BuildTool:     typbuildtool.New(),
 			},
 			"Descriptor: Invalid `Name`",
 		},
@@ -87,48 +90,48 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 				App:       typapp.New(nil),
 				BuildTool: typbuildtool.New(),
 			},
-			"Descriptor: Package can't be empty",
+			"`go.mod` is missing and the project not in $GOPATH",
 		},
 		{
 			typcore.Descriptor{
-				Name:      "some-name",
-				Package:   "some-package",
-				App:       typapp.New(nil),
-				BuildTool: invalidBuildTool{"Build: some-error"},
+				Name:          "some-name",
+				ModulePackage: "some-package",
+				App:           typapp.New(nil),
+				BuildTool:     invalidBuildTool{"Build: some-error"},
 			},
 			"Descriptor: Build: some-error",
 		},
 		{
 			typcore.Descriptor{
-				Name:      "some-name",
-				Package:   "some-package",
-				App:       invalidApp{"App: some-error"},
-				BuildTool: typbuildtool.New(),
+				Name:          "some-name",
+				ModulePackage: "some-package",
+				App:           invalidApp{"App: some-error"},
+				BuildTool:     typbuildtool.New(),
 			},
 			"Descriptor: App: some-error",
 		},
 		{
 			typcore.Descriptor{
-				Name:      "some-name",
-				Package:   "some-package",
-				App:       app{sources: []string{"bad-src"}},
-				BuildTool: typbuildtool.New(),
+				Name:          "some-name",
+				ModulePackage: "some-package",
+				App:           app{sources: []string{"bad-src"}},
+				BuildTool:     typbuildtool.New(),
 			},
 			"Descriptor: Source 'bad-src' is not exist",
 		},
 		{
 			typcore.Descriptor{
-				Name:      "some-name",
-				Package:   "some-package",
-				BuildTool: typbuildtool.New(),
+				Name:          "some-name",
+				ModulePackage: "some-package",
+				BuildTool:     typbuildtool.New(),
 			},
 			"Descriptor: App can't be nil",
 		},
 		{
 			typcore.Descriptor{
-				Name:    "some-name",
-				Package: "some-package",
-				App:     app{},
+				Name:          "some-name",
+				ModulePackage: "some-package",
+				App:           app{},
 			},
 			"Descriptor: BuildTool can't be nil",
 		},

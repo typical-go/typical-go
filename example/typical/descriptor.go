@@ -27,7 +27,7 @@ var (
 		Version: "0.0.1",
 
 		// Package of the project (MANDATORY)
-		// It should be same with go.mod file
+		// Normally package should not be set as it will retrieve from `go.mod` file or project path after the $GOPATH
 		Package: "github.com/typical-go/typical-go/example",
 
 		// App of the project (MANDATORY)

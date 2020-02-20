@@ -40,7 +40,7 @@ func (a *standardPrebuilder) generateConstructor(ctx context.Context, target str
 	imports := []string{"github.com/typical-go/typical-go/pkg/typapp"}
 	for _, dir := range c.Dirs {
 		if !strings.Contains(dir, "internal") {
-			imports = append(imports, fmt.Sprintf("%s/%s", c.Package, dir))
+			imports = append(imports, fmt.Sprintf("%s/%s", c.ModulePackage, dir))
 		}
 	}
 	if err = stdrun.NewWriteTemplate(target, tmpl.Constructor, tmpl.ConstructorData{

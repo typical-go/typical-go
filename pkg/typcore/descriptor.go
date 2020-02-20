@@ -19,15 +19,14 @@ type Descriptor struct {
 	// Version of the project (MANDATORY)
 	Version string
 
-	// Package of the project (MANDATORY)
-	// It should be same with go.mod file
-	Package string
+	// ModulePackage of the project (OPTIONAL)
+	// Normally package should not be set as it will retrieve from `go.mod` file or project path after the $GOPATH
+	ModulePackage string
 
-	// Sources of project (OPTIONAL)
-	// If `App` is sourceable, the sources will be take from it.
-	// Else, by default, sources will be package name of `App` type
-	// If `pkg` folder available, it will be added to sources.
-	Sources []string
+	// ProjectSources of project (OPTIONAL)
+	// Normally source should not be set as it will retrieve from `App` if it's sourceable or package name of `App` type.
+	// `pkg` folder will be also added to sources when available.
+	ProjectSources []string
 
 	// App of the project (MANDATORY)
 	App App
@@ -61,7 +60,7 @@ func (d *Descriptor) RunBuild() (err error) {
 	c := &TypicalContext{
 		Descriptor:    d,
 		ProjectLayout: DefaultLayout,
-		Dirs:          d.Sources,
+		Dirs:          d.ProjectSources,
 	}
 	for _, dir := range c.Dirs {
 		if err = filepath.Walk(dir, c.addFile); err != nil {
