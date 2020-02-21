@@ -11,7 +11,7 @@ import (
 	"github.com/typical-go/typical-go/typicalgo/internal/tmpl"
 )
 
-func (t *TypicalGo) constructProject(ctx context.Context, pkg string) (err error) {
+func constructProject(ctx context.Context, pkg string) (err error) {
 	name := filepath.Base(pkg)
 	if common.IsFileExist(name) {
 		return fmt.Errorf("'%s' already exist", name)
@@ -64,7 +64,7 @@ func (i constructproj) descriptor() error {
 func (i constructproj) cmdPackage() error {
 	appMainPath := fmt.Sprintf("%s/%s", typcore.DefaultLayout.Cmd, i.Name)
 	data := tmpl.MainSrcData{
-		ImportTypical: i.Pkg + "/typical",
+		DescriptorPackage: i.Pkg + "/typical",
 	}
 	return common.Run(
 		stdrun.NewMkdir(i.Path(typcore.DefaultLayout.Cmd)),

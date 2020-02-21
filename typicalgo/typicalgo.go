@@ -1,6 +1,7 @@
 package typicalgo
 
 import (
+	"errors"
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
@@ -36,7 +37,17 @@ func (t *TypicalGo) Run(d *typcore.Descriptor) (err error) {
 				if pkg == "" {
 					return cli.ShowCommandHelp(c, "new")
 				}
-				return t.constructProject(c.Context, pkg)
+				return constructProject(c.Context, pkg)
+			},
+		},
+		{
+			Name: "wrap-me",
+			Action: func(c *cli.Context) (err error) {
+				typTmp := c.Args().First()
+				if typTmp == "" {
+					return errors.New("Missing the first argument for temp-folder path")
+				}
+				return wrapMe(c.Context, d, typTmp)
 			},
 		},
 	}
