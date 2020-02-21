@@ -9,26 +9,9 @@ import (
 	"github.com/typical-go/typical-go/pkg/common/stdrun"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/typicalgo/internal/tmpl"
-	"github.com/urfave/cli/v2"
 )
 
-func cmdConstructProject() *cli.Command {
-	return &cli.Command{
-		Name:      "new",
-		Usage:     "Construct New Project",
-		UsageText: "app new [Package]",
-		Flags: []cli.Flag{
-			&cli.BoolFlag{Name: "blank", Usage: "Create blank new project"},
-		},
-		Action: constructProject,
-	}
-}
-
-func constructProject(c *cli.Context) (err error) {
-	pkg := c.Args().First()
-	if pkg == "" {
-		return cli.ShowCommandHelp(c, "new")
-	}
+func (t *TypicalGo) constructProject(ctx context.Context, pkg string) (err error) {
 	name := filepath.Base(pkg)
 	if common.IsFileExist(name) {
 		return fmt.Errorf("'%s' already exist", name)
@@ -38,15 +21,13 @@ func constructProject(c *cli.Context) (err error) {
 			Name: name,
 			Pkg:  pkg,
 		},
-		blank: c.Bool("blank"),
-		ctx:   c.Context,
+		ctx: ctx,
 	})
 }
 
 type constructproj struct {
 	tmpl.TemplateData
-	blank bool
-	ctx   context.Context
+	ctx context.Context
 }
 
 func (i constructproj) Path(s string) string {
@@ -69,27 +50,14 @@ func (i constructproj) appPackage() error {
 	stmts := []interface{}{
 		stdrun.NewMkdir(i.Path("app")),
 	}
-	if !i.blank {
-		stmts = append(stmts,
-			stdrun.NewMkdir(i.Path("app/config")),
-			stdrun.NewWriteString(i.Path("app/config/config.go"), tmpl.Config),
-			stdrun.NewWriteTemplate(i.Path("app/app.go"), tmpl.App, i.TemplateData),
-		)
-	}
+
 	return common.Run(stmts...)
 }
 
 func (i constructproj) descriptor() error {
-	var writeStmt interface{}
-	path := "typical/descriptor.go"
-	if i.blank {
-		writeStmt = stdrun.NewWriteTemplate(i.Path(path), tmpl.Context, i.TemplateData)
-	} else {
-		writeStmt = stdrun.NewWriteTemplate(i.Path(path), tmpl.ContextWithAppModule, i.TemplateData)
-	}
 	return common.Run(
 		stdrun.NewMkdir(i.Path("typical")),
-		writeStmt,
+		stdrun.NewWriteTemplate(i.Path("typical/descriptor.go"), tmpl.Descriptor, i.TemplateData),
 	)
 }
 
@@ -118,4 +86,17 @@ func (i constructproj) gomod() (err error) {
 			TypicalVersion: Version,
 		}),
 	)
+}
+
+func wrapper(path, pkg string) common.Runner {
+	return stdrun.NewWriteTemplate(
+		path+"/typicalw",
+		tmpl.Typicalw,
+		tmpl.TypicalwData{
+			DescriptorPackage: fmt.Sprintf("%s/typical", pkg),
+			DescriptorFile:    "typical/descriptor.go",
+			ChecksumFile:      ".typical-tmp/checksum",
+			LayoutTemp:        typcore.DefaultLayout.Temp,
+		},
+	).WithPermission(0700)
 }

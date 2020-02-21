@@ -21,7 +21,7 @@ type Detail struct {
 	// Prefix is used by ConfigLoader to retrieve configuration value
 	Prefix string
 
-	// Spec is specification of config object
+	// Spec is specification of config object. Spec used to generate the .env file
 	Spec interface{}
 
 	// Constructor is constructor function to create config object

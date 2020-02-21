@@ -24,8 +24,21 @@ func (t *TypicalGo) Run(d *typcore.Descriptor) (err error) {
 	app.Version = d.Version
 
 	app.Commands = []*cli.Command{
-		cmdConstructProject(),
-		cmdCreateWrapper(),
+		{
+			Name:      "new",
+			Usage:     "Construct New Project",
+			UsageText: "app new [Package]",
+			Flags: []cli.Flag{
+				&cli.BoolFlag{Name: "blank", Usage: "Create blank new project"},
+			},
+			Action: func(c *cli.Context) (err error) {
+				pkg := c.Args().First()
+				if pkg == "" {
+					return cli.ShowCommandHelp(c, "new")
+				}
+				return t.constructProject(c.Context, pkg)
+			},
+		},
 	}
 	return app.Run(os.Args)
 }
