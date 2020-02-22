@@ -8,7 +8,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
@@ -69,7 +69,7 @@ func (t *TypicalGo) Run(d *typcore.Descriptor) (err error) {
 
 func defaultModulePackage() (pkg string) {
 	var (
-		gomod *common.GoMod
+		gomod *buildkit.GoMod
 		err   error
 		root  string
 	)
@@ -77,7 +77,7 @@ func defaultModulePackage() (pkg string) {
 		log.Warn("Can't get default module package. Failed to get working directory")
 		return ""
 	}
-	if gomod, err = common.CreateGoMod(root + "/go.mod"); err != nil {
+	if gomod, err = buildkit.CreateGoMod(root + "/go.mod"); err != nil {
 		// NOTE: go.mod is not exist. Check if the project sit in $GOPATH
 		gopath := build.Default.GOPATH
 		if strings.HasPrefix(root, gopath) {
