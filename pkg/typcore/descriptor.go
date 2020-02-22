@@ -3,6 +3,8 @@ package typcore
 import (
 	"errors"
 	"path/filepath"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Descriptor describe the project
@@ -57,6 +59,7 @@ func (d *Descriptor) RunBuild() (err error) {
 		ModulePackage:  DefaultModulePackage,
 		ProjectSources: projectSources,
 	}
+	log.Infof("Scan the project directories: %v", projectSources)
 	for _, dir := range c.Dirs {
 		if err = filepath.Walk(dir, c.addFile); err != nil {
 			return

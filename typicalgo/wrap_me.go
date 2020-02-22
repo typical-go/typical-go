@@ -65,7 +65,7 @@ func buildBuildTool(ctx context.Context, wc *wrapContext) (err error) {
 		stdrun.NewWriteTemplate(srcPath, tmpl.MainSrcBuildTool, data).Run()
 	}
 	cmd := exec.CommandContext(ctx, "go", "build",
-		"-ldflags", fmt.Sprintf("-X github.com/typical-go/typical-go/pkg/typcore.DefaultModulePackage=%s", "meh"),
+		"-ldflags", fmt.Sprintf("-X github.com/typical-go/typical-go/pkg/typcore.DefaultModulePackage=%s", wc.modulePackage),
 		"-o", binPath,
 		srcPath)
 	cmd.Stdout = os.Stdout
