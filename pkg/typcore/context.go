@@ -9,8 +9,10 @@ import (
 type TypicalContext struct {
 	*Descriptor
 	ProjectLayout
-	Dirs  []string
-	Files []string
+	Dirs           []string
+	Files          []string
+	ModulePackage  string
+	ProjectSources []string
 }
 
 // DefaultLayout is default project layout

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-TYPSRC=./cmd/typical-go
 TYPTMP=.typical-tmp
+TYPSRC=./cmd/typical-go
 TYPGO=$TYPTMP/bin/typical-go
 
 if ! [ -s $TYPGO ]; then

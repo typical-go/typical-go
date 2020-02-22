@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/sha256"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -18,31 +19,31 @@ import (
 	"github.com/typical-go/typical-go/typicalgo/internal/tmpl"
 )
 
-func wrapMe(ctx context.Context, d *typcore.Descriptor, typTmp string) (err error) {
+type wrapContext struct {
+	*typcore.Descriptor
+	typcore.TempFolder
+	modulePackage string
+}
 
-	var (
-		descriptorPkg   = d.ModulePackage + "/typical"
-		buildToolTarget = typTmp + "/bin/build-tool"
-		buildToolMain   = typTmp + "/build-tool/main.go"
-		checksumPath    = typTmp + "/checksum"
-	)
+func wrapMe(ctx context.Context, wc *wrapContext) (err error) {
 
-	// NOTE: create typical tmp if not exist
-	os.MkdirAll(typTmp+"/build-tool", os.ModePerm)
-	os.MkdirAll(typTmp+"/bin", os.ModePerm)
+	// NOTE: create tmp folder if not exist
+	wc.Mkdir()
 
+	checksumPath := wc.Checksum()
+	buildToolBin := wc.BuildToolBin()
 	var checksumData []byte
 	if checksumData, err = checksum("typical"); err != nil {
 		return
 	}
 
-	if !sameChecksum(checksumPath, checksumData) || notExist(buildToolTarget) {
+	if !sameChecksum(checksumPath, checksumData) || notExist(buildToolBin) {
 		log.Info("Update new checksum")
 		if err = ioutil.WriteFile(checksumPath, checksumData, 0644); err != nil {
 			return
 		}
 		log.Info("Build the Build-Tool")
-		if err = buildBuildTool(ctx, buildToolMain, buildToolTarget, descriptorPkg); err != nil {
+		if err = buildBuildTool(ctx, wc); err != nil {
 			return
 		}
 	}
@@ -50,17 +51,26 @@ func wrapMe(ctx context.Context, d *typcore.Descriptor, typTmp string) (err erro
 	return
 }
 
-func buildBuildTool(ctx context.Context, mainPath, target, descriptorPkg string) (err error) {
-	if notExist(mainPath) {
+func buildBuildTool(ctx context.Context, wc *wrapContext) (err error) {
+	var (
+		descriptorPkg = wc.modulePackage + "/typical"
+		srcPath       = wc.BuildToolSrc()
+		binPath       = wc.BuildToolBin()
+	)
+
+	if notExist(srcPath) {
 		data := tmpl.MainSrcData{
 			DescriptorPackage: descriptorPkg,
 		}
-		stdrun.NewWriteTemplate(mainPath, tmpl.MainSrcBuildTool, data).Run()
+		stdrun.NewWriteTemplate(srcPath, tmpl.MainSrcBuildTool, data).Run()
 	}
-
-	cmd := exec.CommandContext(ctx, "go", "build", "-o", target, mainPath)
+	cmd := exec.CommandContext(ctx, "go", "build",
+		"-ldflags", fmt.Sprintf("-X github.com/typical-go/typical-go/pkg/typcore.DefaultModulePackage=%s", "meh"),
+		"-o", binPath,
+		srcPath)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
 
 	return cmd.Run()
 }

@@ -3,11 +3,9 @@ package typcore
 import (
 	"errors"
 	"fmt"
-	"go/build"
 	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
 
 	"github.com/typical-go/typical-go/pkg/common"
 )
@@ -30,12 +28,6 @@ func (d *Descriptor) Validate() (err error) {
 		d.Version = "0.0.1"
 	}
 
-	if d.ModulePackage == "" {
-		if d.ModulePackage, err = defaultModulePackage(root); err != nil {
-			return
-		}
-	}
-
 	if d.App == nil {
 		return errors.New("Descriptor: App can't be nil")
 	} else if err = common.Validate(d.App); err != nil {
@@ -48,43 +40,7 @@ func (d *Descriptor) Validate() (err error) {
 		return fmt.Errorf("Descriptor: %w", err)
 	}
 
-	if len(d.ProjectSources) < 1 {
-		d.ProjectSources = d.defaultProjectSources()
-	}
-	if err = validateProjectSources(d.ProjectSources); err != nil {
-		return fmt.Errorf("Descriptor: %w", err)
-	}
-
 	return
-}
-
-func (d *Descriptor) defaultProjectSources() (sources []string) {
-	if sourceable, ok := d.App.(Sourceable); ok {
-		sources = append(sources, sourceable.ProjectSources()...)
-	} else {
-		sources = append(sources, common.PackageName(d.App))
-	}
-	if _, err := os.Stat("pkg"); !os.IsNotExist(err) {
-		sources = append(sources, "pkg")
-	}
-	return
-}
-
-func defaultModulePackage(root string) (pkg string, err error) {
-	var (
-		gomod *common.GoMod
-	)
-	if gomod, err = common.CreateGoMod(root + "/go.mod"); err != nil {
-		// NOTE: go.mod is not exist. Check if the project sit in $GOPATH
-		gopath := build.Default.GOPATH
-		if strings.HasPrefix(root, gopath) {
-			return root[len(gopath):], nil
-		}
-
-		return "", errors.New("`go.mod` is missing and the project not in $GOPATH")
-	}
-
-	return gomod.ModulePackage, nil
 }
 
 func validateName(name string) (err error) {

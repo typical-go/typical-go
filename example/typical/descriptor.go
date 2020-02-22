@@ -25,10 +25,6 @@ var (
 		// Version of the project (MANDATORY)
 		Version: "0.0.1",
 
-		// ModulePackage of the project (MANDATORY)
-		// Normally it should not be set as it will retrieve from `go.mod` file or project path after the $GOPATH
-		ModulePackage: "github.com/typical-go/typical-go/example",
-
 		// App of the project (MANDATORY)
 		App: typapp.New(hello),
 

@@ -10,6 +10,8 @@ import (
 // Descriptor of typical-go
 var Descriptor = typcore.Descriptor{
 
+	Name: "typical-go",
+
 	Version: typicalgo.Version,
 
 	App: typicalgo.New(),
