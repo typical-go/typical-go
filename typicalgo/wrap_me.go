@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"context"
 	"crypto/sha256"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/typical-go/typical-go/pkg/buildkit"
 
 	log "github.com/sirupsen/logrus"
 
@@ -64,10 +65,17 @@ func buildBuildTool(ctx context.Context, wc *wrapContext) (err error) {
 		}
 		stdrun.NewWriteTemplate(srcPath, tmpl.MainSrcBuildTool, data).Run()
 	}
-	cmd := exec.CommandContext(ctx, "go", "build",
-		"-ldflags", fmt.Sprintf("-X github.com/typical-go/typical-go/pkg/typcore.DefaultModulePackage=%s", wc.modulePackage),
-		"-o", binPath,
-		srcPath)
+
+	ldflags := buildkit.NewLdflags()
+	ldflags.SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultModulePackage", wc.modulePackage)
+
+	args := []string{"build"}
+	if ldflags.NotEmpty() {
+		args = append(args, "-ldflags", ldflags.String())
+	}
+	args = append(args, "-o", binPath, srcPath)
+
+	cmd := exec.CommandContext(ctx, "go", args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
