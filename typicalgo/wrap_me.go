@@ -7,7 +7,6 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"path/filepath"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
@@ -66,16 +65,10 @@ func buildBuildTool(ctx context.Context, wc *wrapContext) (err error) {
 		stdrun.NewWriteTemplate(srcPath, tmpl.MainSrcBuildTool, data).Run()
 	}
 
-	ldflags := buildkit.NewLdflags()
-	ldflags.SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultModulePackage", wc.modulePackage)
+	gobuild := buildkit.NewGoBuild(binPath, srcPath)
+	gobuild.SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultModulePackage", wc.modulePackage)
 
-	args := []string{"build"}
-	if ldflags.NotEmpty() {
-		args = append(args, "-ldflags", ldflags.String())
-	}
-	args = append(args, "-o", binPath, srcPath)
-
-	cmd := exec.CommandContext(ctx, "go", args...)
+	cmd := gobuild.Command(ctx)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
