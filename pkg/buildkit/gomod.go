@@ -2,30 +2,24 @@ package buildkit
 
 import (
 	"bufio"
-	"os"
+	"io"
 	"strings"
 )
 
-// GoMod is naive go.mod file parser
+// GoMod is go.mod file details
 type GoMod struct {
 	ModulePackage string
 	GoVersion     string
 }
 
-// CreateGoMod to create new GoMod instance
-func CreateGoMod(path string) (gomod *GoMod, err error) {
+// ParseGoMod to naively parse go mod source
+func ParseGoMod(r io.Reader) *GoMod {
 	var (
-		f             *os.File
 		modulePackage string
 		goVersion     string
 	)
 
-	if f, err = os.Open(path); err != nil {
-		return
-	}
-	defer f.Close()
-
-	scanner := bufio.NewScanner(f)
+	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		row := scanner.Text()
 		if strings.HasPrefix(row, "module") {
@@ -41,5 +35,5 @@ func CreateGoMod(path string) (gomod *GoMod, err error) {
 	return &GoMod{
 		ModulePackage: modulePackage,
 		GoVersion:     goVersion,
-	}, nil
+	}
 }

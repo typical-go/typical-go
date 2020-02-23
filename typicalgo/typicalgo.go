@@ -69,15 +69,17 @@ func (t *TypicalGo) Run(d *typcore.Descriptor) (err error) {
 
 func defaultModulePackage() (pkg string) {
 	var (
-		gomod *buildkit.GoMod
-		err   error
-		root  string
+		root string
+		err  error
 	)
+
 	if root, err = os.Getwd(); err != nil {
 		log.Warn("Can't get default module package. Failed to get working directory")
 		return ""
 	}
-	if gomod, err = buildkit.CreateGoMod(root + "/go.mod"); err != nil {
+
+	var f *os.File
+	if f, err = os.Open(root + "/go.mod"); err != nil {
 		// NOTE: go.mod is not exist. Check if the project sit in $GOPATH
 		gopath := build.Default.GOPATH
 		if strings.HasPrefix(root, gopath) {
@@ -87,6 +89,8 @@ func defaultModulePackage() (pkg string) {
 		log.Warn("Can't get default module package. `go.mod` is missing and the project not in $GOPATH")
 		return ""
 	}
+	defer f.Close()
 
+	gomod := buildkit.ParseGoMod(f)
 	return gomod.ModulePackage
 }
