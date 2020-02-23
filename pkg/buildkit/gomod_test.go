@@ -1,8 +1,7 @@
 package buildkit_test
 
 import (
-	"io/ioutil"
-	"os"
+	"bytes"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -10,23 +9,12 @@ import (
 )
 
 func TestGoMod(t *testing.T) {
-	t.Run("", func(t *testing.T) {
-		path := "go.mod"
-		ioutil.WriteFile(path, []byte("module github.com/typical-go/typical-go\ngo 1.13"), 0644)
-		defer os.Remove(path)
+	var b bytes.Buffer
+	b.WriteString("module github.com/typical-go/typical-go\ngo 1.13")
 
-		gomod, err := buildkit.CreateGoMod(path)
-		require.NoError(t, err)
-		require.Equal(t, &buildkit.GoMod{
-			ModulePackage: "github.com/typical-go/typical-go",
-			GoVersion:     "1.13",
-		}, gomod)
-	})
-
-	t.Run("WHEN path not exist", func(t *testing.T) {
-		_, err := buildkit.CreateGoMod("not-exist")
-		require.True(t, os.IsNotExist(err))
-		require.EqualError(t, err, "open not-exist: no such file or directory")
-	})
-
+	gomod := buildkit.ParseGoMod(&b)
+	require.Equal(t, &buildkit.GoMod{
+		ModulePackage: "github.com/typical-go/typical-go",
+		GoVersion:     "1.13",
+	}, gomod)
 }
