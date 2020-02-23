@@ -2,9 +2,6 @@ package typcore
 
 import (
 	"errors"
-	"path/filepath"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // Descriptor describe the project
@@ -48,23 +45,16 @@ func (d *Descriptor) RunBuild() (err error) {
 	if d.BuildTool == nil {
 		return errors.New("Descriptor is missing `BuildTool`")
 	}
+
 	if err = d.Validate(); err != nil {
 		return
 	}
-	projectSources := DefaultProjectSources(d)
-	c := &TypicalContext{
-		Descriptor:     d,
-		ProjectLayout:  DefaultLayout,
-		Dirs:           projectSources,
-		ModulePackage:  DefaultModulePackage,
-		ProjectSources: projectSources,
+
+	var c *TypicalContext
+	if c, err = CreateContext(d); err != nil {
+		return
 	}
-	log.Infof("Scan the project directories: %v", projectSources)
-	for _, dir := range c.Dirs {
-		if err = filepath.Walk(dir, c.addFile); err != nil {
-			return
-		}
-	}
+
 	if d.Configuration != nil {
 		if err = d.Configuration.Setup(); err != nil {
 			return

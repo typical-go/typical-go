@@ -72,7 +72,7 @@ func (g *Github) Publish(ctx context.Context, rel *typbuild.ReleaseContext, bina
 func (g *Github) upload(ctx context.Context, svc *github.RepositoriesService, id int64, binary string) (err error) {
 	var (
 		file       *os.File
-		binaryPath = fmt.Sprintf("%s/%s", typcore.DefaultLayout.Release, binary)
+		binaryPath = fmt.Sprintf("%s/%s", typcore.DefaultReleaseFolder, binary)
 	)
 	if file, err = os.Open(binaryPath); err != nil {
 		return

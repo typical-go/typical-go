@@ -18,8 +18,8 @@ func (b *BuildTool) buildProject(ctx context.Context, c *typbuild.Context) (err 
 	cmd := exec.CommandContext(ctx,
 		"go",
 		"build",
-		"-o", fmt.Sprintf("%s/%s", c.Bin, c.Name),
-		fmt.Sprintf("./%s/%s", c.Cmd, c.Name),
+		"-o", fmt.Sprintf("%s/%s", c.BinFolder, c.Name),
+		fmt.Sprintf("./%s/%s", c.CmdFolder, c.Name),
 	)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

@@ -24,7 +24,7 @@ func (b *BuildTool) mock(ctx context.Context, c *typbuild.Context, opt *MockOpti
 		targets common.Strings
 		mockgen string
 		errs    common.Errors
-		mockPkg = c.Mock
+		mockPkg = c.MockFolder
 	)
 
 	if !opt.NoDelete {

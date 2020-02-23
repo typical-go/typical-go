@@ -28,7 +28,7 @@ func (a *standardPrebuilder) Prebuild(ctx context.Context, c *typbuild.Context) 
 		return
 	}
 	log.Info("Generate constructors")
-	target := fmt.Sprintf("%s/%s/constructor_do_not_edit.go", c.Cmd, c.Name)
+	target := fmt.Sprintf("%s/%s/constructor_do_not_edit.go", c.CmdFolder, c.Name)
 	if err = a.generateConstructor(ctx, target, c, constructors); err != nil {
 		return
 	}

@@ -9,8 +9,8 @@ import (
 )
 
 func (b *BuildTool) clean(ctx context.Context, c *typbuild.Context) error {
-	removeAllFile(c.Bin)
-	removeAllFile(c.Temp)
+	removeAllFile(c.BinFolder)
+	removeAllFile(c.TempFolder)
 	removeFile(".env") // TODO: configuration clean
 	// removeFile(typenv.GeneratedConstructor) // TODO: app clean
 	return nil

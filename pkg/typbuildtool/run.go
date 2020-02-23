@@ -15,7 +15,7 @@ func (b *BuildTool) run(ctx context.Context, c *typbuild.Context, args []string)
 		return
 	}
 	log.Info("Run the application")
-	cmd := exec.CommandContext(ctx, fmt.Sprintf("%s/%s", c.Bin, c.Name), args...)
+	cmd := exec.CommandContext(ctx, fmt.Sprintf("%s/%s", c.BinFolder, c.Name), args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin

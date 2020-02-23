@@ -28,9 +28,9 @@ func (r *Releaser) build(ctx context.Context, rel *typbuild.ReleaseContext, targ
 	binary = strings.Join([]string{rel.Name, rel.Tag, goos, goarch}, "_")
 	// TODO: Support CGO
 	cmd := exec.CommandContext(ctx, "go", "build",
-		"-o", fmt.Sprintf("%s/%s", rel.Release, binary),
+		"-o", fmt.Sprintf("%s/%s", rel.ReleaseFolder, binary),
 		"-ldflags", "-w -s",
-		fmt.Sprintf("./%s/%s", rel.Cmd, rel.Name),
+		fmt.Sprintf("./%s/%s", rel.CmdFolder, rel.Name),
 	)
 	cmd.Env = append(os.Environ(), "GOOS="+goos, "GOARCH="+goarch)
 	cmd.Stdout = os.Stdout

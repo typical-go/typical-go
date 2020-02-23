@@ -62,12 +62,12 @@ func (i constructproj) descriptor() error {
 }
 
 func (i constructproj) cmdPackage() error {
-	appMainPath := fmt.Sprintf("%s/%s", typcore.DefaultLayout.Cmd, i.Name)
+	appMainPath := fmt.Sprintf("%s/%s", typcore.DefaultCmdFolder, i.Name)
 	data := tmpl.MainSrcData{
 		DescriptorPackage: i.Pkg + "/typical",
 	}
 	return common.Run(
-		stdrun.NewMkdir(i.Path(typcore.DefaultLayout.Cmd)),
+		stdrun.NewMkdir(i.Path(typcore.DefaultCmdFolder)),
 		stdrun.NewMkdir(i.Path(appMainPath)),
 		stdrun.NewWriteTemplate(i.Path(appMainPath+"/main.go"), tmpl.MainSrcApp, data),
 	)
@@ -95,8 +95,8 @@ func wrapper(path, pkg string) common.Runner {
 		tmpl.TypicalwData{
 			DescriptorPackage: fmt.Sprintf("%s/typical", pkg),
 			DescriptorFile:    "typical/descriptor.go",
-			ChecksumFile:      ".typical-tmp/checksum",
-			LayoutTemp:        typcore.DefaultLayout.Temp,
+			ChecksumFile:      typcore.DefaultTempFolder + "/checksum",
+			LayoutTemp:        typcore.DefaultTempFolder,
 		},
 	).WithPermission(0700)
 }
