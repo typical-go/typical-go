@@ -15,7 +15,7 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typcore"
 
-	"github.com/typical-go/typical-go/pkg/common/stdrun"
+	"github.com/typical-go/typical-go/pkg/runnerkit"
 	"github.com/typical-go/typical-go/typicalgo/internal/tmpl"
 )
 
@@ -62,7 +62,9 @@ func buildBuildTool(ctx context.Context, wc *wrapContext) (err error) {
 		data := tmpl.MainSrcData{
 			DescriptorPackage: descriptorPkg,
 		}
-		stdrun.NewWriteTemplate(srcPath, tmpl.MainSrcBuildTool, data).Run()
+		if err = runnerkit.WriteTemplate(srcPath, tmpl.MainSrcBuildTool, data, 0666).Run(ctx); err != nil {
+			return
+		}
 	}
 
 	gobuild := buildkit.NewGoBuild(binPath, srcPath)

@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/common/stdrun"
+	"github.com/typical-go/typical-go/pkg/runnerkit"
 	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
 	"github.com/typical-go/typical-go/pkg/typbuildtool/internal/tmpl"
@@ -43,10 +43,10 @@ func (a *standardPrebuilder) generateConstructor(ctx context.Context, target str
 			imports = append(imports, fmt.Sprintf("%s/%s", c.ModulePackage, dir))
 		}
 	}
-	if err = stdrun.NewWriteTemplate(target, tmpl.Constructor, tmpl.ConstructorData{
+	if err = runnerkit.WriteTemplate(target, tmpl.Constructor, tmpl.ConstructorData{
 		Imports:      imports,
 		Constructors: constructors,
-	}).Run(); err != nil {
+	}, 0666).Run(ctx); err != nil {
 		return
 	}
 	cmd := exec.CommandContext(ctx,

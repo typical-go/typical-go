@@ -1,25 +1,26 @@
-package common
+package runnerkit
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 )
 
 // Runner contain run function
 type Runner interface {
-	Run() error
+	Run(context.Context) error
 }
 
-// Run all stdrun
-func Run(stmts ...interface{}) (err error) {
+// Run all runnerkit
+func Run(ctx context.Context, stmts ...interface{}) (err error) {
 	for i, stmt := range stmts {
 		switch stmt.(type) {
 		case Runner:
-			if err = stmt.(Runner).Run(); err != nil {
+			if err = stmt.(Runner).Run(ctx); err != nil {
 				return
 			}
-		case func() error:
-			if err = stmt.(func() error)(); err != nil {
+		case func(context.Context) error:
+			if err = stmt.(func(context.Context) error)(ctx); err != nil {
 				return
 			}
 		default:

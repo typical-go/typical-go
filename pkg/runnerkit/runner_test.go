@@ -1,12 +1,13 @@
-package common_test
+package runnerkit_test
 
 import (
+	"context"
 	"errors"
 	"os/exec"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/runnerkit"
 )
 
 func TestRun(t *testing.T) {
@@ -16,7 +17,7 @@ func TestRun(t *testing.T) {
 	}{
 		{
 			stmts: []interface{}{
-				stdrun{"some-error"},
+				errorRunner{"some-error"},
 				exec.Command("wrong-command", "bad-argument"),
 			},
 			errMsg: "some-error",
@@ -30,15 +31,15 @@ func TestRun(t *testing.T) {
 		},
 		{
 			stmts: []interface{}{
-				stdrun{"some-error-1"},
-				stdrun{"some-error-2"},
+				errorRunner{"some-error-1"},
+				errorRunner{"some-error-2"},
 			},
 			errMsg: "some-error-1",
 		},
 		{
 			stmts: []interface{}{
-				func() error { return errors.New("some-error-1") },
-				func() error { return errors.New("some-error-2") },
+				func(context.Context) error { return errors.New("some-error-1") },
+				func(context.Context) error { return errors.New("some-error-2") },
 			},
 			errMsg: "some-error-1",
 		},
@@ -49,7 +50,7 @@ func TestRun(t *testing.T) {
 	}
 
 	for i, tt := range testcases {
-		err := common.Run(tt.stmts...)
+		err := runnerkit.Run(context.Background(), tt.stmts...)
 		if tt.errMsg == "" {
 			require.NoError(t, err)
 		} else {
@@ -58,11 +59,11 @@ func TestRun(t *testing.T) {
 	}
 }
 
-type stdrun struct {
+type errorRunner struct {
 	msg string
 }
 
-func (r stdrun) Run() error {
+func (r errorRunner) Run(ctx context.Context) error {
 	if r.msg == "" {
 		return nil
 	}
