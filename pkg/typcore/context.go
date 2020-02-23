@@ -1,6 +1,7 @@
 package typcore
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -10,7 +11,7 @@ import (
 
 var (
 	// DefaultModulePackage is default value for ModulePackage
-	DefaultModulePackage = "defaultModulePackage" // NOTE: supply by ldflags
+	DefaultModulePackage = "" // NOTE: supply by ldflags
 
 	// DefaultTempFolder is default value for temp folder location
 	DefaultTempFolder = ".typical-tmp"
@@ -64,17 +65,24 @@ func CreateContext(d *Descriptor) (*TypicalContext, error) {
 	return c, nil
 }
 
-// Walk function
-func (b *TypicalContext) addFile(path string, info os.FileInfo, err error) error {
+// Validate typical context
+func (t *TypicalContext) Validate() (err error) {
+	if t.ModulePackage == "" {
+		return errors.New("TypicalContext: ModulePackage can't be empty")
+	}
+	return
+}
+
+func (t *TypicalContext) addFile(path string, info os.FileInfo, err error) error {
 	if info != nil {
 		if info.IsDir() {
-			b.Dirs = append(b.Dirs, path)
+			t.Dirs = append(t.Dirs, path)
 			return nil
 		}
 	}
 
 	if isWalkTarget(path) {
-		b.Files = append(b.Files, path)
+		t.Files = append(t.Files, path)
 	}
 	return nil
 }

@@ -2,6 +2,8 @@ package typcore
 
 import (
 	"errors"
+
+	"github.com/typical-go/typical-go/pkg/common"
 )
 
 // Descriptor describe the project
@@ -52,6 +54,10 @@ func (d *Descriptor) RunBuild() (err error) {
 
 	var c *TypicalContext
 	if c, err = CreateContext(d); err != nil {
+		return
+	}
+
+	if err = common.Validate(c); err != nil {
 		return
 	}
 
