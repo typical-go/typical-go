@@ -5,8 +5,8 @@ import (
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typdep"
 	"github.com/urfave/cli/v2"
-	"go.uber.org/dig"
 )
 
 // Context of build
@@ -49,49 +49,32 @@ func (c *Context) EachAnnotation(name string, declType prebld.DeclType, fn Annot
 }
 
 // ActionFunc to return ActionFunc to invoke function fn
-func (c *Context) ActionFunc(fn interface{}) func(*cli.Context) error {
+func (c *Context) ActionFunc(invocation *typdep.Invocation) func(*cli.Context) error {
 	return func(cliCtx *cli.Context) (err error) {
-		return c.Invoke(cliCtx, fn)
+		return c.Invoke(cliCtx, invocation)
 	}
 }
 
 // Invoke function
-func (c *Context) Invoke(cliCtx *cli.Context, fn interface{}) (err error) {
-	di := dig.New()
+func (c *Context) Invoke(cliCtx *cli.Context, invocation *typdep.Invocation) (err error) {
+	di := typdep.New()
 
-	// provide the cli.Context
-	if err = di.Provide(func() *cli.Context { return cliCtx }); err != nil {
+	if err = typdep.NewConstructor(func() *cli.Context {
+		return cliCtx
+	}).Provide(di); err != nil {
 		return
 	}
 
 	// provide functions
 	if c.Configuration != nil {
-		if err = provide(di, c.Configuration.Store().Provide()...); err != nil {
+		if err = typdep.ProvideAll(di, c.Configuration.Store().Provide()...); err != nil {
 			return
 		}
 	}
 
-	startFn := func() error { return di.Invoke(fn) }
+	startFn := func() error { return invocation.Invoke(di) }
 	for _, err := range common.StartGracefully(startFn, nil) {
 		log.Error(err.Error())
-	}
-	return
-}
-
-func invoke(di *dig.Container, fns ...interface{}) (err error) {
-	for _, fn := range fns {
-		if err = di.Invoke(fn); err != nil {
-			return
-		}
-	}
-	return
-}
-
-func provide(di *dig.Container, fns ...interface{}) (err error) {
-	for _, fn := range fns {
-		if err = di.Provide(fn); err != nil {
-			return
-		}
 	}
 	return
 }

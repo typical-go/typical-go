@@ -1,5 +1,7 @@
 package typcore
 
+import "github.com/typical-go/typical-go/pkg/typdep"
+
 // ConfigStore contain information of config
 type ConfigStore struct {
 	beans []*ConfigBean
@@ -7,7 +9,7 @@ type ConfigStore struct {
 
 // ConfigBean is detail of config
 type ConfigBean struct {
-	Constructor interface{}
+	Constructor *typdep.Constructor
 	Keys        []string
 	FieldMap    map[string]*ConfigField
 }
@@ -28,7 +30,7 @@ func (c *ConfigStore) Add(bean *ConfigBean) {
 }
 
 // Provide list of functino
-func (c *ConfigStore) Provide() (constructors []interface{}) {
+func (c *ConfigStore) Provide() (constructors []*typdep.Constructor) {
 	for _, bean := range c.beans {
 		constructors = append(constructors, bean.Constructor)
 	}

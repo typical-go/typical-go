@@ -5,8 +5,8 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typdep"
 	"github.com/urfave/cli/v2"
-	"go.uber.org/dig"
 )
 
 // Context of App
@@ -16,61 +16,45 @@ type Context struct {
 }
 
 // ActionFunc to return ActionFunc to invoke function fn
-func (c *Context) ActionFunc(fn interface{}) func(*cli.Context) error {
+func (c *Context) ActionFunc(invocation *typdep.Invocation) func(*cli.Context) error {
 	return func(cliCtx *cli.Context) (err error) {
-		return c.Invoke(cliCtx, fn)
+		return c.Invoke(cliCtx, invocation)
 	}
 }
 
 // Invoke function with Dependency Injection
-func (c *Context) Invoke(cliCtx *cli.Context, fn interface{}) (err error) {
-	di := dig.New()
+func (c *Context) Invoke(cliCtx *cli.Context, invocation *typdep.Invocation) (err error) {
+	di := typdep.New()
+
 	if cliCtx != nil {
-		if err = di.Provide(func() *cli.Context { return cliCtx }); err != nil {
+		if err = typdep.NewConstructor(func() *cli.Context {
+			return cliCtx
+		}).Provide(di); err != nil {
 			return
 		}
 	}
+
 	if c.Configuration != nil {
 		// provide configuration to dependency-injection container
-		if err = provide(di, c.Configuration.Store().Provide()...); err != nil {
+		if err = typdep.ProvideAll(di, c.Configuration.Store().Provide()...); err != nil {
 			return
 		}
 	}
+
 	// provide registered function in descriptor to dependency-injection container
-	if err = provide(di, c.Provide()...); err != nil {
-		return
-	}
-	// invoke preparation as register in descriptor
-	if err = invoke(di, c.Prepare()...); err != nil {
+	if err = typdep.ProvideAll(di, c.Provide()...); err != nil {
 		return
 	}
 
-	startFn := func() error {
-		return di.Invoke(fn)
+	// invoke preparation as register in descriptor
+	if err = typdep.InvokeAll(di, c.Prepare()...); err != nil {
+		return
 	}
-	stopFn := func() error {
-		return invoke(di, c.Destroy()...)
-	}
+
+	startFn := func() error { return invocation.Invoke(di) }
+	stopFn := func() error { return typdep.InvokeAll(di, c.Destroy()...) }
 	for _, err := range common.StartGracefully(startFn, stopFn) {
 		log.Error(err.Error())
-	}
-	return
-}
-
-func invoke(di *dig.Container, fns ...interface{}) (err error) {
-	for _, fn := range fns {
-		if err = di.Invoke(fn); err != nil {
-			return
-		}
-	}
-	return
-}
-
-func provide(di *dig.Container, fns ...interface{}) (err error) {
-	for _, fn := range fns {
-		if err = di.Provide(fn); err != nil {
-			return
-		}
 	}
 	return
 }

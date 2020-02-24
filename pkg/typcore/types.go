@@ -1,6 +1,8 @@
 package typcore
 
-import "os"
+import (
+	"os"
+)
 
 // App is interface of app
 type App interface {

@@ -3,6 +3,8 @@ package typapp_test
 import (
 	"testing"
 
+	"github.com/typical-go/typical-go/pkg/typdep"
+
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/urfave/cli/v2"
@@ -11,10 +13,10 @@ import (
 func TestNewApp(t *testing.T) {
 	t.Run("Constructor parameter", func(t *testing.T) {
 		app := typapp.New(&module{})
-		require.Equal(t, "some-entry-point", app.EntryPoint())
-		require.Equal(t, []interface{}{"provide1", "provide2"}, app.Provide())
-		require.Equal(t, []interface{}{"prepare1", "prepare2"}, app.Prepare())
-		require.Equal(t, []interface{}{"destroy1", "destroy2"}, app.Destroy())
+		require.Equal(t, someEntryPoint, app.EntryPoint())
+		require.Equal(t, []*typdep.Constructor{someConstructor}, app.Provide())
+		require.Equal(t, []*typdep.Invocation{somePreparation}, app.Prepare())
+		require.Equal(t, []*typdep.Invocation{someDestroyer}, app.Destroy())
 		require.Equal(t, []*cli.Command{
 			{Name: "cmd1"},
 			{Name: "cmd2"},
@@ -28,10 +30,10 @@ func TestNewApp(t *testing.T) {
 			AppendDestroyer(m).
 			AppendPreparer(m).
 			AppendCommander(m)
-		require.Equal(t, "some-entry-point", app.EntryPoint())
-		require.Equal(t, []interface{}{"provide1", "provide2"}, app.Provide())
-		require.Equal(t, []interface{}{"prepare1", "prepare2"}, app.Prepare())
-		require.Equal(t, []interface{}{"destroy1", "destroy2"}, app.Destroy())
+		require.Equal(t, someEntryPoint, app.EntryPoint())
+		require.Equal(t, []*typdep.Constructor{someConstructor}, app.Provide())
+		require.Equal(t, []*typdep.Invocation{somePreparation}, app.Prepare())
+		require.Equal(t, []*typdep.Invocation{someDestroyer}, app.Destroy())
 		require.Equal(t, []*cli.Command{
 			{Name: "cmd1"},
 			{Name: "cmd2"},
@@ -39,15 +41,22 @@ func TestNewApp(t *testing.T) {
 	})
 }
 
+var (
+	someEntryPoint  = typdep.NewInvocation(nil)
+	someConstructor = typdep.NewConstructor(nil)
+	someDestroyer   = typdep.NewInvocation(nil)
+	somePreparation = typdep.NewInvocation(nil)
+)
+
 type module struct{}
 
-func (*module) EntryPoint() interface{} { return "some-entry-point" }
+func (*module) EntryPoint() *typdep.Invocation { return someEntryPoint }
 
-func (*module) Provide() []interface{} { return []interface{}{"provide1", "provide2"} }
+func (*module) Provide() []*typdep.Constructor { return []*typdep.Constructor{someConstructor} }
 
-func (*module) Destroy() []interface{} { return []interface{}{"destroy1", "destroy2"} }
+func (*module) Destroy() []*typdep.Invocation { return []*typdep.Invocation{someDestroyer} }
 
-func (*module) Prepare() []interface{} { return []interface{}{"prepare1", "prepare2"} }
+func (*module) Prepare() []*typdep.Invocation { return []*typdep.Invocation{somePreparation} }
 
 func (*module) AppCommands(c *typapp.Context) []*cli.Command {
 	return []*cli.Command{

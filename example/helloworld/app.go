@@ -5,6 +5,7 @@ import (
 
 	"github.com/typical-go/typical-go/example/helloworld/config"
 	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typdep"
 )
 
 // Module of application
@@ -26,10 +27,11 @@ func (m *Module) WithPrefix(prefix string) *Module {
 }
 
 // EntryPoint of application
-func (*Module) EntryPoint() interface{} {
-	return func(cfg config.Config) {
-		fmt.Printf("Hello %s\n", cfg.Hello)
-	}
+func (*Module) EntryPoint() *typdep.Invocation {
+	return typdep.NewInvocation(
+		func(cfg config.Config) {
+			fmt.Printf("Hello %s\n", cfg.Hello)
+		})
 }
 
 // Configure the application
@@ -37,9 +39,10 @@ func (m *Module) Configure(loader typcfg.Loader) *typcfg.Detail {
 	return &typcfg.Detail{
 		Prefix: m.Prefix,
 		Spec:   &config.Config{},
-		Constructor: func() (cfg config.Config, err error) {
-			err = loader.Load(m.Prefix, &cfg)
-			return
-		},
+		Constructor: typdep.NewConstructor(
+			func() (cfg config.Config, err error) {
+				err = loader.Load(m.Prefix, &cfg)
+				return
+			}),
 	}
 }

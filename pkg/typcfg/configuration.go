@@ -1,5 +1,7 @@
 package typcfg
 
+import "github.com/typical-go/typical-go/pkg/typdep"
+
 // Configuration of typical project
 type Configuration struct {
 	loader      Loader
@@ -25,7 +27,7 @@ type Detail struct {
 	Spec interface{}
 
 	// Constructor is constructor function to create config object
-	Constructor interface{}
+	Constructor *typdep.Constructor
 }
 
 // New return new instance of Configuration

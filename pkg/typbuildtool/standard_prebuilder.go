@@ -37,7 +37,7 @@ func (a *standardPrebuilder) Prebuild(ctx context.Context, c *typbuild.Context) 
 
 func (a *standardPrebuilder) generateConstructor(ctx context.Context, target string, c *typbuild.Context, constructors common.Strings) (err error) {
 	defer common.ElapsedTimeFn("Generate constructor")()
-	imports := []string{"github.com/typical-go/typical-go/pkg/typapp"}
+	imports := []string{}
 	for _, dir := range c.Dirs {
 		if !strings.Contains(dir, "internal") {
 			imports = append(imports, fmt.Sprintf("%s/%s", c.ModulePackage, dir))

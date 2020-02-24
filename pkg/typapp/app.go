@@ -1,7 +1,12 @@
 package typapp
 
 import (
+	"os"
+
 	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typdep"
 	"github.com/urfave/cli/v2"
 )
 
@@ -13,32 +18,6 @@ type App struct {
 	destroyers     []Destroyer
 	commanders     []AppCommander
 	projectSources []string
-}
-
-// Dependency of app
-type Dependency interface {
-	Provider
-	Destroyer
-}
-
-// EntryPointer responsible to handle entry point
-type EntryPointer interface {
-	EntryPoint() interface{}
-}
-
-// Provider responsible to provide dependency
-type Provider interface {
-	Provide() []interface{}
-}
-
-// Preparer responsible to prepare
-type Preparer interface {
-	Prepare() []interface{}
-}
-
-// Destroyer responsible to destroy dependency
-type Destroyer interface {
-	Destroy() []interface{}
 }
 
 // AppCommander responsible to return commands for App
@@ -120,7 +99,7 @@ func (a *App) AppendProjectSource(sources ...string) *App {
 }
 
 // EntryPoint of app
-func (a *App) EntryPoint() interface{} {
+func (a *App) EntryPoint() *typdep.Invocation {
 	if a.entryPoint != nil {
 		return a.entryPoint.EntryPoint()
 	}
@@ -128,8 +107,8 @@ func (a *App) EntryPoint() interface{} {
 }
 
 // Provide to return constructors
-func (a *App) Provide() (constructors []interface{}) {
-	constructors = append(constructors, appCtors...)
+func (a *App) Provide() (constructors []*typdep.Constructor) {
+	constructors = append(constructors, appConstructors...)
 	for _, provider := range a.providers {
 		constructors = append(constructors, provider.Provide()...)
 	}
@@ -137,7 +116,7 @@ func (a *App) Provide() (constructors []interface{}) {
 }
 
 //Destroy to return destructor
-func (a *App) Destroy() (destructors []interface{}) {
+func (a *App) Destroy() (destructors []*typdep.Invocation) {
 	for _, destroyer := range a.destroyers {
 		destructors = append(destructors, destroyer.Destroy()...)
 	}
@@ -145,7 +124,7 @@ func (a *App) Destroy() (destructors []interface{}) {
 }
 
 // Prepare to return preparations
-func (a *App) Prepare() (preparations []interface{}) {
+func (a *App) Prepare() (preparations []*typdep.Invocation) {
 	for _, preparer := range a.preparers {
 		preparations = append(preparations, preparer.Prepare()...)
 	}
@@ -163,4 +142,28 @@ func (a *App) AppCommands(c *Context) (cmds []*cli.Command) {
 // ProjectSources return source for app
 func (a *App) ProjectSources() []string {
 	return a.projectSources
+}
+
+// Run application
+func (a *App) Run(d *typcore.Descriptor) (err error) {
+	c := &Context{
+		Descriptor: d,
+		App:        a,
+	}
+	app := cli.NewApp()
+	app.Name = d.Name
+	app.Usage = "" // NOTE: intentionally blank
+	app.Description = d.Description
+	app.Version = d.Version
+	app.Before = func(c *cli.Context) (err error) {
+		if err = typcfg.LoadEnvFile(); err != nil {
+			return
+		}
+		return
+	}
+	if entryPoint := a.EntryPoint(); entryPoint != nil {
+		app.Action = c.ActionFunc(entryPoint)
+	}
+	app.Commands = a.AppCommands(c)
+	return app.Run(os.Args)
 }

@@ -5,6 +5,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/typical-go/typical-go/pkg/typdep"
+
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
@@ -26,7 +28,7 @@ func TestConfiguration(t *testing.T) {
 		WithConfigure(&dummyConfigurer1{}, &dummyConfigurer2{})
 	store := configuration.Store()
 	require.IsType(t, &dummyLoader{}, configuration.Loader())
-	require.Equal(t, []interface{}{"loadFn1", "loadFn2"}, store.Provide())
+	require.Equal(t, []*typdep.Constructor{constructor1, constructor2}, store.Provide())
 
 	require.EqualValues(t, []*typcore.ConfigField{
 		{Name: "prefix1_ID", Type: "int64", Default: "", Value: int64(0), IsZero: true, Required: false},
@@ -39,6 +41,11 @@ func TestConfiguration(t *testing.T) {
 	require.NoError(t, configuration.Write(&b))
 	require.Equal(t, "prefix1_ID=\nprefix1_VOLUME=\nprefix2_TITLE=default-title\nprefix2_CONTENT=default-content\n", b.String())
 }
+
+var (
+	constructor1 *typdep.Constructor
+	constructor2 *typdep.Constructor
+)
 
 type dummyLoader struct{}
 
@@ -53,7 +60,7 @@ func (*dummyConfigurer1) Configure(loader typcfg.Loader) *typcfg.Detail {
 			ID     int64 ``
 			Volume int   ``
 		}{},
-		Constructor: "loadFn1",
+		Constructor: constructor1,
 	}
 }
 
@@ -66,6 +73,6 @@ func (*dummyConfigurer2) Configure(loader typcfg.Loader) *typcfg.Detail {
 			Title   string `default:"default-title"`
 			Content string `default:"default-content"`
 		}{},
-		Constructor: "loadFn2",
+		Constructor: constructor2,
 	}
 }
