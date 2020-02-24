@@ -3,7 +3,6 @@ package typcore
 import (
 	"go/build"
 	"os"
-	"path/filepath"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -63,9 +62,4 @@ func RetrieveModulePackage(root string) (pkg string) {
 
 	gomod := buildkit.ParseGoMod(f)
 	return gomod.ModulePackage
-}
-
-// RetreiveName to retrieve name from root path
-func RetrieveName(root string) string {
-	return filepath.Base(root)
 }
