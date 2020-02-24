@@ -9,7 +9,7 @@ import (
 	"github.com/typical-go/typical-go/typicalgo"
 )
 
-func TestDefaultProjectSources(t *testing.T) {
+func TestRetrieveProjectSources(t *testing.T) {
 	testcases := []struct {
 		*typcore.Descriptor
 		expected []string
@@ -25,6 +25,6 @@ func TestDefaultProjectSources(t *testing.T) {
 	}
 
 	for _, tt := range testcases {
-		require.Equal(t, tt.expected, typcore.DefaultProjectSources(tt.Descriptor))
+		require.Equal(t, tt.expected, typcore.RetrieveProjectSources(tt.Descriptor))
 	}
 }

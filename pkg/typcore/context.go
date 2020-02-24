@@ -35,7 +35,7 @@ func CreateContext(d *Descriptor) (*TypicalContext, error) {
 		ReleaseFolder: "release",
 
 		ModulePackage:  DefaultModulePackage,
-		ProjectSources: DefaultProjectSources(d),
+		ProjectSources: RetrieveProjectSources(d),
 	}
 	for _, dir := range c.ProjectSources {
 		if err := filepath.Walk(dir, c.addFile); err != nil {

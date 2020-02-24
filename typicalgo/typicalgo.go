@@ -1,14 +1,10 @@
 package typicalgo
 
 import (
-	"errors"
-	"go/build"
 	"os"
-	"strings"
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
@@ -34,9 +30,6 @@ func (t *TypicalGo) Run(d *typcore.Descriptor) (err error) {
 			Name:      "new",
 			Usage:     "Construct New Project",
 			UsageText: "app new [Package]",
-			Flags: []cli.Flag{
-				&cli.BoolFlag{Name: "blank", Usage: "Create blank new project"},
-			},
 			Action: func(c *cli.Context) (err error) {
 				pkg := c.Args().First()
 				if pkg == "" {
@@ -47,50 +40,34 @@ func (t *TypicalGo) Run(d *typcore.Descriptor) (err error) {
 		},
 		{
 			Name: "wrap-me",
+			Flags: []cli.Flag{
+				&cli.StringFlag{Name: "tmp", Required: true},
+				&cli.StringFlag{Name: "module-package"},
+				&cli.StringFlag{Name: "name"},
+			},
 			Action: func(c *cli.Context) (err error) {
-				first := c.Args().First()
-				if first == "" {
-					return errors.New("Missing the first argument for temp-folder path")
+				var (
+					root          string
+					tmp           = c.String("tmp")
+					modulePackage = c.String("module-package")
+				)
+
+				if root, err = os.Getwd(); err != nil {
+					return err
 				}
-				modulePackage := c.Args().Get(1)
+
 				if modulePackage == "" {
-					modulePackage = defaultModulePackage()
+					log.Info("Retrieve module-package")
+					modulePackage = typcore.RetrieveModulePackage(root)
 				}
+
 				return wrapMe(c.Context, &wrapContext{
 					Descriptor:    d,
-					TempFolder:    typcore.TempFolder(first),
+					TempFolder:    typcore.TempFolder(tmp),
 					modulePackage: modulePackage,
 				})
 			},
 		},
 	}
 	return app.Run(os.Args)
-}
-
-func defaultModulePackage() (pkg string) {
-	var (
-		root string
-		err  error
-	)
-
-	if root, err = os.Getwd(); err != nil {
-		log.Warn("Can't get default module package. Failed to get working directory")
-		return ""
-	}
-
-	var f *os.File
-	if f, err = os.Open(root + "/go.mod"); err != nil {
-		// NOTE: go.mod is not exist. Check if the project sit in $GOPATH
-		gopath := build.Default.GOPATH
-		if strings.HasPrefix(root, gopath) {
-			return root[len(gopath):]
-		}
-
-		log.Warn("Can't get default module package. `go.mod` is missing and the project not in $GOPATH")
-		return ""
-	}
-	defer f.Close()
-
-	gomod := buildkit.ParseGoMod(f)
-	return gomod.ModulePackage
 }

@@ -16,8 +16,7 @@ var (
 
 		// Name of the project (OPTIONAL)
 		// It should be a characters with/without underscore or dash.
-		// By default, project name is same with project folder
-		// Name: "example",
+		Name: "example",
 
 		// Description of the project (OPTIONAL)
 		Description: "Example of typical and scalable RESTful API Server for Go",

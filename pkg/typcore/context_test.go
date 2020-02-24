@@ -26,6 +26,7 @@ func TestTypicalContext(t *testing.T) {
 	}()
 
 	ctx, err := typcore.CreateContext(&typcore.Descriptor{
+		Name:      "some-name",
 		App:       typicalgo.New(),
 		BuildTool: typbuildtool.New(),
 	})
@@ -35,7 +36,6 @@ func TestTypicalContext(t *testing.T) {
 
 	require.NoError(t, err)
 	require.NoError(t, common.Validate(ctx))
-	require.Equal(t, "typcore", ctx.Name)
 	require.Equal(t, "0.0.1", ctx.Version)
 	require.Equal(t, []string{"typicalgo", "pkg"}, ctx.ProjectSources)
 	require.Equal(t, []string{"typicalgo", "typicalgo/some_pkg", "pkg", "pkg/some_lib"}, ctx.Dirs)

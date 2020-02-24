@@ -3,8 +3,6 @@ package typcore
 import (
 	"errors"
 	"fmt"
-	"os"
-	"path/filepath"
 	"regexp"
 
 	"github.com/typical-go/typical-go/pkg/common"
@@ -72,15 +70,8 @@ func (d *Descriptor) RunBuild() (err error) {
 // Validate context
 func (d *Descriptor) Validate() (err error) {
 
-	var root string
-	if root, err = os.Getwd(); err != nil {
-		return errors.New("Descriptor: Fail to get working directory")
-	}
-
-	if d.Name == "" {
-		d.Name = filepath.Base(root)
-	} else if err = validateName(d.Name); err != nil {
-		return
+	if err = validateName(d.Name); err != nil {
+		return fmt.Errorf("Descriptor: %w", err)
 	}
 
 	if d.Version == "" {
@@ -103,9 +94,13 @@ func (d *Descriptor) Validate() (err error) {
 }
 
 func validateName(name string) (err error) {
+	if name == "" {
+		return errors.New("Name can't be empty")
+	}
+
 	r, _ := regexp.Compile(`^[a-zA-Z\_\-]+$`)
 	if !r.MatchString(name) {
-		return errors.New("Descriptor: Invalid `Name`")
+		return errors.New("Invalid name")
 	}
 	return
 }

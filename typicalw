@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 TYPTMP=.typical-tmp
 TYPSRC=./cmd/typical-go
 TYPGO=$TYPTMP/bin/typical-go
@@ -8,5 +10,5 @@ if ! [ -s $TYPGO ]; then
     go build -o $TYPGO $TYPSRC
 fi
 
-$TYPGO wrap-me $TYPTMP
+$TYPGO wrap-me -tmp=$TYPTMP
 $TYPTMP/bin/build-tool $@

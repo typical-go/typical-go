@@ -1,8 +1,14 @@
 #!/bin/bash
 
+set -e
+
 TYPSRC=../cmd/typical-go
 TYPTMP=.typical-tmp
 TYPGO=$TYPTMP/bin/typical-go
+
+if ! [ -s $TYPGO ]; then
+    go build -o $TYPGO $TYPSRC
+fi
 
 # Hack to override module package because the example 
 # project want to use its parent directory as typical-go
@@ -10,9 +16,5 @@ TYPGO=$TYPTMP/bin/typical-go
 # or working path if the project in $GOPATH
 MODPKG="github.com/typical-go/typical-go/example"
 
-if ! [ -s $TYPGO ]; then
-    go build -o $TYPGO $TYPSRC
-fi
-
-$TYPGO wrap-me $TYPTMP $MODPKG
+$TYPGO wrap-me -tmp=$TYPTMP -module-package=$MODPKG
 $TYPTMP/bin/build-tool $@
