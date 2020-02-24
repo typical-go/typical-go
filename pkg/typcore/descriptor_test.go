@@ -2,8 +2,6 @@ package typcore_test
 
 import (
 	"errors"
-	"io/ioutil"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -11,28 +9,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/typicalgo"
 )
-
-func TestDescriptor_Validate_DefaultValue(t *testing.T) {
-	os.Mkdir("typicalgo", os.ModePerm)
-	os.Mkdir("pkg", os.ModePerm)
-	ioutil.WriteFile("go.mod", []byte("module github.com/typical-go/typical-go\ngo 1.13"), 0644)
-	defer func() {
-		os.Remove("typicalgo")
-		os.Remove("pkg")
-		os.Remove("go.mod")
-	}()
-
-	d := &typcore.Descriptor{
-		App:       typicalgo.New(),
-		BuildTool: typbuildtool.New(),
-	}
-	require.NoError(t, common.Validate(d))
-
-	require.Equal(t, "typcore", d.Name)
-	require.Equal(t, "0.0.1", d.Version)
-}
 
 func TestDescriptor_ValidateName(t *testing.T) {
 	t.Run("Valid Names", func(t *testing.T) {
@@ -68,94 +45,99 @@ func TestDescriptor_ValidateName(t *testing.T) {
 
 func TestDecriptor_Validate_ReturnError(t *testing.T) {
 	testcases := []struct {
-		typcore.Descriptor
-		errMsg string
+		*typcore.Descriptor
+		expectedErr string
 	}{
 		{
-			typcore.Descriptor{
+			Descriptor: validDescriptor,
+		},
+		{
+			Descriptor: &typcore.Descriptor{
 				Name:      "Typical Go",
 				App:       typapp.New(nil),
 				BuildTool: typbuildtool.New(),
 			},
-			"Descriptor: Invalid `Name`",
+			expectedErr: "Descriptor: Invalid `Name`",
 		},
 		{
-			typcore.Descriptor{
+			Descriptor: &typcore.Descriptor{
 				Name:      "some-name",
 				App:       typapp.New(nil),
-				BuildTool: invalidBuildTool{"Build: some-error"},
+				BuildTool: buildTool{errMessage: "Build: some-error"},
 			},
-			"Descriptor: Build: some-error",
+			expectedErr: "Descriptor: Build: some-error",
 		},
 		{
-			typcore.Descriptor{
+			Descriptor: &typcore.Descriptor{
 				Name:      "some-name",
-				App:       invalidApp{"App: some-error"},
+				App:       app{errMessage: "App: some-error"},
 				BuildTool: typbuildtool.New(),
 			},
-			"Descriptor: App: some-error",
+			expectedErr: "Descriptor: App: some-error",
 		},
 		{
-			typcore.Descriptor{
+			Descriptor: &typcore.Descriptor{
 				Name:      "some-name",
 				BuildTool: typbuildtool.New(),
 			},
-			"Descriptor: App can't be nil",
+			expectedErr: "Descriptor: App can't be nil",
 		},
 		{
-			typcore.Descriptor{
+			Descriptor: &typcore.Descriptor{
 				Name: "some-name",
 				App:  app{},
 			},
-			"Descriptor: BuildTool can't be nil",
+			expectedErr: "Descriptor: BuildTool can't be nil",
 		},
 	}
 	for i, tt := range testcases {
 		err := tt.Validate()
-		if tt.errMsg == "" {
+		if tt.expectedErr == "" {
 			require.NoError(t, err, i)
 		} else {
-			require.EqualError(t, err, tt.errMsg, i)
+			require.EqualError(t, err, tt.expectedErr, i)
 		}
 	}
 }
 
-type invalidBuildTool struct {
+var (
+	validDescriptor = &typcore.Descriptor{
+		App:       &app{},
+		BuildTool: &buildTool{},
+	}
+)
+
+type buildTool struct {
 	errMessage string
 }
 
-func (i invalidBuildTool) Validate() error {
-	return errors.New(i.errMessage)
-}
-
-func (i invalidBuildTool) Run(*typcore.TypicalContext) error {
+func (i buildTool) Validate() error {
+	if i.errMessage != "" {
+		return errors.New(i.errMessage)
+	}
 	return nil
 }
 
-type invalidApp struct {
-	errMessage string
-}
-
-func (i invalidApp) Validate() error {
-	return errors.New(i.errMessage)
-}
-
-func (i invalidApp) Run(*typcore.Descriptor) error {
-	return nil
-}
-
-func (i invalidApp) Sources() []string {
+func (i buildTool) Run(*typcore.TypicalContext) error {
 	return nil
 }
 
 type app struct {
-	sources []string
+	errMessage string
+	sources    []string
 }
 
-func (a app) Run(*typcore.Descriptor) error {
+func (i app) Validate() error {
+	if i.errMessage != "" {
+		return errors.New(i.errMessage)
+	}
 	return nil
 }
 
-func (a app) ProjectSources() []string {
-	return a.sources
+func (i app) Run(*typcore.Descriptor) error {
+	return nil
+}
+
+func (i app) Sources() []string {
+	return i.sources
 }

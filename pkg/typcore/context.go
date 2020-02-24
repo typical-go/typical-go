@@ -2,28 +2,10 @@ package typcore
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/typical-go/typical-go/pkg/common"
-)
-
-var (
-	// DefaultModulePackage is default value for ModulePackage
-	DefaultModulePackage = "" // NOTE: supply by ldflags
-
-	// DefaultTempFolder is default value for temp folder location
-	DefaultTempFolder = ".typical-tmp"
-
-	// DefaultCmdFolder is default value for cmd folder location
-	DefaultCmdFolder = "cmd"
-
-	// DefaultBinFolder is default value for bin folder location
-	DefaultBinFolder = "bin"
-
-	// DefaultReleaseFolder is default value for release folder location
-	DefaultReleaseFolder = "release"
 )
 
 // TypicalContext is context of typical build tool
@@ -43,7 +25,6 @@ type TypicalContext struct {
 
 // CreateContext return new constructor of TypicalContext
 func CreateContext(d *Descriptor) (*TypicalContext, error) {
-	projectSources := defaultProjectSources(d)
 	c := &TypicalContext{
 		Descriptor: d,
 
@@ -54,10 +35,9 @@ func CreateContext(d *Descriptor) (*TypicalContext, error) {
 		ReleaseFolder: "release",
 
 		ModulePackage:  DefaultModulePackage,
-		Dirs:           projectSources,
-		ProjectSources: projectSources,
+		ProjectSources: DefaultProjectSources(d),
 	}
-	for _, dir := range c.Dirs {
+	for _, dir := range c.ProjectSources {
 		if err := filepath.Walk(dir, c.addFile); err != nil {
 			return nil, err
 		}
@@ -66,9 +46,29 @@ func CreateContext(d *Descriptor) (*TypicalContext, error) {
 }
 
 // Validate typical context
-func (t *TypicalContext) Validate() (err error) {
+func (t *TypicalContext) Validate() error {
+	if t.Descriptor == nil {
+		return errors.New("TypicalContext: Descriptor can't be empty")
+	}
+	if err := t.Descriptor.Validate(); err != nil {
+		return err
+	}
+
 	if t.ModulePackage == "" {
 		return errors.New("TypicalContext: ModulePackage can't be empty")
+	}
+
+	if err := validateProjectSources(t.ProjectSources); err != nil {
+		return fmt.Errorf("TypicalContext: %w", err)
+	}
+	return nil
+}
+
+func validateProjectSources(sources []string) (err error) {
+	for _, source := range sources {
+		if _, err = os.Stat(source); os.IsNotExist(err) {
+			return fmt.Errorf("Source '%s' is not exist", source)
+		}
 	}
 	return
 }
@@ -90,16 +90,4 @@ func (t *TypicalContext) addFile(path string, info os.FileInfo, err error) error
 func isWalkTarget(filename string) bool {
 	return strings.HasSuffix(filename, ".go") &&
 		!strings.HasSuffix(filename, "_test.go")
-}
-
-func defaultProjectSources(d *Descriptor) (sources []string) {
-	if sourceable, ok := d.App.(Sourceable); ok {
-		sources = append(sources, sourceable.ProjectSources()...)
-	} else {
-		sources = append(sources, common.PackageName(d.App))
-	}
-	if _, err := os.Stat("pkg"); !os.IsNotExist(err) {
-		sources = append(sources, "pkg")
-	}
-	return
 }
