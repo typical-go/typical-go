@@ -16,7 +16,7 @@ const (
 
 // Declaration information
 type Declaration struct {
-	Filename    string
+	Path        string
 	File        *ast.File
 	Doc         string
 	Annotations Annotations

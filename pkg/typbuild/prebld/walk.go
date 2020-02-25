@@ -21,7 +21,7 @@ func Walk(filenames []string) (declarations []*Declaration, err error) {
 	return
 }
 
-func declaration(filename string, f *ast.File, decl ast.Decl) (declarations []*Declaration) {
+func declaration(path string, f *ast.File, decl ast.Decl) (declarations []*Declaration) {
 	switch decl.(type) {
 	case *ast.FuncDecl:
 		var (
@@ -35,7 +35,7 @@ func declaration(filename string, f *ast.File, decl ast.Decl) (declarations []*D
 			Type:        FunctionType,
 			SourceName:  funcDecl.Name.Name,
 			SourceObj:   funcDecl,
-			Filename:    filename,
+			Path:        path,
 			File:        f,
 			Annotations: ParseAnnotations(doc),
 		})
@@ -65,7 +65,7 @@ func declaration(filename string, f *ast.File, decl ast.Decl) (declarations []*D
 					Type:        declType,
 					SourceName:  typeSpec.Name.Name,
 					SourceObj:   typeSpec,
-					Filename:    filename,
+					Path:        path,
 					File:        f,
 					Doc:         doc,
 					Annotations: ParseAnnotations(doc),
