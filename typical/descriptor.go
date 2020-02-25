@@ -12,7 +12,7 @@ var Descriptor = typcore.Descriptor{
 
 	Name: "typical-go",
 
-	Version: typicalgo.Version,
+	Version: typcore.Version,
 
 	App: typicalgo.New(),
 

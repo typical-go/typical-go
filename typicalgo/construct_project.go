@@ -81,7 +81,7 @@ func (i constructproj) gomod(ctx context.Context) (err error) {
 	return runnerkit.Run(ctx,
 		runnerkit.WriteTemplate(i.Path("go.mod"), tmpl.GoMod, tmpl.GoModData{
 			Pkg:            i.Pkg,
-			TypicalVersion: Version,
+			TypicalVersion: typcore.Version,
 		}, 0666),
 	)
 }

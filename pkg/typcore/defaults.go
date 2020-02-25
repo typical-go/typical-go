@@ -11,6 +11,11 @@ import (
 	"github.com/typical-go/typical-go/pkg/common"
 )
 
+const (
+	// Version of Typical-Go
+	Version = "0.9.34"
+)
+
 var (
 	// DefaultModulePackage is default value for ModulePackage
 	DefaultModulePackage = "" // NOTE: supply by ldflags
