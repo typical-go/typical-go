@@ -13,6 +13,9 @@ type Log struct {
 
 // CreateLog to create git log from raw message
 func CreateLog(raw string) *Log {
+	if len(raw) < 7 {
+		return nil
+	}
 	raw = strings.TrimSpace(raw)
 	message := raw[7:]
 	coAuthoredBy := ""
