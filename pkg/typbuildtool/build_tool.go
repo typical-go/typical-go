@@ -22,7 +22,7 @@ type BuildTool struct {
 	builder    typbuild.Builder
 	releaser   typrls.Releaser
 
-	decls []*prebld.Declaration
+	declStore *prebld.DeclStore
 }
 
 // New return new instance of build
@@ -39,7 +39,13 @@ func (b *BuildTool) AppendCommander(commanders ...BuildCommander) *BuildTool {
 	return b
 }
 
-// WithRelease to set releaser
+// WithtBuilder return new BuildTool with new builder
+func (b *BuildTool) WithtBuilder(builder typbuild.Builder) *BuildTool {
+	b.builder = builder
+	return b
+}
+
+// WithRelease return BuildTool with new releaser
 func (b *BuildTool) WithRelease(releaser typrls.Releaser) *BuildTool {
 	b.releaser = releaser
 	return b
@@ -57,7 +63,7 @@ func (b *BuildTool) Validate() (err error) {
 
 // Run build tool
 func (b *BuildTool) Run(t *typcore.TypicalContext) (err error) {
-	if b.decls, err = prebld.Walk(t.Files); err != nil {
+	if b.declStore, err = prebld.Walk(t.Files); err != nil {
 		return
 	}
 
@@ -77,7 +83,7 @@ func (b *BuildTool) Run(t *typcore.TypicalContext) (err error) {
 func (b *BuildTool) BuildCommands(c *Context) []*cli.Command {
 	buildCtx := &typbuild.Context{
 		TypicalContext: c.TypicalContext,
-		Declarations:   b.decls,
+		DeclStore:      b.declStore,
 	}
 	cmds := []*cli.Command{
 		{

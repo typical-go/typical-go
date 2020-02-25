@@ -7,7 +7,8 @@ import (
 )
 
 // Walk the source code to get autowire and automock
-func Walk(filenames []string) (declarations []*Declaration, err error) {
+func Walk(filenames []string) (store *DeclStore, err error) {
+	store = &DeclStore{}
 	fset := token.NewFileSet() // positions are relative to fset
 	for _, filename := range filenames {
 		var f *ast.File
@@ -15,13 +16,13 @@ func Walk(filenames []string) (declarations []*Declaration, err error) {
 			return
 		}
 		for _, decl := range f.Decls {
-			declarations = append(declarations, declaration(filename, f, decl)...)
+			store.Append(retrieveDeclarations(filename, f, decl)...)
 		}
 	}
 	return
 }
 
-func declaration(path string, f *ast.File, decl ast.Decl) (declarations []*Declaration) {
+func retrieveDeclarations(path string, f *ast.File, decl ast.Decl) (declarations []*Declaration) {
 	switch decl.(type) {
 	case *ast.FuncDecl:
 		var (
