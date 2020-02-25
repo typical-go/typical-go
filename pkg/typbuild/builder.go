@@ -8,7 +8,7 @@ import (
 
 // Builder reponsible to build
 type Builder interface {
-	Build(ctx context.Context, c *Context) error
+	Build(ctx context.Context, c *Context) (bin string, err error)
 }
 
 // Prebuilder responsible to prebuild

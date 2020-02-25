@@ -1,9 +1,12 @@
 package typbuildtool
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"os/exec"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
@@ -15,15 +18,16 @@ import (
 
 // BuildTool is typical Build Tool for golang
 type BuildTool struct {
-	commanders  []typbuild.BuildCommander
-	prebuilders []typbuild.Prebuilder
-	releaser    typrls.Releaser
+	commanders []typbuild.BuildCommander
+	builder    typbuild.Builder
+	releaser   typrls.Releaser
 }
 
 // New return new instance of build
 func New() *BuildTool {
 	return &BuildTool{
-		prebuilders: []typbuild.Prebuilder{&standardPrebuilder{}},
+		builder:  typbuild.New(),
+		releaser: typrls.New(),
 	}
 }
 
@@ -36,12 +40,6 @@ func (b *BuildTool) AppendCommander(commanders ...typbuild.BuildCommander) *Buil
 // WithRelease to set releaser
 func (b *BuildTool) WithRelease(releaser typrls.Releaser) *BuildTool {
 	b.releaser = releaser
-	return b
-}
-
-// WithPrebuild to set prebuilder
-func (b *BuildTool) WithPrebuild(prebuilders ...typbuild.Prebuilder) *BuildTool {
-	b.prebuilders = append(b.prebuilders, prebuilders...)
 	return b
 }
 
@@ -85,7 +83,11 @@ func (b *BuildTool) BuildCommands(c *typbuild.Context) []*cli.Command {
 			Aliases: []string{"b"},
 			Usage:   "Build the binary",
 			Action: func(cliCtx *cli.Context) (err error) {
-				return b.buildProject(cliCtx.Context, c)
+				if b.builder == nil {
+					panic("Builder can't nil")
+				}
+				_, err = b.builder.Build(cliCtx.Context, c)
+				return
 			},
 		},
 		{
@@ -148,4 +150,17 @@ func (b *BuildTool) BuildCommands(c *typbuild.Context) []*cli.Command {
 		cmds = append(cmds, commanders.BuildCommands(c)...)
 	}
 	return cmds
+}
+
+func (b *BuildTool) run(ctx context.Context, c *typbuild.Context, args []string) (err error) {
+	var binary string
+	if binary, err = b.builder.Build(ctx, c); err != nil {
+		return
+	}
+	log.Info("Run the application")
+	cmd := exec.CommandContext(ctx, binary, args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	return cmd.Run()
 }

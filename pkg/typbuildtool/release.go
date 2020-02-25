@@ -31,8 +31,8 @@ func (b *BuildTool) release(ctx context.Context, c *typbuild.Context, opt *Relea
 		binaries []string
 	)
 
-	if !opt.NoBuild {
-		if err = b.buildProject(ctx, c); err != nil {
+	if !opt.NoBuild && b.builder != nil {
+		if _, err = b.builder.Build(ctx, c); err != nil {
 			return
 		}
 	}
