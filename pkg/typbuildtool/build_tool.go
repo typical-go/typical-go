@@ -18,9 +18,11 @@ import (
 
 // BuildTool is typical Build Tool for golang
 type BuildTool struct {
-	commanders []typbuild.BuildCommander
+	commanders []BuildCommander
 	builder    typbuild.Builder
 	releaser   typrls.Releaser
+
+	decls []*prebld.Declaration
 }
 
 // New return new instance of build
@@ -32,7 +34,7 @@ func New() *BuildTool {
 }
 
 // AppendCommander to return build with appended commander
-func (b *BuildTool) AppendCommander(commanders ...typbuild.BuildCommander) *BuildTool {
+func (b *BuildTool) AppendCommander(commanders ...BuildCommander) *BuildTool {
 	b.commanders = append(b.commanders, commanders...)
 	return b
 }
@@ -54,29 +56,29 @@ func (b *BuildTool) Validate() (err error) {
 }
 
 // Run build tool
-func (b *BuildTool) Run(typCtx *typcore.TypicalContext) (err error) {
-	var decls []*prebld.Declaration
-	if decls, err = prebld.Walk(typCtx.Files); err != nil {
+func (b *BuildTool) Run(t *typcore.TypicalContext) (err error) {
+	if b.decls, err = prebld.Walk(t.Files); err != nil {
 		return
 	}
 
-	c := &typbuild.Context{
-		TypicalContext: typCtx,
-		Declarations:   decls,
-	}
-
 	app := cli.NewApp()
-	app.Name = c.Name
+	app.Name = t.Name
 	app.Usage = "" // NOTE: intentionally blank
-	app.Description = c.Description
-	app.Version = c.Version
-	app.Commands = b.BuildCommands(c)
+	app.Description = t.Description
+	app.Version = t.Version
+	app.Commands = b.BuildCommands(&Context{
+		TypicalContext: t,
+	})
 
 	return app.Run(os.Args)
 }
 
 // BuildCommands to return command
-func (b *BuildTool) BuildCommands(c *typbuild.Context) []*cli.Command {
+func (b *BuildTool) BuildCommands(c *Context) []*cli.Command {
+	buildCtx := &typbuild.Context{
+		TypicalContext: c.TypicalContext,
+		Declarations:   b.decls,
+	}
 	cmds := []*cli.Command{
 		{
 			Name:    "build",
@@ -86,7 +88,7 @@ func (b *BuildTool) BuildCommands(c *typbuild.Context) []*cli.Command {
 				if b.builder == nil {
 					panic("Builder can't nil")
 				}
-				_, err = b.builder.Build(cliCtx.Context, c)
+				_, err = b.builder.Build(cliCtx.Context, buildCtx)
 				return
 			},
 		},
@@ -104,7 +106,7 @@ func (b *BuildTool) BuildCommands(c *typbuild.Context) []*cli.Command {
 			Usage:           "Run the binary",
 			SkipFlagParsing: true,
 			Action: func(cliCtx *cli.Context) (err error) {
-				return b.run(cliCtx.Context, c, cliCtx.Args().Slice())
+				return b.run(cliCtx.Context, buildCtx, cliCtx.Args().Slice())
 			},
 		},
 		{
@@ -112,7 +114,7 @@ func (b *BuildTool) BuildCommands(c *typbuild.Context) []*cli.Command {
 			Aliases: []string{"t"},
 			Usage:   "Run the testing",
 			Action: func(cliCtx *cli.Context) error {
-				return b.test(cliCtx.Context, c)
+				return b.test(cliCtx.Context, c.TypicalContext)
 			},
 		},
 		{
@@ -122,7 +124,7 @@ func (b *BuildTool) BuildCommands(c *typbuild.Context) []*cli.Command {
 				// &cli.BoolFlag{Name: "no-delete", Usage: "Generate mock class with delete previous generation"},
 			},
 			Action: func(cliCtx *cli.Context) (err error) {
-				return b.mock(cliCtx.Context, c, &MockOption{})
+				return b.mock(cliCtx.Context, buildCtx, &MockOption{})
 			},
 		},
 		{
@@ -136,7 +138,7 @@ func (b *BuildTool) BuildCommands(c *typbuild.Context) []*cli.Command {
 				&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 			},
 			Action: func(cliCtx *cli.Context) (err error) {
-				return b.release(cliCtx.Context, c, &ReleaseOption{
+				return b.release(cliCtx.Context, buildCtx, &ReleaseOption{
 					Alpha:     cliCtx.Bool("alpha"),
 					Force:     cliCtx.Bool("force"),
 					NoTest:    cliCtx.Bool("no-test"),

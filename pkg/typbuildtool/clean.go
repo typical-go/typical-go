@@ -5,10 +5,9 @@ import (
 	"os"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/typbuild"
 )
 
-func (b *BuildTool) clean(ctx context.Context, c *typbuild.Context) error {
+func (b *BuildTool) clean(ctx context.Context, c *Context) error {
 	removeAllFile(c.BinFolder)
 	removeAllFile(c.TempFolder)
 	removeFile(".env") // TODO: configuration clean

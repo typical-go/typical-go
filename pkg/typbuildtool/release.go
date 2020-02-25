@@ -38,7 +38,7 @@ func (b *BuildTool) release(ctx context.Context, c *typbuild.Context, opt *Relea
 	}
 
 	if !opt.NoTest {
-		if err = b.test(ctx, c); err != nil {
+		if err = b.test(ctx, c.TypicalContext); err != nil {
 			return
 		}
 	}

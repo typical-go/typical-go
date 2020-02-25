@@ -7,10 +7,10 @@ import (
 	"os/exec"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/typbuild"
+	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
-func (b *BuildTool) test(ctx context.Context, c *typbuild.Context) error {
+func (b *BuildTool) test(ctx context.Context, c *typcore.TypicalContext) error {
 	log.Info("Run testings")
 	var targets []string
 	for _, source := range c.ProjectSources {
