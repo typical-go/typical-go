@@ -7,6 +7,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
+	"github.com/typical-go/typical-go/pkg/typrls"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
@@ -16,7 +17,7 @@ import (
 type BuildTool struct {
 	commanders  []typbuild.BuildCommander
 	prebuilders []typbuild.Prebuilder
-	releaser    typbuild.Releaser
+	releaser    typrls.Releaser
 }
 
 // New return new instance of build
@@ -33,7 +34,7 @@ func (b *BuildTool) AppendCommander(commanders ...typbuild.BuildCommander) *Buil
 }
 
 // WithRelease to set releaser
-func (b *BuildTool) WithRelease(releaser typbuild.Releaser) *BuildTool {
+func (b *BuildTool) WithRelease(releaser typrls.Releaser) *BuildTool {
 	b.releaser = releaser
 	return b
 }

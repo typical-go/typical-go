@@ -7,6 +7,7 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/git"
 	"github.com/typical-go/typical-go/pkg/typbuild"
+	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
 // ReleaseOption is option for release
@@ -57,7 +58,7 @@ func (b *BuildTool) release(ctx context.Context, c *typbuild.Context, opt *Relea
 		return errors.New("No change to be released")
 	}
 
-	rls := &typbuild.ReleaseContext{
+	rls := &typrls.Context{
 		Context: c,
 		Name:    c.Name,
 		Tag:     b.releaser.Tag(ctx, c.Version, opt.Alpha),

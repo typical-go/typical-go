@@ -1,4 +1,4 @@
-package stdrls
+package typrls
 
 import (
 	"errors"

@@ -1,4 +1,4 @@
-package stdrls
+package typrls
 
 import (
 	"context"
@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/git"
-	"github.com/typical-go/typical-go/pkg/typbuild"
 
 	"github.com/google/go-github/github"
 	log "github.com/sirupsen/logrus"
@@ -40,7 +39,7 @@ func (g *Github) WithFilter(filter Filter) *Github {
 }
 
 // Publish to github
-func (g *Github) Publish(ctx context.Context, rel *typbuild.ReleaseContext, binaries []string) (err error) {
+func (g *Github) Publish(ctx context.Context, rel *Context, binaries []string) (err error) {
 	token := os.Getenv("GITHUB_TOKEN")
 	if token == "" {
 		return errors.New("Environment 'GITHUB_TOKEN' is missing")
