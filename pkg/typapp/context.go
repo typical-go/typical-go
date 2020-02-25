@@ -16,9 +16,12 @@ type Context struct {
 }
 
 // ActionFunc to return ActionFunc to invoke function fn
-func (c *Context) ActionFunc(invocation *typdep.Invocation) func(*cli.Context) error {
+func (c *Context) ActionFunc(v interface{}) func(*cli.Context) error {
 	return func(cliCtx *cli.Context) (err error) {
-		return c.Invoke(cliCtx, invocation)
+		if invocation, ok := v.(*typdep.Invocation); ok {
+			return c.Invoke(cliCtx, invocation)
+		}
+		return c.Invoke(cliCtx, typdep.NewInvocation(v))
 	}
 }
 
