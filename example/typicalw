@@ -2,7 +2,7 @@
 
 set -e
 
-TYPSRC=../cmd/typical-go
+TYPSRC=github.com/typical-go/typical-go/cmd/typical-go
 TYPTMP=.typical-tmp
 TYPGO=$TYPTMP/bin/typical-go
 

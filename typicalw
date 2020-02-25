@@ -3,7 +3,7 @@
 set -e
 
 TYPTMP=.typical-tmp
-TYPSRC=./cmd/typical-go
+TYPSRC=github.com/typical-go/typical-go/cmd/typical-go
 TYPGO=$TYPTMP/bin/typical-go
 
 if ! [ -s $TYPGO ]; then
