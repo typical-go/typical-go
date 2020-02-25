@@ -116,12 +116,10 @@ func (b *BuildTool) BuildCommands(c *typbuild.Context) []*cli.Command {
 			Name:  "mock",
 			Usage: "Generate mock class",
 			Flags: []cli.Flag{
-				&cli.BoolFlag{Name: "no-delete", Usage: "Generate mock class with delete previous generation"},
+				// &cli.BoolFlag{Name: "no-delete", Usage: "Generate mock class with delete previous generation"},
 			},
 			Action: func(cliCtx *cli.Context) (err error) {
-				return b.mock(cliCtx.Context, c, &MockOption{
-					NoDelete: cliCtx.Bool("no-delete"),
-				})
+				return b.mock(cliCtx.Context, c, &MockOption{})
 			},
 		},
 		{

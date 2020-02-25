@@ -18,22 +18,12 @@ import (
 
 // MockOption is option for generate mock
 type MockOption struct {
-	NoDelete bool
 }
 
 func (b *BuildTool) mock(ctx context.Context, c *typbuild.Context, opt *MockOption) (err error) {
 	var (
 		targets []*mockTarget
 	)
-
-	if !opt.NoDelete {
-		os.RemoveAll(c.MockFolder)
-		files, _ := filepath.Glob(c.MockFolder + "*")
-		for _, f := range files {
-			log.Infof("Remove %s", f)
-			os.RemoveAll(f)
-		}
-	}
 
 	mockgen := fmt.Sprintf("%s/bin/mockgen", c.TempFolder)
 
@@ -54,7 +44,7 @@ func (b *BuildTool) mock(ctx context.Context, c *typbuild.Context, opt *MockOpti
 	for _, target := range targets {
 		log.Infof("Mock %s", target.srcName)
 		cmd := exec.CommandContext(ctx, mockgen,
-			"-destination", target.mockDest,
+			"-destination", target.dest,
 			"-package", target.mockPkg,
 			target.srcPkg,
 			target.srcName,
@@ -68,22 +58,25 @@ func (b *BuildTool) mock(ctx context.Context, c *typbuild.Context, opt *MockOpti
 }
 
 type mockTarget struct {
-	srcPkg   string
-	srcName  string
-	mockPkg  string
-	mockDest string
+	srcPkg  string
+	srcName string
+	mockPkg string
+	dest    string
 }
 
 func createMockTarget(c *typbuild.Context, decl *prebld.Declaration) *mockTarget {
 	var (
-		mockPkg  = fmt.Sprintf("%s_%s", c.MockFolder, decl.File.Name.Name)
-		mockDest = fmt.Sprintf("%s/%s.go", mockPkg, strcase.ToSnake(decl.SourceName))
-		srcPkg   = fmt.Sprintf("%s/%s", c.ModulePackage, filepath.Dir(decl.Path))
+		pkg     = decl.File.Name.Name
+		dir     = filepath.Dir(decl.Path)
+		dirDest = dir[:len(dir)-len(pkg)]
+		srcPkg  = fmt.Sprintf("%s/%s", c.ModulePackage, dir)
+		mockPkg = fmt.Sprintf("%s_%s", c.MockFolder, pkg)
+		dest    = fmt.Sprintf("%s%s/%s.go", dirDest, mockPkg, strcase.ToSnake(decl.SourceName))
 	)
 	return &mockTarget{
-		srcPkg:   srcPkg,
-		srcName:  decl.SourceName,
-		mockPkg:  mockPkg,
-		mockDest: mockDest,
+		srcPkg:  srcPkg,
+		srcName: decl.SourceName,
+		mockPkg: mockPkg,
+		dest:    dest,
 	}
 }
