@@ -18,7 +18,7 @@ import (
 
 // BuildTool is typical Build Tool for golang
 type BuildTool struct {
-	commanders []BuildCommander
+	commanders []Commander
 	builder    typbuild.Builder
 	mocker     typmock.Mocker
 	releaser   typrls.Releaser
@@ -36,7 +36,7 @@ func New() *BuildTool {
 }
 
 // AppendCommander to return build with appended commander
-func (b *BuildTool) AppendCommander(commanders ...BuildCommander) *BuildTool {
+func (b *BuildTool) AppendCommander(commanders ...Commander) *BuildTool {
 	b.commanders = append(b.commanders, commanders...)
 	return b
 }
@@ -88,54 +88,17 @@ func (b *BuildTool) Run(t *typcore.TypicalContext) (err error) {
 	app.Usage = "" // NOTE: intentionally blank
 	app.Description = t.Description
 	app.Version = t.Version
-	app.Commands = b.BuildCommands(&Context{
+	app.Commands = b.Commands(&Context{
 		TypicalContext: t,
 	})
 
 	return app.Run(os.Args)
 }
 
-// BuildCommands to return command
-func (b *BuildTool) BuildCommands(c *Context) (cmds []*cli.Command) {
-	buildCtx := &typbuild.Context{
-		TypicalContext: c.TypicalContext,
-		DeclStore:      b.declStore,
-	}
+// Commands to return command
+func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 	if b.builder != nil {
-		cmds = append(cmds,
-			&cli.Command{
-				Name:    "build",
-				Aliases: []string{"b"},
-				Usage:   "Build the binary",
-				Action: func(cliCtx *cli.Context) (err error) {
-					_, err = b.builder.Build(cliCtx.Context, buildCtx)
-					return
-				},
-			},
-			&cli.Command{
-				Name:            "run",
-				Aliases:         []string{"r"},
-				Usage:           "Run the binary",
-				SkipFlagParsing: true,
-				Action: func(cliCtx *cli.Context) (err error) {
-					var (
-						binary string
-						ctx    = cliCtx.Context
-						args   = cliCtx.Args().Slice()
-					)
-					if binary, err = b.builder.Build(ctx, buildCtx); err != nil {
-						return
-					}
-					log.Info("Run the application")
-					cmd := exec.CommandContext(ctx, binary, args...)
-					cmd.Stdout = os.Stdout
-					cmd.Stderr = os.Stderr
-					cmd.Stdin = os.Stdin
-					return cmd.Run()
-				},
-			},
-		)
-
+		cmds = append(cmds, b.buildCommands(c)...)
 	}
 	cmds = append(cmds,
 		&cli.Command{
@@ -157,49 +120,101 @@ func (b *BuildTool) BuildCommands(c *Context) (cmds []*cli.Command) {
 	)
 
 	if b.mocker != nil {
-		cmds = append(cmds,
-			&cli.Command{
-				Name:  "mock",
-				Usage: "Generate mock class",
-				Action: func(cliCtx *cli.Context) (err error) {
-					if b.mocker == nil {
-						panic("Mocker is nil")
-					}
-					return b.mocker.Mock(cliCtx.Context, &typmock.Context{
-						TypicalContext: c.TypicalContext,
-						DeclStore:      b.declStore,
-					})
-				},
-			},
-		)
+		cmds = append(cmds, b.mockCommands(c)...)
 	}
 
 	if b.releaser != nil {
-		cmds = append(cmds,
-			&cli.Command{
-				Name:  "release",
-				Usage: "Release the distribution",
-				Flags: []cli.Flag{
-					&cli.BoolFlag{Name: "no-test", Usage: "Release without run unit test"},
-					&cli.BoolFlag{Name: "no-build", Usage: "Release without build"},
-					&cli.BoolFlag{Name: "no-publish", Usage: "Release without create github release"},
-					&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
-					&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
-				},
-				Action: func(cliCtx *cli.Context) (err error) {
-					return b.release(cliCtx.Context, buildCtx, &ReleaseOption{
-						Alpha:     cliCtx.Bool("alpha"),
-						Force:     cliCtx.Bool("force"),
-						NoTest:    cliCtx.Bool("no-test"),
-						NoBuild:   cliCtx.Bool("no-build"),
-						NoPublish: cliCtx.Bool("no-publish"),
-					})
-				},
-			},
-		)
+		cmds = append(cmds, b.releaseCommands(c)...)
 	}
 	for _, commanders := range b.commanders {
-		cmds = append(cmds, commanders.BuildCommands(c)...)
+		cmds = append(cmds, commanders.Commands(c)...)
 	}
 	return cmds
+}
+
+func (b *BuildTool) buildCommands(c *Context) []*cli.Command {
+	buildCtx := &typbuild.Context{
+		TypicalContext: c.TypicalContext,
+		DeclStore:      b.declStore,
+	}
+	return []*cli.Command{
+		{
+			Name:    "build",
+			Aliases: []string{"b"},
+			Usage:   "Build the binary",
+			Action: func(cliCtx *cli.Context) (err error) {
+				_, err = b.builder.Build(cliCtx.Context, buildCtx)
+				return
+			},
+		},
+		{
+			Name:            "run",
+			Aliases:         []string{"r"},
+			Usage:           "Run the binary",
+			SkipFlagParsing: true,
+			Action: func(cliCtx *cli.Context) (err error) {
+				var (
+					binary string
+					ctx    = cliCtx.Context
+					args   = cliCtx.Args().Slice()
+				)
+				if binary, err = b.builder.Build(ctx, buildCtx); err != nil {
+					return
+				}
+				log.Info("Run the application")
+				cmd := exec.CommandContext(ctx, binary, args...)
+				cmd.Stdout = os.Stdout
+				cmd.Stderr = os.Stderr
+				cmd.Stdin = os.Stdin
+				return cmd.Run()
+			},
+		},
+	}
+}
+
+func (b *BuildTool) releaseCommands(c *Context) []*cli.Command {
+	buildCtx := &typbuild.Context{
+		TypicalContext: c.TypicalContext,
+		DeclStore:      b.declStore,
+	}
+	return []*cli.Command{
+		{
+			Name:  "release",
+			Usage: "Release the distribution",
+			Flags: []cli.Flag{
+				&cli.BoolFlag{Name: "no-test", Usage: "Release without run unit test"},
+				&cli.BoolFlag{Name: "no-build", Usage: "Release without build"},
+				&cli.BoolFlag{Name: "no-publish", Usage: "Release without create github release"},
+				&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
+				&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
+			},
+			Action: func(cliCtx *cli.Context) (err error) {
+				return b.release(cliCtx.Context, buildCtx, &ReleaseOption{
+					Alpha:     cliCtx.Bool("alpha"),
+					Force:     cliCtx.Bool("force"),
+					NoTest:    cliCtx.Bool("no-test"),
+					NoBuild:   cliCtx.Bool("no-build"),
+					NoPublish: cliCtx.Bool("no-publish"),
+				})
+			},
+		},
+	}
+}
+
+func (b *BuildTool) mockCommands(c *Context) []*cli.Command {
+	return []*cli.Command{
+		{
+			Name:  "mock",
+			Usage: "Generate mock class",
+			Action: func(cliCtx *cli.Context) (err error) {
+				if b.mocker == nil {
+					panic("Mocker is nil")
+				}
+				return b.mocker.Mock(cliCtx.Context, &typmock.Context{
+					TypicalContext: c.TypicalContext,
+					DeclStore:      b.declStore,
+				})
+			},
+		},
+	}
 }
