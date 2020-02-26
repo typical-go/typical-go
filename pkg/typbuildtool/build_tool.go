@@ -1,6 +1,7 @@
 package typbuildtool
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -12,6 +13,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typclean"
 	"github.com/typical-go/typical-go/pkg/typmock"
 	"github.com/typical-go/typical-go/pkg/typrls"
+	"github.com/typical-go/typical-go/pkg/typtest"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
@@ -23,6 +25,7 @@ type BuildTool struct {
 	builder    typbuild.Builder
 	mocker     typmock.Mocker
 	cleaner    typclean.Cleaner
+	tester     typtest.Tester
 	releaser   typrls.Releaser
 
 	declStore *prebld.DeclStore
@@ -34,6 +37,7 @@ func New() *BuildTool {
 		builder:  typbuild.New(),
 		mocker:   typmock.New(),
 		cleaner:  typclean.New(),
+		tester:   typtest.New(),
 		releaser: typrls.New(),
 	}
 }
@@ -115,18 +119,11 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 	}
 	if b.cleaner != nil {
 		cmds = append(cmds, b.cleanCommands(c)...)
-
 	}
-	cmds = append(cmds,
-		&cli.Command{
-			Name:    "test",
-			Aliases: []string{"t"},
-			Usage:   "Run the testing",
-			Action: func(cliCtx *cli.Context) error {
-				return b.test(cliCtx.Context, c.TypicalContext)
-			},
-		},
-	)
+
+	if b.tester != nil {
+		cmds = append(cmds, b.testCommand(c)...)
+	}
 
 	if b.mocker != nil {
 		cmds = append(cmds, b.mockCommands(c)...)
@@ -142,17 +139,13 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 }
 
 func (b *BuildTool) buildCommands(c *Context) []*cli.Command {
-	buildCtx := &typbuild.Context{
-		TypicalContext: c.TypicalContext,
-		DeclStore:      b.declStore,
-	}
 	return []*cli.Command{
 		{
 			Name:    "build",
 			Aliases: []string{"b"},
 			Usage:   "Build the binary",
 			Action: func(cliCtx *cli.Context) (err error) {
-				_, err = b.builder.Build(cliCtx.Context, buildCtx)
+				_, err = b.build(cliCtx.Context, c)
 				return
 			},
 		},
@@ -165,13 +158,13 @@ func (b *BuildTool) buildCommands(c *Context) []*cli.Command {
 				var (
 					binary string
 					ctx    = cliCtx.Context
-					args   = cliCtx.Args().Slice()
 				)
-				if binary, err = b.builder.Build(ctx, buildCtx); err != nil {
+				if binary, err = b.build(ctx, c); err != nil {
 					return
 				}
+
 				log.Info("Run the application")
-				cmd := exec.CommandContext(ctx, binary, args...)
+				cmd := exec.CommandContext(ctx, binary, cliCtx.Args().Slice()...)
 				cmd.Stdout = os.Stdout
 				cmd.Stderr = os.Stderr
 				cmd.Stdin = os.Stdin
@@ -182,10 +175,6 @@ func (b *BuildTool) buildCommands(c *Context) []*cli.Command {
 }
 
 func (b *BuildTool) releaseCommands(c *Context) []*cli.Command {
-	buildCtx := &typbuild.Context{
-		TypicalContext: c.TypicalContext,
-		DeclStore:      b.declStore,
-	}
 	return []*cli.Command{
 		{
 			Name:  "release",
@@ -198,7 +187,7 @@ func (b *BuildTool) releaseCommands(c *Context) []*cli.Command {
 				&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 			},
 			Action: func(cliCtx *cli.Context) (err error) {
-				return b.release(cliCtx.Context, buildCtx, &ReleaseOption{
+				return b.release(cliCtx.Context, c, &ReleaseOption{
 					Alpha:     cliCtx.Bool("alpha"),
 					Force:     cliCtx.Bool("force"),
 					NoTest:    cliCtx.Bool("no-test"),
@@ -235,11 +224,37 @@ func (b *BuildTool) cleanCommands(c *Context) []*cli.Command {
 			Aliases: []string{"c"},
 			Usage:   "Clean the project from generated file during build time",
 			Action: func(cliCtx *cli.Context) error {
-
 				return b.cleaner.Clean(cliCtx.Context, &typclean.Context{
 					TypicalContext: c.TypicalContext,
 				})
 			},
 		},
 	}
+}
+
+func (b *BuildTool) testCommand(c *Context) []*cli.Command {
+	return []*cli.Command{
+		{
+			Name:    "test",
+			Aliases: []string{"t"},
+			Usage:   "Run the testing",
+			Action: func(cliCtx *cli.Context) error {
+				return b.test(cliCtx.Context, c)
+			},
+		},
+	}
+}
+
+func (b *BuildTool) test(ctx context.Context, c *Context) error {
+	return b.tester.Test(ctx, &typtest.Context{
+		TypicalContext: c.TypicalContext,
+	})
+}
+
+func (b *BuildTool) build(ctx context.Context, c *Context) (out string, err error) {
+	return b.builder.Build(ctx, &typbuild.Context{
+		TypicalContext: c.TypicalContext,
+		DeclStore:      b.declStore,
+	})
+
 }

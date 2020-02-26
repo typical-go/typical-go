@@ -4,12 +4,12 @@ import (
 	"context"
 
 	"github.com/typical-go/typical-go/pkg/git"
-	"github.com/typical-go/typical-go/pkg/typbuild"
+	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 // Context of release
 type Context struct {
-	*typbuild.Context
+	*typcore.TypicalContext
 	Name    string
 	Tag     string
 	GitLogs []*git.Log

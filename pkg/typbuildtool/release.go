@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/git"
-	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
@@ -19,7 +18,7 @@ type ReleaseOption struct {
 	NoPublish bool
 }
 
-func (b *BuildTool) release(ctx context.Context, c *typbuild.Context, opt *ReleaseOption) (err error) {
+func (b *BuildTool) release(ctx context.Context, c *Context, opt *ReleaseOption) (err error) {
 	if b.releaser == nil {
 		return errors.New("Releaser is missing")
 	}
@@ -32,13 +31,13 @@ func (b *BuildTool) release(ctx context.Context, c *typbuild.Context, opt *Relea
 	)
 
 	if !opt.NoBuild && b.builder != nil {
-		if _, err = b.builder.Build(ctx, c); err != nil {
+		if _, err = b.build(ctx, c); err != nil {
 			return
 		}
 	}
 
-	if !opt.NoTest {
-		if err = b.test(ctx, c.TypicalContext); err != nil {
+	if !opt.NoTest && b.tester != nil {
+		if err = b.test(ctx, c); err != nil {
 			return
 		}
 	}
@@ -59,11 +58,11 @@ func (b *BuildTool) release(ctx context.Context, c *typbuild.Context, opt *Relea
 	}
 
 	rls := &typrls.Context{
-		Context: c,
-		Name:    c.Name,
-		Tag:     b.releaser.Tag(ctx, c.Version, opt.Alpha),
-		GitLogs: gitLogs,
-		Alpha:   opt.Alpha,
+		TypicalContext: c.TypicalContext,
+		Name:           c.Name,
+		Tag:            b.releaser.Tag(ctx, c.Version, opt.Alpha),
+		GitLogs:        gitLogs,
+		Alpha:          opt.Alpha,
 	}
 	if binaries, err = b.releaser.Build(ctx, rls); err != nil {
 		return fmt.Errorf("Failed build release: %w", err)
