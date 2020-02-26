@@ -1,31 +1,32 @@
-package typbuildtool
+package typmock
 
 import (
 	"context"
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
-
-	"github.com/iancoleman/strcase"
 
 	log "github.com/sirupsen/logrus"
+
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
 )
 
-// MockOption is option for generate mock
-type MockOption struct {
+// StdMocker is standard mocker
+type StdMocker struct {
 }
 
-func (b *BuildTool) mock(ctx context.Context, c *typbuild.Context, opt *MockOption) (err error) {
+// New return new instance of StdMocker
+func New() *StdMocker {
+	return &StdMocker{}
+}
+
+// Mock the project
+func (b *StdMocker) Mock(ctx context.Context, c *Context) (err error) {
 	var (
 		targets []*mockTarget
 	)
-
-	mockgen := fmt.Sprintf("%s/bin/mockgen", c.TempFolder)
 
 	if err = c.EachAnnotation("mock", prebld.InterfaceType, func(decl *prebld.Declaration, ann *prebld.Annotation) (err error) {
 		targets = append(targets, createMockTarget(c, decl))
@@ -33,6 +34,8 @@ func (b *BuildTool) mock(ctx context.Context, c *typbuild.Context, opt *MockOpti
 	}); err != nil {
 		return
 	}
+
+	mockgen := fmt.Sprintf("%s/bin/mockgen", c.TempFolder)
 
 	if !common.IsFileExist(mockgen) {
 		log.Info("Build mockgen")
@@ -55,28 +58,4 @@ func (b *BuildTool) mock(ctx context.Context, c *typbuild.Context, opt *MockOpti
 		}
 	}
 	return
-}
-
-type mockTarget struct {
-	srcPkg  string
-	srcName string
-	mockPkg string
-	dest    string
-}
-
-func createMockTarget(c *typbuild.Context, decl *prebld.Declaration) *mockTarget {
-	var (
-		pkg     = decl.File.Name.Name
-		dir     = filepath.Dir(decl.Path)
-		dirDest = dir[:len(dir)-len(pkg)]
-		srcPkg  = fmt.Sprintf("%s/%s", c.ModulePackage, dir)
-		mockPkg = fmt.Sprintf("%s_%s", c.MockFolder, pkg)
-		dest    = fmt.Sprintf("%s%s/%s.go", dirDest, mockPkg, strcase.ToSnake(decl.SourceName))
-	)
-	return &mockTarget{
-		srcPkg:  srcPkg,
-		srcName: decl.SourceName,
-		mockPkg: mockPkg,
-		dest:    dest,
-	}
 }

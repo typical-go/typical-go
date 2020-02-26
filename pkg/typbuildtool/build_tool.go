@@ -1,7 +1,6 @@
 package typbuildtool
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -10,6 +9,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
+	"github.com/typical-go/typical-go/pkg/typmock"
 	"github.com/typical-go/typical-go/pkg/typrls"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
@@ -20,6 +20,7 @@ import (
 type BuildTool struct {
 	commanders []BuildCommander
 	builder    typbuild.Builder
+	mocker     typmock.Mocker
 	releaser   typrls.Releaser
 
 	declStore *prebld.DeclStore
@@ -29,6 +30,7 @@ type BuildTool struct {
 func New() *BuildTool {
 	return &BuildTool{
 		builder:  typbuild.New(),
+		mocker:   typmock.New(),
 		releaser: typrls.New(),
 	}
 }
@@ -51,13 +53,27 @@ func (b *BuildTool) WithRelease(releaser typrls.Releaser) *BuildTool {
 	return b
 }
 
+// WithMocker return BuildTool with mocker
+func (b *BuildTool) WithMocker(mocker typmock.Mocker) *BuildTool {
+	b.mocker = mocker
+	return b
+}
+
 // Validate build
 func (b *BuildTool) Validate() (err error) {
-	if b.releaser != nil {
-		if err = common.Validate(b.releaser); err != nil {
-			return fmt.Errorf("Build: Releaser: %w", err)
-		}
+
+	if err = common.Validate(b.builder); err != nil {
+		return fmt.Errorf("BuildTool: Builder: %w", err)
 	}
+
+	if err = common.Validate(b.mocker); err != nil {
+		return fmt.Errorf("BuildTool: Mocker: %w", err)
+	}
+
+	if err = common.Validate(b.releaser); err != nil {
+		return fmt.Errorf("BuildTool: Releaser: %w", err)
+	}
+
 	return
 }
 
@@ -80,25 +96,49 @@ func (b *BuildTool) Run(t *typcore.TypicalContext) (err error) {
 }
 
 // BuildCommands to return command
-func (b *BuildTool) BuildCommands(c *Context) []*cli.Command {
+func (b *BuildTool) BuildCommands(c *Context) (cmds []*cli.Command) {
 	buildCtx := &typbuild.Context{
 		TypicalContext: c.TypicalContext,
 		DeclStore:      b.declStore,
 	}
-	cmds := []*cli.Command{
-		{
-			Name:    "build",
-			Aliases: []string{"b"},
-			Usage:   "Build the binary",
-			Action: func(cliCtx *cli.Context) (err error) {
-				if b.builder == nil {
-					panic("Builder can't nil")
-				}
-				_, err = b.builder.Build(cliCtx.Context, buildCtx)
-				return
+	if b.builder != nil {
+		cmds = append(cmds,
+			&cli.Command{
+				Name:    "build",
+				Aliases: []string{"b"},
+				Usage:   "Build the binary",
+				Action: func(cliCtx *cli.Context) (err error) {
+					_, err = b.builder.Build(cliCtx.Context, buildCtx)
+					return
+				},
 			},
-		},
-		{
+			&cli.Command{
+				Name:            "run",
+				Aliases:         []string{"r"},
+				Usage:           "Run the binary",
+				SkipFlagParsing: true,
+				Action: func(cliCtx *cli.Context) (err error) {
+					var (
+						binary string
+						ctx    = cliCtx.Context
+						args   = cliCtx.Args().Slice()
+					)
+					if binary, err = b.builder.Build(ctx, buildCtx); err != nil {
+						return
+					}
+					log.Info("Run the application")
+					cmd := exec.CommandContext(ctx, binary, args...)
+					cmd.Stdout = os.Stdout
+					cmd.Stderr = os.Stderr
+					cmd.Stdin = os.Stdin
+					return cmd.Run()
+				},
+			},
+		)
+
+	}
+	cmds = append(cmds,
+		&cli.Command{
 			Name:    "clean",
 			Aliases: []string{"c"},
 			Usage:   "Clean the project from generated file during build time",
@@ -106,16 +146,7 @@ func (b *BuildTool) BuildCommands(c *Context) []*cli.Command {
 				return b.clean(cliCtx.Context, c)
 			},
 		},
-		{
-			Name:            "run",
-			Aliases:         []string{"r"},
-			Usage:           "Run the binary",
-			SkipFlagParsing: true,
-			Action: func(cliCtx *cli.Context) (err error) {
-				return b.run(cliCtx.Context, buildCtx, cliCtx.Args().Slice())
-			},
-		},
-		{
+		&cli.Command{
 			Name:    "test",
 			Aliases: []string{"t"},
 			Usage:   "Run the testing",
@@ -123,52 +154,52 @@ func (b *BuildTool) BuildCommands(c *Context) []*cli.Command {
 				return b.test(cliCtx.Context, c.TypicalContext)
 			},
 		},
-		{
-			Name:  "mock",
-			Usage: "Generate mock class",
-			Flags: []cli.Flag{
-				// &cli.BoolFlag{Name: "no-delete", Usage: "Generate mock class with delete previous generation"},
+	)
+
+	if b.mocker != nil {
+		cmds = append(cmds,
+			&cli.Command{
+				Name:  "mock",
+				Usage: "Generate mock class",
+				Action: func(cliCtx *cli.Context) (err error) {
+					if b.mocker == nil {
+						panic("Mocker is nil")
+					}
+					return b.mocker.Mock(cliCtx.Context, &typmock.Context{
+						TypicalContext: c.TypicalContext,
+						DeclStore:      b.declStore,
+					})
+				},
 			},
-			Action: func(cliCtx *cli.Context) (err error) {
-				return b.mock(cliCtx.Context, buildCtx, &MockOption{})
+		)
+	}
+
+	if b.releaser != nil {
+		cmds = append(cmds,
+			&cli.Command{
+				Name:  "release",
+				Usage: "Release the distribution",
+				Flags: []cli.Flag{
+					&cli.BoolFlag{Name: "no-test", Usage: "Release without run unit test"},
+					&cli.BoolFlag{Name: "no-build", Usage: "Release without build"},
+					&cli.BoolFlag{Name: "no-publish", Usage: "Release without create github release"},
+					&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
+					&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
+				},
+				Action: func(cliCtx *cli.Context) (err error) {
+					return b.release(cliCtx.Context, buildCtx, &ReleaseOption{
+						Alpha:     cliCtx.Bool("alpha"),
+						Force:     cliCtx.Bool("force"),
+						NoTest:    cliCtx.Bool("no-test"),
+						NoBuild:   cliCtx.Bool("no-build"),
+						NoPublish: cliCtx.Bool("no-publish"),
+					})
+				},
 			},
-		},
-		{
-			Name:  "release",
-			Usage: "Release the distribution",
-			Flags: []cli.Flag{
-				&cli.BoolFlag{Name: "no-test", Usage: "Release without run unit test"},
-				&cli.BoolFlag{Name: "no-build", Usage: "Release without build"},
-				&cli.BoolFlag{Name: "no-publish", Usage: "Release without create github release"},
-				&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
-				&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
-			},
-			Action: func(cliCtx *cli.Context) (err error) {
-				return b.release(cliCtx.Context, buildCtx, &ReleaseOption{
-					Alpha:     cliCtx.Bool("alpha"),
-					Force:     cliCtx.Bool("force"),
-					NoTest:    cliCtx.Bool("no-test"),
-					NoBuild:   cliCtx.Bool("no-build"),
-					NoPublish: cliCtx.Bool("no-publish"),
-				})
-			},
-		},
+		)
 	}
 	for _, commanders := range b.commanders {
 		cmds = append(cmds, commanders.BuildCommands(c)...)
 	}
 	return cmds
-}
-
-func (b *BuildTool) run(ctx context.Context, c *typbuild.Context, args []string) (err error) {
-	var binary string
-	if binary, err = b.builder.Build(ctx, c); err != nil {
-		return
-	}
-	log.Info("Run the application")
-	cmd := exec.CommandContext(ctx, binary, args...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
-	return cmd.Run()
 }
