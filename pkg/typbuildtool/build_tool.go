@@ -56,9 +56,15 @@ func (b *BuildTool) WithRelease(releaser typrls.Releaser) *BuildTool {
 	return b
 }
 
-// WithMocker return BuildTool with mocker
+// WithMocker return BuildTool with new mocker
 func (b *BuildTool) WithMocker(mocker typmock.Mocker) *BuildTool {
 	b.mocker = mocker
+	return b
+}
+
+// WithCleaner return BuildTool with new cleaner
+func (b *BuildTool) WithCleaner(cleaner typclean.Cleaner) *BuildTool {
+	b.cleaner = cleaner
 	return b
 }
 
@@ -71,6 +77,10 @@ func (b *BuildTool) Validate() (err error) {
 
 	if err = common.Validate(b.mocker); err != nil {
 		return fmt.Errorf("BuildTool: Mocker: %w", err)
+	}
+
+	if err = common.Validate(b.cleaner); err != nil {
+		return fmt.Errorf("BuildTool: Cleaner: %w", err)
 	}
 
 	if err = common.Validate(b.releaser); err != nil {
