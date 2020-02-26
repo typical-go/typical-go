@@ -9,6 +9,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
+	"github.com/typical-go/typical-go/pkg/typclean"
 	"github.com/typical-go/typical-go/pkg/typmock"
 	"github.com/typical-go/typical-go/pkg/typrls"
 
@@ -21,6 +22,7 @@ type BuildTool struct {
 	commanders []Commander
 	builder    typbuild.Builder
 	mocker     typmock.Mocker
+	cleaner    typclean.Cleaner
 	releaser   typrls.Releaser
 
 	declStore *prebld.DeclStore
@@ -31,6 +33,7 @@ func New() *BuildTool {
 	return &BuildTool{
 		builder:  typbuild.New(),
 		mocker:   typmock.New(),
+		cleaner:  typclean.New(),
 		releaser: typrls.New(),
 	}
 }
@@ -100,15 +103,11 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 	if b.builder != nil {
 		cmds = append(cmds, b.buildCommands(c)...)
 	}
+	if b.cleaner != nil {
+		cmds = append(cmds, b.cleanCommands(c)...)
+
+	}
 	cmds = append(cmds,
-		&cli.Command{
-			Name:    "clean",
-			Aliases: []string{"c"},
-			Usage:   "Clean the project from generated file during build time",
-			Action: func(cliCtx *cli.Context) error {
-				return b.clean(cliCtx.Context, c)
-			},
-		},
 		&cli.Command{
 			Name:    "test",
 			Aliases: []string{"t"},
@@ -213,6 +212,22 @@ func (b *BuildTool) mockCommands(c *Context) []*cli.Command {
 				return b.mocker.Mock(cliCtx.Context, &typmock.Context{
 					TypicalContext: c.TypicalContext,
 					DeclStore:      b.declStore,
+				})
+			},
+		},
+	}
+}
+
+func (b *BuildTool) cleanCommands(c *Context) []*cli.Command {
+	return []*cli.Command{
+		{
+			Name:    "clean",
+			Aliases: []string{"c"},
+			Usage:   "Clean the project from generated file during build time",
+			Action: func(cliCtx *cli.Context) error {
+
+				return b.cleaner.Clean(cliCtx.Context, &typclean.Context{
+					TypicalContext: c.TypicalContext,
 				})
 			},
 		},

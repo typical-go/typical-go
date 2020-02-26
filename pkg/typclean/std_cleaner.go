@@ -1,4 +1,4 @@
-package typbuildtool
+package typclean
 
 import (
 	"context"
@@ -7,12 +7,22 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (b *BuildTool) clean(ctx context.Context, c *Context) error {
+// StdCleaner is standard cleaner
+type StdCleaner struct {
+}
+
+// New return new instance of StdCleaner
+func New() *StdCleaner {
+	return &StdCleaner{}
+}
+
+// Clean the project
+func (*StdCleaner) Clean(ctx context.Context, c *Context) (err error) {
 	removeAllFile(c.BinFolder)
 	removeAllFile(c.TempFolder)
 	removeFile(".env") // TODO: configuration clean
 	// removeFile(typenv.GeneratedConstructor) // TODO: app clean
-	return nil
+	return
 }
 
 func removeFile(name string) {
