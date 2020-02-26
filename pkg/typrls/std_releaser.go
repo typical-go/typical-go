@@ -19,11 +19,6 @@ type StdReleaser struct {
 	Tagging
 }
 
-// Publisher reponsible to publish the release to external source
-type Publisher interface {
-	Publish(ctx context.Context, rel *Context, binaries []string) error
-}
-
 // Tagging is setting how to make tag
 type Tagging struct {
 	IncludeBranch   bool
@@ -71,6 +66,54 @@ func (r *StdReleaser) Validate() (err error) {
 	return
 }
 
+// Release this project
+func (r *StdReleaser) Release(ctx context.Context, c *Context) (err error) {
+
+	var (
+		tag      string
+		latest   string
+		gitLogs  []*git.Log
+		binaries []string
+	)
+
+	if err = git.Fetch(ctx); err != nil {
+		return fmt.Errorf("Failed git fetch: %w", err)
+	}
+	defer git.Fetch(ctx)
+
+	tag = r.Tag(ctx, c.Version, c.Alpha)
+
+	if status := git.Status(ctx); status != "" && !c.Force {
+		return fmt.Errorf("Please commit changes first:\n%s", status)
+	}
+	if latest = git.LatestTag(ctx); latest == tag && !c.Force {
+		return fmt.Errorf("%s already released", latest)
+	}
+	if gitLogs = git.Logs(ctx, latest); len(gitLogs) < 1 && !c.Force {
+		return errors.New("No change to be released")
+	}
+
+	for _, target := range r.targets {
+		var binary string
+		if binary, err = build(ctx, c, tag, target); err != nil {
+			return fmt.Errorf("Failed build release: %w", err)
+		}
+		binaries = append(binaries, binary)
+	}
+
+	if !c.NoPublish {
+		if err = r.Publish(ctx, &PublishContext{
+			Context:  c,
+			Tag:      tag,
+			Binaries: binaries,
+			GitLogs:  gitLogs,
+		}); err != nil {
+			return fmt.Errorf("Failed publish: %w", err)
+		}
+	}
+	return
+}
+
 // Tag return relase tag
 func (r *StdReleaser) Tag(ctx context.Context, version string, alpha bool) string {
 	var b strings.Builder
@@ -91,31 +134,19 @@ func (r *StdReleaser) Tag(ctx context.Context, version string, alpha bool) strin
 }
 
 // Publish the release
-func (r *StdReleaser) Publish(ctx context.Context, rel *Context, binaries []string) (err error) {
+func (r *StdReleaser) Publish(ctx context.Context, p *PublishContext) (err error) {
 	for _, publisher := range r.publishers {
-		if err = publisher.Publish(ctx, rel, binaries); err != nil {
+		if err = publisher.Publish(ctx, p); err != nil {
 			return
 		}
 	}
 	return
 }
 
-// Build the distribution
-func (r *StdReleaser) Build(ctx context.Context, rel *Context) (binaries []string, err error) {
-	for _, target := range r.targets {
-		var binary string
-		if binary, err = build(ctx, rel, target); err != nil {
-			return
-		}
-		binaries = append(binaries, binary)
-	}
-	return
-}
-
-func build(ctx context.Context, rel *Context, target Target) (binary string, err error) {
+func build(ctx context.Context, rel *Context, tag string, target Target) (binary string, err error) {
 	goos := target.OS()
 	goarch := target.Arch()
-	binary = strings.Join([]string{rel.Name, rel.Tag, goos, goarch}, "_")
+	binary = strings.Join([]string{rel.Name, tag, goos, goarch}, "_")
 	// TODO: Support CGO
 	cmd := exec.CommandContext(ctx, "go", "build",
 		"-o", fmt.Sprintf("%s/%s", rel.ReleaseFolder, binary),

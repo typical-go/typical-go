@@ -72,6 +72,12 @@ func (b *BuildTool) WithCleaner(cleaner typclean.Cleaner) *BuildTool {
 	return b
 }
 
+// WithTester return BuildTool with new tester
+func (b *BuildTool) WithTester(tester typtest.Tester) *BuildTool {
+	b.tester = tester
+	return b
+}
+
 // Validate build
 func (b *BuildTool) Validate() (err error) {
 
@@ -85,6 +91,10 @@ func (b *BuildTool) Validate() (err error) {
 
 	if err = common.Validate(b.cleaner); err != nil {
 		return fmt.Errorf("BuildTool: Cleaner: %w", err)
+	}
+
+	if err = common.Validate(b.tester); err != nil {
+		return fmt.Errorf("BuildTool: Tester: %w", err)
 	}
 
 	if err = common.Validate(b.releaser); err != nil {
@@ -187,12 +197,25 @@ func (b *BuildTool) releaseCommands(c *Context) []*cli.Command {
 				&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 			},
 			Action: func(cliCtx *cli.Context) (err error) {
-				return b.release(cliCtx.Context, c, &ReleaseOption{
-					Alpha:     cliCtx.Bool("alpha"),
-					Force:     cliCtx.Bool("force"),
-					NoTest:    cliCtx.Bool("no-test"),
-					NoBuild:   cliCtx.Bool("no-build"),
-					NoPublish: cliCtx.Bool("no-publish"),
+				ctx := cliCtx.Context
+
+				if !cliCtx.Bool("no-build") && b.builder != nil {
+					if _, err = b.build(ctx, c); err != nil {
+						return
+					}
+				}
+
+				if !cliCtx.Bool("no-test") && b.tester != nil {
+					if err = b.test(ctx, c); err != nil {
+						return
+					}
+				}
+
+				return b.releaser.Release(ctx, &typrls.Context{
+					TypicalContext: c.TypicalContext,
+					Alpha:          cliCtx.Bool("alpha"),
+					Force:          cliCtx.Bool("force"),
+					NoPublish:      cliCtx.Bool("no-publish"),
 				})
 			},
 		},
