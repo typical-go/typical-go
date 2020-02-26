@@ -13,7 +13,7 @@ import (
 
 const (
 	// Version of Typical-Go
-	Version = "0.9.35"
+	Version = "0.9.36"
 )
 
 var (
