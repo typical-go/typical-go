@@ -13,9 +13,9 @@ import (
 
 // StdReleaser responsible to release distruction
 type StdReleaser struct {
-	name       string
-	targets    []Target
-	publishers []Publisher
+	targets       []Target
+	publishers    []Publisher
+	releaseFolder string
 	Tagging
 }
 
@@ -32,6 +32,7 @@ func New() *StdReleaser {
 			"linux/amd64",
 			"darwin/amd64",
 		},
+		releaseFolder: "release",
 	}
 }
 
@@ -41,15 +42,15 @@ func (r *StdReleaser) WithTarget(targets ...Target) *StdReleaser {
 	return r
 }
 
-// WithName to set name and return its instance
-func (r *StdReleaser) WithName(name string) *StdReleaser {
-	r.name = name
+// WithPublisher return StdReleaser with new publisher
+func (r *StdReleaser) WithPublisher(publishers ...Publisher) *StdReleaser {
+	r.publishers = publishers
 	return r
 }
 
-// WithPublisher to set the publisher and return its instance
-func (r *StdReleaser) WithPublisher(publishers ...Publisher) *StdReleaser {
-	r.publishers = publishers
+// WithReleaseFolder return StdReleaser with new release folder
+func (r *StdReleaser) WithReleaseFolder(releaseFolder string) *StdReleaser {
+	r.releaseFolder = releaseFolder
 	return r
 }
 
@@ -95,7 +96,7 @@ func (r *StdReleaser) Release(ctx context.Context, c *Context) (err error) {
 
 	for _, target := range r.targets {
 		var binary string
-		if binary, err = build(ctx, c, tag, target); err != nil {
+		if binary, err = r.build(ctx, c, tag, target); err != nil {
 			return fmt.Errorf("Failed build release: %w", err)
 		}
 		binaries = append(binaries, binary)
@@ -143,13 +144,13 @@ func (r *StdReleaser) Publish(ctx context.Context, p *PublishContext) (err error
 	return
 }
 
-func build(ctx context.Context, rel *Context, tag string, target Target) (binary string, err error) {
+func (r *StdReleaser) build(ctx context.Context, rel *Context, tag string, target Target) (binary string, err error) {
 	goos := target.OS()
 	goarch := target.Arch()
 	binary = strings.Join([]string{rel.Name, tag, goos, goarch}, "_")
 	// TODO: Support CGO
 	cmd := exec.CommandContext(ctx, "go", "build",
-		"-o", fmt.Sprintf("%s/%s", rel.ReleaseFolder, binary),
+		"-o", fmt.Sprintf("%s/%s", r.releaseFolder, binary),
 		"-ldflags", "-w -s",
 		fmt.Sprintf("./%s/%s", rel.CmdFolder, rel.Name),
 	)

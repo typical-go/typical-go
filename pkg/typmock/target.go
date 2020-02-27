@@ -21,7 +21,7 @@ func createMockTarget(c *Context, decl *prebld.Declaration) *mockTarget {
 		dir     = filepath.Dir(decl.Path)
 		dirDest = dir[:len(dir)-len(pkg)]
 		srcPkg  = fmt.Sprintf("%s/%s", c.ModulePackage, dir)
-		mockPkg = fmt.Sprintf("%s_%s", c.MockFolder, pkg)
+		mockPkg = fmt.Sprintf("mock_%s", pkg)
 		dest    = fmt.Sprintf("%s%s/%s.go", dirDest, mockPkg, strcase.ToSnake(decl.SourceName))
 	)
 	return &mockTarget{

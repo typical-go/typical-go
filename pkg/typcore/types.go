@@ -9,14 +9,10 @@ type App interface {
 	Run(*Descriptor) error
 }
 
-// -----------------------------------------------------
-
 // BuildTool interface
 type BuildTool interface {
 	Run(*TypicalContext) error
 }
-
-// -----------------------------------------------------
 
 // Configuration is interface of configuration
 type Configuration interface {
@@ -24,14 +20,10 @@ type Configuration interface {
 	Setup() error
 }
 
-// -----------------------------------------------------
-
 // Sourceable mean the object can return the sources
 type Sourceable interface {
 	ProjectSources() []string
 }
-
-// -----------------------------------------------------
 
 // TempFolder contain temporary information for typical build
 type TempFolder string

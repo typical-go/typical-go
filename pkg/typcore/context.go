@@ -11,11 +11,9 @@ import (
 // TypicalContext is context of typical build tool
 type TypicalContext struct {
 	*Descriptor
-	BinFolder     string
-	CmdFolder     string
-	TempFolder    string // TODO: temp folder is not part project layout as it is constant for all typical-go
-	MockFolder    string // TODO: mock folder is not part project layout but rather mock generator
-	ReleaseFolder string // TODO: consider release folder as project layout
+	BinFolder  string
+	CmdFolder  string
+	TempFolder string // TODO: temp folder is not part project layout as it is constant for all typical-go
 
 	Dirs           []string
 	Files          []string
@@ -28,11 +26,9 @@ func CreateContext(d *Descriptor) (*TypicalContext, error) {
 	c := &TypicalContext{
 		Descriptor: d,
 
-		CmdFolder:     DefaultCmdFolder,
-		BinFolder:     DefaultBinFolder,
-		TempFolder:    DefaultTempFolder,
-		MockFolder:    "mock",
-		ReleaseFolder: "release",
+		CmdFolder:  DefaultCmdFolder,
+		BinFolder:  DefaultBinFolder,
+		TempFolder: DefaultTempFolder,
 
 		ModulePackage:  DefaultModulePackage,
 		ProjectSources: RetrieveProjectSources(d),
