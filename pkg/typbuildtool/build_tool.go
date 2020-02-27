@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"os/exec"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
@@ -197,11 +196,11 @@ func (b *BuildTool) runCommand(c *Context) *cli.Command {
 			}
 
 			log.Info("Run the application")
-			cmd := exec.CommandContext(ctx, binary, cliCtx.Args().Slice()...)
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			cmd.Stdin = os.Stdin
-			return cmd.Run()
+			return b.runner.Run(ctx, &typrun.Context{
+				TypicalContext: c.TypicalContext,
+				Binary:         binary,
+				Args:           cliCtx.Args().Slice(),
+			})
 		},
 	}
 }
