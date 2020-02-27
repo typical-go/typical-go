@@ -3,7 +3,7 @@ package typmock
 import (
 	"context"
 
-	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
+	"github.com/typical-go/typical-go/pkg/typast"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
@@ -16,5 +16,5 @@ type Mocker interface {
 // Context of mock
 type Context struct {
 	*typcore.TypicalContext
-	*prebld.DeclStore
+	*typast.Store
 }

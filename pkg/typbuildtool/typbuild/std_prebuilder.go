@@ -10,8 +10,8 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/runnerkit"
-	"github.com/typical-go/typical-go/pkg/typbuild/internal/tmpl"
-	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
+	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typbuildtool/typbuild/internal/tmpl"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -20,7 +20,7 @@ type stdPrebuilder struct{}
 
 func (a *stdPrebuilder) Prebuild(ctx context.Context, c *Context) (err error) {
 	var constructors common.Strings
-	if err = c.EachAnnotation("constructor", prebld.FunctionType, func(decl *prebld.Declaration, ann *prebld.Annotation) (err error) {
+	if err = c.EachAnnotation("constructor", typast.FunctionType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
 		constructors.Append(fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
 		return
 	}); err != nil {

@@ -1,4 +1,4 @@
-package prebld
+package typast
 
 import (
 	"go/ast"
@@ -7,8 +7,8 @@ import (
 )
 
 // Walk the source code to get autowire and automock
-func Walk(filenames []string) (store *DeclStore, err error) {
-	store = &DeclStore{}
+func Walk(filenames []string) (store *Store, err error) {
+	store = &Store{}
 	fset := token.NewFileSet() // positions are relative to fset
 	for _, filename := range filenames {
 		var f *ast.File

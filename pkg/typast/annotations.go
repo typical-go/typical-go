@@ -1,4 +1,4 @@
-package prebld
+package typast
 
 import (
 	"strings"

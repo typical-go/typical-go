@@ -2,7 +2,7 @@ package typical
 
 import (
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
-	"github.com/typical-go/typical-go/pkg/typrls"
+	"github.com/typical-go/typical-go/pkg/typbuildtool/typrls"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/typicalgo"

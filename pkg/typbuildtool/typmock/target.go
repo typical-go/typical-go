@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/iancoleman/strcase"
-	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
+	"github.com/typical-go/typical-go/pkg/typast"
 )
 
 type mockTarget struct {
@@ -15,7 +15,7 @@ type mockTarget struct {
 	dest    string
 }
 
-func createMockTarget(c *Context, decl *prebld.Declaration) *mockTarget {
+func createMockTarget(c *Context, decl *typast.Declaration) *mockTarget {
 	var (
 		pkg     = decl.File.Name.Name
 		dir     = filepath.Dir(decl.Path)

@@ -10,7 +10,7 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
+	"github.com/typical-go/typical-go/pkg/typast"
 )
 
 // StdMocker is standard mocker
@@ -28,7 +28,7 @@ func (b *StdMocker) Mock(ctx context.Context, c *Context) (err error) {
 		targets []*mockTarget
 	)
 
-	if err = c.EachAnnotation("mock", prebld.InterfaceType, func(decl *prebld.Declaration, ann *prebld.Annotation) (err error) {
+	if err = c.EachAnnotation("mock", typast.InterfaceType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
 		targets = append(targets, createMockTarget(c, decl))
 		return
 	}); err != nil {

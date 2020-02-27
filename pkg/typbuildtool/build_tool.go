@@ -8,12 +8,13 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typbuild"
-	"github.com/typical-go/typical-go/pkg/typbuild/prebld"
-	"github.com/typical-go/typical-go/pkg/typclean"
-	"github.com/typical-go/typical-go/pkg/typmock"
-	"github.com/typical-go/typical-go/pkg/typrls"
-	"github.com/typical-go/typical-go/pkg/typtest"
+
+	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typbuildtool/typbuild"
+	"github.com/typical-go/typical-go/pkg/typbuildtool/typclean"
+	"github.com/typical-go/typical-go/pkg/typbuildtool/typmock"
+	"github.com/typical-go/typical-go/pkg/typbuildtool/typrls"
+	"github.com/typical-go/typical-go/pkg/typbuildtool/typtest"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
@@ -28,7 +29,7 @@ type BuildTool struct {
 	tester     typtest.Tester
 	releaser   typrls.Releaser
 
-	declStore *prebld.DeclStore
+	store *typast.Store
 }
 
 // New return new instance of build
@@ -106,7 +107,7 @@ func (b *BuildTool) Validate() (err error) {
 
 // Run build tool
 func (b *BuildTool) Run(t *typcore.TypicalContext) (err error) {
-	if b.declStore, err = prebld.Walk(t.Files); err != nil {
+	if b.store, err = typast.Walk(t.Files); err != nil {
 		return
 	}
 
@@ -233,7 +234,7 @@ func (b *BuildTool) mockCommands(c *Context) []*cli.Command {
 				}
 				return b.mocker.Mock(cliCtx.Context, &typmock.Context{
 					TypicalContext: c.TypicalContext,
-					DeclStore:      b.declStore,
+					Store:          b.store,
 				})
 			},
 		},
@@ -277,7 +278,7 @@ func (b *BuildTool) test(ctx context.Context, c *Context) error {
 func (b *BuildTool) build(ctx context.Context, c *Context) (out string, err error) {
 	return b.builder.Build(ctx, &typbuild.Context{
 		TypicalContext: c.TypicalContext,
-		DeclStore:      b.declStore,
+		Store:          b.store,
 	})
 
 }

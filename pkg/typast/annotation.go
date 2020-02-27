@@ -1,4 +1,4 @@
-package prebld
+package typast
 
 // Annotation contain extra additional information
 type Annotation struct {
