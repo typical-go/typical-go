@@ -10,15 +10,25 @@ import (
 )
 
 // StdTester is standard tester
-type StdTester struct{}
+type StdTester struct {
+	coverProfile string
+}
 
 // New return new instance of StdTester
 func New() *StdTester {
-	return &StdTester{}
+	return &StdTester{
+		coverProfile: "cover.out",
+	}
+}
+
+// WithCoverProfile return StdTester with new cover profile
+func (s *StdTester) WithCoverProfile(coverProfile string) *StdTester {
+	s.coverProfile = coverProfile
+	return s
 }
 
 // Test the project
-func (*StdTester) Test(ctx context.Context, c *Context) (err error) {
+func (s *StdTester) Test(ctx context.Context, c *Context) (err error) {
 
 	log.Info("Run testings")
 
@@ -27,7 +37,7 @@ func (*StdTester) Test(ctx context.Context, c *Context) (err error) {
 		targets = append(targets, fmt.Sprintf("./%s/...", source))
 	}
 
-	args := []string{"test", "-coverprofile=cover.out", "-race"}
+	args := []string{"test", fmt.Sprintf("-coverprofile=%s", s.coverProfile), "-race"}
 	args = append(args, targets...)
 
 	cmd := exec.CommandContext(ctx, "go", args...)
