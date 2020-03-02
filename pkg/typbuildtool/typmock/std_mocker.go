@@ -15,21 +15,35 @@ import (
 
 // StdMocker is standard mocker
 type StdMocker struct {
+	targetMap map[string][]*Target
 }
 
 // New return new instance of StdMocker
 func New() *StdMocker {
-	return &StdMocker{}
+	return &StdMocker{
+		targetMap: make(map[string][]*Target),
+	}
+}
+
+// Put new target
+func (b *StdMocker) Put(target *Target) {
+	key := target.MockDir
+	if _, ok := b.targetMap[key]; ok {
+		b.targetMap[key] = append(b.targetMap[key], target)
+	} else {
+		b.targetMap[key] = []*Target{target}
+	}
+}
+
+// TargetMap return targetMap field
+func (b *StdMocker) TargetMap() map[string][]*Target {
+	return b.targetMap
 }
 
 // Mock the project
 func (b *StdMocker) Mock(ctx context.Context, c *Context) (err error) {
-	var (
-		targets []*mockTarget
-	)
-
 	if err = c.EachAnnotation("mock", typast.InterfaceType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
-		targets = append(targets, createMockTarget(c, decl))
+		b.Put(createTarget(c, decl))
 		return
 	}); err != nil {
 		return
@@ -44,18 +58,25 @@ func (b *StdMocker) Mock(ctx context.Context, c *Context) (err error) {
 		}
 	}
 
-	for _, target := range targets {
-		log.Infof("Mock %s", target.srcName)
-		cmd := exec.CommandContext(ctx, mockgen,
-			"-destination", target.dest,
-			"-package", target.mockPkg,
-			target.srcPkg,
-			target.srcName,
-		)
-		cmd.Stderr = os.Stderr
-		if err := cmd.Run(); err != nil {
-			log.Errorf("Mock '%s' failed: %w", target, err)
+	for pkg, targets := range b.targetMap {
+
+		log.Infof("Remove package: %s", pkg)
+		os.RemoveAll(pkg)
+
+		for _, target := range targets {
+			log.Infof("Generate mock: %s", target.Dest)
+			cmd := exec.CommandContext(ctx, mockgen,
+				"-destination", target.Dest,
+				"-package", target.MockPkg,
+				target.SrcPkg,
+				target.SrcName,
+			)
+			cmd.Stderr = os.Stderr
+			if err := cmd.Run(); err != nil {
+				log.Errorf("Mock '%s' failed: %w", target, err)
+			}
 		}
 	}
+
 	return
 }

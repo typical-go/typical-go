@@ -13,7 +13,7 @@ type TypicalContext struct {
 	*Descriptor
 	BinFolder  string
 	CmdFolder  string
-	TempFolder string // TODO: temp folder is not part project layout as it is constant for all typical-go
+	TempFolder string
 
 	Dirs           []string
 	Files          []string

@@ -8,26 +8,31 @@ import (
 	"github.com/typical-go/typical-go/pkg/typast"
 )
 
-type mockTarget struct {
-	srcPkg  string
-	srcName string
-	mockPkg string
-	dest    string
+// Target to be mocked
+type Target struct {
+	SrcDir  string
+	SrcPkg  string
+	SrcName string
+	MockPkg string
+	MockDir string
+	Dest    string
 }
 
-func createMockTarget(c *Context, decl *typast.Declaration) *mockTarget {
+func createTarget(c *Context, decl *typast.Declaration) *Target {
 	var (
 		pkg     = decl.File.Name.Name
 		dir     = filepath.Dir(decl.Path)
 		dirDest = dir[:len(dir)-len(pkg)]
 		srcPkg  = fmt.Sprintf("%s/%s", c.ModulePackage, dir)
 		mockPkg = fmt.Sprintf("mock_%s", pkg)
-		dest    = fmt.Sprintf("%s%s/%s.go", dirDest, mockPkg, strcase.ToSnake(decl.SourceName))
+		mockDir = fmt.Sprintf("%s%s", dirDest, mockPkg)
+		dest    = fmt.Sprintf("%s/%s.go", mockDir, strcase.ToSnake(decl.SourceName))
 	)
-	return &mockTarget{
-		srcPkg:  srcPkg,
-		srcName: decl.SourceName,
-		mockPkg: mockPkg,
-		dest:    dest,
+	return &Target{
+		SrcPkg:  srcPkg,
+		SrcName: decl.SourceName,
+		MockPkg: mockPkg,
+		MockDir: mockDir,
+		Dest:    dest,
 	}
 }
