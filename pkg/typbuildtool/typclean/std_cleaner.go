@@ -20,8 +20,6 @@ func New() *StdCleaner {
 func (*StdCleaner) Clean(ctx context.Context, c *Context) (err error) {
 	removeAllFile(c.BinFolder)
 	removeAllFile(c.TempFolder)
-	removeFile(".env") // TODO: configuration clean
-	// removeFile(typenv.GeneratedConstructor) // TODO: app clean
 	return
 }
 
