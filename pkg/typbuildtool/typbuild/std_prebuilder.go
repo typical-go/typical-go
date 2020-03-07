@@ -1,7 +1,6 @@
 package typbuild
 
 import (
-	"context"
 	"fmt"
 	"go/build"
 	"os"
@@ -18,24 +17,25 @@ import (
 
 type stdPrebuilder struct{}
 
-func (a *stdPrebuilder) Prebuild(ctx context.Context, c *Context) (err error) {
-	var constructors common.Strings
+func (a *stdPrebuilder) Prebuild(c *Context) (err error) {
+	var constructors []string
 	if err = c.EachAnnotation("constructor", typast.FunctionType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
-		constructors.Append(fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
+		constructors = append(constructors, fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
 		return
 	}); err != nil {
 		return
 	}
 	log.Info("Generate constructors")
 	target := fmt.Sprintf("%s/%s/constructor_do_not_edit.go", c.CmdFolder, c.Name)
-	if err = a.generateConstructor(ctx, target, c, constructors); err != nil {
+	if err = a.generateConstructor(c, target, constructors); err != nil {
 		return
 	}
 	return
 }
 
-func (a *stdPrebuilder) generateConstructor(ctx context.Context, target string, c *Context, constructors common.Strings) (err error) {
+func (a *stdPrebuilder) generateConstructor(c *Context, target string, constructors []string) (err error) {
 	defer common.ElapsedTimeFn("Generate constructor")()
+	ctx := c.Cli.Context
 	imports := []string{}
 	for _, dir := range c.Dirs {
 		if !strings.Contains(dir, "internal") {

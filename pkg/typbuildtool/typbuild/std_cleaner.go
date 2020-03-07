@@ -1,7 +1,6 @@
-package typclean
+package typbuild
 
 import (
-	"context"
 	"os"
 
 	log "github.com/sirupsen/logrus"
@@ -11,13 +10,13 @@ import (
 type StdCleaner struct {
 }
 
-// New return new instance of StdCleaner
-func New() *StdCleaner {
+// NewCleaner return new instance of StdCleaner
+func NewCleaner() *StdCleaner {
 	return &StdCleaner{}
 }
 
 // Clean the project
-func (*StdCleaner) Clean(ctx context.Context, c *Context) (err error) {
+func (*StdCleaner) Clean(c *Context) (err error) {
 	removeAllFile(c.BinFolder)
 	removeAllFile(c.TempFolder)
 	return

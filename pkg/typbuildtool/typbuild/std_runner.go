@@ -1,7 +1,6 @@
-package typrun
+package typbuild
 
 import (
-	"context"
 	"os"
 	"os/exec"
 )
@@ -10,14 +9,14 @@ import (
 type StdRunner struct {
 }
 
-// New instance of StdRunner
-func New() *StdRunner {
+// NewRunner return new instance of StdRunner
+func NewRunner() *StdRunner {
 	return &StdRunner{}
 }
 
 // Run the project
-func (*StdRunner) Run(ctx context.Context, c *Context) (err error) {
-	cmd := exec.CommandContext(ctx, c.Binary, c.Args...)
+func (*StdRunner) Run(c *RunContext) (err error) {
+	cmd := exec.CommandContext(c.Cli.Context, c.Binary, c.Cli.Args().Slice()...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin

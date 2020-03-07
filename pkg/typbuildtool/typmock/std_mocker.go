@@ -1,7 +1,6 @@
 package typmock
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -41,7 +40,7 @@ func (b *StdMocker) TargetMap() map[string][]*Target {
 }
 
 // Mock the project
-func (b *StdMocker) Mock(ctx context.Context, c *Context) (err error) {
+func (b *StdMocker) Mock(c *Context) (err error) {
 	if err = c.EachAnnotation("mock", typast.InterfaceType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
 		b.Put(createTarget(c, decl))
 		return
@@ -50,6 +49,7 @@ func (b *StdMocker) Mock(ctx context.Context, c *Context) (err error) {
 	}
 
 	mockgen := fmt.Sprintf("%s/bin/mockgen", c.TempFolder)
+	ctx := c.Cli.Context
 
 	if !common.IsFileExist(mockgen) {
 		log.Info("Build mockgen")

@@ -1,7 +1,6 @@
-package typtest
+package typbuild
 
 import (
-	"context"
 	"fmt"
 	"os"
 
@@ -15,8 +14,8 @@ type StdTester struct {
 	coverProfile string
 }
 
-// New return new instance of StdTester
-func New() *StdTester {
+// NewTester return new instance of StdTester
+func NewTester() *StdTester {
 	return &StdTester{
 		coverProfile: "cover.out",
 	}
@@ -29,8 +28,9 @@ func (s *StdTester) WithCoverProfile(coverProfile string) *StdTester {
 }
 
 // Test the project
-func (s *StdTester) Test(ctx context.Context, c *Context) (err error) {
+func (s *StdTester) Test(c *Context) (err error) {
 	var targets []string
+	ctx := c.Cli.Context
 	for _, source := range c.ProjectSources {
 		targets = append(targets, fmt.Sprintf("./%s/...", source))
 	}

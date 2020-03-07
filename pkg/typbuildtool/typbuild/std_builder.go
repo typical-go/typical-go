@@ -1,7 +1,6 @@
 package typbuild
 
 import (
-	"context"
 	"fmt"
 	"os"
 
@@ -15,8 +14,8 @@ type StdBuilder struct {
 	prebuilders []Prebuilder
 }
 
-// New return new instance of standard builder
-func New() *StdBuilder {
+// NewBuilder return new instance of standard builder
+func NewBuilder() *StdBuilder {
 	return &StdBuilder{
 		prebuilders: []Prebuilder{
 			&stdPrebuilder{},
@@ -31,10 +30,12 @@ func (b *StdBuilder) AppendPrebuilder(prebuilders ...Prebuilder) *StdBuilder {
 }
 
 // Build the project
-func (b *StdBuilder) Build(ctx context.Context, c *Context) (binary string, err error) {
+func (b *StdBuilder) Build(c *Context) (binary string, err error) {
 	binary = fmt.Sprintf("%s/%s", c.BinFolder, c.Name) // TODO: move to context
 	src := fmt.Sprintf("./%s/%s", c.CmdFolder, c.Name) // TODO: move to context
-	if err = b.prebuild(ctx, c); err != nil {
+	ctx := c.Cli.Context
+
+	if err = b.prebuild(c); err != nil {
 		return
 	}
 
@@ -46,9 +47,9 @@ func (b *StdBuilder) Build(ctx context.Context, c *Context) (binary string, err 
 	return binary, cmd.Run()
 }
 
-func (b *StdBuilder) prebuild(ctx context.Context, c *Context) (err error) {
+func (b *StdBuilder) prebuild(c *Context) (err error) {
 	for _, prebuilder := range b.prebuilders {
-		if err = prebuilder.Prebuild(ctx, c); err != nil {
+		if err = prebuilder.Prebuild(c); err != nil {
 			return
 		}
 	}
