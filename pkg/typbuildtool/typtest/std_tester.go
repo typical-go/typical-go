@@ -4,7 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"os/exec"
+
+	"github.com/typical-go/typical-go/pkg/buildkit"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -29,19 +30,19 @@ func (s *StdTester) WithCoverProfile(coverProfile string) *StdTester {
 
 // Test the project
 func (s *StdTester) Test(ctx context.Context, c *Context) (err error) {
-
-	log.Info("Run testings")
-
 	var targets []string
 	for _, source := range c.ProjectSources {
 		targets = append(targets, fmt.Sprintf("./%s/...", source))
 	}
 
-	args := []string{"test", fmt.Sprintf("-coverprofile=%s", s.coverProfile), "-race"}
-	args = append(args, targets...)
+	gotest := buildkit.NewGoTest(targets...)
+	gotest.WithCoverProfile(s.coverProfile)
+	gotest.WithRace(true)
 
-	cmd := exec.CommandContext(ctx, "go", args...)
+	cmd := gotest.Command(ctx)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+
+	log.Info("Run testings")
 	return cmd.Run()
 }
