@@ -3,8 +3,6 @@ package typicalgo
 import (
 	"os"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
@@ -57,7 +55,6 @@ func (t *TypicalGo) Run(d *typcore.Descriptor) (err error) {
 				}
 
 				if modulePackage == "" {
-					log.Info("Retrieve module-package")
 					modulePackage = typcore.RetrieveModulePackage(root)
 				}
 
