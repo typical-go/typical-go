@@ -43,8 +43,8 @@ func (c *Configuration) WithLoader(loader Loader) *Configuration {
 	return c
 }
 
-// WithConfigure to set configurer
-func (c *Configuration) WithConfigure(configurers ...Configurer) *Configuration {
+// AppendConfigurer to append configurer
+func (c *Configuration) AppendConfigurer(configurers ...Configurer) *Configuration {
 	c.configurers = append(c.configurers, configurers...)
 	return c
 }
