@@ -14,7 +14,7 @@ fi
 # project want to use its parent directory as typical-go
 # source. Module Package is module name in go.mod file 
 # or working path if the project in $GOPATH
-MODPKG="github.com/typical-go/typical-go/example"
+MODPKG="github.com/typical-go/typical-go/examples/hello-world-with-config"
 
 $TYPGO wrap-me -tmp=$TYPTMP -module-package=$MODPKG
 $TYPTMP/bin/build-tool $@

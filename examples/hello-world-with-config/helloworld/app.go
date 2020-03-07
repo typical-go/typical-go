@@ -3,7 +3,7 @@ package helloworld
 import (
 	"fmt"
 
-	"github.com/typical-go/typical-go/example/helloworld/config"
+	"github.com/typical-go/typical-go/examples/hello-world-with-config/helloworld/config"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typdep"
 )
