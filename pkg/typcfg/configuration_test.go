@@ -25,7 +25,7 @@ func TestNewConfiguration(t *testing.T) {
 func TestConfiguration(t *testing.T) {
 	configuration := typcfg.New().
 		WithLoader(&dummyLoader{}).
-		WithConfigure(&dummyConfigurer1{}, &dummyConfigurer2{})
+		AppendConfigurer(&dummyConfigurer1{}, &dummyConfigurer2{})
 	store := configuration.Store()
 	require.IsType(t, &dummyLoader{}, configuration.Loader())
 	require.Equal(t, []*typdep.Constructor{constructor1, constructor2}, store.Provide())
@@ -53,9 +53,9 @@ func (*dummyLoader) Load(string, interface{}) error { return nil }
 
 type dummyConfigurer1 struct{}
 
-func (*dummyConfigurer1) Configure(loader typcfg.Loader) *typcfg.Detail {
-	return &typcfg.Detail{
-		Prefix: "prefix1",
+func (*dummyConfigurer1) Configure(loader typcfg.Loader) *typcfg.Configuration {
+	return &typcfg.Configuration{
+		Name: "prefix1",
 		Spec: &struct {
 			ID     int64 ``
 			Volume int   ``
@@ -66,9 +66,9 @@ func (*dummyConfigurer1) Configure(loader typcfg.Loader) *typcfg.Detail {
 
 type dummyConfigurer2 struct{}
 
-func (*dummyConfigurer2) Configure(loader typcfg.Loader) *typcfg.Detail {
-	return &typcfg.Detail{
-		Prefix: "prefix2",
+func (*dummyConfigurer2) Configure(loader typcfg.Loader) *typcfg.Configuration {
+	return &typcfg.Configuration{
+		Name: "prefix2",
 		Spec: &struct {
 			Title   string `default:"default-title"`
 			Content string `default:"default-content"`

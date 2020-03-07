@@ -10,19 +10,19 @@ import (
 
 // Module of application
 type Module struct {
-	Prefix string
+	ConfigName string
 }
 
 // New return new instance of application
 func New() *Module {
 	return &Module{
-		Prefix: "APP",
+		ConfigName: "APP",
 	}
 }
 
-// WithPrefix return Module with new prefix
-func (m *Module) WithPrefix(prefix string) *Module {
-	m.Prefix = prefix
+// WithConfigPrefix return Module with new config prefix
+func (m *Module) WithConfigPrefix(name string) *Module {
+	m.ConfigName = name
 	return m
 }
 
@@ -35,13 +35,13 @@ func (*Module) EntryPoint() *typdep.Invocation {
 }
 
 // Configure the application
-func (m *Module) Configure(loader typcfg.Loader) *typcfg.Detail {
-	return &typcfg.Detail{
-		Prefix: m.Prefix,
-		Spec:   &config.Config{},
+func (m *Module) Configure(loader typcfg.Loader) *typcfg.Configuration {
+	return &typcfg.Configuration{
+		Name: m.ConfigName,
+		Spec: &config.Config{},
 		Constructor: typdep.NewConstructor(
 			func() (cfg config.Config, err error) {
-				err = loader.Load(m.Prefix, &cfg)
+				err = loader.Load(m.ConfigName, &cfg)
 				return
 			}),
 	}

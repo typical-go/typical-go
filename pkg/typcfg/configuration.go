@@ -1,55 +1,150 @@
 package typcfg
 
-import "github.com/typical-go/typical-go/pkg/typdep"
+import (
+	"fmt"
+	"io"
+	"os"
+	"reflect"
+	"strconv"
+	"strings"
 
-// Configuration of typical project
-type Configuration struct {
+	log "github.com/sirupsen/logrus"
+	"github.com/typical-go/typical-go/pkg/typcore"
+)
+
+const (
+	defaultDotEnv = ".env"
+)
+
+// TypicalConfiguration of typical project
+type TypicalConfiguration struct {
 	loader      Loader
 	configurers []Configurer
 }
 
-// Loader responsible to load config
-type Loader interface {
-	Load(string, interface{}) error
-}
-
-// Configurer responsible to create config
-type Configurer interface {
-	Configure(loader Loader) *Detail
-}
-
-// Detail contain detail of config
-type Detail struct {
-	// Prefix is used by ConfigLoader to retrieve configuration value
-	Prefix string
-
-	// Spec is specification of config object. Spec used to generate the .env file
-	Spec interface{}
-
-	// Constructor is constructor function to create config object
-	Constructor *typdep.Constructor
-}
-
 // New return new instance of Configuration
-func New() *Configuration {
-	return &Configuration{
+func New() *TypicalConfiguration {
+	return &TypicalConfiguration{
 		loader: &defaultLoader{},
 	}
 }
 
 // WithLoader to set loader
-func (c *Configuration) WithLoader(loader Loader) *Configuration {
+func (c *TypicalConfiguration) WithLoader(loader Loader) *TypicalConfiguration {
 	c.loader = loader
 	return c
 }
 
 // AppendConfigurer to append configurer
-func (c *Configuration) AppendConfigurer(configurers ...Configurer) *Configuration {
+func (c *TypicalConfiguration) AppendConfigurer(configurers ...Configurer) *TypicalConfiguration {
 	c.configurers = append(c.configurers, configurers...)
 	return c
 }
 
 // Loader of configuration
-func (c *Configuration) Loader() Loader {
+func (c *TypicalConfiguration) Loader() Loader {
 	return c.loader
+}
+
+// Setup the configuration to be ready to use for the app and build-tool
+func (c *TypicalConfiguration) Setup() (err error) {
+	var (
+		f *os.File
+	)
+	if _, err = os.Stat(defaultDotEnv); os.IsNotExist(err) {
+		log.Infof("Generate new project environment at '%s'", defaultDotEnv)
+		if f, err = os.Create(defaultDotEnv); err != nil {
+			return
+		}
+		defer f.Close()
+		if err = c.Write(f); err != nil {
+			return
+		}
+	}
+	// TODO: load env
+	return
+}
+
+// Write typical configuration
+func (c *TypicalConfiguration) Write(w io.Writer) (err error) {
+	store := c.Store()
+	for _, field := range store.Fields(store.Keys()...) {
+		var v interface{}
+		if field.IsZero {
+			v = field.Default
+		} else {
+			v = field.Value
+		}
+		if _, err = fmt.Fprintf(w, "%s=%v\n", field.Name, v); err != nil {
+			return
+		}
+	}
+	return
+}
+
+// Store to return config store that contain config informatino
+func (c *TypicalConfiguration) Store() *typcore.ConfigStore {
+	store := new(typcore.ConfigStore)
+	for _, configurer := range c.configurers {
+		detail := configurer.Configure(c.loader)
+		if detail == nil {
+			panic("Configure return nil detail")
+		}
+		keys, fieldMap := c.fieldmap(detail.Name, detail.Spec)
+		store.Add(&typcore.ConfigBean{
+			Constructor: detail.Constructor,
+			Keys:        keys,
+			FieldMap:    fieldMap,
+		})
+	}
+
+	return store
+}
+
+func (c *TypicalConfiguration) fieldmap(prefix string, spec interface{}) (keys []string, m map[string]*typcore.ConfigField) {
+	m = make(map[string]*typcore.ConfigField)
+	val := reflect.Indirect(reflect.ValueOf(spec))
+	typ := val.Type()
+	for i := 0; i < typ.NumField(); i++ {
+		field := typ.Field(i)
+		if !fieldIgnored(field) {
+			name := fmt.Sprintf("%s_%s", prefix, fieldName(field))
+			m[name] = &typcore.ConfigField{
+				Name:     name,
+				Type:     field.Type.Name(),
+				Default:  fieldDefault(field),
+				Required: fieldRequired(field),
+				Value:    val.Field(i).Interface(),
+				IsZero:   val.Field(i).IsZero(),
+			}
+			keys = append(keys, name)
+		}
+	}
+	return
+}
+
+func fieldRequired(field reflect.StructField) (required bool) {
+	if v, ok := field.Tag.Lookup("required"); ok {
+		required, _ = strconv.ParseBool(v)
+	}
+	return
+}
+
+func fieldIgnored(field reflect.StructField) (ignored bool) {
+	if v, ok := field.Tag.Lookup("ignored"); ok {
+		ignored, _ = strconv.ParseBool(v)
+	}
+	return
+}
+
+func fieldDefault(field reflect.StructField) string {
+	return field.Tag.Get("default")
+}
+
+func fieldName(field reflect.StructField) (name string) {
+	name = strings.ToUpper(field.Name)
+	if v, ok := field.Tag.Lookup("envconfig"); ok {
+		name = v
+	}
+	return
 }
