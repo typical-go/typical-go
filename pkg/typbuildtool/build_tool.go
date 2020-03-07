@@ -20,8 +20,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// BuildTool is typical Build Tool for golang
-type BuildTool struct {
+// TypicalBuildTool is typical Build Tool for golang project
+type TypicalBuildTool struct {
 	commanders []Commander
 	builder    typbuild.Builder
 	runner     typrun.Runner
@@ -34,8 +34,8 @@ type BuildTool struct {
 }
 
 // New return new instance of build
-func New() *BuildTool {
-	return &BuildTool{
+func New() *TypicalBuildTool {
+	return &TypicalBuildTool{
 		builder:  typbuild.New(),
 		runner:   typrun.New(),
 		mocker:   typmock.New(),
@@ -46,49 +46,49 @@ func New() *BuildTool {
 }
 
 // AppendCommander to return BuildTool with appended commander
-func (b *BuildTool) AppendCommander(commanders ...Commander) *BuildTool {
+func (b *TypicalBuildTool) AppendCommander(commanders ...Commander) *TypicalBuildTool {
 	b.commanders = append(b.commanders, commanders...)
 	return b
 }
 
 // WithtBuilder return  BuildTool with new builder
-func (b *BuildTool) WithtBuilder(builder typbuild.Builder) *BuildTool {
+func (b *TypicalBuildTool) WithtBuilder(builder typbuild.Builder) *TypicalBuildTool {
 	b.builder = builder
 	return b
 }
 
 // WithRunner return BuildTool with appended runner
-func (b *BuildTool) WithRunner(runner typrun.Runner) *BuildTool {
+func (b *TypicalBuildTool) WithRunner(runner typrun.Runner) *TypicalBuildTool {
 	b.runner = runner
 	return b
 }
 
 // WithRelease return BuildTool with new releaser
-func (b *BuildTool) WithRelease(releaser typrls.Releaser) *BuildTool {
+func (b *TypicalBuildTool) WithRelease(releaser typrls.Releaser) *TypicalBuildTool {
 	b.releaser = releaser
 	return b
 }
 
 // WithMocker return BuildTool with new mocker
-func (b *BuildTool) WithMocker(mocker typmock.Mocker) *BuildTool {
+func (b *TypicalBuildTool) WithMocker(mocker typmock.Mocker) *TypicalBuildTool {
 	b.mocker = mocker
 	return b
 }
 
 // WithCleaner return BuildTool with new cleaner
-func (b *BuildTool) WithCleaner(cleaner typclean.Cleaner) *BuildTool {
+func (b *TypicalBuildTool) WithCleaner(cleaner typclean.Cleaner) *TypicalBuildTool {
 	b.cleaner = cleaner
 	return b
 }
 
 // WithTester return BuildTool with new tester
-func (b *BuildTool) WithTester(tester typtest.Tester) *BuildTool {
+func (b *TypicalBuildTool) WithTester(tester typtest.Tester) *TypicalBuildTool {
 	b.tester = tester
 	return b
 }
 
 // Validate build
-func (b *BuildTool) Validate() (err error) {
+func (b *TypicalBuildTool) Validate() (err error) {
 
 	if err = common.Validate(b.builder); err != nil {
 		return fmt.Errorf("BuildTool: Builder: %w", err)
@@ -118,7 +118,7 @@ func (b *BuildTool) Validate() (err error) {
 }
 
 // Run build tool
-func (b *BuildTool) Run(t *typcore.TypicalContext) (err error) {
+func (b *TypicalBuildTool) Run(t *typcore.TypicalContext) (err error) {
 	if b.store, err = typast.Walk(t.Files); err != nil {
 		return
 	}
@@ -136,7 +136,7 @@ func (b *BuildTool) Run(t *typcore.TypicalContext) (err error) {
 }
 
 // Commands to return command
-func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
+func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
 
 	if b.builder != nil {
 		cmds = append(cmds, b.buildCommand(c))
@@ -167,7 +167,7 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 	return cmds
 }
 
-func (b *BuildTool) buildCommand(c *Context) *cli.Command {
+func (b *TypicalBuildTool) buildCommand(c *Context) *cli.Command {
 	return &cli.Command{
 		Name:    "build",
 		Aliases: []string{"b"},
@@ -179,7 +179,7 @@ func (b *BuildTool) buildCommand(c *Context) *cli.Command {
 	}
 }
 
-func (b *BuildTool) runCommand(c *Context) *cli.Command {
+func (b *TypicalBuildTool) runCommand(c *Context) *cli.Command {
 	return &cli.Command{
 		Name:            "run",
 		Aliases:         []string{"r"},
@@ -205,7 +205,7 @@ func (b *BuildTool) runCommand(c *Context) *cli.Command {
 	}
 }
 
-func (b *BuildTool) releaseCommand(c *Context) *cli.Command {
+func (b *TypicalBuildTool) releaseCommand(c *Context) *cli.Command {
 	return &cli.Command{
 		Name:  "release",
 		Usage: "Release the distribution",
@@ -241,7 +241,7 @@ func (b *BuildTool) releaseCommand(c *Context) *cli.Command {
 	}
 }
 
-func (b *BuildTool) mockCommand(c *Context) *cli.Command {
+func (b *TypicalBuildTool) mockCommand(c *Context) *cli.Command {
 	return &cli.Command{
 		Name:  "mock",
 		Usage: "Generate mock class",
@@ -257,7 +257,7 @@ func (b *BuildTool) mockCommand(c *Context) *cli.Command {
 	}
 }
 
-func (b *BuildTool) cleanCommand(c *Context) *cli.Command {
+func (b *TypicalBuildTool) cleanCommand(c *Context) *cli.Command {
 	return &cli.Command{
 		Name:    "clean",
 		Aliases: []string{"c"},
@@ -270,7 +270,7 @@ func (b *BuildTool) cleanCommand(c *Context) *cli.Command {
 	}
 }
 
-func (b *BuildTool) testCommand(c *Context) *cli.Command {
+func (b *TypicalBuildTool) testCommand(c *Context) *cli.Command {
 	return &cli.Command{
 		Name:    "test",
 		Aliases: []string{"t"},
@@ -281,13 +281,13 @@ func (b *BuildTool) testCommand(c *Context) *cli.Command {
 	}
 }
 
-func (b *BuildTool) test(ctx context.Context, c *Context) error {
+func (b *TypicalBuildTool) test(ctx context.Context, c *Context) error {
 	return b.tester.Test(ctx, &typtest.Context{
 		TypicalContext: c.TypicalContext,
 	})
 }
 
-func (b *BuildTool) build(ctx context.Context, c *Context) (out string, err error) {
+func (b *TypicalBuildTool) build(ctx context.Context, c *Context) (out string, err error) {
 	return b.builder.Build(ctx, &typbuild.Context{
 		TypicalContext: c.TypicalContext,
 		Store:          b.store,
