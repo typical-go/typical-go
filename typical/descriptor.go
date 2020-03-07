@@ -18,6 +18,9 @@ var Descriptor = typcore.Descriptor{
 	App: typicalgo.New(),
 
 	BuildTool: typbuildtool.New().
+		AppendCommander(
+			typbuildtool.NewCommander(testExampleCmd), // Test all the examples
+		).
 		WithRelease(typrls.New().
 			WithPublisher(
 				typrls.GithubPublisher("typical-go", "typical-go"),
