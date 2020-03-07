@@ -1,0 +1,33 @@
+package typbuildtool
+
+import (
+	"github.com/urfave/cli/v2"
+)
+
+// Commander responsible to return commands for Build-Tool
+type Commander interface {
+	Commands(c *Context) []*cli.Command
+}
+
+// SimpleCommander return command based on command function
+type SimpleCommander struct {
+	funcs []CommandFn
+}
+
+// CommandFn is a function to return command
+type CommandFn func(ctx *Context) *cli.Command
+
+// NewCommander return new instance Commander
+func NewCommander(funcs ...CommandFn) *SimpleCommander {
+	return &SimpleCommander{
+		funcs: funcs,
+	}
+}
+
+// Commands return list of command
+func (c *SimpleCommander) Commands(ctx *Context) (cmds []*cli.Command) {
+	for _, fn := range c.funcs {
+		cmds = append(cmds, fn(ctx))
+	}
+	return
+}
