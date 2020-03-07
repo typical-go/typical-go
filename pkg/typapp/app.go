@@ -10,8 +10,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// App is application
-type App struct {
+// TypicalApp is typical application model
+type TypicalApp struct {
 	entryPoint     EntryPointer
 	providers      []Provider
 	preparers      []Preparer
@@ -26,8 +26,8 @@ type AppCommander interface {
 }
 
 // New return new instance of app
-func New(v interface{}) *App {
-	app := &App{
+func New(v interface{}) *TypicalApp {
+	app := &TypicalApp{
 		projectSources: []string{common.PackageName(v)},
 	}
 	if entryPoint, ok := v.(EntryPointer); ok {
@@ -49,42 +49,42 @@ func New(v interface{}) *App {
 }
 
 // WithEntryPointer return app with new entry pointer
-func (a *App) WithEntryPointer(entryPoint EntryPointer) *App {
+func (a *TypicalApp) WithEntryPointer(entryPoint EntryPointer) *TypicalApp {
 	a.entryPoint = entryPoint
 	return a
 }
 
 // WithSources return app with new source
-func (a *App) WithSources(sources ...string) *App {
+func (a *TypicalApp) WithSources(sources ...string) *TypicalApp {
 	return a
 }
 
 // AppendProvider return app with appended provider
-func (a *App) AppendProvider(provides ...Provider) *App {
+func (a *TypicalApp) AppendProvider(provides ...Provider) *TypicalApp {
 	a.providers = append(a.providers, provides...)
 	return a
 }
 
 // AppendPreparer return app with appended preparer
-func (a *App) AppendPreparer(prepares ...Preparer) *App {
+func (a *TypicalApp) AppendPreparer(prepares ...Preparer) *TypicalApp {
 	a.preparers = append(a.preparers, prepares...)
 	return a
 }
 
 // AppendDestroyer return app with appended destroyer
-func (a *App) AppendDestroyer(destroys ...Destroyer) *App {
+func (a *TypicalApp) AppendDestroyer(destroys ...Destroyer) *TypicalApp {
 	a.destroyers = append(a.destroyers, destroys...)
 	return a
 }
 
 // AppendCommander return app with appended commander
-func (a *App) AppendCommander(commands ...AppCommander) *App {
+func (a *TypicalApp) AppendCommander(commands ...AppCommander) *TypicalApp {
 	a.commanders = append(a.commanders, commands...)
 	return a
 }
 
 // AppendDependency return app with appended dependency
-func (a *App) AppendDependency(dependencies ...Dependency) *App {
+func (a *TypicalApp) AppendDependency(dependencies ...Dependency) *TypicalApp {
 	for _, dep := range dependencies {
 		a.AppendProvider(dep.(Provider))
 		a.AppendDestroyer(dep.(Destroyer))
@@ -93,13 +93,13 @@ func (a *App) AppendDependency(dependencies ...Dependency) *App {
 }
 
 // AppendProjectSource return app with appended project sources
-func (a *App) AppendProjectSource(sources ...string) *App {
+func (a *TypicalApp) AppendProjectSource(sources ...string) *TypicalApp {
 	a.projectSources = append(a.projectSources, sources...)
 	return a
 }
 
 // EntryPoint of app
-func (a *App) EntryPoint() *typdep.Invocation {
+func (a *TypicalApp) EntryPoint() *typdep.Invocation {
 	if a.entryPoint != nil {
 		return a.entryPoint.EntryPoint()
 	}
@@ -107,7 +107,7 @@ func (a *App) EntryPoint() *typdep.Invocation {
 }
 
 // Provide to return constructors
-func (a *App) Provide() (constructors []*typdep.Constructor) {
+func (a *TypicalApp) Provide() (constructors []*typdep.Constructor) {
 	constructors = append(constructors, appConstructors...)
 	for _, provider := range a.providers {
 		constructors = append(constructors, provider.Provide()...)
@@ -116,7 +116,7 @@ func (a *App) Provide() (constructors []*typdep.Constructor) {
 }
 
 //Destroy to return destructor
-func (a *App) Destroy() (destructors []*typdep.Invocation) {
+func (a *TypicalApp) Destroy() (destructors []*typdep.Invocation) {
 	for _, destroyer := range a.destroyers {
 		destructors = append(destructors, destroyer.Destroy()...)
 	}
@@ -124,7 +124,7 @@ func (a *App) Destroy() (destructors []*typdep.Invocation) {
 }
 
 // Prepare to return preparations
-func (a *App) Prepare() (preparations []*typdep.Invocation) {
+func (a *TypicalApp) Prepare() (preparations []*typdep.Invocation) {
 	for _, preparer := range a.preparers {
 		preparations = append(preparations, preparer.Prepare()...)
 	}
@@ -132,7 +132,7 @@ func (a *App) Prepare() (preparations []*typdep.Invocation) {
 }
 
 // AppCommands to return commands
-func (a *App) AppCommands(c *Context) (cmds []*cli.Command) {
+func (a *TypicalApp) AppCommands(c *Context) (cmds []*cli.Command) {
 	for _, commander := range a.commanders {
 		cmds = append(cmds, commander.AppCommands(c)...)
 	}
@@ -140,15 +140,15 @@ func (a *App) AppCommands(c *Context) (cmds []*cli.Command) {
 }
 
 // ProjectSources return source for app
-func (a *App) ProjectSources() []string {
+func (a *TypicalApp) ProjectSources() []string {
 	return a.projectSources
 }
 
 // Run application
-func (a *App) Run(d *typcore.Descriptor) (err error) {
+func (a *TypicalApp) Run(d *typcore.Descriptor) (err error) {
 	c := &Context{
 		Descriptor: d,
-		App:        a,
+		TypicalApp: a,
 	}
 	app := cli.NewApp()
 	app.Name = d.Name

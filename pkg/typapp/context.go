@@ -12,7 +12,7 @@ import (
 // Context of App
 type Context struct {
 	*typcore.Descriptor
-	*App
+	*TypicalApp
 }
 
 // ActionFunc to return ActionFunc to invoke function fn
