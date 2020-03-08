@@ -13,16 +13,11 @@ import (
 
 // StdReleaser responsible to release distruction
 type StdReleaser struct {
-	targets       []Target
-	publishers    []Publisher
-	releaseFolder string
-	Tagging
-}
-
-// Tagging is setting how to make tag
-type Tagging struct {
-	IncludeBranch   bool
-	IncludeCommitID bool
+	targets         []Target
+	publishers      []Publisher
+	releaseFolder   string
+	includeBranch   bool
+	includeCommitID bool
 }
 
 // New return new instance of releaser
@@ -34,6 +29,18 @@ func New() *StdReleaser {
 		},
 		releaseFolder: "release",
 	}
+}
+
+// WithIncludeBranch return StdReleaser with new includeBranch
+func (r *StdReleaser) WithIncludeBranch(includeBranch bool) *StdReleaser {
+	r.includeBranch = includeBranch
+	return r
+}
+
+// WithIncludeCommitID return StdReelaser with new includeCommitID
+func (r *StdReleaser) WithIncludeCommitID(includeCommitID bool) *StdReleaser {
+	r.includeCommitID = includeCommitID
+	return r
 }
 
 // WithTarget to set target and return its instance
@@ -120,11 +127,11 @@ func (r *StdReleaser) Tag(ctx context.Context, version string, alpha bool) strin
 	var b strings.Builder
 	b.WriteString("v")
 	b.WriteString(version)
-	if r.IncludeBranch {
+	if r.includeBranch {
 		b.WriteString("_")
 		b.WriteString(git.Branch(ctx))
 	}
-	if r.IncludeCommitID {
+	if r.includeCommitID {
 		b.WriteString("_")
 		b.WriteString(git.LatestCommit(ctx))
 	}
