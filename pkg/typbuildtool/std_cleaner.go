@@ -1,4 +1,4 @@
-package typbuild
+package typbuildtool
 
 import (
 	"os"

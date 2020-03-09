@@ -7,7 +7,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typast"
-	"github.com/typical-go/typical-go/pkg/typbuildtool/typbuild"
 	"github.com/typical-go/typical-go/pkg/typbuildtool/typrls"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
@@ -16,11 +15,11 @@ import (
 // TypicalBuildTool is typical Build Tool for golang project
 type TypicalBuildTool struct {
 	commanders []Commander
-	builder    typbuild.Builder
-	runner     typbuild.Runner
-	cleaner    typbuild.Cleaner
-	tester     typbuild.Tester
-	mocker     typbuild.Mocker
+	builder    Builder
+	runner     Runner
+	cleaner    Cleaner
+	tester     Tester
+	mocker     Mocker
 	releaser   typrls.Releaser
 
 	ast *typast.Ast
@@ -29,11 +28,11 @@ type TypicalBuildTool struct {
 // New return new instance of build
 func New() *TypicalBuildTool {
 	return &TypicalBuildTool{
-		builder:  typbuild.NewBuilder(),
-		runner:   typbuild.NewRunner(),
-		cleaner:  typbuild.NewCleaner(),
-		tester:   typbuild.NewTester(),
-		mocker:   typbuild.NewMocker(),
+		builder:  NewBuilder(),
+		runner:   NewRunner(),
+		cleaner:  NewCleaner(),
+		tester:   NewTester(),
+		mocker:   NewMocker(),
 		releaser: typrls.New(),
 	}
 }
@@ -45,13 +44,13 @@ func (b *TypicalBuildTool) AppendCommander(commanders ...Commander) *TypicalBuil
 }
 
 // WithtBuilder return  BuildTool with new builder
-func (b *TypicalBuildTool) WithtBuilder(builder typbuild.Builder) *TypicalBuildTool {
+func (b *TypicalBuildTool) WithtBuilder(builder Builder) *TypicalBuildTool {
 	b.builder = builder
 	return b
 }
 
 // WithRunner return BuildTool with appended runner
-func (b *TypicalBuildTool) WithRunner(runner typbuild.Runner) *TypicalBuildTool {
+func (b *TypicalBuildTool) WithRunner(runner Runner) *TypicalBuildTool {
 	b.runner = runner
 	return b
 }
@@ -63,19 +62,19 @@ func (b *TypicalBuildTool) WithReleaser(releaser typrls.Releaser) *TypicalBuildT
 }
 
 // WithMocker return BuildTool with new mocker
-func (b *TypicalBuildTool) WithMocker(mocker typbuild.Mocker) *TypicalBuildTool {
+func (b *TypicalBuildTool) WithMocker(mocker Mocker) *TypicalBuildTool {
 	b.mocker = mocker
 	return b
 }
 
 // WithCleaner return BuildTool with new cleaner
-func (b *TypicalBuildTool) WithCleaner(cleaner typbuild.Cleaner) *TypicalBuildTool {
+func (b *TypicalBuildTool) WithCleaner(cleaner Cleaner) *TypicalBuildTool {
 	b.cleaner = cleaner
 	return b
 }
 
 // WithTester return BuildTool with new tester
-func (b *TypicalBuildTool) WithTester(tester typbuild.Tester) *TypicalBuildTool {
+func (b *TypicalBuildTool) WithTester(tester Tester) *TypicalBuildTool {
 	b.tester = tester
 	return b
 }
@@ -186,7 +185,7 @@ func (b *TypicalBuildTool) runCommand(c *Context) *cli.Command {
 			}
 
 			log.Info("Run the application")
-			return b.runner.Run(&typbuild.RunContext{
+			return b.runner.Run(&RunContext{
 				Context: b.createBuildContext(cliCtx, c),
 				Binary:  binary,
 			})
@@ -236,7 +235,7 @@ func (b *TypicalBuildTool) mockCommand(c *Context) *cli.Command {
 			if b.mocker == nil {
 				panic("Mocker is nil")
 			}
-			return b.mocker.Mock(&typbuild.Context{
+			return b.mocker.Mock(&Context{
 				TypicalContext: c.TypicalContext,
 				Ast:            b.ast,
 				Cli:            cliCtx,
@@ -251,7 +250,7 @@ func (b *TypicalBuildTool) cleanCommand(c *Context) *cli.Command {
 		Aliases: []string{"c"},
 		Usage:   "Clean the project from generated file during build time",
 		Action: func(cliCtx *cli.Context) error {
-			return b.cleaner.Clean(&typbuild.Context{
+			return b.cleaner.Clean(&Context{
 				TypicalContext: c.TypicalContext,
 				Cli:            cliCtx,
 			})
@@ -270,8 +269,8 @@ func (b *TypicalBuildTool) testCommand(c *Context) *cli.Command {
 	}
 }
 
-func (b *TypicalBuildTool) createBuildContext(cliCtx *cli.Context, c *Context) *typbuild.Context {
-	return &typbuild.Context{
+func (b *TypicalBuildTool) createBuildContext(cliCtx *cli.Context, c *Context) *Context {
+	return &Context{
 		TypicalContext: c.TypicalContext,
 		Ast:            b.ast,
 		Cli:            cliCtx,

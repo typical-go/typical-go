@@ -1,4 +1,4 @@
-package typbuild
+package typbuildtool
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/runnerkit"
 	"github.com/typical-go/typical-go/pkg/typast"
-	"github.com/typical-go/typical-go/pkg/typbuildtool/typbuild/internal/tmpl"
+	"github.com/typical-go/typical-go/pkg/typbuildtool/internal/tmpl"
 
 	log "github.com/sirupsen/logrus"
 )

@@ -1,4 +1,4 @@
-package typbuild
+package typbuildtool
 
 // Builder reponsible to build
 type Builder interface {
@@ -28,4 +28,10 @@ type Runner interface {
 // Mocker responsible to mock
 type Mocker interface {
 	Mock(*Context) error
+}
+
+// RunContext of run
+type RunContext struct {
+	*Context
+	Binary string
 }
