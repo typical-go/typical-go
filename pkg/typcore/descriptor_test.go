@@ -123,6 +123,10 @@ func (i buildTool) Run(*typcore.Context) error {
 	return nil
 }
 
+func (i buildTool) SetupMe(d *typcore.Descriptor) error {
+	return nil
+}
+
 type app struct {
 	errMessage string
 	sources    []string
