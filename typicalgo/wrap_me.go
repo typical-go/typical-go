@@ -62,7 +62,7 @@ func buildBuildTool(ctx context.Context, wc *wrapContext) (err error) {
 		data := tmpl.MainSrcData{
 			DescriptorPackage: descriptorPkg,
 		}
-		if err = runnerkit.WriteTemplate(srcPath, tmpl.MainSrcBuildTool, data, 0666).Run(ctx); err != nil {
+		if err = runnerkit.NewWriteTemplate(srcPath, tmpl.MainSrcBuildTool, data).Run(ctx); err != nil {
 			return
 		}
 	}

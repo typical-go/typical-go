@@ -57,7 +57,7 @@ func (i constructproj) appPackage(ctx context.Context) error {
 func (i constructproj) descriptor(ctx context.Context) error {
 	return runnerkit.Run(ctx,
 		runnerkit.Mkdir(i.Path("typical")),
-		runnerkit.WriteTemplate(i.Path("typical/descriptor.go"), tmpl.Descriptor, i.TemplateData, 0666),
+		runnerkit.NewWriteTemplate(i.Path("typical/descriptor.go"), tmpl.Descriptor, i.TemplateData),
 	)
 }
 
@@ -69,27 +69,27 @@ func (i constructproj) cmdPackage(ctx context.Context) error {
 	return runnerkit.Run(ctx,
 		runnerkit.Mkdir(i.Path(typcore.DefaultCmdFolder)),
 		runnerkit.Mkdir(i.Path(appMainPath)),
-		runnerkit.WriteTemplate(i.Path(appMainPath+"/main.go"), tmpl.MainSrcApp, data, 0666),
+		runnerkit.NewWriteTemplate(i.Path(appMainPath+"/main.go"), tmpl.MainSrcApp, data),
 	)
 }
 
 func (i constructproj) ignoreFile(ctx context.Context) error {
 	return runnerkit.Run(ctx,
-		runnerkit.WriteString(i.Path(".gitignore"), tmpl.Gitignore, 0700),
+		runnerkit.NewWriteString(i.Path(".gitignore"), tmpl.Gitignore),
 	)
 }
 
 func (i constructproj) gomod(ctx context.Context) (err error) {
 	return runnerkit.Run(ctx,
-		runnerkit.WriteTemplate(i.Path("go.mod"), tmpl.GoMod, tmpl.GoModData{
+		runnerkit.NewWriteTemplate(i.Path("go.mod"), tmpl.GoMod, tmpl.GoModData{
 			Pkg:            i.Pkg,
 			TypicalVersion: typcore.Version,
-		}, 0666),
+		}),
 	)
 }
 
 func wrapper(path, pkg string) runnerkit.Runner {
-	return runnerkit.WriteTemplate(
+	return runnerkit.NewWriteTemplate(
 		path+"/typicalw",
 		tmpl.Typicalw,
 		tmpl.TypicalwData{
@@ -98,6 +98,5 @@ func wrapper(path, pkg string) runnerkit.Runner {
 			ChecksumFile:      typcore.DefaultTempFolder + "/checksum",
 			LayoutTemp:        typcore.DefaultTempFolder,
 		},
-		0700,
 	)
 }

@@ -42,34 +42,39 @@ func CreateContext(d *Descriptor) (*Context, error) {
 }
 
 // Validate typical context
-func (t *Context) Validate() error {
-	if t.Descriptor == nil {
+func (c *Context) Validate() error {
+	if c.Descriptor == nil {
 		return errors.New("TypicalContext: Descriptor can't be empty")
 	}
-	if err := t.Descriptor.Validate(); err != nil {
+	if err := c.Descriptor.Validate(); err != nil {
 		return err
 	}
 
-	if t.ModulePackage == "" {
+	if c.ModulePackage == "" {
 		return errors.New("TypicalContext: ModulePackage can't be empty")
 	}
 
-	if err := validateProjectSources(t.ProjectSources); err != nil {
+	if err := validateProjectSources(c.ProjectSources); err != nil {
 		return fmt.Errorf("TypicalContext: %w", err)
 	}
 	return nil
 }
 
-func (t *Context) addFile(path string, info os.FileInfo, err error) error {
+// TypicalPackage return package of typical
+func (c *Context) TypicalPackage() string {
+	return fmt.Sprintf("%s/typical", c.ModulePackage)
+}
+
+func (c *Context) addFile(path string, info os.FileInfo, err error) error {
 	if info != nil {
 		if info.IsDir() {
-			t.Dirs = append(t.Dirs, path)
+			c.Dirs = append(c.Dirs, path)
 			return nil
 		}
 	}
 
 	if isWalkTarget(path) {
-		t.Files = append(t.Files, path)
+		c.Files = append(c.Files, path)
 	}
 	return nil
 }

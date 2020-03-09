@@ -8,25 +8,32 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// WriteTemplate runner
-func WriteTemplate(target, template string, data interface{}, permission os.FileMode) Runner {
-	return &writeTemplate{
-		target:     target,
-		template:   template,
-		data:       data,
-		permission: permission,
-	}
-}
-
-// WriteTemplate to write template to file
-type writeTemplate struct {
+// WriteTemplate responsible to write template to file
+type WriteTemplate struct {
 	target     string
 	template   string
 	data       interface{}
 	permission os.FileMode
 }
 
-func (w *writeTemplate) Run(ctx context.Context) (err error) {
+// NewWriteTemplate return new instance of runner
+func NewWriteTemplate(target, template string, data interface{}) *WriteTemplate {
+	return &WriteTemplate{
+		target:     target,
+		template:   template,
+		data:       data,
+		permission: 0777,
+	}
+}
+
+// WithPermission return WriteTemplateRunner with new permission
+func (w *WriteTemplate) WithPermission(permission os.FileMode) *WriteTemplate {
+	w.permission = permission
+	return w
+}
+
+// Run the write template
+func (w *WriteTemplate) Run(ctx context.Context) (err error) {
 	var (
 		f    *os.File
 		tmpl *template.Template

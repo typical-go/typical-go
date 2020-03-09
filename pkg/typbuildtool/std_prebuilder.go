@@ -42,10 +42,10 @@ func (a *stdPrebuilder) generateConstructor(c *BuildContext, target string, cons
 			imports = append(imports, fmt.Sprintf("%s/%s", c.ModulePackage, dir))
 		}
 	}
-	if err = runnerkit.WriteTemplate(target, tmpl.Constructor, tmpl.ConstructorData{
+	if err = runnerkit.NewWriteTemplate(target, tmpl.Constructor, tmpl.ConstructorData{
 		Imports:      imports,
 		Constructors: constructors,
-	}, 0666).Run(ctx); err != nil {
+	}).Run(ctx); err != nil {
 		return
 	}
 	cmd := exec.CommandContext(ctx,
