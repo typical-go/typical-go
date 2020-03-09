@@ -1,7 +1,7 @@
 package typical
 
 import (
-	"github.com/typical-go/typical-go/examples/hello-world-with-config/helloworld"
+	"github.com/typical-go/typical-go/examples/configuration-with-invocation/helloworld"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcfg"
@@ -15,7 +15,7 @@ var (
 
 // Descriptor of sample
 var Descriptor = typcore.Descriptor{
-	Name:    "hello-world-with-config",
+	Name:    "configuration-with-invocation",
 	Version: "0.0.1",
 
 	App: typapp.New(hello),
