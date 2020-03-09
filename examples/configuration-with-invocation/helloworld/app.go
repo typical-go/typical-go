@@ -8,26 +8,26 @@ import (
 	"github.com/typical-go/typical-go/pkg/typdep"
 )
 
-// Module of application
-type Module struct {
+// App of hello world
+type App struct {
 	ConfigName string
 }
 
 // New return new instance of application
-func New() *Module {
-	return &Module{
+func New() *App {
+	return &App{
 		ConfigName: "APP",
 	}
 }
 
 // WithConfigPrefix return Module with new config prefix
-func (m *Module) WithConfigPrefix(name string) *Module {
-	m.ConfigName = name
-	return m
+func (a *App) WithConfigPrefix(name string) *App {
+	a.ConfigName = name
+	return a
 }
 
 // EntryPoint of application
-func (*Module) EntryPoint() *typdep.Invocation {
+func (a *App) EntryPoint() *typdep.Invocation {
 	return typdep.NewInvocation(
 		func(cfg config.Config) {
 			fmt.Printf("Hello %s\n", cfg.Hello)
@@ -35,13 +35,13 @@ func (*Module) EntryPoint() *typdep.Invocation {
 }
 
 // Configure the application
-func (m *Module) Configure(loader typcfg.Loader) *typcfg.Configuration {
+func (a *App) Configure(loader typcfg.Loader) *typcfg.Configuration {
 	return &typcfg.Configuration{
-		Name: m.ConfigName,
+		Name: a.ConfigName,
 		Spec: &config.Config{},
 		Constructor: typdep.NewConstructor(
 			func() (cfg config.Config, err error) {
-				err = loader.Load(m.ConfigName, &cfg)
+				err = loader.Load(a.ConfigName, &cfg)
 				return
 			}),
 	}
