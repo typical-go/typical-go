@@ -6,8 +6,6 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/runnerkit"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typbuildtool/internal/tmpl"
 )
@@ -22,8 +20,8 @@ func NewBuilder() *StdBuilder {
 }
 
 // Build the project
-func (b *StdBuilder) Build(c *BuildContext) (binary string, err error) {
-	binary = fmt.Sprintf("%s/%s", c.BinFolder, c.Name)
+func (b *StdBuilder) Build(c *BuildContext) (dist BuildDistribution, err error) {
+	binary := fmt.Sprintf("%s/%s", c.BinFolder, c.Name)
 	srcDir := fmt.Sprintf("%s/%s", c.CmdFolder, c.Name)
 	src := fmt.Sprintf("./%s/main.go", srcDir)
 	ctx := c.Cli.Context
@@ -42,6 +40,9 @@ func (b *StdBuilder) Build(c *BuildContext) (binary string, err error) {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	log.Info("Build the project")
-	return binary, cmd.Run()
+	if err = cmd.Run(); err != nil {
+		return
+	}
+
+	return NewBuildDistribution(binary), nil
 }

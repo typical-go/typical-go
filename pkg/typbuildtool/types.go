@@ -8,7 +8,7 @@ import (
 
 // Builder reponsible to build
 type Builder interface {
-	Build(c *BuildContext) (bin string, err error)
+	Build(c *BuildContext) (dist BuildDistribution, err error)
 }
 
 // Cleaner responsible to clean the project
@@ -26,9 +26,9 @@ type Tester interface {
 	Test(*BuildContext) error
 }
 
-// Runner responsible to run the project
-type Runner interface {
-	Run(*RunContext) error
+// BuildDistribution is build distribution
+type BuildDistribution interface {
+	Run(*BuildContext) error
 }
 
 // Mocker responsible to mock
@@ -56,12 +56,6 @@ type BuildContext struct {
 // MockContext is context of mock
 type MockContext struct {
 	*BuildContext
-}
-
-// RunContext is context of run
-type RunContext struct {
-	*BuildContext
-	Binary string
 }
 
 // ReleaseContext is context of release

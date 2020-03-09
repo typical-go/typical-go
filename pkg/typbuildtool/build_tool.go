@@ -17,7 +17,6 @@ type TypicalBuildTool struct {
 	commanders  []Commander
 	builder     Builder
 	prebuilders []Prebuilder
-	runner      Runner
 	cleaner     Cleaner
 	tester      Tester
 	mocker      Mocker
@@ -30,7 +29,6 @@ type TypicalBuildTool struct {
 func New() *TypicalBuildTool {
 	return &TypicalBuildTool{
 		builder:  NewBuilder(),
-		runner:   NewRunner(),
 		cleaner:  NewCleaner(),
 		tester:   NewTester(),
 		mocker:   NewMocker(),
@@ -53,12 +51,6 @@ func (b *TypicalBuildTool) AppendPrebuilder(prebuilders ...Prebuilder) *TypicalB
 // WithBuilder return  BuildTool with new builder
 func (b *TypicalBuildTool) WithBuilder(builder Builder) *TypicalBuildTool {
 	b.builder = builder
-	return b
-}
-
-// WithRunner return BuildTool with appended runner
-func (b *TypicalBuildTool) WithRunner(runner Runner) *TypicalBuildTool {
-	b.runner = runner
 	return b
 }
 
@@ -91,10 +83,6 @@ func (b *TypicalBuildTool) Validate() (err error) {
 
 	if err = common.Validate(b.builder); err != nil {
 		return fmt.Errorf("BuildTool: Builder: %w", err)
-	}
-
-	if err = common.Validate(b.runner); err != nil {
-		return fmt.Errorf("BuildTool: Runner: %w", err)
 	}
 
 	if err = common.Validate(b.mocker); err != nil {
@@ -138,11 +126,10 @@ func (b *TypicalBuildTool) Run(t *typcore.Context) (err error) {
 func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
 
 	if b.builder != nil {
-		cmds = append(cmds, b.buildCommand(c))
-	}
-
-	if b.runner != nil {
-		cmds = append(cmds, b.runCommand(c))
+		cmds = append(cmds,
+			b.buildCommand(c),
+			b.runCommand(c),
+		)
 	}
 
 	if b.cleaner != nil {
@@ -179,7 +166,7 @@ func (b *TypicalBuildTool) buildCommand(c *Context) *cli.Command {
 }
 
 // Build task
-func (b *TypicalBuildTool) Build(c *BuildContext) (bin string, err error) {
+func (b *TypicalBuildTool) Build(c *BuildContext) (dist BuildDistribution, err error) {
 	if err = b.Prebuild(c); err != nil {
 		return
 	}
@@ -211,18 +198,16 @@ func (b *TypicalBuildTool) runCommand(c *Context) *cli.Command {
 		Usage:           "Run the binary",
 		SkipFlagParsing: true,
 		Action: func(cliCtx *cli.Context) (err error) {
-			var binary string
+			var dist BuildDistribution
+
 			buildCtx := b.createBuildContext(cliCtx, c)
 
-			if binary, err = b.Build(buildCtx); err != nil {
+			if dist, err = b.Build(buildCtx); err != nil {
 				return
 			}
 
 			log.Info("Run the application")
-			return b.runner.Run(&RunContext{
-				BuildContext: buildCtx,
-				Binary:       binary,
-			})
+			return dist.Run(buildCtx)
 		},
 	}
 }
