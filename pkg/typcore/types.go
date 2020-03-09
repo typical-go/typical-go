@@ -8,6 +8,7 @@ type App interface {
 // BuildTool interface
 type BuildTool interface {
 	Run(*Context) error
+	SetupMe(*Descriptor) error
 }
 
 // Configuration is interface of configuration

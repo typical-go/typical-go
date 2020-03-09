@@ -1,9 +1,18 @@
 package typapp
 
 import (
+	"fmt"
+	"go/build"
 	"os"
+	"os/exec"
+	"strings"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/runnerkit"
+	"github.com/typical-go/typical-go/pkg/typapp/internal/tmpl"
+	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typdep"
@@ -166,4 +175,42 @@ func (a *TypicalApp) Run(d *typcore.Descriptor) (err error) {
 	}
 	app.Commands = a.AppCommands(c)
 	return app.Run(os.Args)
+}
+
+// Prebuild the app
+func (a *TypicalApp) Prebuild(c *typbuildtool.BuildContext) (err error) {
+	var constructors []string
+	if err = c.Ast.EachAnnotation("constructor", typast.FunctionType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
+		constructors = append(constructors, fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
+		return
+	}); err != nil {
+		return
+	}
+	log.Info("Generate constructors")
+	target := fmt.Sprintf("%s/%s/constructor_do_not_edit.go", c.CmdFolder, c.Name)
+	if err = a.generateConstructor(c, target, constructors); err != nil {
+		return
+	}
+	return
+}
+
+func (a *TypicalApp) generateConstructor(c *typbuildtool.BuildContext, target string, constructors []string) (err error) {
+	ctx := c.Cli.Context
+	imports := []string{}
+	for _, dir := range c.Dirs {
+		if !strings.Contains(dir, "internal") {
+			imports = append(imports, fmt.Sprintf("%s/%s", c.ProjectPackage, dir))
+		}
+	}
+	if err = runnerkit.NewWriteTemplate(target, tmpl.Constructor, tmpl.ConstructorData{
+		Imports:      imports,
+		Constructors: constructors,
+	}).Run(ctx); err != nil {
+		return
+	}
+	cmd := exec.CommandContext(ctx,
+		fmt.Sprintf("%s/bin/goimports", build.Default.GOPATH),
+		"-w", target)
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }

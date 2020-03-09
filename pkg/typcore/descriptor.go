@@ -64,6 +64,11 @@ func (d *Descriptor) RunBuild() (err error) {
 			return
 		}
 	}
+
+	if err = d.BuildTool.SetupMe(d); err != nil {
+		return
+	}
+
 	return d.BuildTool.Run(c)
 }
 

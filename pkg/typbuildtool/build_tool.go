@@ -14,13 +14,14 @@ import (
 
 // TypicalBuildTool is typical Build Tool for golang project
 type TypicalBuildTool struct {
-	commanders []Commander
-	builder    Builder
-	runner     Runner
-	cleaner    Cleaner
-	tester     Tester
-	mocker     Mocker
-	releaser   Releaser
+	commanders  []Commander
+	builder     Builder
+	prebuilders []Prebuilder
+	runner      Runner
+	cleaner     Cleaner
+	tester      Tester
+	mocker      Mocker
+	releaser    Releaser
 
 	ast *typast.Ast
 }
@@ -43,8 +44,14 @@ func (b *TypicalBuildTool) AppendCommander(commanders ...Commander) *TypicalBuil
 	return b
 }
 
-// WithtBuilder return  BuildTool with new builder
-func (b *TypicalBuildTool) WithtBuilder(builder Builder) *TypicalBuildTool {
+// AppendPrebuilder to return BuildTool with appended prebuilder
+func (b *TypicalBuildTool) AppendPrebuilder(prebuilders ...Prebuilder) *TypicalBuildTool {
+	b.prebuilders = append(b.prebuilders, prebuilders...)
+	return b
+}
+
+// WithBuilder return  BuildTool with new builder
+func (b *TypicalBuildTool) WithBuilder(builder Builder) *TypicalBuildTool {
 	b.builder = builder
 	return b
 }
@@ -165,10 +172,36 @@ func (b *TypicalBuildTool) buildCommand(c *Context) *cli.Command {
 		Aliases: []string{"b"},
 		Usage:   "Build the binary",
 		Action: func(cliCtx *cli.Context) (err error) {
-			_, err = b.builder.Build(b.createBuildContext(cliCtx, c))
+			_, err = b.Build(b.createBuildContext(cliCtx, c))
 			return
 		},
 	}
+}
+
+// Build task
+func (b *TypicalBuildTool) Build(c *BuildContext) (bin string, err error) {
+	if err = b.Prebuild(c); err != nil {
+		return
+	}
+	return b.builder.Build(c)
+}
+
+// SetupMe is setup the build-tool from descriptor
+func (b *TypicalBuildTool) SetupMe(d *typcore.Descriptor) (err error) {
+	if prebuilder, ok := d.App.(Prebuilder); ok {
+		b.AppendPrebuilder(prebuilder)
+	}
+	return
+}
+
+// Prebuild task
+func (b *TypicalBuildTool) Prebuild(c *BuildContext) (err error) {
+	for _, prebuilder := range b.prebuilders {
+		if err = prebuilder.Prebuild(c); err != nil {
+			return
+		}
+	}
+	return
 }
 
 func (b *TypicalBuildTool) runCommand(c *Context) *cli.Command {
@@ -179,14 +212,15 @@ func (b *TypicalBuildTool) runCommand(c *Context) *cli.Command {
 		SkipFlagParsing: true,
 		Action: func(cliCtx *cli.Context) (err error) {
 			var binary string
+			buildCtx := b.createBuildContext(cliCtx, c)
 
-			if binary, err = b.builder.Build(b.createBuildContext(cliCtx, c)); err != nil {
+			if binary, err = b.Build(buildCtx); err != nil {
 				return
 			}
 
 			log.Info("Run the application")
 			return b.runner.Run(&RunContext{
-				BuildContext: b.createBuildContext(cliCtx, c),
+				BuildContext: buildCtx,
 				Binary:       binary,
 			})
 		},
