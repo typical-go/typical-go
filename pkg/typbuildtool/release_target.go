@@ -1,4 +1,4 @@
-package typrls
+package typbuildtool
 
 import (
 	"errors"
@@ -6,11 +6,11 @@ import (
 	"strings"
 )
 
-// Target of release which is contain OS and Arch
-type Target string
+// ReleaseTarget contain OS and Arch as target of release operation
+type ReleaseTarget string
 
 // Validate release target
-func (t Target) Validate() (err error) {
+func (t ReleaseTarget) Validate() (err error) {
 	s := string(t)
 	if s == "" {
 		return errors.New("Can't be empty")
@@ -25,7 +25,7 @@ func (t Target) Validate() (err error) {
 }
 
 // OS return the operating system information
-func (t Target) OS() string {
+func (t ReleaseTarget) OS() string {
 	s := string(t)
 	i := strings.Index(s, "/")
 	if i < 0 {
@@ -35,7 +35,7 @@ func (t Target) OS() string {
 }
 
 // Arch return the system architecture information
-func (t Target) Arch() string {
+func (t ReleaseTarget) Arch() string {
 	s := string(t)
 	i := strings.Index(s, "/")
 	if i < 0 {

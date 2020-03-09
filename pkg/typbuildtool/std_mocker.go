@@ -40,8 +40,8 @@ func (b *StdMocker) TargetMap() map[string][]*MockTarget {
 }
 
 // Mock the project
-func (b *StdMocker) Mock(c *Context) (err error) {
-	if err = c.EachAnnotation("mock", typast.InterfaceType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
+func (b *StdMocker) Mock(c *MockContext) (err error) {
+	if err = c.Ast.EachAnnotation("mock", typast.InterfaceType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
 		b.Put(createMockTarget(c, decl))
 		return
 	}); err != nil {

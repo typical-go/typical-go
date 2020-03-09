@@ -1,10 +1,10 @@
-package typrls
+package typbuildtool
 
 import "strings"
 
-// Filter the commit message
-type Filter interface {
-	Filter(string) string
+// ReleaseFilter responsible to filter the commit message
+type ReleaseFilter interface {
+	ReleaseFilter(string) string
 }
 
 // NoPrefixFilter is filter no-prefix
@@ -36,8 +36,8 @@ func (f *NoPrefixFilter) Append(prefixes ...string) *NoPrefixFilter {
 	return f
 }
 
-// Filter the messages
-func (f *NoPrefixFilter) Filter(msg string) string {
+// ReleaseFilter to filter the messages
+func (f *NoPrefixFilter) ReleaseFilter(msg string) string {
 	if f.exclude(msg) {
 		return ""
 	}

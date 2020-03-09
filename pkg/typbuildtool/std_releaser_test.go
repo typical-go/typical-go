@@ -1,23 +1,23 @@
-package typrls_test
+package typbuildtool_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typbuildtool/typrls"
+	"github.com/typical-go/typical-go/pkg/typbuildtool"
 )
 
 func TestReleaser_Validate(t *testing.T) {
 	testcases := []struct {
-		*typrls.StdReleaser
+		*typbuildtool.StdReleaser
 		expected string
 	}{
 		{
-			StdReleaser: typrls.New().WithTarget(),
+			StdReleaser: typbuildtool.NewReleaser().WithTarget(),
 			expected:    "Missing 'Targets'",
 		},
 		{
-			StdReleaser: typrls.New().WithTarget("invalid-target"),
+			StdReleaser: typbuildtool.NewReleaser().WithTarget("invalid-target"),
 			expected:    "Target: Missing OS: Please make sure 'invalid-target' using 'OS/ARCH' format",
 		},
 	}

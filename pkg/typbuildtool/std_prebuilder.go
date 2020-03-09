@@ -17,7 +17,7 @@ import (
 
 type stdPrebuilder struct{}
 
-func (a *stdPrebuilder) Prebuild(c *Context) (err error) {
+func (a *stdPrebuilder) Prebuild(c *BuildContext) (err error) {
 	var constructors []string
 	if err = c.Ast.EachAnnotation("constructor", typast.FunctionType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
 		constructors = append(constructors, fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
@@ -33,7 +33,7 @@ func (a *stdPrebuilder) Prebuild(c *Context) (err error) {
 	return
 }
 
-func (a *stdPrebuilder) generateConstructor(c *Context, target string, constructors []string) (err error) {
+func (a *stdPrebuilder) generateConstructor(c *BuildContext, target string, constructors []string) (err error) {
 	defer common.ElapsedTimeFn("Generate constructor")()
 	ctx := c.Cli.Context
 	imports := []string{}

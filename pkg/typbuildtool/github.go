@@ -1,4 +1,4 @@
-package typrls
+package typbuildtool
 
 import (
 	"context"
@@ -20,7 +20,7 @@ import (
 type Github struct {
 	Owner    string
 	RepoName string
-	Filter   Filter
+	Filter   ReleaseFilter
 }
 
 // NewGithub to return new instance of Github
@@ -33,7 +33,7 @@ func NewGithub(owner, repo string) *Github {
 }
 
 // WithFilter return github with filter
-func (g *Github) WithFilter(filter Filter) *Github {
+func (g *Github) WithFilter(filter ReleaseFilter) *Github {
 	g.Filter = filter
 	return g
 }
@@ -86,7 +86,7 @@ func (g *Github) upload(ctx context.Context, svc *github.RepositoriesService, id
 func (g *Github) releaseNote(gitLogs []*git.Log) string {
 	var b strings.Builder
 	for _, log := range gitLogs {
-		if m := g.Filter.Filter(log.Message); m != "" {
+		if m := g.ReleaseFilter(log.Message); m != "" {
 			b.WriteString(log.Short)
 			b.WriteString(" ")
 			b.WriteString(log.Message)
@@ -94,4 +94,9 @@ func (g *Github) releaseNote(gitLogs []*git.Log) string {
 		}
 	}
 	return b.String()
+}
+
+// ReleaseFilter to filter the message
+func (g *Github) ReleaseFilter(msg string) string {
+	return g.Filter.ReleaseFilter(msg)
 }

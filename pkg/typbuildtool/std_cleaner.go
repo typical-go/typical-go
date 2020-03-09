@@ -16,7 +16,7 @@ func NewCleaner() *StdCleaner {
 }
 
 // Clean the project
-func (*StdCleaner) Clean(c *Context) (err error) {
+func (*StdCleaner) Clean(c *BuildContext) (err error) {
 	removeAllFile(c.BinFolder)
 	removeAllFile(c.TempFolder)
 	return

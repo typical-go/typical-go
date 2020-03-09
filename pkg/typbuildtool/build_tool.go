@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typast"
-	"github.com/typical-go/typical-go/pkg/typbuildtool/typrls"
+
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
@@ -20,7 +20,7 @@ type TypicalBuildTool struct {
 	cleaner    Cleaner
 	tester     Tester
 	mocker     Mocker
-	releaser   typrls.Releaser
+	releaser   Releaser
 
 	ast *typast.Ast
 }
@@ -33,7 +33,7 @@ func New() *TypicalBuildTool {
 		cleaner:  NewCleaner(),
 		tester:   NewTester(),
 		mocker:   NewMocker(),
-		releaser: typrls.New(),
+		releaser: NewReleaser(),
 	}
 }
 
@@ -56,7 +56,7 @@ func (b *TypicalBuildTool) WithRunner(runner Runner) *TypicalBuildTool {
 }
 
 // WithReleaser return BuildTool with new releaser
-func (b *TypicalBuildTool) WithReleaser(releaser typrls.Releaser) *TypicalBuildTool {
+func (b *TypicalBuildTool) WithReleaser(releaser Releaser) *TypicalBuildTool {
 	b.releaser = releaser
 	return b
 }
@@ -186,8 +186,8 @@ func (b *TypicalBuildTool) runCommand(c *Context) *cli.Command {
 
 			log.Info("Run the application")
 			return b.runner.Run(&RunContext{
-				Context: b.createBuildContext(cliCtx, c),
-				Binary:  binary,
+				BuildContext: b.createBuildContext(cliCtx, c),
+				Binary:       binary,
 			})
 		},
 	}
@@ -218,10 +218,9 @@ func (b *TypicalBuildTool) releaseCommand(c *Context) *cli.Command {
 				}
 			}
 
-			return b.releaser.Release(&typrls.Context{
-				TypicalContext: c.TypicalContext,
-				Cli:            cliCtx,
-				Alpha:          cliCtx.Bool("alpha"),
+			return b.releaser.Release(&ReleaseContext{
+				BuildContext: b.createBuildContext(cliCtx, c),
+				Alpha:        cliCtx.Bool("alpha"),
 			})
 		},
 	}
@@ -235,10 +234,8 @@ func (b *TypicalBuildTool) mockCommand(c *Context) *cli.Command {
 			if b.mocker == nil {
 				panic("Mocker is nil")
 			}
-			return b.mocker.Mock(&Context{
-				TypicalContext: c.TypicalContext,
-				Ast:            b.ast,
-				Cli:            cliCtx,
+			return b.mocker.Mock(&MockContext{
+				BuildContext: b.createBuildContext(cliCtx, c),
 			})
 		},
 	}
@@ -250,10 +247,7 @@ func (b *TypicalBuildTool) cleanCommand(c *Context) *cli.Command {
 		Aliases: []string{"c"},
 		Usage:   "Clean the project from generated file during build time",
 		Action: func(cliCtx *cli.Context) error {
-			return b.cleaner.Clean(&Context{
-				TypicalContext: c.TypicalContext,
-				Cli:            cliCtx,
-			})
+			return b.cleaner.Clean(b.createBuildContext(cliCtx, c))
 		},
 	}
 }
@@ -269,10 +263,10 @@ func (b *TypicalBuildTool) testCommand(c *Context) *cli.Command {
 	}
 }
 
-func (b *TypicalBuildTool) createBuildContext(cliCtx *cli.Context, c *Context) *Context {
-	return &Context{
-		TypicalContext: c.TypicalContext,
-		Ast:            b.ast,
-		Cli:            cliCtx,
+func (b *TypicalBuildTool) createBuildContext(cliCtx *cli.Context, c *Context) *BuildContext {
+	return &BuildContext{
+		Context: c,
+		Cli:     cliCtx,
+		Ast:     b.ast,
 	}
 }

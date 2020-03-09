@@ -3,7 +3,6 @@ package typbuildtool
 import (
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typdep"
 	"github.com/urfave/cli/v2"
@@ -12,8 +11,6 @@ import (
 // Context of buildtool
 type Context struct {
 	*typcore.TypicalContext
-	*typast.Ast
-	Cli *cli.Context
 }
 
 // ActionFunc to return ActionFunc to invoke function fn
@@ -30,8 +27,8 @@ func (c *Context) ActionFunc(v interface{}) func(*cli.Context) error {
 func (c *Context) Invoke(cliCtx *cli.Context, invocation *typdep.Invocation) (err error) {
 	di := typdep.New()
 
-	if err = typdep.NewConstructor(func() *Context {
-		return c
+	if err = typdep.NewConstructor(func() *cli.Context {
+		return cliCtx
 	}).Provide(di); err != nil {
 		return
 	}

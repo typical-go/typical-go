@@ -1,4 +1,4 @@
-package typrls
+package typbuildtool
 
 import (
 	"context"
@@ -13,17 +13,17 @@ import (
 
 // StdReleaser responsible to release distruction
 type StdReleaser struct {
-	targets         []Target
+	targets         []ReleaseTarget
 	publishers      []Publisher
 	releaseFolder   string
 	includeBranch   bool
 	includeCommitID bool
 }
 
-// New return new instance of releaser
-func New() *StdReleaser {
+// NewReleaser return new instance of releaser
+func NewReleaser() *StdReleaser {
 	return &StdReleaser{
-		targets: []Target{
+		targets: []ReleaseTarget{
 			"linux/amd64",
 			"darwin/amd64",
 		},
@@ -44,7 +44,7 @@ func (r *StdReleaser) WithIncludeCommitID(includeCommitID bool) *StdReleaser {
 }
 
 // WithTarget to set target and return its instance
-func (r *StdReleaser) WithTarget(targets ...Target) *StdReleaser {
+func (r *StdReleaser) WithTarget(targets ...ReleaseTarget) *StdReleaser {
 	r.targets = targets
 	return r
 }
@@ -75,7 +75,7 @@ func (r *StdReleaser) Validate() (err error) {
 }
 
 // Release this project
-func (r *StdReleaser) Release(c *Context) (err error) {
+func (r *StdReleaser) Release(c *ReleaseContext) (err error) {
 
 	var (
 		tag      string
@@ -105,7 +105,7 @@ func (r *StdReleaser) Release(c *Context) (err error) {
 
 	for _, target := range r.targets {
 		var binary string
-		if binary, err = r.build(c, tag, target); err != nil {
+		if binary, err = r.build(c.BuildContext, tag, target); err != nil {
 			return fmt.Errorf("Failed build release: %w", err)
 		}
 		binaries = append(binaries, binary)
@@ -113,10 +113,10 @@ func (r *StdReleaser) Release(c *Context) (err error) {
 
 	if !c.Cli.Bool("no-publish") {
 		if err = r.Publish(&PublishContext{
-			Context:  c,
-			Tag:      tag,
-			Binaries: binaries,
-			GitLogs:  gitLogs,
+			ReleaseContext: c,
+			Tag:            tag,
+			Binaries:       binaries,
+			GitLogs:        gitLogs,
 		}); err != nil {
 			return fmt.Errorf("Failed to publish: %w", err)
 		}
@@ -153,7 +153,7 @@ func (r *StdReleaser) Publish(p *PublishContext) (err error) {
 	return
 }
 
-func (r *StdReleaser) build(c *Context, tag string, target Target) (binary string, err error) {
+func (r *StdReleaser) build(c *BuildContext, tag string, target ReleaseTarget) (binary string, err error) {
 	ctx := c.Cli.Context
 	goos := target.OS()
 	goarch := target.Arch()

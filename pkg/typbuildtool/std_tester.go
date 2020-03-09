@@ -28,7 +28,7 @@ func (s *StdTester) WithCoverProfile(coverProfile string) *StdTester {
 }
 
 // Test the project
-func (s *StdTester) Test(c *Context) (err error) {
+func (s *StdTester) Test(c *BuildContext) (err error) {
 	var targets []string
 	ctx := c.Cli.Context
 	for _, source := range c.ProjectSources {

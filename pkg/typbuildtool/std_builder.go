@@ -30,7 +30,7 @@ func (b *StdBuilder) AppendPrebuilder(prebuilders ...Prebuilder) *StdBuilder {
 }
 
 // Build the project
-func (b *StdBuilder) Build(c *Context) (binary string, err error) {
+func (b *StdBuilder) Build(c *BuildContext) (binary string, err error) {
 	binary = fmt.Sprintf("%s/%s", c.BinFolder, c.Name) // TODO: move to context
 	src := fmt.Sprintf("./%s/%s", c.CmdFolder, c.Name) // TODO: move to context
 	ctx := c.Cli.Context
@@ -47,7 +47,7 @@ func (b *StdBuilder) Build(c *Context) (binary string, err error) {
 	return binary, cmd.Run()
 }
 
-func (b *StdBuilder) prebuild(c *Context) (err error) {
+func (b *StdBuilder) prebuild(c *BuildContext) (err error) {
 	for _, prebuilder := range b.prebuilders {
 		if err = prebuilder.Prebuild(c); err != nil {
 			return
