@@ -8,8 +8,8 @@ import (
 	"strings"
 )
 
-// TypicalContext is context of typical build tool
-type TypicalContext struct {
+// Context of typical build tool
+type Context struct {
 	*Descriptor
 	BinFolder  string
 	CmdFolder  string
@@ -22,8 +22,8 @@ type TypicalContext struct {
 }
 
 // CreateContext return new constructor of TypicalContext
-func CreateContext(d *Descriptor) (*TypicalContext, error) {
-	c := &TypicalContext{
+func CreateContext(d *Descriptor) (*Context, error) {
+	c := &Context{
 		Descriptor: d,
 
 		CmdFolder:  DefaultCmdFolder,
@@ -42,7 +42,7 @@ func CreateContext(d *Descriptor) (*TypicalContext, error) {
 }
 
 // Validate typical context
-func (t *TypicalContext) Validate() error {
+func (t *Context) Validate() error {
 	if t.Descriptor == nil {
 		return errors.New("TypicalContext: Descriptor can't be empty")
 	}
@@ -60,16 +60,7 @@ func (t *TypicalContext) Validate() error {
 	return nil
 }
 
-func validateProjectSources(sources []string) (err error) {
-	for _, source := range sources {
-		if _, err = os.Stat(source); os.IsNotExist(err) {
-			return fmt.Errorf("Source '%s' is not exist", source)
-		}
-	}
-	return
-}
-
-func (t *TypicalContext) addFile(path string, info os.FileInfo, err error) error {
+func (t *Context) addFile(path string, info os.FileInfo, err error) error {
 	if info != nil {
 		if info.IsDir() {
 			t.Dirs = append(t.Dirs, path)
@@ -81,6 +72,15 @@ func (t *TypicalContext) addFile(path string, info os.FileInfo, err error) error
 		t.Files = append(t.Files, path)
 	}
 	return nil
+}
+
+func validateProjectSources(sources []string) (err error) {
+	for _, source := range sources {
+		if _, err = os.Stat(source); os.IsNotExist(err) {
+			return fmt.Errorf("Source '%s' is not exist", source)
+		}
+	}
+	return
 }
 
 func isWalkTarget(filename string) bool {

@@ -110,7 +110,7 @@ func (b *TypicalBuildTool) Validate() (err error) {
 }
 
 // Run build tool
-func (b *TypicalBuildTool) Run(t *typcore.TypicalContext) (err error) {
+func (b *TypicalBuildTool) Run(t *typcore.Context) (err error) {
 	if b.ast, err = typast.Walk(t.Files); err != nil {
 		return
 	}
@@ -121,7 +121,7 @@ func (b *TypicalBuildTool) Run(t *typcore.TypicalContext) (err error) {
 	app.Description = t.Description
 	app.Version = t.Version
 	app.Commands = b.Commands(&Context{
-		TypicalContext: t,
+		Context: t,
 	})
 
 	return app.Run(os.Args)

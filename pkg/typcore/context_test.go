@@ -44,21 +44,21 @@ func TestTypicalContext(t *testing.T) {
 
 func TestTypicalContext_Validate(t *testing.T) {
 	testcases := []struct {
-		*typcore.TypicalContext
+		*typcore.Context
 		expectedError string
 	}{
 		{
-			TypicalContext: &typcore.TypicalContext{},
-			expectedError:  "TypicalContext: Descriptor can't be empty",
+			Context:       &typcore.Context{},
+			expectedError: "TypicalContext: Descriptor can't be empty",
 		},
 		{
-			TypicalContext: &typcore.TypicalContext{
+			Context: &typcore.Context{
 				Descriptor: validDescriptor,
 			},
 			expectedError: "TypicalContext: ModulePackage can't be empty",
 		},
 		{
-			TypicalContext: &typcore.TypicalContext{
+			Context: &typcore.Context{
 				Descriptor:     validDescriptor,
 				ModulePackage:  "some-package",
 				ProjectSources: []string{"not-exist"},
@@ -66,7 +66,7 @@ func TestTypicalContext_Validate(t *testing.T) {
 			expectedError: "TypicalContext: Source 'not-exist' is not exist",
 		},
 		{
-			TypicalContext: &typcore.TypicalContext{
+			Context: &typcore.Context{
 				Descriptor:    validDescriptor,
 				ModulePackage: "some-package",
 			},
@@ -74,7 +74,7 @@ func TestTypicalContext_Validate(t *testing.T) {
 	}
 
 	for _, tt := range testcases {
-		err := common.Validate(tt.TypicalContext)
+		err := common.Validate(tt.Context)
 		if tt.expectedError == "" {
 			require.NoError(t, err)
 		} else {

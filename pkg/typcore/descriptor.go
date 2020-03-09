@@ -50,7 +50,7 @@ func (d *Descriptor) RunBuild() (err error) {
 		return errors.New("Descriptor is missing `BuildTool`")
 	}
 
-	var c *TypicalContext
+	var c *Context
 	if c, err = CreateContext(d); err != nil {
 		return
 	}

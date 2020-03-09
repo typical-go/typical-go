@@ -10,7 +10,7 @@ import (
 
 // Context of buildtool
 type Context struct {
-	*typcore.TypicalContext
+	*typcore.Context
 }
 
 // ActionFunc to return ActionFunc to invoke function fn

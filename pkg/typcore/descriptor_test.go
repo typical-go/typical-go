@@ -119,7 +119,7 @@ func (i buildTool) Validate() error {
 	return nil
 }
 
-func (i buildTool) Run(*typcore.TypicalContext) error {
+func (i buildTool) Run(*typcore.Context) error {
 	return nil
 }
 
