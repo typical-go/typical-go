@@ -23,8 +23,8 @@ type Github struct {
 	Filter   Filter
 }
 
-// GithubPublisher to return new instance of Github
-func GithubPublisher(owner, repo string) *Github {
+// NewGithub to return new instance of Github
+func NewGithub(owner, repo string) *Github {
 	return &Github{
 		Owner:    owner,
 		RepoName: repo,
@@ -39,8 +39,9 @@ func (g *Github) WithFilter(filter Filter) *Github {
 }
 
 // Publish to github
-func (g *Github) Publish(ctx context.Context, p *PublishContext) (err error) {
+func (g *Github) Publish(p *PublishContext) (err error) {
 	token := os.Getenv("GITHUB_TOKEN")
+	ctx := p.Cli.Context
 	if token == "" {
 		return errors.New("Environment 'GITHUB_TOKEN' is missing")
 	}

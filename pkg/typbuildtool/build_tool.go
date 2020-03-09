@@ -60,8 +60,8 @@ func (b *TypicalBuildTool) WithRunner(runner typbuild.Runner) *TypicalBuildTool 
 	return b
 }
 
-// WithRelease return BuildTool with new releaser
-func (b *TypicalBuildTool) WithRelease(releaser typrls.Releaser) *TypicalBuildTool {
+// WithReleaser return BuildTool with new releaser
+func (b *TypicalBuildTool) WithReleaser(releaser typrls.Releaser) *TypicalBuildTool {
 	b.releaser = releaser
 	return b
 }
@@ -210,7 +210,6 @@ func (b *TypicalBuildTool) releaseCommand(c *Context) *cli.Command {
 			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 		},
 		Action: func(cliCtx *cli.Context) (err error) {
-			ctx := cliCtx.Context
 
 			if !cliCtx.Bool("no-build") && b.builder != nil {
 				if _, err = b.builder.Build(b.createBuildContext(cliCtx, c)); err != nil {
@@ -224,11 +223,10 @@ func (b *TypicalBuildTool) releaseCommand(c *Context) *cli.Command {
 				}
 			}
 
-			return b.releaser.Release(ctx, &typrls.Context{
+			return b.releaser.Release(&typrls.Context{
 				TypicalContext: c.TypicalContext,
+				Cli:            cliCtx,
 				Alpha:          cliCtx.Bool("alpha"),
-				Force:          cliCtx.Bool("force"),
-				NoPublish:      cliCtx.Bool("no-publish"),
 			})
 		},
 	}

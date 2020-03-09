@@ -11,8 +11,7 @@ import (
 // Descriptor of typical-go
 var Descriptor = typcore.Descriptor{
 
-	Name: "typical-go",
-
+	Name:    "typical-go",
 	Version: typcore.Version,
 
 	App: typicalgo.New(),
@@ -23,7 +22,7 @@ var Descriptor = typcore.Descriptor{
 		).
 		WithRelease(typrls.New().
 			WithPublisher(
-				typrls.GithubPublisher("typical-go", "typical-go"),
+				typrls.NewGithub("typical-go", "typical-go"),
 			),
 		),
 }

@@ -1,20 +1,18 @@
 package typrls
 
 import (
-	"context"
-
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/urfave/cli/v2"
 )
 
 // Releaser responsible to release
 type Releaser interface {
-	Release(ctx context.Context, rls *Context) (err error)
+	Release(*Context) (err error)
 }
 
 // Context of release
 type Context struct {
 	*typcore.TypicalContext
-	Alpha     bool
-	Force     bool
-	NoPublish bool
+	Cli   *cli.Context
+	Alpha bool
 }

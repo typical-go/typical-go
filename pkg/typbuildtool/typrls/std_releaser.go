@@ -75,13 +75,15 @@ func (r *StdReleaser) Validate() (err error) {
 }
 
 // Release this project
-func (r *StdReleaser) Release(ctx context.Context, c *Context) (err error) {
+func (r *StdReleaser) Release(c *Context) (err error) {
 
 	var (
 		tag      string
 		latest   string
 		gitLogs  []*git.Log
 		binaries []string
+		ctx      = c.Cli.Context
+		force    = c.Cli.Bool("force")
 	)
 
 	if err = git.Fetch(ctx); err != nil {
@@ -91,32 +93,32 @@ func (r *StdReleaser) Release(ctx context.Context, c *Context) (err error) {
 
 	tag = r.Tag(ctx, c.Version, c.Alpha)
 
-	if status := git.Status(ctx); status != "" && !c.Force {
+	if status := git.Status(ctx); status != "" && !force {
 		return fmt.Errorf("Please commit changes first:\n%s", status)
 	}
-	if latest = git.LatestTag(ctx); latest == tag && !c.Force {
+	if latest = git.LatestTag(ctx); latest == tag && !force {
 		return fmt.Errorf("%s already released", latest)
 	}
-	if gitLogs = git.Logs(ctx, latest); len(gitLogs) < 1 && !c.Force {
+	if gitLogs = git.Logs(ctx, latest); len(gitLogs) < 1 && !force {
 		return errors.New("No change to be released")
 	}
 
 	for _, target := range r.targets {
 		var binary string
-		if binary, err = r.build(ctx, c, tag, target); err != nil {
+		if binary, err = r.build(c, tag, target); err != nil {
 			return fmt.Errorf("Failed build release: %w", err)
 		}
 		binaries = append(binaries, binary)
 	}
 
-	if !c.NoPublish {
-		if err = r.Publish(ctx, &PublishContext{
+	if !c.Cli.Bool("no-publish") {
+		if err = r.Publish(&PublishContext{
 			Context:  c,
 			Tag:      tag,
 			Binaries: binaries,
 			GitLogs:  gitLogs,
 		}); err != nil {
-			return fmt.Errorf("Failed publish: %w", err)
+			return fmt.Errorf("Failed to publish: %w", err)
 		}
 	}
 	return
@@ -142,24 +144,25 @@ func (r *StdReleaser) Tag(ctx context.Context, version string, alpha bool) strin
 }
 
 // Publish the release
-func (r *StdReleaser) Publish(ctx context.Context, p *PublishContext) (err error) {
+func (r *StdReleaser) Publish(p *PublishContext) (err error) {
 	for _, publisher := range r.publishers {
-		if err = publisher.Publish(ctx, p); err != nil {
+		if err = publisher.Publish(p); err != nil {
 			return
 		}
 	}
 	return
 }
 
-func (r *StdReleaser) build(ctx context.Context, rel *Context, tag string, target Target) (binary string, err error) {
+func (r *StdReleaser) build(c *Context, tag string, target Target) (binary string, err error) {
+	ctx := c.Cli.Context
 	goos := target.OS()
 	goarch := target.Arch()
-	binary = strings.Join([]string{rel.Name, tag, goos, goarch}, "_")
+	binary = strings.Join([]string{c.Name, tag, goos, goarch}, "_")
 	// TODO: Support CGO
 	cmd := exec.CommandContext(ctx, "go", "build",
 		"-o", fmt.Sprintf("%s/%s", r.releaseFolder, binary),
 		"-ldflags", "-w -s",
-		fmt.Sprintf("./%s/%s", rel.CmdFolder, rel.Name),
+		fmt.Sprintf("./%s/%s", c.CmdFolder, c.Name),
 	)
 	cmd.Env = append(os.Environ(), "GOOS="+goos, "GOARCH="+goarch)
 	cmd.Stdout = os.Stdout
