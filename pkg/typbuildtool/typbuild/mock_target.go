@@ -1,4 +1,4 @@
-package typmock
+package typbuild
 
 import (
 	"fmt"
@@ -8,8 +8,8 @@ import (
 	"github.com/typical-go/typical-go/pkg/typast"
 )
 
-// Target to be mocked
-type Target struct {
+// MockTarget to be mocked
+type MockTarget struct {
 	SrcDir  string
 	SrcPkg  string
 	SrcName string
@@ -18,7 +18,7 @@ type Target struct {
 	Dest    string
 }
 
-func createTarget(c *Context, decl *typast.Declaration) *Target {
+func createMockTarget(c *Context, decl *typast.Declaration) *MockTarget {
 	var (
 		pkg     = decl.File.Name.Name
 		dir     = filepath.Dir(decl.Path)
@@ -28,7 +28,7 @@ func createTarget(c *Context, decl *typast.Declaration) *Target {
 		mockDir = fmt.Sprintf("%s%s", dirDest, mockPkg)
 		dest    = fmt.Sprintf("%s/%s.go", mockDir, strcase.ToSnake(decl.SourceName))
 	)
-	return &Target{
+	return &MockTarget{
 		SrcPkg:  srcPkg,
 		SrcName: decl.SourceName,
 		MockPkg: mockPkg,

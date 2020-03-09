@@ -6,13 +6,9 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
-
 	"github.com/typical-go/typical-go/pkg/typast"
-
 	"github.com/typical-go/typical-go/pkg/typbuildtool/typbuild"
-	"github.com/typical-go/typical-go/pkg/typbuildtool/typmock"
 	"github.com/typical-go/typical-go/pkg/typbuildtool/typrls"
-
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
@@ -24,10 +20,10 @@ type TypicalBuildTool struct {
 	runner     typbuild.Runner
 	cleaner    typbuild.Cleaner
 	tester     typbuild.Tester
-	mocker     typmock.Mocker
+	mocker     typbuild.Mocker
 	releaser   typrls.Releaser
 
-	store *typast.Store
+	ast *typast.Ast
 }
 
 // New return new instance of build
@@ -37,7 +33,7 @@ func New() *TypicalBuildTool {
 		runner:   typbuild.NewRunner(),
 		cleaner:  typbuild.NewCleaner(),
 		tester:   typbuild.NewTester(),
-		mocker:   typmock.New(),
+		mocker:   typbuild.NewMocker(),
 		releaser: typrls.New(),
 	}
 }
@@ -67,7 +63,7 @@ func (b *TypicalBuildTool) WithReleaser(releaser typrls.Releaser) *TypicalBuildT
 }
 
 // WithMocker return BuildTool with new mocker
-func (b *TypicalBuildTool) WithMocker(mocker typmock.Mocker) *TypicalBuildTool {
+func (b *TypicalBuildTool) WithMocker(mocker typbuild.Mocker) *TypicalBuildTool {
 	b.mocker = mocker
 	return b
 }
@@ -116,7 +112,7 @@ func (b *TypicalBuildTool) Validate() (err error) {
 
 // Run build tool
 func (b *TypicalBuildTool) Run(t *typcore.TypicalContext) (err error) {
-	if b.store, err = typast.Walk(t.Files); err != nil {
+	if b.ast, err = typast.Walk(t.Files); err != nil {
 		return
 	}
 
@@ -240,9 +236,9 @@ func (b *TypicalBuildTool) mockCommand(c *Context) *cli.Command {
 			if b.mocker == nil {
 				panic("Mocker is nil")
 			}
-			return b.mocker.Mock(&typmock.Context{
+			return b.mocker.Mock(&typbuild.Context{
 				TypicalContext: c.TypicalContext,
-				Store:          b.store,
+				Ast:            b.ast,
 				Cli:            cliCtx,
 			})
 		},
@@ -277,7 +273,7 @@ func (b *TypicalBuildTool) testCommand(c *Context) *cli.Command {
 func (b *TypicalBuildTool) createBuildContext(cliCtx *cli.Context, c *Context) *typbuild.Context {
 	return &typbuild.Context{
 		TypicalContext: c.TypicalContext,
-		Store:          b.store,
+		Ast:            b.ast,
 		Cli:            cliCtx,
 	}
 }

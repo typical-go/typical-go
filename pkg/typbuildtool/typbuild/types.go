@@ -1,11 +1,5 @@
 package typbuild
 
-import (
-	"github.com/typical-go/typical-go/pkg/typast"
-	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/urfave/cli/v2"
-)
-
 // Builder reponsible to build
 type Builder interface {
 	Build(c *Context) (bin string, err error)
@@ -31,15 +25,7 @@ type Runner interface {
 	Run(*RunContext) error
 }
 
-// Context of build
-type Context struct {
-	*typcore.TypicalContext
-	*typast.Store
-	Cli *cli.Context
-}
-
-// RunContext of run
-type RunContext struct {
-	*Context
-	Binary string
+// Mocker responsible to mock
+type Mocker interface {
+	Mock(*Context) error
 }

@@ -1,4 +1,4 @@
-package typmock
+package typbuild
 
 import (
 	"fmt"
@@ -14,35 +14,35 @@ import (
 
 // StdMocker is standard mocker
 type StdMocker struct {
-	targetMap map[string][]*Target
+	targetMap map[string][]*MockTarget
 }
 
-// New return new instance of StdMocker
-func New() *StdMocker {
+// NewMocker return new instance of StdMocker
+func NewMocker() *StdMocker {
 	return &StdMocker{
-		targetMap: make(map[string][]*Target),
+		targetMap: make(map[string][]*MockTarget),
 	}
 }
 
 // Put new target
-func (b *StdMocker) Put(target *Target) {
+func (b *StdMocker) Put(target *MockTarget) {
 	key := target.MockDir
 	if _, ok := b.targetMap[key]; ok {
 		b.targetMap[key] = append(b.targetMap[key], target)
 	} else {
-		b.targetMap[key] = []*Target{target}
+		b.targetMap[key] = []*MockTarget{target}
 	}
 }
 
 // TargetMap return targetMap field
-func (b *StdMocker) TargetMap() map[string][]*Target {
+func (b *StdMocker) TargetMap() map[string][]*MockTarget {
 	return b.targetMap
 }
 
 // Mock the project
 func (b *StdMocker) Mock(c *Context) (err error) {
 	if err = c.EachAnnotation("mock", typast.InterfaceType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
-		b.Put(createTarget(c, decl))
+		b.Put(createMockTarget(c, decl))
 		return
 	}); err != nil {
 		return

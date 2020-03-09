@@ -4,8 +4,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// Store responsible to store declaration
-type Store struct {
+// Ast responsible to store declaration
+type Ast struct {
 	decls []*Declaration
 }
 
@@ -16,13 +16,13 @@ type DeclFunc func(*Declaration) error
 type AnnotationFunc func(decl *Declaration, ann *Annotation) error
 
 // Append return DeclStore with appended decls
-func (c *Store) Append(decls ...*Declaration) *Store {
+func (c *Ast) Append(decls ...*Declaration) *Ast {
 	c.decls = append(c.decls, decls...)
 	return c
 }
 
 // EachDecl to handle each declaration
-func (c *Store) EachDecl(fn DeclFunc) (err error) {
+func (c *Ast) EachDecl(fn DeclFunc) (err error) {
 	for _, decl := range c.decls {
 		if err = fn(decl); err != nil {
 			return
@@ -32,7 +32,7 @@ func (c *Store) EachDecl(fn DeclFunc) (err error) {
 }
 
 // EachAnnotation to handle each annotation
-func (c *Store) EachAnnotation(name string, declType DeclType, fn AnnotationFunc) (err error) {
+func (c *Ast) EachAnnotation(name string, declType DeclType, fn AnnotationFunc) (err error) {
 	return c.EachDecl(func(decl *Declaration) (err error) {
 		annotation := decl.Annotations.Get(name)
 		if annotation != nil {

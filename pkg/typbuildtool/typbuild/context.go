@@ -1,20 +1,20 @@
-package typmock
+package typbuild
 
 import (
 	"github.com/typical-go/typical-go/pkg/typast"
-	"github.com/urfave/cli/v2"
-
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/urfave/cli/v2"
 )
 
-// Mocker responsible to mock
-type Mocker interface {
-	Mock(*Context) error
-}
-
-// Context of mock
+// Context of build
 type Context struct {
 	*typcore.TypicalContext
-	*typast.Store
+	*typast.Ast
 	Cli *cli.Context
+}
+
+// RunContext of run
+type RunContext struct {
+	*Context
+	Binary string
 }

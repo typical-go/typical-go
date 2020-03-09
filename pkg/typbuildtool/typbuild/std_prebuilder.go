@@ -19,7 +19,7 @@ type stdPrebuilder struct{}
 
 func (a *stdPrebuilder) Prebuild(c *Context) (err error) {
 	var constructors []string
-	if err = c.EachAnnotation("constructor", typast.FunctionType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
+	if err = c.Ast.EachAnnotation("constructor", typast.FunctionType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
 		constructors = append(constructors, fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
 		return
 	}); err != nil {
