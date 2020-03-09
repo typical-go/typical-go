@@ -17,8 +17,8 @@ const (
 )
 
 var (
-	// DefaultModulePackage is default value for ModulePackage
-	DefaultModulePackage = "" // NOTE: supply by ldflags
+	// DefaultProjectPackage is default value for ProjectPackage
+	DefaultProjectPackage = "" // NOTE: supply by ldflags
 
 	// DefaultTempFolder is default value for temp folder location
 	DefaultTempFolder = ".typical-tmp"
@@ -66,5 +66,5 @@ func RetrieveModulePackage(root string) (pkg string) {
 	defer f.Close()
 
 	gomod := buildkit.ParseGoMod(f)
-	return gomod.ModulePackage
+	return gomod.ProjectPackage
 }

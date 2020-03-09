@@ -23,7 +23,7 @@ func createMockTarget(c *MockContext, decl *typast.Declaration) *MockTarget {
 		pkg     = decl.File.Name.Name
 		dir     = filepath.Dir(decl.Path)
 		dirDest = dir[:len(dir)-len(pkg)]
-		srcPkg  = fmt.Sprintf("%s/%s", c.ModulePackage, dir)
+		srcPkg  = fmt.Sprintf("%s/%s", c.ProjectPackage, dir)
 		mockPkg = fmt.Sprintf("mock_%s", pkg)
 		mockDir = fmt.Sprintf("%s%s", dirDest, mockPkg)
 		dest    = fmt.Sprintf("%s/%s.go", mockDir, strcase.ToSnake(decl.SourceName))

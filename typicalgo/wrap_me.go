@@ -68,7 +68,7 @@ func buildBuildTool(ctx context.Context, wc *wrapContext) (err error) {
 	}
 
 	gobuild := buildkit.NewGoBuild(binPath, srcPath)
-	gobuild.SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultModulePackage", wc.modulePackage)
+	gobuild.SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage", wc.modulePackage)
 
 	cmd := gobuild.Command(ctx)
 	cmd.Stdout = os.Stdout

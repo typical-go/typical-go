@@ -39,7 +39,7 @@ func (a *stdPrebuilder) generateConstructor(c *BuildContext, target string, cons
 	imports := []string{}
 	for _, dir := range c.Dirs {
 		if !strings.Contains(dir, "internal") {
-			imports = append(imports, fmt.Sprintf("%s/%s", c.ModulePackage, dir))
+			imports = append(imports, fmt.Sprintf("%s/%s", c.ProjectPackage, dir))
 		}
 	}
 	if err = runnerkit.NewWriteTemplate(target, tmpl.Constructor, tmpl.ConstructorData{

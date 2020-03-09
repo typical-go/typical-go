@@ -8,7 +8,7 @@ import (
 
 // GoMod is go.mod file details
 type GoMod struct {
-	ModulePackage string
+	ProjectPackage string
 	GoVersion     string
 }
 
@@ -33,7 +33,7 @@ func ParseGoMod(r io.Reader) *GoMod {
 	}
 
 	return &GoMod{
-		ModulePackage: modulePackage,
+		ProjectPackage: modulePackage,
 		GoVersion:     goVersion,
 	}
 }

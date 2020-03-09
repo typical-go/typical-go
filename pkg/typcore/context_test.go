@@ -31,8 +31,8 @@ func TestTypicalContext(t *testing.T) {
 		BuildTool: typbuildtool.New(),
 	})
 
-	// NOTE: ModulePackage need to set manually because its value get from ldflags
-	ctx.ModulePackage = "some-package"
+	// NOTE: ProjectPackage need to set manually because its value get from ldflags
+	ctx.ProjectPackage = "some-package"
 
 	require.NoError(t, err)
 	require.NoError(t, common.Validate(ctx))
@@ -55,12 +55,12 @@ func TestTypicalContext_Validate(t *testing.T) {
 			Context: &typcore.Context{
 				Descriptor: validDescriptor,
 			},
-			expectedError: "TypicalContext: ModulePackage can't be empty",
+			expectedError: "TypicalContext: ProjectPackage can't be empty",
 		},
 		{
 			Context: &typcore.Context{
 				Descriptor:     validDescriptor,
-				ModulePackage:  "some-package",
+				ProjectPackage:  "some-package",
 				ProjectSources: []string{"not-exist"},
 			},
 			expectedError: "TypicalContext: Source 'not-exist' is not exist",
@@ -68,7 +68,7 @@ func TestTypicalContext_Validate(t *testing.T) {
 		{
 			Context: &typcore.Context{
 				Descriptor:    validDescriptor,
-				ModulePackage: "some-package",
+				ProjectPackage: "some-package",
 			},
 		},
 	}

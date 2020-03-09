@@ -14,7 +14,7 @@ func TestGoMod(t *testing.T) {
 
 	gomod := buildkit.ParseGoMod(&b)
 	require.Equal(t, &buildkit.GoMod{
-		ModulePackage: "github.com/typical-go/typical-go",
+		ProjectPackage: "github.com/typical-go/typical-go",
 		GoVersion:     "1.13",
 	}, gomod)
 }

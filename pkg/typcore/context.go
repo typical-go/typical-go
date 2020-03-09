@@ -17,7 +17,7 @@ type Context struct {
 
 	Dirs           []string
 	Files          []string
-	ModulePackage  string
+	ProjectPackage string
 	ProjectSources []string
 }
 
@@ -30,7 +30,7 @@ func CreateContext(d *Descriptor) (*Context, error) {
 		BinFolder:  DefaultBinFolder,
 		TempFolder: DefaultTempFolder,
 
-		ModulePackage:  DefaultModulePackage,
+		ProjectPackage: DefaultProjectPackage,
 		ProjectSources: RetrieveProjectSources(d),
 	}
 	for _, dir := range c.ProjectSources {
@@ -50,8 +50,8 @@ func (c *Context) Validate() error {
 		return err
 	}
 
-	if c.ModulePackage == "" {
-		return errors.New("TypicalContext: ModulePackage can't be empty")
+	if c.ProjectPackage == "" {
+		return errors.New("TypicalContext: ProjectPackage can't be empty")
 	}
 
 	if err := validateProjectSources(c.ProjectSources); err != nil {
@@ -62,7 +62,7 @@ func (c *Context) Validate() error {
 
 // TypicalPackage return package of typical
 func (c *Context) TypicalPackage() string {
-	return fmt.Sprintf("%s/typical", c.ModulePackage)
+	return fmt.Sprintf("%s/typical", c.ProjectPackage)
 }
 
 func (c *Context) addFile(path string, info os.FileInfo, err error) error {
