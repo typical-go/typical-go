@@ -3,9 +3,9 @@ package typicalgo
 import (
 	"context"
 	"fmt"
+	"os"
 	"path/filepath"
 
-	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/runnerkit"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/typicalgo/internal/tmpl"
@@ -13,9 +13,11 @@ import (
 
 func constructProject(ctx context.Context, pkg string) (err error) {
 	name := filepath.Base(pkg)
-	if common.IsFileExist(name) {
-		return fmt.Errorf("'%s' already exist", name)
+
+	if _, err = os.Stat(name); os.IsNotExist(err) {
+		return
 	}
+
 	return runnerkit.Run(ctx,
 		constructproj{
 			TemplateData: tmpl.TemplateData{

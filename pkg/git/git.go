@@ -4,8 +4,6 @@ import (
 	"context"
 	"os/exec"
 	"strings"
-
-	"github.com/typical-go/typical-go/pkg/common"
 )
 
 // Status is same with `git status --porcelain`
@@ -39,14 +37,14 @@ func Logs(ctx context.Context, from string) (logs []*Log) {
 	var (
 		data string
 		err  error
-		args common.Strings
+		args []string
 	)
 
-	args.Append("--no-pager", "log")
+	args = append(args, "--no-pager", "log")
 	if from != "" {
-		args.Append(from + "..HEAD")
+		args = append(args, from+"..HEAD")
 	}
-	args.Append("--oneline")
+	args = append(args, "--oneline")
 
 	if data, err = git(ctx, args...); err != nil {
 		return

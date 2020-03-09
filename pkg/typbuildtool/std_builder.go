@@ -31,8 +31,8 @@ func (b *StdBuilder) AppendPrebuilder(prebuilders ...Prebuilder) *StdBuilder {
 
 // Build the project
 func (b *StdBuilder) Build(c *BuildContext) (binary string, err error) {
-	binary = fmt.Sprintf("%s/%s", c.BinFolder, c.Name) // TODO: move to context
-	src := fmt.Sprintf("./%s/%s", c.CmdFolder, c.Name) // TODO: move to context
+	binary = fmt.Sprintf("%s/%s", c.BinFolder, c.Name)
+	src := fmt.Sprintf("./%s/%s", c.CmdFolder, c.Name)
 	ctx := c.Cli.Context
 
 	if err = b.prebuild(c); err != nil {

@@ -8,7 +8,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
-	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typast"
 )
 
@@ -51,7 +50,7 @@ func (b *StdMocker) Mock(c *MockContext) (err error) {
 	mockgen := fmt.Sprintf("%s/bin/mockgen", c.TempFolder)
 	ctx := c.Cli.Context
 
-	if !common.IsFileExist(mockgen) {
+	if _, err = os.Stat(mockgen); os.IsNotExist(err) {
 		log.Info("Build mockgen")
 		if err = buildkit.NewGoBuild(mockgen, "github.com/golang/mock/mockgen").Command(ctx).Run(); err != nil {
 			return
