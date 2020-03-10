@@ -6,25 +6,19 @@ A Framework + Build Tool for Productive Go Development. <https://typical-go.gith
 
 ## Install
 
-Download the latest release from [releases page](https://github.com/typical-go/typical-go/releases)
 
-Or 
 ```bash
 go get -u github.com/typical-go/typical-go/cmd/...
 ```
-
-## Usage
-
-### New Project
-
-```bash
-typical-go new [PACKAGE]
-```
+Or download the latest release from [releases page](https://github.com/typical-go/typical-go/releases)
 
 
 ## Examples
 
-- [RESTful Server](https://github.com/typical-go/typical-rest-server)
+- [Hello World](https://github.com/typical-go/typical-go/tree/master/examples/hello-world)
+- [Configuration with invocation](https://github.com/typical-go/typical-go/tree/master/examples/configuration-with-invocation)
+- [Simple additional task](https://github.com/typical-go/typical-go/tree/master/examples/simple-additional-task)
+- [REST Server](https://github.com/typical-go/typical-rest-server)
 
 
 ## License
