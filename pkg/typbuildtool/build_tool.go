@@ -250,16 +250,15 @@ func (b *TypicalBuildTool) cleanCommand(c *Context) *cli.Command {
 		Aliases: []string{"c"},
 		Usage:   "Clean the project from generated file during build time",
 		Flags: []cli.Flag{
-			&cli.BoolFlag{Name: "all", Usage: "Clean all resource"},
+			&cli.BoolFlag{Name: "short", Aliases: []string{"s"}, Usage: "Short version of clean only clean build-tool"},
 		},
 		Action: func(cliCtx *cli.Context) (err error) {
 			removeAll(c.BinFolder)
-			if cliCtx.Bool("all") {
-				removeAll(c.TempFolder)
-			} else {
+			if cliCtx.Bool("short") {
 				remove(typcore.BuildToolBin(c.TempFolder))
+			} else {
+				removeAll(c.TempFolder)
 			}
-
 			return
 		},
 	}
