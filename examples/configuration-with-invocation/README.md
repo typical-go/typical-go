@@ -29,14 +29,14 @@ func (m *Module) Configure(loader typcfg.Loader) *typcfg.Detail {
 }
 ```
 
-Create invocation with config as parameter
+Create the invocation and function with config as its parameter
 ```go
 // EntryPoint of application
 func (a *App) EntryPoint() *typdep.Invocation {
-	return typdep.NewInvocation(
-		func(cfg config.Config) {
-			fmt.Printf("Hello %s\n", cfg.Hello)
-		})
+	return typdep.NewInvocation(start)
 }
 
+func start(cfg config.Config) {
+	fmt.Printf("Hello %s\n", cfg.Hello)
+}
 ```

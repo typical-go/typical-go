@@ -26,14 +26,6 @@ func (a *App) WithConfigPrefix(name string) *App {
 	return a
 }
 
-// EntryPoint of application
-func (a *App) EntryPoint() *typdep.Invocation {
-	return typdep.NewInvocation(
-		func(cfg config.Config) {
-			fmt.Printf("Hello %s\n", cfg.Hello)
-		})
-}
-
 // Configure the application
 func (a *App) Configure(loader typcfg.Loader) *typcfg.Configuration {
 	return &typcfg.Configuration{
@@ -45,4 +37,13 @@ func (a *App) Configure(loader typcfg.Loader) *typcfg.Configuration {
 				return
 			}),
 	}
+}
+
+// EntryPoint of application
+func (a *App) EntryPoint() *typdep.Invocation {
+	return typdep.NewInvocation(start)
+}
+
+func start(cfg config.Config) {
+	fmt.Printf("Hello %s\n", cfg.Hello)
 }
