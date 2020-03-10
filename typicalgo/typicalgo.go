@@ -40,28 +40,27 @@ func (t *TypicalGo) Run(d *typcore.Descriptor) (err error) {
 			Name: "wrap-me",
 			Flags: []cli.Flag{
 				&cli.StringFlag{Name: "tmp", Required: true},
-				&cli.StringFlag{Name: "module-package"},
-				&cli.StringFlag{Name: "name"},
+				&cli.StringFlag{Name: "project-package"},
 			},
 			Action: func(c *cli.Context) (err error) {
 				var (
-					root          string
-					tmp           = c.String("tmp")
-					modulePackage = c.String("module-package")
+					root           string
+					tmp            = c.String("tmp")
+					projectPackage = c.String("project-package")
 				)
 
 				if root, err = os.Getwd(); err != nil {
 					return err
 				}
 
-				if modulePackage == "" {
-					modulePackage = typcore.RetrieveModulePackage(root)
+				if projectPackage == "" {
+					projectPackage = typcore.RetrieveProjectPackage(root)
 				}
 
 				return wrapMe(c.Context, &wrapContext{
-					Descriptor:    d,
-					TempFolder:    typcore.TempFolder(tmp),
-					modulePackage: modulePackage,
+					Descriptor:     d,
+					tmp:            tmp,
+					projectPackage: projectPackage,
 				})
 			},
 		},

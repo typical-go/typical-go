@@ -21,17 +21,17 @@ import (
 
 type wrapContext struct {
 	*typcore.Descriptor
-	typcore.TempFolder
-	modulePackage string
+	tmp            string
+	projectPackage string
 }
 
 func wrapMe(ctx context.Context, wc *wrapContext) (err error) {
 
 	// NOTE: create tmp folder if not exist
-	wc.Mkdir()
+	typcore.MakeTempDir(wc.tmp)
 
-	checksumPath := wc.Checksum()
-	buildToolBin := wc.BuildToolBin()
+	checksumPath := typcore.Checksum(wc.tmp)
+	buildToolBin := typcore.BuildToolBin(wc.tmp)
 	var checksumData []byte
 	if checksumData, err = checksum("typical"); err != nil {
 		return
@@ -39,7 +39,7 @@ func wrapMe(ctx context.Context, wc *wrapContext) (err error) {
 
 	if !sameChecksum(checksumPath, checksumData) || notExist(buildToolBin) {
 		log.Info("Update new checksum")
-		if err = ioutil.WriteFile(checksumPath, checksumData, 0644); err != nil {
+		if err = ioutil.WriteFile(checksumPath, checksumData, 0777); err != nil {
 			return
 		}
 		log.Info("Build the Build-Tool")
@@ -53,9 +53,9 @@ func wrapMe(ctx context.Context, wc *wrapContext) (err error) {
 
 func buildBuildTool(ctx context.Context, wc *wrapContext) (err error) {
 	var (
-		descriptorPkg = wc.modulePackage + "/typical"
-		srcPath       = wc.BuildToolSrc()
-		binPath       = wc.BuildToolBin()
+		descriptorPkg = typcore.TypicalPackage(wc.projectPackage)
+		srcPath       = typcore.BuildToolSrc(wc.tmp)
+		binPath       = typcore.BuildToolBin(wc.tmp)
 	)
 
 	if notExist(srcPath) {
@@ -68,7 +68,7 @@ func buildBuildTool(ctx context.Context, wc *wrapContext) (err error) {
 	}
 
 	gobuild := buildkit.NewGoBuild(binPath, srcPath)
-	gobuild.SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage", wc.modulePackage)
+	gobuild.SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage", wc.projectPackage)
 
 	cmd := gobuild.Command(ctx)
 	cmd.Stdout = os.Stdout

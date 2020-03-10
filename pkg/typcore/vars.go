@@ -46,8 +46,8 @@ func RetrieveProjectSources(d *Descriptor) (sources []string) {
 	return
 }
 
-// RetrieveModulePackage to retrieve module package from root path
-func RetrieveModulePackage(root string) (pkg string) {
+// RetrieveProjectPackage to retrieve module package from root path
+func RetrieveProjectPackage(root string) (pkg string) {
 	var (
 		err error
 	)

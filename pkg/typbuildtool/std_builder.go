@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/runnerkit"
+	"github.com/typical-go/typical-go/pkg/typcore"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typbuildtool/internal/tmpl"
@@ -29,7 +30,7 @@ func (b *StdBuilder) Build(c *BuildContext) (dist BuildDistribution, err error) 
 	if _, err = os.Stat(src); os.IsNotExist(err) {
 		os.MkdirAll(srcDir, 0777)
 		data := &tmpl.AppMainData{
-			TypicalPackage: c.TypicalPackage(),
+			TypicalPackage: typcore.TypicalPackage(c.ProjectPackage),
 		}
 		if err = runnerkit.NewWriteTemplate(src, tmpl.AppMain, data).Run(ctx); err != nil {
 			return

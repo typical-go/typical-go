@@ -60,11 +60,6 @@ func (c *Context) Validate() error {
 	return nil
 }
 
-// TypicalPackage return package of typical
-func (c *Context) TypicalPackage() string {
-	return fmt.Sprintf("%s/typical", c.ProjectPackage)
-}
-
 func (c *Context) addFile(path string, info os.FileInfo, err error) error {
 	if info != nil {
 		if info.IsDir() {

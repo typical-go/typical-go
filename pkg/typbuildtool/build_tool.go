@@ -17,7 +17,6 @@ type TypicalBuildTool struct {
 	commanders  []Commander
 	builder     Builder
 	prebuilders []Prebuilder
-	cleaner     Cleaner
 	tester      Tester
 	mocker      Mocker
 	releaser    Releaser
@@ -29,7 +28,6 @@ type TypicalBuildTool struct {
 func New() *TypicalBuildTool {
 	return &TypicalBuildTool{
 		builder:  NewBuilder(),
-		cleaner:  NewCleaner(),
 		tester:   NewTester(),
 		mocker:   NewMocker(),
 		releaser: NewReleaser(),
@@ -66,12 +64,6 @@ func (b *TypicalBuildTool) WithMocker(mocker Mocker) *TypicalBuildTool {
 	return b
 }
 
-// WithCleaner return BuildTool with new cleaner
-func (b *TypicalBuildTool) WithCleaner(cleaner Cleaner) *TypicalBuildTool {
-	b.cleaner = cleaner
-	return b
-}
-
 // WithTester return BuildTool with new tester
 func (b *TypicalBuildTool) WithTester(tester Tester) *TypicalBuildTool {
 	b.tester = tester
@@ -87,10 +79,6 @@ func (b *TypicalBuildTool) Validate() (err error) {
 
 	if err = common.Validate(b.mocker); err != nil {
 		return fmt.Errorf("BuildTool: Mocker: %w", err)
-	}
-
-	if err = common.Validate(b.cleaner); err != nil {
-		return fmt.Errorf("BuildTool: Cleaner: %w", err)
 	}
 
 	if err = common.Validate(b.tester); err != nil {
@@ -132,9 +120,7 @@ func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
 		)
 	}
 
-	if b.cleaner != nil {
-		cmds = append(cmds, b.cleanCommand(c))
-	}
+	cmds = append(cmds, b.cleanCommand(c))
 
 	if b.tester != nil {
 		cmds = append(cmds, b.testCommand(c))
@@ -153,6 +139,32 @@ func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
 	return cmds
 }
 
+// SetupMe is setup the build-tool from descriptor
+func (b *TypicalBuildTool) SetupMe(d *typcore.Descriptor) (err error) {
+	if prebuilder, ok := d.App.(Prebuilder); ok {
+		b.AppendPrebuilder(prebuilder)
+	}
+	return
+}
+
+// Build task
+func (b *TypicalBuildTool) Build(c *BuildContext) (dist BuildDistribution, err error) {
+	if err = b.Prebuild(c); err != nil {
+		return
+	}
+	return b.builder.Build(c)
+}
+
+// Prebuild the project
+func (b *TypicalBuildTool) Prebuild(c *BuildContext) (err error) {
+	for _, prebuilder := range b.prebuilders {
+		if err = prebuilder.Prebuild(c); err != nil {
+			return
+		}
+	}
+	return
+}
+
 func (b *TypicalBuildTool) buildCommand(c *Context) *cli.Command {
 	return &cli.Command{
 		Name:    "build",
@@ -165,32 +177,6 @@ func (b *TypicalBuildTool) buildCommand(c *Context) *cli.Command {
 	}
 }
 
-// Build task
-func (b *TypicalBuildTool) Build(c *BuildContext) (dist BuildDistribution, err error) {
-	if err = b.Prebuild(c); err != nil {
-		return
-	}
-	return b.builder.Build(c)
-}
-
-// SetupMe is setup the build-tool from descriptor
-func (b *TypicalBuildTool) SetupMe(d *typcore.Descriptor) (err error) {
-	if prebuilder, ok := d.App.(Prebuilder); ok {
-		b.AppendPrebuilder(prebuilder)
-	}
-	return
-}
-
-// Prebuild task
-func (b *TypicalBuildTool) Prebuild(c *BuildContext) (err error) {
-	for _, prebuilder := range b.prebuilders {
-		if err = prebuilder.Prebuild(c); err != nil {
-			return
-		}
-	}
-	return
-}
-
 func (b *TypicalBuildTool) runCommand(c *Context) *cli.Command {
 	return &cli.Command{
 		Name:            "run",
@@ -199,7 +185,6 @@ func (b *TypicalBuildTool) runCommand(c *Context) *cli.Command {
 		SkipFlagParsing: true,
 		Action: func(cliCtx *cli.Context) (err error) {
 			var dist BuildDistribution
-
 			buildCtx := b.createBuildContext(cliCtx, c)
 
 			if dist, err = b.Build(buildCtx); err != nil {
@@ -224,7 +209,6 @@ func (b *TypicalBuildTool) releaseCommand(c *Context) *cli.Command {
 			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 		},
 		Action: func(cliCtx *cli.Context) (err error) {
-
 			if !cliCtx.Bool("no-build") && b.builder != nil {
 				if _, err = b.builder.Build(b.createBuildContext(cliCtx, c)); err != nil {
 					return
@@ -265,8 +249,18 @@ func (b *TypicalBuildTool) cleanCommand(c *Context) *cli.Command {
 		Name:    "clean",
 		Aliases: []string{"c"},
 		Usage:   "Clean the project from generated file during build time",
-		Action: func(cliCtx *cli.Context) error {
-			return b.cleaner.Clean(b.createBuildContext(cliCtx, c))
+		Flags: []cli.Flag{
+			&cli.BoolFlag{Name: "all", Usage: "Clean all resource"},
+		},
+		Action: func(cliCtx *cli.Context) (err error) {
+			removeAll(c.BinFolder)
+			if cliCtx.Bool("all") {
+				removeAll(c.TempFolder)
+			} else {
+				remove(typcore.BuildToolBin(c.TempFolder))
+			}
+
+			return
 		},
 	}
 }
@@ -287,5 +281,19 @@ func (b *TypicalBuildTool) createBuildContext(cliCtx *cli.Context, c *Context) *
 		Context: c,
 		Cli:     cliCtx,
 		Ast:     b.ast,
+	}
+}
+
+func removeAll(path string) {
+	log.Infof("Remove All: %s", path)
+	if err := os.RemoveAll(path); err != nil {
+		log.Error(err.Error())
+	}
+}
+
+func remove(path string) {
+	log.Infof("Remove: %s", path)
+	if err := os.Remove(path); err != nil {
+		log.Error(err.Error())
 	}
 }
