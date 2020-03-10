@@ -24,18 +24,19 @@ func (t *TypicalGo) Run(d *typcore.Descriptor) (err error) {
 	app.Version = d.Version
 
 	app.Commands = []*cli.Command{
-		{
-			Name:      "new",
-			Usage:     "Construct New Project",
-			UsageText: "app new [Package]",
-			Action: func(c *cli.Context) (err error) {
-				pkg := c.Args().First()
-				if pkg == "" {
-					return cli.ShowCommandHelp(c, "new")
-				}
-				return constructProject(c.Context, pkg)
-			},
-		},
+		// FIXME: redesign projct generation
+		// {
+		// 	Name:      "new",
+		// 	Usage:     "Construct New Project",
+		// 	UsageText: "app new [Package]",
+		// 	Action: func(c *cli.Context) (err error) {
+		// 		pkg := c.Args().First()
+		// 		if pkg == "" {
+		// 			return cli.ShowCommandHelp(c, "new")
+		// 		}
+		// 		return constructProject(c.Context, pkg)
+		// 	},
+		// },
 		{
 			Name: "wrap-me",
 			Flags: []cli.Flag{

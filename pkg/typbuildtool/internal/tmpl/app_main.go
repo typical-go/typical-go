@@ -14,6 +14,6 @@ import (
 )
 
 func main() {
-	typcore.RunApp(&typical.Descriptor)
+	typcore.LaunchApp(&typical.Descriptor)
 }
 `

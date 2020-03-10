@@ -33,8 +33,8 @@ type Descriptor struct {
 	Configuration Configuration
 }
 
-// RunApp to run app
-func (d *Descriptor) RunApp() (err error) {
+// LaunchApp to launch the app
+func (d *Descriptor) LaunchApp() (err error) {
 	if d.App == nil {
 		return errors.New("Descriptor is missing `App`")
 	}
@@ -44,8 +44,8 @@ func (d *Descriptor) RunApp() (err error) {
 	return d.App.Run(d)
 }
 
-// RunBuild to run build
-func (d *Descriptor) RunBuild() (err error) {
+// LaunchBuildTool to launch the build tool
+func (d *Descriptor) LaunchBuildTool() (err error) {
 	if d.BuildTool == nil {
 		return errors.New("Descriptor is missing `BuildTool`")
 	}

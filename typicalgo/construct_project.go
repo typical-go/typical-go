@@ -63,13 +63,13 @@ func (i constructproj) descriptor(ctx context.Context) error {
 
 func (i constructproj) cmdPackage(ctx context.Context) error {
 	appMainPath := fmt.Sprintf("%s/%s", typcore.DefaultCmdFolder, i.Name)
-	data := tmpl.MainSrcData{
-		DescriptorPackage: i.Pkg + "/typical",
-	}
+	// data := tmpl.MainSrcData{
+	// 	DescriptorPackage: i.Pkg + "/typical",
+	// }
 	return runnerkit.Run(ctx,
 		runnerkit.Mkdir(i.Path(typcore.DefaultCmdFolder)),
 		runnerkit.Mkdir(i.Path(appMainPath)),
-		runnerkit.NewWriteTemplate(i.Path(appMainPath+"/main.go"), tmpl.MainSrcApp, data),
+		// runnerkit.NewWriteTemplate(i.Path(appMainPath+"/main.go"), tmpl.MainSrcApp, data),
 	)
 }
 
