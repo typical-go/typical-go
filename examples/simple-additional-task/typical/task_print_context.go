@@ -8,7 +8,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func printContext(ctx *typbuildtool.Context) *cli.Command {
+func taskPrintContext(ctx *typbuildtool.Context) *cli.Command {
 	return &cli.Command{
 		Name:    "context",
 		Aliases: []string{"ctx"},

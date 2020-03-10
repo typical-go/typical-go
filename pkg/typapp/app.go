@@ -187,7 +187,7 @@ func (a *TypicalApp) Prebuild(c *typbuildtool.BuildContext) (err error) {
 		return
 	}
 	log.Info("Generate constructors")
-	target := fmt.Sprintf("%s/%s/constructor_do_not_edit.go", c.CmdFolder, c.Name)
+	target := "typical/init_constructor_do_not_edit.go"
 	if err = a.generateConstructor(c, target, constructors); err != nil {
 		return
 	}

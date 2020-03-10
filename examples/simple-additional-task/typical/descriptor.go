@@ -20,6 +20,6 @@ var Descriptor = typcore.Descriptor{
 
 	BuildTool: typbuildtool.New().
 		AppendCommander(
-			typbuildtool.NewCommander(printContext),
+			typbuildtool.NewCommander(taskPrintContext),
 		),
 }

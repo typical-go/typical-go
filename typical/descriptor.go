@@ -16,7 +16,7 @@ var Descriptor = typcore.Descriptor{
 
 	BuildTool: typbuildtool.New().
 		AppendCommander(
-			typbuildtool.NewCommander(testExampleCmd), // Test all the examples
+			typbuildtool.NewCommander(taskTestExample), // Test all the examples
 		).
 		WithReleaser(typbuildtool.NewReleaser().
 			WithPublisher(
