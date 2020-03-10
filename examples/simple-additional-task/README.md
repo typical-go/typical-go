@@ -31,5 +31,9 @@ var Descriptor = typcore.Descriptor{
 			typbuildtool.NewCommander(printContext),
 		),
 }
+```
 
+Execute the task
+```bash
+./typicalw ctx
 ```
