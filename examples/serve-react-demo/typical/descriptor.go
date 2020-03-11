@@ -2,7 +2,7 @@ package typical
 
 import (
 	"github.com/typical-go/typical-go/examples/serve-react-demo/server"
-	"github.com/typical-go/typical-go/pkg/runnerkit"
+	"github.com/typical-go/typical-go/pkg/exor"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
@@ -17,7 +17,7 @@ var Descriptor = typcore.Descriptor{
 	BuildTool: typbuildtool.New().
 		WithBuilder(typbuildtool.NewBuilder().
 			Before(
-				runnerkit.NewCommand("npm", "run", "build").WithDir("react-demo"),
+				exor.NewCommand("npm", "run", "build").WithDir("react-demo"),
 			),
 		),
 }

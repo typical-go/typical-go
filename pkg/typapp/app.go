@@ -9,7 +9,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/runnerkit"
+	"github.com/typical-go/typical-go/pkg/exor"
 	"github.com/typical-go/typical-go/pkg/typapp/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
@@ -202,10 +202,10 @@ func (a *TypicalApp) generateConstructor(c *typbuildtool.BuildContext, target st
 			imports = append(imports, fmt.Sprintf("%s/%s", c.ProjectPackage, dir))
 		}
 	}
-	if err = runnerkit.NewWriteTemplate(target, tmpl.Constructor, tmpl.ConstructorData{
+	if err = exor.NewWriteTemplate(target, tmpl.Constructor, tmpl.ConstructorData{
 		Imports:      imports,
 		Constructors: constructors,
-	}).Run(ctx); err != nil {
+	}).Execute(ctx); err != nil {
 		return
 	}
 	cmd := exec.CommandContext(ctx,

@@ -1,4 +1,4 @@
-package runnerkit
+package exor
 
 import (
 	"context"
@@ -30,8 +30,8 @@ func (w *WriteString) WithPermission(permission os.FileMode) *WriteString {
 	return w
 }
 
-// Run the write string
-func (w *WriteString) Run(ctx context.Context) (err error) {
+// Execute write string
+func (w *WriteString) Execute(ctx context.Context) (err error) {
 	log.Infof("Write File: %s", w.target)
 	return ioutil.WriteFile(w.target, []byte(w.content), w.permission)
 }

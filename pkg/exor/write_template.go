@@ -1,4 +1,4 @@
-package runnerkit
+package exor
 
 import (
 	"context"
@@ -32,8 +32,8 @@ func (w *WriteTemplate) WithPermission(permission os.FileMode) *WriteTemplate {
 	return w
 }
 
-// Run the write template
-func (w *WriteTemplate) Run(ctx context.Context) (err error) {
+// Execute write template
+func (w *WriteTemplate) Execute(ctx context.Context) (err error) {
 	var (
 		f    *os.File
 		tmpl *template.Template

@@ -1,4 +1,4 @@
-package runnerkit
+package exor
 
 import (
 	"context"
@@ -48,8 +48,8 @@ func (c *Command) WithDir(dir string) *Command {
 	return c
 }
 
-// Run comand
-func (c *Command) Run(ctx context.Context) (err error) {
+// Execute comand
+func (c *Command) Execute(ctx context.Context) (err error) {
 	cmd := exec.CommandContext(ctx, c.name, c.args...)
 	cmd.Stdout = c.stdout
 	cmd.Stderr = c.stderr

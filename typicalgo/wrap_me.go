@@ -15,7 +15,7 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typcore"
 
-	"github.com/typical-go/typical-go/pkg/runnerkit"
+	"github.com/typical-go/typical-go/pkg/exor"
 	"github.com/typical-go/typical-go/typicalgo/internal/tmpl"
 )
 
@@ -62,7 +62,7 @@ func buildBuildTool(ctx context.Context, wc *wrapContext) (err error) {
 		data := tmpl.MainSrcData{
 			DescriptorPackage: descriptorPkg,
 		}
-		if err = runnerkit.NewWriteTemplate(srcPath, tmpl.MainSrcBuildTool, data).Run(ctx); err != nil {
+		if err = exor.NewWriteTemplate(srcPath, tmpl.MainSrcBuildTool, data).Execute(ctx); err != nil {
 			return
 		}
 	}

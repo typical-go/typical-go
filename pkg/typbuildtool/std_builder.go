@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/runnerkit"
+	"github.com/typical-go/typical-go/pkg/exor"
 	"github.com/typical-go/typical-go/pkg/typcore"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
@@ -16,7 +16,7 @@ import (
 type StdBuilder struct {
 	stdout       io.Writer
 	stderr       io.Writer
-	preExecutors []runnerkit.Runner
+	preExecutors []exor.Executor
 }
 
 // NewBuilder return new instance of standard builder
@@ -40,7 +40,7 @@ func (b *StdBuilder) WithStderr(stderr io.Writer) *StdBuilder {
 }
 
 // Before build execution
-func (b *StdBuilder) Before(executor ...runnerkit.Runner) *StdBuilder {
+func (b *StdBuilder) Before(executor ...exor.Executor) *StdBuilder {
 	b.preExecutors = executor
 	return b
 }
@@ -58,15 +58,13 @@ func (b *StdBuilder) Build(c *BuildContext) (dist BuildDistribution, err error) 
 		data := &tmpl.AppMainData{
 			TypicalPackage: typcore.TypicalPackage(c.ProjectPackage),
 		}
-		if err = runnerkit.NewWriteTemplate(src, tmpl.AppMain, data).Run(ctx); err != nil {
+		if err = exor.NewWriteTemplate(src, tmpl.AppMain, data).Execute(ctx); err != nil {
 			return
 		}
 	}
 
-	for _, executor := range b.preExecutors {
-		if err = executor.Run(ctx); err != nil {
-			return
-		}
+	if err = exor.Execute(ctx, b.preExecutors...); err != nil {
+		return
 	}
 
 	cmd := buildkit.NewGoBuild(binary, src).Command(ctx)
