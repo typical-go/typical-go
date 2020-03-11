@@ -14,12 +14,12 @@ import (
 
 // TypicalBuildTool is typical Build Tool for golang project
 type TypicalBuildTool struct {
-	commanders  []Commander
-	builder     Builder
-	prebuilders []Prebuilder
-	tester      Tester
-	mocker      Mocker
-	releaser    Releaser
+	commanders      []Commander
+	builder         Builder
+	preconditioners []Preconditioner
+	tester          Tester
+	mocker          Mocker
+	releaser        Releaser
 
 	ast *typast.Ast
 }
@@ -37,12 +37,6 @@ func New() *TypicalBuildTool {
 // AppendCommander to return BuildTool with appended commander
 func (b *TypicalBuildTool) AppendCommander(commanders ...Commander) *TypicalBuildTool {
 	b.commanders = append(b.commanders, commanders...)
-	return b
-}
-
-// AppendPrebuilder to return BuildTool with appended prebuilder
-func (b *TypicalBuildTool) AppendPrebuilder(prebuilders ...Prebuilder) *TypicalBuildTool {
-	b.prebuilders = append(b.prebuilders, prebuilders...)
 	return b
 }
 
@@ -141,24 +135,24 @@ func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
 
 // SetupMe is setup the build-tool from descriptor
 func (b *TypicalBuildTool) SetupMe(d *typcore.Descriptor) (err error) {
-	if prebuilder, ok := d.App.(Prebuilder); ok {
-		b.AppendPrebuilder(prebuilder)
+	if preconditioner, ok := d.App.(Preconditioner); ok {
+		b.preconditioners = append(b.preconditioners, preconditioner)
 	}
 	return
 }
 
 // Build task
 func (b *TypicalBuildTool) Build(c *BuildContext) (dist BuildDistribution, err error) {
-	if err = b.Prebuild(c); err != nil {
+	if err = b.Precondition(c); err != nil {
 		return
 	}
 	return b.builder.Build(c)
 }
 
-// Prebuild the project
-func (b *TypicalBuildTool) Prebuild(c *BuildContext) (err error) {
-	for _, prebuilder := range b.prebuilders {
-		if err = prebuilder.Prebuild(c); err != nil {
+// Precondition the project
+func (b *TypicalBuildTool) Precondition(c *BuildContext) (err error) {
+	for _, prebuilder := range b.preconditioners {
+		if err = prebuilder.Precondition(c); err != nil {
 			return
 		}
 	}

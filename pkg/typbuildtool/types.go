@@ -16,9 +16,9 @@ type Cleaner interface {
 	Clean(*BuildContext) error
 }
 
-// Prebuilder responsible to prebuild
-type Prebuilder interface {
-	Prebuild(c *BuildContext) error
+// Preconditioner responsible to precondition
+type Preconditioner interface {
+	Precondition(c *BuildContext) error
 }
 
 // Tester responsible to test the project
