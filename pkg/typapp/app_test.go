@@ -22,23 +22,6 @@ func TestNewApp(t *testing.T) {
 			{Name: "cmd2"},
 		}, app.AppCommands(nil))
 	})
-	t.Run("With- function", func(t *testing.T) {
-		m := &module{}
-		app := typapp.New(nil).
-			WithEntryPointer(m).
-			AppendProvider(m).
-			AppendDestroyer(m).
-			AppendPreparer(m).
-			AppendCommander(m)
-		require.Equal(t, someEntryPoint, app.EntryPoint())
-		require.Equal(t, []*typdep.Constructor{someConstructor}, app.Provide())
-		require.Equal(t, []*typdep.Invocation{somePreparation}, app.Prepare())
-		require.Equal(t, []*typdep.Invocation{someDestroyer}, app.Destroy())
-		require.Equal(t, []*cli.Command{
-			{Name: "cmd1"},
-			{Name: "cmd2"},
-		}, app.AppCommands(nil))
-	})
 }
 
 var (

@@ -29,11 +29,6 @@ type TypicalApp struct {
 	projectSources []string
 }
 
-// AppCommander responsible to return commands for App
-type AppCommander interface {
-	AppCommands(*Context) []*cli.Command
-}
-
 // New return new instance of app
 func New(v interface{}) *TypicalApp {
 	app := &TypicalApp{
@@ -57,46 +52,24 @@ func New(v interface{}) *TypicalApp {
 	return app
 }
 
-// WithEntryPointer return app with new entry pointer
-func (a *TypicalApp) WithEntryPointer(entryPoint EntryPointer) *TypicalApp {
-	a.entryPoint = entryPoint
+// WithProjectSources return app with new source
+func (a *TypicalApp) WithProjectSources(sources ...string) *TypicalApp {
+	a.projectSources = sources
 	return a
 }
 
-// WithSources return app with new source
-func (a *TypicalApp) WithSources(sources ...string) *TypicalApp {
-	return a
-}
-
-// AppendProvider return app with appended provider
-func (a *TypicalApp) AppendProvider(provides ...Provider) *TypicalApp {
-	a.providers = append(a.providers, provides...)
-	return a
-}
-
-// AppendPreparer return app with appended preparer
-func (a *TypicalApp) AppendPreparer(prepares ...Preparer) *TypicalApp {
-	a.preparers = append(a.preparers, prepares...)
-	return a
-}
-
-// AppendDestroyer return app with appended destroyer
-func (a *TypicalApp) AppendDestroyer(destroys ...Destroyer) *TypicalApp {
-	a.destroyers = append(a.destroyers, destroys...)
-	return a
-}
-
-// AppendCommander return app with appended commander
-func (a *TypicalApp) AppendCommander(commands ...AppCommander) *TypicalApp {
-	a.commanders = append(a.commanders, commands...)
-	return a
-}
-
-// AppendDependency return app with appended dependency
-func (a *TypicalApp) AppendDependency(dependencies ...Dependency) *TypicalApp {
-	for _, dep := range dependencies {
-		a.AppendProvider(dep.(Provider))
-		a.AppendDestroyer(dep.(Destroyer))
+// Import return app with imported module. Module should be implementation of Provider, Preparer (optional) and Destroyer (optional).
+func (a *TypicalApp) Import(modules ...interface{}) *TypicalApp {
+	for _, module := range modules {
+		if provider, ok := module.(Provider); ok {
+			a.providers = append(a.providers, provider)
+		}
+		if preparer, ok := module.(Preparer); ok {
+			a.preparers = append(a.preparers, preparer)
+		}
+		if destroyer, ok := module.(Destroyer); ok {
+			a.destroyers = append(a.destroyers, destroyer)
+		}
 	}
 	return a
 }
