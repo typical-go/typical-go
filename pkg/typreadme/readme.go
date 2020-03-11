@@ -144,7 +144,7 @@ func (m *Readme) Usages(c *typbuildtool.Context) (infos []UsageInfo) {
 					Description: "Run the application",
 				})
 			}
-			for _, cmd := range app.AppCommands(&typapp.Context{}) {
+			for _, cmd := range app.Commands(&typapp.Context{}) {
 				infos = append(infos, usageInfos(c.Name, cmd)...)
 			}
 		}

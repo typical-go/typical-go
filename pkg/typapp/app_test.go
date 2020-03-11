@@ -20,7 +20,7 @@ func TestNewApp(t *testing.T) {
 		require.Equal(t, []*cli.Command{
 			{Name: "cmd1"},
 			{Name: "cmd2"},
-		}, app.AppCommands(nil))
+		}, app.Commands(nil))
 	})
 }
 
@@ -41,7 +41,7 @@ func (*module) Destroy() []*typdep.Invocation { return []*typdep.Invocation{some
 
 func (*module) Prepare() []*typdep.Invocation { return []*typdep.Invocation{somePreparation} }
 
-func (*module) AppCommands(c *typapp.Context) []*cli.Command {
+func (*module) Commands(c *typapp.Context) []*cli.Command {
 	return []*cli.Command{
 		{Name: "cmd1"},
 		{Name: "cmd2"},

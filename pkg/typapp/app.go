@@ -113,10 +113,10 @@ func (a *TypicalApp) Prepare() (preparations []*typdep.Invocation) {
 	return
 }
 
-// AppCommands to return commands
-func (a *TypicalApp) AppCommands(c *Context) (cmds []*cli.Command) {
-	for _, commander := range a.commanders {
-		cmds = append(cmds, commander.AppCommands(c)...)
+// Commands to return commands
+func (a *TypicalApp) Commands(c *Context) (cmds []*cli.Command) {
+	if a.commander != nil {
+		return a.commander.Commands(c)
 	}
 	return
 }
@@ -146,7 +146,7 @@ func (a *TypicalApp) Run(d *typcore.Descriptor) (err error) {
 	if entryPoint := a.EntryPoint(); entryPoint != nil {
 		app.Action = c.ActionFunc(entryPoint)
 	}
-	app.Commands = a.AppCommands(c)
+	app.Commands = a.Commands(c)
 	return app.Run(os.Args)
 }
 
