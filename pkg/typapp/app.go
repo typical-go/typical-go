@@ -151,9 +151,9 @@ func (a *TypicalApp) Run(d *typcore.Descriptor) (err error) {
 }
 
 // Precondition the app
-func (a *TypicalApp) Precondition(c *typbuildtool.BuildContext) (err error) {
+func (a *TypicalApp) Precondition(c *typbuildtool.PreconditionContext) (err error) {
 	var constructors []string
-	if err = c.Ast.EachAnnotation("constructor", typast.FunctionType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
+	if err = c.Ast().EachAnnotation("constructor", typast.FunctionType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
 		constructors = append(constructors, fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
 		return
 	}); err != nil {
@@ -167,7 +167,7 @@ func (a *TypicalApp) Precondition(c *typbuildtool.BuildContext) (err error) {
 	return
 }
 
-func (a *TypicalApp) generateConstructor(c *typbuildtool.BuildContext, target string, constructors []string) (err error) {
+func (a *TypicalApp) generateConstructor(c *typbuildtool.PreconditionContext, target string, constructors []string) (err error) {
 	ctx := c.Cli.Context
 	imports := []string{}
 	for _, dir := range c.ProjectDirs {

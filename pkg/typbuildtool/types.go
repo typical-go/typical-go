@@ -16,11 +16,6 @@ type Cleaner interface {
 	Clean(*BuildContext) error
 }
 
-// Preconditioner responsible to precondition
-type Preconditioner interface {
-	Precondition(c *BuildContext) error
-}
-
 // Tester responsible to test the project
 type Tester interface {
 	Test(*BuildContext) error

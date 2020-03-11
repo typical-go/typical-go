@@ -3,15 +3,15 @@ package typapp_test
 import (
 	"testing"
 
-	"github.com/typical-go/typical-go/pkg/typdep"
-
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typapp"
+	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typdep"
 	"github.com/urfave/cli/v2"
 )
 
 func TestNewApp(t *testing.T) {
-	t.Run("Constructor parameter", func(t *testing.T) {
+	t.Run("", func(t *testing.T) {
 		app := typapp.New(&module{})
 		require.Equal(t, someEntryPoint, app.EntryPoint())
 		require.Equal(t, []*typdep.Constructor{someConstructor}, app.Provide())
@@ -21,6 +21,9 @@ func TestNewApp(t *testing.T) {
 			{Name: "cmd1"},
 			{Name: "cmd2"},
 		}, app.Commands(nil))
+	})
+	t.Run("SHOULD implement preconditioner", func(t *testing.T) {
+		var _ typbuildtool.Preconditioner = typapp.New(nil)
 	})
 }
 

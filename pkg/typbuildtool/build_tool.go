@@ -157,14 +157,18 @@ func (b *TypicalBuildTool) SetupMe(d *typcore.Descriptor) (err error) {
 
 // Build task
 func (b *TypicalBuildTool) Build(c *BuildContext) (dist BuildDistribution, err error) {
-	if err = b.Precondition(c); err != nil {
+	pc := &PreconditionContext{
+		Context: c.Context.Context,
+		Cli:     c.Cli,
+	}
+	if err = b.Precondition(pc); err != nil {
 		return
 	}
 	return b.builder.Build(c)
 }
 
 // Precondition the project
-func (b *TypicalBuildTool) Precondition(c *BuildContext) (err error) {
+func (b *TypicalBuildTool) Precondition(c *PreconditionContext) (err error) {
 	for _, prebuilder := range b.preconditioners {
 		if err = prebuilder.Precondition(c); err != nil {
 			return
