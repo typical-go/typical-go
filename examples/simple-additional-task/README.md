@@ -1,6 +1,6 @@
 # Additional Build-Tool Task
 
-Simple additional build-tool task
+Example typical-go project to demonstrate how to add additional build-tool task
 
 Create task function 
 ```go
