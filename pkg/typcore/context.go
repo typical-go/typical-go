@@ -15,8 +15,8 @@ type Context struct {
 	CmdFolder  string
 	TempFolder string
 
-	Dirs           []string
-	Files          []string
+	ProjectDirs    []string
+	ProjectFiles   []string
 	ProjectPackage string
 	ProjectSources []string
 }
@@ -63,13 +63,13 @@ func (c *Context) Validate() error {
 func (c *Context) addFile(path string, info os.FileInfo, err error) error {
 	if info != nil {
 		if info.IsDir() {
-			c.Dirs = append(c.Dirs, path)
+			c.ProjectDirs = append(c.ProjectDirs, path)
 			return nil
 		}
 	}
 
 	if isWalkTarget(path) {
-		c.Files = append(c.Files, path)
+		c.ProjectFiles = append(c.ProjectFiles, path)
 	}
 	return nil
 }

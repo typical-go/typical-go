@@ -32,8 +32,8 @@ func LatestTag(ctx context.Context) string {
 	return tag
 }
 
-// Logs of commits
-func Logs(ctx context.Context, from string) (logs []*Log) {
+// RetrieveLogs to get git logs
+func RetrieveLogs(ctx context.Context, from string) (logs []*Log) {
 	var (
 		data string
 		err  error

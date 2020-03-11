@@ -1,23 +1,17 @@
 package typbuildtool
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
-
-	"github.com/typical-go/typical-go/pkg/git"
 )
 
 // StdReleaser responsible to release distruction
 type StdReleaser struct {
-	targets         []ReleaseTarget
-	publishers      []Publisher
-	releaseFolder   string
-	includeBranch   bool
-	includeCommitID bool
+	targets       []ReleaseTarget
+	releaseFolder string
 }
 
 // NewReleaser return new instance of releaser
@@ -31,27 +25,9 @@ func NewReleaser() *StdReleaser {
 	}
 }
 
-// WithIncludeBranch return StdReleaser with new includeBranch
-func (r *StdReleaser) WithIncludeBranch(includeBranch bool) *StdReleaser {
-	r.includeBranch = includeBranch
-	return r
-}
-
-// WithIncludeCommitID return StdReelaser with new includeCommitID
-func (r *StdReleaser) WithIncludeCommitID(includeCommitID bool) *StdReleaser {
-	r.includeCommitID = includeCommitID
-	return r
-}
-
 // WithTarget to set target and return its instance
 func (r *StdReleaser) WithTarget(targets ...ReleaseTarget) *StdReleaser {
 	r.targets = targets
-	return r
-}
-
-// WithPublisher return StdReleaser with new publisher
-func (r *StdReleaser) WithPublisher(publishers ...Publisher) *StdReleaser {
-	r.publishers = publishers
 	return r
 }
 
@@ -75,81 +51,17 @@ func (r *StdReleaser) Validate() (err error) {
 }
 
 // Release this project
-func (r *StdReleaser) Release(c *ReleaseContext) (err error) {
-
-	var (
-		tag      string
-		latest   string
-		gitLogs  []*git.Log
-		binaries []string
-		ctx      = c.Cli.Context
-		force    = c.Cli.Bool("force")
-	)
-
-	if err = git.Fetch(ctx); err != nil {
-		return fmt.Errorf("Failed git fetch: %w", err)
-	}
-	defer git.Fetch(ctx)
-
-	tag = r.Tag(ctx, c.Version, c.Alpha)
-
-	if status := git.Status(ctx); status != "" && !force {
-		return fmt.Errorf("Please commit changes first:\n%s", status)
-	}
-	if latest = git.LatestTag(ctx); latest == tag && !force {
-		return fmt.Errorf("%s already released", latest)
-	}
-	if gitLogs = git.Logs(ctx, latest); len(gitLogs) < 1 && !force {
-		return errors.New("No change to be released")
-	}
+func (r *StdReleaser) Release(c *ReleaseContext) (files []string, err error) {
 
 	for _, target := range r.targets {
 		var binary string
-		if binary, err = r.build(c.BuildContext, tag, target); err != nil {
-			return fmt.Errorf("Failed build release: %w", err)
-		}
-		binaries = append(binaries, binary)
-	}
-
-	if !c.Cli.Bool("no-publish") {
-		if err = r.Publish(&PublishContext{
-			ReleaseContext: c,
-			Tag:            tag,
-			Binaries:       binaries,
-			GitLogs:        gitLogs,
-		}); err != nil {
-			return fmt.Errorf("Failed to publish: %w", err)
-		}
-	}
-	return
-}
-
-// Tag return relase tag
-func (r *StdReleaser) Tag(ctx context.Context, version string, alpha bool) string {
-	var b strings.Builder
-	b.WriteString("v")
-	b.WriteString(version)
-	if r.includeBranch {
-		b.WriteString("_")
-		b.WriteString(git.Branch(ctx))
-	}
-	if r.includeCommitID {
-		b.WriteString("_")
-		b.WriteString(git.LatestCommit(ctx))
-	}
-	if alpha {
-		b.WriteString("_alpha")
-	}
-	return b.String()
-}
-
-// Publish the release
-func (r *StdReleaser) Publish(p *PublishContext) (err error) {
-	for _, publisher := range r.publishers {
-		if err = publisher.Publish(p); err != nil {
+		if binary, err = r.build(c.BuildContext, c.Tag, target); err != nil {
+			err = fmt.Errorf("Failed build release: %w", err)
 			return
 		}
+		files = append(files, binary)
 	}
+
 	return
 }
 

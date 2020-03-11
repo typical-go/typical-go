@@ -38,8 +38,8 @@ func TestTypicalContext(t *testing.T) {
 	require.NoError(t, common.Validate(ctx))
 	require.Equal(t, "0.0.1", ctx.Version)
 	require.Equal(t, []string{"typicalgo", "pkg"}, ctx.ProjectSources)
-	require.Equal(t, []string{"typicalgo", "typicalgo/some_pkg", "pkg", "pkg/some_lib"}, ctx.Dirs)
-	require.Equal(t, []string{"typicalgo/some_pkg/some_file.go", "pkg/some_lib/lib.go"}, ctx.Files)
+	require.Equal(t, []string{"typicalgo", "typicalgo/some_pkg", "pkg", "pkg/some_lib"}, ctx.ProjectDirs)
+	require.Equal(t, []string{"typicalgo/some_pkg/some_file.go", "pkg/some_lib/lib.go"}, ctx.ProjectFiles)
 }
 
 func TestTypicalContext_Validate(t *testing.T) {
@@ -60,14 +60,14 @@ func TestTypicalContext_Validate(t *testing.T) {
 		{
 			Context: &typcore.Context{
 				Descriptor:     validDescriptor,
-				ProjectPackage:  "some-package",
+				ProjectPackage: "some-package",
 				ProjectSources: []string{"not-exist"},
 			},
 			expectedError: "TypicalContext: Source 'not-exist' is not exist",
 		},
 		{
 			Context: &typcore.Context{
-				Descriptor:    validDescriptor,
+				Descriptor:     validDescriptor,
 				ProjectPackage: "some-package",
 			},
 		},

@@ -18,9 +18,7 @@ var Descriptor = typcore.Descriptor{
 		AppendCommander(
 			typbuildtool.NewCommander(taskTestExample), // Test all the examples
 		).
-		WithReleaser(typbuildtool.NewReleaser().
-			WithPublisher(
-				typbuildtool.NewGithub("typical-go", "typical-go"),
-			),
+		WithPublisher(
+			typbuildtool.NewGithub("typical-go", "typical-go"),
 		),
 }

@@ -38,7 +38,7 @@ type Mocker interface {
 
 // Releaser responsible to release
 type Releaser interface {
-	Release(*ReleaseContext) (err error)
+	Release(*ReleaseContext) (files []string, err error)
 }
 
 // Publisher reponsible to publish the release to external source
@@ -61,13 +61,13 @@ type MockContext struct {
 // ReleaseContext is context of release
 type ReleaseContext struct {
 	*BuildContext
-	Alpha bool
+	Alpha   bool
+	Tag     string
+	GitLogs []*git.Log
 }
 
 // PublishContext is context of publish
 type PublishContext struct {
 	*ReleaseContext
-	Tag      string
-	Binaries []string
-	GitLogs  []*git.Log
+	ReleaseFiles []string
 }

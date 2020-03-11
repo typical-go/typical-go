@@ -60,9 +60,9 @@ func (g *Github) Publish(p *PublishContext) (err error) {
 	if githubRls, _, err = repo.CreateRelease(ctx, g.Owner, g.RepoName, githubRls); err != nil {
 		return
 	}
-	for _, binary := range p.Binaries {
-		log.Infof("Upload asset: %s", binary)
-		if err = g.upload(ctx, repo, *githubRls.ID, binary); err != nil {
+	for _, file := range p.ReleaseFiles {
+		log.Infof("Upload asset: %s", file)
+		if err = g.upload(ctx, repo, *githubRls.ID, file); err != nil {
 			return
 		}
 	}

@@ -170,7 +170,7 @@ func (a *TypicalApp) Precondition(c *typbuildtool.BuildContext) (err error) {
 func (a *TypicalApp) generateConstructor(c *typbuildtool.BuildContext, target string, constructors []string) (err error) {
 	ctx := c.Cli.Context
 	imports := []string{}
-	for _, dir := range c.Dirs {
+	for _, dir := range c.ProjectDirs {
 		if !strings.Contains(dir, "internal") {
 			imports = append(imports, fmt.Sprintf("%s/%s", c.ProjectPackage, dir))
 		}

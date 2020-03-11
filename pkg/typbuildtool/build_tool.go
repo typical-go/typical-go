@@ -1,11 +1,15 @@
 package typbuildtool
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/git"
 	"github.com/typical-go/typical-go/pkg/typast"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
@@ -14,12 +18,16 @@ import (
 
 // TypicalBuildTool is typical Build Tool for golang project
 type TypicalBuildTool struct {
+	preconditioners []Preconditioner
 	commanders      []Commander
 	builder         Builder
-	preconditioners []Preconditioner
 	tester          Tester
 	mocker          Mocker
 	releaser        Releaser
+	publishers      []Publisher
+
+	includeBranch   bool
+	includeCommitID bool
 
 	ast *typast.Ast
 }
@@ -49,6 +57,12 @@ func (b *TypicalBuildTool) WithBuilder(builder Builder) *TypicalBuildTool {
 // WithReleaser return BuildTool with new releaser
 func (b *TypicalBuildTool) WithReleaser(releaser Releaser) *TypicalBuildTool {
 	b.releaser = releaser
+	return b
+}
+
+// WithPublisher return BuildTool with new publishers
+func (b *TypicalBuildTool) WithPublisher(publishers ...Publisher) *TypicalBuildTool {
+	b.publishers = publishers
 	return b
 }
 
@@ -88,7 +102,7 @@ func (b *TypicalBuildTool) Validate() (err error) {
 
 // Run build tool
 func (b *TypicalBuildTool) Run(t *typcore.Context) (err error) {
-	if b.ast, err = typast.Walk(t.Files); err != nil {
+	if b.ast, err = typast.Walk(t.ProjectFiles); err != nil {
 		return
 	}
 
@@ -159,6 +173,16 @@ func (b *TypicalBuildTool) Precondition(c *BuildContext) (err error) {
 	return
 }
 
+// Publish the release
+func (b *TypicalBuildTool) Publish(pc *PublishContext) (err error) {
+	for _, publisher := range b.publishers {
+		if err = publisher.Publish(pc); err != nil {
+			return
+		}
+	}
+	return
+}
+
 func (b *TypicalBuildTool) buildCommand(c *Context) *cli.Command {
 	return &cli.Command{
 		Name:    "build",
@@ -203,22 +227,68 @@ func (b *TypicalBuildTool) releaseCommand(c *Context) *cli.Command {
 			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 		},
 		Action: func(cliCtx *cli.Context) (err error) {
+
+			bc := b.createBuildContext(cliCtx, c)
+
 			if !cliCtx.Bool("no-build") && b.builder != nil {
-				if _, err = b.builder.Build(b.createBuildContext(cliCtx, c)); err != nil {
+				if _, err = b.Build(bc); err != nil {
 					return
 				}
 			}
 
 			if !cliCtx.Bool("no-test") && b.tester != nil {
-				if err = b.tester.Test(b.createBuildContext(cliCtx, c)); err != nil {
+				if err = b.tester.Test(bc); err != nil {
 					return
 				}
 			}
 
-			return b.releaser.Release(&ReleaseContext{
-				BuildContext: b.createBuildContext(cliCtx, c),
-				Alpha:        cliCtx.Bool("alpha"),
-			})
+			ctx := cliCtx.Context
+			force := cliCtx.Bool("force")
+			alpha := cliCtx.Bool("alpha")
+
+			if err = git.Fetch(ctx); err != nil {
+				return fmt.Errorf("Failed git fetch: %w", err)
+			}
+			defer git.Fetch(ctx)
+
+			tag := b.Tag(ctx, c.Version, alpha)
+
+			if status := git.Status(ctx); status != "" && !force {
+				return fmt.Errorf("Please commit changes first:\n%s", status)
+			}
+
+			var latest string
+			if latest = git.LatestTag(ctx); latest == tag && !force {
+				return fmt.Errorf("%s already released", latest)
+			}
+
+			var gitLogs []*git.Log
+			if gitLogs = git.RetrieveLogs(ctx, latest); len(gitLogs) < 1 && !force {
+				return errors.New("No change to be released")
+			}
+
+			rlsCtx := &ReleaseContext{
+				BuildContext: bc,
+				Alpha:        alpha,
+				Tag:          tag,
+				GitLogs:      gitLogs,
+			}
+
+			var releaseFiles []string
+			releaseFiles, err = b.releaser.Release(rlsCtx)
+
+			if !cliCtx.Bool("no-publish") {
+				publishCtx := &PublishContext{
+					ReleaseContext: rlsCtx,
+					ReleaseFiles:   releaseFiles,
+				}
+				if err = b.Publish(publishCtx); err != nil {
+					err = fmt.Errorf("Failed to publish: %w", err)
+					return
+				}
+			}
+
+			return
 		},
 	}
 }
@@ -275,6 +345,25 @@ func (b *TypicalBuildTool) createBuildContext(cliCtx *cli.Context, c *Context) *
 		Cli:     cliCtx,
 		Ast:     b.ast,
 	}
+}
+
+// Tag return relase tag
+func (b *TypicalBuildTool) Tag(ctx context.Context, version string, alpha bool) string {
+	var builder strings.Builder
+	builder.WriteString("v")
+	builder.WriteString(version)
+	if b.includeBranch {
+		builder.WriteString("_")
+		builder.WriteString(git.Branch(ctx))
+	}
+	if b.includeCommitID {
+		builder.WriteString("_")
+		builder.WriteString(git.LatestCommit(ctx))
+	}
+	if alpha {
+		builder.WriteString("_alpha")
+	}
+	return builder.String()
 }
 
 func removeAll(path string) {
