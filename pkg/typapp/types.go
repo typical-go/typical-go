@@ -25,9 +25,9 @@ type Destroyer interface {
 	Destroy() []*typdep.Invocation
 }
 
-// AppCommander responsible to return commands for App
-type AppCommander interface {
-	AppCommands(*Context) []*cli.Command
+// Commander responsible to return commands for App
+type Commander interface {
+	Commands(*Context) []*cli.Command
 }
 
 // Module to be imported

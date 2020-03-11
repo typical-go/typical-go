@@ -22,10 +22,10 @@ import (
 // TypicalApp is typical application model
 type TypicalApp struct {
 	entryPoint     EntryPointer
+	commander      Commander
 	providers      []Provider
 	preparers      []Preparer
 	destroyers     []Destroyer
-	commanders     []AppCommander
 	projectSources []string
 }
 
@@ -46,8 +46,8 @@ func New(v interface{}) *TypicalApp {
 	if destroyer, ok := v.(Destroyer); ok {
 		app.destroyers = []Destroyer{destroyer}
 	}
-	if commander, ok := v.(AppCommander); ok {
-		app.commanders = []AppCommander{commander}
+	if commander, ok := v.(Commander); ok {
+		app.commander = commander
 	}
 	return app
 }
