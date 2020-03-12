@@ -33,13 +33,6 @@ func (c *Context) Invoke(cliCtx *cli.Context, invocation *typdep.Invocation) (er
 		return
 	}
 
-	// provide functions
-	if c.Configuration != nil {
-		if err = typdep.Provide(di, c.Configuration.Store().Provide()...); err != nil {
-			return
-		}
-	}
-
 	startFn := func() error { return invocation.Invoke(di) }
 	for _, err := range common.StartGracefully(startFn, nil) {
 		log.Error(err.Error())

@@ -2,6 +2,7 @@ package typapp
 
 import (
 	log "github.com/sirupsen/logrus"
+	"github.com/typical-go/typical-go/pkg/typcfg"
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcore"
@@ -29,19 +30,13 @@ func (c *Context) ActionFunc(v interface{}) func(*cli.Context) error {
 func (c *Context) Invoke(cliCtx *cli.Context, invocation *typdep.Invocation) (err error) {
 	di := typdep.New()
 
-	if cliCtx != nil {
-		if err = typdep.NewConstructor(func() *cli.Context {
+	if err = typdep.Provide(di,
+		typdep.NewConstructor(typcfg.NewDefaultLoader),
+		typdep.NewConstructor(func() *cli.Context {
 			return cliCtx
-		}).Provide(di); err != nil {
-			return
-		}
-	}
-
-	if c.Configuration != nil {
-		// provide configuration to dependency-injection container
-		if err = typdep.Provide(di, c.Configuration.Store().Provide()...); err != nil {
-			return
-		}
+		}),
+	); err != nil {
+		return
 	}
 
 	// provide registered function in descriptor to dependency-injection container

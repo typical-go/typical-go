@@ -2,8 +2,6 @@ package typcore
 
 import (
 	"fmt"
-
-	"github.com/typical-go/typical-go/pkg/typdep"
 )
 
 // ConfigStore contain information of config
@@ -34,10 +32,10 @@ func (c *ConfigStore) Get(name string) *ConfigBean {
 	return c.beanMap[name]
 }
 
-// Provide list of functino
-func (c *ConfigStore) Provide() (constructors []*typdep.Constructor) {
-	for _, bean := range c.beanMap {
-		constructors = append(constructors, bean.Constructor)
+// Beans return array of bean
+func (c *ConfigStore) Beans() (beans []*ConfigBean) {
+	for _, name := range c.beanNames {
+		beans = append(beans, c.beanMap[name])
 	}
 	return
 }

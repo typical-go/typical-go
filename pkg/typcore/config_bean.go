@@ -5,15 +5,12 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-
-	"github.com/typical-go/typical-go/pkg/typdep"
 )
 
 // ConfigBean is detail of config
 type ConfigBean struct {
-	Name        string
-	Spec        interface{}
-	Constructor *typdep.Constructor
+	Name string
+	Spec interface{}
 }
 
 // ConfigField is detail field of config

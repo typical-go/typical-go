@@ -8,7 +8,6 @@ import (
 	"github.com/typical-go/typical-go/examples/configuration-with-invocation/server/config"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/typdep"
 )
 
 // App of hello world
@@ -30,27 +29,25 @@ func (a *App) WithConfigPrefix(name string) *App {
 }
 
 // Configure the application
-func (a *App) Configure(loader typcfg.Loader) *typcfg.Configuration {
-	return &typcfg.Configuration{
+func (a *App) Configure() *typcore.ConfigBean {
+	return &typcore.ConfigBean{
 		Name: a.ConfigName,
 		Spec: &config.Config{},
-		Constructor: typdep.NewConstructor(func() (cfg config.Config, err error) {
-			err = loader.Load(a.ConfigName, &cfg)
-			return
-		}),
 	}
 }
 
 // Run server
 func (a *App) Run(d *typcore.Descriptor) (err error) {
+	cfgLoader := typcfg.NewDefaultLoader()
 	cfgBean := d.Configuration.Store().Get(a.ConfigName)
-	fn := cfgBean.Constructor().Fn().(func() (cfg config.Config, err error))
-	var cfg config.Config
-	if cfg, err = fn(); err != nil {
+
+	if err = cfgLoader.Load(cfgBean.Name, cfgBean.Spec); err != nil {
 		return
 	}
 
-	fmt.Printf("Configuration With Invocation -- Serve http at %s\n", cfg.Address)
+	cfg := cfgBean.Spec.(*config.Config)
+
+	fmt.Printf("Configuration With Config Store -- Serve http at %s\n", cfg.Address)
 	return http.ListenAndServe(cfg.Address, a)
 }
 

@@ -5,6 +5,7 @@ import (
 	"go/build"
 	"os"
 	"os/exec"
+	"reflect"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -153,18 +154,34 @@ func (a *TypicalApp) Run(d *typcore.Descriptor) (err error) {
 // Precondition the app
 func (a *TypicalApp) Precondition(c *typbuildtool.PreconditionContext) (err error) {
 	var constructors []string
+
 	if err = c.Ast().EachAnnotation("constructor", typast.FunctionType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
 		constructors = append(constructors, fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
 		return
 	}); err != nil {
 		return
 	}
+
+	for _, bean := range c.Configuration.Store().Beans() {
+		constructors = append(constructors, configDefinition(bean))
+	}
+
 	log.Info("Generate constructors")
 	target := "typical/init_constructor_do_not_edit.go"
 	if err = a.generateConstructor(c, target, constructors); err != nil {
 		return
 	}
 	return
+}
+
+func configDefinition(bean *typcore.ConfigBean) string {
+	typ := reflect.TypeOf(bean.Spec).String()
+	typ2 := typ[1:]
+	return fmt.Sprintf(`func(loader typcfg.Loader) (cfg %s, err error){
+		cfg = new(%s)
+		err = loader.Load("%s", cfg)
+		return 
+	}`, typ, typ2, bean.Name)
 }
 
 func (a *TypicalApp) generateConstructor(c *typbuildtool.PreconditionContext, target string, constructors []string) (err error) {

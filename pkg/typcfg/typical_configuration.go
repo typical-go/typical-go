@@ -38,6 +38,20 @@ func (c *TypicalConfiguration) AppendConfigurer(configurers ...Configurer) *Typi
 	return c
 }
 
+// Store to return config store that contain config informatino
+func (c *TypicalConfiguration) Store() *typcore.ConfigStore {
+	store := typcore.NewConfigStore()
+	for _, configurer := range c.configurers {
+		cfg := configurer.Configure()
+		if cfg == nil {
+			panic("Configure return nil detail")
+		}
+		store.Put(cfg)
+	}
+
+	return store
+}
+
 // Loader of configuration
 func (c *TypicalConfiguration) Loader() Loader {
 	return c.loader
@@ -77,18 +91,4 @@ func (c *TypicalConfiguration) Write(w io.Writer) (err error) {
 		}
 	}
 	return
-}
-
-// Store to return config store that contain config informatino
-func (c *TypicalConfiguration) Store() *typcore.ConfigStore {
-	store := typcore.NewConfigStore()
-	for _, configurer := range c.configurers {
-		cfg := configurer.Configure(c.loader)
-		if cfg == nil {
-			panic("Configure return nil detail")
-		}
-		store.Put(cfg)
-	}
-
-	return store
 }

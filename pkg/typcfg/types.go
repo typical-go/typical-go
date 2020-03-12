@@ -11,5 +11,5 @@ type Loader interface {
 
 // Configurer responsible to create config
 type Configurer interface {
-	Configure(loader Loader) *typcore.ConfigBean
+	Configure() *typcore.ConfigBean
 }
