@@ -37,7 +37,7 @@ func (a *App) Configure() *typcore.ConfigBean {
 
 // Run server
 func (a *App) Run(d *typcore.Descriptor) (err error) {
-	cfgBean := d.Configuration.Store().Get(a.ConfigName)
+	cfgBean := d.Configuration.Get(a.ConfigName)
 	loader := d.Configuration.Loader()
 
 	if err = loader.LoadConfig(cfgBean.Name, cfgBean.Spec); err != nil {

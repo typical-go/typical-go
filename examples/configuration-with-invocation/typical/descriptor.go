@@ -22,7 +22,7 @@ var Descriptor = typcore.Descriptor{
 	BuildTool: typbuildtool.New(),
 
 	Configuration: typcore.NewConfiguration().
-		AppendConfigurer(
+		Configuring(
 			serverApp, // Append configurer for the this project
 		),
 }

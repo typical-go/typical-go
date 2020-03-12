@@ -22,16 +22,9 @@ func TestNewConfiguration(t *testing.T) {
 func TestConfiguration(t *testing.T) {
 	configuration := typcore.NewConfiguration().
 		WithLoader(&dummyLoader{}).
-		AppendConfigurer(&dummyConfigurer1{}, &dummyConfigurer2{})
-	store := configuration.Store()
-	require.IsType(t, &dummyLoader{}, configuration.Loader())
+		Configuring(&dummyConfigurer1{}, &dummyConfigurer2{})
 
-	require.EqualValues(t, []*typcore.ConfigField{
-		{Name: "prefix1_ID", Type: "int64", Default: "", Value: int64(0), IsZero: true, Required: false},
-		{Name: "prefix1_VOLUME", Type: "int", Default: "", Value: 0, IsZero: true, Required: false},
-		{Name: "prefix2_TITLE", Type: "string", Default: "default-title", Value: "", IsZero: true, Required: false},
-		{Name: "prefix2_CONTENT", Type: "string", Default: "default-content", Value: "", IsZero: true, Required: false},
-	}, store.Fields())
+	require.IsType(t, &dummyLoader{}, configuration.Loader())
 
 	var b strings.Builder
 	require.NoError(t, configuration.Write(&b))

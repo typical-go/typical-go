@@ -14,14 +14,16 @@ const (
 
 // TypicalConfiguration of typical project
 type TypicalConfiguration struct {
-	loader      ConfigLoader
-	configurers []Configurer
+	loader    ConfigLoader
+	beanNames []string
+	beanMap   map[string]*ConfigBean
 }
 
 // NewConfiguration return new instance of Configuration
 func NewConfiguration() *TypicalConfiguration {
 	return &TypicalConfiguration{
-		loader: &defaultLoader{},
+		loader:  &defaultLoader{},
+		beanMap: make(map[string]*ConfigBean),
 	}
 }
 
@@ -31,24 +33,16 @@ func (c *TypicalConfiguration) WithLoader(loader ConfigLoader) *TypicalConfigura
 	return c
 }
 
-// AppendConfigurer to append configurer
-func (c *TypicalConfiguration) AppendConfigurer(configurers ...Configurer) *TypicalConfiguration {
-	c.configurers = append(c.configurers, configurers...)
-	return c
-}
-
-// Store to return config store that contain config informatino
-func (c *TypicalConfiguration) Store() *ConfigStore {
-	store := NewConfigStore()
-	for _, configurer := range c.configurers {
+// Configuring the configurer
+func (c *TypicalConfiguration) Configuring(configurers ...Configurer) *TypicalConfiguration {
+	for _, configurer := range configurers {
 		cfg := configurer.Configure()
 		if cfg == nil {
 			panic("Configure return nil detail")
 		}
-		store.Put(cfg)
+		c.Put(cfg)
 	}
-
-	return store
+	return c
 }
 
 // Loader of configuration
@@ -77,17 +71,41 @@ func (c *TypicalConfiguration) Setup() (err error) {
 
 // Write typical configuration
 func (c *TypicalConfiguration) Write(w io.Writer) (err error) {
-	store := c.Store()
-	for _, field := range store.Fields() {
-		var v interface{}
-		if field.IsZero {
-			v = field.Default
-		} else {
-			v = field.Value
+	for _, bean := range c.Beans() {
+		for _, field := range bean.Fields() {
+			var v interface{}
+			if field.IsZero {
+				v = field.Default
+			} else {
+				v = field.Value
+			}
+			if _, err = fmt.Fprintf(w, "%s=%v\n", field.Name, v); err != nil {
+				return
+			}
 		}
-		if _, err = fmt.Fprintf(w, "%s=%v\n", field.Name, v); err != nil {
-			return
-		}
+	}
+	return
+}
+
+// Put bean to config store
+func (c *TypicalConfiguration) Put(bean *ConfigBean) {
+	name := bean.Name
+	if _, exist := c.beanMap[name]; exist {
+		panic(fmt.Sprintf("Can't put '%s' to config store", name))
+	}
+	c.beanNames = append(c.beanNames, name)
+	c.beanMap[name] = bean
+}
+
+// Get bean from config store
+func (c *TypicalConfiguration) Get(name string) *ConfigBean {
+	return c.beanMap[name]
+}
+
+// Beans return array of bean
+func (c *TypicalConfiguration) Beans() (beans []*ConfigBean) {
+	for _, name := range c.beanNames {
+		beans = append(beans, c.beanMap[name])
 	}
 	return
 }

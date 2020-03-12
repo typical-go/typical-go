@@ -13,9 +13,11 @@ type BuildTool interface {
 
 // Configuration is interface of configuration
 type Configuration interface {
-	Store() *ConfigStore
 	Loader() ConfigLoader
-	Setup() error
+	Beans() []*ConfigBean
+	Get(name string) *ConfigBean
+
+	Setup() error // TODO: remove this
 }
 
 // Sourceable mean the object can return the sources

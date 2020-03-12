@@ -161,7 +161,7 @@ func (a *TypicalApp) Precondition(c *typbuildtool.PreconditionContext) (err erro
 		return
 	}
 
-	for _, bean := range c.Configuration.Store().Beans() {
+	for _, bean := range c.Configuration.Beans() {
 		constructors = append(constructors, configDefinition(bean))
 	}
 
