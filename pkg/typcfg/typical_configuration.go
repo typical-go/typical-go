@@ -68,7 +68,7 @@ func (c *TypicalConfiguration) Setup() (err error) {
 // Write typical configuration
 func (c *TypicalConfiguration) Write(w io.Writer) (err error) {
 	store := c.Store()
-	for _, field := range store.Fields(store.Keys()...) {
+	for _, field := range store.Fields() {
 		var v interface{}
 		if field.IsZero {
 			v = field.Default
@@ -84,40 +84,34 @@ func (c *TypicalConfiguration) Write(w io.Writer) (err error) {
 
 // Store to return config store that contain config informatino
 func (c *TypicalConfiguration) Store() *typcore.ConfigStore {
-	store := new(typcore.ConfigStore)
+	store := typcore.NewConfigStore()
 	for _, configurer := range c.configurers {
-		detail := configurer.Configure(c.loader)
-		if detail == nil {
+		cfg := configurer.Configure(c.loader)
+		if cfg == nil {
 			panic("Configure return nil detail")
 		}
-		keys, fieldMap := c.fieldmap(detail.Name, detail.Spec)
-		store.Add(&typcore.ConfigBean{
-			Constructor: detail.Constructor,
-			Keys:        keys,
-			FieldMap:    fieldMap,
-		})
+		fields := retrieveFields(cfg.Name, cfg.Spec)
+		store.Put(cfg.Name, typcore.NewConfigBean(cfg.Name, fields, cfg.Constructor))
 	}
 
 	return store
 }
 
-func (c *TypicalConfiguration) fieldmap(prefix string, spec interface{}) (keys []string, m map[string]*typcore.ConfigField) {
-	m = make(map[string]*typcore.ConfigField)
+func retrieveFields(prefix string, spec interface{}) (fields []*typcore.ConfigField) {
 	val := reflect.Indirect(reflect.ValueOf(spec))
 	typ := val.Type()
 	for i := 0; i < typ.NumField(); i++ {
 		field := typ.Field(i)
 		if !fieldIgnored(field) {
 			name := fmt.Sprintf("%s_%s", prefix, fieldName(field))
-			m[name] = &typcore.ConfigField{
+			fields = append(fields, &typcore.ConfigField{
 				Name:     name,
 				Type:     field.Type.Name(),
 				Default:  fieldDefault(field),
 				Required: fieldRequired(field),
 				Value:    val.Field(i).Interface(),
 				IsZero:   val.Field(i).IsZero(),
-			}
-			keys = append(keys, name)
+			})
 		}
 	}
 	return

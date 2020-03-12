@@ -10,31 +10,19 @@ import (
 )
 
 func TestConfigStore(t *testing.T) {
-	var (
-		store = &typcore.ConfigStore{}
 
-		c1 = typdep.NewConstructor(nil)
-		c2 = typdep.NewConstructor(nil)
-		f1 = &typcore.ConfigField{}
-		f2 = &typcore.ConfigField{}
-		f3 = &typcore.ConfigField{}
-		f4 = &typcore.ConfigField{}
-	)
+	store := typcore.NewConfigStore()
+	c1 := typdep.NewConstructor(nil)
+	c2 := typdep.NewConstructor(nil)
+	f1 := &typcore.ConfigField{}
+	f2 := &typcore.ConfigField{}
+	f3 := &typcore.ConfigField{}
+	f4 := &typcore.ConfigField{}
 
-	store.Add(&typcore.ConfigBean{
-		Constructor: c1,
-		Keys:        []string{"key1", "key2"},
-		FieldMap:    map[string]*typcore.ConfigField{"key1": f1, "key2": f2},
-	})
-	store.Add(&typcore.ConfigBean{
-		Constructor: c2,
-		Keys:        []string{"key3", "key4"},
-		FieldMap:    map[string]*typcore.ConfigField{"key3": f3, "key4": f4},
-	})
+	store.Put("bean1", typcore.NewConfigBean("bean1", []*typcore.ConfigField{f1, f2}, c1))
+	store.Put("bean2", typcore.NewConfigBean("bean2", []*typcore.ConfigField{f3, f4}, c2))
 
 	require.EqualValues(t, []*typdep.Constructor{c1, c2}, store.Provide())
-	require.EqualValues(t, []string{"key1", "key2", "key3", "key4"}, store.Keys())
-	require.EqualValues(t, map[string]*typcore.ConfigField{"key1": f1, "key2": f2, "key3": f3, "key4": f4}, store.FieldMap())
-	require.EqualValues(t, []*typcore.ConfigField{f1, f3}, store.Fields("key1", "key3"))
+	require.EqualValues(t, []*typcore.ConfigField{f1, f2, f3, f4}, store.Fields())
 
 }

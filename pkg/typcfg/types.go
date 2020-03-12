@@ -1,6 +1,8 @@
 package typcfg
 
-import "github.com/typical-go/typical-go/pkg/typdep"
+import (
+	"github.com/typical-go/typical-go/pkg/typdep"
+)
 
 // Loader responsible to load config
 type Loader interface {
@@ -20,6 +22,6 @@ type Configuration struct {
 	// Spec is specification of config object. Spec used to generate the .env file
 	Spec interface{}
 
-	// Constructor is constructor function to create config object
+	// Constructor function to create config object
 	Constructor *typdep.Constructor
 }

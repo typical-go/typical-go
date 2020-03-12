@@ -7,6 +7,7 @@ import (
 
 	"github.com/typical-go/typical-go/examples/configuration-with-invocation/server/config"
 	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typdep"
 )
 
@@ -40,12 +41,15 @@ func (a *App) Configure(loader typcfg.Loader) *typcfg.Configuration {
 	}
 }
 
-// EntryPoint of application
-func (a *App) EntryPoint() *typdep.Invocation {
-	return typdep.NewInvocation(a.start)
-}
+// Run server
+func (a *App) Run(d *typcore.Descriptor) (err error) {
+	cfgBean := d.Configuration.Store().Get(a.ConfigName)
+	fn := cfgBean.Constructor().Fn().(func() (cfg config.Config, err error))
+	var cfg config.Config
+	if cfg, err = fn(); err != nil {
+		return
+	}
 
-func (a *App) start(cfg config.Config) error {
 	fmt.Printf("Configuration With Invocation -- Serve http at %s\n", cfg.Address)
 	return http.ListenAndServe(cfg.Address, a)
 }

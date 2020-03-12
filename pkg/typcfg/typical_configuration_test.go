@@ -35,7 +35,7 @@ func TestConfiguration(t *testing.T) {
 		{Name: "prefix1_VOLUME", Type: "int", Default: "", Value: 0, IsZero: true, Required: false},
 		{Name: "prefix2_TITLE", Type: "string", Default: "default-title", Value: "", IsZero: true, Required: false},
 		{Name: "prefix2_CONTENT", Type: "string", Default: "default-content", Value: "", IsZero: true, Required: false},
-	}, store.Fields(store.Keys()...))
+	}, store.Fields())
 
 	var b strings.Builder
 	require.NoError(t, configuration.Write(&b))

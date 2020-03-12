@@ -1,68 +1,50 @@
 package typcore
 
-import "github.com/typical-go/typical-go/pkg/typdep"
+import (
+	"fmt"
+
+	"github.com/typical-go/typical-go/pkg/typdep"
+)
 
 // ConfigStore contain information of config
 type ConfigStore struct {
-	beans []*ConfigBean
+	beanNames []string
+	beanMap   map[string]*ConfigBean
 }
 
-// ConfigBean is detail of config
-type ConfigBean struct {
-	Constructor *typdep.Constructor
-	Keys        []string
-	FieldMap    map[string]*ConfigField
+// NewConfigStore return new instance of ConfigStore
+func NewConfigStore() *ConfigStore {
+	return &ConfigStore{
+		beanMap: make(map[string]*ConfigBean),
+	}
 }
 
-// ConfigField is detail field of config
-type ConfigField struct {
-	Name     string
-	Type     string
-	Default  string
-	Value    interface{}
-	IsZero   bool
-	Required bool
+// Put bean to config store
+func (c *ConfigStore) Put(name string, bean *ConfigBean) {
+	if _, exist := c.beanMap[name]; exist {
+		panic(fmt.Sprintf("Can't put '%s' to config store", name))
+	}
+	c.beanNames = append(c.beanNames, name)
+	c.beanMap[name] = bean
 }
 
-// Add bean to config store
-func (c *ConfigStore) Add(bean *ConfigBean) {
-	c.beans = append(c.beans, bean)
+// Get bean from config store
+func (c *ConfigStore) Get(name string) *ConfigBean {
+	return c.beanMap[name]
 }
 
 // Provide list of functino
 func (c *ConfigStore) Provide() (constructors []*typdep.Constructor) {
-	for _, bean := range c.beans {
-		constructors = append(constructors, bean.Constructor)
+	for _, bean := range c.beanMap {
+		constructors = append(constructors, bean.Constructor())
 	}
 	return
 }
 
-// Keys return all config key
-func (c *ConfigStore) Keys() (keys []string) {
-	for _, bean := range c.beans {
-		keys = append(keys, bean.Keys...)
-	}
-	return
-}
-
-// FieldMap return field map
-func (c *ConfigStore) FieldMap() (m map[string]*ConfigField) {
-	m = make(map[string]*ConfigField)
-	for _, bean := range c.beans {
-		for k, v := range bean.FieldMap {
-			m[k] = v
-		}
-	}
-	return
-}
-
-// Fields return array of field by keys
-func (c *ConfigStore) Fields(keys ...string) (fields []*ConfigField) {
-	m := c.FieldMap()
-	for _, key := range keys {
-		if detail, ok := m[key]; ok {
-			fields = append(fields, detail)
-		}
+// Fields return field map
+func (c *ConfigStore) Fields() (fields []*ConfigField) {
+	for _, name := range c.beanNames {
+		fields = append(fields, c.beanMap[name].Fields()...)
 	}
 	return
 }

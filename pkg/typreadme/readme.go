@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"html/template"
 	"os"
-	"sort"
 
 	log "github.com/sirupsen/logrus"
 
@@ -170,9 +169,7 @@ func (m *Readme) BuildUsages(c *typbuildtool.Context) (infos []UsageInfo) {
 func (m *Readme) Configs(c *typbuildtool.Context) (infos []ConfigInfo) {
 	if len(m.configs) < 1 {
 		store := c.Configuration.Store()
-		keys := store.Keys()
-		sort.Strings(keys)
-		for _, cfg := range store.Fields(keys...) {
+		for _, cfg := range store.Fields() {
 			var required string
 			if cfg.Required {
 				required = "Yes"

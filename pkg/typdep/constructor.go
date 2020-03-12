@@ -16,3 +16,8 @@ func NewConstructor(fn interface{}) *Constructor {
 func (c *Constructor) Provide(di *Container) (err error) {
 	return di.container.Provide(c.fn)
 }
+
+// Fn is function of constructor
+func (c *Constructor) Fn() interface{} {
+	return c.fn
+}
