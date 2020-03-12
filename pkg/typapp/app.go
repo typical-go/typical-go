@@ -37,18 +37,10 @@ func New(v interface{}) *TypicalApp {
 	if entryPoint, ok := v.(EntryPointer); ok {
 		app.entryPoint = entryPoint
 	}
-	if provider, ok := v.(Provider); ok {
-		app.providers = []Provider{provider}
-	}
-	if preparer, ok := v.(Preparer); ok {
-		app.preparers = []Preparer{preparer}
-	}
-	if destroyer, ok := v.(Destroyer); ok {
-		app.destroyers = []Destroyer{destroyer}
-	}
 	if commander, ok := v.(Commander); ok {
 		app.commander = commander
 	}
+	app.appendModule(v)
 	return app
 }
 
@@ -58,20 +50,24 @@ func (a *TypicalApp) WithProjectSources(sources ...string) *TypicalApp {
 	return a
 }
 
-// Import return app with imported module. Module should be implementation of Provider, Preparer (optional) and Destroyer (optional).
-func (a *TypicalApp) Import(modules ...interface{}) *TypicalApp {
+// WithModule return app with new module. Module should be implementation of Provider, Preparer (optional) and Destroyer (optional).
+func (a *TypicalApp) WithModule(modules ...interface{}) *TypicalApp {
 	for _, module := range modules {
-		if provider, ok := module.(Provider); ok {
-			a.providers = append(a.providers, provider)
-		}
-		if preparer, ok := module.(Preparer); ok {
-			a.preparers = append(a.preparers, preparer)
-		}
-		if destroyer, ok := module.(Destroyer); ok {
-			a.destroyers = append(a.destroyers, destroyer)
-		}
+		a.appendModule(module)
 	}
 	return a
+}
+
+func (a *TypicalApp) appendModule(module interface{}) {
+	if provider, ok := module.(Provider); ok {
+		a.providers = append(a.providers, provider)
+	}
+	if preparer, ok := module.(Preparer); ok {
+		a.preparers = append(a.preparers, preparer)
+	}
+	if destroyer, ok := module.(Destroyer); ok {
+		a.destroyers = append(a.destroyers, destroyer)
+	}
 }
 
 // AppendProjectSource return app with appended project sources

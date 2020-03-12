@@ -22,7 +22,7 @@ func TestNewConfiguration(t *testing.T) {
 func TestConfiguration(t *testing.T) {
 	configuration := typcore.NewConfiguration().
 		WithLoader(&dummyLoader{}).
-		Configuring(&dummyConfigurer1{}, &dummyConfigurer2{})
+		WithConfigurer(&dummyConfigurer1{}, &dummyConfigurer2{})
 
 	require.IsType(t, &dummyLoader{}, configuration.Loader())
 

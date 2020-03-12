@@ -27,14 +27,14 @@ func NewConfiguration() *TypicalConfiguration {
 	}
 }
 
-// WithLoader to set loader
+// WithLoader return TypicalConfiguration with new loader
 func (c *TypicalConfiguration) WithLoader(loader ConfigLoader) *TypicalConfiguration {
 	c.loader = loader
 	return c
 }
 
-// Configuring the configurer
-func (c *TypicalConfiguration) Configuring(configurers ...Configurer) *TypicalConfiguration {
+// WithConfigurer return TypicalConfiguratiton with new configurers
+func (c *TypicalConfiguration) WithConfigurer(configurers ...Configurer) *TypicalConfiguration {
 	for _, configurer := range configurers {
 		cfg := configurer.Configure()
 		if cfg == nil {
