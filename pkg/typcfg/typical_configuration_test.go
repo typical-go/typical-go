@@ -53,8 +53,8 @@ func (*dummyLoader) Load(string, interface{}) error { return nil }
 
 type dummyConfigurer1 struct{}
 
-func (*dummyConfigurer1) Configure(loader typcfg.Loader) *typcfg.Configuration {
-	return &typcfg.Configuration{
+func (*dummyConfigurer1) Configure(loader typcfg.Loader) *typcore.ConfigBean {
+	return &typcore.ConfigBean{
 		Name: "prefix1",
 		Spec: &struct {
 			ID     int64 ``
@@ -66,8 +66,8 @@ func (*dummyConfigurer1) Configure(loader typcfg.Loader) *typcfg.Configuration {
 
 type dummyConfigurer2 struct{}
 
-func (*dummyConfigurer2) Configure(loader typcfg.Loader) *typcfg.Configuration {
-	return &typcfg.Configuration{
+func (*dummyConfigurer2) Configure(loader typcfg.Loader) *typcore.ConfigBean {
+	return &typcore.ConfigBean{
 		Name: "prefix2",
 		Spec: &struct {
 			Title   string `default:"default-title"`

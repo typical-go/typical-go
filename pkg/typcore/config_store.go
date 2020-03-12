@@ -20,7 +20,8 @@ func NewConfigStore() *ConfigStore {
 }
 
 // Put bean to config store
-func (c *ConfigStore) Put(name string, bean *ConfigBean) {
+func (c *ConfigStore) Put(bean *ConfigBean) {
+	name := bean.Name
 	if _, exist := c.beanMap[name]; exist {
 		panic(fmt.Sprintf("Can't put '%s' to config store", name))
 	}
@@ -36,7 +37,7 @@ func (c *ConfigStore) Get(name string) *ConfigBean {
 // Provide list of functino
 func (c *ConfigStore) Provide() (constructors []*typdep.Constructor) {
 	for _, bean := range c.beanMap {
-		constructors = append(constructors, bean.Constructor())
+		constructors = append(constructors, bean.Constructor)
 	}
 	return
 }

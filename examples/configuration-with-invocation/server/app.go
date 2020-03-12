@@ -7,6 +7,7 @@ import (
 
 	"github.com/typical-go/typical-go/examples/configuration-with-invocation/server/config"
 	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typdep"
 )
 
@@ -29,8 +30,8 @@ func (a *App) WithConfigPrefix(name string) *App {
 }
 
 // Configure the application
-func (a *App) Configure(loader typcfg.Loader) *typcfg.Configuration {
-	return &typcfg.Configuration{
+func (a *App) Configure(loader typcfg.Loader) *typcore.ConfigBean {
+	return &typcore.ConfigBean{
 		Name: a.ConfigName,
 		Spec: &config.Config{},
 		Constructor: typdep.NewConstructor(func() (cfg config.Config, err error) {
