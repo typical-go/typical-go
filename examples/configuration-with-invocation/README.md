@@ -5,11 +5,13 @@ Example typical-go project to demonstrate how to set the configuration
 Append the configurer to the project descriptor `typical/descriptor.go`
 ```go
 var Descriptor = typcore.Descriptor{
-    // ...
+	// ...
+
+	App: typapp.New(serverApp), // wrap serverApp with Typical App
 
 	Configuration: typcfg.New().
 		AppendConfigurer(
-			hello, // Append configurer for the this project
+			serverApp, // Append configurer for the this project
 		),
 }
 
@@ -34,10 +36,10 @@ Create the invocation and function with config as its parameter
 ```go
 // EntryPoint of application
 func (a *App) EntryPoint() *typdep.Invocation {
-	return typdep.NewInvocation(start)
+	return typdep.NewInvocation(a.start)
 }
 
-func start(cfg config.Config) {
-	fmt.Printf("Hello %s\n", cfg.Hello)
+func (a *App) start(cfg config.Config) error {
+	return http.ListenAndServe(cfg.Address, a)
 }
 ```

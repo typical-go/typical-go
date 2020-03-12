@@ -1,9 +1,11 @@
-package helloworld
+package server
 
 import (
 	"fmt"
+	"html"
+	"net/http"
 
-	"github.com/typical-go/typical-go/examples/configuration-with-invocation/helloworld/config"
+	"github.com/typical-go/typical-go/examples/configuration-with-invocation/server/config"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typdep"
 )
@@ -31,19 +33,23 @@ func (a *App) Configure(loader typcfg.Loader) *typcfg.Configuration {
 	return &typcfg.Configuration{
 		Name: a.ConfigName,
 		Spec: &config.Config{},
-		Constructor: typdep.NewConstructor(
-			func() (cfg config.Config, err error) {
-				err = loader.Load(a.ConfigName, &cfg)
-				return
-			}),
+		Constructor: typdep.NewConstructor(func() (cfg config.Config, err error) {
+			err = loader.Load(a.ConfigName, &cfg)
+			return
+		}),
 	}
 }
 
 // EntryPoint of application
 func (a *App) EntryPoint() *typdep.Invocation {
-	return typdep.NewInvocation(start)
+	return typdep.NewInvocation(a.start)
 }
 
-func start(cfg config.Config) {
-	fmt.Printf("Hello %s\n", cfg.Hello)
+func (a *App) start(cfg config.Config) error {
+	fmt.Printf("Serve http at %s\n", cfg.Address)
+	return http.ListenAndServe(cfg.Address, a)
+}
+
+func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
 }

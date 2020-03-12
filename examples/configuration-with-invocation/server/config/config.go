@@ -2,5 +2,5 @@ package config
 
 // Config of app
 type Config struct {
-	Hello string `default:"World"`
+	Address string `default:":8080" required:"true"`
 }
