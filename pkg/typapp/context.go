@@ -39,23 +39,23 @@ func (c *Context) Invoke(cliCtx *cli.Context, invocation *typdep.Invocation) (er
 
 	if c.Configuration != nil {
 		// provide configuration to dependency-injection container
-		if err = typdep.ProvideAll(di, c.Configuration.Store().Provide()...); err != nil {
+		if err = typdep.Provide(di, c.Configuration.Store().Provide()...); err != nil {
 			return
 		}
 	}
 
 	// provide registered function in descriptor to dependency-injection container
-	if err = typdep.ProvideAll(di, c.Provide()...); err != nil {
+	if err = typdep.Provide(di, c.Provide()...); err != nil {
 		return
 	}
 
 	// invoke preparation as register in descriptor
-	if err = typdep.InvokeAll(di, c.Prepare()...); err != nil {
+	if err = typdep.Invoke(di, c.Prepare()...); err != nil {
 		return
 	}
 
 	startFn := func() error { return invocation.Invoke(di) }
-	stopFn := func() error { return typdep.InvokeAll(di, c.Destroy()...) }
+	stopFn := func() error { return typdep.Invoke(di, c.Destroy()...) }
 	for _, err := range common.StartGracefully(startFn, stopFn) {
 		log.Error(err.Error())
 	}

@@ -35,7 +35,7 @@ func (c *Context) Invoke(cliCtx *cli.Context, invocation *typdep.Invocation) (er
 
 	// provide functions
 	if c.Configuration != nil {
-		if err = typdep.ProvideAll(di, c.Configuration.Store().Provide()...); err != nil {
+		if err = typdep.Provide(di, c.Configuration.Store().Provide()...); err != nil {
 			return
 		}
 	}
