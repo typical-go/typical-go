@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/typical-go/typical-go/examples/configuration-with-invocation/server/config"
-	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
@@ -38,10 +37,10 @@ func (a *App) Configure() *typcore.ConfigBean {
 
 // Run server
 func (a *App) Run(d *typcore.Descriptor) (err error) {
-	cfgLoader := typcfg.NewDefaultLoader()
 	cfgBean := d.Configuration.Store().Get(a.ConfigName)
+	loader := d.Configuration.Loader()
 
-	if err = cfgLoader.Load(cfgBean.Name, cfgBean.Spec); err != nil {
+	if err = loader.LoadConfig(cfgBean.Name, cfgBean.Spec); err != nil {
 		return
 	}
 

@@ -9,7 +9,7 @@ var Descriptor = typcore.Descriptor{
 
 	App: typapp.New(serverApp), // wrap serverApp with Typical App
 
-	Configuration: typcfg.New().
+	Configuration: typcore.NewConfiguration().
 		AppendConfigurer(
 			serverApp, // Append configurer for the this project
 		),
@@ -19,15 +19,10 @@ var Descriptor = typcore.Descriptor{
 
 Example of configurer implementation
 ```go
-func (m *Module) Configure(loader typcfg.Loader) *typcfg.Detail {
-	return &typcfg.Detail{
+func (m *Module) Configure(loader typcore.Loader) *typcore.Detail {
+	return &typcore.Detail{
 		Prefix: m.Prefix,
 		Spec:   &config.Config{},
-		Constructor: typdep.NewConstructor(
-			func() (cfg config.Config, err error) {
-				err = loader.Load(m.Prefix, &cfg)
-				return
-			}),
 	}
 }
 ```
@@ -39,7 +34,7 @@ func (a *App) EntryPoint() *typdep.Invocation {
 	return typdep.NewInvocation(a.start)
 }
 
-func (a *App) start(cfg config.Config) error {
+func (a *App) start(cfg *config.Config) error {
 	return http.ListenAndServe(cfg.Address, a)
 }
 ```

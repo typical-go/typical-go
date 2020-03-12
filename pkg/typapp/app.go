@@ -14,7 +14,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typapp/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
-	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typdep"
 	"github.com/urfave/cli/v2"
@@ -139,7 +138,7 @@ func (a *TypicalApp) Run(d *typcore.Descriptor) (err error) {
 	app.Description = d.Description
 	app.Version = d.Version
 	app.Before = func(c *cli.Context) (err error) {
-		if err = typcfg.LoadEnvFile(); err != nil {
+		if err = typcore.LoadEnvFile(); err != nil {
 			return
 		}
 		return
@@ -177,9 +176,9 @@ func (a *TypicalApp) Precondition(c *typbuildtool.PreconditionContext) (err erro
 func configDefinition(bean *typcore.ConfigBean) string {
 	typ := reflect.TypeOf(bean.Spec).String()
 	typ2 := typ[1:]
-	return fmt.Sprintf(`func(loader typcfg.Loader) (cfg %s, err error){
+	return fmt.Sprintf(`func(loader typcore.ConfigLoader) (cfg %s, err error){
 		cfg = new(%s)
-		err = loader.Load("%s", cfg)
+		err = loader.LoadConfig("%s", cfg)
 		return 
 	}`, typ, typ2, bean.Name)
 }

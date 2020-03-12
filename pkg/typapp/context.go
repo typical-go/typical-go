@@ -2,8 +2,6 @@ package typapp
 
 import (
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/typcfg"
-
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typdep"
@@ -31,7 +29,7 @@ func (c *Context) Invoke(cliCtx *cli.Context, invocation *typdep.Invocation) (er
 	di := typdep.New()
 
 	if err = typdep.Provide(di,
-		typdep.NewConstructor(typcfg.NewDefaultLoader),
+		typdep.NewConstructor(c.Configuration.Loader),
 		typdep.NewConstructor(func() *cli.Context {
 			return cliCtx
 		}),

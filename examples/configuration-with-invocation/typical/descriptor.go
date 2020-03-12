@@ -4,7 +4,6 @@ import (
 	"github.com/typical-go/typical-go/examples/configuration-with-invocation/server"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
-	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
@@ -22,7 +21,7 @@ var Descriptor = typcore.Descriptor{
 
 	BuildTool: typbuildtool.New(),
 
-	Configuration: typcfg.New().
+	Configuration: typcore.NewConfiguration().
 		AppendConfigurer(
 			serverApp, // Append configurer for the this project
 		),

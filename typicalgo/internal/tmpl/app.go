@@ -41,8 +41,8 @@ func (*Module) EntryPoint() interface{} {
 }
 
 // Configure the application
-func (m *Module) Configure(loader typcfg.Loader) *typcfg.Detail {
-	return &typcfg.Detail{
+func (m *Module) Configure(loader typcore.Loader) *typcore.Detail {
+	return &typcore.Detail{
 		Prefix: m.Prefix,
 		Spec:   &config.Config{},
 		Constructor: func() (cfg config.Config, err error) {

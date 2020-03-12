@@ -1,4 +1,4 @@
-package typcfg
+package typcore
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 	"os"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 const (
@@ -15,19 +14,19 @@ const (
 
 // TypicalConfiguration of typical project
 type TypicalConfiguration struct {
-	loader      Loader
+	loader      ConfigLoader
 	configurers []Configurer
 }
 
-// New return new instance of Configuration
-func New() *TypicalConfiguration {
+// NewConfiguration return new instance of Configuration
+func NewConfiguration() *TypicalConfiguration {
 	return &TypicalConfiguration{
 		loader: &defaultLoader{},
 	}
 }
 
 // WithLoader to set loader
-func (c *TypicalConfiguration) WithLoader(loader Loader) *TypicalConfiguration {
+func (c *TypicalConfiguration) WithLoader(loader ConfigLoader) *TypicalConfiguration {
 	c.loader = loader
 	return c
 }
@@ -39,8 +38,8 @@ func (c *TypicalConfiguration) AppendConfigurer(configurers ...Configurer) *Typi
 }
 
 // Store to return config store that contain config informatino
-func (c *TypicalConfiguration) Store() *typcore.ConfigStore {
-	store := typcore.NewConfigStore()
+func (c *TypicalConfiguration) Store() *ConfigStore {
+	store := NewConfigStore()
 	for _, configurer := range c.configurers {
 		cfg := configurer.Configure()
 		if cfg == nil {
@@ -53,7 +52,7 @@ func (c *TypicalConfiguration) Store() *typcore.ConfigStore {
 }
 
 // Loader of configuration
-func (c *TypicalConfiguration) Loader() Loader {
+func (c *TypicalConfiguration) Loader() ConfigLoader {
 	return c.loader
 }
 

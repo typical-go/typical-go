@@ -1,4 +1,4 @@
-package typcfg
+package typcore
 
 import (
 	"os"

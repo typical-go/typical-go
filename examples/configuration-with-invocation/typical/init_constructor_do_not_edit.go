@@ -5,15 +5,15 @@ package typical
 import (
 	"github.com/typical-go/typical-go/examples/configuration-with-invocation/server/config"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typdep"
 )
 
 func init() {
 	typapp.AppendConstructor(
-		typdep.NewConstructor(func(loader typcfg.Loader) (cfg *config.Config, err error) {
+		typdep.NewConstructor(func(loader typcore.ConfigLoader) (cfg *config.Config, err error) {
 			cfg = new(config.Config)
-			err = loader.Load("APP", cfg)
+			err = loader.LoadConfig("APP", cfg)
 			return
 		}),
 	)
