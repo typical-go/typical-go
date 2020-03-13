@@ -16,9 +16,12 @@ Or download the latest release from [releases page](https://github.com/typical-g
 ## Examples
 
 - [Hello World](https://github.com/typical-go/typical-go/tree/master/examples/hello-world)
-- [Configuration with invocation](https://github.com/typical-go/typical-go/tree/master/examples/configuration-with-invocation)
-- [Simple additional task](https://github.com/typical-go/typical-go/tree/master/examples/simple-additional-task)
-- [REST Server](https://github.com/typical-go/typical-rest-server)
+- [Get Config From Descriptor](https://github.com/typical-go/typical-go/tree/master/examples/get-config-from-descriptor)
+- [Configuration With Invocation](https://github.com/typical-go/typical-go/tree/master/examples/configuration-with-invocation)
+- [Simple Additional Task](https://github.com/typical-go/typical-go/tree/master/examples/simple-additional-task)
+- [Provide Constructor](https://github.com/typical-go/typical-go/tree/master/examples/provide-constructor)
+- [Serve React Demo](https://github.com/typical-go/typical-go/tree/master/examples/serve-react-demo)
+
 
 
 ## License
