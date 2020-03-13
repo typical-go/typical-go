@@ -29,10 +29,3 @@ type Destroyer interface {
 type Commander interface {
 	Commands(*Context) []*cli.Command
 }
-
-// Module to be imported
-type Module interface {
-	Provider
-	Preparer
-	Destroyer
-}

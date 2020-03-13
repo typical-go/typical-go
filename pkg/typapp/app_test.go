@@ -3,50 +3,27 @@ package typapp_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
-	"github.com/typical-go/typical-go/pkg/typdep"
-	"github.com/urfave/cli/v2"
 )
 
 func TestNewApp(t *testing.T) {
-	t.Run("", func(t *testing.T) {
-		app := typapp.New(&module{})
-		require.Equal(t, someEntryPoint, app.EntryPoint())
-		require.Equal(t, []*typdep.Constructor{someConstructor}, app.Provide())
-		require.Equal(t, []*typdep.Invocation{somePreparation}, app.Prepare())
-		require.Equal(t, []*typdep.Invocation{someDestroyer}, app.Destroy())
-		require.Equal(t, []*cli.Command{
-			{Name: "cmd1"},
-			{Name: "cmd2"},
-		}, app.Commands(nil))
-	})
-	t.Run("SHOULD implement preconditioner", func(t *testing.T) {
+	t.Run("SHOULD implement Preconditioner", func(t *testing.T) {
 		var _ typbuildtool.Preconditioner = typapp.New(nil)
 	})
-}
-
-var (
-	someEntryPoint  = typdep.NewInvocation(nil)
-	someConstructor = typdep.NewConstructor(nil)
-	someDestroyer   = typdep.NewInvocation(nil)
-	somePreparation = typdep.NewInvocation(nil)
-)
-
-type module struct{}
-
-func (*module) EntryPoint() *typdep.Invocation { return someEntryPoint }
-
-func (*module) Provide() []*typdep.Constructor { return []*typdep.Constructor{someConstructor} }
-
-func (*module) Destroy() []*typdep.Invocation { return []*typdep.Invocation{someDestroyer} }
-
-func (*module) Prepare() []*typdep.Invocation { return []*typdep.Invocation{somePreparation} }
-
-func (*module) Commands(c *typapp.Context) []*cli.Command {
-	return []*cli.Command{
-		{Name: "cmd1"},
-		{Name: "cmd2"},
-	}
+	t.Run("SHOULD implement Provider", func(t *testing.T) {
+		var _ typapp.Provider = typapp.New(nil)
+	})
+	t.Run("SHOULD implement Destroyer", func(t *testing.T) {
+		var _ typapp.Destroyer = typapp.New(nil)
+	})
+	t.Run("SHOULD implement Preparer", func(t *testing.T) {
+		var _ typapp.Preparer = typapp.New(nil)
+	})
+	t.Run("SHOULD implement EntryPointer", func(t *testing.T) {
+		var _ typapp.EntryPointer = typapp.New(nil)
+	})
+	t.Run("SHOULD implement Commander", func(t *testing.T) {
+		var _ typapp.Commander = typapp.New(nil)
+	})
 }

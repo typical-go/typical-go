@@ -21,26 +21,18 @@ import (
 
 // TypicalApp is typical application model
 type TypicalApp struct {
-	entryPoint     EntryPointer
-	commander      Commander
-	providers      []Provider
-	preparers      []Preparer
-	destroyers     []Destroyer
 	projectSources []string
+	appModule      interface{}
+	modules        []interface{}
 }
 
 // New return new instance of app
-func New(v interface{}) *TypicalApp {
+func New(appModule interface{}) *TypicalApp {
 	app := &TypicalApp{
-		projectSources: []string{common.PackageName(v)},
+		projectSources: []string{common.PackageName(appModule)},
+		appModule:      appModule,
+		modules:        []interface{}{appModule},
 	}
-	if entryPoint, ok := v.(EntryPointer); ok {
-		app.entryPoint = entryPoint
-	}
-	if commander, ok := v.(Commander); ok {
-		app.commander = commander
-	}
-	app.appendModule(v)
 	return app
 }
 
@@ -50,24 +42,10 @@ func (a *TypicalApp) WithProjectSources(sources ...string) *TypicalApp {
 	return a
 }
 
-// WithModule return app with new module. Module should be implementation of Provider, Preparer (optional) and Destroyer (optional).
-func (a *TypicalApp) WithModule(modules ...interface{}) *TypicalApp {
-	for _, module := range modules {
-		a.appendModule(module)
-	}
+// AppendModule return app with appended module. Module should be implementation of Provider, Preparer (optional) and Destroyer (optional).
+func (a *TypicalApp) AppendModule(modules ...interface{}) *TypicalApp {
+	a.modules = append(a.modules, modules...)
 	return a
-}
-
-func (a *TypicalApp) appendModule(module interface{}) {
-	if provider, ok := module.(Provider); ok {
-		a.providers = append(a.providers, provider)
-	}
-	if preparer, ok := module.(Preparer); ok {
-		a.preparers = append(a.preparers, preparer)
-	}
-	if destroyer, ok := module.(Destroyer); ok {
-		a.destroyers = append(a.destroyers, destroyer)
-	}
 }
 
 // AppendProjectSource return app with appended project sources
@@ -78,8 +56,8 @@ func (a *TypicalApp) AppendProjectSource(sources ...string) *TypicalApp {
 
 // EntryPoint of app
 func (a *TypicalApp) EntryPoint() *typdep.Invocation {
-	if a.entryPoint != nil {
-		return a.entryPoint.EntryPoint()
+	if entryPointer, ok := a.appModule.(EntryPointer); ok {
+		return entryPointer.EntryPoint()
 	}
 	return nil
 }
@@ -87,32 +65,38 @@ func (a *TypicalApp) EntryPoint() *typdep.Invocation {
 // Provide to return constructors
 func (a *TypicalApp) Provide() (constructors []*typdep.Constructor) {
 	constructors = append(constructors, appConstructors...)
-	for _, provider := range a.providers {
-		constructors = append(constructors, provider.Provide()...)
+	for _, module := range a.modules {
+		if provider, ok := module.(Provider); ok {
+			constructors = append(constructors, provider.Provide()...)
+		}
 	}
 	return
 }
 
 //Destroy to return destructor
 func (a *TypicalApp) Destroy() (destructors []*typdep.Invocation) {
-	for _, destroyer := range a.destroyers {
-		destructors = append(destructors, destroyer.Destroy()...)
+	for _, module := range a.modules {
+		if destroyer, ok := module.(Destroyer); ok {
+			destructors = append(destructors, destroyer.Destroy()...)
+		}
 	}
 	return
 }
 
 // Prepare to return preparations
 func (a *TypicalApp) Prepare() (preparations []*typdep.Invocation) {
-	for _, preparer := range a.preparers {
-		preparations = append(preparations, preparer.Prepare()...)
+	for _, module := range a.modules {
+		if preparer, ok := module.(Preparer); ok {
+			preparations = append(preparations, preparer.Prepare()...)
+		}
 	}
 	return
 }
 
 // Commands to return commands
 func (a *TypicalApp) Commands(c *Context) (cmds []*cli.Command) {
-	if a.commander != nil {
-		return a.commander.Commands(c)
+	if commander, ok := a.appModule.(Commander); ok {
+		return commander.Commands(c)
 	}
 	return
 }
