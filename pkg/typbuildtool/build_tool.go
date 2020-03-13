@@ -192,7 +192,6 @@ func (b *TypicalBuildTool) releaseCommand(c *Context) *cli.Command {
 		Usage: "Release the distribution",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{Name: "no-test", Usage: "Release without run unit test"},
-			&cli.BoolFlag{Name: "no-build", Usage: "Release without build"},
 			&cli.BoolFlag{Name: "no-publish", Usage: "Release without create github release"},
 			&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
 			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
@@ -200,12 +199,6 @@ func (b *TypicalBuildTool) releaseCommand(c *Context) *cli.Command {
 		Action: func(cliCtx *cli.Context) (err error) {
 
 			bc := b.createBuildContext(cliCtx, c)
-
-			if !cliCtx.Bool("no-build") && b.builder != nil {
-				if _, err = b.Build(bc); err != nil {
-					return
-				}
-			}
 
 			if !cliCtx.Bool("no-test") && b.tester != nil {
 				if err = b.tester.Test(bc); err != nil {
