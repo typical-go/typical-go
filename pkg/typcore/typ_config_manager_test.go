@@ -38,23 +38,17 @@ func (*dummyLoader) LoadConfig(string, interface{}) error { return nil }
 type dummyConfigurer1 struct{}
 
 func (*dummyConfigurer1) Configure() *typcore.Configuration {
-	return &typcore.Configuration{
-		Name: "prefix1",
-		Spec: &struct {
-			ID     int64 ``
-			Volume int   ``
-		}{},
-	}
+	return typcore.NewConfiguration("prefix1", &struct {
+		ID     int64 ``
+		Volume int   ``
+	}{})
 }
 
 type dummyConfigurer2 struct{}
 
 func (*dummyConfigurer2) Configure() *typcore.Configuration {
-	return &typcore.Configuration{
-		Name: "prefix2",
-		Spec: &struct {
-			Title   string `default:"default-title"`
-			Content string `default:"default-content"`
-		}{},
-	}
+	return typcore.NewConfiguration("prefix2", &struct {
+		Title   string `default:"default-title"`
+		Content string `default:"default-content"`
+	}{})
 }

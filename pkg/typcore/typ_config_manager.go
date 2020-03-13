@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
+	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
 )
 
 const (
 	defaultDotEnv = ".env"
+	configKey     = "CONFIG"
 )
 
 // TypConfigManager of typical project
@@ -64,7 +67,9 @@ func (c *TypConfigManager) Setup() (err error) {
 			return
 		}
 	}
-	// TODO: load env
+	if err = loadEnvFile(); err != nil {
+		return
+	}
 	return
 }
 
@@ -88,7 +93,7 @@ func (c *TypConfigManager) Write(w io.Writer) (err error) {
 
 // Put bean to config store
 func (c *TypConfigManager) Put(bean *Configuration) {
-	name := bean.Name
+	name := bean.Name()
 	if _, exist := c.beanMap[name]; exist {
 		panic(fmt.Sprintf("Can't put '%s' to config store", name))
 	}
@@ -96,15 +101,58 @@ func (c *TypConfigManager) Put(bean *Configuration) {
 	c.beanMap[name] = bean
 }
 
-// GetConfig to get configuration
-func (c *TypConfigManager) GetConfig(name string) *Configuration {
-	return c.beanMap[name]
+// RetrieveConfigSpec to get configuration spec
+func (c *TypConfigManager) RetrieveConfigSpec(name string) (interface{}, error) {
+	cfgdef := c.beanMap[name]
+	spec := cfgdef.Spec()
+	if err := c.LoadConfig(cfgdef.Name(), spec); err != nil {
+		return nil, err
+	}
+	return spec, nil
 }
 
 // Configurations return array of configuration
 func (c *TypConfigManager) Configurations() (beans []*Configuration) {
 	for _, name := range c.beanNames {
 		beans = append(beans, c.beanMap[name])
+	}
+	return
+}
+
+// LoadConfig to load the config
+func (c *TypConfigManager) LoadConfig(name string, spec interface{}) error {
+	if c.loader != nil {
+		return c.loader.LoadConfig(name, spec)
+	}
+	return fmt.Errorf("ConfigLoader is missing")
+}
+
+func loadEnvFile() (err error) {
+	// TODO: don't use godotenv for flexibility
+	configSource := os.Getenv(configKey)
+	var configs []string
+	var envMap map[string]string
+	if configSource == "" {
+		envMap, _ = godotenv.Read()
+	} else {
+		configs = strings.Split(configSource, ",")
+		if envMap, err = godotenv.Read(configs...); err != nil {
+			return
+		}
+	}
+
+	if len(envMap) > 0 {
+		log.Infof("Load environments %s", configSource)
+		var b strings.Builder
+		for key, value := range envMap {
+			if err = os.Setenv(key, value); err != nil {
+				return
+			}
+			b.WriteString("+")
+			b.WriteString(key)
+			b.WriteString(" ")
+		}
+		log.Info(b.String())
 	}
 	return
 }

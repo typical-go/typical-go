@@ -10,7 +10,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
-	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v2"
 )
@@ -51,9 +50,6 @@ func (m *Docker) Commands(ctx *typbuildtool.Context) []*cli.Command {
 		{
 			Name:  "docker",
 			Usage: "Docker utility",
-			Before: func(ctx *cli.Context) error {
-				return typcore.LoadEnvFile()
-			},
 			Subcommands: []*cli.Command{
 				{
 					Name:  "compose",

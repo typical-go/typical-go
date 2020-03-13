@@ -1,7 +1,7 @@
 package typical
 
 import (
-	"github.com/typical-go/typical-go/examples/configuration-with-config-store/server"
+	"github.com/typical-go/typical-go/examples/get-config-from-descriptor/server"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
@@ -13,7 +13,7 @@ var (
 
 // Descriptor of sample
 var Descriptor = typcore.Descriptor{
-	Name:    "configuration-with-config-store",
+	Name:    "get-config-from-descriptor",
 	Version: "0.0.1",
 
 	App: serverApp, // wrap serverApp with Typical App
@@ -22,6 +22,6 @@ var Descriptor = typcore.Descriptor{
 
 	ConfigManager: typcore.NewConfigManager().
 		WithConfigurer(
-			serverApp, // Append configurer for the this project
+			serverApp, // register serverApp configurer
 		),
 }

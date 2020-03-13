@@ -5,13 +5,17 @@ import (
 	"html"
 	"net/http"
 
-	"github.com/typical-go/typical-go/examples/configuration-with-invocation/server/config"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 // App of hello world
 type App struct {
 	ConfigName string
+}
+
+// Config of app
+type Config struct {
+	Address string `default:":8080" required:"true"`
 }
 
 // New return new instance of application
@@ -29,22 +33,18 @@ func (a *App) WithConfigPrefix(name string) *App {
 
 // Configure the application
 func (a *App) Configure() *typcore.Configuration {
-	return &typcore.Configuration{
-		Name: a.ConfigName,
-		Spec: &config.Config{},
-	}
+	return typcore.NewConfiguration(a.ConfigName, &Config{})
 }
 
 // Run server
 func (a *App) Run(d *typcore.Descriptor) (err error) {
-	cfgBean := d.GetConfig(a.ConfigName)
-	loader := d.ConfigManager.Loader()
-
-	if err = loader.LoadConfig(cfgBean.Name, cfgBean.Spec); err != nil {
+	var spec interface{}
+	if spec, err = d.RetrieveConfigSpec(a.ConfigName); err != nil {
 		return
 	}
 
-	cfg := cfgBean.Spec.(*config.Config)
+	// type assertion to Config type
+	cfg := spec.(*Config)
 
 	fmt.Printf("Configuration With Config Store -- Serve http at %s\n", cfg.Address)
 	return http.ListenAndServe(cfg.Address, a)

@@ -133,12 +133,6 @@ func (a *TypicalApp) Run(d *typcore.Descriptor) (err error) {
 	app.Usage = "" // NOTE: intentionally blank
 	app.Description = d.Description
 	app.Version = d.Version
-	app.Before = func(c *cli.Context) (err error) {
-		if err = typcore.LoadEnvFile(); err != nil {
-			return
-		}
-		return
-	}
 	if entryPoint := a.EntryPoint(); entryPoint != nil {
 		app.Action = c.ActionFunc(entryPoint)
 	}
@@ -170,13 +164,13 @@ func (a *TypicalApp) Precondition(c *typbuildtool.PreconditionContext) (err erro
 }
 
 func configDefinition(bean *typcore.Configuration) string {
-	typ := reflect.TypeOf(bean.Spec).String()
+	typ := reflect.TypeOf(bean.Spec()).String()
 	typ2 := typ[1:]
 	return fmt.Sprintf(`func(loader typcore.ConfigLoader) (cfg %s, err error){
 		cfg = new(%s)
 		err = loader.LoadConfig("%s", cfg)
 		return 
-	}`, typ, typ2, bean.Name)
+	}`, typ, typ2, bean.Name())
 }
 
 func (a *TypicalApp) generateConstructor(c *typbuildtool.PreconditionContext, target string, constructors []string) (err error) {

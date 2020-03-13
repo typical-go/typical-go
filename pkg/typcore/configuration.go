@@ -9,8 +9,8 @@ import (
 
 // Configuration is detail of config
 type Configuration struct {
-	Name string
-	Spec interface{}
+	name string
+	spec interface{}
 }
 
 // ConfigField is detail field of config
@@ -23,9 +23,27 @@ type ConfigField struct {
 	Required bool
 }
 
+// NewConfiguration return new instance of Configuration
+func NewConfiguration(name string, spec interface{}) *Configuration {
+	return &Configuration{
+		name: name,
+		spec: spec,
+	}
+}
+
+// Name of configuration
+func (c *Configuration) Name() string {
+	return c.name
+}
+
+// Spec of configuration
+func (c *Configuration) Spec() interface{} {
+	return c.spec
+}
+
 // Fields of Config Bean
 func (c *Configuration) Fields() []*ConfigField {
-	return retrieveFields(c.Name, c.Spec)
+	return retrieveFields(c.name, c.spec)
 }
 
 func retrieveFields(name string, spec interface{}) (fields []*ConfigField) {

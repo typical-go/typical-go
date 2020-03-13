@@ -11,23 +11,23 @@ type BuildTool interface {
 	SetupMe(*Descriptor) error
 }
 
-// ConfigManager responsible to manage config
-type ConfigManager interface {
-	Loader() ConfigLoader
-	Configurations() []*Configuration
-	GetConfig(name string) *Configuration
-
-	Setup() error // TODO: remove this
-}
-
 // Sourceable mean the object can return the sources
 type Sourceable interface {
 	ProjectSources() []string
 }
 
+// ConfigManager responsible to manage config
+type ConfigManager interface {
+	ConfigLoader
+	Configurations() []*Configuration
+	RetrieveConfigSpec(name string) (interface{}, error)
+
+	Setup() error // TODO: remove this
+}
+
 // ConfigLoader responsible to load config
 type ConfigLoader interface {
-	LoadConfig(string, interface{}) error
+	LoadConfig(name string, spec interface{}) error
 }
 
 // Configurer responsible to create config
