@@ -42,8 +42,8 @@ func (a *TypicalApp) WithProjectSources(sources ...string) *TypicalApp {
 	return a
 }
 
-// AppendModule return app with appended module. Module should be implementation of Provider, Preparer (optional) and Destroyer (optional).
-func (a *TypicalApp) AppendModule(modules ...interface{}) *TypicalApp {
+// AppendModules return app with appended module. Module should be implementation of Provider, Preparer (optional) and Destroyer (optional).
+func (a *TypicalApp) AppendModules(modules ...interface{}) *TypicalApp {
 	a.modules = append(a.modules, modules...)
 	return a
 }
