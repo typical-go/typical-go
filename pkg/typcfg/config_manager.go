@@ -35,24 +35,24 @@ func New() *TypConfigManager {
 }
 
 // WithLoader return TypicalConfiguration with new loader
-func (c *TypConfigManager) WithLoader(loader typcore.ConfigLoader) *TypConfigManager {
-	c.loader = loader
-	return c
+func (m *TypConfigManager) WithLoader(loader typcore.ConfigLoader) *TypConfigManager {
+	m.loader = loader
+	return m
 }
 
 // WithConfigurer return TypicalConfiguratiton with new configurers
-func (c *TypConfigManager) WithConfigurer(configurers ...Configurer) *TypConfigManager {
-	c.configurers = configurers
-	return c
+func (m *TypConfigManager) WithConfigurer(configurers ...Configurer) *TypConfigManager {
+	m.configurers = configurers
+	return m
 }
 
 // Loader of configuration
-func (c *TypConfigManager) Loader() typcore.ConfigLoader {
-	return c.loader
+func (m *TypConfigManager) Loader() typcore.ConfigLoader {
+	return m.loader
 }
 
-// Setup the configuration to be ready to use for the app and build-tool
-func (c *TypConfigManager) Setup() (err error) {
+// Precondition to use config manager
+func (m *TypConfigManager) Precondition(ctx *typcore.PreconditionContext) (err error) {
 	if _, err = os.Stat(defaultDotEnv); os.IsNotExist(err) {
 		var f *os.File
 		if f, err = os.Create(defaultDotEnv); err != nil {
@@ -61,7 +61,7 @@ func (c *TypConfigManager) Setup() (err error) {
 		defer f.Close()
 
 		log.Infof("Generate new project environment at '%s'", defaultDotEnv)
-		if err = c.Write(f); err != nil {
+		if err = m.Write(f); err != nil {
 			return
 		}
 	}
@@ -72,8 +72,8 @@ func (c *TypConfigManager) Setup() (err error) {
 }
 
 // Write typical configuration
-func (c *TypConfigManager) Write(w io.Writer) (err error) {
-	for _, cfg := range c.Configurations() {
+func (m *TypConfigManager) Write(w io.Writer) (err error) {
+	for _, cfg := range m.Configurations() {
 		for _, field := range RetrieveFields(cfg) {
 			var v interface{}
 			if field.IsZero {
@@ -90,26 +90,26 @@ func (c *TypConfigManager) Write(w io.Writer) (err error) {
 }
 
 // RetrieveConfigSpec to get configuration spec
-func (c *TypConfigManager) RetrieveConfigSpec(name string) (interface{}, error) {
-	cfgdef := c.Get(name)
+func (m *TypConfigManager) RetrieveConfigSpec(name string) (interface{}, error) {
+	cfgdef := m.Get(name)
 	spec := cfgdef.Spec()
-	if err := c.LoadConfig(cfgdef.Name(), spec); err != nil {
+	if err := m.LoadConfig(cfgdef.Name(), spec); err != nil {
 		return nil, err
 	}
 	return spec, nil
 }
 
 // Configurations return array of configuration
-func (c *TypConfigManager) Configurations() (cfgs []*typcore.Configuration) {
-	for _, configurer := range c.configurers {
+func (m *TypConfigManager) Configurations() (cfgs []*typcore.Configuration) {
+	for _, configurer := range m.configurers {
 		cfgs = append(cfgs, configurer.Configure())
 	}
 	return
 }
 
 // Get the configuration
-func (c *TypConfigManager) Get(name string) *typcore.Configuration {
-	for _, cfg := range c.Configurations() {
+func (m *TypConfigManager) Get(name string) *typcore.Configuration {
+	for _, cfg := range m.Configurations() {
 		if cfg.Name() == name {
 			return cfg
 		}
@@ -118,9 +118,9 @@ func (c *TypConfigManager) Get(name string) *typcore.Configuration {
 }
 
 // LoadConfig to load the config
-func (c *TypConfigManager) LoadConfig(name string, spec interface{}) error {
-	if c.loader != nil {
-		return c.loader.LoadConfig(name, spec)
+func (m *TypConfigManager) LoadConfig(name string, spec interface{}) error {
+	if m.loader != nil {
+		return m.loader.LoadConfig(name, spec)
 	}
 	return fmt.Errorf("ConfigLoader is missing")
 }

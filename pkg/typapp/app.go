@@ -1,6 +1,7 @@
 package typapp
 
 import (
+	"context"
 	"fmt"
 	"go/build"
 	"os"
@@ -13,7 +14,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/exor"
 	"github.com/typical-go/typical-go/pkg/typapp/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/typast"
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typdep"
 	"github.com/urfave/cli/v2"
@@ -125,7 +125,7 @@ func (a *TypicalApp) Run(d *typcore.Descriptor) (err error) {
 }
 
 // Precondition the app
-func (a *TypicalApp) Precondition(c *typbuildtool.PreconditionContext) (err error) {
+func (a *TypicalApp) Precondition(c *typcore.PreconditionContext) (err error) {
 	var constructors []string
 
 	if err = c.Ast().EachAnnotation("constructor", typast.FunctionType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
@@ -159,8 +159,8 @@ func configDefinition(bean *typcore.Configuration) string {
 	}`, typ, typ2, bean.Name())
 }
 
-func (a *TypicalApp) generateConstructor(c *typbuildtool.PreconditionContext, target string, constructors []string) (err error) {
-	ctx := c.Cli.Context
+func (a *TypicalApp) generateConstructor(c *typcore.PreconditionContext, target string, constructors []string) (err error) {
+	ctx := context.Background()
 	imports := []string{}
 	for _, dir := range c.ProjectDirs {
 		if !strings.Contains(dir, "internal") {

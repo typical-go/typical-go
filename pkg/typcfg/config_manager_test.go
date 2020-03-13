@@ -15,8 +15,11 @@ func TestNewConfigManager(t *testing.T) {
 		cfgMngr := typcfg.New()
 		require.Equal(t, "*typcfg.defaultLoader", reflect.TypeOf(cfgMngr.Loader()).String())
 	})
-	t.Run("SHOULD implement of typcore.ConfigManager", func(t *testing.T) {
+	t.Run("SHOULD implement of ConfigManager", func(t *testing.T) {
 		var _ typcore.ConfigManager = typcfg.New()
+	})
+	t.Run("SHOULD implement of Preconditioner", func(t *testing.T) {
+		var _ typcore.Preconditioner = typcfg.New()
 	})
 }
 

@@ -18,13 +18,12 @@ import (
 
 // TypicalBuildTool is typical Build Tool for golang project
 type TypicalBuildTool struct {
-	preconditioners []Preconditioner
-	commanders      []Commander
-	builder         Builder
-	tester          Tester
-	mocker          Mocker
-	releaser        Releaser
-	publishers      []Publisher
+	commanders []Commander
+	builder    Builder
+	tester     Tester
+	mocker     Mocker
+	releaser   Releaser
+	publishers []Publisher
 
 	includeBranch   bool
 	includeCommitID bool
@@ -149,32 +148,12 @@ func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
 
 // SetupMe is setup the build-tool from descriptor
 func (b *TypicalBuildTool) SetupMe(d *typcore.Descriptor) (err error) {
-	if preconditioner, ok := d.App.(Preconditioner); ok {
-		b.preconditioners = append(b.preconditioners, preconditioner)
-	}
 	return
 }
 
 // Build task
 func (b *TypicalBuildTool) Build(c *BuildContext) (dist BuildDistribution, err error) {
-	pc := &PreconditionContext{
-		Context: c.Context.Context,
-		Cli:     c.Cli,
-	}
-	if err = b.Precondition(pc); err != nil {
-		return
-	}
 	return b.builder.Build(c)
-}
-
-// Precondition the project
-func (b *TypicalBuildTool) Precondition(c *PreconditionContext) (err error) {
-	for _, prebuilder := range b.preconditioners {
-		if err = prebuilder.Precondition(c); err != nil {
-			return
-		}
-	}
-	return
 }
 
 // Publish the release

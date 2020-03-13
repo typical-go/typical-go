@@ -1,21 +1,13 @@
-package typbuildtool
+package typcore
 
 import (
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typast"
-	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/urfave/cli/v2"
 )
-
-// Preconditioner responsible to precondition
-type Preconditioner interface {
-	Precondition(c *PreconditionContext) error
-}
 
 // PreconditionContext is context of Precondition
 type PreconditionContext struct {
-	*typcore.Context
-	Cli *cli.Context
+	*Context
 	ast *typast.Ast
 }
 

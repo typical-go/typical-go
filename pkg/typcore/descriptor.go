@@ -59,22 +59,38 @@ func (d *Descriptor) LaunchBuildTool() (err error) {
 		return
 	}
 
-	if d.ConfigManager != nil {
-		if err = d.ConfigManager.Setup(); err != nil {
-			return
-		}
-	}
-
-	if err = d.BuildTool.SetupMe(d); err != nil {
+	if err = d.Precondition(&PreconditionContext{Context: c}); err != nil {
 		return
 	}
 
 	return d.BuildTool.Run(c)
 }
 
+// Precondition for this project
+func (d *Descriptor) Precondition(c *PreconditionContext) (err error) {
+	if preconditioner, ok := c.App.(Preconditioner); ok {
+		if err = preconditioner.Precondition(c); err != nil {
+			return fmt.Errorf("Precondition-App: %w", err)
+		}
+	}
+
+	if preconditioner, ok := c.BuildTool.(Preconditioner); ok {
+		if err = preconditioner.Precondition(c); err != nil {
+			return fmt.Errorf("Precondition-Build-Tool: %w", err)
+		}
+	}
+
+	if preconditioner, ok := c.ConfigManager.(Preconditioner); ok {
+		if err = preconditioner.Precondition(c); err != nil {
+			return fmt.Errorf("Precondition-Config-Manager: %w", err)
+		}
+	}
+
+	return
+}
+
 // Validate context
 func (d *Descriptor) Validate() (err error) {
-
 	if err = validateName(d.Name); err != nil {
 		return fmt.Errorf("Descriptor: %w", err)
 	}
