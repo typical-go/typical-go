@@ -139,11 +139,6 @@ func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
 	return cmds
 }
 
-// SetupMe is setup the build-tool from descriptor
-func (b *TypicalBuildTool) SetupMe(d *typcore.Descriptor) (err error) {
-	return
-}
-
 // Build task
 func (b *TypicalBuildTool) Build(c *BuildContext) (dist BuildDistribution, err error) {
 	return b.builder.Build(c)
