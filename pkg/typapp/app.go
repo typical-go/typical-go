@@ -151,12 +151,14 @@ func (a *TypicalApp) Precondition(c *typbuildtool.PreconditionContext) (err erro
 		return
 	}
 
-	for _, bean := range c.ConfigManager.Configurations() {
-		constructors = append(constructors, configDefinition(bean))
+	if c.ConfigManager != nil {
+		for _, bean := range c.Configurations() {
+			constructors = append(constructors, configDefinition(bean))
+		}
 	}
 
 	log.Info("Generate constructors")
-	target := "typical/init_constructor_do_not_edit.go"
+	target := "typical/init_app_do_not_edit.go"
 	if err = a.generateConstructor(c, target, constructors); err != nil {
 		return
 	}

@@ -46,7 +46,7 @@ func (a *App) Run(d *typcore.Descriptor) (err error) {
 	// type assertion to Config type
 	cfg := spec.(*Config)
 
-	fmt.Printf("Configuration With Config Store -- Serve http at %s\n", cfg.Address)
+	fmt.Printf("Get Config From Descriptor -- Serve http at %s\n", cfg.Address)
 	return http.ListenAndServe(cfg.Address, a)
 }
 
