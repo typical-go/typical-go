@@ -9,8 +9,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/typical-go/typical-go/pkg/buildkit"
-
 	log "github.com/sirupsen/logrus"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
@@ -67,15 +65,12 @@ func buildBuildTool(ctx context.Context, wc *wrapContext) (err error) {
 		}
 	}
 
-	gobuild := buildkit.NewGoBuild(binPath, srcPath)
-	gobuild.SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage", wc.projectPackage)
-
-	cmd := gobuild.Command(ctx)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
-
-	return cmd.Run()
+	return exor.NewGoBuild(binPath, srcPath).
+		SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage", wc.projectPackage).
+		WithStdout(os.Stdout).
+		WithStderr(os.Stderr).
+		WithStdin(os.Stdin).
+		Execute(ctx)
 }
 
 func notExist(path string) bool {

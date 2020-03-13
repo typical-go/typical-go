@@ -1,4 +1,4 @@
-package buildkit
+package common
 
 import (
 	"bufio"
@@ -6,14 +6,14 @@ import (
 	"strings"
 )
 
-// GoMod is go.mod file details
-type GoMod struct {
+// Modfile is go.mod file detailsd
+type Modfile struct {
 	ProjectPackage string
-	GoVersion     string
+	GoVersion      string
 }
 
-// ParseGoMod to naively parse go mod source
-func ParseGoMod(r io.Reader) *GoMod {
+// ParseModfile to naively parse go.mod source
+func ParseModfile(r io.Reader) *Modfile {
 	var (
 		modulePackage string
 		goVersion     string
@@ -32,8 +32,8 @@ func ParseGoMod(r io.Reader) *GoMod {
 		}
 	}
 
-	return &GoMod{
+	return &Modfile{
 		ProjectPackage: modulePackage,
-		GoVersion:     goVersion,
+		GoVersion:      goVersion,
 	}
 }

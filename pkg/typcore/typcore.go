@@ -7,7 +7,6 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/common"
 )
 
@@ -43,6 +42,6 @@ func RetrieveProjectPackage(root string) (pkg string) {
 	}
 	defer f.Close()
 
-	gomod := buildkit.ParseGoMod(f)
-	return gomod.ProjectPackage
+	modfile := common.ParseModfile(f)
+	return modfile.ProjectPackage
 }

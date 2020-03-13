@@ -8,7 +8,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/exor"
 	"github.com/typical-go/typical-go/pkg/typcore"
 
-	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typbuildtool/internal/tmpl"
 )
 
@@ -67,11 +66,11 @@ func (b *StdBuilder) Build(c *BuildContext) (dist BuildDistribution, err error) 
 		return
 	}
 
-	cmd := buildkit.NewGoBuild(binary, src).Command(ctx)
-	cmd.Stdout = b.stdout
-	cmd.Stderr = b.stderr
+	gobuild := exor.NewGoBuild(binary, src).
+		WithStdout(b.stdout).
+		WithStderr(b.stderr)
 
-	if err = cmd.Run(); err != nil {
+	if err = gobuild.Execute(ctx); err != nil {
 		return
 	}
 

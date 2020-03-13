@@ -7,7 +7,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/typical-go/typical-go/pkg/buildkit"
+	"github.com/typical-go/typical-go/pkg/exor"
 	"github.com/typical-go/typical-go/pkg/typast"
 )
 
@@ -52,7 +52,7 @@ func (b *StdMocker) Mock(c *MockContext) (err error) {
 
 	if _, err = os.Stat(mockgen); os.IsNotExist(err) {
 		log.Info("Build mockgen")
-		if err = buildkit.NewGoBuild(mockgen, "github.com/golang/mock/mockgen").Command(ctx).Run(); err != nil {
+		if err = exor.NewGoBuild(mockgen, "github.com/golang/mock/mockgen").Execute(ctx); err != nil {
 			return
 		}
 	}

@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/buildkit"
-
 	log "github.com/sirupsen/logrus"
+	"github.com/typical-go/typical-go/pkg/exor"
 )
 
 // StdTester is standard tester
@@ -30,19 +29,16 @@ func (s *StdTester) WithCoverProfile(coverProfile string) *StdTester {
 // Test the project
 func (s *StdTester) Test(c *BuildContext) (err error) {
 	var targets []string
-	ctx := c.Cli.Context
 	for _, source := range c.ProjectSources {
 		targets = append(targets, fmt.Sprintf("./%s/...", source))
 	}
 
-	gotest := buildkit.NewGoTest(targets...)
-	gotest.WithCoverProfile(s.coverProfile)
-	gotest.WithRace(true)
-
-	cmd := gotest.Command(ctx)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	gotest := exor.NewGoTest(targets...).
+		WithCoverProfile(s.coverProfile).
+		WithRace(true).
+		WithStdout(os.Stdout).
+		WithStderr(os.Stderr)
 
 	log.Info("Run testings")
-	return cmd.Run()
+	return gotest.Execute(c.Cli.Context)
 }

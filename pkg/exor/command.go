@@ -50,10 +50,15 @@ func (c *Command) WithDir(dir string) *Command {
 
 // Execute comand
 func (c *Command) Execute(ctx context.Context) (err error) {
-	cmd := exec.CommandContext(ctx, c.name, c.args...)
+	cmd := exec.CommandContext(ctx, c.name, c.Args()...)
 	cmd.Stdout = c.stdout
 	cmd.Stderr = c.stderr
 	cmd.Stdin = c.stdin
 	cmd.Dir = c.dir
 	return cmd.Run()
+}
+
+// Args of command
+func (c *Command) Args() []string {
+	return c.args
 }
