@@ -11,7 +11,7 @@ import (
 func taskTestExample(ctx *typbuildtool.Context) *cli.Command {
 	return &cli.Command{
 		Name:    "test-example",
-		Aliases: []string{"tex"},
+		Aliases: []string{"e"},
 		Usage:   "Test all example",
 		Action: func(cliCtx *cli.Context) (err error) {
 			gotest := buildkit.NewGoTest("./examples/...")
