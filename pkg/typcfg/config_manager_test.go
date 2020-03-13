@@ -1,4 +1,4 @@
-package typcore_test
+package typcfg_test
 
 import (
 	"reflect"
@@ -6,21 +6,22 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 func TestNewConfigManager(t *testing.T) {
 	t.Run("", func(t *testing.T) {
-		loader := typcore.NewConfigManager().Loader()
-		require.Equal(t, "*typcore.defaultLoader", reflect.TypeOf(loader).String())
+		cfgMngr := typcfg.New()
+		require.Equal(t, "*typcfg.defaultLoader", reflect.TypeOf(cfgMngr.Loader()).String())
 	})
 	t.Run("SHOULD implement of typcore.ConfigManager", func(t *testing.T) {
-		var _ typcore.ConfigManager = typcore.NewConfigManager()
+		var _ typcore.ConfigManager = typcfg.New()
 	})
 }
 
 func TestConfiguration(t *testing.T) {
-	configuration := typcore.NewConfigManager().
+	configuration := typcfg.New().
 		WithLoader(&dummyLoader{}).
 		WithConfigurer(&dummyConfigurer1{}, &dummyConfigurer2{})
 

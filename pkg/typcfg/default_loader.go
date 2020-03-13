@@ -1,4 +1,4 @@
-package typcore
+package typcfg
 
 import (
 	"github.com/kelseyhightower/envconfig"

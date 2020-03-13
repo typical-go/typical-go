@@ -9,6 +9,7 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/urfave/cli/v2"
 )
 
@@ -168,8 +169,8 @@ func (m *Readme) BuildUsages(c *typbuildtool.Context) (infos []UsageInfo) {
 // Configs of readme
 func (m *Readme) Configs(c *typbuildtool.Context) (infos []ConfigInfo) {
 	if len(m.configs) < 1 {
-		for _, bean := range c.Configurations() {
-			for _, field := range bean.Fields() {
+		for _, cfg := range c.Configurations() {
+			for _, field := range typcfg.RetrieveFields(cfg) {
 				var required string
 				if field.Required {
 					required = "Yes"

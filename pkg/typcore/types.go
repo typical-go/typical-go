@@ -31,6 +31,7 @@ type ConfigLoader interface {
 }
 
 // Configurer responsible to create config
+// TODO: move to typcfg
 type Configurer interface {
 	Configure() *Configuration
 }

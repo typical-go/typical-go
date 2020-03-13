@@ -1,4 +1,4 @@
-package typcore
+package typcfg
 
 import (
 	"fmt"
@@ -8,6 +8,7 @@ import (
 
 	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
+	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 const (
@@ -17,27 +18,27 @@ const (
 
 // TypConfigManager of typical project
 type TypConfigManager struct {
-	loader    ConfigLoader
+	loader    typcore.ConfigLoader
 	beanNames []string
-	beanMap   map[string]*Configuration
+	beanMap   map[string]*typcore.Configuration
 }
 
-// NewConfigManager return new instance of Configuration
-func NewConfigManager() *TypConfigManager {
+// New instance of Configuration
+func New() *TypConfigManager {
 	return &TypConfigManager{
 		loader:  &defaultLoader{},
-		beanMap: make(map[string]*Configuration),
+		beanMap: make(map[string]*typcore.Configuration),
 	}
 }
 
 // WithLoader return TypicalConfiguration with new loader
-func (c *TypConfigManager) WithLoader(loader ConfigLoader) *TypConfigManager {
+func (c *TypConfigManager) WithLoader(loader typcore.ConfigLoader) *TypConfigManager {
 	c.loader = loader
 	return c
 }
 
 // WithConfigurer return TypicalConfiguratiton with new configurers
-func (c *TypConfigManager) WithConfigurer(configurers ...Configurer) *TypConfigManager {
+func (c *TypConfigManager) WithConfigurer(configurers ...typcore.Configurer) *TypConfigManager {
 	for _, configurer := range configurers {
 		cfg := configurer.Configure()
 		if cfg == nil {
@@ -49,7 +50,7 @@ func (c *TypConfigManager) WithConfigurer(configurers ...Configurer) *TypConfigM
 }
 
 // Loader of configuration
-func (c *TypConfigManager) Loader() ConfigLoader {
+func (c *TypConfigManager) Loader() typcore.ConfigLoader {
 	return c.loader
 }
 
@@ -76,7 +77,7 @@ func (c *TypConfigManager) Setup() (err error) {
 // Write typical configuration
 func (c *TypConfigManager) Write(w io.Writer) (err error) {
 	for _, cfg := range c.Configurations() {
-		for _, field := range cfg.Fields() {
+		for _, field := range RetrieveFields(cfg) {
 			var v interface{}
 			if field.IsZero {
 				v = field.Default
@@ -92,7 +93,7 @@ func (c *TypConfigManager) Write(w io.Writer) (err error) {
 }
 
 // Put bean to config store
-func (c *TypConfigManager) Put(bean *Configuration) {
+func (c *TypConfigManager) Put(bean *typcore.Configuration) {
 	name := bean.Name()
 	if _, exist := c.beanMap[name]; exist {
 		panic(fmt.Sprintf("Can't put '%s' to config store", name))
@@ -112,7 +113,7 @@ func (c *TypConfigManager) RetrieveConfigSpec(name string) (interface{}, error) 
 }
 
 // Configurations return array of configuration
-func (c *TypConfigManager) Configurations() (beans []*Configuration) {
+func (c *TypConfigManager) Configurations() (beans []*typcore.Configuration) {
 	for _, name := range c.beanNames {
 		beans = append(beans, c.beanMap[name])
 	}
