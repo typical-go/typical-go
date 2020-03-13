@@ -47,7 +47,7 @@ func (m *TypConfigManager) Loader() Loader {
 }
 
 // Precondition to use config manager
-func (m *TypConfigManager) Precondition(ctx *typcore.PreconditionContext) (err error) {
+func (m *TypConfigManager) Precondition(c *typcore.Context) (err error) {
 	if _, err = os.Stat(defaultDotEnv); os.IsNotExist(err) {
 		var f *os.File
 		if f, err = os.Create(defaultDotEnv); err != nil {

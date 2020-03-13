@@ -10,7 +10,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/git"
-	"github.com/typical-go/typical-go/pkg/typast"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
@@ -27,8 +26,6 @@ type TypicalBuildTool struct {
 
 	includeBranch   bool
 	includeCommitID bool
-
-	ast *typast.Ast
 }
 
 // New return new instance of build
@@ -101,10 +98,6 @@ func (b *TypicalBuildTool) Validate() (err error) {
 
 // Run build tool
 func (b *TypicalBuildTool) Run(t *typcore.Context) (err error) {
-	if b.ast, err = typast.Walk(t.ProjectFiles); err != nil {
-		return
-	}
-
 	app := cli.NewApp()
 	app.Name = t.Name
 	app.Usage = "" // NOTE: intentionally blank
@@ -326,7 +319,6 @@ func (b *TypicalBuildTool) createBuildContext(cliCtx *cli.Context, c *Context) *
 	return &BuildContext{
 		Context: c,
 		Cli:     cliCtx,
-		Ast:     b.ast,
 	}
 }
 

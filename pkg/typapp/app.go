@@ -125,7 +125,7 @@ func (a *TypicalApp) Run(d *typcore.Descriptor) (err error) {
 }
 
 // Precondition the app
-func (a *TypicalApp) Precondition(c *typcore.PreconditionContext) (err error) {
+func (a *TypicalApp) Precondition(c *typcore.Context) (err error) {
 	var constructors []string
 
 	if err = c.Ast().EachAnnotation("constructor", typast.FunctionType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
@@ -160,7 +160,7 @@ func configDefinition(bean *typcore.Configuration) string {
 	}`, typ, bean.Name(), typ)
 }
 
-func (a *TypicalApp) generateConstructor(c *typcore.PreconditionContext, target string, constructors []string) (err error) {
+func (a *TypicalApp) generateConstructor(c *typcore.Context, target string, constructors []string) (err error) {
 	ctx := context.Background()
 	imports := []string{}
 	for _, dir := range c.ProjectDirs {

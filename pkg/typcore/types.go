@@ -10,6 +10,11 @@ type BuildTool interface {
 	Run(*Context) error
 }
 
+// Preconditioner responsible to precondition
+type Preconditioner interface {
+	Precondition(c *Context) error
+}
+
 // Sourceable mean the object can return the sources
 type Sourceable interface {
 	ProjectSources() []string
@@ -19,9 +24,4 @@ type Sourceable interface {
 type ConfigManager interface {
 	Configurations() []*Configuration
 	RetrieveConfig(name string) (interface{}, error)
-}
-
-// Preconditioner responsible to precondition
-type Preconditioner interface {
-	Precondition(c *PreconditionContext) error
 }

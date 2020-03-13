@@ -2,7 +2,6 @@ package typbuildtool
 
 import (
 	"github.com/typical-go/typical-go/pkg/git"
-	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/urfave/cli/v2"
 )
 
@@ -45,7 +44,6 @@ type Publisher interface {
 type BuildContext struct {
 	*Context
 	Cli *cli.Context
-	Ast *typast.Ast
 }
 
 // MockContext is context of mock

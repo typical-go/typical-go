@@ -59,7 +59,7 @@ func (d *Descriptor) LaunchBuildTool() (err error) {
 		return
 	}
 
-	if err = d.Precondition(&PreconditionContext{Context: c}); err != nil {
+	if err = d.Precondition(c); err != nil {
 		return
 	}
 
@@ -67,7 +67,7 @@ func (d *Descriptor) LaunchBuildTool() (err error) {
 }
 
 // Precondition for this project
-func (d *Descriptor) Precondition(c *PreconditionContext) (err error) {
+func (d *Descriptor) Precondition(c *Context) (err error) {
 	if preconditioner, ok := c.App.(Preconditioner); ok {
 		if err = preconditioner.Precondition(c); err != nil {
 			return fmt.Errorf("Precondition-App: %w", err)
