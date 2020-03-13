@@ -13,7 +13,7 @@ import (
 
 // RetrieveProjectSources to retrieve project source from descriptor
 func RetrieveProjectSources(d *Descriptor) (sources []string) {
-	if sourceable, ok := d.App.(Sourceable); ok {
+	if sourceable, ok := d.App.(SourceableApp); ok {
 		sources = append(sources, sourceable.ProjectSources()...)
 	} else {
 		sources = append(sources, common.PackageName(d.App))

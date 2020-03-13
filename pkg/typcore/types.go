@@ -15,8 +15,8 @@ type Preconditioner interface {
 	Precondition(c *Context) error
 }
 
-// Sourceable mean the object can return the sources
-type Sourceable interface {
+// SourceableApp mean the app define its own project sources
+type SourceableApp interface {
 	ProjectSources() []string
 }
 
