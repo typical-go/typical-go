@@ -18,16 +18,19 @@ const (
 
 // TypConfigManager of typical project
 type TypConfigManager struct {
-	loader    typcore.ConfigLoader
-	beanNames []string
-	beanMap   map[string]*typcore.Configuration
+	loader      typcore.ConfigLoader
+	configurers []Configurer
+}
+
+// Configurer responsible to create config
+type Configurer interface {
+	Configure() *typcore.Configuration
 }
 
 // New instance of Configuration
 func New() *TypConfigManager {
 	return &TypConfigManager{
-		loader:  &defaultLoader{},
-		beanMap: make(map[string]*typcore.Configuration),
+		loader: &defaultLoader{},
 	}
 }
 
@@ -38,14 +41,8 @@ func (c *TypConfigManager) WithLoader(loader typcore.ConfigLoader) *TypConfigMan
 }
 
 // WithConfigurer return TypicalConfiguratiton with new configurers
-func (c *TypConfigManager) WithConfigurer(configurers ...typcore.Configurer) *TypConfigManager {
-	for _, configurer := range configurers {
-		cfg := configurer.Configure()
-		if cfg == nil {
-			panic("Configure return nil detail")
-		}
-		c.Put(cfg)
-	}
+func (c *TypConfigManager) WithConfigurer(configurers ...Configurer) *TypConfigManager {
+	c.configurers = configurers
 	return c
 }
 
@@ -92,19 +89,9 @@ func (c *TypConfigManager) Write(w io.Writer) (err error) {
 	return
 }
 
-// Put bean to config store
-func (c *TypConfigManager) Put(bean *typcore.Configuration) {
-	name := bean.Name()
-	if _, exist := c.beanMap[name]; exist {
-		panic(fmt.Sprintf("Can't put '%s' to config store", name))
-	}
-	c.beanNames = append(c.beanNames, name)
-	c.beanMap[name] = bean
-}
-
 // RetrieveConfigSpec to get configuration spec
 func (c *TypConfigManager) RetrieveConfigSpec(name string) (interface{}, error) {
-	cfgdef := c.beanMap[name]
+	cfgdef := c.Get(name)
 	spec := cfgdef.Spec()
 	if err := c.LoadConfig(cfgdef.Name(), spec); err != nil {
 		return nil, err
@@ -113,11 +100,21 @@ func (c *TypConfigManager) RetrieveConfigSpec(name string) (interface{}, error) 
 }
 
 // Configurations return array of configuration
-func (c *TypConfigManager) Configurations() (beans []*typcore.Configuration) {
-	for _, name := range c.beanNames {
-		beans = append(beans, c.beanMap[name])
+func (c *TypConfigManager) Configurations() (cfgs []*typcore.Configuration) {
+	for _, configurer := range c.configurers {
+		cfgs = append(cfgs, configurer.Configure())
 	}
 	return
+}
+
+// Get the configuration
+func (c *TypConfigManager) Get(name string) *typcore.Configuration {
+	for _, cfg := range c.Configurations() {
+		if cfg.Name() == name {
+			return cfg
+		}
+	}
+	return nil
 }
 
 // LoadConfig to load the config

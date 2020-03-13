@@ -29,9 +29,3 @@ type ConfigManager interface {
 type ConfigLoader interface {
 	LoadConfig(name string, spec interface{}) error
 }
-
-// Configurer responsible to create config
-// TODO: move to typcfg
-type Configurer interface {
-	Configure() *Configuration
-}
