@@ -13,11 +13,11 @@ func TestReleaser_Validate(t *testing.T) {
 		expected string
 	}{
 		{
-			StdReleaser: typbuildtool.NewReleaser().WithTarget(),
+			StdReleaser: typbuildtool.NewReleaser().WithTargets(),
 			expected:    "Missing 'Targets'",
 		},
 		{
-			StdReleaser: typbuildtool.NewReleaser().WithTarget("invalid-target"),
+			StdReleaser: typbuildtool.NewReleaser().WithTargets("invalid-target"),
 			expected:    "Target: Missing OS: Please make sure 'invalid-target' using 'OS/ARCH' format",
 		},
 	}

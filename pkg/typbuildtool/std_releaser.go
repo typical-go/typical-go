@@ -25,8 +25,8 @@ func NewReleaser() *StdReleaser {
 	}
 }
 
-// WithTarget to set target and return its instance
-func (r *StdReleaser) WithTarget(targets ...ReleaseTarget) *StdReleaser {
+// WithTargets to set target and return its instance
+func (r *StdReleaser) WithTargets(targets ...ReleaseTarget) *StdReleaser {
 	r.targets = targets
 	return r
 }

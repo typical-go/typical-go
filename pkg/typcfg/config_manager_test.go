@@ -26,7 +26,7 @@ func TestNewConfigManager(t *testing.T) {
 func TestConfiguration(t *testing.T) {
 	configuration := typcfg.New().
 		WithLoader(&dummyLoader{}).
-		WithConfigurer(&dummyConfigurer1{}, &dummyConfigurer2{})
+		WithConfigurers(&dummyConfigurer1{}, &dummyConfigurer2{})
 
 	require.IsType(t, &dummyLoader{}, configuration.Loader())
 

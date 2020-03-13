@@ -15,10 +15,10 @@ var Descriptor = typcore.Descriptor{
 	App: typicalgo.New(),
 
 	BuildTool: typbuildtool.New().
-		AppendCommander(
+		AppendCommanders(
 			typbuildtool.NewCommander(taskTestExample), // Test all the examples
 		).
-		WithPublisher(
+		WithPublishers(
 			typbuildtool.NewGithub("typical-go", "typical-go"),
 		),
 }

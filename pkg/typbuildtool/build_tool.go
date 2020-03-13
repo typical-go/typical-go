@@ -38,8 +38,8 @@ func New() *TypicalBuildTool {
 	}
 }
 
-// AppendCommander to return BuildTool with appended commander
-func (b *TypicalBuildTool) AppendCommander(commanders ...Commander) *TypicalBuildTool {
+// AppendCommanders to return BuildTool with appended commander
+func (b *TypicalBuildTool) AppendCommanders(commanders ...Commander) *TypicalBuildTool {
 	b.commanders = append(b.commanders, commanders...)
 	return b
 }
@@ -56,8 +56,8 @@ func (b *TypicalBuildTool) WithReleaser(releaser Releaser) *TypicalBuildTool {
 	return b
 }
 
-// WithPublisher return BuildTool with new publishers
-func (b *TypicalBuildTool) WithPublisher(publishers ...Publisher) *TypicalBuildTool {
+// WithPublishers return BuildTool with new publishers
+func (b *TypicalBuildTool) WithPublishers(publishers ...Publisher) *TypicalBuildTool {
 	b.publishers = publishers
 	return b
 }

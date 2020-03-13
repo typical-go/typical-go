@@ -35,8 +35,8 @@ func (m *TypConfigManager) WithLoader(loader Loader) *TypConfigManager {
 	return m
 }
 
-// WithConfigurer return TypicalConfiguratiton with new configurers
-func (m *TypConfigManager) WithConfigurer(configurers ...Configurer) *TypConfigManager {
+// WithConfigurers return TypicalConfiguratiton with new configurers
+func (m *TypConfigManager) WithConfigurers(configurers ...Configurer) *TypConfigManager {
 	m.configurers = configurers
 	return m
 }
