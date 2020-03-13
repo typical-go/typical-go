@@ -39,7 +39,7 @@ func (a *App) Configure() *typcore.Configuration {
 // Run server
 func (a *App) Run(d *typcore.Descriptor) (err error) {
 	var spec interface{}
-	if spec, err = d.RetrieveConfigSpec(a.ConfigName); err != nil {
+	if spec, err = d.RetrieveConfig(a.ConfigName); err != nil {
 		return
 	}
 

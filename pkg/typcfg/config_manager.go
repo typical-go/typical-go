@@ -18,13 +18,8 @@ const (
 
 // TypConfigManager of typical project
 type TypConfigManager struct {
-	loader      typcore.ConfigLoader
+	loader      Loader
 	configurers []Configurer
-}
-
-// Configurer responsible to create config
-type Configurer interface {
-	Configure() *typcore.Configuration
 }
 
 // New instance of Configuration
@@ -35,7 +30,7 @@ func New() *TypConfigManager {
 }
 
 // WithLoader return TypicalConfiguration with new loader
-func (m *TypConfigManager) WithLoader(loader typcore.ConfigLoader) *TypConfigManager {
+func (m *TypConfigManager) WithLoader(loader Loader) *TypConfigManager {
 	m.loader = loader
 	return m
 }
@@ -47,7 +42,7 @@ func (m *TypConfigManager) WithConfigurer(configurers ...Configurer) *TypConfigM
 }
 
 // Loader of configuration
-func (m *TypConfigManager) Loader() typcore.ConfigLoader {
+func (m *TypConfigManager) Loader() Loader {
 	return m.loader
 }
 
@@ -89,8 +84,8 @@ func (m *TypConfigManager) Write(w io.Writer) (err error) {
 	return
 }
 
-// RetrieveConfigSpec to get configuration spec
-func (m *TypConfigManager) RetrieveConfigSpec(name string) (interface{}, error) {
+// RetrieveConfig to get configuration spec
+func (m *TypConfigManager) RetrieveConfig(name string) (interface{}, error) {
 	cfgdef := m.Get(name)
 	spec := cfgdef.Spec()
 	if err := m.LoadConfig(cfgdef.Name(), spec); err != nil {

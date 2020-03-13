@@ -11,10 +11,12 @@ import (
 
 func init() {
 	typapp.AppendConstructor(
-		typdep.NewConstructor(func(loader typcore.ConfigLoader) (cfg *server.Config, err error) {
-			cfg = new(server.Config)
-			err = loader.LoadConfig("APP", cfg)
-			return
+		typdep.NewConstructor(func(cfgMngr typcore.ConfigManager) (*server.Config, error) {
+			cfg, err := cfgMngr.RetrieveConfig("APP")
+			if err != nil {
+				return nil, err
+			}
+			return cfg.(*server.Config), nil
 		}),
 	)
 }

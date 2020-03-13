@@ -29,7 +29,7 @@ func (c *Context) Invoke(cliCtx *cli.Context, invocation *typdep.Invocation) (er
 	di := typdep.New()
 
 	if err = typdep.Provide(di,
-		typdep.NewConstructor(func() typcore.ConfigLoader {
+		typdep.NewConstructor(func() typcore.ConfigManager {
 			return c.ConfigManager
 		}),
 		typdep.NewConstructor(func() *cli.Context {

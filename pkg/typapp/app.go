@@ -151,12 +151,13 @@ func (a *TypicalApp) Precondition(c *typcore.PreconditionContext) (err error) {
 
 func configDefinition(bean *typcore.Configuration) string {
 	typ := reflect.TypeOf(bean.Spec()).String()
-	typ2 := typ[1:]
-	return fmt.Sprintf(`func(loader typcore.ConfigLoader) (cfg %s, err error){
-		cfg = new(%s)
-		err = loader.LoadConfig("%s", cfg)
-		return 
-	}`, typ, typ2, bean.Name())
+	return fmt.Sprintf(`func(cfgMngr typcore.ConfigManager) (%s, error){
+		cfg, err := cfgMngr.RetrieveConfig("%s")
+		if err != nil {
+			return nil, err
+		}
+		return  cfg.(%s), nil 
+	}`, typ, bean.Name(), typ)
 }
 
 func (a *TypicalApp) generateConstructor(c *typcore.PreconditionContext, target string, constructors []string) (err error) {

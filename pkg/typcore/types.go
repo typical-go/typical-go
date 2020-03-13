@@ -17,14 +17,8 @@ type Sourceable interface {
 
 // ConfigManager responsible to manage config
 type ConfigManager interface {
-	ConfigLoader
 	Configurations() []*Configuration
-	RetrieveConfigSpec(name string) (interface{}, error)
-}
-
-// ConfigLoader responsible to load config
-type ConfigLoader interface {
-	LoadConfig(name string, spec interface{}) error
+	RetrieveConfig(name string) (interface{}, error)
 }
 
 // Preconditioner responsible to precondition
