@@ -29,8 +29,8 @@ func (a *App) WithConfigPrefix(name string) *App {
 }
 
 // Configure the application
-func (a *App) Configure() *typcore.ConfigBean {
-	return &typcore.ConfigBean{
+func (a *App) Configure() *typcore.Configuration {
+	return &typcore.Configuration{
 		Name: a.ConfigName,
 		Spec: &config.Config{},
 	}

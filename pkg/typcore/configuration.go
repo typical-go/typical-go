@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 
-// ConfigBean is detail of config
-type ConfigBean struct {
+// Configuration is detail of config
+type Configuration struct {
 	Name string
 	Spec interface{}
 }
@@ -24,7 +24,7 @@ type ConfigField struct {
 }
 
 // Fields of Config Bean
-func (c *ConfigBean) Fields() []*ConfigField {
+func (c *Configuration) Fields() []*ConfigField {
 	return retrieveFields(c.Name, c.Spec)
 }
 

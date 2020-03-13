@@ -28,8 +28,8 @@ func (a *App) WithConfigPrefix(name string) *App {
 }
 
 // Configure the application
-func (a *App) Configure() *typcore.ConfigBean {
-	return &typcore.ConfigBean{
+func (a *App) Configure() *typcore.Configuration {
+	return &typcore.Configuration{
 		Name: a.ConfigName,
 		Spec: &config.Config{},
 	}
@@ -37,8 +37,8 @@ func (a *App) Configure() *typcore.ConfigBean {
 
 // Run server
 func (a *App) Run(d *typcore.Descriptor) (err error) {
-	cfgBean := d.Configuration.Get(a.ConfigName)
-	loader := d.Configuration.Loader()
+	cfgBean := d.GetConfig(a.ConfigName)
+	loader := d.ConfigManager.Loader()
 
 	if err = loader.LoadConfig(cfgBean.Name, cfgBean.Spec); err != nil {
 		return

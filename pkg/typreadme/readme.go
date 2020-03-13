@@ -168,7 +168,7 @@ func (m *Readme) BuildUsages(c *typbuildtool.Context) (infos []UsageInfo) {
 // Configs of readme
 func (m *Readme) Configs(c *typbuildtool.Context) (infos []ConfigInfo) {
 	if len(m.configs) < 1 {
-		for _, bean := range c.Configuration.Beans() {
+		for _, bean := range c.Configurations() {
 			for _, field := range bean.Fields() {
 				var required string
 				if field.Required {

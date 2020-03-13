@@ -29,8 +29,8 @@ type Descriptor struct {
 	// BuildTool of the project (MANDATORY).
 	BuildTool BuildTool
 
-	// Configuration of the project (OPTIONAL).
-	Configuration Configuration
+	// ConfigManager of the project (OPTIONAL).
+	ConfigManager
 }
 
 // LaunchApp to launch the app
@@ -59,8 +59,8 @@ func (d *Descriptor) LaunchBuildTool() (err error) {
 		return
 	}
 
-	if d.Configuration != nil {
-		if err = d.Configuration.Setup(); err != nil {
+	if d.ConfigManager != nil {
+		if err = d.ConfigManager.Setup(); err != nil {
 			return
 		}
 	}

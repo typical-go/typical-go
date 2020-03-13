@@ -157,7 +157,7 @@ func (a *TypicalApp) Precondition(c *typbuildtool.PreconditionContext) (err erro
 		return
 	}
 
-	for _, bean := range c.Configuration.Beans() {
+	for _, bean := range c.ConfigManager.Configurations() {
 		constructors = append(constructors, configDefinition(bean))
 	}
 
@@ -169,7 +169,7 @@ func (a *TypicalApp) Precondition(c *typbuildtool.PreconditionContext) (err erro
 	return
 }
 
-func configDefinition(bean *typcore.ConfigBean) string {
+func configDefinition(bean *typcore.Configuration) string {
 	typ := reflect.TypeOf(bean.Spec).String()
 	typ2 := typ[1:]
 	return fmt.Sprintf(`func(loader typcore.ConfigLoader) (cfg %s, err error){

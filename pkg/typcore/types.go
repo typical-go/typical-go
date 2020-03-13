@@ -11,11 +11,11 @@ type BuildTool interface {
 	SetupMe(*Descriptor) error
 }
 
-// Configuration is interface of configuration
-type Configuration interface {
+// ConfigManager responsible to manage config
+type ConfigManager interface {
 	Loader() ConfigLoader
-	Beans() []*ConfigBean
-	Get(name string) *ConfigBean
+	Configurations() []*Configuration
+	GetConfig(name string) *Configuration
 
 	Setup() error // TODO: remove this
 }
@@ -32,5 +32,5 @@ type ConfigLoader interface {
 
 // Configurer responsible to create config
 type Configurer interface {
-	Configure() *ConfigBean
+	Configure() *Configuration
 }

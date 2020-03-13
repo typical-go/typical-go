@@ -12,29 +12,29 @@ const (
 	defaultDotEnv = ".env"
 )
 
-// TypicalConfiguration of typical project
-type TypicalConfiguration struct {
+// TypConfigManager of typical project
+type TypConfigManager struct {
 	loader    ConfigLoader
 	beanNames []string
-	beanMap   map[string]*ConfigBean
+	beanMap   map[string]*Configuration
 }
 
-// NewConfiguration return new instance of Configuration
-func NewConfiguration() *TypicalConfiguration {
-	return &TypicalConfiguration{
+// NewConfigManager return new instance of Configuration
+func NewConfigManager() *TypConfigManager {
+	return &TypConfigManager{
 		loader:  &defaultLoader{},
-		beanMap: make(map[string]*ConfigBean),
+		beanMap: make(map[string]*Configuration),
 	}
 }
 
 // WithLoader return TypicalConfiguration with new loader
-func (c *TypicalConfiguration) WithLoader(loader ConfigLoader) *TypicalConfiguration {
+func (c *TypConfigManager) WithLoader(loader ConfigLoader) *TypConfigManager {
 	c.loader = loader
 	return c
 }
 
 // WithConfigurer return TypicalConfiguratiton with new configurers
-func (c *TypicalConfiguration) WithConfigurer(configurers ...Configurer) *TypicalConfiguration {
+func (c *TypConfigManager) WithConfigurer(configurers ...Configurer) *TypConfigManager {
 	for _, configurer := range configurers {
 		cfg := configurer.Configure()
 		if cfg == nil {
@@ -46,21 +46,20 @@ func (c *TypicalConfiguration) WithConfigurer(configurers ...Configurer) *Typica
 }
 
 // Loader of configuration
-func (c *TypicalConfiguration) Loader() ConfigLoader {
+func (c *TypConfigManager) Loader() ConfigLoader {
 	return c.loader
 }
 
 // Setup the configuration to be ready to use for the app and build-tool
-func (c *TypicalConfiguration) Setup() (err error) {
-	var (
-		f *os.File
-	)
+func (c *TypConfigManager) Setup() (err error) {
 	if _, err = os.Stat(defaultDotEnv); os.IsNotExist(err) {
-		log.Infof("Generate new project environment at '%s'", defaultDotEnv)
+		var f *os.File
 		if f, err = os.Create(defaultDotEnv); err != nil {
 			return
 		}
 		defer f.Close()
+
+		log.Infof("Generate new project environment at '%s'", defaultDotEnv)
 		if err = c.Write(f); err != nil {
 			return
 		}
@@ -70,9 +69,9 @@ func (c *TypicalConfiguration) Setup() (err error) {
 }
 
 // Write typical configuration
-func (c *TypicalConfiguration) Write(w io.Writer) (err error) {
-	for _, bean := range c.Beans() {
-		for _, field := range bean.Fields() {
+func (c *TypConfigManager) Write(w io.Writer) (err error) {
+	for _, cfg := range c.Configurations() {
+		for _, field := range cfg.Fields() {
 			var v interface{}
 			if field.IsZero {
 				v = field.Default
@@ -88,7 +87,7 @@ func (c *TypicalConfiguration) Write(w io.Writer) (err error) {
 }
 
 // Put bean to config store
-func (c *TypicalConfiguration) Put(bean *ConfigBean) {
+func (c *TypConfigManager) Put(bean *Configuration) {
 	name := bean.Name
 	if _, exist := c.beanMap[name]; exist {
 		panic(fmt.Sprintf("Can't put '%s' to config store", name))
@@ -97,13 +96,13 @@ func (c *TypicalConfiguration) Put(bean *ConfigBean) {
 	c.beanMap[name] = bean
 }
 
-// Get bean from config store
-func (c *TypicalConfiguration) Get(name string) *ConfigBean {
+// GetConfig to get configuration
+func (c *TypConfigManager) GetConfig(name string) *Configuration {
 	return c.beanMap[name]
 }
 
-// Beans return array of bean
-func (c *TypicalConfiguration) Beans() (beans []*ConfigBean) {
+// Configurations return array of configuration
+func (c *TypConfigManager) Configurations() (beans []*Configuration) {
 	for _, name := range c.beanNames {
 		beans = append(beans, c.beanMap[name])
 	}

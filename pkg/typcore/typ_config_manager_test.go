@@ -9,18 +9,18 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
-func TestNewConfiguration(t *testing.T) {
-	t.Run("New configuration instance using default config loader", func(t *testing.T) {
-		loader := typcore.NewConfiguration().Loader()
+func TestNewConfigManager(t *testing.T) {
+	t.Run("", func(t *testing.T) {
+		loader := typcore.NewConfigManager().Loader()
 		require.Equal(t, "*typcore.defaultLoader", reflect.TypeOf(loader).String())
 	})
-	t.Run("SHOULD implement of typcore.Configuration", func(t *testing.T) {
-		var _ typcore.Configuration = typcore.NewConfiguration()
+	t.Run("SHOULD implement of typcore.ConfigManager", func(t *testing.T) {
+		var _ typcore.ConfigManager = typcore.NewConfigManager()
 	})
 }
 
 func TestConfiguration(t *testing.T) {
-	configuration := typcore.NewConfiguration().
+	configuration := typcore.NewConfigManager().
 		WithLoader(&dummyLoader{}).
 		WithConfigurer(&dummyConfigurer1{}, &dummyConfigurer2{})
 
@@ -37,8 +37,8 @@ func (*dummyLoader) LoadConfig(string, interface{}) error { return nil }
 
 type dummyConfigurer1 struct{}
 
-func (*dummyConfigurer1) Configure() *typcore.ConfigBean {
-	return &typcore.ConfigBean{
+func (*dummyConfigurer1) Configure() *typcore.Configuration {
+	return &typcore.Configuration{
 		Name: "prefix1",
 		Spec: &struct {
 			ID     int64 ``
@@ -49,8 +49,8 @@ func (*dummyConfigurer1) Configure() *typcore.ConfigBean {
 
 type dummyConfigurer2 struct{}
 
-func (*dummyConfigurer2) Configure() *typcore.ConfigBean {
-	return &typcore.ConfigBean{
+func (*dummyConfigurer2) Configure() *typcore.Configuration {
+	return &typcore.Configuration{
 		Name: "prefix2",
 		Spec: &struct {
 			Title   string `default:"default-title"`
