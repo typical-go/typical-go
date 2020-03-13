@@ -2,7 +2,7 @@ package typcore
 
 const (
 	// Version of Typical-Go
-	Version = "0.9.40"
+	Version = "0.9.41"
 )
 
 var (
