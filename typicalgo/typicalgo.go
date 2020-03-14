@@ -45,8 +45,9 @@ func (t *TypicalGo) Run(d *typcore.Descriptor) (err error) {
 					projectPackage = typcore.RetrieveProjectPackage(root)
 				}
 
-				return wrapMe(c.Context, &wrapContext{
+				return wrapMe(&wrapContext{
 					Context:        typcore.CreateContext(d),
+					Cli:            c,
 					tmp:            tmp,
 					projectPackage: projectPackage,
 				})

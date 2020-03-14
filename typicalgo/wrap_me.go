@@ -2,46 +2,44 @@ package typicalgo
 
 import (
 	"bytes"
-	"context"
 	"crypto/sha256"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
-	log "github.com/sirupsen/logrus"
-
-	"github.com/typical-go/typical-go/pkg/typcore"
-
 	"github.com/typical-go/typical-go/pkg/exor"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/typicalgo/internal/tmpl"
+	"github.com/urfave/cli/v2"
 )
 
 type wrapContext struct {
 	*typcore.Context
+	Cli            *cli.Context
 	tmp            string
 	projectPackage string
 }
 
-func wrapMe(ctx context.Context, wc *wrapContext) (err error) {
+func wrapMe(c *wrapContext) (err error) {
 
 	// NOTE: create tmp folder if not exist
-	typcore.MakeTempDir(wc.tmp)
+	typcore.MakeTempDir(c.tmp)
 
-	checksumPath := typcore.Checksum(wc.tmp)
-	buildToolBin := typcore.BuildToolBin(wc.tmp)
+	checksumPath := typcore.Checksum(c.tmp)
+	buildToolBin := typcore.BuildToolBin(c.tmp)
 	var checksumData []byte
 	if checksumData, err = checksum("typical"); err != nil {
 		return
 	}
 
 	if !sameChecksum(checksumPath, checksumData) || notExist(buildToolBin) {
-		log.Info("Update new checksum")
+		c.Info("Update new checksum")
 		if err = ioutil.WriteFile(checksumPath, checksumData, 0777); err != nil {
 			return
 		}
-		log.Info("Build the Build-Tool")
-		if err = buildBuildTool(ctx, wc); err != nil {
+		c.Info("Build the Build-Tool")
+		if err = buildBuildTool(c); err != nil {
 			return
 		}
 	}
@@ -49,11 +47,12 @@ func wrapMe(ctx context.Context, wc *wrapContext) (err error) {
 	return
 }
 
-func buildBuildTool(ctx context.Context, wc *wrapContext) (err error) {
+func buildBuildTool(c *wrapContext) (err error) {
 	var (
-		descriptorPkg = typcore.TypicalPackage(wc.projectPackage)
-		srcPath       = typcore.BuildToolSrc(wc.tmp)
-		binPath       = typcore.BuildToolBin(wc.tmp)
+		descriptorPkg = typcore.TypicalPackage(c.projectPackage)
+		srcPath       = typcore.BuildToolSrc(c.tmp)
+		binPath       = typcore.BuildToolBin(c.tmp)
+		ctx           = c.Cli.Context
 	)
 
 	if notExist(srcPath) {
@@ -66,7 +65,7 @@ func buildBuildTool(ctx context.Context, wc *wrapContext) (err error) {
 	}
 
 	return exor.NewGoBuild(binPath, srcPath).
-		SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage", wc.projectPackage).
+		SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage", c.projectPackage).
 		WithStdout(os.Stdout).
 		WithStderr(os.Stderr).
 		WithStdin(os.Stdin).
