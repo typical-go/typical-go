@@ -2,6 +2,7 @@ package typbuildtool
 
 import (
 	"github.com/typical-go/typical-go/pkg/git"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
@@ -42,7 +43,7 @@ type Publisher interface {
 
 // BuildContext is context of build
 type BuildContext struct {
-	*Context
+	*typcore.Context
 	Cli *cli.Context
 }
 

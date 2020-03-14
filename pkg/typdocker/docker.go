@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/typical-go/typical-go/pkg/typcore"
 
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v2"
 )
@@ -45,7 +45,7 @@ func (m *Docker) WithComposers(composers ...Composer) *Docker {
 }
 
 // Commands of docker
-func (m *Docker) Commands(ctx *typbuildtool.Context) []*cli.Command {
+func (m *Docker) Commands(ctx *typcore.Context) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:  "docker",

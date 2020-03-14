@@ -97,21 +97,19 @@ func (b *TypicalBuildTool) Validate() (err error) {
 }
 
 // Run build tool
-func (b *TypicalBuildTool) Run(t *typcore.Context) (err error) {
+func (b *TypicalBuildTool) Run(c *typcore.Context) (err error) {
 	app := cli.NewApp()
-	app.Name = t.Name
+	app.Name = c.Name
 	app.Usage = "" // NOTE: intentionally blank
-	app.Description = t.Description
-	app.Version = t.Version
-	app.Commands = b.Commands(&Context{
-		Context: t,
-	})
+	app.Description = c.Description
+	app.Version = c.Version
+	app.Commands = b.Commands(c)
 
 	return app.Run(os.Args)
 }
 
 // Commands to return command
-func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
+func (b *TypicalBuildTool) Commands(c *typcore.Context) (cmds []*cli.Command) {
 
 	if b.builder != nil {
 		cmds = append(cmds,
@@ -154,7 +152,7 @@ func (b *TypicalBuildTool) Publish(pc *PublishContext) (err error) {
 	return
 }
 
-func (b *TypicalBuildTool) buildCommand(c *Context) *cli.Command {
+func (b *TypicalBuildTool) buildCommand(c *typcore.Context) *cli.Command {
 	return &cli.Command{
 		Name:    "build",
 		Aliases: []string{"b"},
@@ -166,7 +164,7 @@ func (b *TypicalBuildTool) buildCommand(c *Context) *cli.Command {
 	}
 }
 
-func (b *TypicalBuildTool) runCommand(c *Context) *cli.Command {
+func (b *TypicalBuildTool) runCommand(c *typcore.Context) *cli.Command {
 	return &cli.Command{
 		Name:            "run",
 		Aliases:         []string{"r"},
@@ -186,7 +184,7 @@ func (b *TypicalBuildTool) runCommand(c *Context) *cli.Command {
 	}
 }
 
-func (b *TypicalBuildTool) releaseCommand(c *Context) *cli.Command {
+func (b *TypicalBuildTool) releaseCommand(c *typcore.Context) *cli.Command {
 	return &cli.Command{
 		Name:  "release",
 		Usage: "Release the distribution",
@@ -257,7 +255,7 @@ func (b *TypicalBuildTool) releaseCommand(c *Context) *cli.Command {
 	}
 }
 
-func (b *TypicalBuildTool) mockCommand(c *Context) *cli.Command {
+func (b *TypicalBuildTool) mockCommand(c *typcore.Context) *cli.Command {
 	return &cli.Command{
 		Name:  "mock",
 		Usage: "Generate mock class",
@@ -272,7 +270,7 @@ func (b *TypicalBuildTool) mockCommand(c *Context) *cli.Command {
 	}
 }
 
-func (b *TypicalBuildTool) cleanCommand(c *Context) *cli.Command {
+func (b *TypicalBuildTool) cleanCommand(c *typcore.Context) *cli.Command {
 	return &cli.Command{
 		Name:    "clean",
 		Aliases: []string{"c"},
@@ -292,7 +290,7 @@ func (b *TypicalBuildTool) cleanCommand(c *Context) *cli.Command {
 	}
 }
 
-func (b *TypicalBuildTool) testCommand(c *Context) *cli.Command {
+func (b *TypicalBuildTool) testCommand(c *typcore.Context) *cli.Command {
 	return &cli.Command{
 		Name:    "test",
 		Aliases: []string{"t"},
@@ -303,7 +301,7 @@ func (b *TypicalBuildTool) testCommand(c *Context) *cli.Command {
 	}
 }
 
-func (b *TypicalBuildTool) createBuildContext(cliCtx *cli.Context, c *Context) *BuildContext {
+func (b *TypicalBuildTool) createBuildContext(cliCtx *cli.Context, c *typcore.Context) *BuildContext {
 	return &BuildContext{
 		Context: c,
 		Cli:     cliCtx,

@@ -1,12 +1,13 @@
 package typbuildtool
 
 import (
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
 // Commander responsible to return commands for Build-Tool
 type Commander interface {
-	Commands(c *Context) []*cli.Command
+	Commands(c *typcore.Context) []*cli.Command
 }
 
 // SimpleCommander return command based on command function
@@ -15,7 +16,7 @@ type SimpleCommander struct {
 }
 
 // CommandFn is a function to return command
-type CommandFn func(ctx *Context) *cli.Command
+type CommandFn func(ctx *typcore.Context) *cli.Command
 
 // NewCommander return new instance Commander
 func NewCommander(funcs ...CommandFn) *SimpleCommander {
@@ -25,7 +26,7 @@ func NewCommander(funcs ...CommandFn) *SimpleCommander {
 }
 
 // Commands return list of command
-func (c *SimpleCommander) Commands(ctx *Context) (cmds []*cli.Command) {
+func (c *SimpleCommander) Commands(ctx *typcore.Context) (cmds []*cli.Command) {
 	for _, fn := range c.funcs {
 		cmds = append(cmds, fn(ctx))
 	}
