@@ -50,10 +50,7 @@ func (d *Descriptor) LaunchBuildTool() (err error) {
 		return errors.New("Descriptor is missing `BuildTool`")
 	}
 
-	var c *Context
-	if c, err = CreateContext(d); err != nil {
-		return
-	}
+	c := CreateContext(d)
 
 	if err = common.Validate(c); err != nil {
 		return

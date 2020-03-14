@@ -24,19 +24,6 @@ func (t *TypicalGo) Run(d *typcore.Descriptor) (err error) {
 	app.Version = d.Version
 
 	app.Commands = []*cli.Command{
-		// FIXME: redesign projct generation
-		// {
-		// 	Name:      "new",
-		// 	Usage:     "Construct New Project",
-		// 	UsageText: "app new [Package]",
-		// 	Action: func(c *cli.Context) (err error) {
-		// 		pkg := c.Args().First()
-		// 		if pkg == "" {
-		// 			return cli.ShowCommandHelp(c, "new")
-		// 		}
-		// 		return constructProject(c.Context, pkg)
-		// 	},
-		// },
 		{
 			Name: "wrap-me",
 			Flags: []cli.Flag{
@@ -59,7 +46,7 @@ func (t *TypicalGo) Run(d *typcore.Descriptor) (err error) {
 				}
 
 				return wrapMe(c.Context, &wrapContext{
-					Descriptor:     d,
+					Context:        typcore.CreateContext(d),
 					tmp:            tmp,
 					projectPackage: projectPackage,
 				})

@@ -25,7 +25,7 @@ func TestTypicalContext(t *testing.T) {
 		os.Remove("go.mod")
 	}()
 
-	ctx, err := typcore.CreateContext(&typcore.Descriptor{
+	ctx := typcore.CreateContext(&typcore.Descriptor{
 		Name:      "some-name",
 		App:       typicalgo.New(),
 		BuildTool: typbuildtool.New(),
@@ -34,7 +34,6 @@ func TestTypicalContext(t *testing.T) {
 	// NOTE: ProjectPackage need to set manually because its value get from ldflags
 	ctx.ProjectPackage = "some-package"
 
-	require.NoError(t, err)
 	require.NoError(t, common.Validate(ctx))
 	require.Equal(t, "0.0.1", ctx.Version)
 	require.Equal(t, []string{"typicalgo", "pkg"}, ctx.ProjectSources)

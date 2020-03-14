@@ -18,7 +18,7 @@ import (
 )
 
 type wrapContext struct {
-	*typcore.Descriptor
+	*typcore.Context
 	tmp            string
 	projectPackage string
 }

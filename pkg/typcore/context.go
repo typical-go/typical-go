@@ -24,10 +24,12 @@ type Context struct {
 	ProjectSources []string
 
 	ast *typast.Ast
+
+	Logger
 }
 
 // CreateContext return new constructor of TypicalContext
-func CreateContext(d *Descriptor) (*Context, error) {
+func CreateContext(d *Descriptor) *Context {
 	c := &Context{
 		Descriptor: d,
 
@@ -37,13 +39,13 @@ func CreateContext(d *Descriptor) (*Context, error) {
 
 		ProjectPackage: DefaultProjectPackage,
 		ProjectSources: RetrieveProjectSources(d),
+		// Logger:         logrus.New(),
+		Logger: &SimpleLogger{}, // NOTE: temporary logger to help refactoring logging
 	}
 	for _, dir := range c.ProjectSources {
-		if err := filepath.Walk(dir, c.addFile); err != nil {
-			return nil, err
-		}
+		filepath.Walk(dir, c.addFile)
 	}
-	return c, nil
+	return c
 }
 
 // Ast contain detail of AST analysis
