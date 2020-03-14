@@ -55,7 +55,7 @@ func (r *StdReleaser) Release(c *ReleaseContext) (files []string, err error) {
 
 	for _, target := range r.targets {
 		var binary string
-		if binary, err = r.build(c.BuildContext, c.Tag, target); err != nil {
+		if binary, err = r.build(c.Context, c.Tag, target); err != nil {
 			err = fmt.Errorf("Failed build release: %w", err)
 			return
 		}
@@ -65,7 +65,7 @@ func (r *StdReleaser) Release(c *ReleaseContext) (files []string, err error) {
 	return
 }
 
-func (r *StdReleaser) build(c *BuildContext, tag string, target ReleaseTarget) (binary string, err error) {
+func (r *StdReleaser) build(c *Context, tag string, target ReleaseTarget) (binary string, err error) {
 	ctx := c.Cli.Context
 	goos := target.OS()
 	goarch := target.Arch()

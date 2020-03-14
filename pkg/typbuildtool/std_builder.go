@@ -45,7 +45,7 @@ func (b *StdBuilder) Before(executor ...exor.Executor) *StdBuilder {
 }
 
 // Build the project
-func (b *StdBuilder) Build(c *BuildContext) (dist BuildDistribution, err error) {
+func (b *StdBuilder) Build(c *Context) (dist BuildDistribution, err error) {
 	binary := fmt.Sprintf("%s/%s", c.BinFolder, c.Name)
 	srcDir := fmt.Sprintf("%s/%s", c.CmdFolder, c.Name)
 	src := fmt.Sprintf("./%s/main.go", srcDir)

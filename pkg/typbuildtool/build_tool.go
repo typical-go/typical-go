@@ -138,7 +138,7 @@ func (b *TypicalBuildTool) Commands(c *typcore.Context) (cmds []*cli.Command) {
 }
 
 // Build task
-func (b *TypicalBuildTool) Build(c *BuildContext) (dist BuildDistribution, err error) {
+func (b *TypicalBuildTool) Build(c *Context) (dist BuildDistribution, err error) {
 	return b.builder.Build(c)
 }
 
@@ -158,7 +158,7 @@ func (b *TypicalBuildTool) buildCommand(c *typcore.Context) *cli.Command {
 		Aliases: []string{"b"},
 		Usage:   "Build the binary",
 		Action: func(cliCtx *cli.Context) (err error) {
-			_, err = b.Build(b.createBuildContext(cliCtx, c))
+			_, err = b.Build(NewContext(c, cliCtx))
 			return
 		},
 	}
@@ -172,7 +172,7 @@ func (b *TypicalBuildTool) runCommand(c *typcore.Context) *cli.Command {
 		SkipFlagParsing: true,
 		Action: func(cliCtx *cli.Context) (err error) {
 			var dist BuildDistribution
-			buildCtx := b.createBuildContext(cliCtx, c)
+			buildCtx := NewContext(c, cliCtx)
 
 			if dist, err = b.Build(buildCtx); err != nil {
 				return
@@ -196,7 +196,7 @@ func (b *TypicalBuildTool) releaseCommand(c *typcore.Context) *cli.Command {
 		},
 		Action: func(cliCtx *cli.Context) (err error) {
 
-			bc := b.createBuildContext(cliCtx, c)
+			bc := NewContext(c, cliCtx)
 
 			if !cliCtx.Bool("no-test") && b.tester != nil {
 				if err = b.tester.Test(bc); err != nil {
@@ -230,10 +230,10 @@ func (b *TypicalBuildTool) releaseCommand(c *typcore.Context) *cli.Command {
 			}
 
 			rlsCtx := &ReleaseContext{
-				BuildContext: bc,
-				Alpha:        alpha,
-				Tag:          tag,
-				GitLogs:      gitLogs,
+				Context: bc,
+				Alpha:   alpha,
+				Tag:     tag,
+				GitLogs: gitLogs,
 			}
 
 			var releaseFiles []string
@@ -263,9 +263,7 @@ func (b *TypicalBuildTool) mockCommand(c *typcore.Context) *cli.Command {
 			if b.mocker == nil {
 				panic("Mocker is nil")
 			}
-			return b.mocker.Mock(&MockContext{
-				BuildContext: b.createBuildContext(cliCtx, c),
-			})
+			return b.mocker.Mock(NewContext(c, cliCtx))
 		},
 	}
 }
@@ -296,15 +294,8 @@ func (b *TypicalBuildTool) testCommand(c *typcore.Context) *cli.Command {
 		Aliases: []string{"t"},
 		Usage:   "Run the testing",
 		Action: func(cliCtx *cli.Context) error {
-			return b.tester.Test(b.createBuildContext(cliCtx, c))
+			return b.tester.Test(NewContext(c, cliCtx))
 		},
-	}
-}
-
-func (b *TypicalBuildTool) createBuildContext(cliCtx *cli.Context, c *typcore.Context) *BuildContext {
-	return &BuildContext{
-		Context: c,
-		Cli:     cliCtx,
 	}
 }
 

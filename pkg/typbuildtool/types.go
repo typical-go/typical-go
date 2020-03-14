@@ -8,27 +8,27 @@ import (
 
 // Builder reponsible to build
 type Builder interface {
-	Build(c *BuildContext) (dist BuildDistribution, err error)
+	Build(c *Context) (dist BuildDistribution, err error)
 }
 
 // Cleaner responsible to clean the project
 type Cleaner interface {
-	Clean(*BuildContext) error
+	Clean(*Context) error
 }
 
 // Tester responsible to test the project
 type Tester interface {
-	Test(*BuildContext) error
+	Test(*Context) error
 }
 
 // BuildDistribution is build distribution
 type BuildDistribution interface {
-	Run(*BuildContext) error
+	Run(*Context) error
 }
 
 // Mocker responsible to mock
 type Mocker interface {
-	Mock(*MockContext) error
+	Mock(*Context) error
 }
 
 // Releaser responsible to release
@@ -41,20 +41,23 @@ type Publisher interface {
 	Publish(*PublishContext) error
 }
 
-// BuildContext is context of build
-type BuildContext struct {
+// Context of buildtool
+type Context struct {
 	*typcore.Context
 	Cli *cli.Context
 }
 
-// MockContext is context of mock
-type MockContext struct {
-	*BuildContext
+// NewContext return new instance of Context
+func NewContext(tc *typcore.Context, cc *cli.Context) *Context {
+	return &Context{
+		Context: tc,
+		Cli:     cc,
+	}
 }
 
 // ReleaseContext is context of release
 type ReleaseContext struct {
-	*BuildContext
+	*Context
 	Alpha   bool
 	Tag     string
 	GitLogs []*git.Log

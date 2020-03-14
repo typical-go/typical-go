@@ -18,7 +18,7 @@ type MockTarget struct {
 	Dest    string
 }
 
-func createMockTarget(c *MockContext, decl *typast.Declaration) *MockTarget {
+func createMockTarget(c *Context, decl *typast.Declaration) *MockTarget {
 	var (
 		pkg     = decl.File.Name.Name
 		dir     = filepath.Dir(decl.Path)
