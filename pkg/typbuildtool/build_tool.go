@@ -312,15 +312,21 @@ func (b *TypicalBuildTool) cleanCommand(c *typcore.Context) *cli.Command {
 			&cli.BoolFlag{Name: "short", Aliases: []string{"s"}, Usage: "Short version of clean only clean build-tool"},
 		},
 		Action: func(cliCtx *cli.Context) (err error) {
-			removeAll(b.binFolder)
-			if cliCtx.Bool("short") {
-				remove(typcore.BuildToolBin(c.TempFolder))
-			} else {
-				removeAll(c.TempFolder)
-			}
-			return
+
+			return b.Clean(b.createContext(c, cliCtx))
 		},
 	}
+}
+
+// Clean the project
+func (b *TypicalBuildTool) Clean(c *Context) (err error) {
+	removeAll(b.binFolder)
+	if c.Cli.Bool("short") {
+		remove(typcore.BuildToolBin(c.TempFolder))
+	} else {
+		removeAll(c.TempFolder)
+	}
+	return
 }
 
 // Tag return relase tag

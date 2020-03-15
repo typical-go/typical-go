@@ -16,4 +16,7 @@ func TestBuildTool(t *testing.T) {
 	t.Run("SHOULD implement Tester", func(t *testing.T) {
 		var _ typbuildtool.Tester = typbuildtool.New()
 	})
+	t.Run("SHOULD implement Tester", func(t *testing.T) {
+		var _ typbuildtool.Cleaner = typbuildtool.New()
+	})
 }
