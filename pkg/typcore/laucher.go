@@ -1,8 +1,6 @@
 package typcore
 
-import (
-	log "github.com/sirupsen/logrus"
-)
+import "log"
 
 // AppLauncher responsible to launch the application
 type AppLauncher interface {
