@@ -56,10 +56,10 @@ func buildBuildTool(c *wrapContext) (err error) {
 	)
 
 	if notExist(srcPath) {
-		data := tmpl.MainSrcData{
+		c.Infof("Generate Build-Tool main source: %s", srcPath)
+		if err = exor.NewWriteTemplate(srcPath, tmpl.MainSrcBuildTool, tmpl.MainSrcData{
 			DescriptorPackage: descriptorPkg,
-		}
-		if err = exor.NewWriteTemplate(srcPath, tmpl.MainSrcBuildTool, data).Execute(ctx); err != nil {
+		}).Execute(ctx); err != nil {
 			return
 		}
 	}

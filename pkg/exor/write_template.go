@@ -39,7 +39,7 @@ func (w *WriteTemplate) Execute(ctx context.Context) (err error) {
 		tmpl *template.Template
 	)
 
-	log.Infof("Write File: %s", w.target)
+	log.Infof("Write File: %s", w.target) // TODO: delete this
 	if f, err = os.OpenFile(w.target, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, w.permission); err != nil {
 		return
 	}
