@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/typicalgo"
@@ -80,5 +81,24 @@ func TestTypicalContext_Validate(t *testing.T) {
 			require.EqualError(t, err, tt.expectedError)
 		}
 	}
+}
 
+func TestRetrieveProjectSources(t *testing.T) {
+	testcases := []struct {
+		*typcore.Descriptor
+		expected []string
+	}{
+		{
+			Descriptor: &typcore.Descriptor{App: typicalgo.New()},
+			expected:   []string{"typicalgo"},
+		},
+		{
+			Descriptor: &typcore.Descriptor{App: typapp.New(typicalgo.New())},
+			expected:   []string{"typicalgo"},
+		},
+	}
+
+	for _, tt := range testcases {
+		require.Equal(t, tt.expected, typcore.RetrieveProjectSources(tt.Descriptor))
+	}
 }

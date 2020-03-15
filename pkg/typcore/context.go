@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typast"
 )
 
@@ -39,8 +41,7 @@ func CreateContext(d *Descriptor) *Context {
 
 		ProjectPackage: DefaultProjectPackage,
 		ProjectSources: RetrieveProjectSources(d),
-		// Logger:         logrus.New(),
-		Logger: &SimpleLogger{}, // NOTE: temporary logger to help refactoring logging
+		Logger:         &SimpleLogger{},
 	}
 	for _, dir := range c.ProjectSources {
 		filepath.Walk(dir, c.addFile)
@@ -104,4 +105,32 @@ func validateProjectSources(sources []string) (err error) {
 func isWalkTarget(filename string) bool {
 	return strings.HasSuffix(filename, ".go") &&
 		!strings.HasSuffix(filename, "_test.go")
+}
+
+// RetrieveProjectSources to retrieve project source
+func RetrieveProjectSources(d *Descriptor) (sources []string) {
+	if sourceable, ok := d.App.(SourceableApp); ok {
+		sources = append(sources, sourceable.ProjectSources()...)
+	} else {
+		sources = append(sources, RetrievePackageName(d.App))
+	}
+	if _, err := os.Stat("pkg"); !os.IsNotExist(err) {
+		sources = append(sources, "pkg")
+	}
+	return
+}
+
+// RetrievePackageName return package name of the interface
+func RetrievePackageName(v interface{}) string {
+	if common.IsNil(v) {
+		return ""
+	}
+	s := reflect.TypeOf(v).String()
+	if dot := strings.Index(s, "."); dot > 0 {
+		if strings.HasPrefix(s, "*") {
+			return s[1:dot]
+		}
+		return s[:dot]
+	}
+	return ""
 }

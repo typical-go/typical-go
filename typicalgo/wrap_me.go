@@ -3,11 +3,14 @@ package typicalgo
 import (
 	"bytes"
 	"crypto/sha256"
+	"go/build"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
+	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/exor"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/typicalgo/internal/tmpl"
@@ -22,6 +25,10 @@ type wrapContext struct {
 }
 
 func wrapMe(c *wrapContext) (err error) {
+
+	if c.projectPackage == "" {
+		c.projectPackage = retrieveProjectPackage(c)
+	}
 
 	// NOTE: create tmp folder if not exist
 	typcore.MakeTempDir(c.tmp)
@@ -100,4 +107,29 @@ func sameChecksum(path string, data []byte) bool {
 		return false
 	}
 	return bytes.Compare(current, data) == 0
+}
+
+func retrieveProjectPackage(c *wrapContext) (pkg string) {
+	var (
+		err  error
+		root string
+		f    *os.File
+	)
+
+	if root, err = os.Getwd(); err != nil {
+		panic(err.Error())
+	}
+
+	if f, err = os.Open(root + "/go.mod"); err != nil {
+		// NOTE: go.mod is not exist. Check if the project sit in $GOPATH
+		gopath := build.Default.GOPATH
+		if strings.HasPrefix(root, gopath) {
+			return root[len(gopath):]
+		}
+		panic("Failed to retrieve ProjectPackage: `go.mod` is missing and the project not in $GOPATH")
+	}
+	defer f.Close()
+
+	modfile := common.ParseModfile(f)
+	return modfile.ProjectPackage
 }

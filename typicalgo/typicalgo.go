@@ -30,26 +30,13 @@ func (t *TypicalGo) Run(d *typcore.Descriptor) (err error) {
 				&cli.StringFlag{Name: "tmp", Required: true},
 				&cli.StringFlag{Name: "project-package"},
 			},
-			Action: func(c *cli.Context) (err error) {
-				var (
-					root           string
-					tmp            = c.String("tmp")
-					projectPackage = c.String("project-package")
-				)
-
-				if root, err = os.Getwd(); err != nil {
-					return err
-				}
-
-				if projectPackage == "" {
-					projectPackage = typcore.RetrieveProjectPackage(root)
-				}
+			Action: func(cliCtx *cli.Context) (err error) {
 
 				return wrapMe(&wrapContext{
 					Context:        typcore.CreateContext(d),
-					Cli:            c,
-					tmp:            tmp,
-					projectPackage: projectPackage,
+					Cli:            cliCtx,
+					tmp:            cliCtx.String("tmp"),
+					projectPackage: cliCtx.String("project-package"),
 				})
 			},
 		},

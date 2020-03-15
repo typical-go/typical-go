@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/exor"
 	"github.com/typical-go/typical-go/pkg/typapp/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/typast"
@@ -29,7 +28,7 @@ type TypicalApp struct {
 // New return new instance of app
 func New(appModule interface{}) *TypicalApp {
 	app := &TypicalApp{
-		projectSources: []string{common.PackageName(appModule)},
+		projectSources: []string{typcore.RetrievePackageName(appModule)},
 		appModule:      appModule,
 		modules:        []interface{}{appModule},
 	}
