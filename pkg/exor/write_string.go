@@ -4,8 +4,6 @@ import (
 	"context"
 	"io/ioutil"
 	"os"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // WriteString responsible to write string
@@ -32,6 +30,5 @@ func (w *WriteString) WithPermission(permission os.FileMode) *WriteString {
 
 // Execute write string
 func (w *WriteString) Execute(ctx context.Context) (err error) {
-	log.Infof("Write File: %s", w.target)
 	return ioutil.WriteFile(w.target, []byte(w.content), w.permission)
 }

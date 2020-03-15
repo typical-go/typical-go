@@ -201,10 +201,12 @@ func (b *TypicalBuildTool) runCommand(c *typcore.Context) *cli.Command {
 				return
 			}
 
-			fmt.Println()
-			fmt.Println()
-
-			return dist.Run(bc)
+			if dist != nil {
+				if err = dist.Run(bc); err != nil {
+					return
+				}
+			}
+			return
 		},
 	}
 }
