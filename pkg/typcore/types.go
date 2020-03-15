@@ -2,12 +2,12 @@ package typcore
 
 // App is interface of app
 type App interface {
-	Run(*Descriptor) error
+	RunApp(*Descriptor) error
 }
 
 // BuildTool interface
 type BuildTool interface {
-	Run(*Context) error
+	RunBuildTool(*Context) error
 }
 
 // Preconditioner responsible to precondition

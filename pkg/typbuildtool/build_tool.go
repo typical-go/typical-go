@@ -110,8 +110,8 @@ func (b *TypicalBuildTool) Validate() (err error) {
 	return
 }
 
-// Run build tool
-func (b *TypicalBuildTool) Run(c *typcore.Context) (err error) {
+// RunBuildTool to run the build-tool
+func (b *TypicalBuildTool) RunBuildTool(c *typcore.Context) (err error) {
 	app := cli.NewApp()
 	app.Name = c.Name
 	app.Usage = "" // NOTE: intentionally blank

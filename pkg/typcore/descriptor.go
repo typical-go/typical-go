@@ -24,10 +24,10 @@ type Descriptor struct {
 	Version string
 
 	// App of the project (MANDATORY).
-	App App
+	App
 
 	// BuildTool of the project (MANDATORY).
-	BuildTool BuildTool
+	BuildTool
 
 	// ConfigManager of the project (OPTIONAL).
 	ConfigManager
@@ -41,7 +41,7 @@ func (d *Descriptor) LaunchApp() (err error) {
 	if err = d.Validate(); err != nil {
 		return
 	}
-	return d.App.Run(d)
+	return d.RunApp(d)
 }
 
 // LaunchBuildTool to launch the build tool
@@ -60,7 +60,7 @@ func (d *Descriptor) LaunchBuildTool() (err error) {
 		return
 	}
 
-	return d.BuildTool.Run(c)
+	return d.RunBuildTool(c)
 }
 
 // Precondition for this project

@@ -36,8 +36,8 @@ func (a *App) Configure() *typcore.Configuration {
 	return typcore.NewConfiguration(a.ConfigName, &Config{})
 }
 
-// Run server
-func (a *App) Run(d *typcore.Descriptor) (err error) {
+// RunApp to run the server
+func (a *App) RunApp(d *typcore.Descriptor) (err error) {
 	var spec interface{}
 	if spec, err = d.RetrieveConfig(a.ConfigName); err != nil {
 		return

@@ -132,7 +132,7 @@ func (i buildTool) Validate() error {
 	return nil
 }
 
-func (i buildTool) Run(*typcore.Context) error {
+func (i buildTool) RunBuildTool(*typcore.Context) error {
 	return nil
 }
 
@@ -152,7 +152,7 @@ func (i app) Validate() error {
 	return nil
 }
 
-func (i app) Run(*typcore.Descriptor) error {
+func (i app) RunApp(*typcore.Descriptor) error {
 	return nil
 }
 

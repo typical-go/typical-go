@@ -15,8 +15,8 @@ func New() *App {
 	return &App{}
 }
 
-// Run app
-func (*App) Run(d *typcore.Descriptor) error {
+// RunApp to run the hello-world
+func (*App) RunApp(d *typcore.Descriptor) error {
 	fmt.Println("Hello World")
 	return nil
 }

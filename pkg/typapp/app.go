@@ -105,8 +105,8 @@ func (a *TypicalApp) ProjectSources() []string {
 	return a.projectSources
 }
 
-// Run application
-func (a *TypicalApp) Run(d *typcore.Descriptor) (err error) {
+// RunApp to run the applciation
+func (a *TypicalApp) RunApp(d *typcore.Descriptor) (err error) {
 	c := &Context{
 		Descriptor: d,
 		TypicalApp: a,

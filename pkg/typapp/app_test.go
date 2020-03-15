@@ -8,6 +8,9 @@ import (
 )
 
 func TestNewApp(t *testing.T) {
+	t.Run("SHOULD implement App", func(t *testing.T) {
+		var _ typcore.App = typapp.New(nil)
+	})
 	t.Run("SHOULD implement Preconditioner", func(t *testing.T) {
 		var _ typcore.Preconditioner = typapp.New(nil)
 	})

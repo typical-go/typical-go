@@ -14,8 +14,8 @@ func New() *App {
 	return &App{}
 }
 
-// Run app
-func (*App) Run(d *typcore.Descriptor) error {
+// RunApp to run the server
+func (*App) RunApp(d *typcore.Descriptor) error {
 	fs := http.FileServer(http.Dir("react-demo/build"))
 	http.Handle("/", fs)
 

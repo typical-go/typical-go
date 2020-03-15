@@ -15,8 +15,8 @@ func New() *TypicalGo {
 	return &TypicalGo{}
 }
 
-// Run the typical-go
-func (t *TypicalGo) Run(d *typcore.Descriptor) (err error) {
+// RunApp to run the typical-go
+func (t *TypicalGo) RunApp(d *typcore.Descriptor) (err error) {
 	app := cli.NewApp()
 	app.Name = d.Name
 	app.Usage = "" // NOTE: intentionally blank
