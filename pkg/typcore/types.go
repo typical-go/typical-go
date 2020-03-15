@@ -1,5 +1,17 @@
 package typcore
 
+import "context"
+
+// AppLauncher responsible to launch the application
+type AppLauncher interface {
+	LaunchApp() error
+}
+
+// BuildToolLauncher responsible to launch the build-tool
+type BuildToolLauncher interface {
+	LaunchBuildTool() error
+}
+
 // App is interface of app
 type App interface {
 	RunApp(*Descriptor) error
@@ -8,6 +20,7 @@ type App interface {
 // BuildTool interface
 type BuildTool interface {
 	RunBuildTool(*Context) error
+	Wrap(*WrapContext) error
 }
 
 // Preconditioner responsible to precondition
@@ -24,4 +37,12 @@ type SourceableApp interface {
 type ConfigManager interface {
 	Configurations() []*Configuration
 	RetrieveConfig(name string) (interface{}, error)
+}
+
+// WrapContext is context of wrap
+type WrapContext struct {
+	*Context
+	Ctx            context.Context
+	Tmp            string
+	ProjectPackage string
 }

@@ -1,4 +1,4 @@
-package typicalgo
+package typbuildtool
 
 import (
 	"bytes"
@@ -12,71 +12,57 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/exor"
+	"github.com/typical-go/typical-go/pkg/typbuildtool/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/typicalgo/internal/tmpl"
-	"github.com/urfave/cli/v2"
 )
 
-type wrapContext struct {
-	*typcore.Context
-	Cli            *cli.Context
-	tmp            string
-	projectPackage string
-}
-
-func wrapMe(c *wrapContext) (err error) {
-
-	if c.projectPackage == "" {
-		c.projectPackage = retrieveProjectPackage(c)
+// Wrap the project
+func (b *TypicalBuildTool) Wrap(c *typcore.WrapContext) (err error) {
+	if c.ProjectPackage == "" {
+		c.ProjectPackage = retrieveProjectPackage(c)
 	}
 
 	// NOTE: create tmp folder if not exist
-	typcore.MakeTempDir(c.tmp)
+	typcore.MakeTempDir(c.Tmp)
 
-	checksumPath := typcore.Checksum(c.tmp)
-	buildToolBin := typcore.BuildToolBin(c.tmp)
+	checksumPath := typcore.Checksum(c.Tmp)
+	buildToolBin := typcore.BuildToolBin(c.Tmp)
 	var checksumData []byte
 	if checksumData, err = checksum("typical"); err != nil {
 		return
 	}
 
 	if !sameChecksum(checksumPath, checksumData) || notExist(buildToolBin) {
+		var (
+			descriptorPkg = typcore.TypicalPackage(c.ProjectPackage)
+			srcPath       = typcore.BuildToolSrc(c.Tmp)
+			binPath       = typcore.BuildToolBin(c.Tmp)
+		)
+
 		c.Info("Update new checksum")
 		if err = ioutil.WriteFile(checksumPath, checksumData, 0777); err != nil {
 			return
 		}
-		c.Info("Build the Build-Tool")
-		if err = buildBuildTool(c); err != nil {
-			return
+
+		if notExist(srcPath) {
+			c.Infof("Generate Build-Tool main source: %s", srcPath)
+			if err = exor.NewWriteTemplate(srcPath, tmpl.MainSrcBuildTool, tmpl.MainSrcData{
+				DescriptorPackage: descriptorPkg,
+			}).Execute(c.Ctx); err != nil {
+				return
+			}
 		}
+
+		c.Info("Build the Build-Tool")
+		return exor.NewGoBuild(binPath, srcPath).
+			SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage", c.ProjectPackage).
+			WithStdout(os.Stdout).
+			WithStderr(os.Stderr).
+			WithStdin(os.Stdin).
+			Execute(c.Ctx)
 	}
 
 	return
-}
-
-func buildBuildTool(c *wrapContext) (err error) {
-	var (
-		descriptorPkg = typcore.TypicalPackage(c.projectPackage)
-		srcPath       = typcore.BuildToolSrc(c.tmp)
-		binPath       = typcore.BuildToolBin(c.tmp)
-		ctx           = c.Cli.Context
-	)
-
-	if notExist(srcPath) {
-		c.Infof("Generate Build-Tool main source: %s", srcPath)
-		if err = exor.NewWriteTemplate(srcPath, tmpl.MainSrcBuildTool, tmpl.MainSrcData{
-			DescriptorPackage: descriptorPkg,
-		}).Execute(ctx); err != nil {
-			return
-		}
-	}
-
-	return exor.NewGoBuild(binPath, srcPath).
-		SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage", c.projectPackage).
-		WithStdout(os.Stdout).
-		WithStderr(os.Stderr).
-		WithStdin(os.Stdin).
-		Execute(ctx)
 }
 
 func notExist(path string) bool {
@@ -109,7 +95,7 @@ func sameChecksum(path string, data []byte) bool {
 	return bytes.Compare(current, data) == 0
 }
 
-func retrieveProjectPackage(c *wrapContext) (pkg string) {
+func retrieveProjectPackage(c *typcore.WrapContext) (pkg string) {
 	var (
 		err  error
 		root string

@@ -2,16 +2,6 @@ package typcore
 
 import "log"
 
-// AppLauncher responsible to launch the application
-type AppLauncher interface {
-	LaunchApp() error
-}
-
-// BuildToolLauncher responsible to launch the build-tool
-type BuildToolLauncher interface {
-	LaunchBuildTool() error
-}
-
 // LaunchApp the application
 func LaunchApp(launcher AppLauncher) {
 	if err := launcher.LaunchApp(); err != nil {

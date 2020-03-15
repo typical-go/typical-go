@@ -136,6 +136,10 @@ func (i buildTool) RunBuildTool(*typcore.Context) error {
 	return nil
 }
 
+func (i buildTool) Wrap(*typcore.WrapContext) error {
+	return nil
+}
+
 func (i buildTool) SetupMe(d *typcore.Descriptor) error {
 	return nil
 }

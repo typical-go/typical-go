@@ -25,18 +25,17 @@ func (t *TypicalGo) RunApp(d *typcore.Descriptor) (err error) {
 
 	app.Commands = []*cli.Command{
 		{
-			Name: "wrap-me",
+			Name: "wrap",
 			Flags: []cli.Flag{
 				&cli.StringFlag{Name: "tmp", Required: true},
 				&cli.StringFlag{Name: "project-package"},
 			},
 			Action: func(cliCtx *cli.Context) (err error) {
-
-				return wrapMe(&wrapContext{
+				return d.Wrap(&typcore.WrapContext{
 					Context:        typcore.CreateContext(d),
-					Cli:            cliCtx,
-					tmp:            cliCtx.String("tmp"),
-					projectPackage: cliCtx.String("project-package"),
+					Ctx:            cliCtx.Context,
+					Tmp:            cliCtx.String("tmp"),
+					ProjectPackage: cliCtx.String("project-package"),
 				})
 			},
 		},
