@@ -24,8 +24,6 @@ type TypicalBuildTool struct {
 	releaser   Releaser
 	publishers []Publisher
 
-	binFolder string
-
 	includeBranch   bool
 	includeCommitID bool
 }
@@ -33,11 +31,10 @@ type TypicalBuildTool struct {
 // New return new instance of build
 func New() *TypicalBuildTool {
 	return &TypicalBuildTool{
-		builder:   NewBuilder(),
-		tester:    NewTester(),
-		mocker:    NewMocker(),
-		releaser:  NewReleaser(),
-		binFolder: "bin",
+		builder:  NewBuilder(),
+		tester:   NewTester(),
+		mocker:   NewMocker(),
+		releaser: NewReleaser(),
 	}
 }
 
@@ -75,17 +72,6 @@ func (b *TypicalBuildTool) WithMocker(mocker Mocker) *TypicalBuildTool {
 func (b *TypicalBuildTool) WithTester(tester Tester) *TypicalBuildTool {
 	b.tester = tester
 	return b
-}
-
-// WithBinFolder return BuildTool with new binFolder
-func (b *TypicalBuildTool) WithBinFolder(binFolder string) *TypicalBuildTool {
-	b.binFolder = binFolder
-	return b
-}
-
-// BinFolder value
-func (b *TypicalBuildTool) BinFolder() string {
-	return b.binFolder
 }
 
 // Validate build
@@ -162,6 +148,21 @@ func (b *TypicalBuildTool) Publish(pc *PublishContext) (err error) {
 		if err = publisher.Publish(pc); err != nil {
 			return
 		}
+	}
+	return
+}
+
+// Clean the project
+func (b *TypicalBuildTool) Clean(c *Context) (err error) {
+
+	if cleaner, ok := b.builder.(Cleaner); ok {
+		cleaner.Clean(c)
+	}
+
+	if c.Cli.Bool("short") {
+		remove(typcore.BuildToolBin(c.TempFolder))
+	} else {
+		removeAll(c.TempFolder)
 	}
 	return
 }
@@ -312,21 +313,9 @@ func (b *TypicalBuildTool) cleanCommand(c *typcore.Context) *cli.Command {
 			&cli.BoolFlag{Name: "short", Aliases: []string{"s"}, Usage: "Short version of clean only clean build-tool"},
 		},
 		Action: func(cliCtx *cli.Context) (err error) {
-
 			return b.Clean(b.createContext(c, cliCtx))
 		},
 	}
-}
-
-// Clean the project
-func (b *TypicalBuildTool) Clean(c *Context) (err error) {
-	removeAll(b.binFolder)
-	if c.Cli.Bool("short") {
-		remove(typcore.BuildToolBin(c.TempFolder))
-	} else {
-		removeAll(c.TempFolder)
-	}
-	return
 }
 
 // Tag return relase tag

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/fatih/color"
 )
@@ -12,35 +13,47 @@ import (
 type Logger interface {
 	Info(...interface{})
 	Infof(string, ...interface{})
+	Error(...interface{})
 }
 
 // TypicalLogger is simple logger
 type TypicalLogger struct {
-	w io.Writer
+	io.Writer
 }
 
 // NewLogger return new instance of TypicalLogger
 func NewLogger() *TypicalLogger {
 	return &TypicalLogger{
-		w: os.Stdout,
+		Writer: os.Stdout,
 	}
 }
 
 // Info logs level message
 func (s *TypicalLogger) Info(args ...interface{}) {
-	s.signature()
-	fmt.Fprintln(s.w, args...)
+	s.signature("info")
+	fmt.Fprintln(s, args...)
 }
 
 // Infof is same with Info with formatted
 func (s *TypicalLogger) Infof(format string, args ...interface{}) {
-	s.signature()
-	fmt.Fprintf(s.w, format, args...)
-	fmt.Fprintln(s.w)
+	s.signature("info")
+	fmt.Fprintf(s, format, args...)
+	fmt.Fprintln(s)
 }
 
-func (s *TypicalLogger) signature() {
-	fmt.Print("[")
-	color.New(color.FgHiBlue).Print("TYPICAL")
-	fmt.Print("] ")
+func (s *TypicalLogger) Error(args ...interface{}) {
+	s.signature("error")
+	fmt.Fprintln(s, args...)
+}
+
+func (s *TypicalLogger) signature(level string) {
+	fmt.Fprint(s, "[")
+	color.New(color.FgHiBlue).Fprint(s, "TYPICAL")
+	fmt.Fprint(s, "]")
+
+	if level != "" {
+		fmt.Fprintf(s, "[%s]", strings.ToUpper(level))
+	}
+
+	fmt.Fprint(s, " ")
 }
