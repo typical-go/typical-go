@@ -166,13 +166,21 @@ func (b *TypicalBuildTool) Publish(pc *PublishContext) (err error) {
 	return
 }
 
+// Test the project
+func (b *TypicalBuildTool) Test(c *Context) error {
+	if b.tester == nil {
+		panic("TypicalBuildTool: missing tester")
+	}
+	return b.tester.Test(c)
+}
+
 func (b *TypicalBuildTool) buildCommand(c *typcore.Context) *cli.Command {
 	return &cli.Command{
 		Name:    "build",
 		Aliases: []string{"b"},
 		Usage:   "Build the binary",
 		Action: func(cliCtx *cli.Context) (err error) {
-			_, err = b.Build(b.CreateContext(c, cliCtx))
+			_, err = b.Build(b.createContext(c, cliCtx))
 			return
 		},
 	}
@@ -186,7 +194,7 @@ func (b *TypicalBuildTool) runCommand(c *typcore.Context) *cli.Command {
 		SkipFlagParsing: true,
 		Action: func(cliCtx *cli.Context) (err error) {
 			var dist BuildDistribution
-			bc := b.CreateContext(c, cliCtx)
+			bc := b.createContext(c, cliCtx)
 
 			if dist, err = b.Build(bc); err != nil {
 				return
@@ -196,6 +204,17 @@ func (b *TypicalBuildTool) runCommand(c *typcore.Context) *cli.Command {
 			fmt.Println()
 
 			return dist.Run(bc)
+		},
+	}
+}
+
+func (b *TypicalBuildTool) testCommand(c *typcore.Context) *cli.Command {
+	return &cli.Command{
+		Name:    "test",
+		Aliases: []string{"t"},
+		Usage:   "Run the testing",
+		Action: func(cliCtx *cli.Context) error {
+			return b.Test(b.createContext(c, cliCtx))
 		},
 	}
 }
@@ -212,10 +231,10 @@ func (b *TypicalBuildTool) releaseCommand(c *typcore.Context) *cli.Command {
 		},
 		Action: func(cliCtx *cli.Context) (err error) {
 
-			bc := b.CreateContext(c, cliCtx)
+			bc := b.createContext(c, cliCtx)
 
-			if !cliCtx.Bool("no-test") && b.tester != nil {
-				if err = b.tester.Test(bc); err != nil {
+			if !cliCtx.Bool("no-test") {
+				if err = b.Test(bc); err != nil {
 					return
 				}
 			}
@@ -279,7 +298,7 @@ func (b *TypicalBuildTool) mockCommand(c *typcore.Context) *cli.Command {
 			if b.mocker == nil {
 				panic("Mocker is nil")
 			}
-			return b.mocker.Mock(b.CreateContext(c, cliCtx))
+			return b.mocker.Mock(b.createContext(c, cliCtx))
 		},
 	}
 }
@@ -304,17 +323,6 @@ func (b *TypicalBuildTool) cleanCommand(c *typcore.Context) *cli.Command {
 	}
 }
 
-func (b *TypicalBuildTool) testCommand(c *typcore.Context) *cli.Command {
-	return &cli.Command{
-		Name:    "test",
-		Aliases: []string{"t"},
-		Usage:   "Run the testing",
-		Action: func(cliCtx *cli.Context) error {
-			return b.tester.Test(b.CreateContext(c, cliCtx))
-		},
-	}
-}
-
 // Tag return relase tag
 func (b *TypicalBuildTool) Tag(ctx context.Context, version string, alpha bool) string {
 	var builder strings.Builder
@@ -334,8 +342,8 @@ func (b *TypicalBuildTool) Tag(ctx context.Context, version string, alpha bool) 
 	return builder.String()
 }
 
-// CreateContext to create new instance of Context
-func (b *TypicalBuildTool) CreateContext(tc *typcore.Context, cc *cli.Context) *Context {
+// createContext to create new instance of Context
+func (b *TypicalBuildTool) createContext(tc *typcore.Context, cc *cli.Context) *Context {
 	return &Context{
 		Context:          tc,
 		TypicalBuildTool: b,
