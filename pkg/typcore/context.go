@@ -39,7 +39,7 @@ func CreateContext(d *Descriptor) *Context {
 
 		ProjectPackage: DefaultProjectPackage,
 		ProjectSources: RetrieveProjectSources(d),
-		Logger:         &SimpleLogger{},
+		Logger:         NewLogger(),
 	}
 	for _, dir := range c.ProjectSources {
 		filepath.Walk(dir, c.addFile)
