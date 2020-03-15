@@ -44,15 +44,8 @@ type Publisher interface {
 // Context of buildtool
 type Context struct {
 	*typcore.Context
+	*TypicalBuildTool
 	Cli *cli.Context
-}
-
-// NewContext return new instance of Context
-func NewContext(tc *typcore.Context, cc *cli.Context) *Context {
-	return &Context{
-		Context: tc,
-		Cli:     cc,
-	}
 }
 
 // ReleaseContext is context of release

@@ -24,6 +24,8 @@ type TypicalBuildTool struct {
 	releaser   Releaser
 	publishers []Publisher
 
+	binFolder string
+
 	includeBranch   bool
 	includeCommitID bool
 }
@@ -31,10 +33,11 @@ type TypicalBuildTool struct {
 // New return new instance of build
 func New() *TypicalBuildTool {
 	return &TypicalBuildTool{
-		builder:  NewBuilder(),
-		tester:   NewTester(),
-		mocker:   NewMocker(),
-		releaser: NewReleaser(),
+		builder:   NewBuilder(),
+		tester:    NewTester(),
+		mocker:    NewMocker(),
+		releaser:  NewReleaser(),
+		binFolder: "bin",
 	}
 }
 
@@ -72,6 +75,17 @@ func (b *TypicalBuildTool) WithMocker(mocker Mocker) *TypicalBuildTool {
 func (b *TypicalBuildTool) WithTester(tester Tester) *TypicalBuildTool {
 	b.tester = tester
 	return b
+}
+
+// WithBinFolder return BuildTool with new binFolder
+func (b *TypicalBuildTool) WithBinFolder(binFolder string) *TypicalBuildTool {
+	b.binFolder = binFolder
+	return b
+}
+
+// BinFolder value
+func (b *TypicalBuildTool) BinFolder() string {
+	return b.binFolder
 }
 
 // Validate build
@@ -158,7 +172,7 @@ func (b *TypicalBuildTool) buildCommand(c *typcore.Context) *cli.Command {
 		Aliases: []string{"b"},
 		Usage:   "Build the binary",
 		Action: func(cliCtx *cli.Context) (err error) {
-			_, err = b.Build(NewContext(c, cliCtx))
+			_, err = b.Build(b.CreateContext(c, cliCtx))
 			return
 		},
 	}
@@ -172,14 +186,16 @@ func (b *TypicalBuildTool) runCommand(c *typcore.Context) *cli.Command {
 		SkipFlagParsing: true,
 		Action: func(cliCtx *cli.Context) (err error) {
 			var dist BuildDistribution
-			buildCtx := NewContext(c, cliCtx)
+			bc := b.CreateContext(c, cliCtx)
 
-			if dist, err = b.Build(buildCtx); err != nil {
+			if dist, err = b.Build(bc); err != nil {
 				return
 			}
 
-			log.Info("Run the application")
-			return dist.Run(buildCtx)
+			fmt.Println()
+			fmt.Println()
+
+			return dist.Run(bc)
 		},
 	}
 }
@@ -196,7 +212,7 @@ func (b *TypicalBuildTool) releaseCommand(c *typcore.Context) *cli.Command {
 		},
 		Action: func(cliCtx *cli.Context) (err error) {
 
-			bc := NewContext(c, cliCtx)
+			bc := b.CreateContext(c, cliCtx)
 
 			if !cliCtx.Bool("no-test") && b.tester != nil {
 				if err = b.tester.Test(bc); err != nil {
@@ -263,7 +279,7 @@ func (b *TypicalBuildTool) mockCommand(c *typcore.Context) *cli.Command {
 			if b.mocker == nil {
 				panic("Mocker is nil")
 			}
-			return b.mocker.Mock(NewContext(c, cliCtx))
+			return b.mocker.Mock(b.CreateContext(c, cliCtx))
 		},
 	}
 }
@@ -277,7 +293,7 @@ func (b *TypicalBuildTool) cleanCommand(c *typcore.Context) *cli.Command {
 			&cli.BoolFlag{Name: "short", Aliases: []string{"s"}, Usage: "Short version of clean only clean build-tool"},
 		},
 		Action: func(cliCtx *cli.Context) (err error) {
-			removeAll(c.BinFolder)
+			removeAll(b.binFolder)
 			if cliCtx.Bool("short") {
 				remove(typcore.BuildToolBin(c.TempFolder))
 			} else {
@@ -294,7 +310,7 @@ func (b *TypicalBuildTool) testCommand(c *typcore.Context) *cli.Command {
 		Aliases: []string{"t"},
 		Usage:   "Run the testing",
 		Action: func(cliCtx *cli.Context) error {
-			return b.tester.Test(NewContext(c, cliCtx))
+			return b.tester.Test(b.CreateContext(c, cliCtx))
 		},
 	}
 }
@@ -316,6 +332,15 @@ func (b *TypicalBuildTool) Tag(ctx context.Context, version string, alpha bool) 
 		builder.WriteString("_alpha")
 	}
 	return builder.String()
+}
+
+// CreateContext to create new instance of Context
+func (b *TypicalBuildTool) CreateContext(tc *typcore.Context, cc *cli.Context) *Context {
+	return &Context{
+		Context:          tc,
+		TypicalBuildTool: b,
+		Cli:              cc,
+	}
 }
 
 func removeAll(path string) {

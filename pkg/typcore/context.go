@@ -16,7 +16,6 @@ import (
 // Context of typical build tool
 type Context struct {
 	*Descriptor
-	BinFolder  string
 	CmdFolder  string
 	TempFolder string
 
@@ -36,7 +35,6 @@ func CreateContext(d *Descriptor) *Context {
 		Descriptor: d,
 
 		CmdFolder:  DefaultCmdFolder,
-		BinFolder:  DefaultBinFolder,
 		TempFolder: DefaultTempFolder,
 
 		ProjectPackage: DefaultProjectPackage,

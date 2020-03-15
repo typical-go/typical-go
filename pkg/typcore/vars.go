@@ -15,9 +15,6 @@ var (
 	// DefaultCmdFolder is default value for cmd folder location
 	DefaultCmdFolder = "cmd"
 
-	// DefaultBinFolder is default value for bin folder location
-	DefaultBinFolder = "bin"
-
 	// DefaultReleaseFolder is default value for release folder location
 	DefaultReleaseFolder = "release"
 )
