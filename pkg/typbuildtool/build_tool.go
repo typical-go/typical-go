@@ -33,8 +33,8 @@ func New() *TypicalBuildTool {
 		tester:    NewTester(),
 		mocker:    NewMocker(),
 		releaser:  NewReleaser(),
-		binFolder: "bin",
-		cmdFolder: "cmd",
+		binFolder: DefaultBinFolder,
+		cmdFolder: DefaultCmdFolder,
 		tmpFolder: DefaultTmpFolder,
 	}
 }
