@@ -47,7 +47,7 @@ func (b *StdMocker) Mock(c *Context) (err error) {
 		return
 	}
 
-	mockgen := fmt.Sprintf("%s/bin/mockgen", c.TempFolder)
+	mockgen := fmt.Sprintf("%s/bin/mockgen", c.TmpFolder())
 	ctx := c.Cli.Context
 
 	if _, err = os.Stat(mockgen); os.IsNotExist(err) {

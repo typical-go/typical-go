@@ -18,6 +18,7 @@ import (
 
 // Wrap the project
 func (b *TypicalBuildTool) Wrap(c *typcore.WrapContext) (err error) {
+
 	if c.ProjectPackage == "" {
 		c.ProjectPackage = retrieveProjectPackage(c)
 	}
@@ -57,6 +58,7 @@ func (b *TypicalBuildTool) Wrap(c *typcore.WrapContext) (err error) {
 		c.Info("Build the Build-Tool")
 		return exor.NewGoBuild(binPath, srcPath).
 			SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage", c.ProjectPackage).
+			SetVariable("github.com/typical-go/typical-go/pkg/typbuildtool.DefaultTmpFolder", c.Tmp).
 			WithStdout(os.Stdout).
 			WithStderr(os.Stderr).
 			WithStdin(os.Stdin).

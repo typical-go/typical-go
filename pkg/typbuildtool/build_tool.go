@@ -20,6 +20,7 @@ type TypicalBuildTool struct {
 
 	binFolder string
 	cmdFolder string
+	tmpFolder string
 
 	includeBranch   bool
 	includeCommitID bool
@@ -34,6 +35,7 @@ func New() *TypicalBuildTool {
 		releaser:  NewReleaser(),
 		binFolder: "bin",
 		cmdFolder: "cmd",
+		tmpFolder: DefaultTmpFolder,
 	}
 }
 
@@ -95,6 +97,11 @@ func (b *TypicalBuildTool) BinFolder() string {
 	return b.binFolder
 }
 
+// TmpFolder of build-tool
+func (b *TypicalBuildTool) TmpFolder() string {
+	return b.tmpFolder
+}
+
 // Validate build
 func (b *TypicalBuildTool) Validate() (err error) {
 
@@ -145,10 +152,10 @@ func (b *TypicalBuildTool) Clean(c *Context) (err error) {
 	}
 
 	if c.Cli.Bool("short") {
-		os.Remove(typcore.BuildToolBin(c.TempFolder))
+		os.Remove(typcore.BuildToolBin(b.tmpFolder))
 	} else {
-		c.Infof("Remove All: %s", c.TempFolder)
-		if err := os.RemoveAll(c.TempFolder); err != nil {
+		c.Infof("Remove All: %s", b.tmpFolder)
+		if err := os.RemoveAll(b.tmpFolder); err != nil {
 			c.Error(err.Error())
 		}
 	}
