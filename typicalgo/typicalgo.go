@@ -27,14 +27,14 @@ func (t *TypicalGo) RunApp(d *typcore.Descriptor) (err error) {
 		{
 			Name: "wrap",
 			Flags: []cli.Flag{
-				&cli.StringFlag{Name: "tmp", Required: true},
-				&cli.StringFlag{Name: "project-package"},
+				&cli.StringFlag{Name: "tmp-folder", Required: true},
+				&cli.StringFlag{Name: "project-package", Usage: "To override generated ProjectPackage in context"},
 			},
 			Action: func(cliCtx *cli.Context) (err error) {
 				return d.Wrap(&typcore.WrapContext{
 					Context:        typcore.CreateContext(d),
 					Ctx:            cliCtx.Context,
-					Tmp:            cliCtx.String("tmp"),
+					TmpFolder:      cliCtx.String("tmp-folder"),
 					ProjectPackage: cliCtx.String("project-package"),
 				})
 			},

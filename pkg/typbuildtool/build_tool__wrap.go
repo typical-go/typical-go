@@ -24,10 +24,10 @@ func (b *TypicalBuildTool) Wrap(c *typcore.WrapContext) (err error) {
 	}
 
 	// NOTE: create tmp folder if not exist
-	typcore.MakeTempDir(c.Tmp)
+	typcore.MakeTempDir(c.TmpFolder)
 
-	checksumPath := typcore.Checksum(c.Tmp)
-	buildToolBin := typcore.BuildToolBin(c.Tmp)
+	checksumPath := typcore.Checksum(c.TmpFolder)
+	buildToolBin := typcore.BuildToolBin(c.TmpFolder)
 
 	var checksumData []byte
 	if checksumData, err = checksum("typical"); err != nil {
@@ -37,8 +37,8 @@ func (b *TypicalBuildTool) Wrap(c *typcore.WrapContext) (err error) {
 	if !sameChecksum(checksumPath, checksumData) || notExist(buildToolBin) {
 		var (
 			descriptorPkg = typcore.TypicalPackage(c.ProjectPackage)
-			srcPath       = typcore.BuildToolSrc(c.Tmp)
-			binPath       = typcore.BuildToolBin(c.Tmp)
+			srcPath       = typcore.BuildToolSrc(c.TmpFolder)
+			binPath       = typcore.BuildToolBin(c.TmpFolder)
 		)
 
 		c.Info("Update new checksum")
@@ -58,7 +58,7 @@ func (b *TypicalBuildTool) Wrap(c *typcore.WrapContext) (err error) {
 		c.Info("Build the Build-Tool")
 		return exor.NewGoBuild(binPath, srcPath).
 			SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage", c.ProjectPackage).
-			SetVariable("github.com/typical-go/typical-go/pkg/typbuildtool.DefaultTmpFolder", c.Tmp).
+			SetVariable("github.com/typical-go/typical-go/pkg/typbuildtool.DefaultTmpFolder", c.TmpFolder).
 			WithStdout(os.Stdout).
 			WithStderr(os.Stderr).
 			WithStdin(os.Stdin).

@@ -38,6 +38,6 @@ type ConfigManager interface {
 type WrapContext struct {
 	*Context
 	Ctx            context.Context
-	Tmp            string
+	TmpFolder      string
 	ProjectPackage string
 }
