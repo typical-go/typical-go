@@ -26,7 +26,7 @@ func TestTypicalContext(t *testing.T) {
 		os.Remove("go.mod")
 	}()
 
-	ctx := typcore.CreateContext(&typcore.Descriptor{
+	ctx, err := typcore.CreateContext(&typcore.Descriptor{
 		Name:      "some-name",
 		App:       typicalgo.New(),
 		BuildTool: typbuildtool.New(),
@@ -35,6 +35,8 @@ func TestTypicalContext(t *testing.T) {
 	// NOTE: ProjectPackage need to set manually because its value get from ldflags
 	ctx.ProjectPackage = "some-package"
 
+	require.NoError(t, err)
+
 	require.NoError(t, common.Validate(ctx))
 	require.Equal(t, "0.0.1", ctx.Version)
 	require.Equal(t, []string{"typicalgo", "pkg"}, ctx.ProjectSources)
@@ -42,63 +44,30 @@ func TestTypicalContext(t *testing.T) {
 	require.Equal(t, []string{"typicalgo/some_pkg/some_file.go", "pkg/some_lib/lib.go"}, ctx.ProjectFiles)
 }
 
-func TestTypicalContext_Validate(t *testing.T) {
-	testcases := []struct {
-		*typcore.Context
-		expectedError string
-	}{
-		{
-			Context:       &typcore.Context{},
-			expectedError: "TypicalContext: Descriptor can't be empty",
-		},
-		{
-			Context: &typcore.Context{
-				Descriptor: validDescriptor,
-			},
-			expectedError: "TypicalContext: ProjectPackage can't be empty",
-		},
-		{
-			Context: &typcore.Context{
-				Descriptor:     validDescriptor,
-				ProjectPackage: "some-package",
-				ProjectSources: []string{"not-exist"},
-			},
-			expectedError: "TypicalContext: Source 'not-exist' is not exist",
-		},
-		{
-			Context: &typcore.Context{
-				Descriptor:     validDescriptor,
-				ProjectPackage: "some-package",
-			},
-		},
-	}
-
-	for _, tt := range testcases {
-		err := common.Validate(tt.Context)
-		if tt.expectedError == "" {
-			require.NoError(t, err)
-		} else {
-			require.EqualError(t, err, tt.expectedError)
-		}
-	}
-}
-
 func TestRetrieveProjectSources(t *testing.T) {
 	testcases := []struct {
 		*typcore.Descriptor
-		expected []string
+		expected      []string
+		expectedError string
 	}{
 		{
-			Descriptor: &typcore.Descriptor{App: typicalgo.New()},
-			expected:   []string{"typicalgo"},
+			Descriptor:    &typcore.Descriptor{App: typicalgo.New()},
+			expectedError: "Source 'typicalgo' is not exist",
 		},
 		{
-			Descriptor: &typcore.Descriptor{App: typapp.New(typicalgo.New())},
-			expected:   []string{"typicalgo"},
+			Descriptor:    &typcore.Descriptor{App: typapp.New(typicalgo.New())},
+			expectedError: "Source 'typicalgo' is not exist",
 		},
 	}
 
 	for _, tt := range testcases {
-		require.Equal(t, tt.expected, typcore.RetrieveProjectSources(tt.Descriptor))
+		sources, err := typcore.RetrieveProjectSources(tt.Descriptor)
+		if tt.expectedError == "" {
+			require.NoError(t, err)
+			require.Equal(t, tt.expected, sources)
+		} else {
+			require.EqualError(t, err, tt.expectedError)
+		}
+
 	}
 }

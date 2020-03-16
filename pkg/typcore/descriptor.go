@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/typlog"
 )
 
 // Descriptor describe the project
@@ -31,13 +32,12 @@ type Descriptor struct {
 
 	// ConfigManager of the project (OPTIONAL).
 	ConfigManager
+
+	Logger
 }
 
 // LaunchApp to launch the app
 func (d *Descriptor) LaunchApp() (err error) {
-	if d.App == nil {
-		return errors.New("Descriptor is missing `App`")
-	}
 	if err = d.Validate(); err != nil {
 		return
 	}
@@ -46,13 +46,8 @@ func (d *Descriptor) LaunchApp() (err error) {
 
 // LaunchBuildTool to launch the build tool
 func (d *Descriptor) LaunchBuildTool() (err error) {
-	if d.BuildTool == nil {
-		return errors.New("Descriptor is missing `BuildTool`")
-	}
-
-	c := CreateContext(d)
-
-	if err = common.Validate(c); err != nil {
+	var c *Context
+	if c, err = CreateContext(d); err != nil {
 		return
 	}
 
@@ -67,6 +62,10 @@ func (d *Descriptor) Validate() (err error) {
 
 	if d.Version == "" {
 		d.Version = "0.0.1"
+	}
+
+	if d.Logger == nil {
+		d.Logger = typlog.New()
 	}
 
 	if d.App == nil {

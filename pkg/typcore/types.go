@@ -28,6 +28,14 @@ type SourceableApp interface {
 	ProjectSources() []string
 }
 
+// Logger responsible to log any useful information
+type Logger interface {
+	Info(...interface{})
+	Infof(string, ...interface{})
+	Error(...interface{})
+	Errorf(string, ...interface{})
+}
+
 // ConfigManager responsible to manage config
 type ConfigManager interface {
 	Configurations() []*Configuration
@@ -36,7 +44,7 @@ type ConfigManager interface {
 
 // WrapContext is context of wrap
 type WrapContext struct {
-	*Context
+	*Descriptor
 	Ctx            context.Context
 	TmpFolder      string
 	ProjectPackage string

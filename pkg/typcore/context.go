@@ -15,67 +15,47 @@ import (
 type Context struct {
 	*Descriptor
 
+	ProjectPackage string
 	ProjectDirs    []string
 	ProjectFiles   []string
-	ProjectPackage string
 	ProjectSources []string
-
-	Logger
 }
 
 // CreateContext return new constructor of TypicalContext
-func CreateContext(d *Descriptor) *Context {
-	c := &Context{
-		Descriptor: d,
+func CreateContext(d *Descriptor) (c *Context, err error) {
+	if d == nil {
+		return nil, errors.New("TypicalContext: Descriptor can't be empty")
+	}
+	if err := d.Validate(); err != nil {
+		return nil, err
+	}
 
+	var projectSources []string
+	if projectSources, err = RetrieveProjectSources(d); err != nil {
+		return nil, err
+	}
+
+	var projectDirs, projectFiles []string
+	for _, dir := range projectSources {
+		filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+			if info != nil && info.IsDir() {
+				projectDirs = append(projectDirs, path)
+				return nil
+			}
+			if isWalkTarget(path) {
+				projectFiles = append(projectFiles, path)
+			}
+			return nil
+		})
+	}
+
+	return &Context{
+		Descriptor:     d,
 		ProjectPackage: DefaultProjectPackage,
-		ProjectSources: RetrieveProjectSources(d),
-		Logger:         NewLogger(),
-	}
-	for _, dir := range c.ProjectSources {
-		filepath.Walk(dir, c.addFile)
-	}
-	return c
-}
-
-// Validate typical context
-func (c *Context) Validate() error {
-	if c.Descriptor == nil {
-		return errors.New("TypicalContext: Descriptor can't be empty")
-	}
-	if err := c.Descriptor.Validate(); err != nil {
-		return err
-	}
-
-	if c.ProjectPackage == "" {
-		return errors.New("TypicalContext: ProjectPackage can't be empty")
-	}
-
-	if err := validateProjectSources(c.ProjectSources); err != nil {
-		return fmt.Errorf("TypicalContext: %w", err)
-	}
-	return nil
-}
-
-func (c *Context) addFile(path string, info os.FileInfo, err error) error {
-	if info != nil && info.IsDir() {
-		c.ProjectDirs = append(c.ProjectDirs, path)
-		return nil
-	}
-
-	if isWalkTarget(path) {
-		c.ProjectFiles = append(c.ProjectFiles, path)
-	}
-	return nil
-}
-
-func validateProjectSources(sources []string) (err error) {
-	for _, source := range sources {
-		if _, err = os.Stat(source); os.IsNotExist(err) {
-			return fmt.Errorf("Source '%s' is not exist", source)
-		}
-	}
-	return
+		ProjectSources: projectSources,
+		ProjectDirs:    projectDirs,
+		ProjectFiles:   projectFiles,
+	}, nil
 }
 
 func isWalkTarget(filename string) bool {
@@ -84,7 +64,7 @@ func isWalkTarget(filename string) bool {
 }
 
 // RetrieveProjectSources to retrieve project source
-func RetrieveProjectSources(d *Descriptor) (sources []string) {
+func RetrieveProjectSources(d *Descriptor) (sources []string, err error) {
 	if sourceable, ok := d.App.(SourceableApp); ok {
 		sources = append(sources, sourceable.ProjectSources()...)
 	} else {
@@ -92,6 +72,18 @@ func RetrieveProjectSources(d *Descriptor) (sources []string) {
 	}
 	if _, err := os.Stat("pkg"); !os.IsNotExist(err) {
 		sources = append(sources, "pkg")
+	}
+	if err = validateProjectSources(sources); err != nil {
+		return nil, err
+	}
+	return
+}
+
+func validateProjectSources(sources []string) (err error) {
+	for _, source := range sources {
+		if _, err = os.Stat(source); os.IsNotExist(err) {
+			return fmt.Errorf("Source '%s' is not exist", source)
+		}
 	}
 	return
 }

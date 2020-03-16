@@ -1,4 +1,4 @@
-package typcore
+package typlog
 
 import (
 	"fmt"
@@ -13,8 +13,8 @@ type TypicalLogger struct {
 	io.Writer
 }
 
-// NewLogger return new instance of TypicalLogger
-func NewLogger() *TypicalLogger {
+// New instance of TypicalLogger
+func New() *TypicalLogger {
 	return &TypicalLogger{
 		Writer: os.Stdout,
 	}
