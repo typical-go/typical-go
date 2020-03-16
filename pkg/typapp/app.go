@@ -9,10 +9,10 @@ import (
 	"reflect"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/exor"
 	"github.com/typical-go/typical-go/pkg/typapp/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typdep"
 	"github.com/urfave/cli/v2"
@@ -124,7 +124,7 @@ func (a *TypicalApp) RunApp(d *typcore.Descriptor) (err error) {
 }
 
 // Precondition the app
-func (a *TypicalApp) Precondition(c *typcore.Context) (err error) {
+func (a *TypicalApp) Precondition(c *typbuildtool.Context) (err error) {
 	var constructors []string
 
 	if err = c.Ast().EachAnnotation("constructor", typast.FunctionType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
@@ -140,7 +140,7 @@ func (a *TypicalApp) Precondition(c *typcore.Context) (err error) {
 		}
 	}
 
-	log.Info("Generate constructors")
+	c.Info("Generate constructors")
 	target := "typical/init_app_do_not_edit.go"
 	if err = a.generateConstructor(c, target, constructors); err != nil {
 		return
@@ -159,7 +159,7 @@ func configDefinition(bean *typcore.Configuration) string {
 	}`, typ, bean.Name(), typ)
 }
 
-func (a *TypicalApp) generateConstructor(c *typcore.Context, target string, constructors []string) (err error) {
+func (a *TypicalApp) generateConstructor(c *typbuildtool.Context, target string, constructors []string) (err error) {
 	ctx := context.Background()
 	imports := []string{}
 	for _, dir := range c.ProjectDirs {

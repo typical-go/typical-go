@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/typical-go/typical-go/pkg/typapp"
+	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
@@ -12,7 +13,7 @@ func TestNewApp(t *testing.T) {
 		var _ typcore.App = typapp.New(nil)
 	})
 	t.Run("SHOULD implement Preconditioner", func(t *testing.T) {
-		var _ typcore.Preconditioner = typapp.New(nil)
+		var _ typbuildtool.Preconditioner = typapp.New(nil)
 	})
 	t.Run("SHOULD implement Provider", func(t *testing.T) {
 		var _ typapp.Provider = typapp.New(nil)

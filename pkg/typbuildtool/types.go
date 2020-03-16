@@ -41,6 +41,11 @@ type Publisher interface {
 	Publish(*PublishContext) error
 }
 
+// Preconditioner responsible to precondition
+type Preconditioner interface {
+	Precondition(c *Context) error
+}
+
 // Context of buildtool
 type Context struct {
 	*typcore.Context

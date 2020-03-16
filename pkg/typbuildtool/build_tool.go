@@ -162,3 +162,20 @@ func (b *TypicalBuildTool) Test(c *Context) error {
 	}
 	return b.tester.Test(c)
 }
+
+// Precondition for this project
+func (b *TypicalBuildTool) Precondition(c *Context) (err error) {
+	if preconditioner, ok := c.App.(Preconditioner); ok {
+		if err = preconditioner.Precondition(c); err != nil {
+			return fmt.Errorf("Precondition-App: %w", err)
+		}
+	}
+
+	if preconditioner, ok := c.ConfigManager.(Preconditioner); ok {
+		if err = preconditioner.Precondition(c); err != nil {
+			return fmt.Errorf("Precondition-Config-Manager: %w", err)
+		}
+	}
+
+	return
+}

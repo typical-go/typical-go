@@ -23,11 +23,6 @@ type BuildTool interface {
 	Wrap(*WrapContext) error
 }
 
-// Preconditioner responsible to precondition
-type Preconditioner interface {
-	Precondition(c *Context) error
-}
-
 // SourceableApp mean the app define its own project sources
 type SourceableApp interface {
 	ProjectSources() []string

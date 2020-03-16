@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
@@ -19,7 +20,7 @@ func TestNewConfigManager(t *testing.T) {
 		var _ typcore.ConfigManager = typcfg.New()
 	})
 	t.Run("SHOULD implement of Preconditioner", func(t *testing.T) {
-		var _ typcore.Preconditioner = typcfg.New()
+		var _ typbuildtool.Preconditioner = typcfg.New()
 	})
 }
 

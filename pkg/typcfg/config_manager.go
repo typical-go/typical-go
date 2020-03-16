@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/joho/godotenv"
-	log "github.com/sirupsen/logrus"
+	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
@@ -47,7 +47,7 @@ func (m *TypConfigManager) Loader() Loader {
 }
 
 // Precondition to use config manager
-func (m *TypConfigManager) Precondition(c *typcore.Context) (err error) {
+func (m *TypConfigManager) Precondition(c *typbuildtool.Context) (err error) {
 	if _, err = os.Stat(defaultDotEnv); os.IsNotExist(err) {
 		var f *os.File
 		if f, err = os.Create(defaultDotEnv); err != nil {
@@ -55,12 +55,12 @@ func (m *TypConfigManager) Precondition(c *typcore.Context) (err error) {
 		}
 		defer f.Close()
 
-		log.Infof("Generate new project environment at '%s'", defaultDotEnv)
+		c.Infof("Generate new project environment at '%s'", defaultDotEnv)
 		if err = m.Write(f); err != nil {
 			return
 		}
 	}
-	if err = loadEnvFile(); err != nil {
+	if err = loadEnvFile(c); err != nil {
 		return
 	}
 	return
@@ -120,7 +120,7 @@ func (m *TypConfigManager) LoadConfig(name string, spec interface{}) error {
 	return fmt.Errorf("ConfigLoader is missing")
 }
 
-func loadEnvFile() (err error) {
+func loadEnvFile(c *typbuildtool.Context) (err error) {
 	// TODO: don't use godotenv for flexibility
 	configSource := os.Getenv(configKey)
 	var configs []string
@@ -135,7 +135,7 @@ func loadEnvFile() (err error) {
 	}
 
 	if len(envMap) > 0 {
-		log.Infof("Load environments %s", configSource)
+		c.Infof("Load environments %s", configSource)
 		var b strings.Builder
 		for key, value := range envMap {
 			if err = os.Setenv(key, value); err != nil {
@@ -145,7 +145,7 @@ func loadEnvFile() (err error) {
 			b.WriteString(key)
 			b.WriteString(" ")
 		}
-		log.Info(b.String())
+		c.Info(b.String())
 	}
 	return
 }

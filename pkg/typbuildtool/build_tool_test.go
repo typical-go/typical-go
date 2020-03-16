@@ -29,4 +29,7 @@ func TestBuildTool(t *testing.T) {
 	t.Run("SHOULD implement Publisher", func(t *testing.T) {
 		var _ typbuildtool.Publisher = typbuildtool.New()
 	})
+	t.Run("SHOULD implement Preconditioner", func(t *testing.T) {
+		var _ typbuildtool.Preconditioner = typbuildtool.New()
+	})
 }

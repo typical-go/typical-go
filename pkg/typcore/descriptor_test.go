@@ -18,10 +18,6 @@ func TestDescriptor(t *testing.T) {
 	t.Run("SHOULD implement BuildToolLauncher", func(t *testing.T) {
 		var _ typcore.BuildToolLauncher = &typcore.Descriptor{}
 	})
-	t.Run("SHOULD implement Preconditioner", func(t *testing.T) {
-		var _ typcore.Preconditioner = &typcore.Descriptor{}
-	})
-
 }
 
 func TestDescriptor_ValidateName(t *testing.T) {
