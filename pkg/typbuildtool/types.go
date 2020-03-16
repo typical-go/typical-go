@@ -2,8 +2,6 @@ package typbuildtool
 
 import (
 	"github.com/typical-go/typical-go/pkg/git"
-	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/urfave/cli/v2"
 )
 
 // Builder reponsible to build
@@ -44,13 +42,6 @@ type Publisher interface {
 // Preconditioner responsible to precondition
 type Preconditioner interface {
 	Precondition(c *Context) error
-}
-
-// Context of buildtool
-type Context struct {
-	*typcore.Context
-	*TypicalBuildTool
-	Cli *cli.Context
 }
 
 // ReleaseContext is context of release

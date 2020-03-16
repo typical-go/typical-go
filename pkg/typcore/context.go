@@ -8,9 +8,7 @@ import (
 	"reflect"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typast"
 )
 
 // Context of typical build tool
@@ -22,8 +20,6 @@ type Context struct {
 	ProjectFiles   []string
 	ProjectPackage string
 	ProjectSources []string
-
-	ast *typast.Ast
 
 	Logger
 }
@@ -43,17 +39,6 @@ func CreateContext(d *Descriptor) *Context {
 		filepath.Walk(dir, c.addFile)
 	}
 	return c
-}
-
-// Ast contain detail of AST analysis
-func (c *Context) Ast() *typast.Ast {
-	if c.ast == nil {
-		var err error
-		if c.ast, err = typast.Walk(c.ProjectFiles); err != nil {
-			log.Errorf("PreconditionContext: %w", err.Error())
-		}
-	}
-	return c.ast
 }
 
 // Validate typical context
