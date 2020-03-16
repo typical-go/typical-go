@@ -12,9 +12,6 @@ var (
 	// DefaultTempFolder is default value for temp folder location
 	DefaultTempFolder = ".typical-tmp"
 
-	// DefaultCmdFolder is default value for cmd folder location
-	DefaultCmdFolder = "cmd"
-
 	// DefaultReleaseFolder is default value for release folder location
 	DefaultReleaseFolder = "release"
 )

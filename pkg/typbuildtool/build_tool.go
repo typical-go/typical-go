@@ -18,6 +18,9 @@ type TypicalBuildTool struct {
 	releaser   Releaser
 	publishers []Publisher
 
+	binFolder string
+	cmdFolder string
+
 	includeBranch   bool
 	includeCommitID bool
 }
@@ -25,10 +28,12 @@ type TypicalBuildTool struct {
 // New return new instance of build
 func New() *TypicalBuildTool {
 	return &TypicalBuildTool{
-		builder:  NewBuilder(),
-		tester:   NewTester(),
-		mocker:   NewMocker(),
-		releaser: NewReleaser(),
+		builder:   NewBuilder(),
+		tester:    NewTester(),
+		mocker:    NewMocker(),
+		releaser:  NewReleaser(),
+		binFolder: "bin",
+		cmdFolder: "cmd",
 	}
 }
 
@@ -66,6 +71,28 @@ func (b *TypicalBuildTool) WithMocker(mocker Mocker) *TypicalBuildTool {
 func (b *TypicalBuildTool) WithTester(tester Tester) *TypicalBuildTool {
 	b.tester = tester
 	return b
+}
+
+// WithBinFolder return BuildTool with new binFolder
+func (b *TypicalBuildTool) WithBinFolder(binFolder string) *TypicalBuildTool {
+	b.binFolder = binFolder
+	return b
+}
+
+// WithCmdFolder return BuildTool with new cmdFolder
+func (b *TypicalBuildTool) WithCmdFolder(cmdFolder string) *TypicalBuildTool {
+	b.cmdFolder = cmdFolder
+	return b
+}
+
+// CmdFolder of build-tool
+func (b *TypicalBuildTool) CmdFolder() string {
+	return b.cmdFolder
+}
+
+// BinFolder of build-tool
+func (b *TypicalBuildTool) BinFolder() string {
+	return b.binFolder
 }
 
 // Validate build

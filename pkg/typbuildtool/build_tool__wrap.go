@@ -27,6 +27,7 @@ func (b *TypicalBuildTool) Wrap(c *typcore.WrapContext) (err error) {
 
 	checksumPath := typcore.Checksum(c.Tmp)
 	buildToolBin := typcore.BuildToolBin(c.Tmp)
+
 	var checksumData []byte
 	if checksumData, err = checksum("typical"); err != nil {
 		return

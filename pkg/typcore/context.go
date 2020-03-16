@@ -16,7 +16,6 @@ import (
 // Context of typical build tool
 type Context struct {
 	*Descriptor
-	CmdFolder  string
 	TempFolder string
 
 	ProjectDirs    []string
@@ -34,7 +33,6 @@ func CreateContext(d *Descriptor) *Context {
 	c := &Context{
 		Descriptor: d,
 
-		CmdFolder:  DefaultCmdFolder,
 		TempFolder: DefaultTempFolder,
 
 		ProjectPackage: DefaultProjectPackage,

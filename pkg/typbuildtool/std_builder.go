@@ -16,15 +16,13 @@ type StdBuilder struct {
 	stdout       io.Writer
 	stderr       io.Writer
 	preExecutors []exor.Executor
-	binFolder    string
 }
 
 // NewBuilder return new instance of standard builder
 func NewBuilder() *StdBuilder {
 	return &StdBuilder{
-		stdout:    os.Stdout,
-		stderr:    os.Stderr,
-		binFolder: "bin",
+		stdout: os.Stdout,
+		stderr: os.Stderr,
 	}
 }
 
@@ -40,12 +38,6 @@ func (b *StdBuilder) WithStderr(stderr io.Writer) *StdBuilder {
 	return b
 }
 
-// WithBinFolder return BuildTool with new binFolder
-func (b *StdBuilder) WithBinFolder(binFolder string) *StdBuilder {
-	b.binFolder = binFolder
-	return b
-}
-
 // Before build execution
 func (b *StdBuilder) Before(executor ...exor.Executor) *StdBuilder {
 	b.preExecutors = executor
@@ -54,8 +46,8 @@ func (b *StdBuilder) Before(executor ...exor.Executor) *StdBuilder {
 
 // Build the project
 func (b *StdBuilder) Build(c *Context) (dist BuildDistribution, err error) {
-	binary := fmt.Sprintf("%s/%s", b.binFolder, c.Name)
-	srcDir := fmt.Sprintf("%s/%s", c.CmdFolder, c.Name)
+	binary := fmt.Sprintf("%s/%s", c.BinFolder(), c.Name)
+	srcDir := fmt.Sprintf("%s/%s", c.CmdFolder(), c.Name)
 	src := fmt.Sprintf("./%s/main.go", srcDir)
 	ctx := c.Cli.Context
 
@@ -87,8 +79,8 @@ func (b *StdBuilder) Build(c *Context) (dist BuildDistribution, err error) {
 
 // Clean build result
 func (b *StdBuilder) Clean(c *Context) (err error) {
-	c.Infof("Remove All in '%s'", b.binFolder)
-	if err := os.RemoveAll(b.binFolder); err != nil {
+	c.Infof("Remove All in '%s'", c.BinFolder())
+	if err := os.RemoveAll(c.BinFolder()); err != nil {
 		c.Error(err.Error())
 	}
 	return

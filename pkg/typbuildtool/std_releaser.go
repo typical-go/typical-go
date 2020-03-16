@@ -74,7 +74,7 @@ func (r *StdReleaser) build(c *Context, tag string, target ReleaseTarget) (binar
 	cmd := exec.CommandContext(ctx, "go", "build",
 		"-o", fmt.Sprintf("%s/%s", r.releaseFolder, binary),
 		"-ldflags", "-w -s",
-		fmt.Sprintf("./%s/%s", c.CmdFolder, c.Name),
+		fmt.Sprintf("./%s/%s", c.CmdFolder(), c.Name),
 	)
 	cmd.Env = append(os.Environ(), "GOOS="+goos, "GOARCH="+goarch)
 	cmd.Stdout = os.Stdout
