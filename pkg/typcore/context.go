@@ -58,11 +58,9 @@ func (c *Context) Validate() error {
 }
 
 func (c *Context) addFile(path string, info os.FileInfo, err error) error {
-	if info != nil {
-		if info.IsDir() {
-			c.ProjectDirs = append(c.ProjectDirs, path)
-			return nil
-		}
+	if info != nil && info.IsDir() {
+		c.ProjectDirs = append(c.ProjectDirs, path)
+		return nil
 	}
 
 	if isWalkTarget(path) {

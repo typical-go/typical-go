@@ -5,8 +5,6 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/common"
-
-	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 // TypicalBuildTool is typical Build Tool for golang project
@@ -152,7 +150,7 @@ func (b *TypicalBuildTool) Clean(c *Context) (err error) {
 	}
 
 	if c.Cli.Bool("short") {
-		os.Remove(typcore.BuildToolBin(b.tmpFolder))
+		os.Remove(b.tmpFolder + "/build-tool")
 	} else {
 		c.Infof("Remove All: %s", b.tmpFolder)
 		if err := os.RemoveAll(b.tmpFolder); err != nil {

@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/exor"
-	"github.com/typical-go/typical-go/pkg/typcore"
 
 	"github.com/typical-go/typical-go/pkg/typbuildtool/internal/tmpl"
 )
@@ -55,7 +54,7 @@ func (b *StdBuilder) Build(c *Context) (dist BuildDistribution, err error) {
 	if _, err = os.Stat(src); os.IsNotExist(err) {
 		os.MkdirAll(srcDir, 0777)
 		data := &tmpl.AppMainData{
-			TypicalPackage: typcore.TypicalPackage(c.ProjectPackage),
+			TypicalPackage: c.ProjectPackage + "/typical",
 		}
 		if err = exor.NewWriteTemplate(src, tmpl.AppMain, data).Execute(ctx); err != nil {
 			return

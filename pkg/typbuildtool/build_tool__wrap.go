@@ -24,25 +24,25 @@ func (b *TypicalBuildTool) Wrap(c *typcore.WrapContext) (err error) {
 	}
 
 	// NOTE: create tmp folder if not exist
-	typcore.MakeTempDir(c.TmpFolder)
+	os.MkdirAll(c.TmpFolder+"/build-tool", os.ModePerm)
+	os.MkdirAll(c.TmpFolder+"/bin", os.ModePerm)
 
-	checksumPath := typcore.Checksum(c.TmpFolder)
-	buildToolBin := typcore.BuildToolBin(c.TmpFolder)
+	checksum := c.TmpFolder + "/checksum"
+	out := c.TmpFolder + "/bin/build-tool"
+	srcPath := c.TmpFolder + "/build-tool/main.go"
 
 	var checksumData []byte
-	if checksumData, err = checksum("typical"); err != nil {
+	if checksumData, err = generateChecksum("typical"); err != nil {
 		return
 	}
 
-	if !sameChecksum(checksumPath, checksumData) || notExist(buildToolBin) {
+	if !sameChecksum(checksum, checksumData) || notExist(out) {
 		var (
-			descriptorPkg = typcore.TypicalPackage(c.ProjectPackage)
-			srcPath       = typcore.BuildToolSrc(c.TmpFolder)
-			binPath       = typcore.BuildToolBin(c.TmpFolder)
+			descriptorPkg = c.ProjectPackage + "/typical"
 		)
 
 		c.Info("Update new checksum")
-		if err = ioutil.WriteFile(checksumPath, checksumData, 0777); err != nil {
+		if err = ioutil.WriteFile(checksum, checksumData, 0777); err != nil {
 			return
 		}
 
@@ -56,7 +56,7 @@ func (b *TypicalBuildTool) Wrap(c *typcore.WrapContext) (err error) {
 		}
 
 		c.Info("Build the Build-Tool")
-		return exor.NewGoBuild(binPath, srcPath).
+		return exor.NewGoBuild(out, srcPath).
 			SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage", c.ProjectPackage).
 			SetVariable("github.com/typical-go/typical-go/pkg/typbuildtool.DefaultTmpFolder", c.TmpFolder).
 			WithStdout(os.Stdout).
@@ -73,7 +73,7 @@ func notExist(path string) bool {
 	return os.IsNotExist(err)
 }
 
-func checksum(path string) ([]byte, error) {
+func generateChecksum(path string) ([]byte, error) {
 	h := sha256.New()
 	if err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
