@@ -59,11 +59,11 @@ func (b *StdMocker) Mock(c *Context) (err error) {
 
 	for pkg, targets := range b.targetMap {
 
-		log.Infof("Remove package: %s", pkg)
+		c.Infof("Remove package: %s", pkg)
 		os.RemoveAll(pkg)
 
 		for _, target := range targets {
-			log.Infof("Generate mock: %s", target.Dest)
+			c.Infof("Generate mock: %s", target.Dest)
 			cmd := exec.CommandContext(ctx, mockgen,
 				"-destination", target.Dest,
 				"-package", target.MockPkg,
@@ -72,7 +72,7 @@ func (b *StdMocker) Mock(c *Context) (err error) {
 			)
 			cmd.Stderr = os.Stderr
 			if err := cmd.Run(); err != nil {
-				log.Errorf("Mock '%s' failed: %w", target, err)
+				c.Errorf("Mock '%s' failed: %w", target, err)
 			}
 		}
 	}

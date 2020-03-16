@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/exor"
 )
 
@@ -39,6 +38,5 @@ func (s *StdTester) Test(c *Context) (err error) {
 		WithStdout(os.Stdout).
 		WithStderr(os.Stderr)
 
-	log.Info("Run testings")
 	return gotest.Execute(c.Cli.Context)
 }

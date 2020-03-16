@@ -13,6 +13,7 @@ type Logger interface {
 	Info(...interface{})
 	Infof(string, ...interface{})
 	Error(...interface{})
+	Errorf(string, ...interface{})
 }
 
 // TypicalLogger is simple logger
