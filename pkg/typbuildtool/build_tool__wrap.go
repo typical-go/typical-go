@@ -12,7 +12,6 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/exor"
-	"github.com/typical-go/typical-go/pkg/typbuildtool/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
@@ -48,9 +47,7 @@ func (b *TypicalBuildTool) Wrap(c *typcore.WrapContext) (err error) {
 
 		if notExist(srcPath) {
 			c.Infof("Generate Build-Tool main source: %s", srcPath)
-			if err = exor.NewWriteTemplate(srcPath, tmpl.MainSrcBuildTool, tmpl.MainSrcData{
-				DescriptorPackage: descriptorPkg,
-			}).Execute(c.Ctx); err != nil {
+			if err = typcore.WriteBuildToolMain(c.Ctx, srcPath, descriptorPkg); err != nil {
 				return
 			}
 		}
