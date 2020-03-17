@@ -42,13 +42,13 @@ func (*TypicalWrapper) Wrap(c *WrapContext) (err error) {
 		}
 
 		if _, err = os.Stat(srcPath); os.IsNotExist(err) {
-			c.Infof("Generate Build-Tool main source: %s", srcPath)
+			c.Infof("Generate build-tool main source: %s", srcPath)
 			if err = WriteBuildToolMain(c.Ctx, srcPath, descriptorPkg); err != nil {
 				return
 			}
 		}
 
-		c.Info("Build the Build-Tool")
+		c.Info("Build the build-tool")
 		return exor.NewGoBuild(out, srcPath).
 			SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage", c.ProjectPackage).
 			SetVariable("github.com/typical-go/typical-go/pkg/typbuildtool.DefaultTmpFolder", c.TmpFolder).
