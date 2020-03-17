@@ -124,11 +124,13 @@ func (b *TypicalBuildTool) Validate() (err error) {
 
 // Build task
 func (b *TypicalBuildTool) Build(c *Context) (dist BuildDistribution, err error) {
+	c.Info("Build the project")
 	return b.builder.Build(c)
 }
 
 // Publish the project
 func (b *TypicalBuildTool) Publish(pc *PublishContext) (err error) {
+	pc.Info("Build the project")
 	for _, publisher := range b.publishers {
 		if err = publisher.Publish(pc); err != nil {
 			return
@@ -139,12 +141,12 @@ func (b *TypicalBuildTool) Publish(pc *PublishContext) (err error) {
 
 // Release the project
 func (b *TypicalBuildTool) Release(rc *ReleaseContext) ([]string, error) {
+	rc.Info("Release the project")
 	return b.releaser.Release(rc)
 }
 
 // Clean the project
 func (b *TypicalBuildTool) Clean(c *Context) (err error) {
-
 	if cleaner, ok := b.builder.(Cleaner); ok {
 		cleaner.Clean(c)
 	}
@@ -165,6 +167,7 @@ func (b *TypicalBuildTool) Test(c *Context) error {
 	if b.tester == nil {
 		panic("TypicalBuildTool: missing tester")
 	}
+	c.Info("Test the project")
 	return b.tester.Test(c)
 }
 
