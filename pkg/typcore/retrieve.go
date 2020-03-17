@@ -2,6 +2,7 @@ package typcore
 
 import (
 	"fmt"
+	"go/build"
 	"os"
 	"reflect"
 	"strings"
@@ -35,17 +36,37 @@ func RetrieveProjectSources(d *Descriptor) (sources []string, err error) {
 	if _, err := os.Stat("pkg"); !os.IsNotExist(err) {
 		sources = append(sources, "pkg")
 	}
-	if err = validateProjectSources(sources); err != nil {
-		return nil, err
+
+	for _, source := range sources {
+		if _, err = os.Stat(source); os.IsNotExist(err) {
+			return nil, fmt.Errorf("ProjectSource '%s' is not exist", source)
+		}
 	}
 	return
 }
 
-func validateProjectSources(sources []string) (err error) {
-	for _, source := range sources {
-		if _, err = os.Stat(source); os.IsNotExist(err) {
-			return fmt.Errorf("ProjectSource '%s' is not exist", source)
-		}
+// RetrieveProjectPackage to retrieve project package
+func RetrieveProjectPackage() (pkg string) {
+	var (
+		err  error
+		root string
+		f    *os.File
+	)
+
+	if root, err = os.Getwd(); err != nil {
+		panic(err.Error())
 	}
-	return
+
+	if f, err = os.Open(root + "/go.mod"); err != nil {
+		// NOTE: go.mod is not exist. Check if the project sit in $GOPATH
+		gopath := build.Default.GOPATH
+		if strings.HasPrefix(root, gopath) {
+			return root[len(gopath):]
+		}
+		panic("Failed to retrieve ProjectPackage: `go.mod` is missing and the project not in $GOPATH")
+	}
+	defer f.Close()
+
+	modfile := common.ParseModfile(f)
+	return modfile.ProjectPackage
 }
