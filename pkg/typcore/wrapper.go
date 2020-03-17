@@ -1,4 +1,4 @@
-package typbuildtool
+package typcore
 
 import (
 	"bytes"
@@ -12,11 +12,18 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/exor"
-	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
+// TypicalWrapper responsible to wrap the typical project
+type TypicalWrapper struct{}
+
+// NewWrapper return new instance of TypicalWrapper
+func NewWrapper() *TypicalWrapper {
+	return &TypicalWrapper{}
+}
+
 // Wrap the project
-func (b *TypicalBuildTool) Wrap(c *typcore.WrapContext) (err error) {
+func (*TypicalWrapper) Wrap(c *WrapContext) (err error) {
 
 	if c.ProjectPackage == "" {
 		c.ProjectPackage = retrieveProjectPackage(c)
@@ -47,7 +54,7 @@ func (b *TypicalBuildTool) Wrap(c *typcore.WrapContext) (err error) {
 
 		if notExist(srcPath) {
 			c.Infof("Generate Build-Tool main source: %s", srcPath)
-			if err = typcore.WriteBuildToolMain(c.Ctx, srcPath, descriptorPkg); err != nil {
+			if err = WriteBuildToolMain(c.Ctx, srcPath, descriptorPkg); err != nil {
 				return
 			}
 		}
@@ -95,7 +102,7 @@ func sameChecksum(path string, data []byte) bool {
 	return bytes.Compare(current, data) == 0
 }
 
-func retrieveProjectPackage(c *typcore.WrapContext) (pkg string) {
+func retrieveProjectPackage(c *WrapContext) (pkg string) {
 	var (
 		err  error
 		root string

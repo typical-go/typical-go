@@ -8,11 +8,15 @@ import (
 )
 
 // TypicalGo is app of typical-go
-type TypicalGo struct{}
+type TypicalGo struct {
+	wrapper typcore.Wrapper
+}
 
-// New of Typical-Go
+// New instance of TypicalGo
 func New() *TypicalGo {
-	return &TypicalGo{}
+	return &TypicalGo{
+		wrapper: typcore.NewWrapper(),
+	}
 }
 
 // RunApp to run the typical-go
@@ -25,14 +29,14 @@ func (t *TypicalGo) RunApp(d *typcore.Descriptor) (err error) {
 
 	app.Commands = []*cli.Command{
 		{
-			Name: "wrap",
+			Name:  "wrap",
+			Usage: "wrap the project with its build-tool",
 			Flags: []cli.Flag{
 				&cli.StringFlag{Name: "tmp-folder", Required: true},
 				&cli.StringFlag{Name: "project-package", Usage: "To override generated ProjectPackage in context"},
 			},
 			Action: func(cliCtx *cli.Context) (err error) {
-
-				return d.Wrap(&typcore.WrapContext{
+				return t.Wrap(&typcore.WrapContext{
 					Descriptor:     d,
 					Ctx:            cliCtx.Context,
 					TmpFolder:      cliCtx.String("tmp-folder"),
@@ -42,4 +46,9 @@ func (t *TypicalGo) RunApp(d *typcore.Descriptor) (err error) {
 		},
 	}
 	return app.Run(os.Args)
+}
+
+// Wrap the project
+func (t *TypicalGo) Wrap(c *typcore.WrapContext) error {
+	return t.wrapper.Wrap(c)
 }

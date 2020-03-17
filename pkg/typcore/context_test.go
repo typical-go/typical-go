@@ -52,11 +52,11 @@ func TestRetrieveProjectSources(t *testing.T) {
 	}{
 		{
 			Descriptor:    &typcore.Descriptor{App: typicalgo.New()},
-			expectedError: "Source 'typicalgo' is not exist",
+			expectedError: "ProjectSource 'typicalgo' is not exist",
 		},
 		{
 			Descriptor:    &typcore.Descriptor{App: typapp.New(typicalgo.New())},
-			expectedError: "Source 'typicalgo' is not exist",
+			expectedError: "ProjectSource 'typicalgo' is not exist",
 		},
 	}
 

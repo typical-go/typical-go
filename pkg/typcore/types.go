@@ -20,7 +20,6 @@ type App interface {
 // BuildTool interface
 type BuildTool interface {
 	RunBuildTool(*Context) error
-	Wrap(*WrapContext) error
 }
 
 // SourceableApp mean the app define its own project sources
@@ -40,6 +39,11 @@ type Logger interface {
 type ConfigManager interface {
 	Configurations() []*Configuration
 	RetrieveConfig(name string) (interface{}, error)
+}
+
+// Wrapper responsible to wrap the project
+type Wrapper interface {
+	Wrap(*WrapContext) error
 }
 
 // WrapContext is context of wrap
