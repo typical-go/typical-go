@@ -6,7 +6,7 @@ import (
 
 // Builder reponsible to build
 type Builder interface {
-	Build(c *Context) (dist BuildDistribution, err error)
+	Build(c *Context) (dists []BuildDistribution, err error)
 }
 
 // Cleaner responsible to clean the project

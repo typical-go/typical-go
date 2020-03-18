@@ -15,7 +15,7 @@ var Descriptor = typcore.Descriptor{
 	App: typicalgo.New(),
 
 	BuildTool: typbuildtool.New().
-		AppendCommanders(
+		WithCommanders(
 			typbuildtool.NewCommander(taskTestExample), // Test all the examples
 		).
 		WithPublishers(

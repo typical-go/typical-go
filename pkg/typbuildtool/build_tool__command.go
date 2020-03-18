@@ -11,26 +11,15 @@ import (
 // Commands to return command
 func (b *TypicalBuildTool) Commands(c *typcore.Context) (cmds []*cli.Command) {
 
-	if b.builder != nil {
-		cmds = append(cmds,
-			b.buildCommand(c),
-			b.runCommand(c),
-		)
+	cmds = []*cli.Command{
+		b.buildCommand(c),
+		b.runCommand(c),
+		b.cleanCommand(c),
+		b.testCommand(c),
+		b.mockCommand(c),
+		b.releaseCommand(c),
 	}
 
-	cmds = append(cmds, b.cleanCommand(c))
-
-	if b.tester != nil {
-		cmds = append(cmds, b.testCommand(c))
-	}
-
-	if b.mocker != nil {
-		cmds = append(cmds, b.mockCommand(c))
-	}
-
-	if b.releaser != nil {
-		cmds = append(cmds, b.releaseCommand(c))
-	}
 	for _, commanders := range b.commanders {
 		cmds = append(cmds, commanders.Commands(c)...)
 	}
@@ -67,14 +56,14 @@ func (b *TypicalBuildTool) runCommand(c *typcore.Context) *cli.Command {
 		Usage:           "Run the binary",
 		SkipFlagParsing: true,
 		Action: func(cliCtx *cli.Context) (err error) {
-			var dist BuildDistribution
 			bc := b.createContext(c, cliCtx)
 
-			if dist, err = b.Build(bc); err != nil {
+			var dists []BuildDistribution
+			if dists, err = b.Build(bc); err != nil {
 				return
 			}
 
-			if dist != nil {
+			for _, dist := range dists {
 				if err = dist.Run(bc); err != nil {
 					return
 				}
@@ -89,10 +78,7 @@ func (b *TypicalBuildTool) mockCommand(c *typcore.Context) *cli.Command {
 		Name:  "mock",
 		Usage: "Generate mock class",
 		Action: func(cliCtx *cli.Context) (err error) {
-			if b.mocker == nil {
-				panic("Mocker is nil")
-			}
-			return b.mocker.Mock(b.createContext(c, cliCtx))
+			return b.Mock(b.createContext(c, cliCtx))
 		},
 	}
 }

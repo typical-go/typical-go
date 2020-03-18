@@ -9,12 +9,9 @@ import (
 
 // TypicalBuildTool is typical Build Tool for golang project
 type TypicalBuildTool struct {
-	commanders []Commander
-	builder    Builder
-	tester     Tester
-	mocker     Mocker
-	releaser   Releaser
+	modules    []interface{}
 	publishers []Publisher
+	commanders []Commander
 
 	binFolder string
 	cmdFolder string
@@ -26,51 +23,29 @@ type TypicalBuildTool struct {
 
 // New return new instance of build
 func New() *TypicalBuildTool {
-	m := NewModule()
 	return &TypicalBuildTool{
-		builder:   m,
-		tester:    m,
-		mocker:    m,
-		releaser:  m,
+		modules:   []interface{}{NewModule()},
 		binFolder: DefaultBinFolder,
 		cmdFolder: DefaultCmdFolder,
 		tmpFolder: DefaultTmpFolder,
 	}
 }
 
-// AppendCommanders to return BuildTool with appended commander
-func (b *TypicalBuildTool) AppendCommanders(commanders ...Commander) *TypicalBuildTool {
-	b.commanders = append(b.commanders, commanders...)
-	return b
-}
-
-// WithBuilder return  BuildTool with new builder
-func (b *TypicalBuildTool) WithBuilder(builder Builder) *TypicalBuildTool {
-	b.builder = builder
-	return b
-}
-
-// WithReleaser return BuildTool with new releaser
-func (b *TypicalBuildTool) WithReleaser(releaser Releaser) *TypicalBuildTool {
-	b.releaser = releaser
-	return b
-}
-
-// WithPublishers return BuildTool with new publishers
+// WithPublishers return build-tool with new publishers
 func (b *TypicalBuildTool) WithPublishers(publishers ...Publisher) *TypicalBuildTool {
 	b.publishers = publishers
 	return b
 }
 
-// WithMocker return BuildTool with new mocker
-func (b *TypicalBuildTool) WithMocker(mocker Mocker) *TypicalBuildTool {
-	b.mocker = mocker
+// WithModules return build-tool with modules
+func (b *TypicalBuildTool) WithModules(modules ...interface{}) *TypicalBuildTool {
+	b.modules = modules
 	return b
 }
 
-// WithTester return BuildTool with new tester
-func (b *TypicalBuildTool) WithTester(tester Tester) *TypicalBuildTool {
-	b.tester = tester
+// WithCommanders return build-tool with commanders
+func (b *TypicalBuildTool) WithCommanders(commanders ...Commander) *TypicalBuildTool {
+	b.commanders = commanders
 	return b
 }
 
@@ -103,30 +78,28 @@ func (b *TypicalBuildTool) TmpFolder() string {
 
 // Validate build
 func (b *TypicalBuildTool) Validate() (err error) {
-
-	if err = common.Validate(b.builder); err != nil {
-		return fmt.Errorf("BuildTool: Builder: %w", err)
-	}
-
-	if err = common.Validate(b.mocker); err != nil {
-		return fmt.Errorf("BuildTool: Mocker: %w", err)
-	}
-
-	if err = common.Validate(b.tester); err != nil {
-		return fmt.Errorf("BuildTool: Tester: %w", err)
-	}
-
-	if err = common.Validate(b.releaser); err != nil {
-		return fmt.Errorf("BuildTool: Releaser: %w", err)
+	for _, module := range b.modules {
+		if err = common.Validate(module); err != nil {
+			return fmt.Errorf("BuildTool: %w", err)
+		}
 	}
 
 	return
 }
 
 // Build task
-func (b *TypicalBuildTool) Build(c *Context) (dist BuildDistribution, err error) {
+func (b *TypicalBuildTool) Build(c *Context) (dists []BuildDistribution, err error) {
 	c.Info("Build the project")
-	return b.builder.Build(c)
+	for _, module := range b.modules {
+		if builder, ok := module.(Builder); ok {
+			var dists1 []BuildDistribution
+			if dists1, err = builder.Build(c); err != nil {
+				return
+			}
+			dists = append(dists, dists1...)
+		}
+	}
+	return
 }
 
 // Publish the project
@@ -141,17 +114,31 @@ func (b *TypicalBuildTool) Publish(pc *PublishContext) (err error) {
 }
 
 // Release the project
-func (b *TypicalBuildTool) Release(rc *ReleaseContext) ([]string, error) {
+func (b *TypicalBuildTool) Release(rc *ReleaseContext) (files []string, err error) {
 	rc.Info("Release the project")
-	return b.releaser.Release(rc)
+	for _, module := range b.modules {
+		if releaser, ok := module.(Releaser); ok {
+			var files1 []string
+			if files1, err = releaser.Release(rc); err != nil {
+				return
+			}
+			files = append(files, files1...)
+		}
+	}
+	return
 }
 
 // Clean the project
 func (b *TypicalBuildTool) Clean(c *Context) (err error) {
-	if cleaner, ok := b.builder.(Cleaner); ok {
-		cleaner.Clean(c)
+	for _, module := range b.modules {
+		if cleaner, ok := module.(Cleaner); ok {
+			if err = cleaner.Clean(c); err != nil {
+				return
+			}
+		}
 	}
 
+	// TODO: move to module
 	if c.Cli.Bool("short") {
 		os.Remove(b.tmpFolder + "/build-tool")
 	} else {
@@ -164,12 +151,29 @@ func (b *TypicalBuildTool) Clean(c *Context) (err error) {
 }
 
 // Test the project
-func (b *TypicalBuildTool) Test(c *Context) error {
-	if b.tester == nil {
-		panic("TypicalBuildTool: missing tester")
-	}
+func (b *TypicalBuildTool) Test(c *Context) (err error) {
 	c.Info("Test the project")
-	return b.tester.Test(c)
+	for _, module := range b.modules {
+		if tester, ok := module.(Tester); ok {
+			if err = tester.Test(c); err != nil {
+				return
+			}
+		}
+	}
+	return
+}
+
+// Mock the project
+func (b *TypicalBuildTool) Mock(c *Context) (err error) {
+	c.Info("Mock the project")
+	for _, module := range b.modules {
+		if mocker, ok := module.(Mocker); ok {
+			if err = mocker.Mock(c); err != nil {
+				return
+			}
+		}
+	}
+	return
 }
 
 // Precondition for this project

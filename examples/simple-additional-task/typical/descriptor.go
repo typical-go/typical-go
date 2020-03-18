@@ -19,7 +19,7 @@ var Descriptor = typcore.Descriptor{
 	App: helloApp,
 
 	BuildTool: typbuildtool.New().
-		AppendCommanders(
+		WithCommanders(
 			typbuildtool.NewCommander(taskPrintContext),
 		),
 }

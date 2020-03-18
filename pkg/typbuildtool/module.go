@@ -99,7 +99,7 @@ func (b *Module) MockTargetMap() map[string][]*MockTarget {
 }
 
 // Build the project
-func (b *Module) Build(c *Context) (dist BuildDistribution, err error) {
+func (b *Module) Build(c *Context) (dists []BuildDistribution, err error) {
 	binary := fmt.Sprintf("%s/%s", c.BinFolder(), c.Name)
 	srcDir := fmt.Sprintf("%s/%s", c.CmdFolder(), c.Name)
 	src := fmt.Sprintf("./%s/main.go", srcDir)
@@ -121,7 +121,9 @@ func (b *Module) Build(c *Context) (dist BuildDistribution, err error) {
 		return
 	}
 
-	return NewBuildDistribution(binary), nil
+	return []BuildDistribution{
+		NewBuildDistribution(binary),
+	}, nil
 }
 
 // Clean build result
