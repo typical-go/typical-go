@@ -35,7 +35,7 @@ func (*TypicalWrapper) Wrap(c *WrapContext) (err error) {
 		return
 	}
 
-	if !cksm.IsSame(cksmFile) {
+	if _, err = os.Stat(out); os.IsNotExist(err) || !cksm.IsSame(cksmFile) {
 		c.Info("Update checksum")
 		if err = cksm.Save(cksmFile); err != nil {
 			return
