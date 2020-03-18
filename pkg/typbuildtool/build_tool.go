@@ -26,11 +26,12 @@ type TypicalBuildTool struct {
 
 // New return new instance of build
 func New() *TypicalBuildTool {
+	m := NewModule()
 	return &TypicalBuildTool{
-		builder:   NewBuilder(),
-		tester:    NewTester(),
-		mocker:    NewMocker(),
-		releaser:  NewReleaser(),
+		builder:   m,
+		tester:    m,
+		mocker:    m,
+		releaser:  m,
 		binFolder: DefaultBinFolder,
 		cmdFolder: DefaultCmdFolder,
 		tmpFolder: DefaultTmpFolder,
