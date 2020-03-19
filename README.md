@@ -4,9 +4,7 @@
 
 A Framework (+ Build Tool) for Golang. <https://typical-go.github.io/>
 
-## About
-
-### Descriptor File
+## Descriptor File
 
 Create descriptor in `typical` folder
 ```go
@@ -32,7 +30,7 @@ var Descriptor = typcore.Descriptor{
 }
 ```
 
-### Build-Tool Wrapper
+## Build-Tool Wrapper
 
 `.typicalw` is your best friend. It will download, compile and run the actual build-tool for your daily development task.
 
@@ -45,6 +43,8 @@ var Descriptor = typcore.Descriptor{
 - [Simple Additional Task](https://github.com/typical-go/typical-go/tree/master/examples/simple-additional-task)
 - [Provide Constructor](https://github.com/typical-go/typical-go/tree/master/examples/provide-constructor)
 - [Generate Mock](https://github.com/typical-go/typical-go/tree/master/examples/generate-mock)
+- [Generate Readme](https://github.com/typical-go/typical-go/tree/master/examples/generate-readme)
+- [Generate Docker-Compose](https://github.com/typical-go/typical-go/tree/master/examples/generate-docker-compose)
 - [Serve React Demo](https://github.com/typical-go/typical-go/tree/master/examples/serve-react-demo)
 
 
