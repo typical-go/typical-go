@@ -8,32 +8,32 @@ import (
 
 // Commander responsible to return commands for Build-Tool
 type Commander interface {
-	Commands(c *typcore.Context) []*cli.Command
+	Commands(c *Context) []*cli.Command
 }
 
 // Builder reponsible to build
 type Builder interface {
-	Build(c *Context) (dists []BuildDistribution, err error)
+	Build(c *BuildContext) (dists []BuildDistribution, err error)
 }
 
 // Cleaner responsible to clean the project
 type Cleaner interface {
-	Clean(*Context) error
+	Clean(*BuildContext) error
 }
 
 // Tester responsible to test the project
 type Tester interface {
-	Test(*Context) error
+	Test(*BuildContext) error
 }
 
 // BuildDistribution is build distribution
 type BuildDistribution interface {
-	Run(*Context) error
+	Run(*BuildContext) error
 }
 
 // Mocker responsible to mock
 type Mocker interface {
-	Mock(*Context) error
+	Mock(*BuildContext) error
 }
 
 // Releaser responsible to release
@@ -55,12 +55,17 @@ type Preconditioner interface {
 type Context struct {
 	*typcore.Context
 	*TypicalBuildTool
+}
+
+// BuildContext is context of build
+type BuildContext struct {
+	*Context
 	Cli *cli.Context
 }
 
 // ReleaseContext is context of release
 type ReleaseContext struct {
-	*Context
+	*BuildContext
 	Alpha   bool
 	Tag     string
 	GitLogs []*git.Log

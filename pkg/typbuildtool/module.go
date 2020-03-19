@@ -99,7 +99,7 @@ func (b *Module) MockTargetMap() map[string][]*MockTarget {
 }
 
 // Build the project
-func (b *Module) Build(c *Context) (dists []BuildDistribution, err error) {
+func (b *Module) Build(c *BuildContext) (dists []BuildDistribution, err error) {
 	binary := fmt.Sprintf("%s/%s", c.BinFolder(), c.Name)
 	srcDir := fmt.Sprintf("%s/%s", c.CmdFolder(), c.Name)
 	src := fmt.Sprintf("./%s/main.go", srcDir)
@@ -127,7 +127,7 @@ func (b *Module) Build(c *Context) (dists []BuildDistribution, err error) {
 }
 
 // Clean build result
-func (b *Module) Clean(c *Context) (err error) {
+func (b *Module) Clean(c *BuildContext) (err error) {
 	c.Infof("Remove All in '%s'", c.BinFolder())
 	if err := os.RemoveAll(c.BinFolder()); err != nil {
 		c.Error(err.Error())
@@ -136,7 +136,7 @@ func (b *Module) Clean(c *Context) (err error) {
 }
 
 // Test the project
-func (b *Module) Test(c *Context) (err error) {
+func (b *Module) Test(c *BuildContext) (err error) {
 	var targets []string
 	for _, source := range c.ProjectSources {
 		targets = append(targets, fmt.Sprintf("./%s/...", source))
@@ -152,7 +152,7 @@ func (b *Module) Test(c *Context) (err error) {
 }
 
 // Mock the project
-func (b *Module) Mock(c *Context) (err error) {
+func (b *Module) Mock(c *BuildContext) (err error) {
 	if err = c.Ast().EachAnnotation("mock", typast.InterfaceType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
 		b.PutMockTarget(createMockTarget(c, decl))
 		return
@@ -198,7 +198,7 @@ func (b *Module) Release(c *ReleaseContext) (files []string, err error) {
 
 	for _, target := range b.releaseTargets {
 		var binary string
-		if binary, err = b.build(c.Context, c.Tag, target); err != nil {
+		if binary, err = b.build(c.BuildContext, c.Tag, target); err != nil {
 			err = fmt.Errorf("Failed build release: %w", err)
 			return
 		}
@@ -208,7 +208,7 @@ func (b *Module) Release(c *ReleaseContext) (files []string, err error) {
 	return
 }
 
-func (b *Module) build(c *Context, tag string, target ReleaseTarget) (binary string, err error) {
+func (b *Module) build(c *BuildContext, tag string, target ReleaseTarget) (binary string, err error) {
 	ctx := c.Cli.Context
 	goos := target.OS()
 	goarch := target.Arch()

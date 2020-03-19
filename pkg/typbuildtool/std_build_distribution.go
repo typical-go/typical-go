@@ -18,7 +18,7 @@ func NewBuildDistribution(binary string) *StdBuildDistribution {
 }
 
 // Run the build distribution
-func (d *StdBuildDistribution) Run(c *Context) (err error) {
+func (d *StdBuildDistribution) Run(c *BuildContext) (err error) {
 	cmd := exec.CommandContext(c.Cli.Context, d.binary, c.Cli.Args().Slice()...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

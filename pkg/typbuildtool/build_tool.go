@@ -88,7 +88,7 @@ func (b *TypicalBuildTool) Validate() (err error) {
 }
 
 // Build task
-func (b *TypicalBuildTool) Build(c *Context) (dists []BuildDistribution, err error) {
+func (b *TypicalBuildTool) Build(c *BuildContext) (dists []BuildDistribution, err error) {
 	c.Info("Build the project")
 	for _, module := range b.modules {
 		if builder, ok := module.(Builder); ok {
@@ -129,7 +129,7 @@ func (b *TypicalBuildTool) Release(rc *ReleaseContext) (files []string, err erro
 }
 
 // Clean the project
-func (b *TypicalBuildTool) Clean(c *Context) (err error) {
+func (b *TypicalBuildTool) Clean(c *BuildContext) (err error) {
 	for _, module := range b.modules {
 		if cleaner, ok := module.(Cleaner); ok {
 			if err = cleaner.Clean(c); err != nil {
@@ -151,7 +151,7 @@ func (b *TypicalBuildTool) Clean(c *Context) (err error) {
 }
 
 // Test the project
-func (b *TypicalBuildTool) Test(c *Context) (err error) {
+func (b *TypicalBuildTool) Test(c *BuildContext) (err error) {
 	c.Info("Test the project")
 	for _, module := range b.modules {
 		if tester, ok := module.(Tester); ok {
@@ -164,7 +164,7 @@ func (b *TypicalBuildTool) Test(c *Context) (err error) {
 }
 
 // Mock the project
-func (b *TypicalBuildTool) Mock(c *Context) (err error) {
+func (b *TypicalBuildTool) Mock(c *BuildContext) (err error) {
 	c.Info("Mock the project")
 	for _, module := range b.modules {
 		if mocker, ok := module.(Mocker); ok {

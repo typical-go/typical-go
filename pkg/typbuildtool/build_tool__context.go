@@ -7,20 +7,18 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/git"
-	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
 // createContext to create new instance of Context
-func (b *TypicalBuildTool) createContext(tc *typcore.Context, cc *cli.Context) *Context {
-	return &Context{
-		Context:          tc,
-		TypicalBuildTool: b,
-		Cli:              cc,
+func (b *TypicalBuildTool) createContext(tc *Context, cc *cli.Context) *BuildContext {
+	return &BuildContext{
+		Context: tc,
+		Cli:     cc,
 	}
 }
 
-func (b *TypicalBuildTool) createReleaseContext(c *Context) (*ReleaseContext, error) {
+func (b *TypicalBuildTool) createReleaseContext(c *BuildContext) (*ReleaseContext, error) {
 	ctx := c.Cli.Context
 	force := c.Cli.Bool("force")
 	alpha := c.Cli.Bool("alpha")
@@ -41,10 +39,10 @@ func (b *TypicalBuildTool) createReleaseContext(c *Context) (*ReleaseContext, er
 	}
 
 	return &ReleaseContext{
-		Context: c,
-		Alpha:   alpha,
-		Tag:     tag,
-		GitLogs: gitLogs,
+		BuildContext: c,
+		Alpha:        alpha,
+		Tag:          tag,
+		GitLogs:      gitLogs,
 	}, nil
 }
 

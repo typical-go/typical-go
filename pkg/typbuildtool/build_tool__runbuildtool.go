@@ -8,13 +8,18 @@ import (
 )
 
 // RunBuildTool to run the build-tool
-func (b *TypicalBuildTool) RunBuildTool(c *typcore.Context) (err error) {
+func (b *TypicalBuildTool) RunBuildTool(tc *typcore.Context) (err error) {
+	c := &Context{
+		Context:          tc,
+		TypicalBuildTool: b,
+	}
+
 	app := cli.NewApp()
 	app.Name = c.Name
 	app.Usage = "" // NOTE: intentionally blank
 	app.Description = c.Description
 	app.Before = func(cliCtx *cli.Context) (err error) {
-		return b.Precondition(b.createContext(c, cliCtx))
+		return b.Precondition(c)
 	}
 	app.Version = c.Version
 	app.Commands = b.Commands(c)

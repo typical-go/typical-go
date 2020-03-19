@@ -5,7 +5,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
-	"github.com/typical-go/typical-go/pkg/typcore"
 
 	"github.com/urfave/cli/v2"
 )
@@ -22,10 +21,10 @@ func TestSimpleCommander_Commands(t *testing.T) {
 
 	var commander typbuildtool.Commander
 	commander = typbuildtool.NewCommander(
-		func(ctx *typcore.Context) *cli.Command {
+		func(ctx *typbuildtool.Context) *cli.Command {
 			return cmd1
 		},
-		func(ctx *typcore.Context) *cli.Command {
+		func(ctx *typbuildtool.Context) *cli.Command {
 			return cmd2
 		},
 	)
