@@ -12,8 +12,8 @@ type TypicalGo struct {
 	wrapper typcore.Wrapper
 }
 
-// Create new instance of TypicalGo
-func Create() *TypicalGo {
+// New instance of TypicalGo
+func New() *TypicalGo {
 	return &TypicalGo{
 		wrapper: typcore.NewWrapper(),
 	}

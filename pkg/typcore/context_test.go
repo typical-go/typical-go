@@ -28,7 +28,7 @@ func TestTypicalContext(t *testing.T) {
 
 	ctx, err := typcore.CreateContext(&typcore.Descriptor{
 		Name: "some-name",
-		App:  typicalgo.Create(),
+		App:  typicalgo.New(),
 		BuildTool: typbuildtool.Create(
 			typbuildtool.StandardBuild(),
 		),
@@ -53,11 +53,11 @@ func TestRetrieveProjectSources(t *testing.T) {
 		expectedError string
 	}{
 		{
-			Descriptor:    &typcore.Descriptor{App: typicalgo.Create()},
+			Descriptor:    &typcore.Descriptor{App: typicalgo.New()},
 			expectedError: "ProjectSource 'typicalgo' is not exist",
 		},
 		{
-			Descriptor:    &typcore.Descriptor{App: typapp.Create(typicalgo.Create())},
+			Descriptor:    &typcore.Descriptor{App: typapp.Create(typicalgo.New())},
 			expectedError: "ProjectSource 'typicalgo' is not exist",
 		},
 	}
