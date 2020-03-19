@@ -2,15 +2,39 @@
 
 ![stability-unstable](https://img.shields.io/badge/stability-unstable-yellow.svg)
 
-A Framework + Build Tool for Productive Go Development. <https://typical-go.github.io/>
+A Framework (+ Build Tool) for Golang. <https://typical-go.github.io/>
 
-## Install
+## About
 
+### Descriptor File
 
-```bash
-go get -u github.com/typical-go/typical-go/cmd/...
+Create descriptor in `typical` folder
+```go
+var Descriptor = typcore.Descriptor{
+	Name:    "configuration-with-invocation",
+	Version: "0.0.1",
+
+    // The Application
+	App: typapp.
+		Create(serverApp), 
+
+    // The Build Tool
+	BuildTool: typbuildtool.
+		Create(
+			typbuildtool.StandardBuild(),
+		),
+
+    // The Configuration Manager
+	ConfigManager: typcfg.
+		Create(
+			serverApp, 
+		),
+}
 ```
-Or download the latest release from [releases page](https://github.com/typical-go/typical-go/releases)
+
+### Build-Tool Wrapper
+
+`.typicalw` is your best friend. It will download, compile and run the actual build-tool for your daily development task.
 
 
 ## Examples
