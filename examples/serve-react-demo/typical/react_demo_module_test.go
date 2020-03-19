@@ -11,4 +11,7 @@ func TestNewReactDemoModule(t *testing.T) {
 	t.Run("SHOULD implement builder", func(t *testing.T) {
 		var _ typbuildtool.Builder = typical.NewReactDemoModule()
 	})
+	t.Run("SHOULD implement cleaner", func(t *testing.T) {
+		var _ typbuildtool.Cleaner = typical.NewReactDemoModule()
+	})
 }
