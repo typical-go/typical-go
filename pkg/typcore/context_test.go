@@ -27,15 +27,17 @@ func TestTypicalContext(t *testing.T) {
 	}()
 
 	ctx, err := typcore.CreateContext(&typcore.Descriptor{
-		Name:      "some-name",
-		App:       typicalgo.Create(),
-		BuildTool: typbuildtool.Create(),
+		Name: "some-name",
+		App:  typicalgo.Create(),
+		BuildTool: typbuildtool.Create(
+			typbuildtool.CreateModule(),
+		),
 	})
+
+	require.NoError(t, err)
 
 	// NOTE: ProjectPackage need to set manually because its value get from ldflags
 	ctx.ProjectPackage = "some-package"
-
-	require.NoError(t, err)
 
 	require.NoError(t, common.Validate(ctx))
 	require.Equal(t, "0.0.1", ctx.Version)

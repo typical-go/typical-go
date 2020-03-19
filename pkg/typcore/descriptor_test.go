@@ -32,7 +32,7 @@ func TestDescriptor_ValidateName(t *testing.T) {
 			d := &typcore.Descriptor{
 				Name:      name,
 				App:       app{},
-				BuildTool: typbuildtool.Create(),
+				BuildTool: buildTool{},
 			}
 			require.NoError(t, common.Validate(d))
 		}
@@ -45,7 +45,7 @@ func TestDescriptor_ValidateName(t *testing.T) {
 			d := &typcore.Descriptor{
 				Name:      name,
 				App:       app{},
-				BuildTool: typbuildtool.Create(),
+				BuildTool: buildTool{},
 			}
 			require.EqualError(t, common.Validate(d), "Descriptor: Invalid name")
 		}
@@ -80,14 +80,14 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 			Descriptor: &typcore.Descriptor{
 				Name:      "some-name",
 				App:       app{errMessage: "App: some-error"},
-				BuildTool: typbuildtool.Create(),
+				BuildTool: buildTool{},
 			},
 			expectedErr: "Descriptor: App: some-error",
 		},
 		{
 			Descriptor: &typcore.Descriptor{
 				Name:      "some-name",
-				BuildTool: typbuildtool.Create(),
+				BuildTool: buildTool{},
 			},
 			expectedErr: "Descriptor: App can't be nil",
 		},

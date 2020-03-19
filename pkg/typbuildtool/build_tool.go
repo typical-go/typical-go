@@ -1,6 +1,7 @@
 package typbuildtool
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -65,6 +66,9 @@ func (b *TypicalBuildTool) TmpFolder() string {
 
 // Validate build
 func (b *TypicalBuildTool) Validate() (err error) {
+	if len(b.modules) < 1 {
+		return errors.New("No build modules")
+	}
 	for _, module := range b.modules {
 		if err = common.Validate(module); err != nil {
 			return fmt.Errorf("BuildTool: %w", err)

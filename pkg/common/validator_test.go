@@ -1,7 +1,6 @@
 package common_test
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -16,7 +15,7 @@ func TestValidate(t *testing.T) {
 	}{
 		{},
 		{
-			Validator:   &validator{errors.New("some-error")},
+			Validator:   common.DummyValidator("some-error"),
 			expectedErr: "some-error",
 		},
 	}
@@ -30,12 +29,4 @@ func TestValidate(t *testing.T) {
 		}
 	}
 
-}
-
-type validator struct {
-	err error
-}
-
-func (v *validator) Validate() error {
-	return v.err
 }
