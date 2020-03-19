@@ -6,9 +6,12 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
+	"github.com/iancoleman/strcase"
 	log "github.com/sirupsen/logrus"
+	"github.com/urfave/cli/v2"
 
 	"github.com/typical-go/typical-go/pkg/exor"
 	"github.com/typical-go/typical-go/pkg/typast"
@@ -20,7 +23,6 @@ type Module struct {
 	stdout         io.Writer
 	stderr         io.Writer
 	coverProfile   string
-	mockTargetMap  map[string][]*MockTarget
 	releaseTargets []ReleaseTarget
 	releaseFolder  string
 }
@@ -28,10 +30,9 @@ type Module struct {
 // NewModule return new instance of Module
 func NewModule() *Module {
 	return &Module{
-		stdout:        os.Stdout,
-		stderr:        os.Stderr,
-		coverProfile:  "cover.out",
-		mockTargetMap: make(map[string][]*MockTarget),
+		stdout:       os.Stdout,
+		stderr:       os.Stderr,
+		coverProfile: "cover.out",
 		releaseTargets: []ReleaseTarget{
 			"linux/amd64",
 			"darwin/amd64",
@@ -83,19 +84,20 @@ func (b *Module) Validate() (err error) {
 	return
 }
 
-// PutMockTarget new target
-func (b *Module) PutMockTarget(target *MockTarget) {
-	key := target.MockDir
-	if _, ok := b.mockTargetMap[key]; ok {
-		b.mockTargetMap[key] = append(b.mockTargetMap[key], target)
-	} else {
-		b.mockTargetMap[key] = []*MockTarget{target}
+// Commands of build-tool
+func (b *Module) Commands(c *Context) []*cli.Command {
+	return []*cli.Command{
+		{
+			Name:  "mock",
+			Usage: "Generate mock class",
+			Action: func(cliCtx *cli.Context) (err error) {
+				return b.Mock(&BuildContext{
+					Context: c,
+					Cli:     cliCtx,
+				})
+			},
+		},
 	}
-}
-
-// MockTargetMap return targetMap field
-func (b *Module) MockTargetMap() map[string][]*MockTarget {
-	return b.mockTargetMap
 }
 
 // Build the project
@@ -153,15 +155,32 @@ func (b *Module) Test(c *BuildContext) (err error) {
 
 // Mock the project
 func (b *Module) Mock(c *BuildContext) (err error) {
+	ctx := c.Cli.Context
+	store := NewMockStore()
 	if err = c.Ast().EachAnnotation("mock", typast.InterfaceType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
-		b.PutMockTarget(createMockTarget(c, decl))
+		var (
+			pkg     = decl.File.Name.Name
+			dir     = filepath.Dir(decl.Path)
+			dirDest = dir[:len(dir)-len(pkg)]
+			srcPkg  = fmt.Sprintf("%s/%s", c.ProjectPackage, dir)
+			mockPkg = fmt.Sprintf("mock_%s", pkg)
+			mockDir = fmt.Sprintf("%s%s", dirDest, mockPkg)
+			dest    = fmt.Sprintf("%s/%s.go", mockDir, strcase.ToSnake(decl.SourceName))
+		)
+
+		store.Put(&MockTarget{
+			SrcPkg:  srcPkg,
+			SrcName: decl.SourceName,
+			MockPkg: mockPkg,
+			MockDir: mockDir,
+			Dest:    dest,
+		})
 		return
 	}); err != nil {
 		return
 	}
 
 	mockgen := fmt.Sprintf("%s/bin/mockgen", c.TmpFolder())
-	ctx := c.Cli.Context
 
 	if _, err = os.Stat(mockgen); os.IsNotExist(err) {
 		log.Info("Build mockgen")
@@ -170,7 +189,7 @@ func (b *Module) Mock(c *BuildContext) (err error) {
 		}
 	}
 
-	for pkg, targets := range b.mockTargetMap {
+	for pkg, targets := range store.Map() {
 
 		c.Infof("Remove package: %s", pkg)
 		os.RemoveAll(pkg)

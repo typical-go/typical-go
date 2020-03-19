@@ -31,11 +31,6 @@ type BuildDistribution interface {
 	Run(*BuildContext) error
 }
 
-// Mocker responsible to mock
-type Mocker interface {
-	Mock(*BuildContext) error
-}
-
 // Releaser responsible to release
 type Releaser interface {
 	Release(*ReleaseContext) (files []string, err error)

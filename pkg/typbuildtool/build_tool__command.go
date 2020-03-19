@@ -50,13 +50,6 @@ func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
 			},
 		},
 		{
-			Name:  "mock",
-			Usage: "Generate mock class",
-			Action: func(cliCtx *cli.Context) (err error) {
-				return b.Mock(b.createContext(c, cliCtx))
-			},
-		},
-		{
 			Name:    "clean",
 			Aliases: []string{"c"},
 			Usage:   "Clean the project from generated file during build time",

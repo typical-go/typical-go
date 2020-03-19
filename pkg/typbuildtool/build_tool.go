@@ -151,19 +151,6 @@ func (b *TypicalBuildTool) Test(c *BuildContext) (err error) {
 	return
 }
 
-// Mock the project
-func (b *TypicalBuildTool) Mock(c *BuildContext) (err error) {
-	c.Info("Mock the project")
-	for _, module := range b.modules {
-		if mocker, ok := module.(Mocker); ok {
-			if err = mocker.Mock(c); err != nil {
-				return
-			}
-		}
-	}
-	return
-}
-
 // Precondition for this project
 func (b *TypicalBuildTool) Precondition(c *Context) (err error) {
 	if preconditioner, ok := c.App.(Preconditioner); ok {
