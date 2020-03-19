@@ -5,6 +5,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/typical-go/typical-go/pkg/typast"
 )
 
 // Context of typical build tool
@@ -15,6 +17,8 @@ type Context struct {
 	ProjectDirs    []string
 	ProjectFiles   []string
 	ProjectSources []string
+
+	ast *typast.Ast
 }
 
 // CreateContext return new constructor of TypicalContext
@@ -52,6 +56,17 @@ func CreateContext(d *Descriptor) (c *Context, err error) {
 		ProjectDirs:    projectDirs,
 		ProjectFiles:   projectFiles,
 	}, nil
+}
+
+// Ast contain detail of AST analysis
+func (c *Context) Ast() *typast.Ast {
+	if c.ast == nil {
+		var err error
+		if c.ast, err = typast.Walk(c.ProjectFiles); err != nil {
+			c.Errorf("PreconditionContext: %w", err.Error())
+		}
+	}
+	return c.ast
 }
 
 func isWalkTarget(filename string) bool {

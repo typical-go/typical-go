@@ -5,11 +5,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// Commander responsible to return commands for Build-Tool
-type Commander interface {
-	Commands(c *typcore.Context) []*cli.Command
-}
-
 // SimpleCommander return command based on command function
 type SimpleCommander struct {
 	funcs []CommandFn
