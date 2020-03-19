@@ -10,7 +10,6 @@ import (
 // TypicalBuildTool is typical Build Tool for golang project
 type TypicalBuildTool struct {
 	modules    []interface{}
-	publishers []Publisher
 	commanders []Commander
 
 	binFolder string
@@ -22,25 +21,13 @@ type TypicalBuildTool struct {
 }
 
 // New return new instance of build
-func New() *TypicalBuildTool {
+func New(modules ...interface{}) *TypicalBuildTool {
 	return &TypicalBuildTool{
-		modules:   []interface{}{NewModule()},
+		modules:   modules,
 		binFolder: DefaultBinFolder,
 		cmdFolder: DefaultCmdFolder,
 		tmpFolder: DefaultTmpFolder,
 	}
-}
-
-// WithPublishers return build-tool with new publishers
-func (b *TypicalBuildTool) WithPublishers(publishers ...Publisher) *TypicalBuildTool {
-	b.publishers = publishers
-	return b
-}
-
-// WithModules return build-tool with modules
-func (b *TypicalBuildTool) WithModules(modules ...interface{}) *TypicalBuildTool {
-	b.modules = modules
-	return b
 }
 
 // WithCommanders return build-tool with commanders
@@ -104,10 +91,11 @@ func (b *TypicalBuildTool) Build(c *BuildContext) (dists []BuildDistribution, er
 
 // Publish the project
 func (b *TypicalBuildTool) Publish(pc *PublishContext) (err error) {
-	pc.Info("Build the project")
-	for _, publisher := range b.publishers {
-		if err = publisher.Publish(pc); err != nil {
-			return
+	for _, module := range b.modules {
+		if publisher, ok := module.(Publisher); ok {
+			if err = publisher.Publish(pc); err != nil {
+				return
+			}
 		}
 	}
 	return

@@ -4,11 +4,11 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/exor"
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/urfave/cli/v2"
 )
 
-func taskTestExample(ctx *typcore.Context) *cli.Command {
+func taskTestExample(ctx *typbuildtool.Context) *cli.Command {
 	return &cli.Command{
 		Name:    "test-example",
 		Aliases: []string{"e"},

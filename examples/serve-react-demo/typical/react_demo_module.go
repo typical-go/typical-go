@@ -20,7 +20,7 @@ func NewReactDemoModule() *ReactDemoModule {
 }
 
 // Build the react-demo
-func (m *ReactDemoModule) Build(c *typbuildtool.Context) (dists []typbuildtool.BuildDistribution, err error) {
+func (m *ReactDemoModule) Build(c *typbuildtool.BuildContext) (dists []typbuildtool.BuildDistribution, err error) {
 	c.Info("Build react-demo")
 	err = exor.NewCommand("npm", "run", "build").
 		WithDir(m.source).
@@ -29,7 +29,7 @@ func (m *ReactDemoModule) Build(c *typbuildtool.Context) (dists []typbuildtool.B
 }
 
 // Clean the react-demo
-func (m *ReactDemoModule) Clean(c *typbuildtool.Context) (err error) {
+func (m *ReactDemoModule) Clean(c *typbuildtool.BuildContext) (err error) {
 	c.Info("Clean react-demo")
 	if err := os.RemoveAll(m.source + "/build"); err != nil {
 		c.Errorf("React-Demo: Clean: %w", err)
