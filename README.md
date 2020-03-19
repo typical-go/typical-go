@@ -14,17 +14,17 @@ var Descriptor = typcore.Descriptor{
 	Name:    "configuration-with-invocation",
 	Version: "0.0.1",
 
-    // The Application
+	// The Application
 	App: typapp.
 		Create(serverApp), 
 
-    // The Build Tool
+	// The Build Tool
 	BuildTool: typbuildtool.
 		Create(
 			typbuildtool.StandardBuild(),
 		),
 
-    // The Configuration Manager
+	// The Configuration Manager
 	ConfigManager: typcfg.
 		Create(
 			serverApp, 
