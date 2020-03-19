@@ -44,7 +44,7 @@ func TestBuildTool_Validate(t *testing.T) {
 		expectedError string
 	}{
 		{
-			TypicalBuildTool: typbuildtool.Create(typbuildtool.CreateModule()),
+			TypicalBuildTool: typbuildtool.Create(typbuildtool.StandardBuild()),
 		},
 		{
 			TypicalBuildTool: typbuildtool.Create(),

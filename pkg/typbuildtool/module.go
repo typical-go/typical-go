@@ -27,8 +27,8 @@ type Module struct {
 	releaseFolder  string
 }
 
-// CreateModule return new instance of Module
-func CreateModule() *Module {
+// StandardBuild return new instance of Module
+func StandardBuild() *Module {
 	return &Module{
 		stdout:       os.Stdout,
 		stderr:       os.Stderr,

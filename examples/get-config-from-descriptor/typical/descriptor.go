@@ -21,7 +21,7 @@ var Descriptor = typcore.Descriptor{
 
 	BuildTool: typbuildtool.
 		Create(
-			typbuildtool.CreateModule(),
+			typbuildtool.StandardBuild(),
 		),
 
 	ConfigManager: typcfg.

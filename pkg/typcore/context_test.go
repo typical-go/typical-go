@@ -30,7 +30,7 @@ func TestTypicalContext(t *testing.T) {
 		Name: "some-name",
 		App:  typicalgo.Create(),
 		BuildTool: typbuildtool.Create(
-			typbuildtool.CreateModule(),
+			typbuildtool.StandardBuild(),
 		),
 	})
 

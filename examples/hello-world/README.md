@@ -22,7 +22,7 @@ var Descriptor = typcore.Descriptor{
 
 	BuildTool: typbuildtool.
 		Create(
-			typbuildtool.CreateModule(), // standard build module
+			typbuildtool.StandardBuild(), // standard build module
 		),
 }
 

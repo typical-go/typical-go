@@ -14,16 +14,16 @@ import (
 	"golang.org/x/oauth2"
 )
 
-// Github publisher
-type Github struct {
+// GithubModule publisher
+type GithubModule struct {
 	Owner    string
 	RepoName string
 	Filter   ReleaseFilter
 }
 
-// CreateGithub to create new instance of Github
-func CreateGithub(owner, repo string) *Github {
-	return &Github{
+// Github module
+func Github(owner, repo string) *GithubModule {
+	return &GithubModule{
 		Owner:    owner,
 		RepoName: repo,
 		Filter:   DefaultNoPrefix(),
@@ -31,13 +31,13 @@ func CreateGithub(owner, repo string) *Github {
 }
 
 // WithFilter return github with filter
-func (g *Github) WithFilter(filter ReleaseFilter) *Github {
+func (g *GithubModule) WithFilter(filter ReleaseFilter) *GithubModule {
 	g.Filter = filter
 	return g
 }
 
 // Publish to github
-func (g *Github) Publish(c *PublishContext) (err error) {
+func (g *GithubModule) Publish(c *PublishContext) (err error) {
 	token := os.Getenv("GITHUB_TOKEN")
 	ctx := c.Cli.Context
 	if token == "" {
@@ -67,7 +67,7 @@ func (g *Github) Publish(c *PublishContext) (err error) {
 	return
 }
 
-func (g *Github) upload(ctx context.Context, svc *github.RepositoriesService, id int64, binary string) (err error) {
+func (g *GithubModule) upload(ctx context.Context, svc *github.RepositoriesService, id int64, binary string) (err error) {
 	var (
 		file       *os.File
 		binaryPath = fmt.Sprintf("%s/%s", DefaultReleaseFolder, binary)
@@ -81,7 +81,7 @@ func (g *Github) upload(ctx context.Context, svc *github.RepositoriesService, id
 	return
 }
 
-func (g *Github) releaseNote(gitLogs []*git.Log) string {
+func (g *GithubModule) releaseNote(gitLogs []*git.Log) string {
 	var b strings.Builder
 	for _, log := range gitLogs {
 		if m := g.ReleaseFilter(log.Message); m != "" {
@@ -95,6 +95,6 @@ func (g *Github) releaseNote(gitLogs []*git.Log) string {
 }
 
 // ReleaseFilter to filter the message
-func (g *Github) ReleaseFilter(msg string) string {
+func (g *GithubModule) ReleaseFilter(msg string) string {
 	return g.Filter.ReleaseFilter(msg)
 }

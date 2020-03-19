@@ -8,6 +8,6 @@ import (
 
 func TestGithub(t *testing.T) {
 	t.Run("SHOULD implement of ReleaseFilter", func(t *testing.T) {
-		var _ typbuildtool.ReleaseFilter = typbuildtool.CreateGithub("owner", "repo")
+		var _ typbuildtool.ReleaseFilter = typbuildtool.Github("owner", "repo")
 	})
 }

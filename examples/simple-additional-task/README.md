@@ -26,11 +26,13 @@ Add commander to descriptor `typical/descriptor`
 var Descriptor = typcore.Descriptor{
 	// ... 
 	
-	BuildTool: typbuildtool.New().
-		AppendCommander(
-			typbuildtool.NewCommander(printContext),
+	BuildTool: typbuildtool.
+		Create(
+			typbuildtool.StandardBuild(),
+		).
+		WithCommanders(
+			typbuildtool.CreateCommander(taskPrintContext), // Add custom task
 		),
-}
 ```
 
 Execute the task
