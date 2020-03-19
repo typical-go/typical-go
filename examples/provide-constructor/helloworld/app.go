@@ -5,21 +5,11 @@ import (
 )
 
 // App of hello world
-type App struct {
-	ConfigName string
-}
+type App struct{}
 
 // New return new instance of application
 func New() *App {
-	return &App{
-		ConfigName: "APP",
-	}
-}
-
-// WithConfigPrefix return Module with new config prefix
-func (a *App) WithConfigPrefix(name string) *App {
-	a.ConfigName = name
-	return a
+	return &App{}
 }
 
 // EntryPoint of application

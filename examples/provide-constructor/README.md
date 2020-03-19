@@ -1,6 +1,6 @@
 # Provide Constructor
 
-Example how to provide constructor
+Example typical-go project to demonstrate how to provide constructor to dependency injection
 
 Put `[constructor]` annotation in constructor function comment
 ```go

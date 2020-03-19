@@ -44,6 +44,7 @@ var Descriptor = typcore.Descriptor{
 - [Configuration With Invocation](https://github.com/typical-go/typical-go/tree/master/examples/configuration-with-invocation)
 - [Simple Additional Task](https://github.com/typical-go/typical-go/tree/master/examples/simple-additional-task)
 - [Provide Constructor](https://github.com/typical-go/typical-go/tree/master/examples/provide-constructor)
+- [Generate Mock](https://github.com/typical-go/typical-go/tree/master/examples/generate-mock)
 - [Serve React Demo](https://github.com/typical-go/typical-go/tree/master/examples/serve-react-demo)
 
 

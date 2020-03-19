@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/iancoleman/strcase"
-	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 
 	"github.com/typical-go/typical-go/pkg/exor"
@@ -183,7 +182,7 @@ func (b *Module) Mock(c *BuildContext) (err error) {
 	mockgen := fmt.Sprintf("%s/bin/mockgen", c.TmpFolder())
 
 	if _, err = os.Stat(mockgen); os.IsNotExist(err) {
-		log.Info("Build mockgen")
+		c.Info("Build mockgen")
 		if err = exor.NewGoBuild(mockgen, "github.com/golang/mock/mockgen").Execute(ctx); err != nil {
 			return
 		}
