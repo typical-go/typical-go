@@ -6,17 +6,15 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
-// Modules
-var (
-	helloApp = helloworld.New()
-)
-
 // Descriptor of sample
 var Descriptor = typcore.Descriptor{
 	Name:    "hello-world",
 	Version: "0.0.1",
 
-	App: helloApp,
+	App: helloworld.New(), // the application
 
-	BuildTool: typbuildtool.New(),
+	BuildTool: typbuildtool.
+		Create(
+			typbuildtool.CreateModule(), // standard build module
+		),
 }

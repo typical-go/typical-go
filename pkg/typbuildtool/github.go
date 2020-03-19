@@ -21,8 +21,8 @@ type Github struct {
 	Filter   ReleaseFilter
 }
 
-// NewGithub to return new instance of Github
-func NewGithub(owner, repo string) *Github {
+// CreateGithub to create new instance of Github
+func CreateGithub(owner, repo string) *Github {
 	return &Github{
 		Owner:    owner,
 		RepoName: repo,

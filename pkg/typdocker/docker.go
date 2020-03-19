@@ -25,8 +25,8 @@ type Composer interface {
 	DockerCompose(version Version) *ComposeObject
 }
 
-// New docker module
-func New() *Docker {
+// Create new docker module
+func Create() *Docker {
 	return &Docker{
 		version: "3",
 	}

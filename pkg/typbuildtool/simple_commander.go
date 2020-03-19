@@ -12,8 +12,8 @@ type SimpleCommander struct {
 // CommandFn is a function to return command
 type CommandFn func(ctx *Context) *cli.Command
 
-// NewCommander return new instance Commander
-func NewCommander(funcs ...CommandFn) *SimpleCommander {
+// CreateCommander return new instance Commander
+func CreateCommander(funcs ...CommandFn) *SimpleCommander {
 	return &SimpleCommander{
 		funcs: funcs,
 	}

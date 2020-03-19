@@ -9,6 +9,6 @@ import (
 
 func TestDocker(t *testing.T) {
 	t.Run("SHOULD implement Commander", func(t *testing.T) {
-		var _ typbuildtool.Commander = typdocker.New()
+		var _ typbuildtool.Commander = typdocker.Create()
 	})
 }

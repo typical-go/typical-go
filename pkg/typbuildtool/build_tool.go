@@ -20,8 +20,8 @@ type TypicalBuildTool struct {
 	includeCommitID bool
 }
 
-// New return new instance of build
-func New(modules ...interface{}) *TypicalBuildTool {
+// Create new instance of build
+func Create(modules ...interface{}) *TypicalBuildTool {
 	return &TypicalBuildTool{
 		modules:   modules,
 		binFolder: DefaultBinFolder,

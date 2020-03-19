@@ -18,12 +18,16 @@ var Descriptor = typcore.Descriptor{
 	Name:    "configuration-with-invocation",
 	Version: "0.0.1",
 
-	App: typapp.New(serverApp), // wrap serverApp with Typical App
+	App: typapp.
+		Create(serverApp), // wrap serverApp with Typical App
 
-	BuildTool: typbuildtool.New(),
+	BuildTool: typbuildtool.
+		Create(
+			typbuildtool.CreateModule(),
+		),
 
-	ConfigManager: typcfg.New().
-		WithConfigurers(
+	ConfigManager: typcfg.
+		Create(
 			serverApp, // Append configurer for the this project
 		),
 }

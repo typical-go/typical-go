@@ -9,6 +9,6 @@ import (
 
 func TestReadme(t *testing.T) {
 	t.Run("SHOULD implement of Commander", func(t *testing.T) {
-		var _ typbuildtool.Commander = typreadme.New()
+		var _ typbuildtool.Commander = typreadme.Create()
 	})
 }

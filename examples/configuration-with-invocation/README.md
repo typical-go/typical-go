@@ -7,10 +7,10 @@ Append the configurer to the project descriptor `typical/descriptor.go`
 var Descriptor = typcore.Descriptor{
 	// ...
 
-	App: typapp.New(serverApp), // wrap serverApp with Typical App
+	App: typapp.Create(serverApp), // wrap serverApp with Typical App
 
-	Configuration: typcore.NewConfiguration().
-		AppendConfigurer(
+	ConfigManager: typcfg.
+		Create(
 			serverApp, // Append configurer for the this project
 		),
 }
@@ -19,11 +19,9 @@ var Descriptor = typcore.Descriptor{
 
 Example of configurer implementation
 ```go
-func (m *Module) Configure(loader typcore.Loader) *typcore.Detail {
-	return &typcore.Detail{
-		Prefix: m.Prefix,
-		Spec:   &config.Config{},
-	}
+// Configure the application
+func (a *App) Configure() *typcore.Configuration {
+	return typcore.NewConfiguration(a.ConfigName, &Config{})
 }
 ```
 
@@ -34,7 +32,9 @@ func (a *App) EntryPoint() *typdep.Invocation {
 	return typdep.NewInvocation(a.start)
 }
 
-func (a *App) start(cfg *config.Config) error {
+func (a *App) start(cfg *Config) error {
+	fmt.Printf("Configuration With Invocation -- Serve http at %s\n", cfg.Address)
 	return http.ListenAndServe(cfg.Address, a)
 }
+
 ```

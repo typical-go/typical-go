@@ -9,9 +9,9 @@ import (
 
 func TestNewReactDemoModule(t *testing.T) {
 	t.Run("SHOULD implement builder", func(t *testing.T) {
-		var _ typbuildtool.Builder = typical.NewReactDemoModule()
+		var _ typbuildtool.Builder = &typical.ReactDemoModule{}
 	})
 	t.Run("SHOULD implement cleaner", func(t *testing.T) {
-		var _ typbuildtool.Cleaner = typical.NewReactDemoModule()
+		var _ typbuildtool.Cleaner = &typical.ReactDemoModule{}
 	})
 }

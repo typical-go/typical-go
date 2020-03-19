@@ -6,20 +6,18 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
-// Modules
-var (
-	helloApp = helloworld.New()
-)
-
 // Descriptor of sample
 var Descriptor = typcore.Descriptor{
 	Name:    "simple-additional-task",
 	Version: "0.0.1",
 
-	App: helloApp,
+	App: helloworld.New(),
 
-	BuildTool: typbuildtool.New().
+	BuildTool: typbuildtool.
+		Create(
+			typbuildtool.CreateModule(),
+		).
 		WithCommanders(
-			typbuildtool.NewCommander(taskPrintContext),
+			typbuildtool.CreateCommander(taskPrintContext),
 		),
 }

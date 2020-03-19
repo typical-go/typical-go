@@ -11,7 +11,7 @@ import (
 
 func TestSimpleCommander(t *testing.T) {
 	t.Run("SHOULD implement Commanders", func(t *testing.T) {
-		var _ typbuildtool.Commander = typbuildtool.NewCommander(nil)
+		var _ typbuildtool.Commander = typbuildtool.CreateCommander()
 	})
 }
 
@@ -20,7 +20,7 @@ func TestSimpleCommander_Commands(t *testing.T) {
 	cmd2 := &cli.Command{}
 
 	var commander typbuildtool.Commander
-	commander = typbuildtool.NewCommander(
+	commander = typbuildtool.CreateCommander(
 		func(ctx *typbuildtool.Context) *cli.Command {
 			return cmd1
 		},

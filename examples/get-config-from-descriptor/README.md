@@ -15,19 +15,19 @@ Register it to descriptor in `WithConfigurer(...)` method
 var Descriptor = typcore.Descriptor{
     // ... 
 
-	ConfigManager: typcore.NewConfigManager().
-		WithConfigurer(
+	ConfigManager: typcfg.
+		Create(
 			serverApp, // register serverApp configurer
 		),
 }
 ```
 
-Use `RetrieveConfigSpec()` to get the config
+Use `RetrieveConfig()` to get the config
 ```go
 // Run server
 func (a *App) Run(d *typcore.Descriptor) (err error) {
 	var spec interface{}
-	if spec, err = d.RetrieveConfigSpec(a.ConfigName); err != nil {
+	if spec, err = d.RetrieveConfig(a.ConfigName); err != nil {
 		return
 	}
 

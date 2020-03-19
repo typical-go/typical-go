@@ -10,3 +10,20 @@ func (*App) Run(d *typcore.Descriptor) error {
 	return nil
 }
 ```
+
+Setup the typical descriptor
+```go
+// Descriptor of sample
+var Descriptor = typcore.Descriptor{
+	Name:    "hello-world",
+	Version: "0.0.1",
+
+	App: helloworld.New(), // the application
+
+	BuildTool: typbuildtool.
+		Create(
+			typbuildtool.CreateModule(), // standard build module
+		),
+}
+
+```

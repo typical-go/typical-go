@@ -22,22 +22,17 @@ type TypConfigManager struct {
 	configurers []Configurer
 }
 
-// New instance of Configuration
-func New() *TypConfigManager {
+// Create instance of Configuration
+func Create(configurers ...Configurer) *TypConfigManager {
 	return &TypConfigManager{
-		loader: &defaultLoader{},
+		configurers: configurers,
+		loader:      &defaultLoader{},
 	}
 }
 
 // WithLoader return TypicalConfiguration with new loader
 func (m *TypConfigManager) WithLoader(loader Loader) *TypConfigManager {
 	m.loader = loader
-	return m
-}
-
-// WithConfigurers return TypicalConfiguratiton with new configurers
-func (m *TypConfigManager) WithConfigurers(configurers ...Configurer) *TypConfigManager {
-	m.configurers = configurers
 	return m
 }
 

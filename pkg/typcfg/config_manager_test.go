@@ -13,21 +13,21 @@ import (
 
 func TestNewConfigManager(t *testing.T) {
 	t.Run("", func(t *testing.T) {
-		cfgMngr := typcfg.New()
+		cfgMngr := typcfg.Create()
 		require.Equal(t, "*typcfg.defaultLoader", reflect.TypeOf(cfgMngr.Loader()).String())
 	})
 	t.Run("SHOULD implement of ConfigManager", func(t *testing.T) {
-		var _ typcore.ConfigManager = typcfg.New()
+		var _ typcore.ConfigManager = typcfg.Create()
 	})
 	t.Run("SHOULD implement of Preconditioner", func(t *testing.T) {
-		var _ typbuildtool.Preconditioner = typcfg.New()
+		var _ typbuildtool.Preconditioner = typcfg.Create()
 	})
 }
 
 func TestConfiguration(t *testing.T) {
-	configuration := typcfg.New().
-		WithLoader(&dummyLoader{}).
-		WithConfigurers(&dummyConfigurer1{}, &dummyConfigurer2{})
+	configuration := typcfg.
+		Create(&dummyConfigurer1{}, &dummyConfigurer2{}).
+		WithLoader(&dummyLoader{})
 
 	require.IsType(t, &dummyLoader{}, configuration.Loader())
 

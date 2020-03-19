@@ -7,17 +7,16 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
-// Modules
-var (
-	hello = helloworld.New()
-)
-
 // Descriptor of sample
 var Descriptor = typcore.Descriptor{
 	Name:    "provide-constructor",
 	Version: "0.0.1",
 
-	App: typapp.New(hello),
+	App: typapp.
+		Create(helloworld.New()),
 
-	BuildTool: typbuildtool.New(),
+	BuildTool: typbuildtool.
+		Create(
+			typbuildtool.CreateModule(),
+		),
 }

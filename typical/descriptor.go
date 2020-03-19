@@ -12,14 +12,14 @@ var Descriptor = typcore.Descriptor{
 	Name:    "typical-go",
 	Version: typcore.Version,
 
-	App: typicalgo.New(),
+	App: typicalgo.Create(),
 
 	BuildTool: typbuildtool.
-		New(
-			typbuildtool.NewModule(),
-			typbuildtool.NewGithub("typical-go", "typical-go"),
+		Create(
+			typbuildtool.CreateModule(),
+			typbuildtool.CreateGithub("typical-go", "typical-go"),
 		).
 		WithCommanders(
-			typbuildtool.NewCommander(taskTestExample), // Test all the examples
+			typbuildtool.CreateCommander(taskTestExample), // Test all the examples
 		),
 }

@@ -13,8 +13,8 @@ type TypicalApp struct {
 	modules        []interface{}
 }
 
-// New return new instance of app
-func New(appModule interface{}) *TypicalApp {
+// Create new instance of app
+func Create(appModule interface{}) *TypicalApp {
 	app := &TypicalApp{
 		projectSources: []string{typcore.RetrievePackageName(appModule)},
 		appModule:      appModule,

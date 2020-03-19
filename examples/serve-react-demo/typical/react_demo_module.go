@@ -12,13 +12,6 @@ type ReactDemoModule struct {
 	source string
 }
 
-// NewReactDemoModule return new constructor of ReactDemoModule
-func NewReactDemoModule() *ReactDemoModule {
-	return &ReactDemoModule{
-		source: "react-demo",
-	}
-}
-
 // Build the react-demo
 func (m *ReactDemoModule) Build(c *typbuildtool.BuildContext) (dists []typbuildtool.BuildDistribution, err error) {
 	c.Info("Build react-demo")

@@ -28,8 +28,8 @@ func TestTypicalContext(t *testing.T) {
 
 	ctx, err := typcore.CreateContext(&typcore.Descriptor{
 		Name:      "some-name",
-		App:       typicalgo.New(),
-		BuildTool: typbuildtool.New(),
+		App:       typicalgo.Create(),
+		BuildTool: typbuildtool.Create(),
 	})
 
 	// NOTE: ProjectPackage need to set manually because its value get from ldflags
@@ -51,11 +51,11 @@ func TestRetrieveProjectSources(t *testing.T) {
 		expectedError string
 	}{
 		{
-			Descriptor:    &typcore.Descriptor{App: typicalgo.New()},
+			Descriptor:    &typcore.Descriptor{App: typicalgo.Create()},
 			expectedError: "ProjectSource 'typicalgo' is not exist",
 		},
 		{
-			Descriptor:    &typcore.Descriptor{App: typapp.New(typicalgo.New())},
+			Descriptor:    &typcore.Descriptor{App: typapp.Create(typicalgo.Create())},
 			expectedError: "ProjectSource 'typicalgo' is not exist",
 		},
 	}

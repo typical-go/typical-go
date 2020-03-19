@@ -19,10 +19,13 @@ var Descriptor = typcore.Descriptor{
 
 	App: serverApp, // wrap serverApp with Typical App
 
-	BuildTool: typbuildtool.New(),
+	BuildTool: typbuildtool.
+		Create(
+			typbuildtool.CreateModule(),
+		),
 
-	ConfigManager: typcfg.New().
-		WithConfigurers(
+	ConfigManager: typcfg.
+		Create(
 			serverApp, // register serverApp configurer
 		),
 }

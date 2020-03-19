@@ -31,8 +31,8 @@ type Readme struct {
 	configs     []ConfigInfo
 }
 
-// New readme module
-func New() *Readme {
+// Create new readme module
+func Create() *Readme {
 	return &Readme{
 		TargetFile:   defaultTargetFile,
 		TemplateFile: defaultTemplateFile,
