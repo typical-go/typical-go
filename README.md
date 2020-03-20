@@ -1,8 +1,8 @@
 # Typical Go
 
-![stability-unstable](https://img.shields.io/badge/stability-unstable-yellow.svg)
+[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 
-A Framework (+ Build Tool) for Golang. <https://typical-go.github.io/>
+A Build Tool (+ Framework) for Golang. <https://typical-go.github.io/>
 
 ## Descriptor File
 
