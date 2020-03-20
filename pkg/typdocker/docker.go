@@ -26,21 +26,16 @@ type Composer interface {
 }
 
 // Create new docker module
-func Create() *Docker {
+func Create(composers ...Composer) *Docker {
 	return &Docker{
-		version: "3",
+		version:   "3",
+		composers: composers,
 	}
 }
 
 // WithVersion to set the version
 func (m *Docker) WithVersion(version Version) *Docker {
 	m.version = version
-	return m
-}
-
-// WithComposers to set the composers
-func (m *Docker) WithComposers(composers ...Composer) *Docker {
-	m.composers = composers
 	return m
 }
 
