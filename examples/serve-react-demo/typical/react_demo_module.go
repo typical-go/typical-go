@@ -25,7 +25,7 @@ func (m *ReactDemoModule) Build(c *typbuildtool.BuildContext) (dists []typbuildt
 func (m *ReactDemoModule) Clean(c *typbuildtool.BuildContext) (err error) {
 	c.Info("Clean react-demo")
 	if err := os.RemoveAll(m.source + "/build"); err != nil {
-		c.Errorf("React-Demo: Clean: %w", err)
+		c.Warnf("React-Demo: Clean: %w", err)
 	}
 	return
 }

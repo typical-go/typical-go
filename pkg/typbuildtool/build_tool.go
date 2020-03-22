@@ -145,7 +145,7 @@ func (b *TypicalBuildTool) Test(c *BuildContext) (err error) {
 }
 
 // Precondition for this project
-func (b *TypicalBuildTool) Precondition(c *Context) (err error) {
+func (b *TypicalBuildTool) Precondition(c *BuildContext) (err error) {
 	if preconditioner, ok := c.App.(Preconditioner); ok {
 		if err = preconditioner.Precondition(c); err != nil {
 			return fmt.Errorf("Precondition-App: %w", err)

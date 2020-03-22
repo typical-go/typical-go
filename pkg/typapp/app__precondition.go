@@ -1,11 +1,7 @@
 package typapp
 
 import (
-	"context"
 	"fmt"
-	"go/build"
-	"os"
-	"os/exec"
 	"reflect"
 	"strings"
 
@@ -17,7 +13,7 @@ import (
 )
 
 // Precondition the app
-func (a *TypicalApp) Precondition(c *typbuildtool.Context) (err error) {
+func (a *TypicalApp) Precondition(c *typbuildtool.BuildContext) (err error) {
 	var constructors []string
 
 	if err = c.Ast().EachAnnotation("constructor", typast.FunctionType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
@@ -52,8 +48,8 @@ func configDefinition(bean *typcore.Configuration) string {
 	}`, typ, bean.Name(), typ)
 }
 
-func (a *TypicalApp) generateConstructor(c *typbuildtool.Context, target string, constructors []string) (err error) {
-	ctx := context.Background()
+func (a *TypicalApp) generateConstructor(c *typbuildtool.BuildContext, target string, constructors []string) (err error) {
+	ctx := c.Cli.Context
 	imports := []string{}
 	for _, dir := range c.ProjectDirs {
 		if !strings.Contains(dir, "internal") {
@@ -66,9 +62,6 @@ func (a *TypicalApp) generateConstructor(c *typbuildtool.Context, target string,
 	}).Execute(ctx); err != nil {
 		return
 	}
-	cmd := exec.CommandContext(ctx,
-		fmt.Sprintf("%s/bin/goimports", build.Default.GOPATH),
-		"-w", target)
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+
+	return typcore.GoImport(ctx, c.Context.Context, target)
 }

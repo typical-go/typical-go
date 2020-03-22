@@ -43,7 +43,7 @@ type Publisher interface {
 
 // Preconditioner responsible to precondition
 type Preconditioner interface {
-	Precondition(c *Context) error
+	Precondition(c *BuildContext) error
 }
 
 // Context of buildtool

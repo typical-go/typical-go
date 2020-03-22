@@ -19,7 +19,10 @@ func (b *TypicalBuildTool) RunBuildTool(tc *typcore.Context) (err error) {
 	app.Usage = "" // NOTE: intentionally blank
 	app.Description = c.Description
 	app.Before = func(cliCtx *cli.Context) (err error) {
-		return b.Precondition(c)
+		return b.Precondition(&BuildContext{
+			Context: c,
+			Cli:     cliCtx,
+		})
 	}
 	app.Version = c.Version
 	app.Commands = b.Commands(c)

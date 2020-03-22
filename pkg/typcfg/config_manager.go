@@ -42,7 +42,7 @@ func (m *TypConfigManager) Loader() Loader {
 }
 
 // Precondition to use config manager
-func (m *TypConfigManager) Precondition(c *typbuildtool.Context) (err error) {
+func (m *TypConfigManager) Precondition(c *typbuildtool.BuildContext) (err error) {
 	if _, err = os.Stat(defaultDotEnv); os.IsNotExist(err) {
 		var f *os.File
 		if f, err = os.Create(defaultDotEnv); err != nil {
@@ -115,7 +115,7 @@ func (m *TypConfigManager) LoadConfig(name string, spec interface{}) error {
 	return fmt.Errorf("ConfigLoader is missing")
 }
 
-func loadEnvFile(c *typbuildtool.Context) (err error) {
+func loadEnvFile(c *typbuildtool.BuildContext) (err error) {
 	// TODO: don't use godotenv for flexibility
 	configSource := os.Getenv(configKey)
 	var configs []string

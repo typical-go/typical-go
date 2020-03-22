@@ -195,7 +195,7 @@ func (b *Module) Mock(c *BuildContext) (err error) {
 	mockgen := fmt.Sprintf("%s/bin/mockgen", c.TmpFolder)
 
 	if _, err = os.Stat(mockgen); os.IsNotExist(err) {
-		c.Info("Build mockgen")
+		c.Infof("Install mockgen: %s", mockgen)
 		if err = exor.NewGoBuild(mockgen, "github.com/golang/mock/mockgen").Execute(ctx); err != nil {
 			return
 		}
