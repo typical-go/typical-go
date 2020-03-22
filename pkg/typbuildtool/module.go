@@ -21,6 +21,7 @@ import (
 type Module struct {
 	stdout         io.Writer
 	stderr         io.Writer
+	stdin          io.Reader
 	coverProfile   string
 	releaseTargets []ReleaseTarget
 	releaseFolder  string
@@ -31,6 +32,7 @@ func StandardBuild() *Module {
 	return &Module{
 		stdout:       os.Stdout,
 		stderr:       os.Stderr,
+		stdin:        os.Stdin,
 		coverProfile: "cover.out",
 		releaseTargets: []ReleaseTarget{
 			"linux/amd64",
@@ -49,6 +51,12 @@ func (b *Module) WithStdout(stdout io.Writer) *Module {
 // WithStderr return StdBuilder with new stderr
 func (b *Module) WithStderr(stderr io.Writer) *Module {
 	b.stderr = stderr
+	return b
+}
+
+// WithStdin return StdBuilder with new stderr
+func (b *Module) WithStdin(stdin io.Reader) *Module {
+	b.stdin = stdin
 	return b
 }
 
@@ -123,7 +131,12 @@ func (b *Module) Build(c *BuildContext) (dists []BuildDistribution, err error) {
 	}
 
 	return []BuildDistribution{
-		NewBuildDistribution(binary),
+		&StdBuildDistribution{
+			binary: binary,
+			stdout: b.stdout,
+			stderr: b.stderr,
+			stdin:  b.stdin,
+		},
 	}, nil
 }
 
@@ -146,8 +159,8 @@ func (b *Module) Test(c *BuildContext) (err error) {
 	gotest := exor.NewGoTest(targets...).
 		WithCoverProfile(b.coverProfile).
 		WithRace(true).
-		WithStdout(os.Stdout).
-		WithStderr(os.Stderr)
+		WithStdout(b.stdout).
+		WithStderr(b.stderr)
 
 	return gotest.Execute(c.Cli.Context)
 }
@@ -179,7 +192,7 @@ func (b *Module) Mock(c *BuildContext) (err error) {
 		return
 	}
 
-	mockgen := fmt.Sprintf("%s/bin/mockgen", c.TmpFolder())
+	mockgen := fmt.Sprintf("%s/bin/mockgen", c.TmpFolder)
 
 	if _, err = os.Stat(mockgen); os.IsNotExist(err) {
 		c.Info("Build mockgen")
@@ -201,7 +214,7 @@ func (b *Module) Mock(c *BuildContext) (err error) {
 				target.SrcPkg,
 				target.SrcName,
 			)
-			cmd.Stderr = os.Stderr
+			cmd.Stderr = b.stderr
 			if err := cmd.Run(); err != nil {
 				c.Errorf("Mock '%s' failed: %w", target, err)
 			}
@@ -238,8 +251,8 @@ func (b *Module) build(c *BuildContext, tag string, target ReleaseTarget) (binar
 		fmt.Sprintf("./%s/%s", c.CmdFolder(), c.Name),
 	)
 	cmd.Env = append(os.Environ(), "GOOS="+goos, "GOARCH="+goarch)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stdout
+	cmd.Stdout = b.stdout
+	cmd.Stderr = b.stderr
 	if err = cmd.Run(); err != nil {
 		return
 	}

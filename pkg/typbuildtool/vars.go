@@ -1,10 +1,6 @@
 package typbuildtool
 
 var (
-	// DefaultTmpFolder is default value of tmp folder
-	// NOTE: subject to be set by ldflags
-	DefaultTmpFolder string
-
 	// DefaultReleaseFolder is default value for release folder location
 	DefaultReleaseFolder = "release"
 

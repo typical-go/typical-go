@@ -8,6 +8,6 @@ import (
 
 func TestBuildDistribution(t *testing.T) {
 	t.Run("SHOULD implement BuildDistribution", func(t *testing.T) {
-		var _ typbuildtool.BuildDistribution = typbuildtool.NewBuildDistribution("")
+		var _ typbuildtool.BuildDistribution = &typbuildtool.StdBuildDistribution{}
 	})
 }

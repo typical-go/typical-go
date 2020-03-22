@@ -51,7 +51,7 @@ func (*TypicalWrapper) Wrap(c *WrapContext) (err error) {
 		c.Info("Build the build-tool")
 		return exor.NewGoBuild(out, srcPath).
 			SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage", c.ProjectPackage).
-			SetVariable("github.com/typical-go/typical-go/pkg/typbuildtool.DefaultTmpFolder", c.TmpFolder).
+			SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultTmpFolder", c.TmpFolder).
 			WithStdout(os.Stdout).
 			WithStderr(os.Stderr).
 			WithStdin(os.Stdin).

@@ -53,9 +53,6 @@ func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
 			Name:    "clean",
 			Aliases: []string{"c"},
 			Usage:   "Clean the project from generated file during build time",
-			Flags: []cli.Flag{
-				&cli.BoolFlag{Name: "short", Aliases: []string{"s"}, Usage: "Short version of clean only clean build-tool"},
-			},
 			Action: func(cliCtx *cli.Context) (err error) {
 				return b.Clean(b.createContext(c, cliCtx))
 			},
