@@ -125,7 +125,7 @@ func (b *TypicalBuildTool) Clean(c *BuildContext) (err error) {
 
 	c.Infof("Remove All: %s", c.TmpFolder)
 	if err := os.RemoveAll(c.TmpFolder); err != nil {
-		c.Error(err.Error())
+		c.Warn(err.Error())
 	}
 
 	return

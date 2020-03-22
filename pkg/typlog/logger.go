@@ -20,27 +20,27 @@ func New() *TypicalLogger {
 	}
 }
 
-// Info leveled message
+// Info level message
 func (s *TypicalLogger) Info(args ...interface{}) {
 	s.infoSign()
 	s.print(args...)
 }
 
-// Infof is same with Info with format
+// Infof is same with Info but with format
 func (s *TypicalLogger) Infof(format string, args ...interface{}) {
 	s.infoSign()
 	s.printf(format, args...)
 }
 
-// Error leveled log message
-func (s *TypicalLogger) Error(args ...interface{}) {
-	s.errorSign()
+// Warn level log message
+func (s *TypicalLogger) Warn(args ...interface{}) {
+	s.warnSign()
 	s.print(args...)
 }
 
-// Errorf is same with Info with format
-func (s *TypicalLogger) Errorf(format string, args ...interface{}) {
-	s.errorSign()
+// Warnf is same with warn but with format
+func (s *TypicalLogger) Warnf(format string, args ...interface{}) {
+	s.warnSign()
 	fmt.Fprintf(s, format, args...)
 	fmt.Fprintln(s)
 }
@@ -61,10 +61,10 @@ func (s *TypicalLogger) infoSign() {
 	fmt.Fprint(s, "] ")
 }
 
-func (s *TypicalLogger) errorSign() {
+func (s *TypicalLogger) warnSign() {
 	s.typicalSign()
 	fmt.Fprint(s, "[")
-	color.New(color.FgRed).Fprint(s, "ERRO")
+	color.New(color.FgRed).Fprint(s, "WARN")
 	fmt.Fprint(s, "] ")
 }
 

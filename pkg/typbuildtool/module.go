@@ -144,7 +144,7 @@ func (b *Module) Build(c *BuildContext) (dists []BuildDistribution, err error) {
 func (b *Module) Clean(c *BuildContext) (err error) {
 	c.Infof("Remove All in '%s'", c.BinFolder())
 	if err := os.RemoveAll(c.BinFolder()); err != nil {
-		c.Error(err.Error())
+		c.Warn(err.Error())
 	}
 	return
 }
@@ -216,7 +216,7 @@ func (b *Module) Mock(c *BuildContext) (err error) {
 			)
 			cmd.Stderr = b.stderr
 			if err := cmd.Run(); err != nil {
-				c.Errorf("Mock '%s' failed: %w", target, err)
+				c.Warnf("Mock '%s' failed: %w", target, err)
 			}
 		}
 	}
