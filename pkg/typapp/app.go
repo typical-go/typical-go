@@ -1,7 +1,7 @@
 package typapp
 
 import (
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typdep"
 	"github.com/urfave/cli/v2"
 )
@@ -16,7 +16,7 @@ type TypicalApp struct {
 // Create new instance of app
 func Create(appModule interface{}) *TypicalApp {
 	app := &TypicalApp{
-		projectSources: []string{typcore.RetrievePackageName(appModule)},
+		projectSources: []string{common.PackageName(appModule)},
 		appModule:      appModule,
 	}
 	return app

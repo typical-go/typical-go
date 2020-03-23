@@ -33,7 +33,7 @@ func CreateContext(d *Descriptor) (c *Context, err error) {
 	}
 
 	var projectSources []string
-	if projectSources, err = RetrieveProjectSources(d); err != nil {
+	if projectSources, err = ProjectSources(d); err != nil {
 		return nil, err
 	}
 

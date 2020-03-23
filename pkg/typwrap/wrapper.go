@@ -1,24 +1,28 @@
-package typcore
+package typwrap
 
 import (
+	"go/build"
 	"os"
+	"strings"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
+	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 // TypicalWrapper responsible to wrap the typical project
 type TypicalWrapper struct{}
 
-// NewWrapper return new instance of TypicalWrapper
-func NewWrapper() *TypicalWrapper {
+// New instance of TypicalWrapper
+func New() *TypicalWrapper {
 	return &TypicalWrapper{}
 }
 
 // Wrap the project
-func (*TypicalWrapper) Wrap(c *WrapContext) (err error) {
+func (*TypicalWrapper) Wrap(c *Context) (err error) {
 
 	if c.ProjectPackage == "" {
-		c.ProjectPackage = RetrieveProjectPackage()
+		c.ProjectPackage = retrieveProjectPackage()
 	}
 
 	// NOTE: create tmp folder if not exist
@@ -43,7 +47,7 @@ func (*TypicalWrapper) Wrap(c *WrapContext) (err error) {
 
 		if _, err = os.Stat(srcPath); os.IsNotExist(err) {
 			c.Infof("Generate build-tool main source: %s", srcPath)
-			if err = WriteBuildToolMain(c.Ctx, srcPath, descriptorPkg); err != nil {
+			if err = typcore.WriteBuildToolMain(c.Ctx, srcPath, descriptorPkg); err != nil {
 				return
 			}
 		}
@@ -59,4 +63,29 @@ func (*TypicalWrapper) Wrap(c *WrapContext) (err error) {
 	}
 
 	return
+}
+
+func retrieveProjectPackage() (pkg string) {
+	var (
+		err  error
+		root string
+		f    *os.File
+	)
+
+	if root, err = os.Getwd(); err != nil {
+		panic(err.Error())
+	}
+
+	if f, err = os.Open(root + "/go.mod"); err != nil {
+		// NOTE: go.mod is not exist. Check if the project sit in $GOPATH
+		gopath := build.Default.GOPATH
+		if strings.HasPrefix(root, gopath) {
+			return root[len(gopath):]
+		}
+		panic("Failed to retrieve ProjectPackage: `go.mod` is missing and the project not in $GOPATH")
+	}
+	defer f.Close()
+
+	modfile := common.ParseModfile(f)
+	return modfile.ProjectPackage
 }

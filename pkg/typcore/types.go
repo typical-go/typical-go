@@ -1,7 +1,5 @@
 package typcore
 
-import "context"
-
 // AppLauncher responsible to launch the application
 type AppLauncher interface {
 	LaunchApp() error
@@ -39,17 +37,4 @@ type Logger interface {
 type ConfigManager interface {
 	Configurations() []*Configuration
 	RetrieveConfig(name string) (interface{}, error)
-}
-
-// Wrapper responsible to wrap the project
-type Wrapper interface {
-	Wrap(*WrapContext) error
-}
-
-// WrapContext is context of wrap
-type WrapContext struct {
-	*Descriptor
-	Ctx            context.Context
-	TmpFolder      string
-	ProjectPackage string
 }

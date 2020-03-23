@@ -4,18 +4,19 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typwrap"
 	"github.com/urfave/cli/v2"
 )
 
 // TypicalGo is app of typical-go
 type TypicalGo struct {
-	wrapper typcore.Wrapper
+	wrapper typwrap.Wrapper
 }
 
 // New instance of TypicalGo
 func New() *TypicalGo {
 	return &TypicalGo{
-		wrapper: typcore.NewWrapper(),
+		wrapper: typwrap.New(),
 	}
 }
 
@@ -36,7 +37,7 @@ func (t *TypicalGo) RunApp(d *typcore.Descriptor) (err error) {
 				&cli.StringFlag{Name: "project-package", Usage: "To override generated ProjectPackage in context"},
 			},
 			Action: func(cliCtx *cli.Context) (err error) {
-				return t.Wrap(&typcore.WrapContext{
+				return t.Wrap(&typwrap.Context{
 					Descriptor:     d,
 					Ctx:            cliCtx.Context,
 					TmpFolder:      cliCtx.String("tmp-folder"),
@@ -49,6 +50,6 @@ func (t *TypicalGo) RunApp(d *typcore.Descriptor) (err error) {
 }
 
 // Wrap the project
-func (t *TypicalGo) Wrap(c *typcore.WrapContext) error {
+func (t *TypicalGo) Wrap(c *typwrap.Context) error {
 	return t.wrapper.Wrap(c)
 }

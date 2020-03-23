@@ -7,7 +7,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/typicalgo"
@@ -44,32 +43,4 @@ func TestTypicalContext(t *testing.T) {
 	require.Equal(t, []string{"typicalgo", "pkg"}, ctx.ProjectSources)
 	require.Equal(t, []string{"typicalgo", "typicalgo/some_pkg", "pkg", "pkg/some_lib"}, ctx.ProjectDirs)
 	require.Equal(t, []string{"typicalgo/some_pkg/some_file.go", "pkg/some_lib/lib.go"}, ctx.ProjectFiles)
-}
-
-func TestRetrieveProjectSources(t *testing.T) {
-	testcases := []struct {
-		*typcore.Descriptor
-		expected      []string
-		expectedError string
-	}{
-		{
-			Descriptor:    &typcore.Descriptor{App: typicalgo.New()},
-			expectedError: "ProjectSource 'typicalgo' is not exist",
-		},
-		{
-			Descriptor:    &typcore.Descriptor{App: typapp.Create(typicalgo.New())},
-			expectedError: "ProjectSource 'typicalgo' is not exist",
-		},
-	}
-
-	for _, tt := range testcases {
-		sources, err := typcore.RetrieveProjectSources(tt.Descriptor)
-		if tt.expectedError == "" {
-			require.NoError(t, err)
-			require.Equal(t, tt.expected, sources)
-		} else {
-			require.EqualError(t, err, tt.expectedError)
-		}
-
-	}
 }
