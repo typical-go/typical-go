@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/exor"
+	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typapp/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
@@ -48,20 +48,22 @@ func configDefinition(bean *typcore.Configuration) string {
 	}`, typ, bean.Name(), typ)
 }
 
-func (a *TypicalApp) generateConstructor(c *typbuildtool.BuildContext, target string, constructors []string) (err error) {
+func (a *TypicalApp) generateConstructor(c *typbuildtool.BuildContext, filename string, constructors []string) (err error) {
 	ctx := c.Cli.Context
 	imports := []string{}
+
 	for _, dir := range c.ProjectDirs {
 		if !strings.Contains(dir, "internal") {
 			imports = append(imports, fmt.Sprintf("%s/%s", c.ProjectPackage, dir))
 		}
 	}
-	if err = exor.NewWriteTemplate(target, tmpl.Constructor, tmpl.ConstructorData{
+
+	if err = common.WriteTemplate(filename, tmpl.Constructor, tmpl.ConstructorData{
 		Imports:      imports,
 		Constructors: constructors,
-	}).Execute(ctx); err != nil {
+	}); err != nil {
 		return
 	}
 
-	return typcore.GoImport(ctx, c.Context.Context, target)
+	return typcore.GoImport(ctx, c.Context.Context, filename)
 }
