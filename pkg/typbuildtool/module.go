@@ -12,7 +12,7 @@ import (
 	"github.com/iancoleman/strcase"
 	"github.com/urfave/cli/v2"
 
-	"github.com/typical-go/typical-go/pkg/exor"
+	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
@@ -122,7 +122,7 @@ func (b *Module) Build(c *BuildContext) (dists []BuildDistribution, err error) {
 		}
 	}
 
-	gobuild := exor.NewGoBuild(binary, src).
+	gobuild := buildkit.NewGoBuild(binary, src).
 		WithStdout(b.stdout).
 		WithStderr(b.stderr)
 
@@ -156,7 +156,7 @@ func (b *Module) Test(c *BuildContext) (err error) {
 		targets = append(targets, fmt.Sprintf("./%s/...", source))
 	}
 
-	gotest := exor.NewGoTest(targets...).
+	gotest := buildkit.NewGoTest(targets...).
 		WithCoverProfile(b.coverProfile).
 		WithRace(true).
 		WithStdout(b.stdout).
@@ -196,7 +196,7 @@ func (b *Module) Mock(c *BuildContext) (err error) {
 
 	if _, err = os.Stat(mockgen); os.IsNotExist(err) {
 		c.Infof("Install mockgen: %s", mockgen)
-		if err = exor.NewGoBuild(mockgen, "github.com/golang/mock/mockgen").Execute(ctx); err != nil {
+		if err = buildkit.NewGoBuild(mockgen, "github.com/golang/mock/mockgen").Execute(ctx); err != nil {
 			return
 		}
 	}

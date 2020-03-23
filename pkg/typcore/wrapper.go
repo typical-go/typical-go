@@ -3,7 +3,7 @@ package typcore
 import (
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/exor"
+	"github.com/typical-go/typical-go/pkg/buildkit"
 )
 
 // TypicalWrapper responsible to wrap the typical project
@@ -49,7 +49,7 @@ func (*TypicalWrapper) Wrap(c *WrapContext) (err error) {
 		}
 
 		c.Info("Build the build-tool")
-		return exor.NewGoBuild(out, srcPath).
+		return buildkit.NewGoBuild(out, srcPath).
 			SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage", c.ProjectPackage).
 			SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultTmpFolder", c.TmpFolder).
 			WithStdout(os.Stdout).

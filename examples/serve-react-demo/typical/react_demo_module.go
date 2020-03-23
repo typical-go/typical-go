@@ -3,7 +3,7 @@ package typical
 import (
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/exor"
+	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 )
 
@@ -15,7 +15,7 @@ type ReactDemoModule struct {
 // Build the react-demo
 func (m *ReactDemoModule) Build(c *typbuildtool.BuildContext) (dists []typbuildtool.BuildDistribution, err error) {
 	c.Info("Build react-demo")
-	err = exor.NewCommand("npm", "run", "build").
+	err = buildkit.NewCommand("npm", "run", "build").
 		WithDir(m.source).
 		Execute(c.Cli.Context)
 	return
