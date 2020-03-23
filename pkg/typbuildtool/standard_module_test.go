@@ -27,16 +27,16 @@ func TestStdBuilder(t *testing.T) {
 
 func TestValidate(t *testing.T) {
 	testcases := []struct {
-		*typbuildtool.Module
+		*typbuildtool.StandardModule
 		expected string
 	}{
 		{
-			Module:   typbuildtool.StandardBuild().WithReleaseTargets(),
-			expected: "Missing 'Targets'",
+			StandardModule: typbuildtool.StandardBuild().WithReleaseTargets(),
+			expected:       "Missing 'Targets'",
 		},
 		{
-			Module:   typbuildtool.StandardBuild().WithReleaseTargets("invalid-target"),
-			expected: "Target: Missing OS: Please make sure 'invalid-target' using 'OS/ARCH' format",
+			StandardModule: typbuildtool.StandardBuild().WithReleaseTargets("invalid-target"),
+			expected:       "Target: Missing OS: Please make sure 'invalid-target' using 'OS/ARCH' format",
 		},
 	}
 	for i, tt := range testcases {

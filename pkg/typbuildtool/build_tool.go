@@ -73,7 +73,6 @@ func (b *TypicalBuildTool) Validate() (err error) {
 
 // Build task
 func (b *TypicalBuildTool) Build(c *BuildContext) (dists []BuildDistribution, err error) {
-	c.Info("Build the project")
 	for _, module := range b.modules {
 		if builder, ok := module.(Builder); ok {
 			var dists1 []BuildDistribution
@@ -100,7 +99,6 @@ func (b *TypicalBuildTool) Publish(pc *PublishContext) (err error) {
 
 // Release the project
 func (b *TypicalBuildTool) Release(rc *ReleaseContext) (files []string, err error) {
-	rc.Info("Release the project")
 	for _, module := range b.modules {
 		if releaser, ok := module.(Releaser); ok {
 			var files1 []string
@@ -133,7 +131,6 @@ func (b *TypicalBuildTool) Clean(c *BuildContext) (err error) {
 
 // Test the project
 func (b *TypicalBuildTool) Test(c *BuildContext) (err error) {
-	c.Info("Test the project")
 	for _, module := range b.modules {
 		if tester, ok := module.(Tester); ok {
 			if err = tester.Test(c); err != nil {

@@ -9,8 +9,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// Module of build-tool
-type Module struct {
+// StandardModule is standard build module for go project
+type StandardModule struct {
 	stdout         io.Writer
 	stderr         io.Writer
 	stdin          io.Reader
@@ -20,8 +20,8 @@ type Module struct {
 }
 
 // StandardBuild return new instance of Module
-func StandardBuild() *Module {
-	return &Module{
+func StandardBuild() *StandardModule {
+	return &StandardModule{
 		stdout:       os.Stdout,
 		stderr:       os.Stderr,
 		stdin:        os.Stdin,
@@ -35,43 +35,43 @@ func StandardBuild() *Module {
 }
 
 // WithStdout return StdBuilder with new stdout
-func (b *Module) WithStdout(stdout io.Writer) *Module {
+func (b *StandardModule) WithStdout(stdout io.Writer) *StandardModule {
 	b.stdout = stdout
 	return b
 }
 
 // WithStderr return StdBuilder with new stderr
-func (b *Module) WithStderr(stderr io.Writer) *Module {
+func (b *StandardModule) WithStderr(stderr io.Writer) *StandardModule {
 	b.stderr = stderr
 	return b
 }
 
 // WithStdin return StdBuilder with new stderr
-func (b *Module) WithStdin(stdin io.Reader) *Module {
+func (b *StandardModule) WithStdin(stdin io.Reader) *StandardModule {
 	b.stdin = stdin
 	return b
 }
 
 // WithCoverProfile return StdTester with new cover profile
-func (b *Module) WithCoverProfile(coverProfile string) *Module {
+func (b *StandardModule) WithCoverProfile(coverProfile string) *StandardModule {
 	b.coverProfile = coverProfile
 	return b
 }
 
 // WithReleaseTargets to set target and return its instance
-func (b *Module) WithReleaseTargets(releaseTargets ...ReleaseTarget) *Module {
+func (b *StandardModule) WithReleaseTargets(releaseTargets ...ReleaseTarget) *StandardModule {
 	b.releaseTargets = releaseTargets
 	return b
 }
 
 // WithReleaseFolder return StdReleaser with new release folder
-func (b *Module) WithReleaseFolder(releaseFolder string) *Module {
+func (b *StandardModule) WithReleaseFolder(releaseFolder string) *StandardModule {
 	b.releaseFolder = releaseFolder
 	return b
 }
 
 // Validate the releaser
-func (b *Module) Validate() (err error) {
+func (b *StandardModule) Validate() (err error) {
 	if len(b.releaseTargets) < 1 {
 		return errors.New("Missing 'Targets'")
 	}
@@ -84,7 +84,7 @@ func (b *Module) Validate() (err error) {
 }
 
 // Commands of build-tool
-func (b *Module) Commands(c *Context) []*cli.Command {
+func (b *StandardModule) Commands(c *Context) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:  "mock",

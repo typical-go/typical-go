@@ -9,7 +9,8 @@ import (
 )
 
 // Build the project
-func (b *Module) Build(c *BuildContext) (dists []BuildDistribution, err error) {
+func (b *StandardModule) Build(c *BuildContext) (dists []BuildDistribution, err error) {
+	c.Info("Standard-Build: Build the project")
 	binary := fmt.Sprintf("%s/%s", c.BinFolder(), c.Name)
 	srcDir := fmt.Sprintf("%s/%s", c.CmdFolder(), c.Name)
 	src := fmt.Sprintf("./%s/main.go", srcDir)
@@ -32,7 +33,7 @@ func (b *Module) Build(c *BuildContext) (dists []BuildDistribution, err error) {
 	}
 
 	return []BuildDistribution{
-		&StdBuildDistribution{
+		&GoBinary{
 			binary: binary,
 			stdout: b.stdout,
 			stderr: b.stderr,

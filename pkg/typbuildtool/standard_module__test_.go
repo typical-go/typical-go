@@ -7,7 +7,8 @@ import (
 )
 
 // Test the project
-func (b *Module) Test(c *BuildContext) (err error) {
+func (b *StandardModule) Test(c *BuildContext) (err error) {
+	c.Info("Standard-Build: Test the project")
 	var targets []string
 	for _, source := range c.ProjectSources {
 		targets = append(targets, fmt.Sprintf("./%s/...", source))
