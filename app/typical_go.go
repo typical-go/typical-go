@@ -1,4 +1,4 @@
-package typicalgo
+package app
 
 import (
 	"os"
