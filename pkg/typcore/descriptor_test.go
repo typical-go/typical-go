@@ -31,8 +31,8 @@ func TestDescriptor_ValidateName(t *testing.T) {
 		for _, name := range valids {
 			d := &typcore.Descriptor{
 				Name:      name,
-				App:       app{},
-				BuildTool: buildTool{},
+				App:       dummyApp{},
+				BuildTool: dummyBuildTool{},
 			}
 			require.NoError(t, common.Validate(d))
 		}
@@ -44,8 +44,8 @@ func TestDescriptor_ValidateName(t *testing.T) {
 		for _, name := range invalids {
 			d := &typcore.Descriptor{
 				Name:      name,
-				App:       app{},
-				BuildTool: buildTool{},
+				App:       dummyApp{},
+				BuildTool: dummyBuildTool{},
 			}
 			require.EqualError(t, common.Validate(d), "Descriptor: Invalid name")
 		}
@@ -72,29 +72,29 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 			Descriptor: &typcore.Descriptor{
 				Name:      "some-name",
 				App:       typapp.Create(nil),
-				BuildTool: buildTool{errMessage: "Build: some-error"},
+				BuildTool: dummyBuildTool{errMessage: "Build: some-error"},
 			},
 			expectedErr: "Descriptor: Build: some-error",
 		},
 		{
 			Descriptor: &typcore.Descriptor{
 				Name:      "some-name",
-				App:       app{errMessage: "App: some-error"},
-				BuildTool: buildTool{},
+				App:       dummyApp{errMessage: "App: some-error"},
+				BuildTool: dummyBuildTool{},
 			},
 			expectedErr: "Descriptor: App: some-error",
 		},
 		{
 			Descriptor: &typcore.Descriptor{
 				Name:      "some-name",
-				BuildTool: buildTool{},
+				BuildTool: dummyBuildTool{},
 			},
 			expectedErr: "Descriptor: App can't be nil",
 		},
 		{
 			Descriptor: &typcore.Descriptor{
 				Name: "some-name",
-				App:  app{},
+				App:  dummyApp{},
 			},
 			expectedErr: "Descriptor: BuildTool can't be nil",
 		},
@@ -112,42 +112,42 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 var (
 	validDescriptor = &typcore.Descriptor{
 		Name:      "some-name",
-		App:       &app{},
-		BuildTool: &buildTool{},
+		App:       &dummyApp{},
+		BuildTool: &dummyBuildTool{},
 	}
 )
 
-type buildTool struct {
+type dummyBuildTool struct {
 	errMessage string
 }
 
-func (i buildTool) Validate() error {
+func (i dummyBuildTool) Validate() error {
 	if i.errMessage != "" {
 		return errors.New(i.errMessage)
 	}
 	return nil
 }
 
-func (i buildTool) RunBuildTool(*typcore.Context) error {
+func (i dummyBuildTool) RunBuildTool(*typcore.Context) error {
 	return nil
 }
 
-type app struct {
+type dummyApp struct {
 	errMessage string
 	sources    []string
 }
 
-func (i app) Validate() error {
+func (i dummyApp) Validate() error {
 	if i.errMessage != "" {
 		return errors.New(i.errMessage)
 	}
 	return nil
 }
 
-func (i app) RunApp(*typcore.Descriptor) error {
+func (i dummyApp) RunApp(*typcore.Descriptor) error {
 	return nil
 }
 
-func (i app) Sources() []string {
+func (i dummyApp) Sources() []string {
 	return i.sources
 }

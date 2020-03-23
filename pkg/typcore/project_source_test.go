@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/app"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/typicalgo"
 )
 
 func TestRetrieveProjectSources(t *testing.T) {
@@ -16,12 +16,12 @@ func TestRetrieveProjectSources(t *testing.T) {
 		expectedError string
 	}{
 		{
-			Descriptor:    &typcore.Descriptor{App: typicalgo.New()},
-			expectedError: "ProjectSource 'typicalgo' is not exist",
+			Descriptor:    &typcore.Descriptor{App: app.New()},
+			expectedError: "ProjectSource 'app' is not exist",
 		},
 		{
-			Descriptor:    &typcore.Descriptor{App: typapp.Create(typicalgo.New())},
-			expectedError: "ProjectSource 'typicalgo' is not exist",
+			Descriptor:    &typcore.Descriptor{App: typapp.Create(app.New())},
+			expectedError: "ProjectSource 'app' is not exist",
 		},
 	}
 
