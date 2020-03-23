@@ -66,5 +66,5 @@ func (a *TypicalApp) generateConstructor(c *typbuildtool.BuildContext, filename 
 		return
 	}
 
-	return buildkit.NewGoImports(c.TmpFolder, filename).Execute(ctx)
+	return buildkit.NewGoImports(c.TypicalTmp, filename).Execute(ctx)
 }

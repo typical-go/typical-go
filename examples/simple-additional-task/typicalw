@@ -16,5 +16,5 @@ fi
 # or working path if the project in $GOPATH
 PROJPKG="github.com/typical-go/typical-go/examples/simple-additional-task"
 
-$TYPGO wrap -tmp-folder=$TYPTMP -project-package=$PROJPKG
+$TYPGO wrap -typical-tmp=$TYPTMP -project-package=$PROJPKG
 $TYPTMP/bin/build-tool $@

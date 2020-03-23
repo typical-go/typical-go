@@ -33,14 +33,14 @@ func (t *TypicalGo) RunApp(d *typcore.Descriptor) (err error) {
 			Name:  "wrap",
 			Usage: "wrap the project with its build-tool",
 			Flags: []cli.Flag{
-				&cli.StringFlag{Name: "tmp-folder", Required: true},
+				&cli.StringFlag{Name: "typical-tmp", Required: true},
 				&cli.StringFlag{Name: "project-package", Usage: "To override generated ProjectPackage in context"},
 			},
 			Action: func(cliCtx *cli.Context) (err error) {
 				return t.Wrap(&typwrap.Context{
 					Descriptor:     d,
 					Ctx:            cliCtx.Context,
-					TmpFolder:      cliCtx.String("tmp-folder"),
+					TypicalTmp:     cliCtx.String("typical-tmp"),
 					ProjectPackage: cliCtx.String("project-package"),
 				})
 			},

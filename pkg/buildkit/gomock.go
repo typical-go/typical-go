@@ -20,11 +20,11 @@ type GoMock struct {
 	MockDir string
 	Dest    string
 
-	tmpFolder string
+	typicalTmp string
 }
 
 // CreateGoMock to create new instance of GoMock
-func CreateGoMock(tmpFolder, projectPackage string, decl *typast.Declaration) *GoMock {
+func CreateGoMock(typicalTmp, projectPackage string, decl *typast.Declaration) *GoMock {
 	pkg := decl.File.Name.Name
 	dir := filepath.Dir(decl.Path)
 	srcName := decl.SourceName
@@ -36,19 +36,19 @@ func CreateGoMock(tmpFolder, projectPackage string, decl *typast.Declaration) *G
 	dest := fmt.Sprintf("%s/%s.go", mockDir, strcase.ToSnake(srcName))
 
 	return &GoMock{
-		tmpFolder: tmpFolder,
-		SrcPkg:    srcPkg,
-		SrcName:   srcName,
-		MockPkg:   mockPkg,
-		MockDir:   mockDir,
-		Dest:      dest,
+		typicalTmp: typicalTmp,
+		SrcPkg:     srcPkg,
+		SrcName:    srcName,
+		MockPkg:    mockPkg,
+		MockDir:    mockDir,
+		Dest:       dest,
 	}
 
 }
 
 // Execute gomock
 func (m *GoMock) Execute(ctx context.Context) (err error) {
-	mockgen := fmt.Sprintf("%s/bin/mockgen", m.tmpFolder)
+	mockgen := fmt.Sprintf("%s/bin/mockgen", m.typicalTmp)
 
 	if _, err = os.Stat(mockgen); os.IsNotExist(err) {
 		if err = NewGoBuild(mockgen, "github.com/golang/mock/mockgen").Execute(ctx); err != nil {

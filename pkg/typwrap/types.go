@@ -15,6 +15,6 @@ type Wrapper interface {
 type Context struct {
 	*typcore.Descriptor
 	Ctx            context.Context
-	TmpFolder      string
+	TypicalTmp     string
 	ProjectPackage string
 }

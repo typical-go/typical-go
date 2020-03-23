@@ -26,12 +26,12 @@ func (*TypicalWrapper) Wrap(c *Context) (err error) {
 	}
 
 	// NOTE: create tmp folder if not exist
-	os.MkdirAll(c.TmpFolder+"/build-tool", os.ModePerm)
-	os.MkdirAll(c.TmpFolder+"/bin", os.ModePerm)
+	os.MkdirAll(c.TypicalTmp+"/build-tool", os.ModePerm)
+	os.MkdirAll(c.TypicalTmp+"/bin", os.ModePerm)
 
-	cksmFile := c.TmpFolder + "/checksum"
-	out := c.TmpFolder + "/bin/build-tool"
-	srcPath := c.TmpFolder + "/build-tool/main.go"
+	cksmFile := c.TypicalTmp + "/checksum"
+	out := c.TypicalTmp + "/bin/build-tool"
+	srcPath := c.TypicalTmp + "/build-tool/main.go"
 	descriptorPkg := c.ProjectPackage + "/typical"
 
 	var cksm *Checksum
@@ -54,8 +54,8 @@ func (*TypicalWrapper) Wrap(c *Context) (err error) {
 
 		c.Info("Build the build-tool")
 		return buildkit.NewGoBuild(out, srcPath).
-			SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage", c.ProjectPackage).
-			SetVariable("github.com/typical-go/typical-go/pkg/typcore.DefaultTmpFolder", c.TmpFolder).
+			SetVariable(typcore.DefaultProjectPackageVar, c.ProjectPackage).
+			SetVariable(typcore.DefaultTypicalTmpVar, c.TypicalTmp).
 			WithStdout(os.Stdout).
 			WithStderr(os.Stderr).
 			WithStdin(os.Stdin).
