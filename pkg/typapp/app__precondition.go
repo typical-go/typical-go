@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typapp/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/typast"
@@ -65,5 +66,5 @@ func (a *TypicalApp) generateConstructor(c *typbuildtool.BuildContext, filename 
 		return
 	}
 
-	return typcore.GoImport(ctx, c.Context.Context, filename)
+	return buildkit.NewGoImports(c.TmpFolder, filename).Execute(ctx)
 }
