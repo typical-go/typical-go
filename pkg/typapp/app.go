@@ -8,16 +8,18 @@ import (
 
 // TypicalApp is typical application model
 type TypicalApp struct {
-	projectSources []string
-	appModule      interface{}
-	modules        []interface{}
+	projectSources  []string
+	appModule       interface{}
+	modules         []interface{}
+	initAppFilename string
 }
 
 // Create new instance of app
 func Create(appModule interface{}) *TypicalApp {
 	app := &TypicalApp{
-		projectSources: []string{common.PackageName(appModule)},
-		appModule:      appModule,
+		projectSources:  []string{common.PackageName(appModule)},
+		appModule:       appModule,
+		initAppFilename: "init_app_do_not_edit.go",
 	}
 	return app
 }
@@ -31,6 +33,12 @@ func (a *TypicalApp) WithProjectSources(sources ...string) *TypicalApp {
 // WithModules return app with appended module. Module should be implementation of Provider, Preparer (optional) and Destroyer (optional).
 func (a *TypicalApp) WithModules(modules ...interface{}) *TypicalApp {
 	a.modules = modules
+	return a
+}
+
+// WithInitAppFilename return app with new initAppFilename
+func (a *TypicalApp) WithInitAppFilename(initAppFilename string) *TypicalApp {
+	a.initAppFilename = initAppFilename
 	return a
 }
 

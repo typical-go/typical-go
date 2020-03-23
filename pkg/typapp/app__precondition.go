@@ -30,9 +30,8 @@ func (a *TypicalApp) Precondition(c *typbuildtool.BuildContext) (err error) {
 		}
 	}
 
-	c.Info("Generate constructors")
-	target := "typical/init_app_do_not_edit.go"
-	if err = a.generateConstructor(c, target, constructors); err != nil {
+	c.Info("Precondition the typical-app")
+	if err = a.generateConstructor(c, "typical/"+a.initAppFilename, constructors); err != nil {
 		return
 	}
 	return

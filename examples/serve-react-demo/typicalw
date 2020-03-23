@@ -10,9 +10,9 @@ if ! [ -s $TYPGO ]; then
     go build -o $TYPGO $TYPSRC
 fi
 
-# Hack to override module package because the example 
+# Hack to override project package because the example 
 # project want to use its parent directory as typical-go
-# source. Module Package is module name in go.mod file 
+# source. Project Package is module name in go.mod file 
 # or working path if the project in $GOPATH
 PROJPKG="github.com/typical-go/typical-go/examples/serve-react-demo"
 
