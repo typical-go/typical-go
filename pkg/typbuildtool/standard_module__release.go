@@ -11,6 +11,7 @@ import (
 func (b *StandardModule) Release(c *ReleaseContext) (files []string, err error) {
 
 	for _, target := range b.releaseTargets {
+		c.Infof("Build release for %s", target)
 		var binary string
 		if binary, err = b.build(c.BuildContext, c.Tag, target); err != nil {
 			err = fmt.Errorf("Failed build release: %w", err)

@@ -1,7 +1,6 @@
 package typbuildtool
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -68,9 +67,6 @@ func (b *StandardModule) WithReleaseFolder(releaseFolder string) *StandardModule
 
 // Validate the releaser
 func (b *StandardModule) Validate() (err error) {
-	if len(b.releaseTargets) < 1 {
-		return errors.New("Missing 'Targets'")
-	}
 	for _, target := range b.releaseTargets {
 		if err = target.Validate(); err != nil {
 			return fmt.Errorf("Target: %w", err)
