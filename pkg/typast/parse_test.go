@@ -58,7 +58,7 @@ func TestParseAnnotation(t *testing.T) {
 
 func TestParseAnnotations(t *testing.T) {
 	raw := "[tag1] some text [tag2] then another text [tag3(key1=value1)]"
-	require.Equal(t, typast.Annotations{
+	require.Equal(t, []*typast.Annotation{
 		typast.NewAnnotation("tag1"),
 		typast.NewAnnotation("tag2"),
 		typast.NewAnnotation("tag3").Put("key1", "value1"),

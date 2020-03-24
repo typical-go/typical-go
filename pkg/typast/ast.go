@@ -1,6 +1,8 @@
 package typast
 
 import (
+	"strings"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -8,12 +10,6 @@ import (
 type Ast struct {
 	decls []*Declaration
 }
-
-// DeclFunc to handle declaration
-type DeclFunc func(*Declaration) error
-
-// AnnotationFunc to handle annotation
-type AnnotationFunc func(decl *Declaration, ann *Annotation) error
 
 // Append return DeclStore with appended decls
 func (c *Ast) Append(decls ...*Declaration) *Ast {
@@ -34,7 +30,7 @@ func (c *Ast) EachDecl(fn DeclFunc) (err error) {
 // EachAnnotation to handle each annotation
 func (c *Ast) EachAnnotation(name string, declType DeclType, fn AnnotationFunc) (err error) {
 	return c.EachDecl(func(decl *Declaration) (err error) {
-		annotation := decl.Annotations.Get(name)
+		annotation := getAnnotation(decl.Annotations, name)
 		if annotation != nil {
 			if decl.Type == declType {
 				if err = fn(decl, annotation); err != nil {
@@ -46,4 +42,13 @@ func (c *Ast) EachAnnotation(name string, declType DeclType, fn AnnotationFunc) 
 		}
 		return
 	})
+}
+
+func getAnnotation(a []*Annotation, name string) *Annotation {
+	for _, a := range a {
+		if strings.ToLower(name) == strings.ToLower(a.Name) {
+			return a
+		}
+	}
+	return nil
 }

@@ -9,16 +9,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
-// Field of config
-type Field struct {
-	Name     string
-	Type     string
-	Default  string
-	Value    interface{}
-	IsZero   bool
-	Required bool
-}
-
 // RetrieveFields to retrieve fields from configuration
 func RetrieveFields(c *typcore.Configuration) (fields []*Field) {
 	val := reflect.Indirect(reflect.ValueOf(c.Spec()))

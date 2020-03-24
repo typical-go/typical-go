@@ -1,7 +1,10 @@
 package typbuildtool
 
 import (
+	"context"
+	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/typical-go/typical-go/pkg/git"
 	"github.com/urfave/cli/v2"
@@ -16,7 +19,10 @@ func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
 			Aliases: []string{"b"},
 			Usage:   "Build the binary",
 			Action: func(cliCtx *cli.Context) (err error) {
-				_, err = b.Build(b.createContext(c, cliCtx))
+				_, err = b.Build(&BuildContext{
+					Context: c,
+					Cli:     cliCtx,
+				})
 				return
 			},
 		},
@@ -25,7 +31,10 @@ func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
 			Aliases: []string{"t"},
 			Usage:   "Run the testing",
 			Action: func(cliCtx *cli.Context) error {
-				return b.Test(b.createContext(c, cliCtx))
+				return b.Test(&BuildContext{
+					Context: c,
+					Cli:     cliCtx,
+				})
 			},
 		},
 		{
@@ -34,7 +43,10 @@ func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
 			Usage:           "Run the binary",
 			SkipFlagParsing: true,
 			Action: func(cliCtx *cli.Context) (err error) {
-				bc := b.createContext(c, cliCtx)
+				bc := &BuildContext{
+					Context: c,
+					Cli:     cliCtx,
+				}
 
 				var dists []BuildDistribution
 				if dists, err = b.Build(bc); err != nil {
@@ -54,7 +66,10 @@ func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
 			Aliases: []string{"c"},
 			Usage:   "Clean the project from generated file during build time",
 			Action: func(cliCtx *cli.Context) (err error) {
-				return b.Clean(b.createContext(c, cliCtx))
+				return b.Clean(&BuildContext{
+					Context: c,
+					Cli:     cliCtx,
+				})
 			},
 		},
 		{
@@ -75,7 +90,10 @@ func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
 				var (
 					rc           *ReleaseContext
 					releaseFiles []string
-					bc           = b.createContext(c, cliCtx)
+					bc           = &BuildContext{
+						Context: c,
+						Cli:     cliCtx,
+					}
 				)
 
 				if !cliCtx.Bool("no-test") {
@@ -118,4 +136,51 @@ func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
 		cmds = append(cmds, commander.Commands(c)...)
 	}
 	return cmds
+}
+
+func (b *TypicalBuildTool) createReleaseContext(c *BuildContext) (*ReleaseContext, error) {
+	ctx := c.Cli.Context
+	force := c.Cli.Bool("force")
+	alpha := c.Cli.Bool("alpha")
+	tag := b.releaseTag(ctx, c.Version, alpha)
+
+	if status := git.Status(ctx); status != "" && !force {
+		return nil, fmt.Errorf("Please commit changes first:\n%s", status)
+	}
+
+	var latest string
+	if latest = git.LatestTag(ctx); latest == tag && !force {
+		return nil, fmt.Errorf("%s already released", latest)
+	}
+
+	var gitLogs []*git.Log
+	if gitLogs = git.RetrieveLogs(ctx, latest); len(gitLogs) < 1 && !force {
+		return nil, errors.New("No change to be released")
+	}
+
+	return &ReleaseContext{
+		BuildContext: c,
+		Alpha:        alpha,
+		Tag:          tag,
+		GitLogs:      gitLogs,
+	}, nil
+}
+
+// Tag return relase tag
+func (b *TypicalBuildTool) releaseTag(ctx context.Context, version string, alpha bool) string {
+	var builder strings.Builder
+	builder.WriteString("v")
+	builder.WriteString(version)
+	if b.includeBranch {
+		builder.WriteString("_")
+		builder.WriteString(git.Branch(ctx))
+	}
+	if b.includeCommitID {
+		builder.WriteString("_")
+		builder.WriteString(git.LatestCommit(ctx))
+	}
+	if alpha {
+		builder.WriteString("_alpha")
+	}
+	return builder.String()
 }

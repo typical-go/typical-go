@@ -6,7 +6,7 @@ import (
 )
 
 // ParseAnnotations to parse godoc comment to list of annotation
-func ParseAnnotations(doc string) (annotations Annotations) {
+func ParseAnnotations(doc string) (annotations []*Annotation) {
 	if doc == "" {
 		return
 	}
