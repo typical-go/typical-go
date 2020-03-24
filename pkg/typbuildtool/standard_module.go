@@ -22,14 +22,10 @@ type StandardModule struct {
 // StandardBuild return new instance of Module
 func StandardBuild() *StandardModule {
 	return &StandardModule{
-		stdout:       os.Stdout,
-		stderr:       os.Stderr,
-		stdin:        os.Stdin,
-		coverProfile: "cover.out",
-		releaseTargets: []ReleaseTarget{
-			"linux/amd64",
-			"darwin/amd64",
-		},
+		stdout:        os.Stdout,
+		stderr:        os.Stderr,
+		stdin:         os.Stdin,
+		coverProfile:  "cover.out",
 		releaseFolder: "release",
 	}
 }

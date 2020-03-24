@@ -1,6 +1,6 @@
 package typbuildtool
 
-var (
+const (
 	// DefaultReleaseFolder is default value for release folder location
 	DefaultReleaseFolder = "release"
 
@@ -9,4 +9,10 @@ var (
 
 	// DefaultCmdFolder is default value for cmd folder
 	DefaultCmdFolder = "cmd"
+
+	// Linux as releast target
+	Linux ReleaseTarget = "linux/amd64"
+
+	// Darwin as releast target
+	Darwin ReleaseTarget = "darwin/amd64"
 )
