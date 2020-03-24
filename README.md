@@ -7,7 +7,7 @@ A Build Tool (+ Framework) for Golang. <https://typical-go.github.io/>
 
 ## Descriptor File
 
-Create descriptor in `typical` folder
+Define descriptor in `typical` folder
 ```go
 var Descriptor = typcore.Descriptor{
 	Name:    "configuration-with-invocation",
@@ -63,18 +63,23 @@ GLOBAL OPTIONS:
    --version, -v  print the version (default: false) 
 ```
 
+## Typical Tmp
+
+Typical-tmp is an important folder that contains the build tool mechanism. By default, it is located in `.typical-tmp` and can be changed by hacking/editing the `typicalw` file.
+
+Since the typical-go project is still undergoing development, maybe there is some breaking change and deleting typical-tmp may solve the issue since it will be healed by itself.
 
 ## Examples
 
-- [Hello World](https://github.com/typical-go/typical-go/tree/master/examples/hello-world)
-- [Get Config From Descriptor](https://github.com/typical-go/typical-go/tree/master/examples/get-config-from-descriptor)
-- [Configuration With Invocation](https://github.com/typical-go/typical-go/tree/master/examples/configuration-with-invocation)
-- [Simple Additional Task](https://github.com/typical-go/typical-go/tree/master/examples/simple-additional-task)
-- [Provide Constructor](https://github.com/typical-go/typical-go/tree/master/examples/provide-constructor)
-- [Generate Mock](https://github.com/typical-go/typical-go/tree/master/examples/generate-mock)
-- [Generate Readme](https://github.com/typical-go/typical-go/tree/master/examples/generate-readme)
-- [Generate Docker-Compose](https://github.com/typical-go/typical-go/tree/master/examples/generate-docker-compose)
-- [Serve React Demo](https://github.com/typical-go/typical-go/tree/master/examples/serve-react-demo)
+- [x] [Hello World](https://github.com/typical-go/typical-go/tree/master/examples/hello-world)
+- [x] [Get Config From Descriptor](https://github.com/typical-go/typical-go/tree/master/examples/get-config-from-descriptor)
+- [x] [Configuration With Invocation](https://github.com/typical-go/typical-go/tree/master/examples/configuration-with-invocation)
+- [x] [Simple Additional Task](https://github.com/typical-go/typical-go/tree/master/examples/simple-additional-task)
+- [x] [Provide Constructor](https://github.com/typical-go/typical-go/tree/master/examples/provide-constructor)
+- [x] [Generate Mock](https://github.com/typical-go/typical-go/tree/master/examples/generate-mock)
+- [ ] [Generate Readme](https://github.com/typical-go/typical-go/tree/master/examples/generate-readme)
+- [ ] [Generate Docker-Compose](https://github.com/typical-go/typical-go/tree/master/examples/generate-docker-compose)
+- [x] [Serve React Demo](https://github.com/typical-go/typical-go/tree/master/examples/serve-react-demo)
 
 
 
