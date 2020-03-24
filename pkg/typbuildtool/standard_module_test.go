@@ -31,10 +31,6 @@ func TestValidate(t *testing.T) {
 		expected string
 	}{
 		{
-			StandardModule: typbuildtool.StandardBuild().WithReleaseTargets(),
-			expected:       "Missing 'Targets'",
-		},
-		{
 			StandardModule: typbuildtool.StandardBuild().WithReleaseTargets("invalid-target"),
 			expected:       "Target: Missing OS: Please make sure 'invalid-target' using 'OS/ARCH' format",
 		},
