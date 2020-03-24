@@ -9,7 +9,7 @@ import (
 // Descriptor of sample
 var Descriptor = typcore.Descriptor{
 	Name:    "server-echo-react",
-	Version: "0.0.1",
+	Version: "1.0.0",
 
 	App: server.New(),
 

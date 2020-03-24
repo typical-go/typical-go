@@ -9,7 +9,7 @@ import (
 // Descriptor of sample
 var Descriptor = typcore.Descriptor{
 	Name:    "hello-world",
-	Version: "0.0.1",
+	Version: "1.0.0",
 
 	App: helloworld.New(), // the application
 

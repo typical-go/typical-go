@@ -15,7 +15,7 @@ var (
 // Descriptor of sample
 var Descriptor = typcore.Descriptor{
 	Name:    "get-config-from-descriptor",
-	Version: "0.0.1",
+	Version: "1.0.0",
 
 	App: serverApp, // wrap serverApp with Typical App
 

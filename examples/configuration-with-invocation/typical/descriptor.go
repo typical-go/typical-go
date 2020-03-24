@@ -16,7 +16,7 @@ var (
 // Descriptor of sample
 var Descriptor = typcore.Descriptor{
 	Name:    "configuration-with-invocation",
-	Version: "0.0.1",
+	Version: "1.0.0",
 
 	App: typapp.
 		Create(serverApp), // wrap serverApp with Typical App

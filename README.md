@@ -35,6 +35,34 @@ var Descriptor = typcore.Descriptor{
 
 `.typicalw` is your best friend. It will download, compile and run the actual build-tool for your daily development task.
 
+```bash
+./typicalw
+```
+
+```
+NAME:
+   configuration-with-invocation - Build-Tool
+
+USAGE:
+   build-tool [global options] command [command options] [arguments...]
+
+VERSION:
+   1.0.0
+
+COMMANDS:
+   build, b  Build the binary
+   test, t   Run the testing
+   run, r    Run the binary
+   clean, c  Clean the project from generated file during build time
+   release   Release the distribution
+   mock      Generate mock class
+   help, h   Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --help, -h     show help (default: false)
+   --version, -v  print the version (default: false) 
+```
+
 
 ## Examples
 

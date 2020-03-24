@@ -9,7 +9,7 @@ import (
 // Descriptor of sample
 var Descriptor = typcore.Descriptor{
 	Name:    "simple-additional-task",
-	Version: "0.0.1",
+	Version: "1.0.0",
 
 	App: helloworld.New(),
 
