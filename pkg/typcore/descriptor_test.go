@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/app"
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
@@ -18,6 +19,29 @@ func TestDescriptor(t *testing.T) {
 	t.Run("SHOULD implement BuildToolLauncher", func(t *testing.T) {
 		var _ typcore.BuildToolLauncher = &typcore.Descriptor{}
 	})
+	t.Run("SHOULD implement AppSourceable", func(t *testing.T) {
+		var _ typcore.AppSourceable = &typcore.Descriptor{}
+	})
+}
+
+func TestDescriptor_ProjectSources(t *testing.T) {
+	testcases := []struct {
+		*typcore.Descriptor
+		expected []string
+	}{
+		{
+			Descriptor: &typcore.Descriptor{App: app.New()},
+			expected:   []string{"app"},
+		},
+		{
+			Descriptor: &typcore.Descriptor{App: typapp.Create(app.New())},
+			expected:   []string{"app"},
+		},
+	}
+
+	for _, tt := range testcases {
+		require.Equal(t, tt.expected, tt.AppSources())
+	}
 }
 
 func TestDescriptor_ValidateName(t *testing.T) {

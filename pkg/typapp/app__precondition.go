@@ -52,7 +52,7 @@ func (a *TypicalApp) generateConstructor(c *typbuildtool.BuildContext, filename 
 	ctx := c.Cli.Context
 	imports := []string{}
 
-	for _, dir := range c.ProjectDirs {
+	for _, dir := range c.AppDirs {
 		if !strings.Contains(dir, "internal") {
 			imports = append(imports, fmt.Sprintf("%s/%s", c.ProjectPackage, dir))
 		}

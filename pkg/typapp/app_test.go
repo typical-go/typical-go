@@ -36,7 +36,7 @@ func TestNewApp(t *testing.T) {
 		var _ typapp.Commander = typapp.Create(nil)
 	})
 	t.Run("SHOULD implement Sourceable", func(t *testing.T) {
-		var _ typcore.SourceableApp = typapp.Create(nil)
+		var _ typcore.AppSourceable = typapp.Create(nil)
 	})
 }
 

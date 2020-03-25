@@ -2,6 +2,7 @@ package typcore
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -13,12 +14,12 @@ import (
 type Context struct {
 	*Descriptor
 
-	TypicalTmp string
-
+	TypicalTmp     string
 	ProjectPackage string
-	ProjectDirs    []string
-	ProjectFiles   []string
-	ProjectSources []string
+
+	AppDirs    []string
+	AppFiles   []string
+	AppSources []string
 
 	ast *typast.Ast
 }
@@ -32,20 +33,20 @@ func CreateContext(d *Descriptor) (c *Context, err error) {
 		return nil, err
 	}
 
-	var projectSources []string
-	if projectSources, err = ProjectSources(d); err != nil {
-		return nil, err
+	appSources := d.AppSources()
+	if err = validateSources(appSources); err != nil {
+		return
 	}
 
-	var projectDirs, projectFiles []string
-	for _, dir := range projectSources {
+	var appDirs, appFiles []string
+	for _, dir := range appSources {
 		filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 			if info != nil && info.IsDir() {
-				projectDirs = append(projectDirs, path)
+				appDirs = append(appDirs, path)
 				return nil
 			}
 			if isWalkTarget(path) {
-				projectFiles = append(projectFiles, path)
+				appFiles = append(appFiles, path)
 			}
 			return nil
 		})
@@ -55,9 +56,9 @@ func CreateContext(d *Descriptor) (c *Context, err error) {
 		Descriptor:     d,
 		TypicalTmp:     DefaultTypicalTmp,
 		ProjectPackage: DefaultProjectPackage,
-		ProjectSources: projectSources,
-		ProjectDirs:    projectDirs,
-		ProjectFiles:   projectFiles,
+		AppSources:     appSources,
+		AppDirs:        appDirs,
+		AppFiles:       appFiles,
 	}, nil
 }
 
@@ -65,7 +66,7 @@ func CreateContext(d *Descriptor) (c *Context, err error) {
 func (c *Context) Ast() *typast.Ast {
 	if c.ast == nil {
 		var err error
-		if c.ast, err = typast.Walk(c.ProjectFiles); err != nil {
+		if c.ast, err = typast.Walk(c.AppFiles); err != nil {
 			c.Warnf("PreconditionContext: %w", err.Error())
 		}
 	}
@@ -75,4 +76,13 @@ func (c *Context) Ast() *typast.Ast {
 func isWalkTarget(filename string) bool {
 	return strings.HasSuffix(filename, ".go") &&
 		!strings.HasSuffix(filename, "_test.go")
+}
+
+func validateSources(sources []string) (err error) {
+	for _, source := range sources {
+		if _, err = os.Stat(source); os.IsNotExist(err) {
+			return fmt.Errorf("Source '%s' is not exist", source)
+		}
+	}
+	return
 }

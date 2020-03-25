@@ -40,7 +40,7 @@ func TestTypicalContext(t *testing.T) {
 
 	require.NoError(t, common.Validate(ctx))
 	require.Equal(t, "0.0.1", ctx.Version)
-	require.Equal(t, []string{"app", "pkg"}, ctx.ProjectSources)
-	require.Equal(t, []string{"app", "app/some_pkg", "pkg", "pkg/some_lib"}, ctx.ProjectDirs)
-	require.Equal(t, []string{"app/some_pkg/some_file.go", "pkg/some_lib/lib.go"}, ctx.ProjectFiles)
+	require.Equal(t, []string{"app", "pkg"}, ctx.AppSources)
+	require.Equal(t, []string{"app", "app/some_pkg", "pkg", "pkg/some_lib"}, ctx.AppDirs)
+	require.Equal(t, []string{"app/some_pkg/some_file.go", "pkg/some_lib/lib.go"}, ctx.AppFiles)
 }

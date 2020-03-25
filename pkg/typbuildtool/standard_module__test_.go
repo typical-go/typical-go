@@ -10,7 +10,7 @@ import (
 func (b *StandardModule) Test(c *BuildContext) (err error) {
 	c.Info("Standard-Build: Test the project")
 	var targets []string
-	for _, source := range c.ProjectSources {
+	for _, source := range c.AppSources {
 		targets = append(targets, fmt.Sprintf("./%s/...", source))
 	}
 

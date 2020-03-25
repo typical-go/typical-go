@@ -98,7 +98,7 @@ func (a *TypicalApp) Commands(c *Context) (cmds []*cli.Command) {
 	return
 }
 
-// ProjectSources return source for app
-func (a *TypicalApp) ProjectSources() []string {
+// AppSources return source for app
+func (a *TypicalApp) AppSources() []string {
 	return a.projectSources
 }

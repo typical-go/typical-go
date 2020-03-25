@@ -20,9 +20,9 @@ type BuildTool interface {
 	RunBuildTool(*Context) error
 }
 
-// SourceableApp mean the app define its own project sources
-type SourceableApp interface {
-	ProjectSources() []string
+// AppSourceable mean the app define its own project sources
+type AppSourceable interface {
+	AppSources() []string
 }
 
 // Logger responsible to log any useful information
