@@ -1,12 +1,13 @@
 package typwrap
 
 import (
+	"bufio"
+	"errors"
 	"go/build"
 	"os"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
-	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
@@ -22,7 +23,9 @@ func New() *TypicalWrapper {
 func (*TypicalWrapper) Wrap(c *Context) (err error) {
 
 	if c.ProjectPackage == "" {
-		c.ProjectPackage = retrieveProjectPackage()
+		if c.ProjectPackage, err = retrieveProjectPackage(); err != nil {
+			return
+		}
 	}
 
 	// NOTE: create tmp folder if not exist
@@ -65,27 +68,37 @@ func (*TypicalWrapper) Wrap(c *Context) (err error) {
 	return
 }
 
-func retrieveProjectPackage() (pkg string) {
+func retrieveProjectPackage() (pkg string, err error) {
 	var (
-		err  error
 		root string
 		f    *os.File
 	)
 
 	if root, err = os.Getwd(); err != nil {
-		panic(err.Error())
+		return
 	}
 
+	// go.mod is not exist. Check if the project sit in $GOPATH
 	if f, err = os.Open(root + "/go.mod"); err != nil {
-		// NOTE: go.mod is not exist. Check if the project sit in $GOPATH
 		gopath := build.Default.GOPATH
 		if strings.HasPrefix(root, gopath) {
-			return root[len(gopath):]
+			pkg = root[len(gopath):]
+		} else {
+			err = errors.New("RetrieveProjectPackage: go.mod is missing and the project not in $GOPATH")
 		}
-		panic("Failed to retrieve ProjectPackage: `go.mod` is missing and the project not in $GOPATH")
+		return
 	}
 	defer f.Close()
 
-	modfile := common.ParseModfile(f)
-	return modfile.ProjectPackage
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.HasPrefix(line, "module") {
+			pkg = strings.TrimSpace(line[6:])
+			return
+		}
+	}
+
+	err = errors.New("RetrieveProjectPackage: go.mod doesn't contain module")
+	return
 }
