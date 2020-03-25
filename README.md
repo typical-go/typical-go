@@ -11,22 +11,18 @@ Define descriptor in `typical` folder
 ```go
 var Descriptor = typcore.Descriptor{
 	Name:    "configuration-with-invocation",
-	Version: "0.0.1",
+	Version: "1.0.0",
 
-	// The Application
-	App: typapp.
-		Create(serverApp), 
+	App: typapp.EntryPoint(server.Main), 
 
-	// The Build Tool
 	BuildTool: typbuildtool.
-		Create(
+		BuildSequences(
 			typbuildtool.StandardBuild(),
 		),
 
-	// The Configuration Manager
 	ConfigManager: typcfg.
-		Create(
-			serverApp, 
+		Configures(
+			typcfg.NewConfiguration(server.ConfigName, &server.Config{}), 
 		),
 }
 ```
