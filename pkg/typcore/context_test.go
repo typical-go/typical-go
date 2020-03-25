@@ -28,7 +28,7 @@ func TestTypicalContext(t *testing.T) {
 	ctx, err := typcore.CreateContext(&typcore.Descriptor{
 		Name: "some-name",
 		App:  app.New(),
-		BuildTool: typbuildtool.Create(
+		BuildTool: typbuildtool.BuildSequences(
 			typbuildtool.StandardBuild(),
 		),
 	})

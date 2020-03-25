@@ -11,30 +11,30 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
-func TestBuildTool(t *testing.T) {
+func TestBuildSequences(t *testing.T) {
 	t.Run("SHOULD implement Buildtool", func(t *testing.T) {
-		var _ typcore.BuildTool = typbuildtool.Create()
+		var _ typcore.BuildTool = typbuildtool.BuildSequences()
 	})
 	t.Run("SHOULD implement Commander", func(t *testing.T) {
-		var _ typbuildtool.Commander = typbuildtool.Create()
+		var _ typbuildtool.Task = typbuildtool.BuildSequences()
 	})
 	t.Run("SHOULD implement Builder", func(t *testing.T) {
-		var _ typbuildtool.Builder = typbuildtool.Create()
+		var _ typbuildtool.Builder = typbuildtool.BuildSequences()
 	})
 	t.Run("SHOULD implement Tester", func(t *testing.T) {
-		var _ typbuildtool.Tester = typbuildtool.Create()
+		var _ typbuildtool.Tester = typbuildtool.BuildSequences()
 	})
 	t.Run("SHOULD implement Tester", func(t *testing.T) {
-		var _ typbuildtool.Cleaner = typbuildtool.Create()
+		var _ typbuildtool.Cleaner = typbuildtool.BuildSequences()
 	})
 	t.Run("SHOULD implement Releaser", func(t *testing.T) {
-		var _ typbuildtool.Releaser = typbuildtool.Create()
+		var _ typbuildtool.Releaser = typbuildtool.BuildSequences()
 	})
 	t.Run("SHOULD implement Publisher", func(t *testing.T) {
-		var _ typbuildtool.Publisher = typbuildtool.Create()
+		var _ typbuildtool.Publisher = typbuildtool.BuildSequences()
 	})
 	t.Run("SHOULD implement Preconditioner", func(t *testing.T) {
-		var _ typbuildtool.Preconditioner = typbuildtool.Create()
+		var _ typbuildtool.Preconditioner = typbuildtool.BuildSequences()
 	})
 }
 
@@ -44,14 +44,14 @@ func TestBuildTool_Validate(t *testing.T) {
 		expectedError string
 	}{
 		{
-			TypicalBuildTool: typbuildtool.Create(typbuildtool.StandardBuild()),
+			TypicalBuildTool: typbuildtool.BuildSequences(typbuildtool.StandardBuild()),
 		},
 		{
-			TypicalBuildTool: typbuildtool.Create(),
+			TypicalBuildTool: typbuildtool.BuildSequences(),
 			expectedError:    "No build modules",
 		},
 		{
-			TypicalBuildTool: typbuildtool.Create(common.DummyValidator("some-error")),
+			TypicalBuildTool: typbuildtool.BuildSequences(common.DummyValidator("some-error")),
 			expectedError:    "BuildTool: some-error",
 		},
 	}

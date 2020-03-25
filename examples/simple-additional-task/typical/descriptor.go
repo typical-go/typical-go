@@ -14,10 +14,10 @@ var Descriptor = typcore.Descriptor{
 	App: typcore.NewApp(helloworld.Main),
 
 	BuildTool: typbuildtool.
-		Create(
+		BuildSequences(
 			typbuildtool.StandardBuild(),
 		).
-		WithCommanders(
-			typbuildtool.CreateCommander(taskPrintContext), // Add custom task
+		WithTasks(
+			typbuildtool.NewTask(taskPrintContext), // Add custom task
 		),
 }

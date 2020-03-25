@@ -13,27 +13,27 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
-func TestNewApp(t *testing.T) {
+func TestAppModule(t *testing.T) {
 	t.Run("SHOULD implement App", func(t *testing.T) {
-		var _ typcore.App = typapp.Create(nil)
+		var _ typcore.App = typapp.AppModule(nil)
 	})
 	t.Run("SHOULD implement Preconditioner", func(t *testing.T) {
-		var _ typbuildtool.Preconditioner = typapp.Create(nil)
+		var _ typbuildtool.Preconditioner = typapp.AppModule(nil)
 	})
 	t.Run("SHOULD implement Provider", func(t *testing.T) {
-		var _ typapp.Provider = typapp.Create(nil)
+		var _ typapp.Provider = typapp.AppModule(nil)
 	})
 	t.Run("SHOULD implement Destroyer", func(t *testing.T) {
-		var _ typapp.Destroyer = typapp.Create(nil)
+		var _ typapp.Destroyer = typapp.AppModule(nil)
 	})
 	t.Run("SHOULD implement Preparer", func(t *testing.T) {
-		var _ typapp.Preparer = typapp.Create(nil)
+		var _ typapp.Preparer = typapp.AppModule(nil)
 	})
 	t.Run("SHOULD implement EntryPointer", func(t *testing.T) {
-		var _ typapp.EntryPointer = typapp.Create(nil)
+		var _ typapp.EntryPointer = typapp.AppModule(nil)
 	})
 	t.Run("SHOULD implement Commander", func(t *testing.T) {
-		var _ typapp.Commander = typapp.Create(nil)
+		var _ typapp.Commander = typapp.AppModule(nil)
 	})
 }
 
@@ -41,7 +41,7 @@ func TestProvide(t *testing.T) {
 	c1 := typdep.NewConstructor(nil)
 	c2 := typdep.NewConstructor(nil)
 	c3 := typdep.NewConstructor(nil)
-	app := typapp.Create(dummyProvider(c1)).WithModules(dummyProvider(c2))
+	app := typapp.AppModule(dummyProvider(c1)).WithModules(dummyProvider(c2))
 	typapp.AppendConstructor(c3)
 
 	require.EqualValues(t,
@@ -54,7 +54,7 @@ func TestDestoy(t *testing.T) {
 	i1 := typdep.NewInvocation(nil)
 	i2 := typdep.NewInvocation(nil)
 	i3 := typdep.NewInvocation(nil)
-	app := typapp.Create(dummyDestroyers(i1)).WithModules(dummyDestroyers(i2, i3))
+	app := typapp.AppModule(dummyDestroyers(i1)).WithModules(dummyDestroyers(i2, i3))
 
 	require.EqualValues(t,
 		[]*typdep.Invocation{i1, i2, i3},
@@ -66,7 +66,7 @@ func TestPrepare(t *testing.T) {
 	i1 := typdep.NewInvocation(nil)
 	i2 := typdep.NewInvocation(nil)
 	i3 := typdep.NewInvocation(nil)
-	app := typapp.Create(dummyPreparer(i1)).WithModules(dummyPreparer(i2, i3))
+	app := typapp.AppModule(dummyPreparer(i1)).WithModules(dummyPreparer(i2, i3))
 
 	require.EqualValues(t,
 		[]*typdep.Invocation{i1, i2, i3},
@@ -77,7 +77,7 @@ func TestPrepare(t *testing.T) {
 func TestEntryPoint(t *testing.T) {
 	i1 := typdep.NewInvocation(nil)
 	i2 := typdep.NewInvocation(nil)
-	app := typapp.Create(dummyEntryPointer(i1)).WithModules(dummyEntryPointer(i2))
+	app := typapp.AppModule(dummyEntryPointer(i1)).WithModules(dummyEntryPointer(i2))
 
 	require.EqualValues(t, i1, app.EntryPoint())
 }
@@ -89,7 +89,7 @@ func TestApp(t *testing.T) {
 	fn := struct{}{}
 
 	app := typapp.
-		Create(struct {
+		AppModule(struct {
 			typapp.EntryPointer
 			typapp.Commander
 		}{

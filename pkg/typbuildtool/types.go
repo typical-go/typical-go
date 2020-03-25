@@ -6,8 +6,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// Commander responsible to return commands for Build-Tool
-type Commander interface {
+// Task of build-tool
+type Task interface {
 	Commands(c *Context) []*cli.Command
 }
 

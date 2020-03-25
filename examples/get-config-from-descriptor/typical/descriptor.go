@@ -15,12 +15,12 @@ var Descriptor = typcore.Descriptor{
 	App: typcore.NewApp(server.Main), // wrap serverApp with Typical App
 
 	BuildTool: typbuildtool.
-		Create(
+		BuildSequences(
 			typbuildtool.StandardBuild(),
 		),
 
 	ConfigManager: typcfg.
-		Create(
+		Configures(
 			typcfg.NewConfiguration(server.ConfigName, &server.Config{}), // register serverApp configurer
 		),
 }

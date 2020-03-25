@@ -8,7 +8,6 @@ import (
 	"github.com/typical-go/typical-go/app"
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
@@ -31,7 +30,7 @@ func TestDescriptor_ProjectSources(t *testing.T) {
 			expected:   []string{"app"},
 		},
 		{
-			Descriptor: &typcore.Descriptor{App: typapp.Create(app.New())},
+			Descriptor: &typcore.Descriptor{App: typapp.AppModule(app.New())},
 			expected:   []string{"app"},
 		},
 	}
@@ -84,15 +83,15 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 		{
 			Descriptor: &typcore.Descriptor{
 				Name:      "Typical Go",
-				App:       typapp.Create(nil),
-				BuildTool: typbuildtool.Create(),
+				App:       typapp.AppModule(nil),
+				BuildTool: dummyBuildTool{},
 			},
 			expectedErr: "Descriptor: Invalid name",
 		},
 		{
 			Descriptor: &typcore.Descriptor{
 				Name:      "some-name",
-				App:       typapp.Create(nil),
+				App:       typapp.AppModule(nil),
 				BuildTool: dummyBuildTool{errMessage: "Build: some-error"},
 			},
 			expectedErr: "Descriptor: Build: some-error",

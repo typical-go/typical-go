@@ -14,14 +14,13 @@ type TypicalApp struct {
 	initAppFilename string
 }
 
-// Create new instance of app
-func Create(appModule interface{}) *TypicalApp {
-	app := &TypicalApp{
+// AppModule to create new instance of TypicalApp with AppModule
+func AppModule(appModule interface{}) *TypicalApp {
+	return &TypicalApp{
 		projectSources:  []string{common.PackageName(appModule)},
 		appModule:       appModule,
-		initAppFilename: "init_app_do_not_edit.go",
+		initAppFilename: defaultInitAppFilename,
 	}
-	return app
 }
 
 // WithProjectSources return app with new source

@@ -127,13 +127,13 @@ func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
 	}
 
 	for _, module := range b.modules {
-		if commander, ok := module.(Commander); ok {
-			cmds = append(cmds, commander.Commands(c)...)
+		if task, ok := module.(Task); ok {
+			cmds = append(cmds, task.Commands(c)...)
 		}
 	}
 
-	for _, commander := range b.commanders {
-		cmds = append(cmds, commander.Commands(c)...)
+	for _, task := range b.tasks {
+		cmds = append(cmds, task.Commands(c)...)
 	}
 	return cmds
 }

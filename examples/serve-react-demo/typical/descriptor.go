@@ -14,7 +14,7 @@ var Descriptor = typcore.Descriptor{
 	App: typcore.NewApp(server.Main),
 
 	BuildTool: typbuildtool.
-		Create(
+		BuildSequences(
 			&ReactDemoModule{source: "react-demo"},
 			typbuildtool.StandardBuild(),
 		),

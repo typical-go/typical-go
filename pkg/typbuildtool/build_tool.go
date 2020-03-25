@@ -10,8 +10,8 @@ import (
 
 // TypicalBuildTool is typical Build Tool for golang project
 type TypicalBuildTool struct {
-	modules    []interface{}
-	commanders []Commander
+	modules []interface{}
+	tasks   []Task
 
 	binFolder string
 	cmdFolder string
@@ -20,8 +20,8 @@ type TypicalBuildTool struct {
 	includeCommitID bool
 }
 
-// Create new instance of build
-func Create(modules ...interface{}) *TypicalBuildTool {
+// BuildSequences create new instance of TypicalBuildTool with build-sequence
+func BuildSequences(modules ...interface{}) *TypicalBuildTool {
 	return &TypicalBuildTool{
 		modules:   modules,
 		binFolder: DefaultBinFolder,
@@ -29,9 +29,9 @@ func Create(modules ...interface{}) *TypicalBuildTool {
 	}
 }
 
-// WithCommanders return build-tool with commanders
-func (b *TypicalBuildTool) WithCommanders(commanders ...Commander) *TypicalBuildTool {
-	b.commanders = commanders
+// WithTasks return build-tool with commanders
+func (b *TypicalBuildTool) WithTasks(tasks ...Task) *TypicalBuildTool {
+	b.tasks = tasks
 	return b
 }
 
