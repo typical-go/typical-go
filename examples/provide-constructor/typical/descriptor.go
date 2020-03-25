@@ -12,7 +12,7 @@ var Descriptor = typcore.Descriptor{
 	Name:    "provide-constructor",
 	Version: "1.0.0",
 
-	App: typapp.AppModule(helloworld.New()),
+	App: typapp.EntryPoint(helloworld.Main),
 
 	BuildTool: typbuildtool.
 		BuildSequences(
