@@ -81,9 +81,9 @@ func (m *TypConfigManager) Write(w io.Writer) (err error) {
 
 // RetrieveConfig to get configuration spec
 func (m *TypConfigManager) RetrieveConfig(name string) (interface{}, error) {
-	cfgdef := m.Get(name)
-	spec := cfgdef.Spec()
-	if err := m.LoadConfig(cfgdef.Name(), spec); err != nil {
+	cfg := m.Get(name)
+	spec := cfg.Spec
+	if err := m.LoadConfig(name, spec); err != nil {
 		return nil, err
 	}
 	return spec, nil
@@ -92,7 +92,7 @@ func (m *TypConfigManager) RetrieveConfig(name string) (interface{}, error) {
 // Configurations return array of configuration
 func (m *TypConfigManager) Configurations() (cfgs []*typcore.Configuration) {
 	for _, configurer := range m.configurers {
-		cfgs = append(cfgs, configurer.Configure())
+		cfgs = append(cfgs, configurer.Configure().Configuration)
 	}
 	return
 }
@@ -100,7 +100,7 @@ func (m *TypConfigManager) Configurations() (cfgs []*typcore.Configuration) {
 // Get the configuration
 func (m *TypConfigManager) Get(name string) *typcore.Configuration {
 	for _, cfg := range m.Configurations() {
-		if cfg.Name() == name {
+		if cfg.Name == name {
 			return cfg
 		}
 	}

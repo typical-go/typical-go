@@ -38,14 +38,14 @@ func (a *TypicalApp) Precondition(c *typbuildtool.BuildContext) (err error) {
 }
 
 func configDefinition(bean *typcore.Configuration) string {
-	typ := reflect.TypeOf(bean.Spec()).String()
+	typ := reflect.TypeOf(bean.Spec).String()
 	return fmt.Sprintf(`func(cfgMngr typcore.ConfigManager) (%s, error){
 		cfg, err := cfgMngr.RetrieveConfig("%s")
 		if err != nil {
 			return nil, err
 		}
 		return  cfg.(%s), nil 
-	}`, typ, bean.Name(), typ)
+	}`, typ, bean.Name, typ)
 }
 
 func (a *TypicalApp) generateConstructor(c *typbuildtool.BuildContext, filename string, constructors []string) (err error) {

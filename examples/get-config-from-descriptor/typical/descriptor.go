@@ -7,17 +7,12 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
-// Modules
-var (
-	serverApp = server.New()
-)
-
 // Descriptor of sample
 var Descriptor = typcore.Descriptor{
 	Name:    "get-config-from-descriptor",
 	Version: "1.0.0",
 
-	App: serverApp, // wrap serverApp with Typical App
+	App: typcore.NewApp(server.Main), // wrap serverApp with Typical App
 
 	BuildTool: typbuildtool.
 		Create(
@@ -26,6 +21,6 @@ var Descriptor = typcore.Descriptor{
 
 	ConfigManager: typcfg.
 		Create(
-			serverApp, // register serverApp configurer
+			typcfg.NewConfiguration(server.ConfigName, &server.Config{}), // register serverApp configurer
 		),
 }

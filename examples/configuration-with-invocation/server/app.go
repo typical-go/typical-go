@@ -5,7 +5,7 @@ import (
 	"html"
 	"net/http"
 
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typdep"
 )
 
@@ -33,8 +33,8 @@ func (a *App) WithConfigPrefix(name string) *App {
 }
 
 // Configure the application
-func (a *App) Configure() *typcore.Configuration {
-	return typcore.NewConfiguration(a.ConfigName, &Config{})
+func (a *App) Configure() *typcfg.Configuration {
+	return typcfg.NewConfiguration(a.ConfigName, &Config{})
 }
 
 // EntryPoint of application

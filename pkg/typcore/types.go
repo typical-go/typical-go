@@ -38,3 +38,9 @@ type ConfigManager interface {
 	Configurations() []*Configuration
 	RetrieveConfig(name string) (interface{}, error)
 }
+
+// Configuration is detail of config
+type Configuration struct {
+	Name string
+	Spec interface{}
+}

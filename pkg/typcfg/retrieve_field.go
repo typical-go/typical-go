@@ -11,12 +11,12 @@ import (
 
 // RetrieveFields to retrieve fields from configuration
 func RetrieveFields(c *typcore.Configuration) (fields []*Field) {
-	val := reflect.Indirect(reflect.ValueOf(c.Spec()))
+	val := reflect.Indirect(reflect.ValueOf(c.Spec))
 	typ := val.Type()
 	for i := 0; i < typ.NumField(); i++ {
 		field := typ.Field(i)
 		if !fieldIgnored(field) {
-			name := fmt.Sprintf("%s_%s", c.Name(), fieldName(field))
+			name := fmt.Sprintf("%s_%s", c.Name, fieldName(field))
 			fields = append(fields, &Field{
 				Name:     name,
 				Type:     field.Type.Name(),
