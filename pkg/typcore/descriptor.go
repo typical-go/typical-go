@@ -3,7 +3,6 @@ package typcore
 import (
 	"errors"
 	"fmt"
-	"os"
 	"regexp"
 
 	"github.com/typical-go/typical-go/pkg/common"
@@ -53,19 +52,6 @@ func (d *Descriptor) LaunchBuildTool() (err error) {
 	}
 
 	return d.RunBuildTool(c)
-}
-
-// AppSources of the project
-func (d *Descriptor) AppSources() (sources []string) {
-	if sourceable, ok := d.App.(AppSourceable); ok {
-		sources = append(sources, sourceable.AppSources()...)
-	} else {
-		sources = append(sources, common.PackageName(d.App))
-	}
-	if _, err := os.Stat("pkg"); !os.IsNotExist(err) {
-		sources = append(sources, "pkg")
-	}
-	return
 }
 
 // Validate context

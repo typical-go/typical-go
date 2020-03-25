@@ -14,10 +14,6 @@ func TestSimpleApp(t *testing.T) {
 		var _ typcore.App = typcore.NewApp(nil)
 	})
 
-	t.Run("SHOULD implement AppSourceable", func(t *testing.T) {
-		var _ typcore.AppSourceable = typcore.NewApp(nil)
-	})
-
 	t.Run("", func(t *testing.T) {
 		fn := func(*typcore.Descriptor) error {
 			return errors.New("some-error")

@@ -13,16 +13,12 @@ type BuildToolLauncher interface {
 // App is interface of app
 type App interface {
 	RunApp(*Descriptor) error
+	AppSources() []string
 }
 
 // BuildTool interface
 type BuildTool interface {
 	RunBuildTool(*Context) error
-}
-
-// AppSourceable mean the app define its own project sources
-type AppSourceable interface {
-	AppSources() []string
 }
 
 // Logger responsible to log any useful information

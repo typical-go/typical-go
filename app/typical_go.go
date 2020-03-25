@@ -53,3 +53,8 @@ func (t *TypicalGo) RunApp(d *typcore.Descriptor) (err error) {
 func (t *TypicalGo) Wrap(c *typwrap.Context) error {
 	return t.wrapper.Wrap(c)
 }
+
+// AppSources is application source for typical-go
+func (t *TypicalGo) AppSources() []string {
+	return []string{"app"}
+}

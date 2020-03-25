@@ -38,6 +38,10 @@ func CreateContext(d *Descriptor) (c *Context, err error) {
 		return
 	}
 
+	if _, err := os.Stat("pkg"); !os.IsNotExist(err) {
+		appSources = append(appSources, "pkg")
+	}
+
 	var appDirs, appFiles []string
 	for _, dir := range appSources {
 		filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {

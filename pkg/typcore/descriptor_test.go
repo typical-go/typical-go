@@ -19,9 +19,6 @@ func TestDescriptor(t *testing.T) {
 	t.Run("SHOULD implement BuildToolLauncher", func(t *testing.T) {
 		var _ typcore.BuildToolLauncher = &typcore.Descriptor{}
 	})
-	t.Run("SHOULD implement AppSourceable", func(t *testing.T) {
-		var _ typcore.AppSourceable = &typcore.Descriptor{}
-	})
 }
 
 func TestDescriptor_ProjectSources(t *testing.T) {
@@ -172,6 +169,6 @@ func (i dummyApp) RunApp(*typcore.Descriptor) error {
 	return nil
 }
 
-func (i dummyApp) Sources() []string {
+func (i dummyApp) AppSources() []string {
 	return i.sources
 }
