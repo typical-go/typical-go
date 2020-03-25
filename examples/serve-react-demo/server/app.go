@@ -6,16 +6,8 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
-// App of server
-type App struct{}
-
-// New instance of App
-func New() *App {
-	return &App{}
-}
-
-// RunApp to run the server
-func (*App) RunApp(d *typcore.Descriptor) error {
+// Main function to run server
+func Main(d *typcore.Descriptor) error {
 	fs := http.FileServer(http.Dir("react-demo/build"))
 	http.Handle("/", fs)
 

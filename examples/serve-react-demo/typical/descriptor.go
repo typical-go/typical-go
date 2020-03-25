@@ -11,7 +11,7 @@ var Descriptor = typcore.Descriptor{
 	Name:    "server-echo-react",
 	Version: "1.0.0",
 
-	App: server.New(),
+	App: typcore.NewApp(server.Main),
 
 	BuildTool: typbuildtool.
 		Create(
