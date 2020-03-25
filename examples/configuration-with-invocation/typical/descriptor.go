@@ -8,17 +8,12 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
-// Modules
-var (
-	serverApp = server.New()
-)
-
 // Descriptor of sample
 var Descriptor = typcore.Descriptor{
 	Name:    "configuration-with-invocation",
 	Version: "1.0.0",
 
-	App: typapp.AppModule(serverApp), // wrap serverApp with Typical App
+	App: typapp.EntryPoint(server.Main), // wrap serverApp with Typical App
 
 	BuildTool: typbuildtool.
 		BuildSequences(
@@ -27,6 +22,6 @@ var Descriptor = typcore.Descriptor{
 
 	ConfigManager: typcfg.
 		Configures(
-			serverApp, // Append configurer for the this project
+			typcfg.NewConfiguration(server.ConfigName, &server.Config{}), // Append configurer for the this project
 		),
 }

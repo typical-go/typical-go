@@ -7,16 +7,16 @@ import (
 )
 
 type entryPointer struct {
-	invocation *typdep.Invocation
+	invocation *typapp.MainInvocation
 }
 
-func dummyEntryPointer(invocation *typdep.Invocation) *entryPointer {
+func dummyEntryPointer(invocation *typapp.MainInvocation) *entryPointer {
 	return &entryPointer{
 		invocation: invocation,
 	}
 }
 
-func (e *entryPointer) EntryPoint() *typdep.Invocation {
+func (e *entryPointer) EntryPoint() *typapp.MainInvocation {
 	return e.invocation
 }
 

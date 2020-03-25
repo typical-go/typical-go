@@ -7,7 +7,7 @@ import (
 
 // EntryPointer responsible to handle entry point
 type EntryPointer interface {
-	EntryPoint() *typdep.Invocation
+	EntryPoint() *MainInvocation
 }
 
 // Provider responsible to provide constructor [mock]

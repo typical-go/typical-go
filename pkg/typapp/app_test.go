@@ -75,8 +75,8 @@ func TestPrepare(t *testing.T) {
 }
 
 func TestEntryPoint(t *testing.T) {
-	i1 := typdep.NewInvocation(nil)
-	i2 := typdep.NewInvocation(nil)
+	i1 := typapp.NewMainInvocation(nil)
+	i2 := typapp.NewMainInvocation(nil)
 	app := typapp.AppModule(dummyEntryPointer(i1)).WithModules(dummyEntryPointer(i2))
 
 	require.EqualValues(t, i1, app.EntryPoint())
@@ -93,7 +93,7 @@ func TestApp(t *testing.T) {
 			typapp.EntryPointer
 			typapp.Commander
 		}{
-			EntryPointer: dummyEntryPointer(typdep.NewInvocation(fn)),
+			EntryPointer: dummyEntryPointer(typapp.NewMainInvocation(fn)),
 			Commander:    dummyCommander(c1, c2),
 		}).
 		WithModules(dummyCommander(c3))

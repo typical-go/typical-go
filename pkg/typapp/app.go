@@ -8,24 +8,32 @@ import (
 
 // TypicalApp is typical application model
 type TypicalApp struct {
-	projectSources  []string
+	appSources      []string
 	appModule       interface{}
 	modules         []interface{}
 	initAppFilename string
 }
 
-// AppModule to create new instance of TypicalApp with AppModule
+// AppModule create new instance of TypicalApp with AppModule
 func AppModule(appModule interface{}) *TypicalApp {
 	return &TypicalApp{
-		projectSources:  []string{common.PackageName(appModule)},
+		appSources:      []string{common.PackageName(appModule)},
 		appModule:       appModule,
 		initAppFilename: defaultInitAppFilename,
 	}
 }
 
-// WithProjectSources return app with new source
-func (a *TypicalApp) WithProjectSources(sources ...string) *TypicalApp {
-	a.projectSources = sources
+// EntryPoint create new instance of TypicalApp with main invocation function
+func EntryPoint(fn interface{}) *TypicalApp {
+	return &TypicalApp{
+		appModule:       NewMainInvocation(fn),
+		initAppFilename: defaultInitAppFilename,
+	}
+}
+
+// WithAppSources return app with new source
+func (a *TypicalApp) WithAppSources(appSources ...string) *TypicalApp {
+	a.appSources = appSources
 	return a
 }
 
@@ -42,7 +50,7 @@ func (a *TypicalApp) WithInitAppFilename(initAppFilename string) *TypicalApp {
 }
 
 // EntryPoint of app
-func (a *TypicalApp) EntryPoint() *typdep.Invocation {
+func (a *TypicalApp) EntryPoint() *MainInvocation {
 	if entryPointer, ok := a.appModule.(EntryPointer); ok {
 		return entryPointer.EntryPoint()
 	}
@@ -99,5 +107,5 @@ func (a *TypicalApp) Commands(c *Context) (cmds []*cli.Command) {
 
 // AppSources return source for app
 func (a *TypicalApp) AppSources() []string {
-	return a.projectSources
+	return a.appSources
 }
