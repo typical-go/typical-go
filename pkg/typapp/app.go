@@ -5,12 +5,18 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+const (
+	defaultInitAppFilename = "init_app_do_not_edit.go"
+	defaultPrecondition    = true
+)
+
 // TypicalApp is typical application model
 type TypicalApp struct {
 	appSources      []string
 	appModule       interface{}
 	modules         []interface{}
 	initAppFilename string
+	precondition    bool
 }
 
 // AppModule create new instance of TypicalApp with AppModule
@@ -19,6 +25,7 @@ func AppModule(appModule interface{}) *TypicalApp {
 		appSources:      []string{common.PackageName(appModule)},
 		appModule:       appModule,
 		initAppFilename: defaultInitAppFilename,
+		precondition:    defaultPrecondition,
 	}
 }
 
@@ -27,6 +34,7 @@ func EntryPoint(fn interface{}) *TypicalApp {
 	return &TypicalApp{
 		appModule:       NewMainInvocation(fn),
 		initAppFilename: defaultInitAppFilename,
+		precondition:    defaultPrecondition,
 	}
 }
 
@@ -45,6 +53,12 @@ func (a *TypicalApp) WithModules(modules ...interface{}) *TypicalApp {
 // WithInitAppFilename return app with new initAppFilename
 func (a *TypicalApp) WithInitAppFilename(initAppFilename string) *TypicalApp {
 	a.initAppFilename = initAppFilename
+	return a
+}
+
+// WithPrecondition return app with new precondition
+func (a *TypicalApp) WithPrecondition(precondition bool) *TypicalApp {
+	a.precondition = precondition
 	return a
 }
 

@@ -20,6 +20,12 @@ func New() *TypicalLogger {
 	}
 }
 
+// WithWriter return TypicalLogger with new writer
+func (s *TypicalLogger) WithWriter(w io.Writer) *TypicalLogger {
+	s.Writer = w
+	return s
+}
+
 // Info level message
 func (s *TypicalLogger) Info(args ...interface{}) {
 	s.infoSign()

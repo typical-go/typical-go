@@ -15,8 +15,12 @@ import (
 
 // Precondition the app
 func (a *TypicalApp) Precondition(c *typbuildtool.BuildContext) (err error) {
-	var constructors []string
+	if !a.precondition {
+		c.Info("Skip Precondition for typical-app")
+		return
+	}
 
+	var constructors []string
 	if err = c.Ast().EachAnnotation("constructor", typast.FunctionType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
 		constructors = append(constructors, fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
 		return

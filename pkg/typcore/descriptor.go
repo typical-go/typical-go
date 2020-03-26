@@ -54,6 +54,11 @@ func (d *Descriptor) LaunchBuildTool() (err error) {
 	return d.RunBuildTool(c)
 }
 
+// SetLogger to set logger
+func (d *Descriptor) SetLogger(logger Logger) {
+	d.Logger = logger
+}
+
 // Validate context
 func (d *Descriptor) Validate() (err error) {
 	if err = validateName(d.Name); err != nil {
