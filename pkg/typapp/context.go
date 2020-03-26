@@ -47,8 +47,10 @@ func (c *Context) Invoke(cliCtx *cli.Context, invocation *typdep.Invocation) (er
 	}
 
 	// invoke preparation as register in descriptor
-	if err = typdep.Invoke(di, c.Prepare()...); err != nil {
-		return
+	for _, preparation := range c.Prepare() {
+		if err = preparation.Invoke(di); err != nil {
+			return
+		}
 	}
 
 	startFn := func() error { return invocation.Invoke(di) }

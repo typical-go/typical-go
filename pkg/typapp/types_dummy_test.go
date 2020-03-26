@@ -35,16 +35,16 @@ func (p *provider) Provide() []*typdep.Constructor {
 }
 
 type preparer struct {
-	invocations []*typdep.Invocation
+	invocations []*typapp.Preparation
 }
 
-func dummyPreparer(invocations ...*typdep.Invocation) *preparer {
+func dummyPreparer(invocations ...*typapp.Preparation) *preparer {
 	return &preparer{
 		invocations: invocations,
 	}
 }
 
-func (p *preparer) Prepare() []*typdep.Invocation {
+func (p *preparer) Prepare() []*typapp.Preparation {
 	return p.invocations
 }
 

@@ -85,7 +85,7 @@ func (a *TypicalApp) Destroy() (destructors []*Destruction) {
 }
 
 // Prepare to return preparations
-func (a *TypicalApp) Prepare() (preparations []*typdep.Invocation) {
+func (a *TypicalApp) Prepare() (preparations []*Preparation) {
 	if preparer, ok := a.appModule.(Preparer); ok {
 		preparations = append(preparations, preparer.Prepare()...)
 	}

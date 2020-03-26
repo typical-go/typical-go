@@ -15,12 +15,12 @@ type Provider interface {
 	Provide() []*typdep.Constructor
 }
 
-// Preparer responsible to prepare [mock]
+// Preparer responsible to prepare the dependency[mock]
 type Preparer interface {
-	Prepare() []*typdep.Invocation
+	Prepare() []*Preparation
 }
 
-// Destroyer responsible to destroy dependency [mock]
+// Destroyer responsible to destroy the dependency [mock]
 type Destroyer interface {
 	Destroy() []*Destruction
 }

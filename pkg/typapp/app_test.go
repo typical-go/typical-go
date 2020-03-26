@@ -63,13 +63,13 @@ func TestDestoy(t *testing.T) {
 }
 
 func TestPrepare(t *testing.T) {
-	i1 := typdep.NewInvocation(nil)
-	i2 := typdep.NewInvocation(nil)
-	i3 := typdep.NewInvocation(nil)
+	i1 := typapp.NewPreparation(nil)
+	i2 := typapp.NewPreparation(nil)
+	i3 := typapp.NewPreparation(nil)
 	app := typapp.AppModule(dummyPreparer(i1)).WithModules(dummyPreparer(i2, i3))
 
 	require.EqualValues(t,
-		[]*typdep.Invocation{i1, i2, i3},
+		[]*typapp.Preparation{i1, i2, i3},
 		app.Prepare(),
 	)
 }
