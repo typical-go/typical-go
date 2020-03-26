@@ -2,7 +2,7 @@ package typcore
 
 const (
 	// Version of Typical-Go
-	Version = "0.9.44"
+	Version = "0.9.45"
 
 	// DefaultProjectPackageVar is full path for DefaultProjectPackage variable for ldflgs purpose
 	DefaultProjectPackageVar = "github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage"
@@ -12,9 +12,9 @@ const (
 )
 
 var (
-	// DefaultProjectPackage is default value for ProjectPackage
-	DefaultProjectPackage string // NOTE: supply by ldflags
+	// DefaultProjectPackage is default value for ProjectPackage which is supply by ldflags
+	DefaultProjectPackage string
 
-	// DefaultTypicalTmp is default value of typical tmp
-	DefaultTypicalTmp string // NOTE: supply by ldflags
+	// DefaultTypicalTmp is default value of typical tmp which is supply by ldflags
+	DefaultTypicalTmp string
 )
