@@ -47,8 +47,7 @@ func (s *TypicalLogger) Warn(args ...interface{}) {
 // Warnf is same with warn but with format
 func (s *TypicalLogger) Warnf(format string, args ...interface{}) {
 	s.warnSign()
-	fmt.Fprintf(s, format, args...)
-	fmt.Fprintln(s)
+	s.printf(format, args...)
 }
 
 func (s *TypicalLogger) print(args ...interface{}) {
@@ -57,7 +56,7 @@ func (s *TypicalLogger) print(args ...interface{}) {
 
 func (s *TypicalLogger) printf(format string, args ...interface{}) {
 	fmt.Fprintf(s, format, args...)
-	fmt.Println()
+	fmt.Fprintln(s)
 }
 
 func (s *TypicalLogger) infoSign() {
@@ -70,7 +69,7 @@ func (s *TypicalLogger) infoSign() {
 func (s *TypicalLogger) warnSign() {
 	s.typicalSign()
 	fmt.Fprint(s, "[")
-	color.New(color.FgRed).Fprint(s, "WARN")
+	color.New(color.FgYellow).Fprint(s, "WARN")
 	fmt.Fprint(s, "] ")
 }
 

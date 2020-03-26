@@ -8,7 +8,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func taskTestExample(ctx *typbuildtool.Context) *cli.Command {
+func taskTestExample(c *typbuildtool.Context) *cli.Command {
 	return &cli.Command{
 		Name:    "test-example",
 		Aliases: []string{"e"},
