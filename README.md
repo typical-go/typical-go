@@ -61,9 +61,9 @@ GLOBAL OPTIONS:
 
 ## Typical Tmp
 
-Typical-tmp is an important folder that contains the build tool mechanism. By default, it is located in `.typical-tmp` and can be changed by hacking/editing the `typicalw` file.
+Typical-tmp is an important folder that contains the build tool mechanism. By default, it is located in `.typical-tmp` and can be changed by hacking/editing the `typicalw` script.
 
-Since the typical-go project is still undergoing development, maybe there is some breaking change and deleting typical-tmp may solve the issue since it will be healed by itself.
+Since the typical-go project is still undergoing development, maybe there is some breaking change and deleting typical-tmp can solve the issue since it will be healed by itself.
 
 ## Examples
 
