@@ -51,13 +51,13 @@ func TestProvide(t *testing.T) {
 }
 
 func TestDestoy(t *testing.T) {
-	i1 := typdep.NewInvocation(nil)
-	i2 := typdep.NewInvocation(nil)
-	i3 := typdep.NewInvocation(nil)
+	i1 := typapp.NewDestruction(nil)
+	i2 := typapp.NewDestruction(nil)
+	i3 := typapp.NewDestruction(nil)
 	app := typapp.AppModule(dummyDestroyers(i1)).WithModules(dummyDestroyers(i2, i3))
 
 	require.EqualValues(t,
-		[]*typdep.Invocation{i1, i2, i3},
+		[]*typapp.Destruction{i1, i2, i3},
 		app.Destroy(),
 	)
 }

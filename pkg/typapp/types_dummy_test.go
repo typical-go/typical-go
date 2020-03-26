@@ -49,16 +49,16 @@ func (p *preparer) Prepare() []*typdep.Invocation {
 }
 
 type destroyer struct {
-	invocations []*typdep.Invocation
+	invocations []*typapp.Destruction
 }
 
-func dummyDestroyers(invocations ...*typdep.Invocation) *destroyer {
+func dummyDestroyers(invocations ...*typapp.Destruction) *destroyer {
 	return &destroyer{
 		invocations: invocations,
 	}
 }
 
-func (d *destroyer) Destroy() []*typdep.Invocation {
+func (d *destroyer) Destroy() []*typapp.Destruction {
 	return d.invocations
 }
 

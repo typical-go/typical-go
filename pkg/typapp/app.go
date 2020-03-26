@@ -72,7 +72,7 @@ func (a *TypicalApp) Provide() (constructors []*typdep.Constructor) {
 }
 
 //Destroy to return destructor
-func (a *TypicalApp) Destroy() (destructors []*typdep.Invocation) {
+func (a *TypicalApp) Destroy() (destructors []*Destruction) {
 	if destroyer, ok := a.appModule.(Destroyer); ok {
 		destructors = append(destructors, destroyer.Destroy()...)
 	}

@@ -12,6 +12,8 @@ import (
 type Context struct {
 	*typcore.Descriptor
 	*TypicalApp
+
+	container *typdep.Container
 }
 
 // ActionFunc to return ActionFunc to invoke function fn
@@ -26,7 +28,7 @@ func (c *Context) ActionFunc(v interface{}) func(*cli.Context) error {
 
 // Invoke function with Dependency Injection
 func (c *Context) Invoke(cliCtx *cli.Context, invocation *typdep.Invocation) (err error) {
-	di := typdep.New()
+	di := c.Container()
 
 	if err = typdep.Provide(di,
 		typdep.NewConstructor(func() typcore.ConfigManager {
@@ -50,9 +52,26 @@ func (c *Context) Invoke(cliCtx *cli.Context, invocation *typdep.Invocation) (er
 	}
 
 	startFn := func() error { return invocation.Invoke(di) }
-	stopFn := func() error { return typdep.Invoke(di, c.Destroy()...) }
-	for _, err := range common.StartGracefully(startFn, stopFn) {
+
+	for _, err := range common.StartGracefully(startFn, c.stop) {
 		log.Error(err.Error())
+	}
+	return
+}
+
+// Container for dependency-injection
+func (c *Context) Container() *typdep.Container {
+	if c.container == nil {
+		typdep.New()
+	}
+	return c.container
+}
+
+func (c *Context) stop() (err error) {
+	for _, destruction := range c.Destroy() {
+		if err = destruction.Invocation.Invoke(c.Container()); err != nil {
+			return
+		}
 	}
 	return
 }

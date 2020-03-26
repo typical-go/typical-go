@@ -22,7 +22,7 @@ type Preparer interface {
 
 // Destroyer responsible to destroy dependency [mock]
 type Destroyer interface {
-	Destroy() []*typdep.Invocation
+	Destroy() []*Destruction
 }
 
 // Commander responsible to return commands for App
