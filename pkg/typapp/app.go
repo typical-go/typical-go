@@ -6,8 +6,11 @@ import (
 )
 
 const (
-	defaultInitAppFilename = "init_app_do_not_edit.go"
-	defaultPrecondition    = true
+	// DefaultInitAppFilename is default value for init-app filename
+	DefaultInitAppFilename = "init_app_do_not_edit.go"
+
+	// DefaultPrecondition is default value for precondition flag
+	DefaultPrecondition = true
 )
 
 // TypicalApp is typical application model
@@ -20,28 +23,26 @@ type TypicalApp struct {
 }
 
 // AppModule create new instance of TypicalApp with AppModule
-func AppModule(appModule interface{}) *TypicalApp {
+func AppModule(appModule interface{}, appSources ...string) *TypicalApp {
+	if len(appSources) < 1 {
+		appSources = []string{common.PackageName(appModule)}
+	}
 	return &TypicalApp{
-		appSources:      []string{common.PackageName(appModule)},
+		appSources:      appSources,
 		appModule:       appModule,
-		initAppFilename: defaultInitAppFilename,
-		precondition:    defaultPrecondition,
+		initAppFilename: DefaultInitAppFilename,
+		precondition:    DefaultPrecondition,
 	}
 }
 
 // EntryPoint create new instance of TypicalApp with main invocation function
-func EntryPoint(fn interface{}) *TypicalApp {
+func EntryPoint(fn interface{}, appSources ...string) *TypicalApp {
 	return &TypicalApp{
+		appSources:      appSources,
 		appModule:       NewMainInvocation(fn),
-		initAppFilename: defaultInitAppFilename,
-		precondition:    defaultPrecondition,
+		initAppFilename: DefaultInitAppFilename,
+		precondition:    DefaultPrecondition,
 	}
-}
-
-// WithAppSources return app with new source
-func (a *TypicalApp) WithAppSources(appSources ...string) *TypicalApp {
-	a.appSources = appSources
-	return a
 }
 
 // WithModules return app with appended module. Module should be implementation of Provider, Preparer (optional) and Destroyer (optional).

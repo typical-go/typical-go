@@ -7,32 +7,48 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"github.com/typical-go/typical-go/app"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
-func TestAppModule(t *testing.T) {
+func TestTypicalApp(t *testing.T) {
 	t.Run("SHOULD implement App", func(t *testing.T) {
-		var _ typcore.App = typapp.AppModule(nil)
+		var _ typcore.App = &typapp.TypicalApp{}
 	})
 	t.Run("SHOULD implement Preconditioner", func(t *testing.T) {
-		var _ typbuildtool.Preconditioner = typapp.AppModule(nil)
+		var _ typbuildtool.Preconditioner = &typapp.TypicalApp{}
 	})
 	t.Run("SHOULD implement Provider", func(t *testing.T) {
-		var _ typapp.Provider = typapp.AppModule(nil)
+		var _ typapp.Provider = &typapp.TypicalApp{}
 	})
 	t.Run("SHOULD implement Destroyer", func(t *testing.T) {
-		var _ typapp.Destroyer = typapp.AppModule(nil)
+		var _ typapp.Destroyer = &typapp.TypicalApp{}
 	})
 	t.Run("SHOULD implement Preparer", func(t *testing.T) {
-		var _ typapp.Preparer = typapp.AppModule(nil)
+		var _ typapp.Preparer = &typapp.TypicalApp{}
 	})
 	t.Run("SHOULD implement EntryPointer", func(t *testing.T) {
-		var _ typapp.EntryPointer = typapp.AppModule(nil)
+		var _ typapp.EntryPointer = &typapp.TypicalApp{}
 	})
 	t.Run("SHOULD implement Commander", func(t *testing.T) {
-		var _ typapp.Commander = typapp.AppModule(nil)
+		var _ typapp.Commander = &typapp.TypicalApp{}
+	})
+}
+
+func TestAppModule(t *testing.T) {
+	t.Run("GIVEN empty app sources", func(t *testing.T) {
+		require.Equal(t,
+			[]string{"app"},
+			typapp.AppModule(app.New()).AppSources(),
+		)
+	})
+	t.Run("GIVEN some app sources", func(t *testing.T) {
+		require.Equal(t,
+			[]string{"some-app-sources"},
+			typapp.AppModule(app.New(), "some-app-sources").AppSources(),
+		)
 	})
 }
 

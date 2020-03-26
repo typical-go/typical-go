@@ -9,6 +9,7 @@ import (
 
 func init() {
 	typapp.AppendConstructor(
+		typapp.NewConstructor(helloworld.GetWriter),
 		typapp.NewConstructor(helloworld.NewGreeter),
 	)
 }

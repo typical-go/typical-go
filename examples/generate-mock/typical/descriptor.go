@@ -12,7 +12,7 @@ var Descriptor = typcore.Descriptor{
 	Name:    "generate-mock",
 	Version: "1.0.0",
 
-	App: typapp.AppModule(helloworld.New()),
+	App: typapp.EntryPoint(helloworld.Main, "helloworld"),
 
 	BuildTool: typbuildtool.
 		BuildSequences(

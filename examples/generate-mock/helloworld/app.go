@@ -4,34 +4,14 @@ import (
 	"fmt"
 	"io"
 	"os"
-
-	"github.com/typical-go/typical-go/pkg/typapp"
 )
 
-// App of hello world
-type App struct {
-	io.Writer
+// Main function to run hello-world
+func Main(greeter Greeter, w io.Writer) {
+	fmt.Fprintln(w, greeter.Greet())
 }
 
-// New return new instance of application
-func New() *App {
-	return &App{
-		Writer: os.Stdout,
-	}
-}
-
-// WithWriter return App with new writer
-func (a *App) WithWriter(w io.Writer) *App {
-	a.Writer = w
-	return a
-}
-
-// EntryPoint of application
-func (a *App) EntryPoint() *typapp.MainInvocation {
-	return typapp.NewMainInvocation(a.Print)
-}
-
-// Print text from greeter
-func (a *App) Print(greeter Greeter) {
-	fmt.Fprintln(a, greeter.Greet())
+// GetWriter to get writer to greet the world [constructor]
+func GetWriter() io.Writer {
+	return os.Stdout
 }

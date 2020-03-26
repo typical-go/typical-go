@@ -15,13 +15,12 @@ func TestPrint(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	var s strings.Builder
-	app := helloworld.New().WithWriter(&s)
+	var debugger strings.Builder
 
 	greeter := mock_helloworld.NewMockGreeter(ctrl)
 	greeter.EXPECT().Greet().Return("some-word")
 
-	app.Print(greeter)
-	require.Equal(t, "some-word\n", s.String())
+	helloworld.Main(greeter, &debugger)
+	require.Equal(t, "some-word\n", debugger.String())
 
 }
