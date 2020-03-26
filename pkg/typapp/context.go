@@ -19,18 +19,16 @@ type Context struct {
 // ActionFunc to return ActionFunc to invoke function fn
 func (c *Context) ActionFunc(v interface{}) func(*cli.Context) error {
 	return func(cliCtx *cli.Context) (err error) {
-		if invocation, ok := v.(*typdep.Invocation); ok {
-			return c.Invoke(cliCtx, invocation)
+		if invokable, ok := v.(typdep.Invokable); ok {
+			return c.Invoke(cliCtx, invokable)
 		}
-		if invocation, ok := v.(*MainInvocation); ok {
-			return c.Invoke(cliCtx, invocation.Invocation)
-		}
+
 		return c.Invoke(cliCtx, typdep.NewInvocation(v))
 	}
 }
 
 // Invoke function with Dependency Injection
-func (c *Context) Invoke(cliCtx *cli.Context, invocation *typdep.Invocation) (err error) {
+func (c *Context) Invoke(cliCtx *cli.Context, invokable typdep.Invokable) (err error) {
 	di := c.Container()
 
 	if err = typdep.Provide(di,
@@ -62,7 +60,7 @@ func (c *Context) Invoke(cliCtx *cli.Context, invocation *typdep.Invocation) (er
 		}
 	}
 
-	startFn := func() error { return invocation.Invoke(di) }
+	startFn := func() error { return invokable.Invoke(di) }
 
 	for _, err := range common.StartGracefully(startFn, c.stop) {
 		log.Error(err.Error())

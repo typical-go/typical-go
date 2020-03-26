@@ -1,15 +1,5 @@
 package typcore
 
-// AppLauncher responsible to launch the application
-type AppLauncher interface {
-	LaunchApp() error
-}
-
-// BuildToolLauncher responsible to launch the build-tool
-type BuildToolLauncher interface {
-	LaunchBuildTool() error
-}
-
 // App is interface of app
 type App interface {
 	RunApp(*Descriptor) error
