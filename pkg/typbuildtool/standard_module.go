@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"time"
 
 	"github.com/urfave/cli/v2"
 )
@@ -16,6 +17,8 @@ type StandardModule struct {
 	coverProfile   string
 	releaseTargets []ReleaseTarget
 	releaseFolder  string
+
+	testTimeout time.Duration
 }
 
 // StandardBuild return new instance of Module
@@ -26,42 +29,49 @@ func StandardBuild() *StandardModule {
 		stdin:         os.Stdin,
 		coverProfile:  "cover.out",
 		releaseFolder: "release",
+		testTimeout:   20 * time.Second,
 	}
 }
 
-// WithStdout return StdBuilder with new stdout
+// WithStdout return StandardModule with new stdout
 func (b *StandardModule) WithStdout(stdout io.Writer) *StandardModule {
 	b.stdout = stdout
 	return b
 }
 
-// WithStderr return StdBuilder with new stderr
+// WithStderr return StandardModule with new stderr
 func (b *StandardModule) WithStderr(stderr io.Writer) *StandardModule {
 	b.stderr = stderr
 	return b
 }
 
-// WithStdin return StdBuilder with new stderr
+// WithStdin return StandardModule with new stderr
 func (b *StandardModule) WithStdin(stdin io.Reader) *StandardModule {
 	b.stdin = stdin
 	return b
 }
 
-// WithCoverProfile return StdTester with new cover profile
+// WithCoverProfile return StandardModule with new cover profile
 func (b *StandardModule) WithCoverProfile(coverProfile string) *StandardModule {
 	b.coverProfile = coverProfile
 	return b
 }
 
-// WithReleaseTargets to set target and return its instance
+// WithReleaseTargets return StandardModule with new releaseTarget
 func (b *StandardModule) WithReleaseTargets(releaseTargets ...ReleaseTarget) *StandardModule {
 	b.releaseTargets = releaseTargets
 	return b
 }
 
-// WithReleaseFolder return StdReleaser with new release folder
+// WithReleaseFolder return StandardModule with new release folder
 func (b *StandardModule) WithReleaseFolder(releaseFolder string) *StandardModule {
 	b.releaseFolder = releaseFolder
+	return b
+}
+
+// WithTestTimeout return StandardModule with new testTimeout
+func (b *StandardModule) WithTestTimeout(testTimeout time.Duration) *StandardModule {
+	b.testTimeout = testTimeout
 	return b
 }
 

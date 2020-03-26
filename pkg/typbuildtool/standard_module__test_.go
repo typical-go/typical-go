@@ -16,6 +16,7 @@ func (b *StandardModule) Test(c *BuildContext) (err error) {
 
 	gotest := buildkit.NewGoTest(targets...).
 		WithCoverProfile(b.coverProfile).
+		WithTimeout(b.testTimeout).
 		WithRace(true).
 		WithStdout(b.stdout).
 		WithStderr(b.stderr)
