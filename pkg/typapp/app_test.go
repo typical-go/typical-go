@@ -6,7 +6,6 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typdep"
 
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
@@ -38,14 +37,14 @@ func TestAppModule(t *testing.T) {
 }
 
 func TestProvide(t *testing.T) {
-	c1 := typdep.NewConstructor(nil)
-	c2 := typdep.NewConstructor(nil)
-	c3 := typdep.NewConstructor(nil)
+	c1 := typapp.NewConstructor(nil)
+	c2 := typapp.NewConstructor(nil)
+	c3 := typapp.NewConstructor(nil)
 	app := typapp.AppModule(dummyProvider(c1)).WithModules(dummyProvider(c2))
 	typapp.AppendConstructor(c3)
 
 	require.EqualValues(t,
-		[]*typdep.Constructor{c1, c2, c3},
+		[]*typapp.Constructor{c1, c2, c3},
 		app.Provide(),
 	)
 }

@@ -5,11 +5,10 @@ package typical
 import (
 	"github.com/typical-go/typical-go/examples/provide-constructor/helloworld"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typdep"
 )
 
 func init() {
 	typapp.AppendConstructor(
-		typdep.NewConstructor(helloworld.NewGreeter),
+		typapp.NewConstructor(helloworld.NewGreeter),
 	)
 }

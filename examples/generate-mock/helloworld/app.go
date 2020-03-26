@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/typdep"
+	"github.com/typical-go/typical-go/pkg/typapp"
 )
 
 // App of hello world
@@ -27,8 +27,8 @@ func (a *App) WithWriter(w io.Writer) *App {
 }
 
 // EntryPoint of application
-func (a *App) EntryPoint() *typdep.Invocation {
-	return typdep.NewInvocation(a.Print)
+func (a *App) EntryPoint() *typapp.MainInvocation {
+	return typapp.NewMainInvocation(a.Print)
 }
 
 // Print text from greeter

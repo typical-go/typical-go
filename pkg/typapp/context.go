@@ -22,6 +22,9 @@ func (c *Context) ActionFunc(v interface{}) func(*cli.Context) error {
 		if invocation, ok := v.(*typdep.Invocation); ok {
 			return c.Invoke(cliCtx, invocation)
 		}
+		if invocation, ok := v.(*MainInvocation); ok {
+			return c.Invoke(cliCtx, invocation.Invocation)
+		}
 		return c.Invoke(cliCtx, typdep.NewInvocation(v))
 	}
 }
@@ -34,6 +37,11 @@ func (c *Context) Invoke(cliCtx *cli.Context, invocation *typdep.Invocation) (er
 		typdep.NewConstructor(func() typcore.ConfigManager {
 			return c.ConfigManager
 		}),
+	); err != nil {
+		return
+	}
+
+	if err = typdep.Provide(di,
 		typdep.NewConstructor(func() *cli.Context {
 			return cliCtx
 		}),
@@ -41,9 +49,10 @@ func (c *Context) Invoke(cliCtx *cli.Context, invocation *typdep.Invocation) (er
 		return
 	}
 
-	// provide registered function in descriptor to dependency-injection container
-	if err = typdep.Provide(di, c.Provide()...); err != nil {
-		return
+	for _, constructor := range c.Provide() {
+		if err = constructor.Constructor.Provide(di); err != nil {
+			return
+		}
 	}
 
 	// invoke preparation as register in descriptor
@@ -64,7 +73,7 @@ func (c *Context) Invoke(cliCtx *cli.Context, invocation *typdep.Invocation) (er
 // Container for dependency-injection
 func (c *Context) Container() *typdep.Container {
 	if c.container == nil {
-		typdep.New()
+		c.container = typdep.New()
 	}
 	return c.container
 }

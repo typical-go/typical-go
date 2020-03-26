@@ -6,13 +6,12 @@ import (
 	"github.com/typical-go/typical-go/examples/configuration-with-invocation/server"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/typdep"
 )
 
 func init() {
 	typapp.AppendConstructor(
-		typdep.NewConstructor(func(cfgMngr typcore.ConfigManager) (*server.Config, error) {
-			cfg, err := cfgMngr.RetrieveConfig("APP")
+		typapp.NewConstructor(func(cfgMngr typcore.ConfigManager) (*server.Config, error) {
+			cfg, err := cfgMngr.RetrieveConfig("SERVER")
 			if err != nil {
 				return nil, err
 			}

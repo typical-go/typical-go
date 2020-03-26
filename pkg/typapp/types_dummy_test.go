@@ -2,7 +2,6 @@ package typapp_test
 
 import (
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typdep"
 	"github.com/urfave/cli/v2"
 )
 
@@ -21,16 +20,16 @@ func (e *entryPointer) EntryPoint() *typapp.MainInvocation {
 }
 
 type provider struct {
-	constructors []*typdep.Constructor
+	constructors []*typapp.Constructor
 }
 
-func dummyProvider(constructors ...*typdep.Constructor) *provider {
+func dummyProvider(constructors ...*typapp.Constructor) *provider {
 	return &provider{
 		constructors: constructors,
 	}
 }
 
-func (p *provider) Provide() []*typdep.Constructor {
+func (p *provider) Provide() []*typapp.Constructor {
 	return p.constructors
 }
 

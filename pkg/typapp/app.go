@@ -2,7 +2,6 @@ package typapp
 
 import (
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typdep"
 	"github.com/urfave/cli/v2"
 )
 
@@ -58,8 +57,8 @@ func (a *TypicalApp) EntryPoint() *MainInvocation {
 }
 
 // Provide to return constructors
-func (a *TypicalApp) Provide() (constructors []*typdep.Constructor) {
-	constructors = append(constructors, appConstructors...)
+func (a *TypicalApp) Provide() (constructors []*Constructor) {
+	constructors = append(constructors, global...)
 	if provider, ok := a.appModule.(Provider); ok {
 		constructors = append(constructors, provider.Provide()...)
 	}

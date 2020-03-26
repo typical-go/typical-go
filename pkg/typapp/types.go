@@ -1,7 +1,6 @@
 package typapp
 
 import (
-	"github.com/typical-go/typical-go/pkg/typdep"
 	"github.com/urfave/cli/v2"
 )
 
@@ -12,7 +11,7 @@ type EntryPointer interface {
 
 // Provider responsible to provide constructor [mock]
 type Provider interface {
-	Provide() []*typdep.Constructor
+	Provide() []*Constructor
 }
 
 // Preparer responsible to prepare the dependency[mock]

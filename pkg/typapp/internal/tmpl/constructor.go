@@ -11,13 +11,12 @@ const Constructor = `package typical
 
 import (
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typdep"
 	{{range $import := .Imports}}"{{$import}}"
 	{{end}}
 )
 
 func init() {
 	{{if .Constructors}}typapp.AppendConstructor({{range $constructor := .Constructors}}
-		typdep.NewConstructor({{$constructor}}),{{end}}
+		typapp.NewConstructor({{$constructor}}),{{end}}
 	)
 {{end}}}`
