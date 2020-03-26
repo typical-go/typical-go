@@ -10,20 +10,20 @@ A Build Tool (+ Framework) for Golang. <https://typical-go.github.io/>
 Define descriptor in `typical` folder
 ```go
 var Descriptor = typcore.Descriptor{
-	Name:    "configuration-with-invocation",
-	Version: "1.0.0",
+    Name:    "configuration-with-invocation",
+    Version: "1.0.0",
 
-	App: typapp.EntryPoint(server.Main), 
+    App: typapp.EntryPoint(server.Main), 
 
-	BuildTool: typbuildtool.
-		BuildSequences(
-			typbuildtool.StandardBuild(),
-		),
+    BuildTool: typbuildtool.
+        BuildSequences(
+            typbuildtool.StandardBuild(),
+        ),
 
-	ConfigManager: typcfg.
-		Configures(
-			typcfg.NewConfiguration(server.ConfigName, &server.Config{}), 
-		),
+    ConfigManager: typcfg.
+        Configures(
+            typcfg.NewConfiguration(server.ConfigName, &server.Config{}), 
+        ),
 }
 ```
 
