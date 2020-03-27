@@ -1,11 +1,8 @@
 package typdocker
 
-// ComposeObject represent docker-compose.yml
-type ComposeObject struct {
-	Version  Version
-	Services Services
-	Networks Networks
-	Volumes  Volumes
+// Composer responsible to compose docker
+type Composer interface {
+	DockerCompose(version Version) *Recipe
 }
 
 // Services descriptor in docker-compose.yml
@@ -31,17 +28,4 @@ type Service struct {
 	Ports       []string          `yaml:"ports,omitempty"`
 	Networks    []string          `yaml:"networks,omitempty"`
 	Restart     string            `yaml:"restart,omitempty"`
-}
-
-// Append another compose object
-func (c *ComposeObject) Append(comp *ComposeObject) {
-	for k, service := range comp.Services {
-		c.Services[k] = service
-	}
-	for k, network := range comp.Networks {
-		c.Networks[k] = network
-	}
-	for k, volume := range comp.Volumes {
-		c.Volumes[k] = volume
-	}
 }

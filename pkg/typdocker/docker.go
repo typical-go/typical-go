@@ -20,11 +20,6 @@ type Docker struct {
 	composers []Composer
 }
 
-// Composer responsible to compose docker
-type Composer interface {
-	DockerCompose(version Version) *ComposeObject
-}
-
 // Compose new docker module
 func Compose(composers ...Composer) *Docker {
 	return &Docker{
@@ -51,7 +46,7 @@ func (m *Docker) Commands(ctx *typbuildtool.Context) []*cli.Command {
 					Usage: "Generate docker-compose.yaml",
 					Action: func(c *cli.Context) (err error) {
 						if len(m.composers) < 1 {
-							return errors.New("No composers is set")
+							return errors.New("Nothing to compose")
 						}
 						var out []byte
 						log.Info("Generate docker-compose.yml")
@@ -113,8 +108,8 @@ func (m *Docker) Commands(ctx *typbuildtool.Context) []*cli.Command {
 	}
 }
 
-func (m *Docker) dockerCompose() (root *ComposeObject) {
-	root = &ComposeObject{
+func (m *Docker) dockerCompose() (root *Recipe) {
+	root = &Recipe{
 		Version:  m.version,
 		Services: make(Services),
 		Networks: make(Networks),
