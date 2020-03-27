@@ -15,9 +15,10 @@ const (
 
 // TypicalApp is typical application model
 type TypicalApp struct {
-	appSources      []string
-	appModule       interface{}
-	modules         []interface{}
+	appSources []string
+	appModule  interface{}
+	modules    []interface{}
+
 	initAppFilename string
 	precondition    bool
 }
@@ -114,7 +115,12 @@ func (a *TypicalApp) Prepare() (preparations []*Preparation) {
 // Commands to return commands
 func (a *TypicalApp) Commands(c *Context) (cmds []*cli.Command) {
 	if commander, ok := a.appModule.(Commander); ok {
-		return commander.Commands(c)
+		cmds = append(cmds, commander.Commands(c)...)
+	}
+	for _, module := range a.modules {
+		if commander, ok := module.(Commander); ok {
+			cmds = append(cmds, commander.Commands(c)...)
+		}
 	}
 	return
 }

@@ -118,7 +118,7 @@ func TestApp(t *testing.T) {
 		Version: "some-version",
 	})
 
-	require.EqualValues(t, []*cli.Command{c1, c2}, cliApp.Commands)
+	require.EqualValues(t, []*cli.Command{c1, c2, c3}, cliApp.Commands)
 	require.Equal(t, "some-name", cliApp.Name)
 	require.Equal(t, "some-version", cliApp.Version)
 }
