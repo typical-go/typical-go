@@ -1,8 +1,13 @@
 package typdocker
 
+const (
+	// V3 is version 3
+	V3 = "3"
+)
+
 // Composer responsible to compose docker
 type Composer interface {
-	DockerCompose(version Version) *Recipe
+	DockerCompose(version string) *Recipe
 }
 
 // Services descriptor in docker-compose.yml

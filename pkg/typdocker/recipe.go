@@ -2,7 +2,7 @@ package typdocker
 
 // Recipe represent docker-compose.yml
 type Recipe struct {
-	Version  Version
+	Version  string
 	Services Services
 	Networks Networks
 	Volumes  Volumes
@@ -10,6 +10,10 @@ type Recipe struct {
 
 // Append another compose object
 func (c *Recipe) Append(comp *Recipe) {
+	if comp == nil {
+		return
+	}
+
 	for k, service := range comp.Services {
 		c.Services[k] = service
 	}
@@ -22,6 +26,9 @@ func (c *Recipe) Append(comp *Recipe) {
 }
 
 // DockerCompose to get the recipe
-func (c *Recipe) DockerCompose(version Version) *Recipe {
-	return c
+func (c *Recipe) DockerCompose(version string) *Recipe {
+	if Major(version) == Major(c.Version) {
+		return c
+	}
+	return nil
 }

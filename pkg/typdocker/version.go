@@ -1,12 +1,15 @@
 package typdocker
 
-import "strings"
+import (
+	"strings"
+)
 
-// Version of docker compose
-type Version string
+// Major version from docker-composer version
+func Major(version string) string {
+	i := strings.IndexRune(version, '.')
+	if i < 0 {
+		return version
+	}
 
-// IsV3 return true if the version belong to docker-compose v3
-func (v *Version) IsV3() bool {
-	// TODO: improve the checking
-	return strings.HasPrefix(string(*v), "3")
+	return version[:i]
 }
