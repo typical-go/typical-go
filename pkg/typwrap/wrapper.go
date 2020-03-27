@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"go/build"
+	"io/ioutil"
 	"os"
 	"strings"
 
@@ -32,19 +33,26 @@ func (*TypicalWrapper) Wrap(c *Context) (err error) {
 	os.MkdirAll(c.TypicalTmp+"/build-tool", os.ModePerm)
 	os.MkdirAll(c.TypicalTmp+"/bin", os.ModePerm)
 
-	cksmFile := c.TypicalTmp + "/checksum"
-	out := c.TypicalTmp + "/bin/build-tool"
+	gitignore := ".gitignore"
+	if _, err = os.Stat(gitignore); os.IsNotExist(err) {
+		if err = ioutil.WriteFile(gitignore, []byte(gitignoreTmpl), 0777); err != nil {
+			return
+		}
+	}
+
+	checksumFile := c.TypicalTmp + "/checksum"
+	buildTool := c.TypicalTmp + "/bin/build-tool"
 	srcPath := c.TypicalTmp + "/build-tool/main.go"
 	descriptorPkg := c.ProjectPackage + "/typical"
 
-	var cksm *Checksum
-	if cksm, err = CreateChecksum("typical"); err != nil {
+	var checksum *Checksum
+	if checksum, err = CreateChecksum("typical"); err != nil {
 		return
 	}
 
-	if _, err = os.Stat(out); os.IsNotExist(err) || !cksm.IsSame(cksmFile) {
+	if _, err = os.Stat(buildTool); os.IsNotExist(err) || !checksum.IsSame(checksumFile) {
 		c.Info("Update checksum")
-		if err = cksm.Save(cksmFile); err != nil {
+		if err = checksum.Save(checksumFile); err != nil {
 			return
 		}
 
@@ -56,7 +64,7 @@ func (*TypicalWrapper) Wrap(c *Context) (err error) {
 		}
 
 		c.Info("Build the build-tool")
-		return buildkit.NewGoBuild(out, srcPath).
+		return buildkit.NewGoBuild(buildTool, srcPath).
 			SetVariable(typcore.DefaultProjectPackageVar, c.ProjectPackage).
 			SetVariable(typcore.DefaultTypicalTmpVar, c.TypicalTmp).
 			WithStdout(os.Stdout).
@@ -64,7 +72,6 @@ func (*TypicalWrapper) Wrap(c *Context) (err error) {
 			WithStdin(os.Stdin).
 			Execute(c.Ctx)
 	}
-
 	return
 }
 
