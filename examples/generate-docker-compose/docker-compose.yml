@@ -1,0 +1,9 @@
+version: "3"
+services:
+  redis:
+    image: redis:4.0.5-alpine
+    command: redis-server --requirepass "redispass"
+    ports:
+    - 6379:6379
+networks: {}
+volumes: {}

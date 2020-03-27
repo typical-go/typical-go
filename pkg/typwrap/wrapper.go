@@ -43,6 +43,7 @@ func (*TypicalWrapper) Wrap(c *Context) (err error) {
 
 	typicalw := "typicalw"
 	if _, err = os.Stat(typicalw); os.IsNotExist(err) {
+		c.Infof("Generate %s", typicalw)
 		if err = typfactory.WriteFile(typicalw, 0777, &typfactory.Typicalw{
 			TypicalSource:  "github.com/typical-go/typical-go/cmd/typical-go",
 			TypicalTmp:     c.TypicalTmp,

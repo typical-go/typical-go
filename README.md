@@ -74,7 +74,7 @@ Since the typical-go project is still undergoing development, maybe there is som
 - [x] [Provide Constructor](https://github.com/typical-go/typical-go/tree/master/examples/provide-constructor)
 - [x] [Generate Mock](https://github.com/typical-go/typical-go/tree/master/examples/generate-mock)
 - [ ] [Generate Readme](https://github.com/typical-go/typical-go/tree/master/examples/generate-readme)
-- [ ] [Generate Docker-Compose](https://github.com/typical-go/typical-go/tree/master/examples/generate-docker-compose)
+- [x] [Generate Docker-Compose](https://github.com/typical-go/typical-go/tree/master/examples/generate-docker-compose)
 - [x] [Serve React Demo](https://github.com/typical-go/typical-go/tree/master/examples/serve-react-demo)
 
 
