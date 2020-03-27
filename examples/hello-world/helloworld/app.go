@@ -7,7 +7,7 @@ import (
 )
 
 // Main function of hello-world
-func Main(d *typcore.Descriptor) error {
+func Main(d *typcore.Descriptor) (err error) {
 	fmt.Println("Hello World")
-	return nil
+	return
 }

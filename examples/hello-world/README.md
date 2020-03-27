@@ -2,28 +2,25 @@
 
 Simple hello-world application
 
-Implement of `typcore.App`
+Create function with `*typcore.Descriptor` as function parameter
 ```go
-// Run app
-func (*App) Run(d *typcore.Descriptor) error {
+func Main(d *typcore.Descriptor) (err error) {
 	fmt.Println("Hello World")
-	return nil
+	return
 }
 ```
 
 Setup the typical descriptor
 ```go
-// Descriptor of sample
 var Descriptor = typcore.Descriptor{
 	Name:    "hello-world",
-	Version: "0.0.1",
+	Version: "1.0.0",
 
-	App: helloworld.New(), // the application
+	App: typcore.NewApp(helloworld.Main), // the application
 
 	BuildTool: typbuildtool.
-		Create(
+		BuildSequences(
 			typbuildtool.StandardBuild(), // standard build module
 		),
 }
-
 ```

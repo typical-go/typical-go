@@ -4,12 +4,12 @@ import (
 	"bufio"
 	"errors"
 	"go/build"
-	"io/ioutil"
 	"os"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typfactory"
 )
 
 // TypicalWrapper responsible to wrap the typical project
@@ -35,7 +35,19 @@ func (*TypicalWrapper) Wrap(c *Context) (err error) {
 
 	gitignore := ".gitignore"
 	if _, err = os.Stat(gitignore); os.IsNotExist(err) {
-		if err = ioutil.WriteFile(gitignore, []byte(gitignoreTmpl), 0777); err != nil {
+		c.Infof("Generate %s", gitignore)
+		if err = typfactory.WriteFile(gitignore, 0777, &typfactory.GitIgnore{}); err != nil {
+			return
+		}
+	}
+
+	typicalw := "typicalw"
+	if _, err = os.Stat(typicalw); os.IsNotExist(err) {
+		if err = typfactory.WriteFile(typicalw, 0777, &typfactory.Typicalw{
+			TypicalSource:  "github.com/typical-go/typical-go/cmd/typical-go",
+			TypicalTmp:     c.TypicalTmp,
+			ProjectPackage: c.ProjectPackage,
+		}); err != nil {
 			return
 		}
 	}

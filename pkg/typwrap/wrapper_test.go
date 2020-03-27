@@ -10,5 +10,4 @@ func TestNew(t *testing.T) {
 	t.Run("SHOULD implement wrapper", func(t *testing.T) {
 		var _ typwrap.Wrapper = typwrap.New()
 	})
-
 }
