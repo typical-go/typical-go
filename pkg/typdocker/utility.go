@@ -34,7 +34,7 @@ func (m *DockerUtility) WithVersion(version string) *DockerUtility {
 }
 
 // Commands of docker
-func (m *DockerUtility) Commands(ctx *typbuildtool.Context) []*cli.Command {
+func (m *DockerUtility) Commands(c *typbuildtool.Context) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:  "docker",
@@ -43,7 +43,7 @@ func (m *DockerUtility) Commands(ctx *typbuildtool.Context) []*cli.Command {
 				{
 					Name:  "compose",
 					Usage: "Generate docker-compose.yaml",
-					Action: func(c *cli.Context) (err error) {
+					Action: func(cliCtx *cli.Context) (err error) {
 						if len(m.composers) < 1 {
 							return errors.New("Nothing to compose")
 						}
