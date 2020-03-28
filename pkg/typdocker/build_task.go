@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 
 	"github.com/urfave/cli/v2"
@@ -49,7 +48,7 @@ func (m *DockerUtility) Commands(ctx *typbuildtool.Context) []*cli.Command {
 							return errors.New("Nothing to compose")
 						}
 						var out []byte
-						log.Info("Generate docker-compose.yml")
+						c.Info("Generate docker-compose.yml")
 						if out, err = yaml.Marshal(m.dockerCompose()); err != nil {
 							return
 						}

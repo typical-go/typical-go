@@ -2,8 +2,6 @@ package typast
 
 import (
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // Ast responsible to store declaration
@@ -37,7 +35,8 @@ func (c *Ast) EachAnnotation(name string, declType DeclType, fn AnnotationFunc) 
 					return
 				}
 			} else {
-				log.Warnf("[%s] has no effect to %s:%s", name, declType, decl.SourceName)
+				// log.Warnf("[%s] has no effect to %s:%s", name, declType, decl.SourceName)
+				// TODO: give some hint
 			}
 		}
 		return

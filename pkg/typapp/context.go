@@ -1,7 +1,6 @@
 package typapp
 
 import (
-	log "github.com/sirupsen/logrus"
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typdep"
@@ -63,7 +62,7 @@ func (c *Context) Invoke(cliCtx *cli.Context, invokable typdep.Invokable) (err e
 	startFn := func() error { return invokable.Invoke(di) }
 
 	for _, err := range common.StartGracefully(startFn, c.stop) {
-		log.Error(err.Error())
+		c.Warn(err.Error())
 	}
 	return
 }

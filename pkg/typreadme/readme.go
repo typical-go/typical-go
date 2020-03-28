@@ -5,8 +5,6 @@ import (
 	"html/template"
 	"os"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcfg"
@@ -103,11 +101,11 @@ func (m *ReadmeGenerator) generate(c *typbuildtool.Context) (err error) {
 		return
 	}
 	defer file.Close()
-	log.Infof("Parse template '%s'", m.TemplateFile)
+	c.Infof("Parse template '%s'", m.TemplateFile)
 	if tmpl, err = template.ParseFiles(m.TemplateFile); err != nil {
 		return
 	}
-	log.Infof("Apply template and write to '%s'", m.TargetFile)
+	c.Infof("Apply template and write to '%s'", m.TargetFile)
 	return tmpl.Execute(file, &Object{
 		TemplateFile: m.TemplateFile,
 		Title:        m.Title(c),
