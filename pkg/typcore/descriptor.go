@@ -33,7 +33,7 @@ type Descriptor struct {
 	// ConfigManager of the project (OPTIONAL).
 	ConfigManager
 
-	Logger
+	typlog.Logger
 }
 
 // LaunchApp to launch the app
@@ -54,11 +54,6 @@ func (d *Descriptor) LaunchBuildTool() (err error) {
 	return d.RunBuildTool(c)
 }
 
-// SetLogger to set logger
-func (d *Descriptor) SetLogger(logger Logger) {
-	d.Logger = logger
-}
-
 // Validate context
 func (d *Descriptor) Validate() (err error) {
 	if err = validateName(d.Name); err != nil {
@@ -67,10 +62,6 @@ func (d *Descriptor) Validate() (err error) {
 
 	if d.Version == "" {
 		d.Version = "0.0.1"
-	}
-
-	if d.Logger == nil {
-		d.Logger = typlog.New()
 	}
 
 	if d.App == nil {

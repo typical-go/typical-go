@@ -9,19 +9,33 @@ import (
 )
 
 func TestLogger(t *testing.T) {
-	var debugger strings.Builder
+	var output strings.Builder
+	defer typlog.SetOutput(&output)()
 
-	logger := typlog.New().
-		WithWriter(&debugger)
+	var logger typlog.Logger
 
 	logger.Info("some information")
 	logger.Infof("formatted information: %s", "FOO")
 	logger.Warn("some warning")
 	logger.Warnf("formatted warning: %s", "BAR")
 
-	require.Equal(t, `[TYPICAL][INFO] some information
+	expected := `[TYPICAL][INFO] some information
 [TYPICAL][INFO] formatted information: FOO
 [TYPICAL][WARN] some warning
 [TYPICAL][WARN] formatted warning: BAR
-`, debugger.String())
+`
+
+	require.Equal(t, expected, output.String())
+}
+
+func TestChangeSignature(t *testing.T) {
+	var output strings.Builder
+	defer typlog.SetOutput(&output)()
+
+	var logger typlog.Logger
+	defer logger.SetLogSignature("TEST", 0)()
+
+	logger.Info("some-info")
+
+	require.Equal(t, "[TEST][INFO] some-info\n", output.String())
 }

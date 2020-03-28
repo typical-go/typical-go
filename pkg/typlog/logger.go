@@ -8,73 +8,101 @@ import (
 	"github.com/fatih/color"
 )
 
-// TypicalLogger is simple logger
-type TypicalLogger struct {
-	io.Writer
+var (
+	// Output for logger
+	output io.Writer = os.Stdout
+
+	// DefaultName is default name in log signature
+	DefaultName string = "TYPICAL"
+
+	// DefaultColor is default name in log signature
+	DefaultColor color.Attribute = color.FgHiBlue
+)
+
+// Logger is simple logger
+type Logger struct {
+	name  string
+	color color.Attribute
 }
 
-// New instance of TypicalLogger
-func New() *TypicalLogger {
-	return &TypicalLogger{
-		Writer: os.Stdout,
+// SetOutput to set logger output
+func SetOutput(w io.Writer) func() {
+	output = w
+	return func() {
+		output = os.Stdout
 	}
 }
 
-// WithWriter return TypicalLogger with new writer
-func (s *TypicalLogger) WithWriter(w io.Writer) *TypicalLogger {
-	s.Writer = w
-	return s
+// SetLogSignature to change signature. It return method to reset the signature.
+func (s *Logger) SetLogSignature(name string, color color.Attribute) func() {
+	s.name = name
+	s.color = color
+	return s.ResetLogSignature
+}
+
+// ResetLogSignature to reset signature
+func (s *Logger) ResetLogSignature() {
+	s.name = DefaultName
+	s.color = DefaultColor
 }
 
 // Info level message
-func (s *TypicalLogger) Info(args ...interface{}) {
+func (s *Logger) Info(args ...interface{}) {
 	s.infoSign()
 	s.print(args...)
 }
 
 // Infof is same with Info but with format
-func (s *TypicalLogger) Infof(format string, args ...interface{}) {
+func (s *Logger) Infof(format string, args ...interface{}) {
 	s.infoSign()
 	s.printf(format, args...)
 }
 
 // Warn level log message
-func (s *TypicalLogger) Warn(args ...interface{}) {
+func (s *Logger) Warn(args ...interface{}) {
 	s.warnSign()
 	s.print(args...)
 }
 
 // Warnf is same with warn but with format
-func (s *TypicalLogger) Warnf(format string, args ...interface{}) {
+func (s *Logger) Warnf(format string, args ...interface{}) {
 	s.warnSign()
 	s.printf(format, args...)
 }
 
-func (s *TypicalLogger) print(args ...interface{}) {
+func (s *Logger) print(args ...interface{}) {
 	fmt.Fprintln(s, args...)
 }
 
-func (s *TypicalLogger) printf(format string, args ...interface{}) {
+func (s *Logger) printf(format string, args ...interface{}) {
 	fmt.Fprintf(s, format, args...)
 	fmt.Fprintln(s)
 }
 
-func (s *TypicalLogger) infoSign() {
+func (s *Logger) infoSign() {
 	s.typicalSign()
 	fmt.Fprint(s, "[")
 	color.New(color.FgCyan).Fprint(s, "INFO")
 	fmt.Fprint(s, "] ")
 }
 
-func (s *TypicalLogger) warnSign() {
+func (s *Logger) warnSign() {
 	s.typicalSign()
 	fmt.Fprint(s, "[")
 	color.New(color.FgYellow).Fprint(s, "WARN")
 	fmt.Fprint(s, "] ")
 }
 
-func (s TypicalLogger) typicalSign() {
+func (s *Logger) typicalSign() {
+	if s.name == "" {
+		s.ResetLogSignature()
+	}
+
 	fmt.Fprint(s, "[")
-	color.New(color.FgHiBlue).Fprint(s, "TYPICAL")
+	color.New(s.color).Fprint(s, s.name)
 	fmt.Fprint(s, "]")
+}
+
+func (s Logger) Write(p []byte) (n int, err error) {
+	return output.Write(p)
 }

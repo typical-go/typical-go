@@ -71,7 +71,7 @@ func (c *Context) Ast() *typast.Ast {
 	if c.ast == nil {
 		var err error
 		if c.ast, err = typast.Walk(c.AppFiles); err != nil {
-			c.Warnf("PreconditionContext: %w", err.Error())
+			c.Warnf("PreconditionContext: %s", err.Error())
 		}
 	}
 	return c.ast

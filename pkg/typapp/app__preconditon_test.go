@@ -14,6 +14,8 @@ import (
 func TestTypicalApp_Preconditon(t *testing.T) {
 	t.Run("GIVEN false precondition", func(t *testing.T) {
 		var debugger strings.Builder
+		defer typlog.SetOutput(&debugger)()
+
 		c := &typbuildtool.BuildContext{
 			Context: &typbuildtool.Context{
 				Context: &typcore.Context{
@@ -21,7 +23,6 @@ func TestTypicalApp_Preconditon(t *testing.T) {
 				},
 			},
 		}
-		c.SetLogger(typlog.New().WithWriter(&debugger))
 
 		require.NoError(t, typapp.
 			AppModule(nil).
