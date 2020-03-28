@@ -2,26 +2,21 @@ package pinger
 
 import (
 	"fmt"
+	"io/ioutil"
+	"net/http"
 
-	"github.com/go-redis/redis"
+	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 // Main function of hello-world
-func Main(client *redis.Client) (err error) {
-	defer client.Close()
-
-	if err := client.Ping().Err(); err != nil {
-		fmt.Printf("Ping: %s\n", err.Error())
-	} else {
-		fmt.Println("Ping success")
+func Main(d *typcore.Descriptor) (err error) {
+	var resp *http.Response
+	if resp, err = http.Get("http://127.0.0.1:7379/ping"); err != nil {
+		return
 	}
-	return
-}
 
-// NewRedisClient [constructor]
-func NewRedisClient() *redis.Client {
-	return redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "redispass",
-	})
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println(string(body))
+
+	return
 }
