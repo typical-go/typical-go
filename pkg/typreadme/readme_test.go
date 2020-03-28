@@ -9,6 +9,6 @@ import (
 
 func TestReadme(t *testing.T) {
 	t.Run("SHOULD implement of Task", func(t *testing.T) {
-		var _ typbuildtool.Task = typreadme.Create()
+		var _ typbuildtool.Utility = typreadme.Generator()
 	})
 }

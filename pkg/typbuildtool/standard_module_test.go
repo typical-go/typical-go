@@ -20,8 +20,8 @@ func TestStdBuilder(t *testing.T) {
 	t.Run("SHOULD implement Release", func(t *testing.T) {
 		var _ typbuildtool.Releaser = typbuildtool.StandardBuild()
 	})
-	t.Run("SHOULD implement Task", func(t *testing.T) {
-		var _ typbuildtool.Task = typbuildtool.StandardBuild()
+	t.Run("SHOULD implement Utility", func(t *testing.T) {
+		var _ typbuildtool.Utility = typbuildtool.StandardBuild()
 	})
 }
 

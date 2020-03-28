@@ -10,8 +10,8 @@ import (
 
 // TypicalBuildTool is typical Build Tool for golang project
 type TypicalBuildTool struct {
-	modules []interface{}
-	tasks   []Task
+	modules   []interface{}
+	utilities []Utility
 
 	binFolder string
 	cmdFolder string
@@ -29,9 +29,9 @@ func BuildSequences(modules ...interface{}) *TypicalBuildTool {
 	}
 }
 
-// WithTasks return build-tool with commanders
-func (b *TypicalBuildTool) WithTasks(tasks ...Task) *TypicalBuildTool {
-	b.tasks = tasks
+// WithUtilities return build-tool with new utilities
+func (b *TypicalBuildTool) WithUtilities(utilities ...Utility) *TypicalBuildTool {
+	b.utilities = utilities
 	return b
 }
 

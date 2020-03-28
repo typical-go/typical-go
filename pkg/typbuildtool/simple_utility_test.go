@@ -11,7 +11,7 @@ import (
 
 func TestSimpleCommander(t *testing.T) {
 	t.Run("SHOULD implement Commanders", func(t *testing.T) {
-		var _ typbuildtool.Task = typbuildtool.NewTask()
+		var _ typbuildtool.Utility = typbuildtool.NewUtility()
 	})
 }
 
@@ -19,7 +19,7 @@ func TestSimpleCommander_Commands(t *testing.T) {
 	cmd1 := &cli.Command{}
 	cmd2 := &cli.Command{}
 
-	commander := typbuildtool.NewTask(
+	util := typbuildtool.NewUtility(
 		func(ctx *typbuildtool.Context) *cli.Command {
 			return cmd1
 		},
@@ -28,5 +28,5 @@ func TestSimpleCommander_Commands(t *testing.T) {
 		},
 	)
 
-	require.Equal(t, []*cli.Command{cmd1, cmd2}, commander.Commands(nil))
+	require.Equal(t, []*cli.Command{cmd1, cmd2}, util.Commands(nil))
 }

@@ -9,6 +9,6 @@ import (
 
 func TestDocker(t *testing.T) {
 	t.Run("SHOULD implement Task", func(t *testing.T) {
-		var _ typbuildtool.Task = typdocker.Compose()
+		var _ typbuildtool.Utility = typdocker.Compose()
 	})
 }

@@ -18,8 +18,8 @@ const (
 	defaultTemplateFile = "README.tmpl"
 )
 
-// Readme module
-type Readme struct {
+// ReadmeGenerator module
+type ReadmeGenerator struct {
 	// NOTE: required to be public to be access by template
 	TargetFile   string
 	TemplateFile string
@@ -31,58 +31,58 @@ type Readme struct {
 	configs     []ConfigInfo
 }
 
-// Create new readme module
-func Create() *Readme {
-	return &Readme{
+// Generator retunr new instance of ReadmeGenerator
+func Generator() *ReadmeGenerator {
+	return &ReadmeGenerator{
 		TargetFile:   defaultTargetFile,
 		TemplateFile: defaultTemplateFile,
 	}
 }
 
 // WithTargetFile return module with new target file
-func (m *Readme) WithTargetFile(targetFile string) *Readme {
+func (m *ReadmeGenerator) WithTargetFile(targetFile string) *ReadmeGenerator {
 	m.TargetFile = targetFile
 	return m
 }
 
 // WithTemplateFile return module with new template file
-func (m *Readme) WithTemplateFile(templateFile string) *Readme {
+func (m *ReadmeGenerator) WithTemplateFile(templateFile string) *ReadmeGenerator {
 	m.TemplateFile = templateFile
 	return m
 }
 
 // WithTitle return module with new title
-func (m *Readme) WithTitle(title string) *Readme {
+func (m *ReadmeGenerator) WithTitle(title string) *ReadmeGenerator {
 	m.title = title
 	return m
 }
 
 // WithDescription return module with new description
-func (m *Readme) WithDescription(description string) *Readme {
+func (m *ReadmeGenerator) WithDescription(description string) *ReadmeGenerator {
 	m.description = description
 	return m
 }
 
 // WithUsages return module with new usages
-func (m *Readme) WithUsages(usages []UsageInfo) *Readme {
+func (m *ReadmeGenerator) WithUsages(usages []UsageInfo) *ReadmeGenerator {
 	m.usages = usages
 	return m
 }
 
 // WithBuildUsages return module with new build usages
-func (m *Readme) WithBuildUsages(buildUsages []UsageInfo) *Readme {
+func (m *ReadmeGenerator) WithBuildUsages(buildUsages []UsageInfo) *ReadmeGenerator {
 	m.buildUsages = buildUsages
 	return m
 }
 
 // WithConfigs return odule with new configs
-func (m *Readme) WithConfigs(configs []ConfigInfo) *Readme {
+func (m *ReadmeGenerator) WithConfigs(configs []ConfigInfo) *ReadmeGenerator {
 	m.configs = configs
 	return m
 }
 
 // Commands of readme
-func (m *Readme) Commands(c *typbuildtool.Context) []*cli.Command {
+func (m *ReadmeGenerator) Commands(c *typbuildtool.Context) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:  "readme",
@@ -94,7 +94,7 @@ func (m *Readme) Commands(c *typbuildtool.Context) []*cli.Command {
 	}
 }
 
-func (m *Readme) generate(c *typbuildtool.Context) (err error) {
+func (m *ReadmeGenerator) generate(c *typbuildtool.Context) (err error) {
 	var (
 		file *os.File
 		tmpl *template.Template
@@ -119,7 +119,7 @@ func (m *Readme) generate(c *typbuildtool.Context) (err error) {
 }
 
 // Title of readme
-func (m *Readme) Title(c *typbuildtool.Context) string {
+func (m *ReadmeGenerator) Title(c *typbuildtool.Context) string {
 	if m.title == "" {
 		return c.Name
 	}
@@ -127,7 +127,7 @@ func (m *Readme) Title(c *typbuildtool.Context) string {
 }
 
 // Description of readme
-func (m *Readme) Description(c *typbuildtool.Context) string {
+func (m *ReadmeGenerator) Description(c *typbuildtool.Context) string {
 	if m.description == "" {
 		return c.Description
 	}
@@ -135,7 +135,7 @@ func (m *Readme) Description(c *typbuildtool.Context) string {
 }
 
 // Usages of readme
-func (m *Readme) Usages(c *typbuildtool.Context) (infos []UsageInfo) {
+func (m *ReadmeGenerator) Usages(c *typbuildtool.Context) (infos []UsageInfo) {
 	if len(m.usages) < 1 {
 		if app, ok := c.App.(*typapp.TypicalApp); ok {
 			if app.EntryPoint() != nil {
@@ -154,7 +154,7 @@ func (m *Readme) Usages(c *typbuildtool.Context) (infos []UsageInfo) {
 }
 
 // BuildUsages of readme
-func (m *Readme) BuildUsages(c *typbuildtool.Context) (infos []UsageInfo) {
+func (m *ReadmeGenerator) BuildUsages(c *typbuildtool.Context) (infos []UsageInfo) {
 	if len(m.buildUsages) < 1 {
 		if build, ok := c.BuildTool.(*typbuildtool.TypicalBuildTool); ok {
 			for _, cmd := range build.Commands(&typbuildtool.Context{}) {
@@ -167,7 +167,7 @@ func (m *Readme) BuildUsages(c *typbuildtool.Context) (infos []UsageInfo) {
 }
 
 // Configs of readme
-func (m *Readme) Configs(c *typbuildtool.Context) (infos []ConfigInfo) {
+func (m *ReadmeGenerator) Configs(c *typbuildtool.Context) (infos []ConfigInfo) {
 	if len(m.configs) < 1 {
 		for _, cfg := range c.Configurations() {
 			for _, field := range typcfg.RetrieveFields(cfg) {

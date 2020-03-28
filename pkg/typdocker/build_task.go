@@ -14,28 +14,28 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// BuildTask for docker
-type BuildTask struct {
+// DockerUtility for docker
+type DockerUtility struct {
 	version   string
 	composers []Composer
 }
 
 // Compose new docker module
-func Compose(composers ...Composer) *BuildTask {
-	return &BuildTask{
+func Compose(composers ...Composer) *DockerUtility {
+	return &DockerUtility{
 		version:   V3,
 		composers: composers,
 	}
 }
 
 // WithVersion to set the version
-func (m *BuildTask) WithVersion(version string) *BuildTask {
+func (m *DockerUtility) WithVersion(version string) *DockerUtility {
 	m.version = version
 	return m
 }
 
 // Commands of docker
-func (m *BuildTask) Commands(ctx *typbuildtool.Context) []*cli.Command {
+func (m *DockerUtility) Commands(ctx *typbuildtool.Context) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:  "docker",
@@ -108,7 +108,7 @@ func (m *BuildTask) Commands(ctx *typbuildtool.Context) []*cli.Command {
 	}
 }
 
-func (m *BuildTask) dockerCompose() (root *Recipe) {
+func (m *DockerUtility) dockerCompose() (root *Recipe) {
 	root = &Recipe{
 		Version:  m.version,
 		Services: make(Services),

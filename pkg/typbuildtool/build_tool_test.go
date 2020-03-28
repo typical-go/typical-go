@@ -15,8 +15,8 @@ func TestBuildSequences(t *testing.T) {
 	t.Run("SHOULD implement Buildtool", func(t *testing.T) {
 		var _ typcore.BuildTool = typbuildtool.BuildSequences()
 	})
-	t.Run("SHOULD implement Commander", func(t *testing.T) {
-		var _ typbuildtool.Task = typbuildtool.BuildSequences()
+	t.Run("SHOULD implement Utility", func(t *testing.T) {
+		var _ typbuildtool.Utility = typbuildtool.BuildSequences()
 	})
 	t.Run("SHOULD implement Builder", func(t *testing.T) {
 		var _ typbuildtool.Builder = typbuildtool.BuildSequences()

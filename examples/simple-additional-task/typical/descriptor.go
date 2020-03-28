@@ -17,7 +17,7 @@ var Descriptor = typcore.Descriptor{
 		BuildSequences(
 			typbuildtool.StandardBuild(),
 		).
-		WithTasks(
-			typbuildtool.NewTask(taskPrintContext), // Add custom task
+		WithUtilities(
+			typbuildtool.NewUtility(taskPrintContext), // Add custom task
 		),
 }
