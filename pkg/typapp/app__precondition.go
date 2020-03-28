@@ -6,11 +6,10 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
-	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typapp/internal/tmpl"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typfactory"
 )
 
 // Precondition the app
@@ -62,7 +61,7 @@ func (a *TypicalApp) generateConstructor(c *typbuildtool.BuildContext, filename 
 		}
 	}
 
-	if err = common.WriteTemplate(filename, tmpl.Constructor, tmpl.ConstructorData{
+	if err = typfactory.WriteFile(filename, 0777, &typfactory.InitialApp{
 		Imports:      imports,
 		Constructors: constructors,
 	}); err != nil {
