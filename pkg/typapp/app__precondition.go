@@ -13,7 +13,7 @@ import (
 )
 
 // Precondition the app
-func (a *TypicalApp) Precondition(c *typbuildtool.BuildContext) (err error) {
+func (a *App) Precondition(c *typbuildtool.BuildContext) (err error) {
 	if !a.precondition {
 		c.Info("Skip Precondition for typical-app")
 		return
@@ -51,7 +51,7 @@ func configDefinition(bean *typcore.Configuration) string {
 	}`, typ, bean.Name, typ)
 }
 
-func (a *TypicalApp) generateConstructor(c *typbuildtool.BuildContext, filename string, constructors []string) (err error) {
+func (a *App) generateConstructor(c *typbuildtool.BuildContext, filename string, constructors []string) (err error) {
 	ctx := c.Cli.Context
 	imports := []string{}
 

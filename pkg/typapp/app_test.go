@@ -15,25 +15,25 @@ import (
 
 func TestTypicalApp(t *testing.T) {
 	t.Run("SHOULD implement App", func(t *testing.T) {
-		var _ typcore.App = &typapp.TypicalApp{}
+		var _ typcore.App = &typapp.App{}
 	})
 	t.Run("SHOULD implement Preconditioner", func(t *testing.T) {
-		var _ typbuildtool.Preconditioner = &typapp.TypicalApp{}
+		var _ typbuildtool.Preconditioner = &typapp.App{}
 	})
 	t.Run("SHOULD implement Provider", func(t *testing.T) {
-		var _ typapp.Provider = &typapp.TypicalApp{}
+		var _ typapp.Provider = &typapp.App{}
 	})
 	t.Run("SHOULD implement Destroyer", func(t *testing.T) {
-		var _ typapp.Destroyer = &typapp.TypicalApp{}
+		var _ typapp.Destroyer = &typapp.App{}
 	})
 	t.Run("SHOULD implement Preparer", func(t *testing.T) {
-		var _ typapp.Preparer = &typapp.TypicalApp{}
+		var _ typapp.Preparer = &typapp.App{}
 	})
 	t.Run("SHOULD implement EntryPointer", func(t *testing.T) {
-		var _ typapp.EntryPointer = &typapp.TypicalApp{}
+		var _ typapp.EntryPointer = &typapp.App{}
 	})
 	t.Run("SHOULD implement Commander", func(t *testing.T) {
-		var _ typapp.Commander = &typapp.TypicalApp{}
+		var _ typapp.Commander = &typapp.App{}
 	})
 }
 

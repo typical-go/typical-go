@@ -10,7 +10,7 @@ import (
 // Context of App
 type Context struct {
 	*typcore.Descriptor
-	*TypicalApp
+	*App
 
 	container *typdep.Container
 }

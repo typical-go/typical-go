@@ -13,8 +13,8 @@ const (
 	DefaultPrecondition = true
 )
 
-// TypicalApp is typical application model
-type TypicalApp struct {
+// App is typical application model
+type App struct {
 	appSources []string
 	appModule  interface{}
 	modules    []interface{}
@@ -23,12 +23,12 @@ type TypicalApp struct {
 	precondition    bool
 }
 
-// AppModule create new instance of TypicalApp with AppModule
-func AppModule(appModule interface{}, appSources ...string) *TypicalApp {
+// AppModule create new instance of App with AppModule
+func AppModule(appModule interface{}, appSources ...string) *App {
 	if len(appSources) < 1 {
 		appSources = []string{common.PackageName(appModule)}
 	}
-	return &TypicalApp{
+	return &App{
 		appSources:      appSources,
 		appModule:       appModule,
 		initAppFilename: DefaultInitAppFilename,
@@ -36,9 +36,9 @@ func AppModule(appModule interface{}, appSources ...string) *TypicalApp {
 	}
 }
 
-// EntryPoint create new instance of TypicalApp with main invocation function
-func EntryPoint(fn interface{}, appSource string, sources ...string) *TypicalApp {
-	return &TypicalApp{
+// EntryPoint create new instance of App with main invocation function
+func EntryPoint(fn interface{}, appSource string, sources ...string) *App {
+	return &App{
 		appSources:      append([]string{appSource}, sources...),
 		appModule:       NewMainInvocation(fn),
 		initAppFilename: DefaultInitAppFilename,
@@ -47,25 +47,25 @@ func EntryPoint(fn interface{}, appSource string, sources ...string) *TypicalApp
 }
 
 // WithModules return app with appended module. Module should be implementation of Provider, Preparer (optional) and Destroyer (optional).
-func (a *TypicalApp) WithModules(modules ...interface{}) *TypicalApp {
+func (a *App) WithModules(modules ...interface{}) *App {
 	a.modules = modules
 	return a
 }
 
 // WithInitAppFilename return app with new initAppFilename
-func (a *TypicalApp) WithInitAppFilename(initAppFilename string) *TypicalApp {
+func (a *App) WithInitAppFilename(initAppFilename string) *App {
 	a.initAppFilename = initAppFilename
 	return a
 }
 
 // WithPrecondition return app with new precondition
-func (a *TypicalApp) WithPrecondition(precondition bool) *TypicalApp {
+func (a *App) WithPrecondition(precondition bool) *App {
 	a.precondition = precondition
 	return a
 }
 
 // EntryPoint of app
-func (a *TypicalApp) EntryPoint() *MainInvocation {
+func (a *App) EntryPoint() *MainInvocation {
 	if entryPointer, ok := a.appModule.(EntryPointer); ok {
 		return entryPointer.EntryPoint()
 	}
@@ -73,7 +73,7 @@ func (a *TypicalApp) EntryPoint() *MainInvocation {
 }
 
 // Provide to return constructors
-func (a *TypicalApp) Provide() (constructors []*Constructor) {
+func (a *App) Provide() (constructors []*Constructor) {
 	constructors = append(constructors, global...)
 	if provider, ok := a.appModule.(Provider); ok {
 		constructors = append(constructors, provider.Provide()...)
@@ -87,7 +87,7 @@ func (a *TypicalApp) Provide() (constructors []*Constructor) {
 }
 
 //Destroy to return destructor
-func (a *TypicalApp) Destroy() (destructors []*Destruction) {
+func (a *App) Destroy() (destructors []*Destruction) {
 	if destroyer, ok := a.appModule.(Destroyer); ok {
 		destructors = append(destructors, destroyer.Destroy()...)
 	}
@@ -100,7 +100,7 @@ func (a *TypicalApp) Destroy() (destructors []*Destruction) {
 }
 
 // Prepare to return preparations
-func (a *TypicalApp) Prepare() (preparations []*Preparation) {
+func (a *App) Prepare() (preparations []*Preparation) {
 	if preparer, ok := a.appModule.(Preparer); ok {
 		preparations = append(preparations, preparer.Prepare()...)
 	}
@@ -113,7 +113,7 @@ func (a *TypicalApp) Prepare() (preparations []*Preparation) {
 }
 
 // Commands to return commands
-func (a *TypicalApp) Commands(c *Context) (cmds []*cli.Command) {
+func (a *App) Commands(c *Context) (cmds []*cli.Command) {
 	if commander, ok := a.appModule.(Commander); ok {
 		cmds = append(cmds, commander.Commands(c)...)
 	}
@@ -126,6 +126,6 @@ func (a *TypicalApp) Commands(c *Context) (cmds []*cli.Command) {
 }
 
 // AppSources return source for app
-func (a *TypicalApp) AppSources() []string {
+func (a *App) AppSources() []string {
 	return a.appSources
 }

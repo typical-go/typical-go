@@ -135,7 +135,7 @@ func (m *ReadmeGenerator) Description(c *typbuildtool.Context) string {
 // Usages of readme
 func (m *ReadmeGenerator) Usages(c *typbuildtool.Context) (infos []UsageInfo) {
 	if len(m.usages) < 1 {
-		if app, ok := c.App.(*typapp.TypicalApp); ok {
+		if app, ok := c.App.(*typapp.App); ok {
 			if app.EntryPoint() != nil {
 				infos = append(infos, UsageInfo{
 					Usage:       c.Name,

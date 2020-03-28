@@ -8,15 +8,15 @@ import (
 )
 
 // RunApp to run the applciation
-func (a *TypicalApp) RunApp(d *typcore.Descriptor) (err error) {
+func (a *App) RunApp(d *typcore.Descriptor) (err error) {
 	return a.App(d).Run(os.Args)
 }
 
 // App is the cli app
-func (a *TypicalApp) App(d *typcore.Descriptor) *cli.App {
+func (a *App) App(d *typcore.Descriptor) *cli.App {
 	c := &Context{
 		Descriptor: d,
-		TypicalApp: a,
+		App: a,
 	}
 	app := cli.NewApp()
 	app.Name = d.Name
