@@ -8,18 +8,21 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func taskPrintContext(c *typbuildtool.Context) *cli.Command {
-	return &cli.Command{
-		Name:    "context",
-		Aliases: []string{"ctx"},
-		Usage:   "Print context as json",
-		Action: func(cliCtx *cli.Context) (err error) {
-			var b []byte
-			if b, err = json.MarshalIndent(c, "", "    "); err != nil {
+func taskPrintContext(c *typbuildtool.Context) []*cli.Command {
+	return []*cli.Command{
+		{
+			Name:    "context",
+			Aliases: []string{"ctx"},
+			Usage:   "Print context as json",
+			Action: func(cliCtx *cli.Context) (err error) {
+				var b []byte
+				if b, err = json.MarshalIndent(c, "", "    "); err != nil {
+					return
+				}
+				fmt.Println(string(b))
 				return
-			}
-			fmt.Println(string(b))
-			return
+			},
 		},
 	}
+
 }

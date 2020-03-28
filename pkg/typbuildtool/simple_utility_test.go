@@ -11,22 +11,18 @@ import (
 
 func TestSimpleCommander(t *testing.T) {
 	t.Run("SHOULD implement Commanders", func(t *testing.T) {
-		var _ typbuildtool.Utility = typbuildtool.NewUtility()
+		var _ typbuildtool.Utility = typbuildtool.NewUtility(nil)
 	})
 }
 
 func TestSimpleCommander_Commands(t *testing.T) {
 	cmd1 := &cli.Command{}
 	cmd2 := &cli.Command{}
+	cmd3 := &cli.Command{}
 
-	util := typbuildtool.NewUtility(
-		func(ctx *typbuildtool.Context) *cli.Command {
-			return cmd1
-		},
-		func(ctx *typbuildtool.Context) *cli.Command {
-			return cmd2
-		},
-	)
+	util := typbuildtool.NewUtility(func(ctx *typbuildtool.Context) []*cli.Command {
+		return []*cli.Command{cmd1, cmd2, cmd3}
+	})
 
-	require.Equal(t, []*cli.Command{cmd1, cmd2}, util.Commands(nil))
+	require.Equal(t, []*cli.Command{cmd1, cmd2, cmd3}, util.Commands(nil))
 }
