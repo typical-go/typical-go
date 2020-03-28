@@ -13,7 +13,7 @@ var Descriptor = typcore.Descriptor{
 	Name:    "configuration-with-invocation",
 	Version: "1.0.0",
 
-	App: typapp.EntryPoint(server.Main), // wrap serverApp with Typical App
+	App: typapp.EntryPoint(server.Main, "server"), // wrap serverApp with Typical App
 
 	BuildTool: typbuildtool.
 		BuildSequences(

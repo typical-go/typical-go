@@ -37,9 +37,9 @@ func AppModule(appModule interface{}, appSources ...string) *TypicalApp {
 }
 
 // EntryPoint create new instance of TypicalApp with main invocation function
-func EntryPoint(fn interface{}, appSources ...string) *TypicalApp {
+func EntryPoint(fn interface{}, appSource string, sources ...string) *TypicalApp {
 	return &TypicalApp{
-		appSources:      appSources,
+		appSources:      append([]string{appSource}, sources...),
 		appModule:       NewMainInvocation(fn),
 		initAppFilename: DefaultInitAppFilename,
 		precondition:    DefaultPrecondition,
