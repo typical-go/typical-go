@@ -71,7 +71,9 @@ func (*TypicalWrapper) Wrap(c *Context) (err error) {
 
 		if _, err = os.Stat(srcPath); os.IsNotExist(err) {
 			c.Infof("Generate build-tool main source: %s", srcPath)
-			if err = typcore.WriteBuildToolMain(c.Ctx, srcPath, descriptorPkg); err != nil {
+			if err = typfactory.WriteFile(srcPath, 0777, &typfactory.BuildToolMain{
+				DescPkg: descriptorPkg,
+			}); err != nil {
 				return
 			}
 		}

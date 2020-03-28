@@ -8,14 +8,16 @@ import (
 	"github.com/typical-go/typical-go/pkg/typfactory"
 )
 
+type testcase struct {
+	typfactory.Writer
+	expected string
+}
+
 func TestTypicalw(t *testing.T) {
 
-	testcases := []struct {
-		typfactory.Typicalw
-		expected string
-	}{
+	testcases := []testcase{
 		{
-			Typicalw: typfactory.Typicalw{
+			Writer: &typfactory.Typicalw{
 				TypicalSource: "some-source",
 				TypicalTmp:    "some-tmp",
 			},
@@ -38,7 +40,7 @@ $TYPTMP/bin/build-tool $@
 `,
 		},
 		{
-			Typicalw: typfactory.Typicalw{
+			Writer: &typfactory.Typicalw{
 				TypicalSource:  "some-source",
 				TypicalTmp:     "some-tmp",
 				ProjectPackage: "some-project-package",

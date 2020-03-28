@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/typical-go/typical-go/pkg/typfactory"
+
 	"github.com/typical-go/typical-go/pkg/buildkit"
-	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 // Build the project
@@ -19,7 +20,9 @@ func (b *StandardModule) Build(c *BuildContext) (dists []BuildDistribution, err 
 	// NOTE: create main.go if not exist
 	if _, err = os.Stat(src); os.IsNotExist(err) {
 		os.MkdirAll(srcDir, 0777)
-		if err = typcore.WriteAppMain(ctx, src, c.ProjectPackage+"/typical"); err != nil {
+		if err = typfactory.WriteFile(src, 0777, &typfactory.BuildToolMain{
+			DescPkg: c.ProjectPackage + "/typical",
+		}); err != nil {
 			return
 		}
 	}
