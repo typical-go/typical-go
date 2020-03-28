@@ -40,18 +40,18 @@ func TestBuildSequences(t *testing.T) {
 
 func TestBuildTool_Validate(t *testing.T) {
 	testcases := []struct {
-		*typbuildtool.TypicalBuildTool
+		*typbuildtool.BuildTool
 		expectedError string
 	}{
 		{
-			TypicalBuildTool: typbuildtool.BuildSequences(typbuildtool.StandardBuild()),
+			BuildTool: typbuildtool.BuildSequences(typbuildtool.StandardBuild()),
 		},
 		{
-			TypicalBuildTool: typbuildtool.BuildSequences(),
+			BuildTool: typbuildtool.BuildSequences(),
 			expectedError:    "No build modules",
 		},
 		{
-			TypicalBuildTool: typbuildtool.BuildSequences(common.DummyValidator("some-error")),
+			BuildTool: typbuildtool.BuildSequences(common.DummyValidator("some-error")),
 			expectedError:    "BuildTool: some-error",
 		},
 	}

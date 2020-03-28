@@ -154,10 +154,8 @@ func (m *ReadmeGenerator) Usages(c *typbuildtool.Context) (infos []UsageInfo) {
 // BuildUsages of readme
 func (m *ReadmeGenerator) BuildUsages(c *typbuildtool.Context) (infos []UsageInfo) {
 	if len(m.buildUsages) < 1 {
-		if build, ok := c.BuildTool.(*typbuildtool.TypicalBuildTool); ok {
-			for _, cmd := range build.Commands(&typbuildtool.Context{}) {
-				infos = append(infos, usageInfos("./typicalw", cmd)...)
-			}
+		for _, cmd := range c.BuildTool.Commands(&typbuildtool.Context{}) {
+			infos = append(infos, usageInfos("./typicalw", cmd)...)
 		}
 		return
 	}

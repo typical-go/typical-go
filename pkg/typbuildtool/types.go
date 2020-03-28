@@ -49,7 +49,7 @@ type Preconditioner interface {
 // Context of buildtool
 type Context struct {
 	*typcore.Context
-	*TypicalBuildTool
+	*BuildTool
 }
 
 // BuildContext is context of build

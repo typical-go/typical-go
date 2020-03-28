@@ -8,8 +8,8 @@ import (
 	"github.com/typical-go/typical-go/pkg/common"
 )
 
-// TypicalBuildTool is typical Build Tool for golang project
-type TypicalBuildTool struct {
+// BuildTool is typical Build Tool for golang project
+type BuildTool struct {
 	modules   []interface{}
 	utilities []Utility
 
@@ -20,9 +20,9 @@ type TypicalBuildTool struct {
 	includeCommitID bool
 }
 
-// BuildSequences create new instance of TypicalBuildTool with build-sequence
-func BuildSequences(modules ...interface{}) *TypicalBuildTool {
-	return &TypicalBuildTool{
+// BuildSequences create new instance of BuildTool with build-sequence
+func BuildSequences(modules ...interface{}) *BuildTool {
+	return &BuildTool{
 		modules:   modules,
 		binFolder: DefaultBinFolder,
 		cmdFolder: DefaultCmdFolder,
@@ -30,35 +30,35 @@ func BuildSequences(modules ...interface{}) *TypicalBuildTool {
 }
 
 // WithUtilities return build-tool with new utilities
-func (b *TypicalBuildTool) WithUtilities(utilities ...Utility) *TypicalBuildTool {
+func (b *BuildTool) WithUtilities(utilities ...Utility) *BuildTool {
 	b.utilities = utilities
 	return b
 }
 
 // WithBinFolder return BuildTool with new binFolder
-func (b *TypicalBuildTool) WithBinFolder(binFolder string) *TypicalBuildTool {
+func (b *BuildTool) WithBinFolder(binFolder string) *BuildTool {
 	b.binFolder = binFolder
 	return b
 }
 
 // WithCmdFolder return BuildTool with new cmdFolder
-func (b *TypicalBuildTool) WithCmdFolder(cmdFolder string) *TypicalBuildTool {
+func (b *BuildTool) WithCmdFolder(cmdFolder string) *BuildTool {
 	b.cmdFolder = cmdFolder
 	return b
 }
 
 // CmdFolder of build-tool
-func (b *TypicalBuildTool) CmdFolder() string {
+func (b *BuildTool) CmdFolder() string {
 	return b.cmdFolder
 }
 
 // BinFolder of build-tool
-func (b *TypicalBuildTool) BinFolder() string {
+func (b *BuildTool) BinFolder() string {
 	return b.binFolder
 }
 
 // Validate build
-func (b *TypicalBuildTool) Validate() (err error) {
+func (b *BuildTool) Validate() (err error) {
 	if len(b.modules) < 1 {
 		return errors.New("No build modules")
 	}
@@ -72,7 +72,7 @@ func (b *TypicalBuildTool) Validate() (err error) {
 }
 
 // Build task
-func (b *TypicalBuildTool) Build(c *BuildContext) (dists []BuildDistribution, err error) {
+func (b *BuildTool) Build(c *BuildContext) (dists []BuildDistribution, err error) {
 	for _, module := range b.modules {
 		if builder, ok := module.(Builder); ok {
 			var dists1 []BuildDistribution
@@ -86,7 +86,7 @@ func (b *TypicalBuildTool) Build(c *BuildContext) (dists []BuildDistribution, er
 }
 
 // Publish the project
-func (b *TypicalBuildTool) Publish(pc *PublishContext) (err error) {
+func (b *BuildTool) Publish(pc *PublishContext) (err error) {
 	for _, module := range b.modules {
 		if publisher, ok := module.(Publisher); ok {
 			if err = publisher.Publish(pc); err != nil {
@@ -98,7 +98,7 @@ func (b *TypicalBuildTool) Publish(pc *PublishContext) (err error) {
 }
 
 // Release the project
-func (b *TypicalBuildTool) Release(rc *ReleaseContext) (files []string, err error) {
+func (b *BuildTool) Release(rc *ReleaseContext) (files []string, err error) {
 	for _, module := range b.modules {
 		if releaser, ok := module.(Releaser); ok {
 			var files1 []string
@@ -112,7 +112,7 @@ func (b *TypicalBuildTool) Release(rc *ReleaseContext) (files []string, err erro
 }
 
 // Clean the project
-func (b *TypicalBuildTool) Clean(c *BuildContext) (err error) {
+func (b *BuildTool) Clean(c *BuildContext) (err error) {
 	for _, module := range b.modules {
 		if cleaner, ok := module.(Cleaner); ok {
 			if err = cleaner.Clean(c); err != nil {
@@ -130,7 +130,7 @@ func (b *TypicalBuildTool) Clean(c *BuildContext) (err error) {
 }
 
 // Test the project
-func (b *TypicalBuildTool) Test(c *BuildContext) (err error) {
+func (b *BuildTool) Test(c *BuildContext) (err error) {
 	for _, module := range b.modules {
 		if tester, ok := module.(Tester); ok {
 			if err = tester.Test(c); err != nil {
@@ -142,7 +142,7 @@ func (b *TypicalBuildTool) Test(c *BuildContext) (err error) {
 }
 
 // Precondition for this project
-func (b *TypicalBuildTool) Precondition(c *BuildContext) (err error) {
+func (b *BuildTool) Precondition(c *BuildContext) (err error) {
 	if preconditioner, ok := c.App.(Preconditioner); ok {
 		if err = preconditioner.Precondition(c); err != nil {
 			return fmt.Errorf("Precondition-App: %w", err)

@@ -11,7 +11,7 @@ import (
 )
 
 // Commands to return command
-func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
+func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 
 	cmds = []*cli.Command{
 		{
@@ -138,7 +138,7 @@ func (b *TypicalBuildTool) Commands(c *Context) (cmds []*cli.Command) {
 	return cmds
 }
 
-func (b *TypicalBuildTool) createReleaseContext(c *BuildContext) (*ReleaseContext, error) {
+func (b *BuildTool) createReleaseContext(c *BuildContext) (*ReleaseContext, error) {
 	ctx := c.Cli.Context
 	force := c.Cli.Bool("force")
 	alpha := c.Cli.Bool("alpha")
@@ -167,7 +167,7 @@ func (b *TypicalBuildTool) createReleaseContext(c *BuildContext) (*ReleaseContex
 }
 
 // Tag return relase tag
-func (b *TypicalBuildTool) releaseTag(ctx context.Context, version string, alpha bool) string {
+func (b *BuildTool) releaseTag(ctx context.Context, version string, alpha bool) string {
 	var builder strings.Builder
 	builder.WriteString("v")
 	builder.WriteString(version)

@@ -8,10 +8,10 @@ import (
 )
 
 // RunBuildTool to run the build-tool
-func (b *TypicalBuildTool) RunBuildTool(tc *typcore.Context) (err error) {
+func (b *BuildTool) RunBuildTool(tc *typcore.Context) (err error) {
 	c := &Context{
 		Context:          tc,
-		TypicalBuildTool: b,
+		BuildTool: b,
 	}
 
 	app := cli.NewApp()
