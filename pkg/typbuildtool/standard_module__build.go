@@ -15,12 +15,13 @@ func (b *StandardModule) Build(c *BuildContext) (dists []BuildDistribution, err 
 	binary := fmt.Sprintf("%s/%s", c.BinFolder(), c.Name)
 	srcDir := fmt.Sprintf("%s/%s", c.CmdFolder(), c.Name)
 	src := fmt.Sprintf("./%s/main.go", srcDir)
+
 	ctx := c.Cli.Context
 
 	// NOTE: create main.go if not exist
 	if _, err = os.Stat(src); os.IsNotExist(err) {
 		os.MkdirAll(srcDir, 0777)
-		if err = typfactory.WriteFile(src, 0777, &typfactory.BuildToolMain{
+		if err = typfactory.WriteFile(src, 0777, &typfactory.AppMain{
 			DescPkg: c.ProjectPackage + "/typical",
 		}); err != nil {
 			return
