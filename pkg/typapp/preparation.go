@@ -4,6 +4,10 @@ import (
 	"github.com/typical-go/typical-go/pkg/typdep"
 )
 
+var (
+	_ Preparer = (*Preparation)(nil)
+)
+
 // Preparation is invocation to prepare the application
 type Preparation struct {
 	*typdep.Invocation

@@ -8,6 +8,10 @@ var (
 	global []*Constructor
 )
 
+var (
+	_ Provider = (*Constructor)(nil)
+)
+
 // Constructor to provide the dependency
 type Constructor struct {
 	*typdep.Constructor

@@ -4,6 +4,10 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+var (
+	_ Utility = (*SimpleUtility)(nil)
+)
+
 // SimpleUtility return command based on command function
 type SimpleUtility struct {
 	fn UtilityFn

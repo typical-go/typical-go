@@ -9,6 +9,11 @@ import (
 	"github.com/typical-go/typical-go/pkg/typlog"
 )
 
+var (
+	_ AppLauncher       = (*Descriptor)(nil)
+	_ BuildToolLauncher = (*Descriptor)(nil)
+)
+
 // Descriptor describe the project
 type Descriptor struct {
 

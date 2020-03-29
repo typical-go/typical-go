@@ -12,8 +12,15 @@ import (
 )
 
 const (
-	defaultTargetFile   = "README.md"
-	defaultTemplateFile = "README.tmpl"
+	// DefaultTargetFile is default target file for readme
+	DefaultTargetFile = "README.md"
+
+	// DefaultTemplateFile is default tempalte file for readme
+	DefaultTemplateFile = "README.tmpl"
+)
+
+var (
+	_ typbuildtool.Utility = (*ReadmeGenerator)(nil)
 )
 
 // ReadmeGenerator module
@@ -32,8 +39,8 @@ type ReadmeGenerator struct {
 // Generator retunr new instance of ReadmeGenerator
 func Generator() *ReadmeGenerator {
 	return &ReadmeGenerator{
-		TargetFile:   defaultTargetFile,
-		TemplateFile: defaultTemplateFile,
+		TargetFile:   DefaultTargetFile,
+		TemplateFile: DefaultTemplateFile,
 	}
 }
 

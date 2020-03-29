@@ -9,12 +9,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func TestSimpleCommander(t *testing.T) {
-	t.Run("SHOULD implement Commanders", func(t *testing.T) {
-		var _ typbuildtool.Utility = typbuildtool.NewUtility(nil)
-	})
-}
-
 func TestSimpleCommander_Commands(t *testing.T) {
 	cmd1 := &cli.Command{}
 	cmd2 := &cli.Command{}

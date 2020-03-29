@@ -1,5 +1,9 @@
 package typdep
 
+var (
+	_ Invokable = (*Invocation)(nil)
+)
+
 // Invocation detail
 type Invocation struct {
 	fn interface{}

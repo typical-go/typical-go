@@ -4,6 +4,13 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+var (
+	_ Provider  = (*Module)(nil)
+	_ Destroyer = (*Module)(nil)
+	_ Preparer  = (*Module)(nil)
+	_ Commander = (*Module)(nil)
+)
+
 // Module for application
 type Module struct {
 	providers  []Provider

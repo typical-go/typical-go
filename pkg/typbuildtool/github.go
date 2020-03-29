@@ -12,6 +12,10 @@ import (
 	"golang.org/x/oauth2"
 )
 
+var (
+	_ ReleaseFilter = (*GithubModule)(nil)
+)
+
 // GithubModule publisher
 type GithubModule struct {
 	owner    string

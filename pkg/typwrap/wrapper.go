@@ -12,6 +12,10 @@ import (
 	"github.com/typical-go/typical-go/pkg/typfactory"
 )
 
+var (
+	_ Wrapper = (*TypicalWrapper)(nil)
+)
+
 // TypicalWrapper responsible to wrap the typical project
 type TypicalWrapper struct{}
 

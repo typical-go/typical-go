@@ -9,33 +9,8 @@ import (
 
 	"github.com/typical-go/typical-go/app"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
-
-func TestTypicalApp(t *testing.T) {
-	t.Run("SHOULD implement App", func(t *testing.T) {
-		var _ typcore.App = &typapp.App{}
-	})
-	t.Run("SHOULD implement Preconditioner", func(t *testing.T) {
-		var _ typbuildtool.Preconditioner = &typapp.App{}
-	})
-	t.Run("SHOULD implement Provider", func(t *testing.T) {
-		var _ typapp.Provider = &typapp.App{}
-	})
-	t.Run("SHOULD implement Destroyer", func(t *testing.T) {
-		var _ typapp.Destroyer = &typapp.App{}
-	})
-	t.Run("SHOULD implement Preparer", func(t *testing.T) {
-		var _ typapp.Preparer = &typapp.App{}
-	})
-	t.Run("SHOULD implement EntryPointer", func(t *testing.T) {
-		var _ typapp.EntryPointer = &typapp.App{}
-	})
-	t.Run("SHOULD implement Commander", func(t *testing.T) {
-		var _ typapp.Commander = &typapp.App{}
-	})
-}
 
 func TestAppModule(t *testing.T) {
 	t.Run("GIVEN empty app sources", func(t *testing.T) {

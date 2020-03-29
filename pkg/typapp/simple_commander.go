@@ -2,6 +2,10 @@ package typapp
 
 import "github.com/urfave/cli/v2"
 
+var (
+	_ Commander = (*SimpleCommander)(nil)
+)
+
 // SimpleCommander is simple implementation of Commander
 type SimpleCommander struct {
 	fns []CommandFn

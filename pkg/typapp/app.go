@@ -2,6 +2,8 @@ package typapp
 
 import (
 	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
@@ -11,6 +13,16 @@ const (
 
 	// DefaultPrecondition is default value for precondition flag
 	DefaultPrecondition = true
+)
+
+var (
+	_ typcore.App                 = (*App)(nil)
+	_ typbuildtool.Preconditioner = (*App)(nil)
+	_ Provider                    = (*App)(nil)
+	_ Destroyer                   = (*App)(nil)
+	_ Preparer                    = (*App)(nil)
+	_ EntryPointer                = (*App)(nil)
+	_ Commander                   = (*App)(nil)
 )
 
 // App is typical application model

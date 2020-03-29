@@ -8,12 +8,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func TestSimpleCommander(t *testing.T) {
-	t.Run("SHOULD implement Commander", func(t *testing.T) {
-		var _ typapp.Commander = &typapp.SimpleCommander{}
-	})
-}
-
 func TestSimpleCommander_Commands(t *testing.T) {
 	c1 := &cli.Command{}
 	c2 := &cli.Command{}

@@ -6,6 +6,18 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/typcore"
+)
+
+var (
+	_ typcore.BuildTool = (*BuildTool)(nil)
+	_ Utility           = (*BuildTool)(nil)
+	_ Builder           = (*BuildTool)(nil)
+	_ Tester            = (*BuildTool)(nil)
+	_ Cleaner           = (*BuildTool)(nil)
+	_ Releaser          = (*BuildTool)(nil)
+	_ Publisher         = (*BuildTool)(nil)
+	_ Preconditioner    = (*BuildTool)(nil)
 )
 
 // BuildTool is typical Build Tool for golang project

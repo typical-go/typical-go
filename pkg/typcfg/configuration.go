@@ -2,6 +2,10 @@ package typcfg
 
 import "github.com/typical-go/typical-go/pkg/typcore"
 
+var (
+	_ Configurer = &Configuration{}
+)
+
 // Configuration is alias from typcore.Configuration with Configurer implementation
 type Configuration struct {
 	*typcore.Configuration

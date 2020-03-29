@@ -7,24 +7,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 )
 
-func TestStdBuilder(t *testing.T) {
-	t.Run("SHOULD implement Builder", func(t *testing.T) {
-		var _ typbuildtool.Builder = typbuildtool.StandardBuild()
-	})
-	t.Run("SHOULD implement Cleaner", func(t *testing.T) {
-		var _ typbuildtool.Cleaner = typbuildtool.StandardBuild()
-	})
-	t.Run("SHOULD implement Tester", func(t *testing.T) {
-		var _ typbuildtool.Tester = typbuildtool.StandardBuild()
-	})
-	t.Run("SHOULD implement Release", func(t *testing.T) {
-		var _ typbuildtool.Releaser = typbuildtool.StandardBuild()
-	})
-	t.Run("SHOULD implement Utility", func(t *testing.T) {
-		var _ typbuildtool.Utility = typbuildtool.StandardBuild()
-	})
-}
-
 func TestValidate(t *testing.T) {
 	testcases := []struct {
 		*typbuildtool.StandardModule

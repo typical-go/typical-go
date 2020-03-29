@@ -4,6 +4,10 @@ import (
 	"github.com/typical-go/typical-go/pkg/typdep"
 )
 
+var (
+	_ EntryPointer = (*MainInvocation)(nil)
+)
+
 // MainInvocation invoke when the application start
 type MainInvocation struct {
 	*typdep.Invocation

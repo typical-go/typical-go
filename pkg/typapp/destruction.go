@@ -4,6 +4,10 @@ import (
 	"github.com/typical-go/typical-go/pkg/typdep"
 )
 
+var (
+	_ Destroyer = (*Destruction)(nil)
+)
+
 // Destruction is invocation to destroy dependency
 type Destruction struct {
 	*typdep.Invocation

@@ -8,6 +8,11 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+var (
+	_ typcore.App     = (*TypicalGo)(nil)
+	_ typwrap.Wrapper = (*TypicalGo)(nil)
+)
+
 // TypicalGo is app of typical-go
 type TypicalGo struct {
 	wrapper typwrap.Wrapper

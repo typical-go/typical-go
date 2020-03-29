@@ -13,6 +13,10 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+var (
+	_ typbuildtool.Utility = (*DockerUtility)(nil)
+)
+
 // DockerUtility for docker
 type DockerUtility struct {
 	version   string

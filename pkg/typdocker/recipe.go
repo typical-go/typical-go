@@ -1,5 +1,9 @@
 package typdocker
 
+var (
+	_ Composer = (*Recipe)(nil)
+)
+
 // Recipe represent docker-compose.yml
 type Recipe struct {
 	Version  string

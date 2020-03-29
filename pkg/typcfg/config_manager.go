@@ -16,33 +16,38 @@ const (
 	configKey     = "CONFIG"
 )
 
-// TypicalConfigManager of typical project
-type TypicalConfigManager struct {
+var (
+	_ typcore.ConfigManager       = (*ConfigManager)(nil)
+	_ typbuildtool.Preconditioner = (*ConfigManager)(nil)
+)
+
+// ConfigManager of typical project
+type ConfigManager struct {
 	loader      Loader
 	configurers []Configurer
 }
 
-// Configures to create new instance of TypicalConfigManager with set of configurers
-func Configures(configurers ...Configurer) *TypicalConfigManager {
-	return &TypicalConfigManager{
+// Configures to create new instance of ConfigManager with set of configurers
+func Configures(configurers ...Configurer) *ConfigManager {
+	return &ConfigManager{
 		configurers: configurers,
 		loader:      &defaultLoader{},
 	}
 }
 
 // WithLoader return TypicalConfiguration with new loader
-func (m *TypicalConfigManager) WithLoader(loader Loader) *TypicalConfigManager {
+func (m *ConfigManager) WithLoader(loader Loader) *ConfigManager {
 	m.loader = loader
 	return m
 }
 
 // Loader of configuration
-func (m *TypicalConfigManager) Loader() Loader {
+func (m *ConfigManager) Loader() Loader {
 	return m.loader
 }
 
 // Precondition to use config manager
-func (m *TypicalConfigManager) Precondition(c *typbuildtool.BuildContext) (err error) {
+func (m *ConfigManager) Precondition(c *typbuildtool.BuildContext) (err error) {
 	if _, err = os.Stat(defaultDotEnv); os.IsNotExist(err) {
 		var f *os.File
 		if f, err = os.Create(defaultDotEnv); err != nil {
@@ -62,7 +67,7 @@ func (m *TypicalConfigManager) Precondition(c *typbuildtool.BuildContext) (err e
 }
 
 // Write typical configuration
-func (m *TypicalConfigManager) Write(w io.Writer) (err error) {
+func (m *ConfigManager) Write(w io.Writer) (err error) {
 	for _, cfg := range m.Configurations() {
 		for _, field := range RetrieveFields(cfg) {
 			var v interface{}
@@ -80,7 +85,7 @@ func (m *TypicalConfigManager) Write(w io.Writer) (err error) {
 }
 
 // RetrieveConfig to get configuration spec
-func (m *TypicalConfigManager) RetrieveConfig(name string) (interface{}, error) {
+func (m *ConfigManager) RetrieveConfig(name string) (interface{}, error) {
 	cfg := m.Get(name)
 	spec := cfg.Spec
 	if err := m.LoadConfig(name, spec); err != nil {
@@ -90,7 +95,7 @@ func (m *TypicalConfigManager) RetrieveConfig(name string) (interface{}, error) 
 }
 
 // Configurations return array of configuration
-func (m *TypicalConfigManager) Configurations() (cfgs []*typcore.Configuration) {
+func (m *ConfigManager) Configurations() (cfgs []*typcore.Configuration) {
 	for _, configurer := range m.configurers {
 		cfgs = append(cfgs, configurer.Configure().Configuration)
 	}
@@ -98,7 +103,7 @@ func (m *TypicalConfigManager) Configurations() (cfgs []*typcore.Configuration) 
 }
 
 // Get the configuration
-func (m *TypicalConfigManager) Get(name string) *typcore.Configuration {
+func (m *ConfigManager) Get(name string) *typcore.Configuration {
 	for _, cfg := range m.Configurations() {
 		if cfg.Name == name {
 			return cfg
@@ -108,7 +113,7 @@ func (m *TypicalConfigManager) Get(name string) *typcore.Configuration {
 }
 
 // LoadConfig to load the config
-func (m *TypicalConfigManager) LoadConfig(name string, spec interface{}) error {
+func (m *ConfigManager) LoadConfig(name string, spec interface{}) error {
 	if m.loader != nil {
 		return m.loader.LoadConfig(name, spec)
 	}

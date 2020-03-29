@@ -1,5 +1,9 @@
 package typcore
 
+var (
+	_ App = (*SimpleApp)(nil)
+)
+
 // SimpleApp is simple implementation of App
 type SimpleApp struct {
 	fn      func(*Descriptor) error

@@ -6,9 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcfg"
-	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 func TestNewConfigManager(t *testing.T) {
@@ -16,12 +14,7 @@ func TestNewConfigManager(t *testing.T) {
 		cfgMngr := typcfg.Configures()
 		require.Equal(t, "*typcfg.defaultLoader", reflect.TypeOf(cfgMngr.Loader()).String())
 	})
-	t.Run("SHOULD implement of ConfigManager", func(t *testing.T) {
-		var _ typcore.ConfigManager = typcfg.Configures()
-	})
-	t.Run("SHOULD implement of Preconditioner", func(t *testing.T) {
-		var _ typbuildtool.Preconditioner = typcfg.Configures()
-	})
+
 	t.Run("", func(t *testing.T) {
 		configuration := typcfg.
 			Configures(&dummyConfigurer1{}, &dummyConfigurer2{}).

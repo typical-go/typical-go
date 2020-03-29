@@ -8,12 +8,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestConfiguration(t *testing.T) {
-	t.Run("SHOULD implement typcfg.Configurer", func(t *testing.T) {
-		var _ typcfg.Configurer = &typcfg.Configuration{}
-	})
-}
-
 func TestConfiguration_Constructor(t *testing.T) {
 	t.Run("", func(t *testing.T) {
 		cfg := typcfg.NewConfiguration("some-name", "some-spec")

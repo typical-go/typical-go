@@ -1,5 +1,9 @@
 package typdep
 
+var (
+	_ Providable = (*Constructor)(nil)
+)
+
 // Constructor details
 type Constructor struct {
 	fn interface{}

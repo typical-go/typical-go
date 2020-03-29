@@ -11,15 +11,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
-func TestDescriptor(t *testing.T) {
-	t.Run("SHOULD implement AppLauncher", func(t *testing.T) {
-		var _ typcore.AppLauncher = &typcore.Descriptor{}
-	})
-	t.Run("SHOULD implement BuildToolLauncher", func(t *testing.T) {
-		var _ typcore.BuildToolLauncher = &typcore.Descriptor{}
-	})
-}
-
 func TestDescriptor_ProjectSources(t *testing.T) {
 	testcases := []struct {
 		*typcore.Descriptor

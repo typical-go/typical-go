@@ -7,6 +7,11 @@ import (
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 )
 
+var (
+	_ typbuildtool.Builder = (*ReactDemoModule)(nil)
+	_ typbuildtool.Cleaner = (*ReactDemoModule)(nil)
+)
+
 // ReactDemoModule is build module for react-demo
 type ReactDemoModule struct {
 	source string
