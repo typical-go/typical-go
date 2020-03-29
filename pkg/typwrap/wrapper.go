@@ -12,20 +12,16 @@ import (
 	"github.com/typical-go/typical-go/pkg/typfactory"
 )
 
-var (
-	_ Wrapper = (*TypicalWrapper)(nil)
-)
+// Wrapper responsible to wrap the typical project
+type Wrapper struct{}
 
-// TypicalWrapper responsible to wrap the typical project
-type TypicalWrapper struct{}
-
-// New instance of TypicalWrapper
-func New() *TypicalWrapper {
-	return &TypicalWrapper{}
+// New instance of Wrapper
+func New() *Wrapper {
+	return &Wrapper{}
 }
 
 // Wrap the project
-func (*TypicalWrapper) Wrap(c *Context) (err error) {
+func (*Wrapper) Wrap(c *Context) (err error) {
 
 	if c.ProjectPackage == "" {
 		if c.ProjectPackage, err = retrieveProjectPackage(); err != nil {

@@ -9,13 +9,12 @@ import (
 )
 
 var (
-	_ typcore.App     = (*TypicalGo)(nil)
-	_ typwrap.Wrapper = (*TypicalGo)(nil)
+	_ typcore.App = (*TypicalGo)(nil)
 )
 
 // TypicalGo is app of typical-go
 type TypicalGo struct {
-	wrapper typwrap.Wrapper
+	wrapper *typwrap.Wrapper
 }
 
 // New instance of TypicalGo
