@@ -106,7 +106,7 @@ func (m *ReadmeGenerator) generate(c *typbuildtool.Context) (err error) {
 		return
 	}
 	c.Infof("Apply template and write to '%s'", m.TargetFile)
-	return tmpl.Execute(file, &Object{
+	return tmpl.Execute(file, &Data{
 		TemplateFile: m.TemplateFile,
 		Title:        m.Title(c),
 		Description:  m.Description(c),

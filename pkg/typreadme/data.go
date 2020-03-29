@@ -1,7 +1,7 @@
 package typreadme
 
-// Object represent readme documentation
-type Object struct {
+// Data to supply to readme template
+type Data struct {
 	TemplateFile string
 	Title        string
 	Description  string
