@@ -22,6 +22,6 @@ var Descriptor = typcore.Descriptor{
 
 	ConfigManager: typcfg.
 		Configures(
-			typcfg.NewConfiguration(server.ConfigName, &server.Config{}), // Append configurer for the this project
+			server.Configuration(), // Append configurer for the this project
 		),
 }

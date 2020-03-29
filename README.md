@@ -22,7 +22,7 @@ var Descriptor = typcore.Descriptor{
 
     ConfigManager: typcfg.
         Configures(
-            typcfg.NewConfiguration(server.ConfigName, &server.Config{}), 
+            server.Configuration(), 
         ),
 }
 ```

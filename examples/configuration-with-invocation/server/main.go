@@ -2,8 +2,9 @@ package server
 
 import (
 	"fmt"
-	"html"
 	"net/http"
+
+	"github.com/typical-go/typical-go/pkg/typcfg"
 )
 
 const (
@@ -22,8 +23,7 @@ func Main(cfg *Config) error {
 	return http.ListenAndServe(cfg.Address, &handler{})
 }
 
-type handler struct{}
-
-func (*handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
+// Configuration of server
+func Configuration() *typcfg.Configuration {
+	return typcfg.NewConfiguration(ConfigName, &Config{})
 }
