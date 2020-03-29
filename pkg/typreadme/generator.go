@@ -2,8 +2,8 @@ package typreadme
 
 import (
 	"fmt"
-	"html/template"
 	"os"
+	"text/template"
 
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
