@@ -7,7 +7,7 @@ A Build Tool (+ Framework) for Golang. <https://typical-go.github.io/>
 
 ## Descriptor File
 
-Define descriptor in `typical` folder
+Define descriptor in `typical/descriptor.go` folder
 ```go
 var Descriptor = typcore.Descriptor{
     Name:    "configuration-with-invocation",
@@ -27,9 +27,14 @@ var Descriptor = typcore.Descriptor{
 }
 ```
 
+- `BuildTool` is definition of build-tool for the project. Use `./typicalw` to run the build
+- `App` is definition of the application. Use `./typicalw run` to run the application
+- `ConfigManager` is configuration for the project. Note: This is subject to change on next version.
+
+
 ## Build-Tool Wrapper
 
-`.typicalw` is your best friend. It will download, compile and run the actual build-tool for your daily development task.
+`typicalw` is your best friend. It will download, compile and run the actual build-tool for your daily development task.
 
 ```bash
 ./typicalw
