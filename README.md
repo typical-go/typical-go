@@ -5,7 +5,7 @@
 
 A Build Tool (+ Framework) for Golang. <https://typical-go.github.io/>
 
-## Introductions
+## Introduction
 
 Typical-Go provides levels of abstraction for build/compile the (golang) project. The unique about Typical-Go is it use golang-based descriptor file rather than DSL which is making it easier to maintain and becoming part of the application source code in runtime.
 
@@ -20,7 +20,7 @@ Build-Tool as a framework (BAAF) is a concept where both build-tool and applicat
 
 ## Descriptor File
 
-Typically, the descriptor defined in `typical/descriptor.go` folder
+Typically, the descriptor defined in `typical/descriptor.go` 
 ```go
 // Descriptor of Typical REST Server
 // Build-Tool and Application will be generated based on this descriptor
@@ -71,7 +71,7 @@ var Descriptor = typcore.Descriptor{
 
 ## Build-Tool Wrapper
 
-`typicalw` is your best friend. It will download, compile and run the actual build-tool for your daily development task.
+`typicalw` is your best friend. It will download, compile and run the actual build-tool for your day-to-day development.
 
 ```bash
 ./typicalw
@@ -109,7 +109,7 @@ GLOBAL OPTIONS:
 
 ## Typical Tmp
 
-Typical-tmp is an important folder that contains the build tool mechanism. By default, it is located in `.typical-tmp` and can be changed by hacking/editing the `typicalw` script.
+Typical-tmp is an important folder that contains the build-tool mechanisms. By default, it is located in `.typical-tmp` and can be changed by hacking/editing the `typicalw` script.
 
 Since the typical-go project is still undergoing development, maybe there is some breaking change and deleting typical-tmp can solve the issue since it will be healed by itself.
 
