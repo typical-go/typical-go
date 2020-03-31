@@ -79,26 +79,32 @@ var Descriptor = typcore.Descriptor{
 
 ```
 NAME:
-   configuration-with-invocation - Build-Tool
+   typical-rest-server - Build-Tool
 
 USAGE:
    build-tool [global options] command [command options] [arguments...]
 
 VERSION:
-   1.0.0
+   0.8.25
+
+DESCRIPTION:
+   Example of typical and scalable RESTful API Server for Go
 
 COMMANDS:
-   build, b  Build the binary
-   test, t   Run the testing
-   run, r    Run the binary
-   clean, c  Clean the project from generated file during build time
-   release   Release the distribution
-   mock      Generate mock class
-   help, h   Shows a list of commands or help for one command
+   build, b      Build the binary
+   test, t       Run the testing
+   run, r        Run the binary
+   clean, c      Clean the project from generated file during build time
+   release       Release the distribution
+   mock          Generate mock class
+   postgres, pg  Postgres Utility
+   redis         Redis utility
+   docker        Docker utility
+   help, h       Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --help, -h     show help (default: false)
-   --version, -v  print the version (default: false) 
+   --version, -v  print the version (default: false)
 ```
 
 ## Typical Tmp
@@ -115,7 +121,6 @@ Since the typical-go project is still undergoing development, maybe there is som
 - [x] [Simple Additional Task](https://github.com/typical-go/typical-go/tree/master/examples/simple-additional-task)
 - [x] [Provide Constructor](https://github.com/typical-go/typical-go/tree/master/examples/provide-constructor)
 - [x] [Generate Mock](https://github.com/typical-go/typical-go/tree/master/examples/generate-mock)
-- [ ] [Generate Readme](https://github.com/typical-go/typical-go/tree/master/examples/generate-readme)
 - [x] [Generate Docker-Compose](https://github.com/typical-go/typical-go/tree/master/examples/generate-docker-compose)
 - [x] [Serve React Demo](https://github.com/typical-go/typical-go/tree/master/examples/serve-react-demo)
 
