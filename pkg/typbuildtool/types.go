@@ -52,6 +52,14 @@ type Context struct {
 	*BuildTool
 }
 
+// BuildContext to create BuildContext
+func (c *Context) BuildContext(cliCtx *cli.Context) *BuildContext {
+	return &BuildContext{
+		Context: c,
+		Cli:     cliCtx,
+	}
+}
+
 // BuildContext is context of build
 type BuildContext struct {
 	*Context

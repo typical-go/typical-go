@@ -19,10 +19,7 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 			Aliases: []string{"b"},
 			Usage:   "Build the binary",
 			Action: func(cliCtx *cli.Context) (err error) {
-				_, err = b.Build(&BuildContext{
-					Context: c,
-					Cli:     cliCtx,
-				})
+				_, err = b.Build(c.BuildContext(cliCtx))
 				return
 			},
 		},
@@ -31,10 +28,7 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 			Aliases: []string{"t"},
 			Usage:   "Run the testing",
 			Action: func(cliCtx *cli.Context) error {
-				return b.Test(&BuildContext{
-					Context: c,
-					Cli:     cliCtx,
-				})
+				return b.Test(c.BuildContext(cliCtx))
 			},
 		},
 		{
@@ -43,16 +37,13 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 			Usage:           "Run the binary",
 			SkipFlagParsing: true,
 			Action: func(cliCtx *cli.Context) (err error) {
-				bc := &BuildContext{
-					Context: c,
-					Cli:     cliCtx,
-				}
-
-				var dists []BuildDistribution
+				var (
+					dists []BuildDistribution
+					bc    = c.BuildContext(cliCtx)
+				)
 				if dists, err = b.Build(bc); err != nil {
 					return
 				}
-
 				for _, dist := range dists {
 					if err = dist.Run(bc); err != nil {
 						return
@@ -66,10 +57,7 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 			Aliases: []string{"c"},
 			Usage:   "Clean the project from generated file during build time",
 			Action: func(cliCtx *cli.Context) (err error) {
-				return b.Clean(&BuildContext{
-					Context: c,
-					Cli:     cliCtx,
-				})
+				return b.Clean(c.BuildContext(cliCtx))
 			},
 		},
 		{
@@ -90,10 +78,7 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 				var (
 					rc           *ReleaseContext
 					releaseFiles []string
-					bc           = &BuildContext{
-						Context: c,
-						Cli:     cliCtx,
-					}
+					bc           = c.BuildContext(cliCtx)
 				)
 
 				if !cliCtx.Bool("no-test") {
@@ -111,11 +96,10 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 				}
 
 				if !cliCtx.Bool("no-publish") {
-					publishCtx := &PublishContext{
+					if err = b.Publish(&PublishContext{
 						ReleaseContext: rc,
 						ReleaseFiles:   releaseFiles,
-					}
-					if err = b.Publish(publishCtx); err != nil {
+					}); err != nil {
 						err = fmt.Errorf("Failed to publish: %w", err)
 						return
 					}

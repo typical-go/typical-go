@@ -10,7 +10,7 @@ import (
 // RunBuildTool to run the build-tool
 func (b *BuildTool) RunBuildTool(tc *typcore.Context) (err error) {
 	c := &Context{
-		Context:          tc,
+		Context:   tc,
 		BuildTool: b,
 	}
 
@@ -20,10 +20,7 @@ func (b *BuildTool) RunBuildTool(tc *typcore.Context) (err error) {
 	app.Description = c.Description
 
 	app.Before = func(cliCtx *cli.Context) (err error) {
-		return b.Precondition(&BuildContext{
-			Context: c,
-			Cli:     cliCtx,
-		})
+		return b.Precondition(c.BuildContext(cliCtx))
 	}
 	app.Version = c.Version
 	app.Commands = b.Commands(c)

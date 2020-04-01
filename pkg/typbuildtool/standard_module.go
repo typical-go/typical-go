@@ -100,10 +100,7 @@ func (b *StandardModule) Commands(c *Context) []*cli.Command {
 			Name:  "mock",
 			Usage: "Generate mock class",
 			Action: func(cliCtx *cli.Context) (err error) {
-				return b.Mock(&BuildContext{
-					Context: c,
-					Cli:     cliCtx,
-				})
+				return b.Mock(c.BuildContext(cliCtx))
 			},
 		},
 	}
