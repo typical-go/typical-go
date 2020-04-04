@@ -7,7 +7,6 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
-	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/urfave/cli/v2"
 )
 
@@ -119,7 +118,7 @@ func (m *ReadmeGenerator) generate(c *typbuildtool.Context) (err error) {
 		Description:  m.Description(c),
 		Usages:       m.Usages(c),
 		BuildUsages:  m.BuildUsages(c),
-		Configs:      m.Configs(c),
+		// Configs:      m.Configs(c),
 	})
 }
 
@@ -170,26 +169,26 @@ func (m *ReadmeGenerator) BuildUsages(c *typbuildtool.Context) (infos []UsageInf
 }
 
 // Configs of readme
-func (m *ReadmeGenerator) Configs(c *typbuildtool.Context) (infos []ConfigInfo) {
-	if len(m.configs) < 1 {
-		for _, cfg := range c.Configurations() {
-			for _, field := range typcfg.RetrieveFields(cfg) {
-				var required string
-				if field.Required {
-					required = "Yes"
-				}
-				infos = append(infos, ConfigInfo{
-					Name:     field.Name,
-					Type:     field.Type,
-					Default:  field.Default,
-					Required: required,
-				})
-			}
-		}
-		return
-	}
-	return m.configs
-}
+// func (m *ReadmeGenerator) Configs(c *typbuildtool.Context) (infos []ConfigInfo) {
+// 	if len(m.configs) < 1 {
+// 		for _, cfg := range c.Configurations() {
+// 			for _, field := range typcfg.RetrieveFields(cfg) {
+// 				var required string
+// 				if field.Required {
+// 					required = "Yes"
+// 				}
+// 				infos = append(infos, ConfigInfo{
+// 					Name:     field.Name,
+// 					Type:     field.Type,
+// 					Default:  field.Default,
+// 					Required: required,
+// 				})
+// 			}
+// 		}
+// 		return
+// 	}
+// 	return m.configs
+// }
 
 func usageInfos(name string, cmd *cli.Command) (details []UsageInfo) {
 	details = append(details, UsageInfo{

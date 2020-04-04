@@ -1,16 +1,13 @@
 package typcfg
 
 import (
-	"os"
-	"strings"
-
-	"github.com/kelseyhightower/envconfig"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 var (
 	_ typcore.ConfigManager       = (*ConfigManager)(nil)
+	_ Configurer                  = (*ConfigManager)(nil)
 	_ typbuildtool.Preconditioner = (*ConfigManager)(nil)
 )
 
@@ -30,32 +27,16 @@ func Configures(configurers ...Configurer) *ConfigManager {
 
 // Precondition to use config manager
 func (m *ConfigManager) Precondition(c *typbuildtool.BuildContext) (err error) {
-	var (
-		envMap map[string]string
-		b      strings.Builder
-	)
+	c.Infof("Generate new project environment at '%s'", m.source)
 
-	if _, err = os.Stat(m.source); os.IsNotExist(err) {
-		c.Infof("Generate new project environment at '%s'", m.source)
-		if err = Write(m, m.source); err != nil {
-			return
-		}
-	}
-
-	if envMap, err = Read(m.source); err != nil {
+	if err = Write(m.source, m); err != nil {
 		return
 	}
 
-	if len(envMap) > 0 {
-		c.Infof("Load environments %s", m.source)
-		for key, value := range envMap {
-			if err = os.Setenv(key, value); err != nil {
-				return
-			}
-			b.WriteString("+" + key + " ")
-		}
-		c.Info(b.String())
+	if _, err = Load(m.source); err != nil {
+		return
 	}
+
 	return
 }
 
@@ -63,16 +44,27 @@ func (m *ConfigManager) Precondition(c *typbuildtool.BuildContext) (err error) {
 func (m *ConfigManager) RetrieveConfig(name string) (interface{}, error) {
 	cfg := m.Get(name)
 	spec := cfg.Spec
-	if err := envconfig.Process(name, spec); err != nil {
+	if err := Process(name, spec); err != nil {
 		return nil, err
 	}
 	return spec, nil
 }
 
 // Configurations return array of configuration
+// TODO: remove this
 func (m *ConfigManager) Configurations() (cfgs []*typcore.Configuration) {
 	for _, configurer := range m.configurers {
-		cfgs = append(cfgs, configurer.Configure().Configuration)
+		for _, configurations := range configurer.Configure() {
+			cfgs = append(cfgs, configurations.Configuration)
+		}
+	}
+	return
+}
+
+// Configure the application or buildtool
+func (m *ConfigManager) Configure() (cfgs []*Configuration) {
+	for _, configurer := range m.configurers {
+		cfgs = append(cfgs, configurer.Configure()...)
 	}
 	return
 }

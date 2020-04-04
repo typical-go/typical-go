@@ -5,12 +5,10 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-
-	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
-// RetrieveFields to retrieve fields from configuration
-func RetrieveFields(c *typcore.Configuration) (fields []*Field) {
+// Fields to retrieve fields from configuration
+func Fields(c *Configuration) (fields []*Field) {
 	val := reflect.Indirect(reflect.ValueOf(c.Spec))
 	typ := val.Type()
 	for i := 0; i < typ.NumField(); i++ {

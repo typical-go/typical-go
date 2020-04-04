@@ -2,7 +2,7 @@ package typcfg
 
 // Configurer responsible to create config
 type Configurer interface {
-	Configure() *Configuration
+	Configure() []*Configuration
 }
 
 // Field of config

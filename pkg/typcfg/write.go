@@ -7,29 +7,40 @@ import (
 )
 
 // Write configuration to file
-func Write(m *ConfigManager, dest string) (err error) {
-	var f *os.File
-	if f, err = os.Create(dest); err != nil {
-		return
-	}
-	defer f.Close()
+func Write(dest string, m Configurer) (err error) {
+	var (
+		fields []*Field
+		f      *os.File
+	)
 
-	return write(m, f)
-}
-
-func write(m *ConfigManager, w io.Writer) (err error) {
-	for _, cfg := range m.Configurations() {
-		for _, field := range RetrieveFields(cfg) {
-			var v interface{}
-			if field.IsZero {
-				v = field.Default
-			} else {
-				v = field.Value
-			}
-			if _, err = fmt.Fprintf(w, "%s=%v\n", field.Name, v); err != nil {
-				return
-			}
+	for _, cfg := range m.Configure() {
+		for _, field := range Fields(cfg) {
+			fields = append(fields, field)
 		}
 	}
+
+	if _, err = os.Stat(dest); os.IsNotExist(err) {
+		if f, err = os.Create(dest); err != nil {
+			return
+		}
+		defer f.Close()
+		return write(f, fields)
+	}
+
+	return
+
+}
+
+func write(w io.Writer, fields []*Field) (err error) {
+	for _, field := range fields {
+		var v interface{}
+		if field.IsZero {
+			v = field.Default
+		} else {
+			v = field.Value
+		}
+		fmt.Fprintf(w, "%s=%v\n", field.Name, v)
+	}
+
 	return
 }

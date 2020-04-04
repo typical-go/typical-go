@@ -34,6 +34,6 @@ func (c *Configuration) WithSpec(spec interface{}) *Configuration {
 }
 
 // Configure return the configuration
-func (c *Configuration) Configure() *Configuration {
-	return c
+func (c *Configuration) Configure() []*Configuration {
+	return []*Configuration{c}
 }

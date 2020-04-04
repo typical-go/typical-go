@@ -6,6 +6,27 @@ import (
 	"strings"
 )
 
+// Load configuration from source file
+func Load(source string) (m map[string]string, err error) {
+	var (
+		b strings.Builder
+	)
+	if m, err = Read(source); err != nil {
+		return
+	}
+
+	if len(m) > 0 {
+		for key, value := range m {
+			if err = os.Setenv(key, value); err != nil {
+				return
+			}
+			b.WriteString("+" + key + " ")
+		}
+	}
+
+	return
+}
+
 // Read config file
 func Read(source string) (m map[string]string, err error) {
 	var (
