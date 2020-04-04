@@ -13,8 +13,7 @@ func TestCommandExist(t *testing.T) {
 		name     string
 		expected bool
 	}{
-		{"cd", true},
-		{"bash", true},
+		{"go", true},
 		{"", false},
 		{"invalid-command", false},
 	}
