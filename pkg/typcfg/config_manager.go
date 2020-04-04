@@ -6,14 +6,12 @@ import (
 	"os"
 	"strings"
 
-	"github.com/joho/godotenv"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 const (
 	defaultDotEnv = ".env"
-	configKey     = "CONFIG"
 )
 
 var (
@@ -121,21 +119,15 @@ func (m *ConfigManager) LoadConfig(name string, spec interface{}) error {
 }
 
 func loadEnvFile(c *typbuildtool.BuildContext) (err error) {
-	// TODO: don't use godotenv for flexibility
-	configSource := os.Getenv(configKey)
-	var configs []string
-	var envMap map[string]string
-	if configSource == "" {
-		envMap, _ = godotenv.Read()
-	} else {
-		configs = strings.Split(configSource, ",")
-		if envMap, err = godotenv.Read(configs...); err != nil {
-			return
-		}
+	source := ".env"
+
+	envMap, err := ReadFile(source)
+	if err != nil {
+		return
 	}
 
 	if len(envMap) > 0 {
-		c.Infof("Load environments %s", configSource)
+		c.Infof("Load environments %s", source)
 		var b strings.Builder
 		for key, value := range envMap {
 			if err = os.Setenv(key, value); err != nil {
