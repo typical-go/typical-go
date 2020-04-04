@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-// ReadFile to read config file
-func ReadFile(source string) (m map[string]string, err error) {
+// Read config file
+func Read(source string) (m map[string]string, err error) {
 	var (
 		file *os.File
 	)
@@ -26,7 +26,6 @@ func ReadFile(source string) (m map[string]string, err error) {
 		value := line[i+1:]
 
 		m[key] = value
-
 	}
 
 	return

@@ -31,7 +31,7 @@ func TestReadFile(t *testing.T) {
 		ioutil.WriteFile(src, []byte(tt.raw), 0777)
 		defer os.Remove(src)
 
-		res, err := typcfg.ReadFile(src)
+		res, err := typcfg.Read(src)
 		if tt.expectedErr != "" {
 			require.EqualError(t, err, tt.expectedErr)
 		} else {
