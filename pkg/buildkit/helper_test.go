@@ -20,6 +20,7 @@ func TestCommandExist(t *testing.T) {
 
 	ctx := context.Background()
 	for _, tt := range testcases {
-		require.Equal(t, tt.expected, buildkit.AvailableCommand(ctx, tt.name))
+		require.Equal(t, tt.expected, buildkit.AvailableCommand(ctx, tt.name),
+			"%s expected %t", tt.name, tt.expected)
 	}
 }
