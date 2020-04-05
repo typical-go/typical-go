@@ -14,3 +14,11 @@ type Field struct {
 	IsZero   bool
 	Required bool
 }
+
+// GetValue to get value or default value if no value
+func (f *Field) GetValue() interface{} {
+	if f.IsZero {
+		return f.Default
+	}
+	return f.Value
+}

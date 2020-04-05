@@ -1,9 +1,7 @@
 package typcfg_test
 
 import (
-	"fmt"
-	"io/ioutil"
-	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -12,33 +10,27 @@ import (
 
 func TestReadFile(t *testing.T) {
 	testcases := []struct {
-		raw            string
-		expectedResult map[string]string
-		expectedErr    string
+		raw      string
+		expected map[string]string
 	}{
 		{
 			raw: "key1=value1\nkey2=value2",
-			expectedResult: map[string]string{
+			expected: map[string]string{
+				"key1": "value1",
+				"key2": "value2",
+			},
+		},
+		{
+			raw: "key1=value1\n\n\nkey2=value2",
+			expected: map[string]string{
 				"key1": "value1",
 				"key2": "value2",
 			},
 		},
 	}
 
-	for i, tt := range testcases {
-		src := fmt.Sprintf("test-%d.env", i)
-
-		ioutil.WriteFile(src, []byte(tt.raw), 0777)
-		defer os.Remove(src)
-
-		res, err := typcfg.Read(src)
-		if tt.expectedErr != "" {
-			require.EqualError(t, err, tt.expectedErr)
-		} else {
-			require.NoError(t, err)
-		}
-
-		require.Equal(t, tt.expectedResult, res)
+	for _, tt := range testcases {
+		require.Equal(t, tt.expected, typcfg.Read(strings.NewReader(tt.raw)))
 	}
 
 }

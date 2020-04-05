@@ -2,45 +2,41 @@ package typcfg
 
 import (
 	"fmt"
-	"io"
 	"os"
 )
 
 // Write configuration to file
-func Write(dest string, m Configurer) (err error) {
+func Write(dest string, c Configurer) (err error) {
 	var (
 		fields []*Field
 		f      *os.File
+		m      map[string]string
 	)
 
-	for _, cfg := range m.Configure() {
-		for _, field := range Fields(cfg) {
+	for _, cfg := range c.Configure() {
+		for _, field := range cfg.Fields() {
 			fields = append(fields, field)
 		}
 	}
 
-	if _, err = os.Stat(dest); os.IsNotExist(err) {
-		if f, err = os.Create(dest); err != nil {
-			return
-		}
-		defer f.Close()
-		return write(f, fields)
+	if f, err = os.OpenFile(dest, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666); err != nil {
+		return
+	}
+	defer f.Close()
+
+	m = Read(f)
+
+	stat, _ := f.Stat()
+	if stat.Size() > 0 {
+		fmt.Fprintln(f)
 	}
 
-	return
-
-}
-
-func write(w io.Writer, fields []*Field) (err error) {
 	for _, field := range fields {
-		var v interface{}
-		if field.IsZero {
-			v = field.Default
-		} else {
-			v = field.Value
+		if _, ok := m[field.Name]; !ok {
+			fmt.Fprintf(f, "%s=%v\n", field.Name, field.GetValue())
 		}
-		fmt.Fprintf(w, "%s=%v\n", field.Name, v)
 	}
 
 	return
+
 }

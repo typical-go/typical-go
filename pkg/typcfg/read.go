@@ -2,6 +2,7 @@ package typcfg
 
 import (
 	"bufio"
+	"io"
 	"os"
 	"strings"
 )
@@ -9,18 +10,18 @@ import (
 // Load configuration from source file
 func Load(source string) (m map[string]string, err error) {
 	var (
-		b strings.Builder
+		file *os.File
 	)
-	if m, err = Read(source); err != nil {
+
+	if file, err = os.Open(source); err != nil {
 		return
 	}
+	defer file.Close()
 
-	if len(m) > 0 {
-		for key, value := range m {
-			if err = os.Setenv(key, value); err != nil {
-				return
-			}
-			b.WriteString("+" + key + " ")
+	m = Read(file)
+	for key, value := range m {
+		if err = os.Setenv(key, value); err != nil {
+			return
 		}
 	}
 
@@ -28,25 +29,19 @@ func Load(source string) (m map[string]string, err error) {
 }
 
 // Read config file
-func Read(source string) (m map[string]string, err error) {
-	var (
-		file *os.File
-	)
+func Read(r io.Reader) (m map[string]string) {
+	var ()
 	m = make(map[string]string)
 
-	if file, err = os.Open(source); err != nil {
-		return
-	}
-	defer file.Close()
-
-	sc := bufio.NewScanner(file)
+	sc := bufio.NewScanner(r)
 	for sc.Scan() {
 		line := sc.Text()
-		i := strings.IndexRune(line, '=')
-		key := line[:i]
-		value := line[i+1:]
+		if i := strings.IndexRune(line, '='); i >= 0 {
+			key := line[:i]
+			value := line[i+1:]
 
-		m[key] = value
+			m[key] = value
+		}
 	}
 
 	return
