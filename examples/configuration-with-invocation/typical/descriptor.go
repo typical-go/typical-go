@@ -13,7 +13,7 @@ var Descriptor = typcore.Descriptor{
 	Version: "1.0.0",
 
 	App: typapp.EntryPoint(server.Main, "server").
-		Configures(
+		Modules(
 			server.Configuration(), // Append configurer for the this project
 		),
 

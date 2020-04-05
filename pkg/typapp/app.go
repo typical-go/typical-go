@@ -29,7 +29,6 @@ type App struct {
 	appSources []string
 	main       *typdep.Invocation
 	modules    []interface{}
-	configurer []typcfg.Configurer
 
 	initFile string
 }
@@ -41,12 +40,6 @@ func EntryPoint(mainFn interface{}, appSource string, sources ...string) *App {
 		main:       typdep.NewInvocation(mainFn),
 		initFile:   DefaultInitFile,
 	}
-}
-
-// Configures the application
-func (a *App) Configures(configurer ...typcfg.Configurer) *App {
-	a.configurer = configurer
-	return a
 }
 
 // Modules define the dependencies of application. Module should be implementation of Provider, Preparer (optional) and Destroyer (optional).
@@ -109,11 +102,6 @@ func (a *App) Configurations() (cfgs []*typcfg.Configuration) {
 			cfgs = append(cfgs, c.Configurations()...)
 		}
 	}
-
-	for _, c := range a.configurer {
-		cfgs = append(cfgs, c.Configurations()...)
-	}
-
 	return
 }
 
