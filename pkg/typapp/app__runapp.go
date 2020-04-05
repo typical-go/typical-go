@@ -24,8 +24,10 @@ func (a *App) App(d *typcore.Descriptor) *cli.App {
 	app.Usage = "" // NOTE: intentionally blank
 	app.Description = d.Description
 	app.Before = func(*cli.Context) (err error) {
-		c.Info("Load environments")
-		_, err = typcfg.Load(a.configFile)
+		if configFile := os.Getenv("CONFIG"); configFile != "" {
+			c.Info("Load environments")
+			_, err = typcfg.Load(configFile)
+		}
 		return
 	}
 	app.Version = d.Version

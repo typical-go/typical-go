@@ -14,15 +14,6 @@ import (
 
 // Precondition the app
 func (a *App) Precondition(c *typbuildtool.BuildContext) (err error) {
-	if !a.enablePrecondition {
-		c.Info("Skip Precondition for typical-app")
-		return
-	}
-
-	if err = typcfg.Write(a.configFile, a); err != nil {
-		return
-	}
-
 	c.Info("Precondition the typical-app")
 	if err = a.generateConstructor(c, "typical/"+a.initFile); err != nil {
 		return

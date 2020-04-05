@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
@@ -28,6 +29,9 @@ type BuildTool struct {
 	binFolder string // TODO: move to context
 	cmdFolder string // TODO: move to context
 
+	configFile         string
+	enablePrecondition bool
+
 	includeBranch   bool
 	includeCommitID bool
 }
@@ -35,9 +39,11 @@ type BuildTool struct {
 // BuildSequences create new instance of BuildTool with build-sequence
 func BuildSequences(modules ...interface{}) *BuildTool {
 	return &BuildTool{
-		modules:   modules,
-		binFolder: DefaultBinFolder,
-		cmdFolder: DefaultCmdFolder,
+		modules:            modules,
+		binFolder:          DefaultBinFolder,
+		cmdFolder:          DefaultCmdFolder,
+		configFile:         DefaultConfigFile,
+		enablePrecondition: DefaultEnablePrecondition,
 	}
 }
 
@@ -56,6 +62,18 @@ func (b *BuildTool) BinFolder(binFolder string) *BuildTool {
 // CmdFolder return BuildTool with new cmdFolder
 func (b *BuildTool) CmdFolder(cmdFolder string) *BuildTool {
 	b.cmdFolder = cmdFolder
+	return b
+}
+
+// ConfigFile define path to store config
+func (b *BuildTool) ConfigFile(configFile string) *BuildTool {
+	b.configFile = configFile
+	return b
+}
+
+// EnablePrecondition define whether execute precondition or not. By default if true
+func (b *BuildTool) EnablePrecondition(enablePrecondition bool) *BuildTool {
+	b.enablePrecondition = enablePrecondition
 	return b
 }
 
@@ -145,9 +163,20 @@ func (b *BuildTool) Test(c *BuildContext) (err error) {
 
 // Precondition for this project
 func (b *BuildTool) Precondition(c *BuildContext) (err error) {
+	if !b.enablePrecondition {
+		c.Info("Skip the preconditon")
+		return
+	}
+
 	if preconditioner, ok := c.App.(Preconditioner); ok {
 		if err = preconditioner.Precondition(c); err != nil {
 			return fmt.Errorf("Precondition-App: %w", err)
+		}
+	}
+
+	if configurer, ok := c.App.(typcfg.Configurer); ok {
+		if err = typcfg.Write(b.configFile, configurer); err != nil {
+			return
 		}
 	}
 

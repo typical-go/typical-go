@@ -3,6 +3,7 @@ package typbuildtool
 import (
 	"os"
 
+	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
@@ -20,7 +21,13 @@ func (b *BuildTool) RunBuildTool(tc *typcore.Context) (err error) {
 	app.Description = c.Description
 
 	app.Before = func(cliCtx *cli.Context) (err error) {
-		return b.Precondition(c.BuildContext(cliCtx))
+		if err = b.Precondition(c.BuildContext(cliCtx)); err != nil {
+			return
+		}
+
+		typcfg.Load(b.configFile)
+
+		return
 	}
 	app.Version = c.Version
 	app.Commands = b.Commands(c)

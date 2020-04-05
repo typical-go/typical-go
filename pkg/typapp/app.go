@@ -11,12 +11,6 @@ import (
 const (
 	// DefaultInitFile is default init file path
 	DefaultInitFile = "init_app_do_not_edit.go"
-
-	// DefaultConfigFile is default config file path
-	DefaultConfigFile = ".env"
-
-	// DefaultEnablePrecondition is default precondition flag
-	DefaultEnablePrecondition = true
 )
 
 var (
@@ -37,19 +31,15 @@ type App struct {
 	modules    []interface{}
 	configurer []typcfg.Configurer
 
-	initFile           string
-	configFile         string
-	enablePrecondition bool
+	initFile string
 }
 
 // EntryPoint create new instance of App with main invocation function
 func EntryPoint(mainFn interface{}, appSource string, sources ...string) *App {
 	return &App{
-		appSources:         append([]string{appSource}, sources...),
-		main:               typdep.NewInvocation(mainFn),
-		initFile:           DefaultInitFile,
-		enablePrecondition: DefaultEnablePrecondition,
-		configFile:         DefaultConfigFile,
+		appSources: append([]string{appSource}, sources...),
+		main:       typdep.NewInvocation(mainFn),
+		initFile:   DefaultInitFile,
 	}
 }
 
@@ -68,18 +58,6 @@ func (a *App) Modules(modules ...interface{}) *App {
 // InitFile define path to generate initial requirement
 func (a *App) InitFile(initFile string) *App {
 	a.initFile = initFile
-	return a
-}
-
-// ConfigFile define path to store config
-func (a *App) ConfigFile(configFile string) *App {
-	a.configFile = configFile
-	return a
-}
-
-// EnablePrecondition define whether execute precondition or not. By default if true
-func (a *App) EnablePrecondition(enablePrecondition bool) *App {
-	a.enablePrecondition = enablePrecondition
 	return a
 }
 
