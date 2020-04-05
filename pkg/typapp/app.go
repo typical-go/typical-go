@@ -13,7 +13,7 @@ const (
 	DefaultInitFile = "init_app_do_not_edit.go"
 
 	// DefaultConfigFile is default config file path
-	DefaultConfigFile = "app.env"
+	DefaultConfigFile = ".env"
 
 	// DefaultEnablePrecondition is default precondition flag
 	DefaultEnablePrecondition = true
