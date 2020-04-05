@@ -25,8 +25,8 @@ type BuildTool struct {
 	modules   []interface{}
 	utilities []Utility
 
-	binFolder string
-	cmdFolder string
+	binFolder string // TODO: move to context
+	cmdFolder string // TODO: move to context
 
 	includeBranch   bool
 	includeCommitID bool
@@ -41,32 +41,22 @@ func BuildSequences(modules ...interface{}) *BuildTool {
 	}
 }
 
-// WithUtilities return build-tool with new utilities
-func (b *BuildTool) WithUtilities(utilities ...Utility) *BuildTool {
+// Utilities return build-tool with new utilities
+func (b *BuildTool) Utilities(utilities ...Utility) *BuildTool {
 	b.utilities = utilities
 	return b
 }
 
-// WithBinFolder return BuildTool with new binFolder
-func (b *BuildTool) WithBinFolder(binFolder string) *BuildTool {
+// BinFolder return BuildTool with new binFolder
+func (b *BuildTool) BinFolder(binFolder string) *BuildTool {
 	b.binFolder = binFolder
 	return b
 }
 
-// WithCmdFolder return BuildTool with new cmdFolder
-func (b *BuildTool) WithCmdFolder(cmdFolder string) *BuildTool {
+// CmdFolder return BuildTool with new cmdFolder
+func (b *BuildTool) CmdFolder(cmdFolder string) *BuildTool {
 	b.cmdFolder = cmdFolder
 	return b
-}
-
-// CmdFolder of build-tool
-func (b *BuildTool) CmdFolder() string {
-	return b.cmdFolder
-}
-
-// BinFolder of build-tool
-func (b *BuildTool) BinFolder() string {
-	return b.binFolder
 }
 
 // Validate build

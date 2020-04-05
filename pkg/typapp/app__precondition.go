@@ -14,7 +14,7 @@ import (
 
 // Precondition the app
 func (a *App) Precondition(c *typbuildtool.BuildContext) (err error) {
-	if !a.precondition {
+	if !a.enablePrecondition {
 		c.Info("Skip Precondition for typical-app")
 		return
 	}

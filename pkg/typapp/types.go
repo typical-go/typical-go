@@ -6,17 +6,17 @@ import (
 
 // Provider responsible to provide constructor [mock]
 type Provider interface {
-	Provide() []*Constructor
+	Constructors() []*Constructor
 }
 
 // Preparer responsible to prepare the dependency[mock]
 type Preparer interface {
-	Prepare() []*Preparation
+	Preparations() []*Preparation
 }
 
 // Destroyer responsible to destroy the dependency [mock]
 type Destroyer interface {
-	Destroy() []*Destruction
+	Destructions() []*Destruction
 }
 
 // Commander responsible to return commands for App

@@ -20,7 +20,7 @@ func NewDestruction(fn interface{}) *Destruction {
 	}
 }
 
-// Destroy the dependecies
-func (d *Destruction) Destroy() []*Destruction {
+// Destructions return slice of destruction
+func (d *Destruction) Destructions() []*Destruction {
 	return []*Destruction{d}
 }

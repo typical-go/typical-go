@@ -24,8 +24,8 @@ func NewConstructor(fn interface{}) *Constructor {
 	}
 }
 
-// Provide the dependency
-func (c *Constructor) Provide() []*Constructor {
+// Constructors is list of constructor
+func (c *Constructor) Constructors() []*Constructor {
 	return []*Constructor{c}
 }
 

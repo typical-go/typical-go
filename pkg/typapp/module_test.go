@@ -23,7 +23,7 @@ func TestNewModule(t *testing.T) {
 		WithProviders(constructor)
 
 	require.Equal(t, []*cli.Command{cmd}, mod.Commands(nil))
-	require.Equal(t, []*typapp.Preparation{preparation}, mod.Prepare())
-	require.Equal(t, []*typapp.Constructor{constructor}, mod.Provide())
-	require.Equal(t, []*typapp.Destruction{destruction}, mod.Destroy())
+	require.Equal(t, []*typapp.Preparation{preparation}, mod.Preparations())
+	require.Equal(t, []*typapp.Constructor{constructor}, mod.Constructors())
+	require.Equal(t, []*typapp.Destruction{destruction}, mod.Destructions())
 }

@@ -18,10 +18,8 @@ var Descriptor = typcore.Descriptor{
 		BuildSequences(
 			typbuildtool.StandardBuild(), // standard build module
 		).
-		WithUtilities(
-			typdocker.Compose(
-				redisRecipe,
-			),
+		Utilities(
+			typdocker.Compose(redisRecipe),
 		),
 }
 

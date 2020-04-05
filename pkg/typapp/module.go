@@ -48,26 +48,26 @@ func (m *Module) WithCommanders(commanders ...Commander) *Module {
 	return m
 }
 
-// Provide dependency
-func (m *Module) Provide() (constructions []*Constructor) {
+// Constructors of the module
+func (m *Module) Constructors() (constructions []*Constructor) {
 	for _, provider := range m.providers {
-		constructions = append(constructions, provider.Provide()...)
+		constructions = append(constructions, provider.Constructors()...)
 	}
 	return
 }
 
-// Destroy dependency
-func (m *Module) Destroy() (destructions []*Destruction) {
+// Destructions of the module
+func (m *Module) Destructions() (destructions []*Destruction) {
 	for _, destroyer := range m.destroyers {
-		destructions = append(destructions, destroyer.Destroy()...)
+		destructions = append(destructions, destroyer.Destructions()...)
 	}
 	return
 }
 
-// Prepare dependency
-func (m *Module) Prepare() (preparations []*Preparation) {
+// Preparations of the module
+func (m *Module) Preparations() (preparations []*Preparation) {
 	for _, prepare := range m.preparers {
-		preparations = append(preparations, prepare.Prepare()...)
+		preparations = append(preparations, prepare.Preparations()...)
 	}
 	return
 }

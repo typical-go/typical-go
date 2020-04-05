@@ -32,8 +32,8 @@ func Github(owner, repo string) *GithubModule {
 	}
 }
 
-// WithFilter return github with filter
-func (g *GithubModule) WithFilter(filter ReleaseFilter) *GithubModule {
+// Filter define filter message
+func (g *GithubModule) Filter(filter ReleaseFilter) *GithubModule {
 	g.filter = filter
 	return g
 }

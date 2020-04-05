@@ -20,7 +20,7 @@ func NewPreparation(fn interface{}) *Preparation {
 	}
 }
 
-// Prepare the dependency
-func (p *Preparation) Prepare() []*Preparation {
+// Preparations return preparation as its slice
+func (p *Preparation) Preparations() []*Preparation {
 	return []*Preparation{p}
 }

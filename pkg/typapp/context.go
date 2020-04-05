@@ -38,14 +38,14 @@ func (c *Context) Invoke(cliCtx *cli.Context, invokable typdep.Invokable) (err e
 		return
 	}
 
-	for _, constructor := range c.Provide() {
+	for _, constructor := range c.Constructors() {
 		if err = constructor.Constructor.Provide(di); err != nil {
 			return
 		}
 	}
 
 	// invoke preparation as register in descriptor
-	for _, preparation := range c.Prepare() {
+	for _, preparation := range c.Preparations() {
 		if err = preparation.Invoke(di); err != nil {
 			return
 		}
@@ -68,7 +68,7 @@ func (c *Context) Container() *typdep.Container {
 }
 
 func (c *Context) stop() (err error) {
-	for _, destruction := range c.Destroy() {
+	for _, destruction := range c.Destructions() {
 		if err = destruction.Invocation.Invoke(c.Container()); err != nil {
 			return
 		}

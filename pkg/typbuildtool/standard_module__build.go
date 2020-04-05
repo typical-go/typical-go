@@ -12,8 +12,8 @@ import (
 // Build the project
 func (b *StandardModule) Build(c *BuildContext) (dists []BuildDistribution, err error) {
 	c.Info("Standard-Build: Build the project")
-	binary := fmt.Sprintf("%s/%s", c.BinFolder(), c.Name)
-	srcDir := fmt.Sprintf("%s/%s", c.CmdFolder(), c.Name)
+	binary := fmt.Sprintf("%s/%s", c.binFolder, c.Name)
+	srcDir := fmt.Sprintf("%s/%s", c.cmdFolder, c.Name)
 	src := fmt.Sprintf("./%s/main.go", srcDir)
 
 	ctx := c.Cli.Context

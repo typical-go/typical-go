@@ -32,7 +32,7 @@ func (b *StandardModule) build(c *BuildContext, tag string, target ReleaseTarget
 	cmd := exec.CommandContext(ctx, "go", "build",
 		"-o", fmt.Sprintf("%s/%s", b.releaseFolder, binary),
 		"-ldflags", "-w -s",
-		fmt.Sprintf("./%s/%s", c.CmdFolder(), c.Name),
+		fmt.Sprintf("./%s/%s", c.cmdFolder, c.Name),
 	)
 	cmd.Env = append(os.Environ(), "GOOS="+goos, "GOARCH="+goarch)
 	cmd.Stdout = b.stdout

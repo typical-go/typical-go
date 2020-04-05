@@ -15,8 +15,8 @@ const (
 	// DefaultConfigFile is default config file path
 	DefaultConfigFile = "app.env"
 
-	// DefaultPrecondition is default precondition flag
-	DefaultPrecondition = true
+	// DefaultEnablePrecondition is default precondition flag
+	DefaultEnablePrecondition = true
 )
 
 var (
@@ -37,19 +37,19 @@ type App struct {
 	modules    []interface{}
 	configurer []typcfg.Configurer
 
-	initFile     string
-	configFile   string
-	precondition bool
+	initFile           string
+	configFile         string
+	enablePrecondition bool
 }
 
 // EntryPoint create new instance of App with main invocation function
 func EntryPoint(mainFn interface{}, appSource string, sources ...string) *App {
 	return &App{
-		appSources:   append([]string{appSource}, sources...),
-		main:         typdep.NewInvocation(mainFn),
-		initFile:     DefaultInitFile,
-		precondition: DefaultPrecondition,
-		configFile:   DefaultConfigFile,
+		appSources:         append([]string{appSource}, sources...),
+		main:               typdep.NewInvocation(mainFn),
+		initFile:           DefaultInitFile,
+		enablePrecondition: DefaultEnablePrecondition,
+		configFile:         DefaultConfigFile,
 	}
 }
 
@@ -59,57 +59,56 @@ func (a *App) Configures(configurer ...typcfg.Configurer) *App {
 	return a
 }
 
-// WithModules return app with appended module. Module should be implementation of Provider, Preparer (optional) and Destroyer (optional).
-func (a *App) WithModules(modules ...interface{}) *App {
+// Modules define the dependencies of application. Module should be implementation of Provider, Preparer (optional) and Destroyer (optional).
+func (a *App) Modules(modules ...interface{}) *App {
 	a.modules = modules
 	return a
 }
 
-// WithInitFile return app with new initFile
-func (a *App) WithInitFile(initFile string) *App {
+// InitFile define path to generate initial requirement
+func (a *App) InitFile(initFile string) *App {
 	a.initFile = initFile
 	return a
 }
 
-// WithConfigFile return app with new configFile
-func (a *App) WithConfigFile(configFile string) *App {
+// ConfigFile define path to store config
+func (a *App) ConfigFile(configFile string) *App {
 	a.configFile = configFile
 	return a
 }
 
-// WithPrecondition return app with new precondition
-func (a *App) WithPrecondition(precondition bool) *App {
-	a.precondition = precondition
+// EnablePrecondition define whether execute precondition or not. By default if true
+func (a *App) EnablePrecondition(enablePrecondition bool) *App {
+	a.enablePrecondition = enablePrecondition
 	return a
 }
 
-// Provide to return constructors
-func (a *App) Provide() (constructors []*Constructor) {
+// Constructors of app
+func (a *App) Constructors() (constructors []*Constructor) {
 	constructors = append(constructors, global...)
 	for _, module := range a.modules {
 		if provider, ok := module.(Provider); ok {
-			constructors = append(constructors, provider.Provide()...)
+			constructors = append(constructors, provider.Constructors()...)
 		}
 	}
 	return
 }
 
-//Destroy to return destructor
-func (a *App) Destroy() (destructors []*Destruction) {
+// Destructions of app
+func (a *App) Destructions() (destructors []*Destruction) {
 	for _, module := range a.modules {
 		if destroyer, ok := module.(Destroyer); ok {
-			destructors = append(destructors, destroyer.Destroy()...)
+			destructors = append(destructors, destroyer.Destructions()...)
 		}
 	}
 	return
 }
 
-// Prepare to return preparations
-func (a *App) Prepare() (preparations []*Preparation) {
-
+// Preparations of app
+func (a *App) Preparations() (preparations []*Preparation) {
 	for _, module := range a.modules {
 		if preparer, ok := module.(Preparer); ok {
-			preparations = append(preparations, preparer.Prepare()...)
+			preparations = append(preparations, preparer.Preparations()...)
 		}
 	}
 	return
