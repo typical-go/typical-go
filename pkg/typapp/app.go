@@ -3,26 +3,32 @@ package typapp
 import (
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
 const (
-	// DefaultInitAppFilename is default value for init-app filename
-	DefaultInitAppFilename = "init_app_do_not_edit.go"
+	// DefaultInitFile is default init file path
+	DefaultInitFile = "init_app_do_not_edit.go"
 
-	// DefaultPrecondition is default value for precondition flag
+	// DefaultConfigFile is default config file path
+	DefaultConfigFile = "app.env"
+
+	// DefaultPrecondition is default precondition flag
 	DefaultPrecondition = true
 )
 
 var (
 	_ typcore.App                 = (*App)(nil)
 	_ typbuildtool.Preconditioner = (*App)(nil)
-	_ Provider                    = (*App)(nil)
-	_ Destroyer                   = (*App)(nil)
-	_ Preparer                    = (*App)(nil)
-	_ EntryPointer                = (*App)(nil)
-	_ Commander                   = (*App)(nil)
+	_ typcfg.Configurer           = (*App)(nil)
+
+	_ Provider     = (*App)(nil)
+	_ Destroyer    = (*App)(nil)
+	_ Preparer     = (*App)(nil)
+	_ EntryPointer = (*App)(nil)
+	_ Commander    = (*App)(nil)
 )
 
 // App is typical application model
@@ -30,9 +36,11 @@ type App struct {
 	appSources []string
 	appModule  interface{}
 	modules    []interface{}
+	configurer []typcfg.Configurer
 
-	initAppFilename string
-	precondition    bool
+	initFile     string
+	configFile   string
+	precondition bool
 }
 
 // AppModule create new instance of App with AppModule
@@ -41,21 +49,29 @@ func AppModule(appModule interface{}, appSources ...string) *App {
 		appSources = []string{common.PackageName(appModule)}
 	}
 	return &App{
-		appSources:      appSources,
-		appModule:       appModule,
-		initAppFilename: DefaultInitAppFilename,
-		precondition:    DefaultPrecondition,
+		appSources:   appSources,
+		appModule:    appModule,
+		initFile:     DefaultInitFile,
+		precondition: DefaultPrecondition,
+		configFile:   DefaultConfigFile,
 	}
 }
 
 // EntryPoint create new instance of App with main invocation function
 func EntryPoint(fn interface{}, appSource string, sources ...string) *App {
 	return &App{
-		appSources:      append([]string{appSource}, sources...),
-		appModule:       NewMainInvocation(fn),
-		initAppFilename: DefaultInitAppFilename,
-		precondition:    DefaultPrecondition,
+		appSources:   append([]string{appSource}, sources...),
+		appModule:    NewMainInvocation(fn),
+		initFile:     DefaultInitFile,
+		precondition: DefaultPrecondition,
+		configFile:   DefaultConfigFile,
 	}
+}
+
+// Configures the application
+func (a *App) Configures(configurer ...typcfg.Configurer) *App {
+	a.configurer = configurer
+	return a
 }
 
 // WithModules return app with appended module. Module should be implementation of Provider, Preparer (optional) and Destroyer (optional).
@@ -64,9 +80,15 @@ func (a *App) WithModules(modules ...interface{}) *App {
 	return a
 }
 
-// WithInitAppFilename return app with new initAppFilename
-func (a *App) WithInitAppFilename(initAppFilename string) *App {
-	a.initAppFilename = initAppFilename
+// WithInitFile return app with new initFile
+func (a *App) WithInitFile(initFile string) *App {
+	a.initFile = initFile
+	return a
+}
+
+// WithConfigFile return app with new configFile
+func (a *App) WithConfigFile(configFile string) *App {
+	a.configFile = configFile
 	return a
 }
 
@@ -134,6 +156,25 @@ func (a *App) Commands(c *Context) (cmds []*cli.Command) {
 			cmds = append(cmds, commander.Commands(c)...)
 		}
 	}
+	return
+}
+
+// Configurations of app
+func (a *App) Configurations() (cfgs []*typcfg.Configuration) {
+	for _, module := range a.modules {
+		if c, ok := module.(typcfg.Configurer); ok {
+			cfgs = append(cfgs, c.Configurations()...)
+		}
+	}
+
+	if c, ok := a.appModule.(typcfg.Configurer); ok {
+		cfgs = append(cfgs, c.Configurations()...)
+	}
+
+	for _, c := range a.configurer {
+		cfgs = append(cfgs, c.Configurations()...)
+	}
+
 	return
 }
 

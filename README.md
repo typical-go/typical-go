@@ -116,7 +116,6 @@ Since the typical-go project is still undergoing development, maybe there is som
 ## Examples
 
 - [x] [Hello World](https://github.com/typical-go/typical-go/tree/master/examples/hello-world)
-- [x] [Get Config From Descriptor](https://github.com/typical-go/typical-go/tree/master/examples/get-config-from-descriptor)
 - [x] [Configuration With Invocation](https://github.com/typical-go/typical-go/tree/master/examples/configuration-with-invocation)
 - [x] [Simple Additional Task](https://github.com/typical-go/typical-go/tree/master/examples/simple-additional-task)
 - [x] [Provide Constructor](https://github.com/typical-go/typical-go/tree/master/examples/provide-constructor)

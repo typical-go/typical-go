@@ -161,11 +161,5 @@ func (b *BuildTool) Precondition(c *BuildContext) (err error) {
 		}
 	}
 
-	if preconditioner, ok := c.ConfigManager.(Preconditioner); ok {
-		if err = preconditioner.Precondition(c); err != nil {
-			return fmt.Errorf("Precondition-Config-Manager: %w", err)
-		}
-	}
-
 	return
 }

@@ -5,8 +5,6 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-
-	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 var (
@@ -15,16 +13,15 @@ var (
 
 // Configuration is alias from typcore.Configuration with Configurer implementation
 type Configuration struct {
-	*typcore.Configuration
+	Name string
+	Spec interface{}
 }
 
 // NewConfiguration return new instance of Configuration
 func NewConfiguration(name string, spec interface{}) *Configuration {
 	return &Configuration{
-		Configuration: &typcore.Configuration{
-			Name: name,
-			Spec: spec,
-		},
+		Name: name,
+		Spec: spec,
 	}
 }
 
@@ -40,8 +37,8 @@ func (c *Configuration) WithSpec(spec interface{}) *Configuration {
 	return c
 }
 
-// Configure return the configuration
-func (c *Configuration) Configure() []*Configuration {
+// Configurations of configuration instance
+func (c *Configuration) Configurations() []*Configuration {
 	return []*Configuration{c}
 }
 

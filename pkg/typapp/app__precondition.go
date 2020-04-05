@@ -8,7 +8,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typfactory"
 )
 
@@ -19,30 +19,33 @@ func (a *App) Precondition(c *typbuildtool.BuildContext) (err error) {
 		return
 	}
 
-	var constructors []string
-	if err = c.Ast().EachAnnotation("constructor", typast.FunctionType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
-		constructors = append(constructors, fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
-		return
-	}); err != nil {
+	if err = typcfg.Write(a.configFile, a); err != nil {
 		return
 	}
 
-	if c.ConfigManager != nil {
-		for _, bean := range c.Configurations() {
-			constructors = append(constructors, ConfigContructor(bean))
-		}
+	if _, err = typcfg.Load(a.configFile); err != nil {
+		return
 	}
 
 	c.Info("Precondition the typical-app")
-	if err = a.generateConstructor(c, "typical/"+a.initAppFilename, constructors); err != nil {
+	if err = a.generateConstructor(c, "typical/"+a.initFile); err != nil {
 		return
 	}
 	return
 }
 
-func (a *App) generateConstructor(c *typbuildtool.BuildContext, filename string, constructors []string) (err error) {
+func (a *App) generateConstructor(c *typbuildtool.BuildContext, filename string) (err error) {
 	ctx := c.Cli.Context
 	imports := []string{}
+	constructors := []string{}
+
+	if constructors, err = walkForConstructor(c); err != nil {
+		return
+	}
+
+	for _, cfg := range a.Configurations() {
+		constructors = append(constructors, ConfigContructor(cfg))
+	}
 
 	for _, dir := range c.AppDirs {
 		if !strings.Contains(dir, "internal") {
@@ -60,8 +63,18 @@ func (a *App) generateConstructor(c *typbuildtool.BuildContext, filename string,
 	return buildkit.NewGoImports(c.TypicalTmp, filename).Execute(ctx)
 }
 
+func walkForConstructor(c *typbuildtool.BuildContext) (constructors []string, err error) {
+	err = c.Ast().
+		EachAnnotation("constructor", typast.FunctionType,
+			func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
+				constructors = append(constructors, fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
+				return
+			})
+	return
+}
+
 // ConfigContructor is definition for  configuration constructor
-func ConfigContructor(bean *typcore.Configuration) string {
+func ConfigContructor(bean *typcfg.Configuration) string {
 	typ := reflect.TypeOf(bean.Spec).String()
 	tmpl := `func() (cfg %s, err error){
 		cfg = new(%s)

@@ -13,7 +13,7 @@ func Write(dest string, c Configurer) (err error) {
 		m      map[string]string
 	)
 
-	for _, cfg := range c.Configure() {
+	for _, cfg := range c.Configurations() {
 		for _, field := range cfg.Fields() {
 			fields = append(fields, field)
 		}

@@ -6,9 +6,3 @@
 .env
 *.test
 *.out
-
-sample*
-
-# experimental
-app/sample.go
-cmd/typical-go/constructor.go

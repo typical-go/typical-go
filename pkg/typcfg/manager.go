@@ -2,11 +2,9 @@ package typcfg
 
 import (
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
-	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 var (
-	_ typcore.ConfigManager       = (*ConfigManager)(nil)
 	_ Configurer                  = (*ConfigManager)(nil)
 	_ typbuildtool.Preconditioner = (*ConfigManager)(nil)
 )
@@ -40,41 +38,10 @@ func (m *ConfigManager) Precondition(c *typbuildtool.BuildContext) (err error) {
 	return
 }
 
-// RetrieveConfig to get configuration spec
-func (m *ConfigManager) RetrieveConfig(name string) (interface{}, error) {
-	cfg := m.Get(name)
-	spec := cfg.Spec
-	if err := Process(name, spec); err != nil {
-		return nil, err
-	}
-	return spec, nil
-}
-
-// Configurations return array of configuration
-// TODO: remove this
-func (m *ConfigManager) Configurations() (cfgs []*typcore.Configuration) {
+// Configurations of manager
+func (m *ConfigManager) Configurations() (cfgs []*Configuration) {
 	for _, configurer := range m.configurers {
-		for _, configurations := range configurer.Configure() {
-			cfgs = append(cfgs, configurations.Configuration)
-		}
+		cfgs = append(cfgs, configurer.Configurations()...)
 	}
 	return
-}
-
-// Configure the application or buildtool
-func (m *ConfigManager) Configure() (cfgs []*Configuration) {
-	for _, configurer := range m.configurers {
-		cfgs = append(cfgs, configurer.Configure()...)
-	}
-	return
-}
-
-// Get the configuration
-func (m *ConfigManager) Get(name string) *typcore.Configuration {
-	for _, cfg := range m.Configurations() {
-		if cfg.Name == name {
-			return cfg
-		}
-	}
-	return nil
 }

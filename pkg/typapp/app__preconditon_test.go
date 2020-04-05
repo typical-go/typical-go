@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typlog"
 )
@@ -42,10 +43,7 @@ func TestConfigConstructor(t *testing.T) {
 		return  
 	}`
 
-	require.Equal(t, expected, typapp.ConfigContructor(&typcore.Configuration{
-		Name: "NAME",
-		Spec: &config{},
-	}))
+	require.Equal(t, expected, typapp.ConfigContructor(typcfg.NewConfiguration("NAME", &config{})))
 
 }
 

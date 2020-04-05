@@ -8,8 +8,8 @@ const gitignore = `/bin
 /release
 /.typical-tmp
 /vendor 
-.envrc
-.env
+*.envrc
+*.env
 *.test
 *.out
 `

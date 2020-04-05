@@ -35,9 +35,6 @@ type Descriptor struct {
 	// BuildTool of the project (MANDATORY).
 	BuildTool
 
-	// ConfigManager of the project (OPTIONAL).
-	ConfigManager
-
 	typlog.Logger
 }
 

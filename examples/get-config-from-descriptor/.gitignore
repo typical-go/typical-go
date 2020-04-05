@@ -1,8 +1,0 @@
-/bin
-/release
-/.typical-tmp
-/vendor
-.envrc
-.env
-*.test
-*.out
