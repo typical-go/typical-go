@@ -16,16 +16,14 @@ func (a *App) RunApp(d *typcore.Descriptor) (err error) {
 func (a *App) App(d *typcore.Descriptor) *cli.App {
 	c := &Context{
 		Descriptor: d,
-		App: a,
+		App:        a,
 	}
 	app := cli.NewApp()
 	app.Name = d.Name
 	app.Usage = "" // NOTE: intentionally blank
 	app.Description = d.Description
 	app.Version = d.Version
-	if entryPoint := a.EntryPoint(); entryPoint != nil {
-		app.Action = c.ActionFunc(entryPoint)
-	}
+	app.Action = c.ActionFunc(a.main)
 	app.Commands = a.Commands(c)
 	return app
 }

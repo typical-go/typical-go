@@ -25,11 +25,8 @@ func TestTypicalApp_Preconditon(t *testing.T) {
 			},
 		}
 
-		require.NoError(t, typapp.
-			AppModule(nil).
-			WithPrecondition(false).
-			Precondition(c))
-
+		app := typapp.EntryPoint(nil, "").WithPrecondition(false)
+		require.NoError(t, app.Precondition(c))
 		require.Equal(t, "[TYPICAL][INFO] Skip Precondition for typical-app\n", debugger.String())
 	})
 }

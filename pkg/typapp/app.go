@@ -1,10 +1,10 @@
 package typapp
 
 import (
-	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typdep"
 	"github.com/urfave/cli/v2"
 )
 
@@ -24,17 +24,16 @@ var (
 	_ typbuildtool.Preconditioner = (*App)(nil)
 	_ typcfg.Configurer           = (*App)(nil)
 
-	_ Provider     = (*App)(nil)
-	_ Destroyer    = (*App)(nil)
-	_ Preparer     = (*App)(nil)
-	_ EntryPointer = (*App)(nil)
-	_ Commander    = (*App)(nil)
+	_ Provider  = (*App)(nil)
+	_ Destroyer = (*App)(nil)
+	_ Preparer  = (*App)(nil)
+	_ Commander = (*App)(nil)
 )
 
 // App is typical application model
 type App struct {
 	appSources []string
-	appModule  interface{}
+	main       *typdep.Invocation
 	modules    []interface{}
 	configurer []typcfg.Configurer
 
@@ -43,25 +42,11 @@ type App struct {
 	precondition bool
 }
 
-// AppModule create new instance of App with AppModule
-func AppModule(appModule interface{}, appSources ...string) *App {
-	if len(appSources) < 1 {
-		appSources = []string{common.PackageName(appModule)}
-	}
-	return &App{
-		appSources:   appSources,
-		appModule:    appModule,
-		initFile:     DefaultInitFile,
-		precondition: DefaultPrecondition,
-		configFile:   DefaultConfigFile,
-	}
-}
-
 // EntryPoint create new instance of App with main invocation function
-func EntryPoint(fn interface{}, appSource string, sources ...string) *App {
+func EntryPoint(mainFn interface{}, appSource string, sources ...string) *App {
 	return &App{
 		appSources:   append([]string{appSource}, sources...),
-		appModule:    NewMainInvocation(fn),
+		main:         typdep.NewInvocation(mainFn),
 		initFile:     DefaultInitFile,
 		precondition: DefaultPrecondition,
 		configFile:   DefaultConfigFile,
@@ -98,20 +83,9 @@ func (a *App) WithPrecondition(precondition bool) *App {
 	return a
 }
 
-// EntryPoint of app
-func (a *App) EntryPoint() *MainInvocation {
-	if entryPointer, ok := a.appModule.(EntryPointer); ok {
-		return entryPointer.EntryPoint()
-	}
-	return nil
-}
-
 // Provide to return constructors
 func (a *App) Provide() (constructors []*Constructor) {
 	constructors = append(constructors, global...)
-	if provider, ok := a.appModule.(Provider); ok {
-		constructors = append(constructors, provider.Provide()...)
-	}
 	for _, module := range a.modules {
 		if provider, ok := module.(Provider); ok {
 			constructors = append(constructors, provider.Provide()...)
@@ -122,9 +96,6 @@ func (a *App) Provide() (constructors []*Constructor) {
 
 //Destroy to return destructor
 func (a *App) Destroy() (destructors []*Destruction) {
-	if destroyer, ok := a.appModule.(Destroyer); ok {
-		destructors = append(destructors, destroyer.Destroy()...)
-	}
 	for _, module := range a.modules {
 		if destroyer, ok := module.(Destroyer); ok {
 			destructors = append(destructors, destroyer.Destroy()...)
@@ -135,9 +106,7 @@ func (a *App) Destroy() (destructors []*Destruction) {
 
 // Prepare to return preparations
 func (a *App) Prepare() (preparations []*Preparation) {
-	if preparer, ok := a.appModule.(Preparer); ok {
-		preparations = append(preparations, preparer.Prepare()...)
-	}
+
 	for _, module := range a.modules {
 		if preparer, ok := module.(Preparer); ok {
 			preparations = append(preparations, preparer.Prepare()...)
@@ -148,9 +117,6 @@ func (a *App) Prepare() (preparations []*Preparation) {
 
 // Commands to return commands
 func (a *App) Commands(c *Context) (cmds []*cli.Command) {
-	if commander, ok := a.appModule.(Commander); ok {
-		cmds = append(cmds, commander.Commands(c)...)
-	}
 	for _, module := range a.modules {
 		if commander, ok := module.(Commander); ok {
 			cmds = append(cmds, commander.Commands(c)...)
@@ -165,10 +131,6 @@ func (a *App) Configurations() (cfgs []*typcfg.Configuration) {
 		if c, ok := module.(typcfg.Configurer); ok {
 			cfgs = append(cfgs, c.Configurations()...)
 		}
-	}
-
-	if c, ok := a.appModule.(typcfg.Configurer); ok {
-		cfgs = append(cfgs, c.Configurations()...)
 	}
 
 	for _, c := range a.configurer {

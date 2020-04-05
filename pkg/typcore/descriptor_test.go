@@ -21,7 +21,7 @@ func TestDescriptor_ProjectSources(t *testing.T) {
 			expected:   []string{"app"},
 		},
 		{
-			Descriptor: &typcore.Descriptor{App: typapp.AppModule(app.New())},
+			Descriptor: &typcore.Descriptor{App: typapp.EntryPoint(nil, "app")},
 			expected:   []string{"app"},
 		},
 	}
@@ -74,7 +74,7 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 		{
 			Descriptor: &typcore.Descriptor{
 				Name:      "Typical Go",
-				App:       typapp.AppModule(nil),
+				App:       typapp.EntryPoint(nil, ""),
 				BuildTool: dummyBuildTool{},
 			},
 			expectedErr: "Descriptor: Invalid name",
@@ -82,7 +82,7 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 		{
 			Descriptor: &typcore.Descriptor{
 				Name:      "some-name",
-				App:       typapp.AppModule(nil),
+				App:       typapp.EntryPoint(nil, ""),
 				BuildTool: dummyBuildTool{errMessage: "Build: some-error"},
 			},
 			expectedErr: "Descriptor: Build: some-error",

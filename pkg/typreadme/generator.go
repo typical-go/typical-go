@@ -5,7 +5,6 @@ import (
 	"os"
 	"text/template"
 
-	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/urfave/cli/v2"
 )
@@ -116,8 +115,8 @@ func (m *ReadmeGenerator) generate(c *typbuildtool.Context) (err error) {
 		TemplateFile: m.TemplateFile,
 		Title:        m.Title(c),
 		Description:  m.Description(c),
-		Usages:       m.Usages(c),
-		BuildUsages:  m.BuildUsages(c),
+		// Usages:       m.Usages(c),
+		BuildUsages: m.BuildUsages(c),
 		// Configs:      m.Configs(c),
 	})
 }
@@ -138,24 +137,24 @@ func (m *ReadmeGenerator) Description(c *typbuildtool.Context) string {
 	return m.description
 }
 
-// Usages of readme
-func (m *ReadmeGenerator) Usages(c *typbuildtool.Context) (infos []UsageInfo) {
-	if len(m.usages) < 1 {
-		if app, ok := c.App.(*typapp.App); ok {
-			if app.EntryPoint() != nil {
-				infos = append(infos, UsageInfo{
-					Usage:       c.Name,
-					Description: "Run the application",
-				})
-			}
-			for _, cmd := range app.Commands(&typapp.Context{}) {
-				infos = append(infos, usageInfos(c.Name, cmd)...)
-			}
-		}
-		return
-	}
-	return m.usages
-}
+// // Usages of readme
+// func (m *ReadmeGenerator) Usages(c *typbuildtool.Context) (infos []UsageInfo) {
+// 	if len(m.usages) < 1 {
+// 		if app, ok := c.App.(*typapp.App); ok {
+// 			if app.EntryPoint() != nil {
+// 				infos = append(infos, UsageInfo{
+// 					Usage:       c.Name,
+// 					Description: "Run the application",
+// 				})
+// 			}
+// 			for _, cmd := range app.Commands(&typapp.Context{}) {
+// 				infos = append(infos, usageInfos(c.Name, cmd)...)
+// 			}
+// 		}
+// 		return
+// 	}
+// 	return m.usages
+// }
 
 // BuildUsages of readme
 func (m *ReadmeGenerator) BuildUsages(c *typbuildtool.Context) (infos []UsageInfo) {

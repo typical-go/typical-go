@@ -4,11 +4,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// EntryPointer responsible to handle entry point
-type EntryPointer interface {
-	EntryPoint() *MainInvocation
-}
-
 // Provider responsible to provide constructor [mock]
 type Provider interface {
 	Provide() []*Constructor
