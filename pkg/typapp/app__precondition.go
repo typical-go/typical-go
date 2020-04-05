@@ -23,10 +23,6 @@ func (a *App) Precondition(c *typbuildtool.BuildContext) (err error) {
 		return
 	}
 
-	if _, err = typcfg.Load(a.configFile); err != nil {
-		return
-	}
-
 	c.Info("Precondition the typical-app")
 	if err = a.generateConstructor(c, "typical/"+a.initFile); err != nil {
 		return

@@ -3,6 +3,7 @@ package typapp
 import (
 	"os"
 
+	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
@@ -22,6 +23,11 @@ func (a *App) App(d *typcore.Descriptor) *cli.App {
 	app.Name = d.Name
 	app.Usage = "" // NOTE: intentionally blank
 	app.Description = d.Description
+	app.Before = func(*cli.Context) (err error) {
+		c.Info("Load environments")
+		_, err = typcfg.Load(a.configFile)
+		return
+	}
 	app.Version = d.Version
 	app.Action = c.ActionFunc(a.main)
 	app.Commands = a.Commands(c)
