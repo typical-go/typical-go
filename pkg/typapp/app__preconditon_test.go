@@ -32,3 +32,21 @@ func TestTypicalApp_Preconditon(t *testing.T) {
 		require.Equal(t, "[TYPICAL][INFO] Skip Precondition for typical-app\n", debugger.String())
 	})
 }
+
+func TestConfigConstructor(t *testing.T) {
+	expected := `func() (cfg *typapp_test.config, err error){
+		cfg = new(typapp_test.config)
+		if err = typcfg.Process("NAME", cfg); err != nil {
+			return nil, err
+		}
+		return  
+	}`
+
+	require.Equal(t, expected, typapp.ConfigContructor(&typcore.Configuration{
+		Name: "NAME",
+		Spec: &config{},
+	}))
+
+}
+
+type config struct{}

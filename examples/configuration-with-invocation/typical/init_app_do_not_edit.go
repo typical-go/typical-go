@@ -5,17 +5,17 @@ package typical
 import (
 	"github.com/typical-go/typical-go/examples/configuration-with-invocation/server"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typcfg"
 )
 
 func init() {
 	typapp.AppendConstructor(
-		typapp.NewConstructor(func(cfgMngr typcore.ConfigManager) (*server.Config, error) {
-			cfg, err := cfgMngr.RetrieveConfig("SERVER")
-			if err != nil {
+		typapp.NewConstructor(func() (cfg *server.Config, err error) {
+			cfg = new(server.Config)
+			if err = typcfg.Process("SERVER", cfg); err != nil {
 				return nil, err
 			}
-			return cfg.(*server.Config), nil
+			return
 		}),
 	)
 }

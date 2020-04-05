@@ -31,14 +31,6 @@ func (c *Context) Invoke(cliCtx *cli.Context, invokable typdep.Invokable) (err e
 	di := c.Container()
 
 	if err = typdep.Provide(di,
-		typdep.NewConstructor(func() typcore.ConfigManager {
-			return c.ConfigManager
-		}),
-	); err != nil {
-		return
-	}
-
-	if err = typdep.Provide(di,
 		typdep.NewConstructor(func() *cli.Context {
 			return cliCtx
 		}),

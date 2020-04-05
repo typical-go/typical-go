@@ -29,7 +29,7 @@ func (a *App) Precondition(c *typbuildtool.BuildContext) (err error) {
 
 	if c.ConfigManager != nil {
 		for _, bean := range c.Configurations() {
-			constructors = append(constructors, configDefinition(bean))
+			constructors = append(constructors, ConfigContructor(bean))
 		}
 	}
 
@@ -38,17 +38,6 @@ func (a *App) Precondition(c *typbuildtool.BuildContext) (err error) {
 		return
 	}
 	return
-}
-
-func configDefinition(bean *typcore.Configuration) string {
-	typ := reflect.TypeOf(bean.Spec).String()
-	return fmt.Sprintf(`func(cfgMngr typcore.ConfigManager) (%s, error){
-		cfg, err := cfgMngr.RetrieveConfig("%s")
-		if err != nil {
-			return nil, err
-		}
-		return  cfg.(%s), nil 
-	}`, typ, bean.Name, typ)
 }
 
 func (a *App) generateConstructor(c *typbuildtool.BuildContext, filename string, constructors []string) (err error) {
@@ -69,4 +58,17 @@ func (a *App) generateConstructor(c *typbuildtool.BuildContext, filename string,
 	}
 
 	return buildkit.NewGoImports(c.TypicalTmp, filename).Execute(ctx)
+}
+
+// ConfigContructor is definition for  configuration constructor
+func ConfigContructor(bean *typcore.Configuration) string {
+	typ := reflect.TypeOf(bean.Spec).String()
+	tmpl := `func() (cfg %s, err error){
+		cfg = new(%s)
+		if err = typcfg.Process("%s", cfg); err != nil {
+			return nil, err
+		}
+		return  
+	}`
+	return fmt.Sprintf(tmpl, typ, typ[1:], bean.Name)
 }
