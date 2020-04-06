@@ -12,13 +12,15 @@ import (
 
 var (
 	_ typcore.BuildTool = (*BuildTool)(nil)
-	_ Utility           = (*BuildTool)(nil)
-	_ Builder           = (*BuildTool)(nil)
-	_ Tester            = (*BuildTool)(nil)
-	_ Cleaner           = (*BuildTool)(nil)
-	_ Releaser          = (*BuildTool)(nil)
-	_ Publisher         = (*BuildTool)(nil)
-	_ Preconditioner    = (*BuildTool)(nil)
+	_ typcfg.Configurer = (*BuildTool)(nil)
+
+	_ Utility        = (*BuildTool)(nil)
+	_ Builder        = (*BuildTool)(nil)
+	_ Tester         = (*BuildTool)(nil)
+	_ Cleaner        = (*BuildTool)(nil)
+	_ Releaser       = (*BuildTool)(nil)
+	_ Publisher      = (*BuildTool)(nil)
+	_ Preconditioner = (*BuildTool)(nil)
 )
 
 // BuildTool is typical Build Tool for golang project
@@ -161,6 +163,23 @@ func (b *BuildTool) Test(c *BuildContext) (err error) {
 	return
 }
 
+// Configurations of Build-Tool
+func (b *BuildTool) Configurations() (cfgs []*typcfg.Configuration) {
+	for _, module := range b.modules {
+		if configurer, ok := module.(typcfg.Configurer); ok {
+			cfgs = append(cfgs, configurer.Configurations()...)
+		}
+	}
+
+	for _, utility := range b.utilities {
+		if configurer, ok := utility.(typcfg.Configurer); ok {
+			cfgs = append(cfgs, configurer.Configurations()...)
+		}
+	}
+
+	return
+}
+
 // Precondition for this project
 func (b *BuildTool) Precondition(c *BuildContext) (err error) {
 	if !b.enablePrecondition {
@@ -168,15 +187,19 @@ func (b *BuildTool) Precondition(c *BuildContext) (err error) {
 		return
 	}
 
-	if preconditioner, ok := c.App.(Preconditioner); ok {
-		if err = preconditioner.Precondition(c); err != nil {
-			return fmt.Errorf("Precondition-App: %w", err)
-		}
-	}
-
 	if configurer, ok := c.App.(typcfg.Configurer); ok {
 		if err = typcfg.Write(b.configFile, configurer); err != nil {
 			return
+		}
+	}
+
+	if err = typcfg.Write(b.configFile, b); err != nil {
+		return
+	}
+
+	if preconditioner, ok := c.App.(Preconditioner); ok {
+		if err = preconditioner.Precondition(c); err != nil {
+			return fmt.Errorf("Precondition-App: %w", err)
 		}
 	}
 
