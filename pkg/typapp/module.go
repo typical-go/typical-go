@@ -1,6 +1,7 @@
 package typapp
 
 import (
+	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/urfave/cli/v2"
 )
 
@@ -9,14 +10,17 @@ var (
 	_ Destroyer = (*Module)(nil)
 	_ Preparer  = (*Module)(nil)
 	_ Commander = (*Module)(nil)
+
+	_ typcfg.Configurer = (*Module)(nil)
 )
 
 // Module for application
 type Module struct {
-	providers  []Provider
-	destroyers []Destroyer
-	preparers  []Preparer
-	commanders []Commander
+	providers   []Provider
+	destroyers  []Destroyer
+	preparers   []Preparer
+	commanders  []Commander
+	configurers []typcfg.Configurer
 }
 
 // NewModule return new instance of Module
@@ -24,27 +28,33 @@ func NewModule() *Module {
 	return &Module{}
 }
 
-// WithProviders return Module with new providers
-func (m *Module) WithProviders(providers ...Provider) *Module {
+// Provides constructor for the module
+func (m *Module) Provides(providers ...Provider) *Module {
 	m.providers = providers
 	return m
 }
 
-// WithDestoyers return Module with new destroyers
-func (m *Module) WithDestoyers(destroyers ...Destroyer) *Module {
+// Destroys destruction for the module
+func (m *Module) Destroys(destroyers ...Destroyer) *Module {
 	m.destroyers = destroyers
 	return m
 }
 
-// WithPrepares return Module with new preparers
-func (m *Module) WithPrepares(prepares ...Preparer) *Module {
+// Prepares preparation for the module
+func (m *Module) Prepares(prepares ...Preparer) *Module {
 	m.preparers = prepares
 	return m
 }
 
-// WithCommanders return Module with new commanders
-func (m *Module) WithCommanders(commanders ...Commander) *Module {
+// Commanders to add the command
+func (m *Module) Commanders(commanders ...Commander) *Module {
 	m.commanders = commanders
+	return m
+}
+
+// Configures configuration
+func (m *Module) Configures(configurers ...typcfg.Configurer) *Module {
+	m.configurers = configurers
 	return m
 }
 
@@ -72,10 +82,18 @@ func (m *Module) Preparations() (preparations []*Preparation) {
 	return
 }
 
-// Commands of application
+// Commands of module
 func (m *Module) Commands(c *Context) (cmds []*cli.Command) {
 	for _, commander := range m.commanders {
 		cmds = append(cmds, commander.Commands(c)...)
+	}
+	return
+}
+
+// Configurations of module
+func (m *Module) Configurations() (cfgs []*typcfg.Configuration) {
+	for _, configurer := range m.configurers {
+		cfgs = append(cfgs, configurer.Configurations()...)
 	}
 	return
 }

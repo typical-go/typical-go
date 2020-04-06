@@ -20,6 +20,7 @@ type Destroyer interface {
 }
 
 // Commander responsible to return commands for App
+// TODO: consider to remove or rename the commander
 type Commander interface {
 	Commands(*Context) []*cli.Command
 }
