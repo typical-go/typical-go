@@ -1,31 +1,27 @@
-package app
+package wrapper
 
 import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/typwrap"
 	"github.com/urfave/cli/v2"
 )
 
 var (
-	_ typcore.App = (*TypicalGo)(nil)
+	_ typcore.App = (*Wrapper)(nil)
 )
 
-// TypicalGo is app of typical-go
-type TypicalGo struct {
-	wrapper *typwrap.Wrapper
+// Wrapper is app of typical-go
+type Wrapper struct {
 }
 
 // New instance of TypicalGo
-func New() *TypicalGo {
-	return &TypicalGo{
-		wrapper: typwrap.New(),
-	}
+func New() *Wrapper {
+	return &Wrapper{}
 }
 
 // RunApp to run the typical-go
-func (t *TypicalGo) RunApp(d *typcore.Descriptor) (err error) {
+func (t *Wrapper) RunApp(d *typcore.Descriptor) (err error) {
 	app := cli.NewApp()
 	app.Name = d.Name
 	app.Usage = "" // NOTE: intentionally blank
@@ -41,7 +37,7 @@ func (t *TypicalGo) RunApp(d *typcore.Descriptor) (err error) {
 				&cli.StringFlag{Name: "project-package", Usage: "To override generated ProjectPackage in context"},
 			},
 			Action: func(cliCtx *cli.Context) (err error) {
-				return t.Wrap(&typwrap.Context{
+				return Wrap(&Context{
 					Descriptor:     d,
 					Ctx:            cliCtx.Context,
 					TypicalTmp:     cliCtx.String("typical-tmp"),
@@ -53,12 +49,7 @@ func (t *TypicalGo) RunApp(d *typcore.Descriptor) (err error) {
 	return app.Run(os.Args)
 }
 
-// Wrap the project
-func (t *TypicalGo) Wrap(c *typwrap.Context) error {
-	return t.wrapper.Wrap(c)
-}
-
 // AppSources is application source for typical-go
-func (t *TypicalGo) AppSources() []string {
-	return []string{"app"}
+func (t *Wrapper) AppSources() []string {
+	return []string{"wrapper"}
 }

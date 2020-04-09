@@ -1,4 +1,4 @@
-package typwrap
+package wrapper
 
 import (
 	"bufio"
@@ -12,16 +12,8 @@ import (
 	"github.com/typical-go/typical-go/pkg/typfactory"
 )
 
-// Wrapper responsible to wrap the typical project
-type Wrapper struct{}
-
-// New instance of Wrapper
-func New() *Wrapper {
-	return &Wrapper{}
-}
-
 // Wrap the project
-func (*Wrapper) Wrap(c *Context) (err error) {
+func Wrap(c *Context) (err error) {
 
 	if c.ProjectPackage == "" {
 		if c.ProjectPackage, err = retrieveProjectPackage(); err != nil {

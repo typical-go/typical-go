@@ -1,4 +1,4 @@
-package typwrap
+package wrapper
 
 import (
 	"context"

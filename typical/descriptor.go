@@ -1,9 +1,9 @@
 package typical
 
 import (
-	"github.com/typical-go/typical-go/app"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/wrapper"
 )
 
 // Descriptor of typical-go
@@ -12,7 +12,7 @@ var Descriptor = typcore.Descriptor{
 	Name:    "typical-go",
 	Version: typcore.Version,
 
-	App: app.New(),
+	App: wrapper.New(),
 
 	BuildTool: typbuildtool.
 		BuildSequences(
