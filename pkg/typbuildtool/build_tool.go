@@ -186,29 +186,3 @@ func (b *BuildTool) Configurations() (cfgs []*typcfg.Configuration) {
 
 	return
 }
-
-// Precondition for this project
-func (b *BuildTool) Precondition(c *BuildContext) (err error) {
-	if !b.enablePrecondition {
-		c.Info("Skip the preconditon")
-		return
-	}
-
-	if configurer, ok := c.App.(typcfg.Configurer); ok {
-		if err = typcfg.Write(b.configFile, configurer); err != nil {
-			return
-		}
-	}
-
-	if err = typcfg.Write(b.configFile, b); err != nil {
-		return
-	}
-
-	if preconditioner, ok := c.App.(Preconditioner); ok {
-		if err = preconditioner.Precondition(c); err != nil {
-			return fmt.Errorf("Precondition-App: %w", err)
-		}
-	}
-
-	return
-}
