@@ -22,7 +22,7 @@ func (b *StandardModule) Build(c *BuildContext) (dists []BuildDistribution, err 
 	if _, err = os.Stat(src); os.IsNotExist(err) {
 		os.MkdirAll(srcDir, 0777)
 		if err = typfactory.WriteFile(src, 0777, &typfactory.AppMain{
-			DescPkg: c.ProjectPackage + "/typical",
+			DescPkg: c.ProjectPkg + "/typical",
 		}); err != nil {
 			return
 		}

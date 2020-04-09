@@ -4,16 +4,16 @@ const (
 	// Version of Typical-Go
 	Version = "0.9.47"
 
-	// DefaultProjectPackageVar is full path for DefaultProjectPackage variable for ldflgs purpose
-	DefaultProjectPackageVar = "github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPackage"
+	// DefaultProjectPkgVar is full path for DefaultProjectPkg variable for ldflgs purpose
+	DefaultProjectPkgVar = "github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPkg"
 
 	// DefaultTypicalTmpVar is full path for DefaultTypicalTmpVar variable for ldflgs purpose
 	DefaultTypicalTmpVar = "github.com/typical-go/typical-go/pkg/typcore.DefaultTypicalTmp"
 )
 
 var (
-	// DefaultProjectPackage is default value for ProjectPackage which is supply by ldflags
-	DefaultProjectPackage string
+	// DefaultProjectPkg is default value for ProjectPackage which is supply by ldflags
+	DefaultProjectPkg string
 
 	// DefaultTypicalTmp is default value of typical tmp which is supply by ldflags
 	DefaultTypicalTmp string

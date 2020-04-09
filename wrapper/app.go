@@ -8,20 +8,20 @@ import (
 )
 
 var (
-	_ typcore.App = (*Wrapper)(nil)
+	_ typcore.App = (*App)(nil)
 )
 
-// Wrapper is app of typical-go
-type Wrapper struct {
+// App of wrapper
+type App struct {
 }
 
 // New instance of TypicalGo
-func New() *Wrapper {
-	return &Wrapper{}
+func New() *App {
+	return &App{}
 }
 
 // RunApp to run the typical-go
-func (t *Wrapper) RunApp(d *typcore.Descriptor) (err error) {
+func (t *App) RunApp(d *typcore.Descriptor) (err error) {
 	app := cli.NewApp()
 	app.Name = d.Name
 	app.Usage = "" // NOTE: intentionally blank
@@ -34,14 +34,18 @@ func (t *Wrapper) RunApp(d *typcore.Descriptor) (err error) {
 			Usage: "wrap the project with its build-tool",
 			Flags: []cli.Flag{
 				&cli.StringFlag{Name: "typical-tmp", Value: ".typical-tmp"},
-				&cli.StringFlag{Name: "project-package", Usage: "To override generated ProjectPackage in context"},
+				&cli.StringFlag{Name: "descriptor-folder", Value: "typical"},
+				&cli.StringFlag{Name: "checksum-file", Value: "checksum"},
+				&cli.StringFlag{Name: "project-pkg", Usage: "To override generated ProjectPackage in context"},
 			},
 			Action: func(cliCtx *cli.Context) (err error) {
 				return Wrap(&Context{
-					Descriptor:     d,
-					Ctx:            cliCtx.Context,
-					TypicalTmp:     cliCtx.String("typical-tmp"),
-					ProjectPackage: cliCtx.String("project-package"),
+					Descriptor:       d,
+					Ctx:              cliCtx.Context,
+					TypicalTmp:       cliCtx.String("typical-tmp"),
+					ProjectPkg:       cliCtx.String("project-pkg"),
+					DescriptorFolder: cliCtx.String("descriptor-folder"),
+					ChecksumFile:     cliCtx.String("checksum-file"),
 				})
 			},
 		},
@@ -50,6 +54,6 @@ func (t *Wrapper) RunApp(d *typcore.Descriptor) (err error) {
 }
 
 // AppSources is application source for typical-go
-func (t *Wrapper) AppSources() []string {
+func (t *App) AppSources() []string {
 	return []string{"wrapper"}
 }

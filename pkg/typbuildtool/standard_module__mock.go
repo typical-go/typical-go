@@ -12,7 +12,7 @@ func (b *StandardModule) Mock(c *BuildContext) (err error) {
 	ctx := c.Cli.Context
 	store := NewMockStore()
 	if err = c.Ast().EachAnnotation("mock", typast.InterfaceType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
-		store.Put(buildkit.CreateGoMock(c.TypicalTmp, c.ProjectPackage, decl))
+		store.Put(buildkit.CreateGoMock(c.TypicalTmp, c.ProjectPkg, decl))
 		return
 	}); err != nil {
 		return

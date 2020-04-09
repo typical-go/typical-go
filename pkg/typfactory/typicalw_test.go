@@ -41,9 +41,9 @@ $TYPTMP/bin/build-tool $@
 		},
 		{
 			Writer: &typfactory.Typicalw{
-				TypicalSource:  "some-source",
-				TypicalTmp:     "some-tmp",
-				ProjectPackage: "some-project-package",
+				TypicalSource: "some-source",
+				TypicalTmp:    "some-tmp",
+				ProjectPkg:    "some-project-pkg",
 			},
 			expected: `#!/bin/bash
 
@@ -59,7 +59,7 @@ fi
 
 $TYPGO wrap \
 	-typical-tmp=$TYPTMP \
-	-project-package="some-project-package" \
+	-project-pkg="some-project-pkg" \
 
 $TYPTMP/bin/build-tool $@
 `,

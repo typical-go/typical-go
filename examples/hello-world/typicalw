@@ -12,6 +12,6 @@ fi
 
 $TYPGO wrap \
 	-typical-tmp=$TYPTMP \
-	-project-package="github.com/typical-go/typical-go/examples/hello-world" \
+	-project-pkg="github.com/typical-go/typical-go/examples/hello-world" \
 
 $TYPTMP/bin/build-tool $@

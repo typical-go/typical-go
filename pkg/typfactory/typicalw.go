@@ -19,16 +19,16 @@ fi
 
 $TYPGO wrap \
 	-typical-tmp=$TYPTMP \
-{{if .ProjectPackage }}	-project-package="{{.ProjectPackage}}" \
+{{if .ProjectPkg }}	-project-pkg="{{.ProjectPkg}}" \
 {{end}}
 $TYPTMP/bin/build-tool $@
 `
 
 // Typicalw writer
 type Typicalw struct {
-	TypicalTmp     string
-	TypicalSource  string
-	ProjectPackage string
+	TypicalTmp    string
+	TypicalSource string
+	ProjectPkg    string
 }
 
 // Write the tyicalw

@@ -14,8 +14,8 @@ import (
 type Context struct {
 	*Descriptor
 
-	TypicalTmp     string
-	ProjectPackage string
+	TypicalTmp string
+	ProjectPkg string
 
 	AppDirs    []string
 	AppFiles   []string
@@ -57,12 +57,12 @@ func CreateContext(d *Descriptor) (c *Context, err error) {
 	}
 
 	return &Context{
-		Descriptor:     d,
-		TypicalTmp:     DefaultTypicalTmp,
-		ProjectPackage: DefaultProjectPackage,
-		AppSources:     appSources,
-		AppDirs:        appDirs,
-		AppFiles:       appFiles,
+		Descriptor: d,
+		TypicalTmp: DefaultTypicalTmp,
+		ProjectPkg: DefaultProjectPkg,
+		AppSources: appSources,
+		AppDirs:    appDirs,
+		AppFiles:   appFiles,
 	}, nil
 }
 

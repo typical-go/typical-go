@@ -2,7 +2,9 @@ package wrapper
 
 import (
 	"bufio"
+	"context"
 	"errors"
+	"fmt"
 	"go/build"
 	"os"
 	"strings"
@@ -12,11 +14,23 @@ import (
 	"github.com/typical-go/typical-go/pkg/typfactory"
 )
 
+// Context of wrapper
+type Context struct {
+	*typcore.Descriptor
+	Ctx context.Context
+
+	TypicalTmp string
+	ProjectPkg string
+
+	DescriptorFolder string
+	ChecksumFile     string
+}
+
 // Wrap the project
 func Wrap(c *Context) (err error) {
 
-	if c.ProjectPackage == "" {
-		if c.ProjectPackage, err = retrieveProjectPackage(); err != nil {
+	if c.ProjectPkg == "" {
+		if c.ProjectPkg, err = retrieveProjectPackage(); err != nil {
 			return
 		}
 	}
@@ -37,27 +51,27 @@ func Wrap(c *Context) (err error) {
 	if _, err = os.Stat(typicalw); os.IsNotExist(err) {
 		c.Infof("Generate %s", typicalw)
 		if err = typfactory.WriteFile(typicalw, 0777, &typfactory.Typicalw{
-			TypicalSource:  "github.com/typical-go/typical-go/cmd/typical-go",
-			TypicalTmp:     c.TypicalTmp,
-			ProjectPackage: c.ProjectPackage,
+			TypicalSource: "github.com/typical-go/typical-go/cmd/typical-go",
+			TypicalTmp:    c.TypicalTmp,
+			ProjectPkg:    c.ProjectPkg,
 		}); err != nil {
 			return
 		}
 	}
 
-	checksumFile := c.TypicalTmp + "/checksum"
+	checksumPath := fmt.Sprintf("%s/%s", c.TypicalTmp, c.ChecksumFile)
 	buildTool := c.TypicalTmp + "/bin/build-tool"
 	srcPath := c.TypicalTmp + "/build-tool/main.go"
-	descriptorPkg := c.ProjectPackage + "/typical"
+	descriptorPkg := fmt.Sprintf("%s/%s", c.ProjectPkg, c.DescriptorFolder)
 
 	var checksum *Checksum
-	if checksum, err = CreateChecksum("typical"); err != nil {
+	if checksum, err = CreateChecksum(c.DescriptorFolder); err != nil {
 		return
 	}
 
-	if _, err = os.Stat(buildTool); os.IsNotExist(err) || !checksum.IsSame(checksumFile) {
+	if _, err = os.Stat(buildTool); os.IsNotExist(err) || !checksum.IsSame(checksumPath) {
 		c.Info("Update checksum")
-		if err = checksum.Save(checksumFile); err != nil {
+		if err = checksum.Save(checksumPath); err != nil {
 			return
 		}
 
@@ -72,7 +86,7 @@ func Wrap(c *Context) (err error) {
 
 		c.Info("Build the build-tool")
 		return buildkit.NewGoBuild(buildTool, srcPath).
-			SetVariable(typcore.DefaultProjectPackageVar, c.ProjectPackage).
+			SetVariable(typcore.DefaultProjectPkgVar, c.ProjectPkg).
 			SetVariable(typcore.DefaultTypicalTmpVar, c.TypicalTmp).
 			WithStdout(os.Stdout).
 			WithStderr(os.Stderr).

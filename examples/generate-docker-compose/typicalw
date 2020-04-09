@@ -12,6 +12,6 @@ fi
 
 $TYPGO wrap \
 	-typical-tmp=$TYPTMP \
-	-project-package="github.com/typical-go/typical-go/examples/generate-docker-compose" \
+	-project-pkg="github.com/typical-go/typical-go/examples/generate-docker-compose" \
 
 $TYPTMP/bin/build-tool $@
