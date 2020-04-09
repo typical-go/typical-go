@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/app"
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/wrapper"
 )
 
 func TestDescriptor_ProjectSources(t *testing.T) {
@@ -17,8 +17,8 @@ func TestDescriptor_ProjectSources(t *testing.T) {
 		expected []string
 	}{
 		{
-			Descriptor: &typcore.Descriptor{App: app.New()},
-			expected:   []string{"app"},
+			Descriptor: &typcore.Descriptor{App: wrapper.New()},
+			expected:   []string{"wrapper"},
 		},
 		{
 			Descriptor: &typcore.Descriptor{App: typapp.EntryPoint(nil, "app")},
