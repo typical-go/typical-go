@@ -110,7 +110,7 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 		},
 	}
 
-	for _, module := range b.modules {
+	for _, module := range b.buildSequences {
 		if utility, ok := module.(Utility); ok {
 			cmds = append(cmds, utility.Commands(c)...)
 		}

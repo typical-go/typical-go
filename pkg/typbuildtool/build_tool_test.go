@@ -18,11 +18,18 @@ func TestBuildTool_Validate(t *testing.T) {
 		},
 		{
 			BuildTool:     typbuildtool.BuildSequences(),
-			expectedError: "No build modules",
+			expectedError: "No build-sequence",
 		},
 		{
-			BuildTool:     typbuildtool.BuildSequences(common.DummyValidator("some-error")),
-			expectedError: "BuildTool: some-error",
+			BuildTool: typbuildtool.
+				BuildSequences(common.DummyValidator("build-seq-error")),
+			expectedError: "BuildTool: build-seq-error",
+		},
+		{
+			BuildTool: typbuildtool.
+				BuildSequences(struct{}{}).
+				Utilities(&utilityWithErrors{errMsg: "utility-error"}),
+			expectedError: "BuildTool: utility-error",
 		},
 	}
 
@@ -33,4 +40,9 @@ func TestBuildTool_Validate(t *testing.T) {
 			require.NoError(t, err)
 		}
 	}
+}
+
+type utilityWithErrors struct {
+	typbuildtool.SimpleUtility
+	errMsg string
 }
