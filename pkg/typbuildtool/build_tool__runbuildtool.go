@@ -24,7 +24,7 @@ func (b *BuildTool) RunBuildTool(tc *typcore.Context) (err error) {
 		if err = b.Precondition(c.BuildContext(cliCtx)); err != nil {
 			return
 		}
-
+		
 		typcfg.Load(b.configFile)
 
 		return
