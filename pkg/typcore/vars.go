@@ -1,9 +1,6 @@
 package typcore
 
 const (
-	// Version of Typical-Go
-	Version = "0.9.47"
-
 	// DefaultProjectPkgVar is full path for DefaultProjectPkg variable for ldflgs purpose
 	DefaultProjectPkgVar = "github.com/typical-go/typical-go/pkg/typcore.DefaultProjectPkg"
 
