@@ -6,11 +6,10 @@ import (
 )
 
 var (
-	_ Provider  = (*Module)(nil)
-	_ Destroyer = (*Module)(nil)
-	_ Preparer  = (*Module)(nil)
-	_ Commander = (*Module)(nil)
-
+	_ Provider          = (*Module)(nil)
+	_ Destroyer         = (*Module)(nil)
+	_ Preparer          = (*Module)(nil)
+	_ Commander         = (*Module)(nil)
 	_ typcfg.Configurer = (*Module)(nil)
 )
 
@@ -28,32 +27,32 @@ func NewModule() *Module {
 	return &Module{}
 }
 
-// Provides constructor for the module
-func (m *Module) Provides(providers ...Provider) *Module {
+// Provide the module
+func (m *Module) Provide(providers ...Provider) *Module {
 	m.providers = providers
 	return m
 }
 
-// Destroys destruction for the module
-func (m *Module) Destroys(destroyers ...Destroyer) *Module {
+// Destroy the module
+func (m *Module) Destroy(destroyers ...Destroyer) *Module {
 	m.destroyers = destroyers
 	return m
 }
 
-// Prepares preparation for the module
-func (m *Module) Prepares(prepares ...Preparer) *Module {
+// Prepare the module
+func (m *Module) Prepare(prepares ...Preparer) *Module {
 	m.preparers = prepares
 	return m
 }
 
-// Commanders to add the command
-func (m *Module) Commanders(commanders ...Commander) *Module {
+// Command the module
+func (m *Module) Command(commanders ...Commander) *Module {
 	m.commanders = commanders
 	return m
 }
 
-// Configures configuration
-func (m *Module) Configures(configurers ...typcfg.Configurer) *Module {
+// Configure tbe module
+func (m *Module) Configure(configurers ...typcfg.Configurer) *Module {
 	m.configurers = configurers
 	return m
 }

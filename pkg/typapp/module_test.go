@@ -18,13 +18,13 @@ func TestNewModule(t *testing.T) {
 	configuration := typcfg.NewConfiguration("", nil)
 
 	mod := typapp.NewModule().
-		Commanders(typapp.NewCommander(func(*typapp.Context) []*cli.Command {
+		Command(typapp.NewCommander(func(*typapp.Context) []*cli.Command {
 			return []*cli.Command{cmd}
 		})).
-		Prepares(preparation).
-		Destroys(destruction).
-		Provides(constructor).
-		Configures(configuration)
+		Prepare(preparation).
+		Destroy(destruction).
+		Provide(constructor).
+		Configure(configuration)
 
 	require.Equal(t, []*cli.Command{cmd}, mod.Commands(nil))
 	require.Equal(t, []*typapp.Preparation{preparation}, mod.Preparations())
