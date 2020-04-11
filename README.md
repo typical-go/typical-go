@@ -29,7 +29,7 @@ var Descriptor = typcore.Descriptor{
 	Version:     "0.8.25",                                                    // version of the project
 
 	App: typapp.EntryPoint(server.Main, "server").
-		Modules(
+		Imports(
 			server.Configuration(), 
 			typredis.Module(),    // create and destroy redis connection
 			typpostgres.Module(), // create and destroy postgres db connection

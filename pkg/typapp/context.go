@@ -3,8 +3,8 @@ package typapp
 import (
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/typdep"
 	"github.com/urfave/cli/v2"
+	"go.uber.org/dig"
 )
 
 // Context of App
@@ -12,34 +12,32 @@ type Context struct {
 	*typcore.Descriptor
 	*App
 
-	container *typdep.Container
+	container *dig.Container
 }
 
 // ActionFunc to return ActionFunc to invoke function fn
 func (c *Context) ActionFunc(v interface{}) func(*cli.Context) error {
 	return func(cliCtx *cli.Context) (err error) {
-		if invokable, ok := v.(typdep.Invokable); ok {
+		if invokable, ok := v.(*Invocation); ok {
 			return c.Invoke(cliCtx, invokable)
 		}
 
-		return c.Invoke(cliCtx, typdep.NewInvocation(v))
+		return c.Invoke(cliCtx, NewInvocation(v))
 	}
 }
 
 // Invoke function with Dependency Injection
-func (c *Context) Invoke(cliCtx *cli.Context, invokable typdep.Invokable) (err error) {
+func (c *Context) Invoke(cliCtx *cli.Context, invocation *Invocation) (err error) {
 	di := c.Container()
 
-	if err = typdep.Provide(di,
-		typdep.NewConstructor(func() *cli.Context {
-			return cliCtx
-		}),
-	); err != nil {
+	if err = NewConstructor(func() *cli.Context {
+		return cliCtx
+	}).Provide(di); err != nil {
 		return
 	}
 
 	for _, constructor := range c.Constructors() {
-		if err = constructor.Constructor.Provide(di); err != nil {
+		if err = constructor.Provide(di); err != nil {
 			return
 		}
 	}
@@ -51,7 +49,7 @@ func (c *Context) Invoke(cliCtx *cli.Context, invokable typdep.Invokable) (err e
 		}
 	}
 
-	startFn := func() error { return invokable.Invoke(di) }
+	startFn := func() error { return invocation.Invoke(di) }
 
 	for _, err := range common.StartGracefully(startFn, c.stop) {
 		c.Warn(err.Error())
@@ -60,16 +58,16 @@ func (c *Context) Invoke(cliCtx *cli.Context, invokable typdep.Invokable) (err e
 }
 
 // Container for dependency-injection
-func (c *Context) Container() *typdep.Container {
+func (c *Context) Container() *dig.Container {
 	if c.container == nil {
-		c.container = typdep.New()
+		c.container = dig.New()
 	}
 	return c.container
 }
 
 func (c *Context) stop() (err error) {
 	for _, destruction := range c.Destructions() {
-		if err = destruction.Invocation.Invoke(c.Container()); err != nil {
+		if err = destruction.Invoke(c.Container()); err != nil {
 			return
 		}
 	}

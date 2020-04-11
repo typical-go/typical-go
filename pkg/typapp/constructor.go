@@ -1,8 +1,6 @@
 package typapp
 
-import (
-	"github.com/typical-go/typical-go/pkg/typdep"
-)
+import "go.uber.org/dig"
 
 var (
 	global []*Constructor
@@ -12,16 +10,26 @@ var (
 	_ Provider = (*Constructor)(nil)
 )
 
-// Constructor to provide the dependency
+// Constructor details
 type Constructor struct {
-	*typdep.Constructor
+	fn interface{}
 }
 
-// NewConstructor return new instance of Constructor
+// NewConstructor return new instance of constructor
 func NewConstructor(fn interface{}) *Constructor {
 	return &Constructor{
-		Constructor: typdep.NewConstructor(fn),
+		fn: fn,
 	}
+}
+
+// Provide the constructor to dig container
+func (c *Constructor) Provide(di *dig.Container) (err error) {
+	return di.Provide(c.fn)
+}
+
+// Fn is function of constructor
+func (c *Constructor) Fn() interface{} {
+	return c.fn
 }
 
 // Constructors is list of constructor

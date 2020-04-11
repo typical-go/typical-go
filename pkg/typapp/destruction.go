@@ -1,8 +1,6 @@
 package typapp
 
-import (
-	"github.com/typical-go/typical-go/pkg/typdep"
-)
+import "go.uber.org/dig"
 
 var (
 	_ Destroyer = (*Destruction)(nil)
@@ -10,14 +8,19 @@ var (
 
 // Destruction is invocation to destroy dependency
 type Destruction struct {
-	*typdep.Invocation
+	fn interface{}
 }
 
 // NewDestruction return new instance of Destructor
 func NewDestruction(fn interface{}) *Destruction {
 	return &Destruction{
-		Invocation: typdep.NewInvocation(fn),
+		fn: fn,
 	}
+}
+
+// Invoke the invocation using dig container
+func (d *Destruction) Invoke(di *dig.Container) (err error) {
+	return di.Invoke(d.fn)
 }
 
 // Destructions return slice of destruction

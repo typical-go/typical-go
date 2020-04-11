@@ -14,19 +14,8 @@ func NewGreeter() *Greeter {
 ```go
 func init() {
 	typapp.AppendConstructor(
-		typdep.NewConstructor(helloworld.NewGreeter),
+		NewConstructor(helloworld.NewGreeter),
 	)
 }
 ```
 
-Create the invocation and function with config as its parameter
-```go
-// EntryPoint of application
-func (a *App) EntryPoint() *typdep.Invocation {
-	return typdep.NewInvocation(start)
-}
-
-func start(greeter *Greeter) {
-	greeter.Greet()
-}
-```

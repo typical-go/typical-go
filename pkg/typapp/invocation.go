@@ -1,8 +1,6 @@
-package typdep
+package typapp
 
-var (
-	_ Invokable = (*Invocation)(nil)
-)
+import "go.uber.org/dig"
 
 // Invocation detail
 type Invocation struct {
@@ -17,6 +15,6 @@ func NewInvocation(fn interface{}) *Invocation {
 }
 
 // Invoke the invocation using dig container
-func (i *Invocation) Invoke(di *Container) (err error) {
-	return di.container.Invoke(i.fn)
+func (i *Invocation) Invoke(di *dig.Container) (err error) {
+	return di.Invoke(i.fn)
 }
