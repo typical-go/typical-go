@@ -17,18 +17,17 @@ var (
 	_ typcore.App                 = (*App)(nil)
 	_ typbuildtool.Preconditioner = (*App)(nil)
 	_ typcfg.Configurer           = (*App)(nil)
-
-	_ Provider  = (*App)(nil)
-	_ Destroyer = (*App)(nil)
-	_ Preparer  = (*App)(nil)
-	_ Commander = (*App)(nil)
+	_ Provider                    = (*App)(nil)
+	_ Destroyer                   = (*App)(nil)
+	_ Preparer                    = (*App)(nil)
+	_ Commander                   = (*App)(nil)
 )
 
 // App is typical application model
 type App struct {
 	appSources []string
 	main       *typdep.Invocation
-	modules    []interface{}
+	imports    []interface{}
 
 	initFile string
 }
@@ -42,9 +41,9 @@ func EntryPoint(mainFn interface{}, appSource string, sources ...string) *App {
 	}
 }
 
-// Modules define the dependencies of application. Module should be implementation of Provider, Preparer (optional) and Destroyer (optional).
-func (a *App) Modules(modules ...interface{}) *App {
-	a.modules = modules
+// Imports either Provider, Preparer, Destroyer or Configurations
+func (a *App) Imports(imports ...interface{}) *App {
+	a.imports = imports
 	return a
 }
 
@@ -57,7 +56,7 @@ func (a *App) InitFile(initFile string) *App {
 // Constructors of app
 func (a *App) Constructors() (constructors []*Constructor) {
 	constructors = append(constructors, global...)
-	for _, module := range a.modules {
+	for _, module := range a.imports {
 		if provider, ok := module.(Provider); ok {
 			constructors = append(constructors, provider.Constructors()...)
 		}
@@ -67,7 +66,7 @@ func (a *App) Constructors() (constructors []*Constructor) {
 
 // Destructions of app
 func (a *App) Destructions() (destructors []*Destruction) {
-	for _, module := range a.modules {
+	for _, module := range a.imports {
 		if destroyer, ok := module.(Destroyer); ok {
 			destructors = append(destructors, destroyer.Destructions()...)
 		}
@@ -77,7 +76,7 @@ func (a *App) Destructions() (destructors []*Destruction) {
 
 // Preparations of app
 func (a *App) Preparations() (preparations []*Preparation) {
-	for _, module := range a.modules {
+	for _, module := range a.imports {
 		if preparer, ok := module.(Preparer); ok {
 			preparations = append(preparations, preparer.Preparations()...)
 		}
@@ -87,7 +86,7 @@ func (a *App) Preparations() (preparations []*Preparation) {
 
 // Commands to return commands
 func (a *App) Commands(c *Context) (cmds []*cli.Command) {
-	for _, module := range a.modules {
+	for _, module := range a.imports {
 		if commander, ok := module.(Commander); ok {
 			cmds = append(cmds, commander.Commands(c)...)
 		}
@@ -97,7 +96,7 @@ func (a *App) Commands(c *Context) (cmds []*cli.Command) {
 
 // Configurations of app
 func (a *App) Configurations() (cfgs []*typcfg.Configuration) {
-	for _, module := range a.modules {
+	for _, module := range a.imports {
 		if c, ok := module.(typcfg.Configurer); ok {
 			cfgs = append(cfgs, c.Configurations()...)
 		}

@@ -12,7 +12,7 @@ func TestProvide(t *testing.T) {
 	c1 := typapp.NewConstructor(nil)
 	c2 := typapp.NewConstructor(nil)
 	c3 := typapp.NewConstructor(nil)
-	app := typapp.EntryPoint(nil, "").Modules(c1, c2)
+	app := typapp.EntryPoint(nil, "").Imports(c1, c2)
 	typapp.AppendConstructor(c3)
 
 	require.EqualValues(t,
@@ -25,7 +25,7 @@ func TestDestoy(t *testing.T) {
 	i1 := typapp.NewDestruction(nil)
 	i2 := typapp.NewDestruction(nil)
 	i3 := typapp.NewDestruction(nil)
-	app := typapp.EntryPoint(nil, "").Modules(i1, i2, i3)
+	app := typapp.EntryPoint(nil, "").Imports(i1, i2, i3)
 
 	require.EqualValues(t,
 		[]*typapp.Destruction{i1, i2, i3},
@@ -37,7 +37,7 @@ func TestPrepare(t *testing.T) {
 	i1 := typapp.NewPreparation(nil)
 	i2 := typapp.NewPreparation(nil)
 	i3 := typapp.NewPreparation(nil)
-	app := typapp.EntryPoint(nil, "").Modules(i1, i2, i3)
+	app := typapp.EntryPoint(nil, "").Imports(i1, i2, i3)
 
 	require.EqualValues(t,
 		[]*typapp.Preparation{i1, i2, i3},
