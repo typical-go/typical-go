@@ -51,7 +51,7 @@ func (c *Context) Invoke(cliCtx *cli.Context, invocation *Invocation) (err error
 
 	startFn := func() error { return invocation.Invoke(di) }
 
-	for _, err := range common.StartGracefully(startFn, c.stop) {
+	for _, err := range common.StartGracefuly(startFn, c.stop) {
 		c.Warn(err.Error())
 	}
 	return

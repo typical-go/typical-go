@@ -22,9 +22,11 @@ func (a *App) Precondition(c *typbuildtool.BuildContext) (err error) {
 }
 
 func (a *App) generateConstructor(c *typbuildtool.BuildContext, filename string) (err error) {
-	ctx := c.Cli.Context
-	imports := []string{}
-	constructors := []string{}
+	var (
+		pkgs         []string
+		constructors []string
+		ctx          = c.Cli.Context
+	)
 
 	if constructors, err = walkForConstructor(c); err != nil {
 		return
@@ -36,12 +38,12 @@ func (a *App) generateConstructor(c *typbuildtool.BuildContext, filename string)
 
 	for _, dir := range c.AppDirs {
 		if !strings.Contains(dir, "internal") {
-			imports = append(imports, fmt.Sprintf("%s/%s", c.ProjectPkg, dir))
+			pkgs = append(pkgs, fmt.Sprintf("%s/%s", c.ProjectPkg, dir))
 		}
 	}
 
 	if err = typfactory.WriteFile(filename, 0777, &typfactory.InitialApp{
-		Imports:      imports,
+		Imports:      pkgs,
 		Constructors: constructors,
 	}); err != nil {
 		return

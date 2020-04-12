@@ -11,7 +11,7 @@ type Utility interface {
 	Commands(c *Context) []*cli.Command
 }
 
-// Builder reponsible to build
+// Builder responsible to build
 type Builder interface {
 	Build(c *BuildContext) (dists []BuildDistribution, err error)
 }
@@ -36,7 +36,7 @@ type Releaser interface {
 	Release(*ReleaseContext) (files []string, err error)
 }
 
-// Publisher reponsible to publish the release to external source
+// Publisher responsible to publish the release to external source
 type Publisher interface {
 	Publish(*PublishContext) error
 }

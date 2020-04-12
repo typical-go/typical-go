@@ -2,6 +2,7 @@
 
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 ![Go-Workflow](https://github.com/typical-go/typical-go/workflows/Go/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/typical-go/typical-go)](https://goreportcard.com/report/github.com/typical-go/typical-go)
 
 A Build Tool (+ Framework) for Golang. <https://typical-go.github.io/>
 

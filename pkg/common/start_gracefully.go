@@ -6,8 +6,8 @@ import (
 	"syscall"
 )
 
-// StartGracefully to start function with itts gracefull stop
-func StartGracefully(startFn func() error, stopFn func() error) (errs Errors) {
+// StartGracefuly to start function with itts graceful stop
+func StartGracefuly(startFn func() error, stopFn func() error) (errs Errors) {
 	gracefulStop := make(chan os.Signal)
 	signal.Notify(gracefulStop, syscall.SIGTERM)
 	signal.Notify(gracefulStop, syscall.SIGINT)

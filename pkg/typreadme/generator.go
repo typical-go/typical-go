@@ -13,7 +13,7 @@ const (
 	// DefaultTargetFile is default target file for readme
 	DefaultTargetFile = "README.md"
 
-	// DefaultTemplateFile is default tempalte file for readme
+	// DefaultTemplateFile is default template file for readme
 	DefaultTemplateFile = "README.tmpl"
 )
 
