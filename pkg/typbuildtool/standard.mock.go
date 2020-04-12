@@ -8,7 +8,7 @@ import (
 )
 
 // Mock the project
-func (b *StandardModule) Mock(c *BuildContext) (err error) {
+func (b *StdBuild) Mock(c *BuildContext) (err error) {
 	ctx := c.Cli.Context
 	store := NewMockStore()
 	if err = c.Ast().EachAnnotation("mock", typast.InterfaceType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {

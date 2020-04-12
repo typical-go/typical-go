@@ -11,7 +11,7 @@ import (
 )
 
 // Run the project locally
-func (b *StandardModule) Run(c *BuildContext) (err error) {
+func (b *StdBuild) Run(c *BuildContext) (err error) {
 	c.Info("Standard-Build: Build the project")
 	binary := fmt.Sprintf("%s/%s", c.binFolder, c.Name)
 	srcDir := fmt.Sprintf("%s/%s", c.cmdFolder, c.Name)

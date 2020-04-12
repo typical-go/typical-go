@@ -9,12 +9,12 @@ import (
 
 func TestValidate(t *testing.T) {
 	testcases := []struct {
-		*typbuildtool.StandardModule
+		*typbuildtool.StdBuild
 		expected string
 	}{
 		{
-			StandardModule: typbuildtool.StandardBuild().WithReleaseTargets("invalid-target"),
-			expected:       "Target: Missing OS: Please make sure 'invalid-target' using 'OS/ARCH' format",
+			StdBuild: typbuildtool.StandardBuild().WithReleaseTargets("invalid-target"),
+			expected: "Target: Missing OS: Please make sure 'invalid-target' using 'OS/ARCH' format",
 		},
 	}
 	for i, tt := range testcases {

@@ -7,7 +7,7 @@ import (
 )
 
 // Test the project
-func (b *StandardModule) Test(c *BuildContext) (err error) {
+func (b *StdBuild) Test(c *BuildContext) (err error) {
 	c.Info("Standard-Build: Test the project")
 	var targets []string
 	for _, source := range c.AppSources {

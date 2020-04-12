@@ -8,8 +8,7 @@ import (
 )
 
 // Release this project
-func (b *StandardModule) Release(c *ReleaseContext) (files []string, err error) {
-
+func (b *StdBuild) Release(c *ReleaseContext) (files []string, err error) {
 	for _, target := range b.releaseTargets {
 		c.Infof("Build release for %s", target)
 		var binary string
@@ -23,7 +22,7 @@ func (b *StandardModule) Release(c *ReleaseContext) (files []string, err error) 
 	return
 }
 
-func (b *StandardModule) build(c *BuildContext, tag string, target ReleaseTarget) (binary string, err error) {
+func (b *StdBuild) build(c *BuildContext, tag string, target ReleaseTarget) (binary string, err error) {
 	ctx := c.Cli.Context
 	goos := target.OS()
 	goarch := target.Arch()

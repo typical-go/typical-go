@@ -10,15 +10,15 @@ import (
 )
 
 var (
-	_ Cleaner  = (*StandardModule)(nil)
-	_ Tester   = (*StandardModule)(nil)
-	_ Releaser = (*StandardModule)(nil)
-	_ Utility  = (*StandardModule)(nil)
-	_ Runner   = (*StandardModule)(nil)
+	_ Cleaner  = (*StdBuild)(nil)
+	_ Tester   = (*StdBuild)(nil)
+	_ Releaser = (*StdBuild)(nil)
+	_ Utility  = (*StdBuild)(nil)
+	_ Runner   = (*StdBuild)(nil)
 )
 
-// StandardModule is standard build module for go project
-type StandardModule struct {
+// StdBuild is standard build module for go project
+type StdBuild struct {
 	stdout         io.Writer
 	stderr         io.Writer
 	stdin          io.Reader
@@ -30,8 +30,8 @@ type StandardModule struct {
 }
 
 // StandardBuild return new instance of Module
-func StandardBuild() *StandardModule {
-	return &StandardModule{
+func StandardBuild() *StdBuild {
+	return &StdBuild{
 		stdout:        os.Stdout,
 		stderr:        os.Stderr,
 		stdin:         os.Stdin,
@@ -42,49 +42,49 @@ func StandardBuild() *StandardModule {
 }
 
 // WithStdout return StandardModule with new stdout
-func (b *StandardModule) WithStdout(stdout io.Writer) *StandardModule {
+func (b *StdBuild) WithStdout(stdout io.Writer) *StdBuild {
 	b.stdout = stdout
 	return b
 }
 
 // WithStderr return StandardModule with new stderr
-func (b *StandardModule) WithStderr(stderr io.Writer) *StandardModule {
+func (b *StdBuild) WithStderr(stderr io.Writer) *StdBuild {
 	b.stderr = stderr
 	return b
 }
 
 // WithStdin return StandardModule with new stderr
-func (b *StandardModule) WithStdin(stdin io.Reader) *StandardModule {
+func (b *StdBuild) WithStdin(stdin io.Reader) *StdBuild {
 	b.stdin = stdin
 	return b
 }
 
 // WithCoverProfile return StandardModule with new cover profile
-func (b *StandardModule) WithCoverProfile(coverProfile string) *StandardModule {
+func (b *StdBuild) WithCoverProfile(coverProfile string) *StdBuild {
 	b.coverProfile = coverProfile
 	return b
 }
 
 // WithReleaseTargets return StandardModule with new releaseTarget
-func (b *StandardModule) WithReleaseTargets(releaseTargets ...ReleaseTarget) *StandardModule {
+func (b *StdBuild) WithReleaseTargets(releaseTargets ...ReleaseTarget) *StdBuild {
 	b.releaseTargets = releaseTargets
 	return b
 }
 
 // WithReleaseFolder return StandardModule with new release folder
-func (b *StandardModule) WithReleaseFolder(releaseFolder string) *StandardModule {
+func (b *StdBuild) WithReleaseFolder(releaseFolder string) *StdBuild {
 	b.releaseFolder = releaseFolder
 	return b
 }
 
 // WithTestTimeout return StandardModule with new testTimeout
-func (b *StandardModule) WithTestTimeout(testTimeout time.Duration) *StandardModule {
+func (b *StdBuild) WithTestTimeout(testTimeout time.Duration) *StdBuild {
 	b.testTimeout = testTimeout
 	return b
 }
 
 // Validate the releaser
-func (b *StandardModule) Validate() (err error) {
+func (b *StdBuild) Validate() (err error) {
 	for _, target := range b.releaseTargets {
 		if err = target.Validate(); err != nil {
 			return fmt.Errorf("Target: %w", err)
@@ -94,7 +94,7 @@ func (b *StandardModule) Validate() (err error) {
 }
 
 // Commands of build-tool
-func (b *StandardModule) Commands(c *Context) []*cli.Command {
+func (b *StdBuild) Commands(c *Context) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:  "mock",
