@@ -16,7 +16,7 @@ type Preparer interface {
 
 // Destroyer responsible to destroy the dependency [mock]
 type Destroyer interface {
-	Destructions() []*Destruction
+	Destructors() []*Destructor
 }
 
 // Commander responsible to return commands for App

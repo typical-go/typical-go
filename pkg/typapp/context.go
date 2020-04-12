@@ -66,8 +66,8 @@ func (c *Context) Container() *dig.Container {
 }
 
 func (c *Context) stop() (err error) {
-	for _, destruction := range c.Destructions() {
-		if err = destruction.Invoke(c.Container()); err != nil {
+	for _, destructor := range c.Destructors() {
+		if err = destructor.Invoke(c.Container()); err != nil {
 			return
 		}
 	}

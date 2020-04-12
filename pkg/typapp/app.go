@@ -63,11 +63,11 @@ func (a *App) Constructors() (constructors []*Constructor) {
 	return
 }
 
-// Destructions of app
-func (a *App) Destructions() (destructors []*Destruction) {
+// Destructors of app
+func (a *App) Destructors() (destructors []*Destructor) {
 	for _, module := range a.imports {
 		if destroyer, ok := module.(Destroyer); ok {
-			destructors = append(destructors, destroyer.Destructions()...)
+			destructors = append(destructors, destroyer.Destructors()...)
 		}
 	}
 	return

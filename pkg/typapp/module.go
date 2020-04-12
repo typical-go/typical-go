@@ -65,10 +65,10 @@ func (m *Module) Constructors() (constructions []*Constructor) {
 	return
 }
 
-// Destructions of the module
-func (m *Module) Destructions() (destructions []*Destruction) {
+// Destructors of the module
+func (m *Module) Destructors() (destructions []*Destructor) {
 	for _, destroyer := range m.destroyers {
-		destructions = append(destructions, destroyer.Destructions()...)
+		destructions = append(destructions, destroyer.Destructors()...)
 	}
 	return
 }

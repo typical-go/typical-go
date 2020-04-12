@@ -22,14 +22,14 @@ func TestProvide(t *testing.T) {
 }
 
 func TestDestoy(t *testing.T) {
-	i1 := typapp.NewDestruction(nil)
-	i2 := typapp.NewDestruction(nil)
-	i3 := typapp.NewDestruction(nil)
+	i1 := typapp.NewDestructor(nil)
+	i2 := typapp.NewDestructor(nil)
+	i3 := typapp.NewDestructor(nil)
 	app := typapp.EntryPoint(nil, "").Imports(i1, i2, i3)
 
 	require.EqualValues(t,
-		[]*typapp.Destruction{i1, i2, i3},
-		app.Destructions(),
+		[]*typapp.Destructor{i1, i2, i3},
+		app.Destructors(),
 	)
 }
 

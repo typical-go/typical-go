@@ -14,7 +14,7 @@ func TestNewModule(t *testing.T) {
 	cmd := &cli.Command{}
 	preparation := typapp.NewPreparation(nil)
 	constructor := typapp.NewConstructor(nil)
-	destruction := typapp.NewDestruction(nil)
+	destructor := typapp.NewDestructor(nil)
 	configuration := typcfg.NewConfiguration("", nil)
 
 	mod := typapp.NewModule().
@@ -22,13 +22,13 @@ func TestNewModule(t *testing.T) {
 			return []*cli.Command{cmd}
 		})).
 		Prepare(preparation).
-		Destroy(destruction).
+		Destroy(destructor).
 		Provide(constructor).
 		Configure(configuration)
 
 	require.Equal(t, []*cli.Command{cmd}, mod.Commands(nil))
 	require.Equal(t, []*typapp.Preparation{preparation}, mod.Preparations())
 	require.Equal(t, []*typapp.Constructor{constructor}, mod.Constructors())
-	require.Equal(t, []*typapp.Destruction{destruction}, mod.Destructions())
+	require.Equal(t, []*typapp.Destructor{destructor}, mod.Destructors())
 	require.Equal(t, []*typcfg.Configuration{configuration}, mod.Configurations())
 }
