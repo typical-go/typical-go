@@ -15,18 +15,9 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 
 	cmds = []*cli.Command{
 		{
-			Name:    "build",
-			Aliases: []string{"b"},
-			Usage:   "Build the binary",
-			Action: func(cliCtx *cli.Context) (err error) {
-				_, err = b.Build(c.BuildContext(cliCtx))
-				return
-			},
-		},
-		{
 			Name:    "test",
 			Aliases: []string{"t"},
-			Usage:   "Run the testing",
+			Usage:   "Test the project",
 			Action: func(cliCtx *cli.Context) error {
 				return b.Test(c.BuildContext(cliCtx))
 			},
@@ -34,35 +25,23 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 		{
 			Name:            "run",
 			Aliases:         []string{"r"},
-			Usage:           "Run the binary",
+			Usage:           "Run the project in local environment",
 			SkipFlagParsing: true,
 			Action: func(cliCtx *cli.Context) (err error) {
-				var (
-					dists []BuildDistribution
-					bc    = c.BuildContext(cliCtx)
-				)
-				if dists, err = b.Build(bc); err != nil {
-					return
-				}
-				for _, dist := range dists {
-					if err = dist.Run(bc); err != nil {
-						return
-					}
-				}
-				return
+				return b.Run(c.BuildContext(cliCtx))
 			},
 		},
 		{
 			Name:    "clean",
 			Aliases: []string{"c"},
-			Usage:   "Clean the project from generated file during build time",
+			Usage:   "Clean the project",
 			Action: func(cliCtx *cli.Context) (err error) {
 				return b.Clean(c.BuildContext(cliCtx))
 			},
 		},
 		{
 			Name:  "release",
-			Usage: "Release the distribution",
+			Usage: "Create project release",
 			Flags: []cli.Flag{
 				&cli.BoolFlag{Name: "no-test", Usage: "Release without run unit test"},
 				&cli.BoolFlag{Name: "no-publish", Usage: "Release without create github release"},

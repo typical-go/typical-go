@@ -11,11 +11,6 @@ type Utility interface {
 	Commands(c *Context) []*cli.Command
 }
 
-// Builder responsible to build
-type Builder interface {
-	Build(c *BuildContext) (dists []BuildDistribution, err error)
-}
-
 // Cleaner responsible to clean the project
 type Cleaner interface {
 	Clean(*BuildContext) error
@@ -24,11 +19,6 @@ type Cleaner interface {
 // Tester responsible to test the project
 type Tester interface {
 	Test(*BuildContext) error
-}
-
-// BuildDistribution is build distribution
-type BuildDistribution interface {
-	Run(*BuildContext) error
 }
 
 // Releaser responsible to release
@@ -44,6 +34,11 @@ type Publisher interface {
 // Preconditioner responsible to precondition
 type Preconditioner interface {
 	Precondition(c *BuildContext) error
+}
+
+// Runner responsible to run the project in local environment
+type Runner interface {
+	Run(c *BuildContext) error
 }
 
 // Context of buildtool

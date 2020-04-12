@@ -10,11 +10,11 @@ import (
 )
 
 var (
-	_ Builder  = (*StandardModule)(nil)
 	_ Cleaner  = (*StandardModule)(nil)
 	_ Tester   = (*StandardModule)(nil)
 	_ Releaser = (*StandardModule)(nil)
 	_ Utility  = (*StandardModule)(nil)
+	_ Runner   = (*StandardModule)(nil)
 )
 
 // StandardModule is standard build module for go project

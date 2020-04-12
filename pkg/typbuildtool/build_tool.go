@@ -15,7 +15,7 @@ var (
 	_ typcfg.Configurer = (*BuildTool)(nil)
 
 	_ Utility        = (*BuildTool)(nil)
-	_ Builder        = (*BuildTool)(nil)
+	_ Runner         = (*BuildTool)(nil)
 	_ Tester         = (*BuildTool)(nil)
 	_ Cleaner        = (*BuildTool)(nil)
 	_ Releaser       = (*BuildTool)(nil)
@@ -100,15 +100,13 @@ func (b *BuildTool) Validate() (err error) {
 	return
 }
 
-// Build task
-func (b *BuildTool) Build(c *BuildContext) (dists []BuildDistribution, err error) {
+// Run task
+func (b *BuildTool) Run(c *BuildContext) (err error) {
 	for _, module := range b.buildSequences {
-		if builder, ok := module.(Builder); ok {
-			var dists1 []BuildDistribution
-			if dists1, err = builder.Build(c); err != nil {
+		if runner, ok := module.(Runner); ok {
+			if err = runner.Run(c); err != nil {
 				return
 			}
-			dists = append(dists, dists1...)
 		}
 	}
 	return

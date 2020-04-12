@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	_ typbuildtool.Builder = (*ReactDemoModule)(nil)
+	_ typbuildtool.Runner  = (*ReactDemoModule)(nil)
 	_ typbuildtool.Cleaner = (*ReactDemoModule)(nil)
 )
 
@@ -17,8 +17,8 @@ type ReactDemoModule struct {
 	source string
 }
 
-// Build the react-demo
-func (m *ReactDemoModule) Build(c *typbuildtool.BuildContext) (dists []typbuildtool.BuildDistribution, err error) {
+// Run the react-demo
+func (m *ReactDemoModule) Run(c *typbuildtool.BuildContext) (err error) {
 	c.Info("Build react-demo")
 	err = buildkit.NewCommand("npm", "run", "build").
 		WithDir(m.source).
