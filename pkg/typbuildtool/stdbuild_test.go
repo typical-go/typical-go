@@ -7,7 +7,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 )
 
-func TestValidate(t *testing.T) {
+func TestStdBuild_Validate(t *testing.T) {
 	testcases := []struct {
 		*typbuildtool.StdBuild
 		expected string

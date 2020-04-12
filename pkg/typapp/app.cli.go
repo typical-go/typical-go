@@ -8,13 +8,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// RunApp to run the applciation
-func (a *App) RunApp(d *typcore.Descriptor) (err error) {
-	return a.App(d).Run(os.Args)
-}
-
 // App is the cli app
-func (a *App) App(d *typcore.Descriptor) *cli.App {
+func (a *App) cli(d *typcore.Descriptor) *cli.App {
 	c := &Context{
 		Descriptor: d,
 		App:        a,
@@ -34,4 +29,9 @@ func (a *App) App(d *typcore.Descriptor) *cli.App {
 	app.Action = c.ActionFunc(a.main)
 	app.Commands = a.Commands(c)
 	return app
+}
+
+// RunApp to run the applciation
+func (a *App) RunApp(d *typcore.Descriptor) (err error) {
+	return a.cli(d).Run(os.Args)
 }

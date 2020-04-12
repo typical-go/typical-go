@@ -3,11 +3,11 @@ package typbuildtool
 import (
 	"errors"
 	"fmt"
-	"os"
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/urfave/cli/v2"
 )
 
 var (
@@ -100,87 +100,23 @@ func (b *BuildTool) Validate() (err error) {
 	return
 }
 
-// Run task
-func (b *BuildTool) Run(c *BuildContext) (err error) {
+// Commands to return command
+func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
+	cmds = []*cli.Command{
+		b.cmdTest(c),
+		b.cmdRun(c),
+		b.cmdClean(c),
+		b.cmdPublish(c),
+	}
+
 	for _, module := range b.buildSequences {
-		if runner, ok := module.(Runner); ok {
-			if err = runner.Run(c); err != nil {
-				return
-			}
-		}
-	}
-	return
-}
-
-// Publish the project
-func (b *BuildTool) Publish(pc *PublishContext) (err error) {
-	for _, module := range b.buildSequences {
-		if publisher, ok := module.(Publisher); ok {
-			if err = publisher.Publish(pc); err != nil {
-				return
-			}
-		}
-	}
-	return
-}
-
-// Release the project
-func (b *BuildTool) Release(rc *ReleaseContext) (files []string, err error) {
-	for _, module := range b.buildSequences {
-		if releaser, ok := module.(Releaser); ok {
-			var files1 []string
-			if files1, err = releaser.Release(rc); err != nil {
-				return
-			}
-			files = append(files, files1...)
-		}
-	}
-	return
-}
-
-// Clean the project
-func (b *BuildTool) Clean(c *BuildContext) (err error) {
-	for _, module := range b.buildSequences {
-		if cleaner, ok := module.(Cleaner); ok {
-			if err = cleaner.Clean(c); err != nil {
-				return
-			}
+		if utility, ok := module.(Utility); ok {
+			cmds = append(cmds, utility.Commands(c)...)
 		}
 	}
 
-	c.Infof("Remove All: %s", c.TypicalTmp)
-	if err := os.RemoveAll(c.TypicalTmp); err != nil {
-		c.Warn(err.Error())
+	for _, task := range b.utilities {
+		cmds = append(cmds, task.Commands(c)...)
 	}
-
-	return
-}
-
-// Test the project
-func (b *BuildTool) Test(c *BuildContext) (err error) {
-	for _, module := range b.buildSequences {
-		if tester, ok := module.(Tester); ok {
-			if err = tester.Test(c); err != nil {
-				return
-			}
-		}
-	}
-	return
-}
-
-// Configurations of Build-Tool
-func (b *BuildTool) Configurations() (cfgs []*typcfg.Configuration) {
-	for _, module := range b.buildSequences {
-		if configurer, ok := module.(typcfg.Configurer); ok {
-			cfgs = append(cfgs, configurer.Configurations()...)
-		}
-	}
-
-	for _, utility := range b.utilities {
-		if configurer, ok := utility.(typcfg.Configurer); ok {
-			cfgs = append(cfgs, configurer.Configurations()...)
-		}
-	}
-
-	return
+	return cmds
 }

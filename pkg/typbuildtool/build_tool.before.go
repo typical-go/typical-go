@@ -43,3 +43,20 @@ func (b *BuildTool) Precondition(c *BuildContext) (err error) {
 
 	return
 }
+
+// Configurations of Build-Tool
+func (b *BuildTool) Configurations() (cfgs []*typcfg.Configuration) {
+	for _, module := range b.buildSequences {
+		if configurer, ok := module.(typcfg.Configurer); ok {
+			cfgs = append(cfgs, configurer.Configurations()...)
+		}
+	}
+
+	for _, utility := range b.utilities {
+		if configurer, ok := utility.(typcfg.Configurer); ok {
+			cfgs = append(cfgs, configurer.Configurations()...)
+		}
+	}
+
+	return
+}

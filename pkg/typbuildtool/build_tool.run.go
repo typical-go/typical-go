@@ -1,31 +1,27 @@
 package typbuildtool
 
-import (
-	"os"
+import "github.com/urfave/cli/v2"
 
-	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/urfave/cli/v2"
-)
-
-// RunBuildTool to run the build-tool
-func (b *BuildTool) RunBuildTool(tc *typcore.Context) (err error) {
-	c := b.context(tc)
-
-	app := cli.NewApp()
-	app.Name = c.Name
-	app.Usage = "Build-Tool"
-	app.Description = c.Description
-
-	app.Before = b.before(c)
-	app.Version = c.Version
-	app.Commands = b.Commands(c)
-
-	return app.Run(os.Args)
+func (b *BuildTool) cmdRun(c *Context) *cli.Command {
+	return &cli.Command{
+		Name:            "run",
+		Aliases:         []string{"r"},
+		Usage:           "Run the project in local environment",
+		SkipFlagParsing: true,
+		Action: func(cliCtx *cli.Context) (err error) {
+			return b.Run(c.BuildContext(cliCtx))
+		},
+	}
 }
 
-func (b *BuildTool) context(tc *typcore.Context) *Context {
-	return &Context{
-		Context:   tc,
-		BuildTool: b,
+// Run task
+func (b *BuildTool) Run(c *BuildContext) (err error) {
+	for _, module := range b.buildSequences {
+		if runner, ok := module.(Runner); ok {
+			if err = runner.Run(c); err != nil {
+				return
+			}
+		}
 	}
+	return
 }

@@ -31,7 +31,7 @@ type StdBuild struct {
 
 // StandardBuild return new instance of Module
 func StandardBuild() *StdBuild {
-	return &StdBuild{
+	instance := &StdBuild{
 		stdout:        os.Stdout,
 		stderr:        os.Stderr,
 		stdin:         os.Stdin,
@@ -39,6 +39,8 @@ func StandardBuild() *StdBuild {
 		releaseFolder: "release",
 		testTimeout:   20 * time.Second,
 	}
+
+	return instance
 }
 
 // WithStdout return StandardModule with new stdout
