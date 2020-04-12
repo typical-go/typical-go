@@ -54,11 +54,26 @@ var Descriptor = typcore.Descriptor{
 }
 ```
 
-- `BuildTool` is definition of build-tool for the project. Use `./typicalw` to run the build-tool
-- `App` is definition of the application. Use `./typicalw run` to run the application
+### Application
+
+`App` is definition of the application. Based on this definition, `./typicalw run` run the application.
+
+`typapp` package is common golang application gear with dependency-injection and configuration. 
+- `EntryPoint` contain main function and source folder. 
+- `Imports` to put configurations, constructor, destructor or preparation into the application
+
+You can make your own application implementation by implmenent `typcore.App` interface
+
+### Build Tool
+
+`BuildTool` is definition of build-tool. Based on this definition, `./typicalw` run the build-tool
+
+`typbuildtool` package is common build-tool with build-sequence and utilities.
+- `BuildSequence` is sequence of build process (check [Build Life-Cycle](#build-life-cycle) section)
+- `Utilities` custom task for development
 
 
-## Build-Tool Wrapper
+## Wrapper
 
 `typicalw` is your best friend. It will download, compile and run the actual build-tool for your day-to-day development.
 
@@ -80,11 +95,10 @@ DESCRIPTION:
    Example of typical and scalable RESTful API Server for Go
 
 COMMANDS:
-   build, b      Build the binary
-   test, t       Run the testing
-   run, r        Run the binary
-   clean, c      Clean the project from generated file during build time
-   release       Release the distribution
+   test, t          Test the project
+   run, r           Run the project in local environment
+   publish, p       Publish the project
+   clean, c         Clean the project
    mock          Generate mock class
    postgres, pg  Postgres Utility
    redis         Redis utility
@@ -96,11 +110,62 @@ GLOBAL OPTIONS:
    --version, -v  print the version (default: false)
 ```
 
+## Build Life-Cycle
+
+Each build-sequence contain either precondition, run, test, release or publish. 
+
+```
+     +------------------------+          
+     |      Precondition      |          
+     +------------------------+          
+          /              \               
+         /                \              
+        /                  \             
++-------------+             \            
+|     Run     |              \           
++-------------+       +-----------------+
+                      |      Test       |
+                      +-----------------+
+                               |         
+                               |         
+                      +-----------------+
+                      |     Release     |
+                      +-----------------+
+                               |         
+                               |         
+                      +-----------------+
+                      |     Publish     |
+                      +-----------------+
+```
+
+### Precondition 
+
+Setup the project, most likely generate file that required for application.  `./typicalw`
+
+### Run
+
+Run the project for local environment. `./typicalw run` 
+
+### Test
+
+Test the project. `./typicalw test`
+
+### Release
+
+Create project release/destribution. Execute before publish the project
+
+### Publish
+
+Publish the project. `./typicalw publish` 
+
+
 ## Typical Tmp
 
 Typical-tmp is an important folder that contains the build-tool mechanisms. By default, it is located in `.typical-tmp` and can be changed by hacking/editing the `typicalw` script.
 
 Since the typical-go project is still undergoing development, maybe there is some breaking change and deleting typical-tmp can solve the issue since it will be healed by itself.
+
+
 
 ## Examples
 

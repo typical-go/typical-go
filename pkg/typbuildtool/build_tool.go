@@ -105,8 +105,8 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 	cmds = []*cli.Command{
 		b.cmdTest(c),
 		b.cmdRun(c),
-		b.cmdClean(c),
 		b.cmdPublish(c),
+		b.cmdClean(c),
 	}
 
 	for _, module := range b.buildSequences {
