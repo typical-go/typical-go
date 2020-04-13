@@ -55,9 +55,9 @@ var Descriptor = typcore.Descriptor{
 }
 ```
 
-### Application
+## Application
 
-`App` is definition of the application. Based on this definition, `./typicalw run` run the application.
+`App` in descriptor define the application. `./typicalw run` run the application based on this.
 
 `typapp` package is common golang application gear with dependency-injection and configuration. 
 - `EntryPoint` contain main function and source folder. 
@@ -65,9 +65,9 @@ var Descriptor = typcore.Descriptor{
 
 You can make your own application implementation by implmenent `typcore.App` interface
 
-### Build Tool
+## Build Tool
 
-`BuildTool` is definition of build-tool. Based on this definition, `./typicalw` run the build-tool
+`BuildTool` in descriptor define the build-tool. `./typicalw` run the build-tool based on this.
 
 `typbuildtool` package is common build-tool with build-sequence and utilities.
 - `BuildSequence` is sequence of build process (check [Build Life-Cycle](#build-life-cycle) section)
@@ -116,48 +116,34 @@ GLOBAL OPTIONS:
 Each build-sequence contain either precondition, run, test, release or publish. 
 
 ```
-     +------------------------+          
-     |      Precondition      |          
-     +------------------------+          
-          /              \               
-         /                \              
-        /                  \             
-+-------------+             \            
-|     Run     |              \           
-+-------------+       +-----------------+
-                      |      Test       |
-                      +-----------------+
-                               |         
-                               |         
-                      +-----------------+
-                      |     Release     |
-                      +-----------------+
-                               |         
-                               |         
-                      +-----------------+
-                      |     Publish     |
-                      +-----------------+
+        +--------------------+       
+        |    Precondition    |       
+        +--------------------+       
+            /            \           
+           /              \          
+          /                \         
+         /         +----------------+
+        /          |      Test      |
++-------------+    +----------------+
+|     Run     |             |        
++-------------+             |        
+                   +----------------+
+                   |     Release    |
+                   +----------------+
+                            |        
+                            |        
+                   +----------------+
+                   |     Publish    |
+                   +----------------+
 ```
 
-### Precondition 
-
-Setup the project, most likely generate file that required for application.  `./typicalw`
-
-### Run
-
-Run the project for local environment. `./typicalw run` 
-
-### Test
-
-Test the project. `./typicalw test`
-
-### Release
-
-Create project release/destribution. Execute before publish the project
-
-### Publish
-
-Publish the project. `./typicalw publish` 
+| # | Phase | Description | Command | 
+|---|-------|-------------|---------|
+| 1 | Precondition | Setup the project; most likely generate file that required for application | `./typicalw` |
+| 2 | Test |  Test the project | `./typicalw test` |
+| 3 | Run | Run the project for local environment | `./typicalw run` |
+| 4 | Release | Execute before publish the project | n/a |
+| 5 | Publish | Publish the project | `./typicalw publish`  |
 
 
 ## Typical Tmp
