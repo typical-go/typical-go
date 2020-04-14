@@ -59,7 +59,7 @@ var Descriptor = typcore.Descriptor{
 
 `App` in descriptor define the application. `./typicalw run` run the application based on this.
 
-`typapp` package is common golang application gear with dependency-injection and configuration. 
+`typapp` package is common golang application geared with dependency-injection and configuration. 
 - `EntryPoint` contain main function and source folder. 
 - `Imports` to put configurations, constructor, destructor or preparation into the application
 
@@ -72,6 +72,41 @@ You can make your own application implementation by implmenent `typcore.App` int
 `typbuildtool` package is common build-tool with build-sequence and utilities.
 - `BuildSequence` is sequence of build process (check [Build Life-Cycle](#build-life-cycle) section)
 - `Utilities` custom task for development
+
+## Build Life-Cycle
+
+Each build-sequence contain either precondition, run, test, release or publish. 
+
+```
+        +--------------------+       
+        |    Precondition    |       
+        +--------------------+       
+            /            \           
+           /              \          
+          /                \         
+         /         +----------------+
+        /          |      Test      |
++-------------+    +----------------+
+|     Run     |             |        
++-------------+             |        
+                   +----------------+
+                   |     Release    |
+                   +----------------+
+                            |        
+                            |        
+                   +----------------+
+                   |     Publish    |
+                   +----------------+
+```
+
+| # | Phase | Description | Command | 
+|---|-------|-------------|---------|
+| 1 | Precondition | Setup the project; most likely generate file that required for application | `./typicalw` |
+| 2 | Test |  Test the project | `./typicalw test` |
+| 3 | Run | Run the project for local environment | `./typicalw run` |
+| 4 | Release | Execute before publish the project | n/a |
+| 5 | Publish | Publish the project | `./typicalw publish`  |
+
 
 
 ## Wrapper
@@ -111,47 +146,12 @@ GLOBAL OPTIONS:
    --version, -v  print the version (default: false)
 ```
 
-## Build Life-Cycle
-
-Each build-sequence contain either precondition, run, test, release or publish. 
-
-```
-        +--------------------+       
-        |    Precondition    |       
-        +--------------------+       
-            /            \           
-           /              \          
-          /                \         
-         /         +----------------+
-        /          |      Test      |
-+-------------+    +----------------+
-|     Run     |             |        
-+-------------+             |        
-                   +----------------+
-                   |     Release    |
-                   +----------------+
-                            |        
-                            |        
-                   +----------------+
-                   |     Publish    |
-                   +----------------+
-```
-
-| # | Phase | Description | Command | 
-|---|-------|-------------|---------|
-| 1 | Precondition | Setup the project; most likely generate file that required for application | `./typicalw` |
-| 2 | Test |  Test the project | `./typicalw test` |
-| 3 | Run | Run the project for local environment | `./typicalw run` |
-| 4 | Release | Execute before publish the project | n/a |
-| 5 | Publish | Publish the project | `./typicalw publish`  |
-
 
 ## Typical Tmp
 
 Typical-tmp is an important folder that contains the build-tool mechanisms. By default, it is located in `.typical-tmp` and can be changed by hacking/editing the `typicalw` script.
 
 Since the typical-go project is still undergoing development, maybe there is some breaking change and deleting typical-tmp can solve the issue since it will be healed by itself.
-
 
 
 ## Examples
@@ -163,7 +163,6 @@ Since the typical-go project is still undergoing development, maybe there is som
 - [x] [Generate Mock](https://github.com/typical-go/typical-go/tree/master/examples/generate-mock)
 - [x] [Generate Docker-Compose](https://github.com/typical-go/typical-go/tree/master/examples/generate-docker-compose)
 - [x] [Serve React Demo](https://github.com/typical-go/typical-go/tree/master/examples/serve-react-demo)
-
 
 
 ## License
