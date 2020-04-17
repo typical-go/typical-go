@@ -5,15 +5,12 @@ import (
 	"io"
 	"os"
 	"time"
-
-	"github.com/urfave/cli/v2"
 )
 
 var (
 	_ Cleaner  = (*StdBuild)(nil)
 	_ Tester   = (*StdBuild)(nil)
 	_ Releaser = (*StdBuild)(nil)
-	_ Utility  = (*StdBuild)(nil)
 	_ Runner   = (*StdBuild)(nil)
 )
 
@@ -93,17 +90,4 @@ func (b *StdBuild) Validate() (err error) {
 		}
 	}
 	return
-}
-
-// Commands of build-tool
-func (b *StdBuild) Commands(c *Context) []*cli.Command {
-	return []*cli.Command{
-		{
-			Name:  "mock",
-			Usage: "Generate mock class",
-			Action: func(cliCtx *cli.Context) (err error) {
-				return b.Mock(c.BuildContext(cliCtx))
-			},
-		},
-	}
 }

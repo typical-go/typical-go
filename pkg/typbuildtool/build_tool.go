@@ -109,12 +109,6 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 		b.cmdClean(c),
 	}
 
-	for _, module := range b.buildSequences {
-		if utility, ok := module.(Utility); ok {
-			cmds = append(cmds, utility.Commands(c)...)
-		}
-	}
-
 	for _, task := range b.utilities {
 		cmds = append(cmds, task.Commands(c)...)
 	}

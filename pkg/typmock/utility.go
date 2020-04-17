@@ -1,14 +1,32 @@
-package typbuildtool
+package typmock
 
 import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/urfave/cli/v2"
 )
 
-// Mock the project
-func (b *StdBuild) Mock(c *BuildContext) (err error) {
+// Utility to generate mock class
+func Utility() typbuildtool.Utility {
+	return typbuildtool.NewUtility(commands)
+}
+
+func commands(c *typbuildtool.Context) []*cli.Command {
+	return []*cli.Command{
+		{
+			Name:  "mock",
+			Usage: "Generate mock class",
+			Action: func(cliCtx *cli.Context) (err error) {
+				return mock(c.BuildContext(cliCtx))
+			},
+		},
+	}
+}
+
+func mock(c *typbuildtool.BuildContext) (err error) {
 	ctx := c.Cli.Context
 	store := NewMockStore()
 	if err = c.Ast().EachAnnotation("mock", typast.InterfaceType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {

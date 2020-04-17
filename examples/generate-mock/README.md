@@ -10,7 +10,23 @@ type Greeter interface {
 }
 ```
 
-Run the mock task to generate mock at `mock_` + package name. 
+Add typmock utility to descriptor
+```go
+var Descriptor = typcore.Descriptor{
+	// ...
+
+	BuildTool: typbuildtool.
+		BuildSequences(
+			typbuildtool.StandardBuild(), 
+		).
+		Utilities(
+			typmock.Utility(),
+		),
+}
+
+```
+
+Generate mock
 ```bash
 ./typicalw mock
 ```

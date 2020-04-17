@@ -1,15 +1,15 @@
-package typbuildtool_test
+package typmock_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/buildkit"
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typmock"
 )
 
 func TestMockStore(t *testing.T) {
-	store := typbuildtool.NewMockStore()
+	store := typmock.NewMockStore()
 	store.Put(&buildkit.GoMock{MockDir: "pkg1", SrcName: "target1"})
 	store.Put(&buildkit.GoMock{MockDir: "pkg1", SrcName: "target2"})
 	store.Put(&buildkit.GoMock{MockDir: "pkg2", SrcName: "target3"})

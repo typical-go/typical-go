@@ -1,4 +1,4 @@
-package typbuildtool
+package typmock
 
 import "github.com/typical-go/typical-go/pkg/buildkit"
 

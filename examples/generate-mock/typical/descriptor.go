@@ -5,6 +5,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typmock"
 )
 
 // Descriptor of sample
@@ -17,5 +18,8 @@ var Descriptor = typcore.Descriptor{
 	BuildTool: typbuildtool.
 		BuildSequences(
 			typbuildtool.StandardBuild(), // standard build module
+		).
+		Utilities(
+			typmock.Utility(),
 		),
 }
