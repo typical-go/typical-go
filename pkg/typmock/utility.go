@@ -1,10 +1,13 @@
 package typmock
 
 import (
+	"context"
+	"fmt"
 	"os"
+	"os/exec"
 
+	"github.com/iancoleman/strcase"
 	"github.com/typical-go/typical-go/pkg/buildkit"
-	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/urfave/cli/v2"
 )
@@ -17,37 +20,71 @@ func Utility() typbuildtool.Utility {
 func commands(c *typbuildtool.Context) []*cli.Command {
 	return []*cli.Command{
 		{
-			Name:  "mock",
-			Usage: "Generate mock class",
+			Name:        "mock",
+			Usage:       "Generate mock class",
+			UsageText:   "mock [package_names]",
+			Description: "If package_names is missing then check every package",
 			Action: func(cliCtx *cli.Context) (err error) {
-				return mock(c.BuildContext(cliCtx))
+				return generateMock(c.BuildContext(cliCtx))
 			},
 		},
 	}
 }
 
-func mock(c *typbuildtool.BuildContext) (err error) {
+func generateMock(c *typbuildtool.BuildContext) (err error) {
 	ctx := c.Cli.Context
-	store := NewMockStore()
-	if err = c.Ast().EachAnnotation("mock", typast.InterfaceType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
-		store.Put(buildkit.CreateGoMock(c.TypicalTmp, c.ProjectPkg, decl))
-		return
-	}); err != nil {
+	mockery := NewMockery(c.ProjectPkg)
+
+	if err = mockery.Walk(c.Ast()); err != nil {
 		return
 	}
 
-	for pkg, targets := range store.Map() {
+	targetMap := mockery.TargetMap(c.Cli.Args().Slice()...)
 
-		c.Infof("Remove package: %s", pkg)
-		os.RemoveAll(pkg)
+	if len(targetMap) < 1 {
+		c.Info("Nothing to mock")
+		return
+	}
 
-		for _, target := range targets {
-			c.Infof("Mock '%s'", target)
-			if err = target.Execute(ctx); err != nil {
-				c.Warnf("Fail to mock '%s': %s", target, err.Error())
+	mockgen := fmt.Sprintf("%s/bin/mockgen", c.TypicalTmp)
+
+	if err = installIfNotExist(ctx, mockgen); err != nil {
+		return
+	}
+
+	for pkg, targets := range targetMap {
+		mockPkg := fmt.Sprintf("mock_%s", pkg)
+
+		c.Infof("Remove package: %s", mockPkg)
+		os.RemoveAll(mockPkg)
+
+		for _, t := range targets {
+			srcPkg := fmt.Sprintf("%s/%s", c.ProjectPkg, t.Dir)
+			dest := fmt.Sprintf("%s%s/%s.go", t.Parent, mockPkg, strcase.ToSnake(t.Source))
+			name := fmt.Sprintf("%s.%s", srcPkg, t.Source)
+
+			cmd := exec.CommandContext(ctx, mockgen,
+				"-destination", dest,
+				"-package", mockPkg,
+				srcPkg,
+				t.Source,
+			)
+			cmd.Stderr = os.Stderr
+
+			c.Infof("Mock '%s'", name)
+			if err = cmd.Run(); err != nil {
+				c.Warnf("Fail to mock '%s': %w", name, err)
 			}
 		}
 	}
+	return
+}
 
+func installIfNotExist(ctx context.Context, mockgen string) (err error) {
+	if _, err = os.Stat(mockgen); os.IsNotExist(err) {
+		return buildkit.
+			NewGoBuild(mockgen, "github.com/golang/mock/mockgen").
+			Execute(ctx)
+	}
 	return
 }
