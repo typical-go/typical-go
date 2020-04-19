@@ -4,6 +4,7 @@
 ![Go-Workflow](https://github.com/typical-go/typical-go/workflows/Go/badge.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/typical-go/typical-go)](https://goreportcard.com/report/github.com/typical-go/typical-go)
 [![codebeat badge](https://codebeat.co/badges/a8b3c7a6-c42a-480a-acb4-68ece12f36b8)](https://codebeat.co/projects/github-com-typical-go-typical-go-master)
+[![codecov](https://codecov.io/gh/typical-go/typical-go/branch/master/graph/badge.svg)](https://codecov.io/gh/typical-go/typical-go)
 
 A Build Tool (+ Framework) for Golang. <https://typical-go.github.io/>
 
