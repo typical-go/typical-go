@@ -10,8 +10,8 @@ import (
 // Context of App
 type Context struct {
 	*typcore.Descriptor
-	*App
 
+	App       *App
 	container *dig.Container
 }
 
@@ -36,14 +36,14 @@ func (c *Context) Invoke(cliCtx *cli.Context, invocation *Invocation) (err error
 		return
 	}
 
-	for _, constructor := range c.Constructors() {
+	for _, constructor := range c.App.Constructors() {
 		if err = constructor.Provide(di); err != nil {
 			return
 		}
 	}
 
 	// invoke preparation as register in descriptor
-	for _, preparation := range c.Preparations() {
+	for _, preparation := range c.App.Preparations() {
 		if err = preparation.Invoke(di); err != nil {
 			return
 		}
@@ -66,7 +66,7 @@ func (c *Context) Container() *dig.Container {
 }
 
 func (c *Context) stop() (err error) {
-	for _, destructor := range c.Destructors() {
+	for _, destructor := range c.App.Destructors() {
 		if err = destructor.Invoke(c.Container()); err != nil {
 			return
 		}

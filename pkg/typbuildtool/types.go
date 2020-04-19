@@ -44,7 +44,7 @@ type Runner interface {
 // Context of buildtool
 type Context struct {
 	*typcore.Context
-	*BuildTool
+	BuildTool *BuildTool
 }
 
 // BuildContext to create BuildContext

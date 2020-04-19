@@ -13,8 +13,8 @@ import (
 // Run the project locally
 func (b *StdBuild) Run(c *BuildContext) (err error) {
 	c.Info("Standard-Build: Build the project")
-	binary := fmt.Sprintf("%s/%s", c.binFolder, c.Name)
-	srcDir := fmt.Sprintf("%s/%s", c.cmdFolder, c.Name)
+	binary := fmt.Sprintf("%s/%s", c.BuildTool.binFolder, c.Name)
+	srcDir := fmt.Sprintf("%s/%s", c.BuildTool.cmdFolder, c.Name)
 	src := fmt.Sprintf("./%s/main.go", srcDir)
 	ctx := c.Cli.Context
 
