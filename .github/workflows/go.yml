@@ -27,4 +27,10 @@ jobs:
 
     - name: Test Example
       run: ./typicalw test-example
+    
+    - name: Upload coverage to Codecov
+      if: success() && matrix.go == 1.14 && matrix.os == 'ubuntu-latest'
+      uses: codecov/codecov-action@v1
+      with:
+        fail_ci_if_error: true
 
