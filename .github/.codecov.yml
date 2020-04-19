@@ -1,0 +1,5 @@
+ignore:
+  - "examples/**"
+  - "**/mock_*"
+  - "typical/**"
+  - "cmd/**"
