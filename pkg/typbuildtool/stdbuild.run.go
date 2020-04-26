@@ -13,16 +13,15 @@ import (
 // Run the project locally
 func (b *StdBuild) Run(c *CliContext) (err error) {
 	c.Info("Standard-Build: Build the project")
-	binary := fmt.Sprintf("%s/%s", c.BuildTool.binFolder, c.Name)
-	srcDir := fmt.Sprintf("%s/%s", c.BuildTool.cmdFolder, c.Name)
+	binary := fmt.Sprintf("%s/%s", c.BuildTool.binFolder, c.Core.Name)
+	srcDir := fmt.Sprintf("%s/%s", c.BuildTool.cmdFolder, c.Core.Name)
 	src := fmt.Sprintf("./%s/main.go", srcDir)
-	ctx := c.Cli.Context
 
 	// NOTE: create main.go if not exist
 	if _, err = os.Stat(src); os.IsNotExist(err) {
 		os.MkdirAll(srcDir, 0777)
 		appMain := &typfactory.AppMain{
-			DescPkg: c.ProjectPkg + "/typical",
+			DescPkg: c.Core.ProjectPkg + "/typical",
 		}
 
 		if err = typfactory.WriteFile(src, 0777, appMain); err != nil {
@@ -34,11 +33,11 @@ func (b *StdBuild) Run(c *CliContext) (err error) {
 		WithStdout(b.stdout).
 		WithStderr(b.stderr)
 
-	if err = gobuild.Execute(ctx); err != nil {
+	if err = gobuild.Execute(c.Context); err != nil {
 		return fmt.Errorf("GoBuild: %w", err)
 	}
 
-	cmd := exec.CommandContext(ctx, binary, c.Cli.Args().Slice()...)
+	cmd := exec.CommandContext(c.Context, binary, c.Args().Slice()...)
 	cmd.Stdout = b.stdout
 	cmd.Stderr = b.stderr
 

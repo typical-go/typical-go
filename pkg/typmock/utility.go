@@ -24,31 +24,28 @@ func commands(c *typbuildtool.Context) []*cli.Command {
 			Usage:       "Generate mock class",
 			UsageText:   "mock [package_names]",
 			Description: "If package_names is missing then check every package",
-			Action: func(cliCtx *cli.Context) (err error) {
-				return generateMock(c.CliContext(cliCtx))
-			},
+			Action:      c.ActionFunc(generateMock),
 		},
 	}
 }
 
 func generateMock(c *typbuildtool.CliContext) (err error) {
-	ctx := c.Cli.Context
-	mockery := NewMockery(c.ProjectPkg)
+	mockery := NewMockery(c.Core.ProjectPkg)
 
-	if err = mockery.Walk(c.Ast()); err != nil {
+	if err = mockery.Walk(c.Core.Ast()); err != nil {
 		return
 	}
 
-	targetMap := mockery.TargetMap(c.Cli.Args().Slice()...)
+	targetMap := mockery.TargetMap(c.Args().Slice()...)
 
 	if len(targetMap) < 1 {
 		c.Info("Nothing to mock")
 		return
 	}
 
-	mockgen := fmt.Sprintf("%s/bin/mockgen", c.TypicalTmp)
+	mockgen := fmt.Sprintf("%s/bin/mockgen", c.Core.TypicalTmp)
 
-	if err = installIfNotExist(ctx, mockgen); err != nil {
+	if err = installIfNotExist(c.Context, mockgen); err != nil {
 		return
 	}
 
@@ -59,11 +56,11 @@ func generateMock(c *typbuildtool.CliContext) (err error) {
 		os.RemoveAll(mockPkg)
 
 		for _, t := range targets {
-			srcPkg := fmt.Sprintf("%s/%s", c.ProjectPkg, t.Dir)
+			srcPkg := fmt.Sprintf("%s/%s", c.Core.ProjectPkg, t.Dir)
 			dest := fmt.Sprintf("%s%s/%s.go", t.Parent, mockPkg, strcase.ToSnake(t.Source))
 			name := fmt.Sprintf("%s.%s", srcPkg, t.Source)
 
-			cmd := exec.CommandContext(ctx, mockgen,
+			cmd := exec.CommandContext(c.Context, mockgen,
 				"-destination", dest,
 				"-package", mockPkg,
 				srcPkg,

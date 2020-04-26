@@ -4,19 +4,7 @@ import (
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/typcfg"
-	"github.com/urfave/cli/v2"
 )
-
-func (b *BuildTool) before(c *Context) cli.BeforeFunc {
-	return func(cliCtx *cli.Context) (err error) {
-		if err = b.Precondition(c.CliContext(cliCtx)); err != nil {
-			return
-		}
-
-		typcfg.Load(b.configFile)
-		return
-	}
-}
 
 // Precondition for this project
 func (b *BuildTool) Precondition(c *CliContext) (err error) {
@@ -25,7 +13,8 @@ func (b *BuildTool) Precondition(c *CliContext) (err error) {
 		return
 	}
 
-	if configurer, ok := c.App.(typcfg.Configurer); ok {
+	app := c.Core.App
+	if configurer, ok := app.(typcfg.Configurer); ok {
 		if err = typcfg.Write(b.configFile, configurer); err != nil {
 			return
 		}
@@ -35,11 +24,13 @@ func (b *BuildTool) Precondition(c *CliContext) (err error) {
 		return
 	}
 
-	if preconditioner, ok := c.App.(Preconditioner); ok {
+	if preconditioner, ok := app.(Preconditioner); ok {
 		if err = preconditioner.Precondition(c); err != nil {
 			return fmt.Errorf("Precondition-App: %w", err)
 		}
 	}
+
+	typcfg.Load(b.configFile)
 
 	return
 }

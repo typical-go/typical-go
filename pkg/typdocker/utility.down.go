@@ -13,16 +13,14 @@ func (m *DockerUtility) cmdDown(c *typbuildtool.Context) *cli.Command {
 		Name:    "down",
 		Aliases: []string{"stop"},
 		Usage:   "Take down all docker containers according docker-compose",
-		Action:  m.downAction(c),
+		Action:  c.ActionFunc(dockerDown),
 	}
 }
 
-func (m *DockerUtility) downAction(c *typbuildtool.Context) cli.ActionFunc {
-	return func(cc *cli.Context) (err error) {
-		c.Info("Docker down")
-		cmd := exec.CommandContext(cc.Context, "docker-compose", "down")
-		cmd.Stderr = os.Stderr
-		cmd.Stdout = os.Stdout
-		return cmd.Run()
-	}
+func dockerDown(c *typbuildtool.CliContext) error {
+	c.Info("Docker down")
+	cmd := exec.CommandContext(c.Context, "docker-compose", "down")
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+	return cmd.Run()
 }

@@ -11,9 +11,7 @@ func (b *BuildTool) cmdClean(c *Context) *cli.Command {
 		Name:    "clean",
 		Aliases: []string{"c"},
 		Usage:   "Clean the project",
-		Action: func(cliCtx *cli.Context) (err error) {
-			return b.Clean(c.CliContext(cliCtx))
-		},
+		Action:  c.ActionFunc(b.Clean),
 	}
 }
 
@@ -27,8 +25,10 @@ func (b *BuildTool) Clean(c *CliContext) (err error) {
 		}
 	}
 
-	c.Infof("Remove All: %s", c.TypicalTmp)
-	if err := os.RemoveAll(c.TypicalTmp); err != nil {
+	typicalTmp := c.Core.TypicalTmp
+
+	c.Infof("Remove All: %s", typicalTmp)
+	if err := os.RemoveAll(typicalTmp); err != nil {
 		c.Warn(err.Error())
 	}
 

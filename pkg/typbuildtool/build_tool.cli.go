@@ -12,24 +12,24 @@ func (b *BuildTool) RunBuildTool(tc *typcore.Context) (err error) {
 	return b.cli(tc).Run(os.Args)
 }
 
-func (b *BuildTool) cli(tc *typcore.Context) *cli.App {
-	c := b.context(tc)
+func (b *BuildTool) cli(core *typcore.Context) *cli.App {
 
 	app := cli.NewApp()
-	app.Name = c.Name
+	app.Name = core.Name
 	app.Usage = "Build-Tool"
-	app.Description = c.Description
+	app.Description = core.Description
 
-	app.Before = b.before(c)
-	app.Version = c.Version
+	c := b.context(core)
+	app.Before = c.ActionFunc(b.Precondition)
+	app.Version = c.Core.Version
 	app.Commands = b.Commands(c)
 
 	return app
 }
 
-func (b *BuildTool) context(tc *typcore.Context) *Context {
+func (b *BuildTool) context(core *typcore.Context) *Context {
 	return &Context{
-		Context:   tc,
+		Core:      core,
 		BuildTool: b,
 	}
 }

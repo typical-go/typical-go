@@ -2,20 +2,17 @@ package typbuildtool
 
 import "github.com/urfave/cli/v2"
 
-func (b *BuildTool) cmdTest(c *Context) *cli.Command {
+func cmdTest(c *Context) *cli.Command {
 	return &cli.Command{
 		Name:    "test",
 		Aliases: []string{"t"},
 		Usage:   "Test the project",
-		Action: func(cliCtx *cli.Context) error {
-			return b.Test(c.CliContext(cliCtx))
-		},
+		Action:  c.ActionFunc(test),
 	}
 }
 
-// Test the project
-func (b *BuildTool) Test(c *CliContext) (err error) {
-	for _, module := range b.buildSequences {
+func test(c *CliContext) (err error) {
+	for _, module := range c.BuildTool.buildSequences {
 		if tester, ok := module.(Tester); ok {
 			if err = tester.Test(c); err != nil {
 				return

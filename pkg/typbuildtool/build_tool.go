@@ -15,8 +15,6 @@ var (
 	_ typcfg.Configurer = (*BuildTool)(nil)
 
 	_ Utility        = (*BuildTool)(nil)
-	_ Runner         = (*BuildTool)(nil)
-	_ Tester         = (*BuildTool)(nil)
 	_ Cleaner        = (*BuildTool)(nil)
 	_ Releaser       = (*BuildTool)(nil)
 	_ Publisher      = (*BuildTool)(nil)
@@ -103,8 +101,8 @@ func (b *BuildTool) Validate() (err error) {
 // Commands to return command
 func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 	cmds = []*cli.Command{
-		b.cmdTest(c),
-		b.cmdRun(c),
+		cmdTest(c),
+		cmdRun(c),
 		b.cmdPublish(c),
 		b.cmdClean(c),
 	}

@@ -17,30 +17,24 @@ func (m *DockerUtility) cmdCompose(c *typbuildtool.Context) *cli.Command {
 	return &cli.Command{
 		Name:   "compose",
 		Usage:  "Generate docker-compose.yaml",
-		Action: m.composeAction(c),
+		Action: c.ActionFunc(m.dockerCompose),
 	}
 }
 
-func (m *DockerUtility) composeAction(c *typbuildtool.Context) cli.ActionFunc {
+func (m *DockerUtility) dockerCompose(c *typbuildtool.CliContext) (err error) {
 	var (
 		out []byte
 	)
+	if len(m.composers) < 1 {
+		return errors.New("Nothing to compose")
+	}
 
-	return func(cc *cli.Context) (err error) {
-		if len(m.composers) < 1 {
-			return errors.New("Nothing to compose")
-		}
-
-		if out, err = yaml.Marshal(m.recipe()); err != nil {
-			return
-		}
-
-		c.Info("Generate docker-compose.yml")
-		if err = ioutil.WriteFile(dockerComposeFile, out, 0644); err != nil {
-			return
-		}
+	if out, err = yaml.Marshal(m.recipe()); err != nil {
 		return
 	}
+
+	c.Info("Generate docker-compose.yml")
+	return ioutil.WriteFile(dockerComposeFile, out, 0644)
 }
 
 func (m *DockerUtility) recipe() (root *Recipe) {

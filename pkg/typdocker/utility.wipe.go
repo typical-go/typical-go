@@ -15,28 +15,27 @@ func (m *DockerUtility) cmdWipe(c *typbuildtool.Context) *cli.Command {
 	return &cli.Command{
 		Name:   "wipe",
 		Usage:  "Kill all running docker container",
-		Action: m.wipeAction(c),
+		Action: c.ActionFunc(m.dockerWipe),
 	}
 }
 
-func (m *DockerUtility) wipeAction(c *typbuildtool.Context) cli.ActionFunc {
-	return func(cc *cli.Context) (err error) {
-		var (
-			ids []string
-		)
+func (m *DockerUtility) dockerWipe(c *typbuildtool.CliContext) (err error) {
+	var (
+		ids []string
+	)
 
-		if ids, err = dockerIDs(cc.Context); err != nil {
-			return fmt.Errorf("Docker-ID: %w", err)
-		}
-
-		c.Info("Wipe all docker container")
-		for _, id := range ids {
-			if err = kill(cc.Context, id); err != nil {
-				c.Warnf("Fail to kill #%s: %w", id, err)
-			}
-		}
-		return nil
+	if ids, err = dockerIDs(c.Context); err != nil {
+		return fmt.Errorf("Docker-ID: %w", err)
 	}
+
+	c.Info("Wipe all docker container")
+	for _, id := range ids {
+		if err = kill(c.Context, id); err != nil {
+			c.Warnf("Fail to kill #%s: %w", id, err)
+		}
+	}
+	return nil
+
 }
 
 func dockerIDs(ctx context.Context) (ids []string, err error) {

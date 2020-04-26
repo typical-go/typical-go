@@ -21,48 +21,45 @@ func (b *BuildTool) cmdPublish(c *Context) *cli.Command {
 			&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
 			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 		},
-		Action: b.releaseAction(c),
+		Action: c.ActionFunc(b.release),
 	}
 }
 
-func (b *BuildTool) releaseAction(c *Context) cli.ActionFunc {
-	return func(cliCtx *cli.Context) (err error) {
-		var (
-			rc           *ReleaseContext
-			releaseFiles []string
-		)
-		if err = git.Fetch(cliCtx.Context); err != nil {
-			return fmt.Errorf("Failed git fetch: %w", err)
-		}
-		defer git.Fetch(cliCtx.Context)
+func (b *BuildTool) release(c *CliContext) (err error) {
 
-		bc := c.CliContext(cliCtx)
+	var (
+		rc           *ReleaseContext
+		releaseFiles []string
+	)
+	if err = git.Fetch(c.Context); err != nil {
+		return fmt.Errorf("Failed git fetch: %w", err)
+	}
+	defer git.Fetch(c.Context)
 
-		if !cliCtx.Bool("no-test") {
-			if err = b.Test(bc); err != nil {
-				return
-			}
-		}
-
-		if rc, err = b.releaseContext(bc); err != nil {
+	if !c.Bool("no-test") {
+		if err = test(c); err != nil {
 			return
 		}
+	}
 
-		if releaseFiles, err = b.Release(rc); err != nil {
-			return
-		}
-
-		pc := &PublishContext{
-			ReleaseContext: rc,
-			ReleaseFiles:   releaseFiles,
-		}
-
-		if err = b.Publish(pc); err != nil {
-			return
-		}
-
+	if rc, err = b.releaseContext(c); err != nil {
 		return
 	}
+
+	if releaseFiles, err = b.Release(rc); err != nil {
+		return
+	}
+
+	pc := &PublishContext{
+		ReleaseContext: rc,
+		ReleaseFiles:   releaseFiles,
+	}
+
+	if err = b.Publish(pc); err != nil {
+		return
+	}
+
+	return
 
 }
 
@@ -93,22 +90,22 @@ func (b *BuildTool) Release(rc *ReleaseContext) (files []string, err error) {
 }
 
 func (b *BuildTool) releaseContext(c *CliContext) (*ReleaseContext, error) {
-	ctx := c.Cli.Context
-	force := c.Cli.Bool("force")
-	alpha := c.Cli.Bool("alpha")
-	tag := b.releaseTag(ctx, c.Version, alpha)
 
-	if status := git.Status(ctx); status != "" && !force {
+	force := c.Bool("force")
+	alpha := c.Bool("alpha")
+	tag := b.releaseTag(c.Context, c.Core.Version, alpha)
+
+	if status := git.Status(c.Context); status != "" && !force {
 		return nil, fmt.Errorf("Please commit changes first:\n%s", status)
 	}
 
 	var latest string
-	if latest = git.LatestTag(ctx); latest == tag && !force {
+	if latest = git.LatestTag(c.Context); latest == tag && !force {
 		return nil, fmt.Errorf("%s already released", latest)
 	}
 
 	var gitLogs []*git.Log
-	if gitLogs = git.RetrieveLogs(ctx, latest); len(gitLogs) < 1 && !force {
+	if gitLogs = git.RetrieveLogs(c.Context, latest); len(gitLogs) < 1 && !force {
 		return nil, errors.New("No change to be released")
 	}
 

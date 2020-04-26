@@ -25,7 +25,6 @@ func (a *App) generateConstructor(c *typbuildtool.CliContext, filename string) (
 	var (
 		pkgs         []string
 		constructors []string
-		ctx          = c.Cli.Context
 	)
 
 	if constructors, err = walkForConstructor(c); err != nil {
@@ -36,9 +35,9 @@ func (a *App) generateConstructor(c *typbuildtool.CliContext, filename string) (
 		constructors = append(constructors, ConfigContructor(cfg))
 	}
 
-	for _, dir := range c.AppDirs {
+	for _, dir := range c.Core.AppDirs {
 		if !strings.Contains(dir, "internal") {
-			pkgs = append(pkgs, fmt.Sprintf("%s/%s", c.ProjectPkg, dir))
+			pkgs = append(pkgs, fmt.Sprintf("%s/%s", c.Core.ProjectPkg, dir))
 		}
 	}
 
@@ -49,11 +48,11 @@ func (a *App) generateConstructor(c *typbuildtool.CliContext, filename string) (
 		return
 	}
 
-	return buildkit.NewGoImports(c.TypicalTmp, filename).Execute(ctx)
+	return buildkit.NewGoImports(c.Core.TypicalTmp, filename).Execute(c.Context)
 }
 
 func walkForConstructor(c *typbuildtool.CliContext) (constructors []string, err error) {
-	err = c.Ast().
+	err = c.Core.Ast().
 		EachAnnotation("constructor", typast.FunctionType,
 			func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
 				constructors = append(constructors, fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))

@@ -10,7 +10,7 @@ import (
 func (b *StdBuild) Test(c *CliContext) (err error) {
 	c.Info("Standard-Build: Test the project")
 	var targets []string
-	for _, source := range c.AppSources {
+	for _, source := range c.Core.AppSources {
 		targets = append(targets, fmt.Sprintf("./%s/...", source))
 	}
 
@@ -21,5 +21,5 @@ func (b *StdBuild) Test(c *CliContext) (err error) {
 		WithStdout(b.stdout).
 		WithStderr(b.stderr)
 
-	return gotest.Execute(c.Cli.Context)
+	return gotest.Execute(c.Context)
 }

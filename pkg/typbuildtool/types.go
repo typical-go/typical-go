@@ -43,22 +43,49 @@ type Runner interface {
 
 // Context of buildtool
 type Context struct {
-	*typcore.Context
-	BuildTool *BuildTool
+	*BuildTool
+	Core *typcore.Context
 }
 
-// CliContext to create CliContext
-func (c *Context) CliContext(cli *cli.Context) *CliContext {
-	return &CliContext{
-		Context: c,
-		Cli:     cli,
+// CliFunc is command line function
+type CliFunc func(*CliContext) error
+
+// ActionFunc to return related action func
+func (c *Context) ActionFunc(fn CliFunc) func(*cli.Context) error {
+	return func(cli *cli.Context) error {
+		return fn(&CliContext{
+			Context:   cli,
+			Core:      c.Core,
+			BuildTool: c.BuildTool,
+		})
 	}
 }
 
 // CliContext is context of build
 type CliContext struct {
-	*Context
-	Cli *cli.Context
+	*cli.Context
+	Core      *typcore.Context
+	BuildTool *BuildTool
+}
+
+// Info logger
+func (c *CliContext) Info(args ...interface{}) {
+	c.Core.Info(args...)
+}
+
+// Infof logger
+func (c *CliContext) Infof(format string, args ...interface{}) {
+	c.Core.Infof(format, args)
+}
+
+// Warn logger
+func (c *CliContext) Warn(args ...interface{}) {
+	c.Core.Warn(args...)
+}
+
+// Warnf logger
+func (c *CliContext) Warnf(format string, args ...interface{}) {
+	c.Core.Warnf(format, args...)
 }
 
 // ReleaseContext is context of release

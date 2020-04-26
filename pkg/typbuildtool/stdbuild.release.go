@@ -23,21 +23,20 @@ func (b *StdBuild) Release(c *ReleaseContext) (files []string, err error) {
 }
 
 func (b *StdBuild) build(c *CliContext, tag string, target ReleaseTarget) (binary string, err error) {
-	ctx := c.Cli.Context
 	goos := target.OS()
 	goarch := target.Arch()
-	binary = strings.Join([]string{c.Name, tag, goos, goarch}, "_")
+	binary = strings.Join([]string{c.Core.Name, tag, goos, goarch}, "_")
 	// TODO: Support CGO
-	cmd := exec.CommandContext(ctx, "go", "build",
+	cmd := exec.CommandContext(c.Context,
+		"go", "build",
 		"-o", fmt.Sprintf("%s/%s", b.releaseFolder, binary),
 		"-ldflags", "-w -s",
-		fmt.Sprintf("./%s/%s", c.BuildTool.cmdFolder, c.Name),
+		fmt.Sprintf("./%s/%s", c.BuildTool.cmdFolder, c.Core.Name),
 	)
 	cmd.Env = append(os.Environ(), "GOOS="+goos, "GOARCH="+goarch)
 	cmd.Stdout = b.stdout
 	cmd.Stderr = b.stderr
-	if err = cmd.Run(); err != nil {
-		return
-	}
+
+	err = cmd.Run()
 	return
 }
