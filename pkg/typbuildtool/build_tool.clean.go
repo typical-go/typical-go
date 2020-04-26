@@ -12,13 +12,13 @@ func (b *BuildTool) cmdClean(c *Context) *cli.Command {
 		Aliases: []string{"c"},
 		Usage:   "Clean the project",
 		Action: func(cliCtx *cli.Context) (err error) {
-			return b.Clean(c.BuildContext(cliCtx))
+			return b.Clean(c.CliContext(cliCtx))
 		},
 	}
 }
 
 // Clean the project
-func (b *BuildTool) Clean(c *BuildContext) (err error) {
+func (b *BuildTool) Clean(c *CliContext) (err error) {
 	for _, module := range b.buildSequences {
 		if cleaner, ok := module.(Cleaner); ok {
 			if err = cleaner.Clean(c); err != nil {

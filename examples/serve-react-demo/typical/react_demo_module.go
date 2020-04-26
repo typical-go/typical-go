@@ -18,7 +18,7 @@ type ReactDemoModule struct {
 }
 
 // Run the react-demo
-func (m *ReactDemoModule) Run(c *typbuildtool.BuildContext) (err error) {
+func (m *ReactDemoModule) Run(c *typbuildtool.CliContext) (err error) {
 	c.Info("Build react-demo")
 	err = buildkit.NewCommand("npm", "run", "build").
 		WithDir(m.source).
@@ -27,7 +27,7 @@ func (m *ReactDemoModule) Run(c *typbuildtool.BuildContext) (err error) {
 }
 
 // Clean the react-demo
-func (m *ReactDemoModule) Clean(c *typbuildtool.BuildContext) (err error) {
+func (m *ReactDemoModule) Clean(c *typbuildtool.CliContext) (err error) {
 	c.Info("Clean react-demo")
 	if err := os.RemoveAll(m.source + "/build"); err != nil {
 		c.Warnf("React-Demo: Clean: %w", err)

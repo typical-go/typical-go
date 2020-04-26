@@ -25,13 +25,13 @@ func commands(c *typbuildtool.Context) []*cli.Command {
 			UsageText:   "mock [package_names]",
 			Description: "If package_names is missing then check every package",
 			Action: func(cliCtx *cli.Context) (err error) {
-				return generateMock(c.BuildContext(cliCtx))
+				return generateMock(c.CliContext(cliCtx))
 			},
 		},
 	}
 }
 
-func generateMock(c *typbuildtool.BuildContext) (err error) {
+func generateMock(c *typbuildtool.CliContext) (err error) {
 	ctx := c.Cli.Context
 	mockery := NewMockery(c.ProjectPkg)
 

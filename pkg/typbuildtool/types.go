@@ -13,12 +13,12 @@ type Utility interface {
 
 // Cleaner responsible to clean the project
 type Cleaner interface {
-	Clean(*BuildContext) error
+	Clean(*CliContext) error
 }
 
 // Tester responsible to test the project
 type Tester interface {
-	Test(*BuildContext) error
+	Test(*CliContext) error
 }
 
 // Releaser responsible to release
@@ -33,12 +33,12 @@ type Publisher interface {
 
 // Preconditioner responsible to precondition
 type Preconditioner interface {
-	Precondition(c *BuildContext) error
+	Precondition(c *CliContext) error
 }
 
 // Runner responsible to run the project in local environment
 type Runner interface {
-	Run(c *BuildContext) error
+	Run(c *CliContext) error
 }
 
 // Context of buildtool
@@ -47,23 +47,23 @@ type Context struct {
 	BuildTool *BuildTool
 }
 
-// BuildContext to create BuildContext
-func (c *Context) BuildContext(cliCtx *cli.Context) *BuildContext {
-	return &BuildContext{
+// CliContext to create CliContext
+func (c *Context) CliContext(cli *cli.Context) *CliContext {
+	return &CliContext{
 		Context: c,
-		Cli:     cliCtx,
+		Cli:     cli,
 	}
 }
 
-// BuildContext is context of build
-type BuildContext struct {
+// CliContext is context of build
+type CliContext struct {
 	*Context
 	Cli *cli.Context
 }
 
 // ReleaseContext is context of release
 type ReleaseContext struct {
-	*BuildContext
+	*CliContext
 	Alpha   bool
 	Tag     string
 	GitLogs []*git.Log

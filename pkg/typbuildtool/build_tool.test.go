@@ -8,13 +8,13 @@ func (b *BuildTool) cmdTest(c *Context) *cli.Command {
 		Aliases: []string{"t"},
 		Usage:   "Test the project",
 		Action: func(cliCtx *cli.Context) error {
-			return b.Test(c.BuildContext(cliCtx))
+			return b.Test(c.CliContext(cliCtx))
 		},
 	}
 }
 
 // Test the project
-func (b *BuildTool) Test(c *BuildContext) (err error) {
+func (b *BuildTool) Test(c *CliContext) (err error) {
 	for _, module := range b.buildSequences {
 		if tester, ok := module.(Tester); ok {
 			if err = tester.Test(c); err != nil {

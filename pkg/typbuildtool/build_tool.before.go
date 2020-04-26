@@ -9,7 +9,7 @@ import (
 
 func (b *BuildTool) before(c *Context) cli.BeforeFunc {
 	return func(cliCtx *cli.Context) (err error) {
-		if err = b.Precondition(c.BuildContext(cliCtx)); err != nil {
+		if err = b.Precondition(c.CliContext(cliCtx)); err != nil {
 			return
 		}
 
@@ -19,7 +19,7 @@ func (b *BuildTool) before(c *Context) cli.BeforeFunc {
 }
 
 // Precondition for this project
-func (b *BuildTool) Precondition(c *BuildContext) (err error) {
+func (b *BuildTool) Precondition(c *CliContext) (err error) {
 	if !b.enablePrecondition {
 		c.Info("Skip the preconditon")
 		return

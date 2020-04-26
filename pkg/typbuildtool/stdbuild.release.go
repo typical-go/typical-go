@@ -12,7 +12,7 @@ func (b *StdBuild) Release(c *ReleaseContext) (files []string, err error) {
 	for _, target := range b.releaseTargets {
 		c.Infof("Build release for %s", target)
 		var binary string
-		if binary, err = b.build(c.BuildContext, c.Tag, target); err != nil {
+		if binary, err = b.build(c.CliContext, c.Tag, target); err != nil {
 			err = fmt.Errorf("Failed build release: %w", err)
 			return
 		}
@@ -22,7 +22,7 @@ func (b *StdBuild) Release(c *ReleaseContext) (files []string, err error) {
 	return
 }
 
-func (b *StdBuild) build(c *BuildContext, tag string, target ReleaseTarget) (binary string, err error) {
+func (b *StdBuild) build(c *CliContext, tag string, target ReleaseTarget) (binary string, err error) {
 	ctx := c.Cli.Context
 	goos := target.OS()
 	goarch := target.Arch()

@@ -13,7 +13,7 @@ import (
 )
 
 // Precondition the app
-func (a *App) Precondition(c *typbuildtool.BuildContext) (err error) {
+func (a *App) Precondition(c *typbuildtool.CliContext) (err error) {
 	c.Info("Precondition the typical-app")
 	if err = a.generateConstructor(c, "typical/"+a.initFile); err != nil {
 		return
@@ -21,7 +21,7 @@ func (a *App) Precondition(c *typbuildtool.BuildContext) (err error) {
 	return
 }
 
-func (a *App) generateConstructor(c *typbuildtool.BuildContext, filename string) (err error) {
+func (a *App) generateConstructor(c *typbuildtool.CliContext, filename string) (err error) {
 	var (
 		pkgs         []string
 		constructors []string
@@ -52,7 +52,7 @@ func (a *App) generateConstructor(c *typbuildtool.BuildContext, filename string)
 	return buildkit.NewGoImports(c.TypicalTmp, filename).Execute(ctx)
 }
 
-func walkForConstructor(c *typbuildtool.BuildContext) (constructors []string, err error) {
+func walkForConstructor(c *typbuildtool.CliContext) (constructors []string, err error) {
 	err = c.Ast().
 		EachAnnotation("constructor", typast.FunctionType,
 			func(decl *typast.Declaration, ann *typast.Annotation) (err error) {

@@ -11,10 +11,6 @@ import (
 )
 
 func (b *BuildTool) cmdPublish(c *Context) *cli.Command {
-	var (
-		rc           *ReleaseContext
-		releaseFiles []string
-	)
 
 	return &cli.Command{
 		Name:    "publish",
@@ -25,40 +21,49 @@ func (b *BuildTool) cmdPublish(c *Context) *cli.Command {
 			&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
 			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 		},
-		Action: func(cliCtx *cli.Context) (err error) {
-			if err = git.Fetch(cliCtx.Context); err != nil {
-				return fmt.Errorf("Failed git fetch: %w", err)
-			}
-			defer git.Fetch(cliCtx.Context)
-
-			bc := c.BuildContext(cliCtx)
-
-			if !cliCtx.Bool("no-test") {
-				if err = b.Test(bc); err != nil {
-					return
-				}
-			}
-
-			if rc, err = b.releaseContext(bc); err != nil {
-				return
-			}
-
-			if releaseFiles, err = b.Release(rc); err != nil {
-				return
-			}
-
-			pc := &PublishContext{
-				ReleaseContext: rc,
-				ReleaseFiles:   releaseFiles,
-			}
-
-			if err = b.Publish(pc); err != nil {
-				return
-			}
-
-			return
-		},
+		Action: b.releaseAction(c),
 	}
+}
+
+func (b *BuildTool) releaseAction(c *Context) cli.ActionFunc {
+	return func(cliCtx *cli.Context) (err error) {
+		var (
+			rc           *ReleaseContext
+			releaseFiles []string
+		)
+		if err = git.Fetch(cliCtx.Context); err != nil {
+			return fmt.Errorf("Failed git fetch: %w", err)
+		}
+		defer git.Fetch(cliCtx.Context)
+
+		bc := c.CliContext(cliCtx)
+
+		if !cliCtx.Bool("no-test") {
+			if err = b.Test(bc); err != nil {
+				return
+			}
+		}
+
+		if rc, err = b.releaseContext(bc); err != nil {
+			return
+		}
+
+		if releaseFiles, err = b.Release(rc); err != nil {
+			return
+		}
+
+		pc := &PublishContext{
+			ReleaseContext: rc,
+			ReleaseFiles:   releaseFiles,
+		}
+
+		if err = b.Publish(pc); err != nil {
+			return
+		}
+
+		return
+	}
+
 }
 
 // Publish the project
@@ -87,7 +92,7 @@ func (b *BuildTool) Release(rc *ReleaseContext) (files []string, err error) {
 	return
 }
 
-func (b *BuildTool) releaseContext(c *BuildContext) (*ReleaseContext, error) {
+func (b *BuildTool) releaseContext(c *CliContext) (*ReleaseContext, error) {
 	ctx := c.Cli.Context
 	force := c.Cli.Bool("force")
 	alpha := c.Cli.Bool("alpha")
@@ -108,10 +113,10 @@ func (b *BuildTool) releaseContext(c *BuildContext) (*ReleaseContext, error) {
 	}
 
 	return &ReleaseContext{
-		BuildContext: c,
-		Alpha:        alpha,
-		Tag:          tag,
-		GitLogs:      gitLogs,
+		CliContext: c,
+		Alpha:      alpha,
+		Tag:        tag,
+		GitLogs:    gitLogs,
 	}, nil
 }
 
