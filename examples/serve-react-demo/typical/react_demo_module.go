@@ -22,7 +22,7 @@ func (m *ReactDemoModule) Run(c *typbuildtool.CliContext) (err error) {
 	c.Info("Build react-demo")
 	err = buildkit.NewCommand("npm", "run", "build").
 		WithDir(m.source).
-		Execute(c.Cli.Context)
+		Execute(c.Context)
 	return
 }
 
