@@ -5,15 +5,14 @@ import (
 	"strings"
 )
 
-// ParseAnnotations to parse godoc comment to list of annotation
-func ParseAnnotations(doc string) (annotations []*Annotation) {
+// ParseAnnots to parse godoc comment to list of annotation
+func ParseAnnots(doc string) (annotations []*Annot) {
 	if doc == "" {
 		return
 	}
 	r, _ := regexp.Compile("\\[(.*?)\\]")
 	for _, s := range r.FindAllString(doc, -1) {
-		var a *Annotation
-		if a = ParseAnnotation(s); a != nil {
+		if a := ParseAnnotation(s); a != nil {
 			annotations = append(annotations, a)
 		}
 	}
@@ -21,12 +20,12 @@ func ParseAnnotations(doc string) (annotations []*Annotation) {
 }
 
 // ParseAnnotation parse raw string to annotation
-func ParseAnnotation(raw string) (a *Annotation) {
+func ParseAnnotation(raw string) (a *Annot) {
 	if raw[0] != '[' && raw[len(raw)-1] != ']' {
 		return
 	}
 	raw = raw[1 : len(raw)-1]
-	a = NewAnnotation(name(raw))
+	a = NewAnnot(name(raw))
 	putAttr(a, rawAttribute(raw))
 	return
 }
@@ -48,7 +47,7 @@ func rawAttribute(raw string) string {
 	return raw[i0+1 : i1]
 }
 
-func putAttr(a *Annotation, rawAttr string) {
+func putAttr(a *Annot, rawAttr string) {
 	rawAttr = strings.TrimSpace(rawAttr)
 	if rawAttr == "" {
 		return

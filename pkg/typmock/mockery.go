@@ -53,8 +53,8 @@ func (b *Mockery) TargetMap(pkgs ...string) map[string][]*Target {
 }
 
 // Walk the syntax tree
-func (b *Mockery) Walk(ast *typast.Ast) error {
-	return ast.EachAnnotation("mock", typast.InterfaceType, func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
+func (b *Mockery) Walk(store *typast.DeclStore) error {
+	return store.EachAnnotation("mock", typast.InterfaceType, func(decl *typast.Decl, ann *typast.Annot) (err error) {
 		pkg := decl.File.Name.Name
 		dir := filepath.Dir(decl.Path)
 

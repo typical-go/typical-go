@@ -4,19 +4,19 @@ import (
 	"strings"
 )
 
-// Ast responsible to store declaration
-type Ast struct {
-	decls []*Declaration
+// DeclStore responsible to store declaration
+type DeclStore struct {
+	decls []*Decl
 }
 
 // Append return DeclStore with appended decls
-func (c *Ast) Append(decls ...*Declaration) *Ast {
+func (c *DeclStore) Append(decls ...*Decl) *DeclStore {
 	c.decls = append(c.decls, decls...)
 	return c
 }
 
 // EachDecl to handle each declaration
-func (c *Ast) EachDecl(fn DeclFunc) (err error) {
+func (c *DeclStore) EachDecl(fn DeclFunc) (err error) {
 	for _, decl := range c.decls {
 		if err = fn(decl); err != nil {
 			return
@@ -26,9 +26,9 @@ func (c *Ast) EachDecl(fn DeclFunc) (err error) {
 }
 
 // EachAnnotation to handle each annotation
-func (c *Ast) EachAnnotation(name string, declType DeclType, fn AnnotationFunc) (err error) {
-	return c.EachDecl(func(decl *Declaration) (err error) {
-		annotation := getAnnotation(decl.Annotations, name)
+func (c *DeclStore) EachAnnotation(name string, declType DeclType, fn AnnotFunc) (err error) {
+	return c.EachDecl(func(decl *Decl) (err error) {
+		annotation := getAnnot(decl.Annots, name)
 		if annotation != nil {
 			if decl.Type == declType {
 				if err = fn(decl, annotation); err != nil {
@@ -43,7 +43,7 @@ func (c *Ast) EachAnnotation(name string, declType DeclType, fn AnnotationFunc) 
 	})
 }
 
-func getAnnotation(a []*Annotation, name string) *Annotation {
+func getAnnot(a []*Annot, name string) *Annot {
 	for _, a := range a {
 		if strings.ToLower(name) == strings.ToLower(a.Name) {
 			return a

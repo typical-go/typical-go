@@ -6,6 +6,8 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/typical-go/typical-go/pkg/typast"
+
 	"github.com/iancoleman/strcase"
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
@@ -30,9 +32,17 @@ func commands(c *typbuildtool.Context) []*cli.Command {
 }
 
 func generateMock(c *typbuildtool.CliContext) (err error) {
+	var (
+		store *typast.DeclStore
+	)
+
+	if store, err = typast.Walk(c.Core.AppFiles); err != nil {
+		return
+	}
+
 	mockery := NewMockery(c.Core.ProjectPkg)
 
-	if err = mockery.Walk(c.Core.Ast()); err != nil {
+	if err = mockery.Walk(store); err != nil {
 		return
 	}
 

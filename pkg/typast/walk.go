@@ -7,8 +7,8 @@ import (
 )
 
 // Walk the source code to get autowire and automock
-func Walk(filenames []string) (a *Ast, err error) {
-	a = &Ast{}
+func Walk(filenames []string) (a *DeclStore, err error) {
+	a = &DeclStore{}
 	fset := token.NewFileSet() // positions are relative to fset
 	for _, filename := range filenames {
 		var f *ast.File
@@ -22,7 +22,7 @@ func Walk(filenames []string) (a *Ast, err error) {
 	return
 }
 
-func retrieveDeclarations(path string, f *ast.File, decl ast.Decl) (declarations []*Declaration) {
+func retrieveDeclarations(path string, f *ast.File, decl ast.Decl) (declarations []*Decl) {
 	switch decl.(type) {
 	case *ast.FuncDecl:
 		var (
@@ -32,13 +32,13 @@ func retrieveDeclarations(path string, f *ast.File, decl ast.Decl) (declarations
 		if funcDecl.Doc != nil {
 			doc = funcDecl.Doc.Text()
 		}
-		declarations = append(declarations, &Declaration{
-			Type:        FunctionType,
-			SourceName:  funcDecl.Name.Name,
-			SourceObj:   funcDecl,
-			Path:        path,
-			File:        f,
-			Annotations: ParseAnnotations(doc),
+		declarations = append(declarations, &Decl{
+			Type:       FunctionType,
+			SourceName: funcDecl.Name.Name,
+			SourceObj:  funcDecl,
+			Path:       path,
+			File:       f,
+			Annots:     ParseAnnots(doc),
 		})
 
 	case *ast.GenDecl:
@@ -62,14 +62,14 @@ func retrieveDeclarations(path string, f *ast.File, decl ast.Decl) (declarations
 				case *ast.StructType:
 					declType = StructType
 				}
-				declarations = append(declarations, &Declaration{
-					Type:        declType,
-					SourceName:  typeSpec.Name.Name,
-					SourceObj:   typeSpec,
-					Path:        path,
-					File:        f,
-					Doc:         doc,
-					Annotations: ParseAnnotations(doc),
+				declarations = append(declarations, &Decl{
+					Type:       declType,
+					SourceName: typeSpec.Name.Name,
+					SourceObj:  typeSpec,
+					Path:       path,
+					File:       f,
+					Doc:        doc,
+					Annots:     ParseAnnots(doc),
 				})
 			}
 		}

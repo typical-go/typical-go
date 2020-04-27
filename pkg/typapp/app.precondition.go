@@ -52,12 +52,18 @@ func (a *App) generateConstructor(c *typbuildtool.CliContext, filename string) (
 }
 
 func walkForConstructor(c *typbuildtool.CliContext) (constructors []string, err error) {
-	err = c.Core.Ast().
-		EachAnnotation("constructor", typast.FunctionType,
-			func(decl *typast.Declaration, ann *typast.Annotation) (err error) {
-				constructors = append(constructors, fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
-				return
-			})
+	var (
+		store *typast.DeclStore
+	)
+
+	if store, err = typast.Walk(c.Core.AppFiles); err != nil {
+		return
+	}
+	err = store.EachAnnotation("constructor", typast.FunctionType,
+		func(decl *typast.Decl, ann *typast.Annot) (err error) {
+			constructors = append(constructors, fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
+			return
+		})
 	return
 }
 
