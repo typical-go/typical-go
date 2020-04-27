@@ -18,9 +18,8 @@ const (
 type Decl struct {
 	Path       string
 	File       *ast.File
-	Doc        string
-	Annots     []*Annot
 	Type       DeclType
+	Doc        *ast.CommentGroup
 	SourceName string
 	SourceObj  interface{}
 }
@@ -29,4 +28,4 @@ type Decl struct {
 type DeclFunc func(*Decl) error
 
 // AnnotFunc to handle annotation
-type AnnotFunc func(decl *Decl, ann *Annot) error
+type AnnotFunc func(decl *Decl, ann *Annotation) error

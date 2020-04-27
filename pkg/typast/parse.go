@@ -6,12 +6,13 @@ import (
 )
 
 // ParseAnnots to parse godoc comment to list of annotation
-func ParseAnnots(doc string) (annotations []*Annot) {
-	if doc == "" {
+func ParseAnnots(decl *Decl) (annotations []*Annotation) {
+	if decl.Doc == nil {
 		return
 	}
+
 	r, _ := regexp.Compile("\\[(.*?)\\]")
-	for _, s := range r.FindAllString(doc, -1) {
+	for _, s := range r.FindAllString(decl.Doc.Text(), -1) {
 		if a := ParseAnnotation(s); a != nil {
 			annotations = append(annotations, a)
 		}
@@ -20,12 +21,12 @@ func ParseAnnots(doc string) (annotations []*Annot) {
 }
 
 // ParseAnnotation parse raw string to annotation
-func ParseAnnotation(raw string) (a *Annot) {
+func ParseAnnotation(raw string) (a *Annotation) {
 	if raw[0] != '[' && raw[len(raw)-1] != ']' {
 		return
 	}
 	raw = raw[1 : len(raw)-1]
-	a = NewAnnot(name(raw))
+	a = NewAnnotation(name(raw))
 	putAttr(a, rawAttribute(raw))
 	return
 }
@@ -47,7 +48,7 @@ func rawAttribute(raw string) string {
 	return raw[i0+1 : i1]
 }
 
-func putAttr(a *Annot, rawAttr string) {
+func putAttr(a *Annotation, rawAttr string) {
 	rawAttr = strings.TrimSpace(rawAttr)
 	if rawAttr == "" {
 		return
@@ -56,36 +57,36 @@ func putAttr(a *Annot, rawAttr string) {
 	eq := strings.IndexRune(rawAttr, '=')
 	space := strings.IndexRune(rawAttr, ' ')
 	if space > 0 && (space < eq || eq < 1) {
-		a.Put(rawAttr[:space], "")
+		a.PutAttr(rawAttr[:space], "")
 		putAttr(a, rawAttr[space+1:])
 		return
 	}
 	if eq > 0 {
 		key = rawAttr[:eq]
 		if eq == len(rawAttr)-1 {
-			a.Put(key, "")
+			a.PutAttr(key, "")
 			return
 		}
 		value = rawAttr[eq+1:]
 		if value[0] == '"' {
 			value = value[1:]
 			i := strings.IndexRune(value, '"')
-			a.Put(key, value[:i])
+			a.PutAttr(key, value[:i])
 			putAttr(a, value[i+1:])
 			return
 		}
 		if value[0] == ' ' {
-			a.Put(key, "")
+			a.PutAttr(key, "")
 			putAttr(a, value)
 			return
 		}
 		if i := strings.IndexRune(value, ' '); i > 0 {
-			a.Put(key, value[:i])
+			a.PutAttr(key, value[:i])
 			putAttr(a, value[i+1:])
 			return
 		}
-		a.Put(key, value)
+		a.PutAttr(key, value)
 		return
 	}
-	a.Put(rawAttr, "")
+	a.PutAttr(rawAttr, "")
 }
