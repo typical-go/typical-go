@@ -3,6 +3,7 @@ package typbuildtool
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcfg"
@@ -13,12 +14,8 @@ import (
 var (
 	_ typcore.BuildTool = (*BuildTool)(nil)
 	_ typcfg.Configurer = (*BuildTool)(nil)
-
-	_ Utility        = (*BuildTool)(nil)
-	_ Cleaner        = (*BuildTool)(nil)
-	_ Releaser       = (*BuildTool)(nil)
-	_ Publisher      = (*BuildTool)(nil)
-	_ Preconditioner = (*BuildTool)(nil)
+	_ Utility           = (*BuildTool)(nil)
+	_ Preconditioner    = (*BuildTool)(nil)
 )
 
 // BuildTool is typical Build Tool for golang project
@@ -50,24 +47,6 @@ func BuildSequences(buildSequences ...interface{}) *BuildTool {
 // Utilities return build-tool with new utilities
 func (b *BuildTool) Utilities(utilities ...Utility) *BuildTool {
 	b.utilities = utilities
-	return b
-}
-
-// BinFolder return BuildTool with new binFolder
-func (b *BuildTool) BinFolder(binFolder string) *BuildTool {
-	b.binFolder = binFolder
-	return b
-}
-
-// CmdFolder return BuildTool with new cmdFolder
-func (b *BuildTool) CmdFolder(cmdFolder string) *BuildTool {
-	b.cmdFolder = cmdFolder
-	return b
-}
-
-// ConfigFile define path to store config
-func (b *BuildTool) ConfigFile(configFile string) *BuildTool {
-	b.configFile = configFile
 	return b
 }
 
@@ -103,12 +82,80 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 	cmds = []*cli.Command{
 		cmdTest(c),
 		cmdRun(c),
-		b.cmdPublish(c),
-		b.cmdClean(c),
+		cmdPublish(c),
+		cmdClean(c),
 	}
 
 	for _, task := range b.utilities {
 		cmds = append(cmds, task.Commands(c)...)
 	}
 	return cmds
+}
+
+// Precondition for this project
+func (b *BuildTool) Precondition(c *CliContext) (err error) {
+	if !b.enablePrecondition {
+		c.Info("Skip the preconditon")
+		return
+	}
+
+	app := c.Core.App
+	if configurer, ok := app.(typcfg.Configurer); ok {
+		if err = typcfg.Write(b.configFile, configurer); err != nil {
+			return
+		}
+	}
+
+	if err = typcfg.Write(b.configFile, b); err != nil {
+		return
+	}
+
+	if preconditioner, ok := app.(Preconditioner); ok {
+		if err = preconditioner.Precondition(c); err != nil {
+			return fmt.Errorf("Precondition-App: %w", err)
+		}
+	}
+
+	typcfg.Load(b.configFile)
+
+	return
+}
+
+// Configurations of Build-Tool
+func (b *BuildTool) Configurations() (cfgs []*typcfg.Configuration) {
+	for _, module := range b.buildSequences {
+		if configurer, ok := module.(typcfg.Configurer); ok {
+			cfgs = append(cfgs, configurer.Configurations()...)
+		}
+	}
+
+	for _, utility := range b.utilities {
+		if configurer, ok := utility.(typcfg.Configurer); ok {
+			cfgs = append(cfgs, configurer.Configurations()...)
+		}
+	}
+
+	return
+}
+
+// RunBuildTool to run the build-tool
+func (b *BuildTool) RunBuildTool(c *typcore.Context) (err error) {
+	return b.cli(c).Run(os.Args)
+}
+
+func (b *BuildTool) cli(core *typcore.Context) *cli.App {
+	app := cli.NewApp()
+	app.Name = core.Name
+	app.Usage = "Build-Tool"
+	app.Description = core.Description
+	app.Version = core.Version
+
+	c := &Context{
+		Core:      core,
+		BuildTool: b,
+	}
+	app.Before = c.ActionFunc(b.Precondition)
+	app.Commands = b.Commands(c)
+
+	return app
 }

@@ -1,6 +1,6 @@
 package typbuildtool
 
-const (
+var (
 	// DefaultReleaseFolder is default value for release folder location
 	DefaultReleaseFolder = "release"
 
