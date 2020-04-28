@@ -10,6 +10,7 @@ import (
 func TestCreateAnnotation(t *testing.T) {
 	testcases := []struct {
 		testName string
+		decl     *typast.Decl
 		raw      string
 		*typast.Annotation
 	}{
@@ -159,9 +160,9 @@ func TestCreateAnnotation(t *testing.T) {
 			},
 		},
 	}
-	for i, tt := range testcases {
+	for _, tt := range testcases {
 		t.Run(tt.testName, func(t *testing.T) {
-			require.Equal(t, tt.Annotation, typast.CreateAnnotation(tt.raw), i)
+			require.Equal(t, tt.Annotation, typast.CreateAnnotation(tt.decl, tt.raw))
 		})
 	}
 }

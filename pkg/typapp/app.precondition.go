@@ -12,6 +12,10 @@ import (
 	"github.com/typical-go/typical-go/pkg/typfactory"
 )
 
+const (
+	constructorTag = "constructor"
+)
+
 // Precondition the app
 func (a *App) Precondition(c *typbuildtool.CliContext) (err error) {
 	c.Info("Precondition the typical-app")
@@ -59,11 +63,13 @@ func walkForConstructor(c *typbuildtool.CliContext) (constructors []string, err 
 	if store, err = typast.Walk(c.Core.AppFiles...); err != nil {
 		return
 	}
-	err = store.EachAnnotation("constructor", typast.FunctionType,
-		func(decl *typast.Decl, ann *typast.Annotation) (err error) {
-			constructors = append(constructors, fmt.Sprintf("%s.%s", decl.File.Name, decl.SourceName))
-			return
-		})
+
+	for _, a := range store.Annots {
+		if a.Equal(constructorTag, typast.FunctionType) {
+			constructors = append(constructors, fmt.Sprintf("%s.%s", a.File.Name, a.SourceName))
+		}
+	}
+
 	return
 }
 

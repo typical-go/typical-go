@@ -4,21 +4,29 @@ import "strings"
 
 // Annotation contain extra additional information
 type Annotation struct {
+	*Decl
 	TagName  string
 	TagAttrs map[string]string
 }
 
 // CreateAnnotation parse raw string to annotation
-func CreateAnnotation(raw string) (a *Annotation) {
+func CreateAnnotation(decl *Decl, raw string) (a *Annotation) {
 	if raw[0] != '[' && raw[len(raw)-1] != ']' {
 		return
 	}
 	raw = raw[1 : len(raw)-1]
 
 	return &Annotation{
+		Decl:     decl,
 		TagName:  tagName(raw),
 		TagAttrs: tagAttrs(map[string]string{}, rawAttribute(raw)),
 	}
+}
+
+// Equal return true if annotation have same tag name and declaration type
+func (a *Annotation) Equal(tagName string, declType DeclType) bool {
+	return strings.ToLower(tagName) == strings.ToLower(a.TagName) &&
+		a.Type == declType
 }
 
 func tagName(raw string) string {
@@ -88,10 +96,4 @@ func tagAttrs(m map[string]string, rawAttr string) map[string]string {
 
 	m[rawAttr] = ""
 	return m
-}
-
-// PutAttr to put attribute
-func (a *Annotation) PutAttr(key, value string) *Annotation {
-	a.TagAttrs[key] = value
-	return a
 }

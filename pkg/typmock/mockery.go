@@ -28,7 +28,27 @@ func NewMockery(projectPkg string) *Mockery {
 	}
 }
 
-// Put new target
+// CreateMockery to get mock annotated
+func CreateMockery(ast *typast.ASTStore, projectPkg string) (b *Mockery, err error) {
+	b = NewMockery(projectPkg)
+	for _, a := range ast.Annots {
+		if a.Equal("mock", typast.InterfaceType) {
+			pkg := a.File.Name.Name
+			dir := filepath.Dir(a.Path)
+
+			b.Put(&Target{
+				Dir:    dir,
+				Pkg:    pkg,
+				Source: a.SourceName,
+				Parent: dir[:len(dir)-len(pkg)],
+			})
+		}
+	}
+
+	return
+}
+
+// Put target to mockery
 func (b *Mockery) Put(target *Target) {
 	key := target.Pkg
 	if _, ok := b.targetMap[key]; ok {
@@ -50,20 +70,4 @@ func (b *Mockery) TargetMap(pkgs ...string) map[string][]*Target {
 		return targetMap
 	}
 	return b.targetMap
-}
-
-// Walk the syntax tree
-func (b *Mockery) Walk(store *typast.ASTStore) error {
-	return store.EachAnnotation("mock", typast.InterfaceType, func(decl *typast.Decl, ann *typast.Annotation) (err error) {
-		pkg := decl.File.Name.Name
-		dir := filepath.Dir(decl.Path)
-
-		b.Put(&Target{
-			Dir:    dir,
-			Pkg:    pkg,
-			Source: decl.SourceName,
-			Parent: dir[:len(dir)-len(pkg)],
-		})
-		return
-	})
 }

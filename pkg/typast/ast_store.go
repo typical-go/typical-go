@@ -1,55 +1,108 @@
 package typast
 
 import (
-	"strings"
+	"go/ast"
+	"go/parser"
+	"go/token"
+	"regexp"
 )
 
 // ASTStore responsible to store filename, declaration and annotation
 type ASTStore struct {
-	filenames []string
-	decls     []*Decl
+	Filenames []string
+	Decls     []*Decl
+	Annots    []*Annotation
 }
 
-// DeclFunc to handle declaration
-type DeclFunc func(*Decl) error
+// Walk the source code to get autowire and automock
+func Walk(filenames ...string) (a *ASTStore, err error) {
+	var (
+		decls  []*Decl
+		annots []*Annotation
+	)
 
-// AnnotFunc to handle annotation
-type AnnotFunc func(decl *Decl, ann *Annotation) error
+	if decls, err = parseFiles(filenames); err != nil {
+		return
+	}
 
-// EachDecl to handle each declaration
-func (c *ASTStore) EachDecl(fn DeclFunc) (err error) {
-	for _, decl := range c.decls {
-		if err = fn(decl); err != nil {
+	for _, decl := range decls {
+		annots = append(annots, parseAnnots(decl)...)
+	}
+
+	return &ASTStore{
+		Filenames: filenames,
+		Decls:     decls,
+		Annots:    annots,
+	}, nil
+}
+
+func parseFiles(filenames []string) (decls []*Decl, err error) {
+	var (
+		f *ast.File
+	)
+	fset := token.NewFileSet() // positions are relative to fset
+	for _, filename := range filenames {
+		if f, err = parser.ParseFile(fset, filename, nil, parser.ParseComments); err != nil {
 			return
+		}
+		for _, d := range f.Decls {
+			if decl := parseDecl(filename, f, d); decl != nil {
+				decls = append(decls, decl)
+			}
 		}
 	}
 	return
 }
 
-// EachAnnotation to handle each annotation
-func (c *ASTStore) EachAnnotation(name string, declType DeclType, fn AnnotFunc) (err error) {
-	return c.EachDecl(func(decl *Decl) (err error) {
-		annots := parseAnnotations(decl)
-		annot := getAnnot(annots, name)
-		if annot != nil {
-			if decl.Type == declType {
-				if err = fn(decl, annot); err != nil {
-					return
-				}
-			} else {
-				// log.Warnf("[%s] has no effect to %s:%s", name, declType, decl.SourceName)
-				// TODO: give some hint
-			}
+func parseDecl(path string, f *ast.File, decl ast.Decl) *Decl {
+	switch decl.(type) {
+	case *ast.FuncDecl:
+		funcDecl := decl.(*ast.FuncDecl)
+		return &Decl{
+			Type:       FunctionType,
+			SourceName: funcDecl.Name.Name,
+			SourceObj:  funcDecl,
+			Path:       path,
+			File:       f,
+			Doc:        funcDecl.Doc,
 		}
-		return
-	})
-}
-
-func getAnnot(a []*Annotation, name string) *Annotation {
-	for _, a := range a {
-		if strings.ToLower(name) == strings.ToLower(a.TagName) {
-			return a
+	case *ast.GenDecl:
+		genDecl := decl.(*ast.GenDecl)
+		for _, spec := range genDecl.Specs {
+			switch spec.(type) {
+			case *ast.TypeSpec:
+				typeSpec := spec.(*ast.TypeSpec)
+				declType := GenericType
+				switch typeSpec.Type.(type) {
+				case *ast.InterfaceType:
+					declType = InterfaceType
+				case *ast.StructType:
+					declType = StructType
+				}
+				return &Decl{
+					Type:       declType,
+					SourceName: typeSpec.Name.Name,
+					SourceObj:  typeSpec,
+					Path:       path,
+					File:       f,
+					Doc:        genDecl.Doc,
+				}
+			}
 		}
 	}
 	return nil
+}
+
+func parseAnnots(decl *Decl) (annotations []*Annotation) {
+	if decl.Doc == nil {
+		return
+	}
+
+	r, _ := regexp.Compile("\\[(.*?)\\]")
+	for _, s := range r.FindAllString(decl.Doc.Text(), -1) {
+		if a := CreateAnnotation(decl, s); a != nil {
+			annotations = append(annotations, a)
+		}
+	}
+	return
 }
