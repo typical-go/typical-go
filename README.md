@@ -74,42 +74,6 @@ You can make your own application implementation by implmenent `typcore.App` int
 - `BuildSequence` is sequence of build process (check [Build Life-Cycle](#build-life-cycle) section)
 - `Utilities` custom task for development
 
-## Build Life-Cycle
-
-Each build-sequence contain either precondition, run, test, release or publish. 
-
-```
-        +--------------------+       
-        |    Precondition    |       
-        +--------------------+       
-            /            \           
-           /              \          
-          /                \         
-         /         +----------------+
-        /          |      Test      |
-+-------------+    +----------------+
-|     Run     |             |        
-+-------------+             |        
-                   +----------------+
-                   |     Release    |
-                   +----------------+
-                            |        
-                            |        
-                   +----------------+
-                   |     Publish    |
-                   +----------------+
-```
-
-| # | Phase | Description | Command | 
-|---|-------|-------------|---------|
-| 1 | Precondition | Setup the project; most likely generate file that required for application | `./typicalw` |
-| 2 | Test |  Test the project | `./typicalw test` |
-| 3 | Run | Run the project for local environment | `./typicalw run` |
-| 4 | Release | Execute before publish the project | n/a |
-| 5 | Publish | Publish the project | `./typicalw publish`  |
-
-
-
 ## Wrapper
 
 `typicalw` is your best friend. It will download, compile and run the actual build-tool for your day-to-day development.
@@ -155,6 +119,42 @@ Typical-tmp is an important folder that contains the build-tool mechanisms. By d
 Since the typical-go project is still undergoing development, maybe there is some breaking change and deleting typical-tmp can solve the issue since it will be healed by itself.
 
 
+## Build Life-Cycle
+
+Each build-sequence contain either precondition, run, test, release or publish. 
+
+```
+        +--------------------+       
+        |    Precondition    |       
+        +--------------------+       
+            /            \           
+           /              \          
+          /                \         
+         /         +----------------+
+        /          |      Test      |
++-------------+    +----------------+
+|     Run     |             |        
++-------------+             |        
+                   +----------------+
+                   |     Release    |
+                   +----------------+
+                            |        
+                            |        
+                   +----------------+
+                   |     Publish    |
+                   +----------------+
+```
+
+| # | Phase | Description | Command | 
+|---|-------|-------------|---------|
+| 1 | Precondition | Setup the project; most likely generate file that required for application | `./typicalw` |
+| 2 | Test |  Test the project | `./typicalw test` |
+| 3 | Run | Run the project for local environment | `./typicalw run` |
+| 4 | Release | Execute before publish the project | n/a |
+| 5 | Publish | Publish the project | `./typicalw publish`  |
+
+
+
 ## Examples
 
 - [x] [Hello World](https://github.com/typical-go/typical-go/tree/master/examples/hello-world)
@@ -169,7 +169,3 @@ Since the typical-go project is still undergoing development, maybe there is som
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-
-
-
