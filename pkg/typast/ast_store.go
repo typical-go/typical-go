@@ -10,6 +10,12 @@ type ASTStore struct {
 	decls     []*Decl
 }
 
+// DeclFunc to handle declaration
+type DeclFunc func(*Decl) error
+
+// AnnotFunc to handle annotation
+type AnnotFunc func(decl *Decl, ann *Annotation) error
+
 // EachDecl to handle each declaration
 func (c *ASTStore) EachDecl(fn DeclFunc) (err error) {
 	for _, decl := range c.decls {
@@ -23,7 +29,7 @@ func (c *ASTStore) EachDecl(fn DeclFunc) (err error) {
 // EachAnnotation to handle each annotation
 func (c *ASTStore) EachAnnotation(name string, declType DeclType, fn AnnotFunc) (err error) {
 	return c.EachDecl(func(decl *Decl) (err error) {
-		annots := ParseAnnots(decl)
+		annots := parseAnnotations(decl)
 		annot := getAnnot(annots, name)
 		if annot != nil {
 			if decl.Type == declType {

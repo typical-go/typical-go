@@ -4,9 +4,6 @@ import (
 	"go/ast"
 )
 
-// DeclType is declaration type
-type DeclType string
-
 const (
 	FunctionType  = DeclType("Function")
 	InterfaceType = DeclType("Interface")
@@ -24,8 +21,5 @@ type Decl struct {
 	SourceObj  interface{}
 }
 
-// DeclFunc to handle declaration
-type DeclFunc func(*Decl) error
-
-// AnnotFunc to handle annotation
-type AnnotFunc func(decl *Decl, ann *Annotation) error
+// DeclType is declaration type
+type DeclType string

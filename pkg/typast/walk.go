@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"regexp"
 )
 
 // Walk the source code to get autowire and automock
@@ -75,4 +76,18 @@ func parseDecl(path string, f *ast.File, decl ast.Decl) *Decl {
 		}
 	}
 	return nil
+}
+
+func parseAnnotations(decl *Decl) (annotations []*Annotation) {
+	if decl.Doc == nil {
+		return
+	}
+
+	r, _ := regexp.Compile("\\[(.*?)\\]")
+	for _, s := range r.FindAllString(decl.Doc.Text(), -1) {
+		if a := CreateAnnotation(s); a != nil {
+			annotations = append(annotations, a)
+		}
+	}
+	return
 }
