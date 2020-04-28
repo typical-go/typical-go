@@ -14,15 +14,16 @@ type ASTStore struct {
 	Annots    []*Annotation
 }
 
-// Walk the source code to get autowire and automock
-func Walk(filenames ...string) (a *ASTStore, err error) {
+// CreateASTStore to walk through the filenames and store declaration and annotations
+func CreateASTStore(filenames ...string) (a *ASTStore) {
 	var (
 		decls  []*Decl
 		annots []*Annotation
+		err    error
 	)
 
 	if decls, err = parseFiles(filenames); err != nil {
-		return
+		panic(err.Error())
 	}
 
 	for _, decl := range decls {
@@ -33,7 +34,7 @@ func Walk(filenames ...string) (a *ASTStore, err error) {
 		Filenames: filenames,
 		Decls:     decls,
 		Annots:    annots,
-	}, nil
+	}
 }
 
 func parseFiles(filenames []string) (decls []*Decl, err error) {

@@ -1,7 +1,10 @@
 package typbuildtool
 
 import (
+	"context"
+
 	"github.com/typical-go/typical-go/pkg/git"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
@@ -33,7 +36,7 @@ type Publisher interface {
 
 // Preconditioner responsible to precondition
 type Preconditioner interface {
-	Precondition(c *CliContext) error
+	Precondition(c *PreconditionContext) error
 }
 
 // Runner responsible to run the project in local environment
@@ -70,22 +73,22 @@ type CliContext struct {
 
 // Info logger
 func (c *CliContext) Info(args ...interface{}) {
-	c.Core.Info(args...)
+	c.Core.Info(args...) // TODO: custom label from cli name
 }
 
 // Infof logger
 func (c *CliContext) Infof(format string, args ...interface{}) {
-	c.Core.Infof(format, args)
+	c.Core.Infof(format, args) // TODO: custom label from cli name
 }
 
 // Warn logger
 func (c *CliContext) Warn(args ...interface{}) {
-	c.Core.Warn(args...)
+	c.Core.Warn(args...) // TODO: custom label from cli name
 }
 
 // Warnf logger
 func (c *CliContext) Warnf(format string, args ...interface{}) {
-	c.Core.Warnf(format, args...)
+	c.Core.Warnf(format, args...) // TODO: custom label from cli name
 }
 
 // ReleaseContext is context of release
@@ -100,4 +103,39 @@ type ReleaseContext struct {
 type PublishContext struct {
 	*ReleaseContext
 	ReleaseFiles []string
+}
+
+// PreconditionContext is context of preconditioning
+type PreconditionContext struct {
+	Core     *typcore.Context
+	Ctx      context.Context
+	astStore *typast.ASTStore
+}
+
+// ASTStore return the ast store
+func (c *PreconditionContext) ASTStore() *typast.ASTStore {
+	if c.astStore == nil {
+		c.astStore = typast.CreateASTStore(c.Core.AppFiles...)
+	}
+	return c.astStore
+}
+
+// Info logger
+func (c *PreconditionContext) Info(args ...interface{}) {
+	c.Core.Info(args...) // TODO: precondition label
+}
+
+// Infof logger
+func (c *PreconditionContext) Infof(format string, args ...interface{}) {
+	c.Core.Infof(format, args) // TODO: precondition label
+}
+
+// Warn logger
+func (c *PreconditionContext) Warn(args ...interface{}) {
+	c.Core.Warn(args...) // TODO: precondition label
+}
+
+// Warnf logger
+func (c *PreconditionContext) Warnf(format string, args ...interface{}) {
+	c.Core.Warnf(format, args...) // TODO: precondition label
 }

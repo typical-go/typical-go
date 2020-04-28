@@ -33,27 +33,21 @@ func commands(c *typbuildtool.Context) []*cli.Command {
 
 func generateMock(c *typbuildtool.CliContext) (err error) {
 	var (
-		store   *typast.ASTStore
 		mockery *Mockery
 	)
 
-	if store, err = typast.Walk(c.Core.AppFiles...); err != nil {
-		return
-	}
-
+	store := typast.CreateASTStore(c.Core.AppFiles...)
 	if mockery, err = CreateMockery(store, c.Core.ProjectPkg); err != nil {
 		return
 	}
 
 	targetMap := mockery.TargetMap(c.Args().Slice()...)
-
 	if len(targetMap) < 1 {
 		c.Info("Nothing to mock")
 		return
 	}
 
 	mockgen := fmt.Sprintf("%s/bin/mockgen", c.Core.TypicalTmp)
-
 	if err = installIfNotExist(c.Context, mockgen); err != nil {
 		return
 	}

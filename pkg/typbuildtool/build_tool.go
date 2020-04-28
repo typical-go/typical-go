@@ -93,7 +93,7 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 }
 
 // Precondition for this project
-func (b *BuildTool) Precondition(c *CliContext) (err error) {
+func (b *BuildTool) Precondition(c *PreconditionContext) (err error) {
 	if !b.enablePrecondition {
 		c.Info("Skip the preconditon")
 		return
@@ -150,12 +150,16 @@ func (b *BuildTool) cli(core *typcore.Context) *cli.App {
 	app.Description = core.Description
 	app.Version = core.Version
 
-	c := &Context{
+	app.Before = func(cli *cli.Context) (err error) {
+		return b.Precondition(&PreconditionContext{
+			Core: core,
+			Ctx:  cli.Context,
+		})
+	}
+	app.Commands = b.Commands(&Context{
 		Core:      core,
 		BuildTool: b,
-	}
-	app.Before = c.ActionFunc(b.Precondition)
-	app.Commands = b.Commands(c)
+	})
 
 	return app
 }
