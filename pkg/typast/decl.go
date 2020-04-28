@@ -1,6 +1,7 @@
 package typast
 
 import (
+	"fmt"
 	"go/ast"
 )
 
@@ -26,6 +27,18 @@ type Decl struct {
 	Doc        *ast.CommentGroup
 	SourceName string
 	SourceObj  interface{}
+}
+
+// Equal return true the declaration has same signature
+func (d Decl) Equal(d1 *Decl) bool {
+	return d1.SourceName == d.SourceName &&
+		d1.Path == d.Path &&
+		d1.Type == d.Type
+}
+
+func (d Decl) String() string {
+	return fmt.Sprintf("Path:%s\tType: %s\tSourceName: %s",
+		d.Path, d.Type, d.SourceName)
 }
 
 // DeclType is declaration type
