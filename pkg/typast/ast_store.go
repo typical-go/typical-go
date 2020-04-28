@@ -60,7 +60,7 @@ func parseDecl(path string, f *ast.File, decl ast.Decl) *Decl {
 	case *ast.FuncDecl:
 		funcDecl := decl.(*ast.FuncDecl)
 		return &Decl{
-			Type:       FunctionType,
+			Type:       Function,
 			SourceName: funcDecl.Name.Name,
 			SourceObj:  funcDecl,
 			Path:       path,
@@ -73,12 +73,12 @@ func parseDecl(path string, f *ast.File, decl ast.Decl) *Decl {
 			switch spec.(type) {
 			case *ast.TypeSpec:
 				typeSpec := spec.(*ast.TypeSpec)
-				declType := GenericType
+				declType := Generic
 				switch typeSpec.Type.(type) {
 				case *ast.InterfaceType:
-					declType = InterfaceType
+					declType = Interface
 				case *ast.StructType:
-					declType = StructType
+					declType = Struct
 				}
 				return &Decl{
 					Type:       declType,

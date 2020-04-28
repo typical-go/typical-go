@@ -35,7 +35,7 @@ func (a *App) generateConstructor(c *typbuildtool.PreconditionContext, filename 
 	store := c.ASTStore()
 
 	for _, a := range store.Annots {
-		if a.Equal(constructorTag, typast.FunctionType) {
+		if a.Equal(constructorTag, typast.Function) {
 			constructors = append(constructors, ctorDef(a))
 		}
 	}

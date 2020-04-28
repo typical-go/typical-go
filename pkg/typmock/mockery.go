@@ -32,7 +32,7 @@ func NewMockery(projectPkg string) *Mockery {
 func CreateMockery(ast *typast.ASTStore, projectPkg string) (b *Mockery, err error) {
 	b = NewMockery(projectPkg)
 	for _, a := range ast.Annots {
-		if a.Equal("mock", typast.InterfaceType) {
+		if a.Equal("mock", typast.Interface) {
 			pkg := a.File.Name.Name
 			dir := filepath.Dir(a.Path)
 
