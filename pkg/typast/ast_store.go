@@ -4,7 +4,7 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
-	"regexp"
+	"strings"
 )
 
 // ASTStore responsible to store filename, declaration and annotation
@@ -93,11 +93,15 @@ func parseAnnots(decl *Decl, doc *ast.CommentGroup) (annotations []*Annotation) 
 		return
 	}
 
-	r, _ := regexp.Compile("\\[(.*?)\\]")
-	for _, s := range r.FindAllString(doc.Text(), -1) {
-		if a := CreateAnnotation(decl, s); a != nil {
-			annotations = append(annotations, a)
+	for _, line := range strings.Split(doc.Text(), "\n") {
+		line = strings.TrimSpace(line)
+		if strings.HasPrefix(line, "@") {
+			a := CreateAnnotation(decl, line[1:])
+			if a != nil {
+				annotations = append(annotations, a)
+			}
 		}
 	}
+
 	return
 }

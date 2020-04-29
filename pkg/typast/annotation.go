@@ -13,11 +13,6 @@ type Annotation struct {
 
 // CreateAnnotation parse raw string to annotation
 func CreateAnnotation(decl *Decl, raw string) (a *Annotation) {
-	if raw[0] != '[' && raw[len(raw)-1] != ']' {
-		return
-	}
-	raw = raw[1 : len(raw)-1]
-
 	return &Annotation{
 		Decl:     decl,
 		TagName:  tagName(raw),
@@ -63,6 +58,7 @@ func tagAttrs(m map[string]string, rawAttr string) map[string]string {
 
 	eq := strings.IndexRune(rawAttr, '=')
 	space := strings.IndexRune(rawAttr, ' ')
+
 	if space > 0 && (space < eq || eq < 1) {
 		key := strings.TrimSpace(rawAttr[:space])
 		m[key] = ""
