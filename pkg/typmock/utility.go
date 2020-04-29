@@ -34,9 +34,13 @@ func commands(c *typbuildtool.Context) []*cli.Command {
 func generateMock(c *typbuildtool.CliContext) (err error) {
 	var (
 		mockery *Mockery
+		store   *typast.ASTStore
 	)
 
-	store := typast.CreateASTStore(c.Core.AppFiles...)
+	if store, err = typast.CreateASTStore(c.Core.AppFiles...); err != nil {
+		return
+	}
+
 	if mockery, err = CreateMockery(store, c.Core.ProjectPkg); err != nil {
 		return
 	}

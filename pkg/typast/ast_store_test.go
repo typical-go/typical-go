@@ -32,7 +32,8 @@ var (
 
 func TestCreateASTStore(t *testing.T) {
 
-	store := typast.CreateASTStore("sample_test.go")
+	store, err := typast.CreateASTStore("sample_test.go")
+	require.NoError(t, err)
 	require.EqualValues(t, []*typast.Decl{
 		sampleInterfaceDecl,
 		sampleStructDecl,
@@ -40,12 +41,8 @@ func TestCreateASTStore(t *testing.T) {
 	}, store.Decls)
 
 	require.EqualValues(t, []*typast.Annotation{
-		{Decl: sampleStructDecl, TagName: "tag1", TagAttrs: map[string]string{}},
-		{Decl: sampleStructDecl, TagName: "tag2", TagAttrs: map[string]string{
-			"key1": "",
-			"key2": "",
-			"key3": "value3",
-		}},
+		{Decl: sampleStructDecl, TagName: "tag1"},
+		{Decl: sampleStructDecl, TagName: "tag2", TagAttrs: `{"key1":"", "key2": "", "key3":"value3"}`},
 	}, store.Annots)
 
 }

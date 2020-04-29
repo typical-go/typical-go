@@ -114,8 +114,12 @@ type PreconditionContext struct {
 
 // ASTStore return the ast store
 func (c *PreconditionContext) ASTStore() *typast.ASTStore {
+	var err error
 	if c.astStore == nil {
-		c.astStore = typast.CreateASTStore(c.Core.AppFiles...)
+		c.astStore, err = typast.CreateASTStore(c.Core.AppFiles...)
+		if err != nil {
+			c.Warn(err.Error())
+		}
 	}
 	return c.astStore
 }

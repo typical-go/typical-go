@@ -16,19 +16,18 @@ type ASTStore struct {
 }
 
 // CreateASTStore to walk through the filenames and store declaration and annotations
-func CreateASTStore(paths ...string) *ASTStore {
+func CreateASTStore(paths ...string) (store *ASTStore, err error) {
 	var (
 		decls     []*Decl
 		declNodes []ast.Decl
 		annots    []*Annotation
-		err       error
 	)
 
 	fset := token.NewFileSet() // positions are relative to fset
 	for _, path := range paths {
 		var f *ast.File
 		if f, err = parser.ParseFile(fset, path, nil, parser.ParseComments); err != nil {
-			panic(err.Error())
+			return
 		}
 
 		pkg := f.Name.Name
@@ -36,14 +35,19 @@ func CreateASTStore(paths ...string) *ASTStore {
 			name, declType, doc := parseDecl(node)
 			if name != "" {
 				declNodes = append(declNodes, node)
+
 				decl := &Decl{
 					Name: name,
 					Type: declType,
 					Path: path,
 					Pkg:  pkg,
 				}
+
 				decls = append(decls, decl)
-				annots = append(annots, parseAnnots(decl, doc)...)
+
+				if err = putAnnots(&annots, decl, doc); err != nil {
+					return
+				}
 			}
 		}
 	}
@@ -53,7 +57,7 @@ func CreateASTStore(paths ...string) *ASTStore {
 		Decls:     decls,
 		DeclNodes: declNodes,
 		Annots:    annots,
-	}
+	}, nil
 }
 
 func parseDecl(decl ast.Decl) (name string, declType DeclType, doc *ast.CommentGroup) {
@@ -88,7 +92,7 @@ func parseDecl(decl ast.Decl) (name string, declType DeclType, doc *ast.CommentG
 	return
 }
 
-func parseAnnots(decl *Decl, doc *ast.CommentGroup) (annotations []*Annotation) {
+func putAnnots(annotations *[]*Annotation, decl *Decl, doc *ast.CommentGroup) (err error) {
 	if doc == nil {
 		return
 	}
@@ -96,9 +100,13 @@ func parseAnnots(decl *Decl, doc *ast.CommentGroup) (annotations []*Annotation) 
 	for _, line := range strings.Split(doc.Text(), "\n") {
 		line = strings.TrimSpace(line)
 		if strings.HasPrefix(line, "@") {
-			a := CreateAnnotation(decl, line)
+			var a *Annotation
+			a, err = CreateAnnotation(decl, line)
+			if err != nil {
+				return
+			}
 			if a != nil {
-				annotations = append(annotations, a)
+				*annotations = append(*annotations, a)
 			}
 		}
 	}
