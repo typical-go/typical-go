@@ -17,11 +17,10 @@ type ASTStore struct {
 
 // CreateASTStore to walk through the filenames and store declaration and annotations
 func CreateASTStore(paths ...string) (store *ASTStore, err error) {
-	var (
-		decls     []*Decl
-		declNodes []ast.Decl
-		annots    []*Annotation
-	)
+
+	store = &ASTStore{
+		Paths: paths,
+	}
 
 	fset := token.NewFileSet() // positions are relative to fset
 	for _, path := range paths {
@@ -32,32 +31,24 @@ func CreateASTStore(paths ...string) (store *ASTStore, err error) {
 
 		pkg := f.Name.Name
 		for _, node := range f.Decls {
+			store.DeclNodes = append(store.DeclNodes, node)
 			name, declType, doc := parseDecl(node)
-			if name != "" {
-				declNodes = append(declNodes, node)
-
-				decl := &Decl{
-					Name: name,
-					Type: declType,
-					Path: path,
-					Pkg:  pkg,
-				}
-
-				decls = append(decls, decl)
-
-				if err = putAnnots(&annots, decl, doc); err != nil {
-					return
-				}
+			decl := &Decl{
+				Name: name,
+				Type: declType,
+				Path: path,
+				Pkg:  pkg,
 			}
+			store.Decls = append(store.Decls, decl)
+
+			if err = putAnnots(store, decl, doc); err != nil {
+				return
+			}
+
 		}
 	}
 
-	return &ASTStore{
-		Paths:     paths,
-		Decls:     decls,
-		DeclNodes: declNodes,
-		Annots:    annots,
-	}, nil
+	return store, nil
 }
 
 func parseDecl(decl ast.Decl) (name string, declType DeclType, doc *ast.CommentGroup) {
@@ -92,24 +83,68 @@ func parseDecl(decl ast.Decl) (name string, declType DeclType, doc *ast.CommentG
 	return
 }
 
-func putAnnots(annotations *[]*Annotation, decl *Decl, doc *ast.CommentGroup) (err error) {
+func putAnnots(store *ASTStore, decl *Decl, doc *ast.CommentGroup) (err error) {
+	var rawAnnots []string
+
 	if doc == nil {
 		return
 	}
 
-	for _, line := range strings.Split(doc.Text(), "\n") {
-		line = strings.TrimSpace(line)
-		if strings.HasPrefix(line, "@") {
-			var a *Annotation
-			a, err = CreateAnnotation(decl, line)
-			if err != nil {
-				return
-			}
-			if a != nil {
-				*annotations = append(*annotations, a)
-			}
+	RetrRawAnnots(&rawAnnots, doc.Text())
+
+	for _, line := range rawAnnots {
+		var a *Annotation
+		a, _ = CreateAnnotation(decl, line)
+		if a != nil {
+			store.Annots = append(store.Annots, a)
 		}
 	}
 
+	return
+}
+
+// RetrRawAnnots retrieve raw of annotation for godoc text
+func RetrRawAnnots(rawAnnots *[]string, docText string) {
+	docText = strings.TrimSpace(docText)
+	enter := strings.IndexRune(docText, '\n')
+	if !strings.HasPrefix(docText, "@") {
+		if enter > 0 {
+			RetrRawAnnots(rawAnnots, docText[enter+1:])
+		}
+		return
+	}
+
+	open := strings.IndexRune(docText, '{')
+
+	if enter < open && enter > 0 {
+		*rawAnnots = append(*rawAnnots, docText[:enter])
+		RetrRawAnnots(rawAnnots, docText[enter+1:])
+		return
+	}
+
+	if open < 0 {
+		if enter < 0 {
+			*rawAnnots = append(*rawAnnots, docText)
+		} else {
+			*rawAnnots = append(*rawAnnots, docText[:enter])
+			RetrRawAnnots(rawAnnots, docText[enter+1:])
+		}
+		return
+	}
+
+	close := strings.IndexRune(docText, '}')
+	if close < 0 {
+		*rawAnnots = append(*rawAnnots, docText)
+		return
+	}
+
+	enter2 := strings.IndexRune(docText[close:], '\n')
+	if enter2 < 0 {
+		*rawAnnots = append(*rawAnnots, docText)
+		return
+	}
+	enter2 = close + enter2
+	*rawAnnots = append(*rawAnnots, docText[:enter2])
+	RetrRawAnnots(rawAnnots, docText[enter2+1:])
 	return
 }

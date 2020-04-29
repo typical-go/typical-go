@@ -31,7 +31,6 @@ var (
 )
 
 func TestCreateASTStore(t *testing.T) {
-
 	store, err := typast.CreateASTStore("sample_test.go")
 	require.NoError(t, err)
 	require.EqualValues(t, []*typast.Decl{
@@ -44,5 +43,96 @@ func TestCreateASTStore(t *testing.T) {
 		{Decl: sampleStructDecl, TagName: "tag1"},
 		{Decl: sampleStructDecl, TagName: "tag2", TagAttrs: `{"key1":"", "key2": "", "key3":"value3"}`},
 	}, store.Annots)
+}
+
+func TestRetrRawAnnots(t *testing.T) {
+	testcases := []struct {
+		testname string
+		doc      string
+		expected []string
+	}{
+		{
+			testname: "no annotation",
+			doc:      `no annotation`,
+		},
+		{
+			testname: "start with @",
+			doc:      "@tag1",
+			expected: []string{
+				"@tag1",
+			},
+		},
+		{
+			testname: "start with @, multiple annotation",
+			doc:      "@tag1\n@tag2",
+			expected: []string{
+				"@tag1",
+				"@tag2",
+			},
+		},
+		{
+			testname: "start with @, multiple annotation, end with empty line",
+			doc:      "@tag1\n@tag2\n",
+			expected: []string{
+				"@tag1",
+				"@tag2",
+			},
+		},
+		{
+			testname: "start with @, have attribute",
+			doc:      "@tag1{attribute}",
+			expected: []string{
+				"@tag1{attribute}",
+			},
+		},
+		{
+			testname: "start with @; multiple annotation; one has attribute",
+			doc:      "@tag1{attribute}\n@tag2\n",
+			expected: []string{
+				"@tag1{attribute}",
+				"@tag2",
+			},
+		},
+		{
+			testname: "start with @; multiple annotation; all have attribute",
+			doc:      "@tag1{attribute}\n@tag2{attribute}\n",
+			expected: []string{
+				"@tag1{attribute}",
+				"@tag2{attribute}",
+			},
+		},
+		{
+			testname: "start with @; multiple annotation; all have attribute; multiline annotation",
+			doc:      "@tag1{\nattribute\n}\n@tag2{\nattribute\n}\n",
+			expected: []string{
+				"@tag1{\nattribute\n}",
+				"@tag2{\nattribute\n}",
+			},
+		},
+		{
+			testname: "start with not annotation; multiple annotation; all have attribute; multiline annotation",
+			doc:      "not annotation\n@tag1{\nattribute\n}\n@tag2{\nattribute\n}\n",
+			expected: []string{
+				"@tag1{\nattribute\n}",
+				"@tag2{\nattribute\n}",
+			},
+		},
+		{
+			testname: "start with not annotation; multiple annotation; one have attribute; multiline annotation",
+			doc:      "not annotation\n@tag1\n@tag2{\nattribute\n}\n",
+			expected: []string{
+				"@tag1",
+				"@tag2{\nattribute\n}",
+			},
+		},
+	}
+
+	for _, tt := range testcases {
+		t.Run(tt.testname, func(t *testing.T) {
+			var initial []string
+			typast.RetrRawAnnots(&initial, tt.doc)
+			require.Equal(t, tt.expected, initial)
+		})
+	}
 
 }

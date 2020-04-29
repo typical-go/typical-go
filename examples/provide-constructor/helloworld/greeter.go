@@ -6,7 +6,8 @@ import "fmt"
 type Greeter struct {
 }
 
-// NewGreeter return new insteance of Greeter [constructor]
+// NewGreeter return new insteance of Greeter
+// @constructor
 func NewGreeter() *Greeter {
 	return &Greeter{}
 }
