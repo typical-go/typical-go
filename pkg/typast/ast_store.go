@@ -96,7 +96,7 @@ func parseAnnots(decl *Decl, doc *ast.CommentGroup) (annotations []*Annotation) 
 	for _, line := range strings.Split(doc.Text(), "\n") {
 		line = strings.TrimSpace(line)
 		if strings.HasPrefix(line, "@") {
-			a := CreateAnnotation(decl, line[1:])
+			a := CreateAnnotation(decl, line)
 			if a != nil {
 				annotations = append(annotations, a)
 			}

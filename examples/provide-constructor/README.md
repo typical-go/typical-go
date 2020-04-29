@@ -2,9 +2,10 @@
 
 Example typical-go project to demonstrate how to provide constructor to dependency injection
 
-Put `[constructor]` annotation in constructor function comment
+Put `@constructor` annotation in constructor function comment
 ```go
-// NewGreeter return new insteance of Greeter [constructor]
+// NewGreeter return new insteance of Greeter 
+// @constructor
 func NewGreeter() *Greeter {
 	return &Greeter{}
 }

@@ -2,9 +2,10 @@
 
 Example typical-go project to demonstrate how to generate mock
 
-Put `[mock]` annotation in interface comment
+Put `@mock` annotation in interface comment
 ```go
-// Greeter responsible to greet [mock]
+// Greeter responsible to greet 
+// @mock
 type Greeter interface {
 	Greet() string
 }

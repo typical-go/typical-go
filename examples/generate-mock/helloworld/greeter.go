@@ -1,6 +1,7 @@
 package helloworld
 
-// Greeter responsible to greet [mock]
+// Greeter responsible to greet
+// @mock
 type Greeter interface {
 	Greet() string
 }

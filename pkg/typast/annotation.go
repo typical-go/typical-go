@@ -13,6 +13,10 @@ type Annotation struct {
 
 // CreateAnnotation parse raw string to annotation
 func CreateAnnotation(decl *Decl, raw string) (a *Annotation) {
+	if !strings.HasPrefix(raw, "@") {
+		panic("Annotation should start with @")
+	}
+	raw = raw[1:]
 	return &Annotation{
 		Decl:     decl,
 		TagName:  tagName(raw),
