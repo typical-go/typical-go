@@ -21,24 +21,24 @@ const (
 
 // Decl stand of declaration
 type Decl struct {
-	Path       string
-	File       *ast.File
-	Type       DeclType
-	Doc        *ast.CommentGroup
-	SourceName string
-	SourceObj  interface{}
+	Name string
+	Path string
+	Pkg  string
+	Type DeclType
+	Doc  *ast.CommentGroup
+	Obj  interface{}
 }
 
 // Equal return true the declaration has same signature
 func (d Decl) Equal(d1 *Decl) bool {
-	return d1.SourceName == d.SourceName &&
+	return d1.Name == d.Name &&
 		d1.Path == d.Path &&
 		d1.Type == d.Type
 }
 
 func (d Decl) String() string {
 	return fmt.Sprintf("Path:%s\tType: %s\tSourceName: %s",
-		d.Path, d.Type, d.SourceName)
+		d.Path, d.Type, d.Name)
 }
 
 // DeclType is declaration type

@@ -68,7 +68,7 @@ func importDef(c *typcore.Context, dir string) string {
 }
 
 func ctorDef(a *typast.Annotation) string {
-	return fmt.Sprintf("%s.%s", a.File.Name, a.SourceName)
+	return fmt.Sprintf("%s.%s", a.Pkg, a.Name)
 }
 
 func cfgCtorDef(bean *typcfg.Configuration) string {

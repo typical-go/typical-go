@@ -56,16 +56,17 @@ func parseFiles(filenames []string) (decls []*Decl, err error) {
 }
 
 func parseDecl(path string, f *ast.File, decl ast.Decl) *Decl {
+	pkg := f.Name.Name
 	switch decl.(type) {
 	case *ast.FuncDecl:
 		funcDecl := decl.(*ast.FuncDecl)
 		return &Decl{
-			Type:       Function,
-			SourceName: funcDecl.Name.Name,
-			SourceObj:  funcDecl,
-			Path:       path,
-			File:       f,
-			Doc:        funcDecl.Doc,
+			Type: Function,
+			Name: funcDecl.Name.Name,
+			Obj:  funcDecl,
+			Path: path,
+			Pkg:  pkg,
+			Doc:  funcDecl.Doc,
 		}
 	case *ast.GenDecl:
 		genDecl := decl.(*ast.GenDecl)
@@ -81,12 +82,12 @@ func parseDecl(path string, f *ast.File, decl ast.Decl) *Decl {
 					declType = Struct
 				}
 				return &Decl{
-					Type:       declType,
-					SourceName: typeSpec.Name.Name,
-					SourceObj:  typeSpec,
-					Path:       path,
-					File:       f,
-					Doc:        genDecl.Doc,
+					Type: declType,
+					Name: typeSpec.Name.Name,
+					Obj:  typeSpec,
+					Path: path,
+					Pkg:  pkg,
+					Doc:  genDecl.Doc,
 				}
 			}
 		}

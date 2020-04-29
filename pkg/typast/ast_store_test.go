@@ -10,9 +10,9 @@ import (
 func TestCreateASTStore(t *testing.T) {
 	store := typast.CreateASTStore("sample_test.go")
 	expectedDecls := []*typast.Decl{
-		&typast.Decl{Path: "sample_test.go", Type: typast.Interface, SourceName: "sampleInterface"},
-		&typast.Decl{Path: "sample_test.go", Type: typast.Struct, SourceName: "sampleStruct"},
-		&typast.Decl{Path: "sample_test.go", Type: typast.Function, SourceName: "sampleFunction"},
+		&typast.Decl{Path: "sample_test.go", Type: typast.Interface, Name: "sampleInterface"},
+		&typast.Decl{Path: "sample_test.go", Type: typast.Struct, Name: "sampleStruct"},
+		&typast.Decl{Path: "sample_test.go", Type: typast.Function, Name: "sampleFunction"},
 	}
 
 	require.Equal(t, len(expectedDecls), len(store.Decls))

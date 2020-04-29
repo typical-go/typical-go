@@ -33,13 +33,13 @@ func CreateMockery(ast *typast.ASTStore, projectPkg string) (b *Mockery, err err
 	b = NewMockery(projectPkg)
 	for _, a := range ast.Annots {
 		if a.Equal("mock", typast.Interface) {
-			pkg := a.File.Name.Name
+			pkg := a.Pkg
 			dir := filepath.Dir(a.Path)
 
 			b.Put(&Target{
 				Dir:    dir,
 				Pkg:    pkg,
-				Source: a.SourceName,
+				Source: a.Name,
 				Parent: dir[:len(dir)-len(pkg)],
 			})
 		}
