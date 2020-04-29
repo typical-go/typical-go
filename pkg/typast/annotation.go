@@ -1,6 +1,8 @@
 package typast
 
-import "strings"
+import (
+	"strings"
+)
 
 // Annotation contain extra additional information
 type Annotation struct {
@@ -31,10 +33,10 @@ func (a *Annotation) Equal(tagName string, declType DeclType) bool {
 
 func tagName(raw string) string {
 	i := strings.IndexRune(raw, '(')
-	if i < 0 {
-		return raw
+	if i > 0 {
+		raw = raw[:i]
 	}
-	return raw[:i]
+	return strings.TrimSpace(raw)
 }
 
 func rawAttribute(raw string) string {
@@ -62,38 +64,41 @@ func tagAttrs(m map[string]string, rawAttr string) map[string]string {
 	eq := strings.IndexRune(rawAttr, '=')
 	space := strings.IndexRune(rawAttr, ' ')
 	if space > 0 && (space < eq || eq < 1) {
-		m[rawAttr[:space]] = ""
+		key := strings.TrimSpace(rawAttr[:space])
+		m[key] = ""
 		tagAttrs(m, rawAttr[space+1:])
 		return m
 	}
-	if eq > 0 {
-		key = rawAttr[:eq]
-		if eq == len(rawAttr)-1 {
-			m[key] = ""
-			return m
-		}
-		value = rawAttr[eq+1:]
-		if value[0] == '"' {
-			value = value[1:]
-			i := strings.IndexRune(value, '"')
-			m[key] = value[:i]
-			tagAttrs(m, value[i+1:])
-			return m
-		}
-		if value[0] == ' ' {
-			m[key] = ""
-			tagAttrs(m, value)
-			return m
-		}
-		if i := strings.IndexRune(value, ' '); i > 0 {
-			m[key] = value[:i]
-			tagAttrs(m, value[i+1:])
-			return m
-		}
-		m[key] = value
+
+	if eq < 0 {
+		m[rawAttr] = ""
 		return m
 	}
 
-	m[rawAttr] = ""
+	key = strings.TrimSpace(rawAttr[:eq])
+	if eq == len(rawAttr)-1 {
+		m[key] = ""
+		return m
+	}
+
+	value = rawAttr[eq+1:]
+	if value[0] == '"' {
+		value = value[1:]
+		i := strings.IndexRune(value, '"')
+		m[key] = value[:i]
+		tagAttrs(m, value[i+1:])
+		return m
+	}
+	if value[0] == ' ' {
+		m[key] = ""
+		tagAttrs(m, value)
+		return m
+	}
+	if i := strings.IndexRune(value, ' '); i > 0 {
+		m[key] = value[:i]
+		tagAttrs(m, value[i+1:])
+		return m
+	}
+	m[key] = value
 	return m
 }

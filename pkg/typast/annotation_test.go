@@ -28,8 +28,27 @@ func TestCreateAnnotation(t *testing.T) {
 			},
 		},
 		{
+			testName: "tag only with space",
+			raw:      `[ autowire  ]`,
+			Annotation: &typast.Annotation{
+				TagName:  "autowire",
+				TagAttrs: map[string]string{},
+			},
+		},
+		{
 			testName: "with attribute (no quote)",
 			raw:      `[mock(pkg=mock2)]`,
+			Annotation: &typast.Annotation{
+				TagName: "mock",
+				TagAttrs: map[string]string{
+					"pkg": "mock2",
+				},
+			},
+		},
+
+		{
+			testName: "with attribute, no quote, space between tagname and bracket",
+			raw:      `[mock (pkg=mock2) ]`,
 			Annotation: &typast.Annotation{
 				TagName: "mock",
 				TagAttrs: map[string]string{

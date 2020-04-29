@@ -7,17 +7,45 @@ import (
 	"github.com/typical-go/typical-go/pkg/typast"
 )
 
-func TestCreateASTStore(t *testing.T) {
-	store := typast.CreateASTStore("sample_test.go")
-	expectedDecls := []*typast.Decl{
-		&typast.Decl{Path: "sample_test.go", Type: typast.Interface, Name: "sampleInterface"},
-		&typast.Decl{Path: "sample_test.go", Type: typast.Struct, Name: "sampleStruct"},
-		&typast.Decl{Path: "sample_test.go", Type: typast.Function, Name: "sampleFunction"},
+var (
+	sampleInterfaceDecl = &typast.Decl{
+		Path: "sample_test.go",
+		Pkg:  "typast_test",
+		Type: typast.Interface,
+		Name: "sampleInterface",
 	}
 
-	require.Equal(t, len(expectedDecls), len(store.Decls))
-	for i, decl := range store.Decls {
-		require.True(t, decl.Equal(expectedDecls[i]), decl)
+	sampleStructDecl = &typast.Decl{
+		Path: "sample_test.go",
+		Pkg:  "typast_test",
+		Type: typast.Struct,
+		Name: "sampleStruct",
 	}
+
+	sampleFunctionDecl = &typast.Decl{
+		Path: "sample_test.go",
+		Pkg:  "typast_test",
+		Type: typast.Function,
+		Name: "sampleFunction",
+	}
+)
+
+func TestCreateASTStore(t *testing.T) {
+
+	store := typast.CreateASTStore("sample_test.go")
+	require.EqualValues(t, []*typast.Decl{
+		sampleInterfaceDecl,
+		sampleStructDecl,
+		sampleFunctionDecl,
+	}, store.Decls)
+
+	require.EqualValues(t, []*typast.Annotation{
+		{Decl: sampleStructDecl, TagName: "tag1", TagAttrs: map[string]string{}},
+		{Decl: sampleStructDecl, TagName: "tag2", TagAttrs: map[string]string{
+			"key1": "",
+			"key2": "",
+			"key3": "value3",
+		}},
+	}, store.Annots)
 
 }
