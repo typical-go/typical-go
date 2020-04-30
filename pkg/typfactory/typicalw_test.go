@@ -9,6 +9,7 @@ import (
 )
 
 type testcase struct {
+	testName string
 	typfactory.Writer
 	expected string
 }

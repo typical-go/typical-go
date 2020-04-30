@@ -12,8 +12,8 @@ func TestInitialApp(t *testing.T) {
 	testcases := []testcase{
 		{
 			Writer: &typfactory.InitialApp{
-				Imports:      []string{"import1", "import2"},
-				Constructors: []string{"constructor1", "constructor2"},
+				Imports: []string{"import1", "import2"},
+				Lines:   []string{"line1", "line2"},
 			},
 			expected: `package typical
 
@@ -25,11 +25,9 @@ import (
 	"import2"
 )
 
-func init() {
-	typapp.AppendConstructor(
-		typapp.NewConstructor(constructor1),
-		typapp.NewConstructor(constructor2),
-	)
+func init() { 
+	line1
+	line2
 }
 `,
 		},

@@ -2,6 +2,7 @@ package typfactory
 
 import (
 	"io"
+	"strings"
 	"text/template"
 )
 
@@ -14,24 +15,41 @@ import (
 	"{{$import}}"{{end}}
 )
 
-func init() {
-	{{if .Constructors}}typapp.AppendConstructor({{range $constructor := .Constructors}}
-		typapp.NewConstructor({{$constructor}}),{{end}}
-	)
-{{end}}}
+func init() { {{range $line := .Lines}}
+	{{$line}}{{end}}
+}
 `
 
 // InitialApp writer
 type InitialApp struct {
-	Imports      []string
-	Constructors []string
+	Imports []string
+	Lines   []string
+}
+
+// NewInitialApp return new instance of InitialApp
+func NewInitialApp(imports ...string) *InitialApp {
+	return &InitialApp{
+		Imports: imports,
+	}
+}
+
+// Append to append init line
+func (i *InitialApp) Append(line string) {
+	i.Lines = append(i.Lines, line)
+}
+
+// AppendWithWriter to append init line with wirter
+func (i *InitialApp) AppendWithWriter(w Writer) {
+	var b strings.Builder
+	w.Write(&b)
+	i.Append(b.String())
 }
 
 // Write the tyicalw
-func (t *InitialApp) Write(w io.Writer) (err error) {
+func (i *InitialApp) Write(w io.Writer) (err error) {
 	var tmpl *template.Template
 	if tmpl, err = template.New("").Parse(initialApp); err != nil {
 		return
 	}
-	return tmpl.Execute(w, t)
+	return tmpl.Execute(w, i)
 }

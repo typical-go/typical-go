@@ -25,18 +25,6 @@ func NewConfiguration(name string, spec interface{}) *Configuration {
 	}
 }
 
-// WithName return Configuration with new name
-func (c *Configuration) WithName(name string) *Configuration {
-	c.Name = name
-	return c
-}
-
-// WithSpec return Configuration with new spec
-func (c *Configuration) WithSpec(spec interface{}) *Configuration {
-	c.Spec = spec
-	return c
-}
-
 // Configurations of configuration instance
 func (c *Configuration) Configurations() []*Configuration {
 	return []*Configuration{c}
