@@ -30,7 +30,7 @@ func (c *Context) ActionFunc(v interface{}) func(*cli.Context) error {
 func (c *Context) Invoke(cliCtx *cli.Context, invocation *Invocation) (err error) {
 	di := c.Container()
 
-	if err = NewConstructor(func() *cli.Context {
+	if err = NewConstructor("", func() *cli.Context {
 		return cliCtx
 	}).Provide(di); err != nil {
 		return

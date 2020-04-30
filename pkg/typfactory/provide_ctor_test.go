@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typfactory"
 )
 
@@ -14,23 +13,26 @@ func TestProvideCtor(t *testing.T) {
 		{
 			testName: "common constructor",
 			Writer: &typfactory.ProvideCtor{
-				FnDefs: []string{"pkg1.NewFunction1", "pkg2.NewFunction2"},
+				Ctors: []*typfactory.Ctor{
+					{Name: "", Def: "pkg1.NewFunction1"},
+					{Name: "", Def: "pkg2.NewFunction2"},
+				},
 			},
 			expected: `typapp.AppendConstructor(
-	typapp.NewConstructor(pkg1.NewFunction1),
-	typapp.NewConstructor(pkg2.NewFunction2),
+	typapp.NewConstructor("", pkg1.NewFunction1),
+	typapp.NewConstructor("", pkg2.NewFunction2),
 )`,
 		},
 		{
 			testName: "constructor for configuration",
 			Writer: &typfactory.ProvideCtor{
-				Cfgs: []*typcfg.Configuration{
-					typcfg.NewConfiguration("AAA", &sample{}),
+				CfgCtors: []*typfactory.CfgCtor{
+					{Name: "", Prefix: "AAA", SpecType: "*Sample", SpecType2: "Sample"},
 				},
 			},
 			expected: `typapp.AppendConstructor(
-	typapp.NewConstructor(func() (cfg *typfactory_test.sample, err error) {
-		cfg = new(typfactory_test.sample)
+	typapp.NewConstructor("", func() (cfg *Sample, err error) {
+		cfg = new(Sample)
 		if err = typcfg.Process("AAA", cfg); err != nil {
 			return nil, err
 		}

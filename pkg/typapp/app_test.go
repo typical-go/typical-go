@@ -9,9 +9,9 @@ import (
 )
 
 func TestProvide(t *testing.T) {
-	c1 := typapp.NewConstructor(nil)
-	c2 := typapp.NewConstructor(nil)
-	c3 := typapp.NewConstructor(nil)
+	c1 := typapp.NewConstructor("", nil)
+	c2 := typapp.NewConstructor("", nil)
+	c3 := typapp.NewConstructor("", nil)
 	app := typapp.EntryPoint(nil, "").Imports(c1, c2)
 	typapp.AppendConstructor(c3)
 

@@ -12,19 +12,21 @@ var (
 
 // Constructor details
 type Constructor struct {
-	fn interface{}
+	name string
+	fn   interface{}
 }
 
 // NewConstructor return new instance of constructor
-func NewConstructor(fn interface{}) *Constructor {
+func NewConstructor(name string, fn interface{}) *Constructor {
 	return &Constructor{
-		fn: fn,
+		name: name,
+		fn:   fn,
 	}
 }
 
 // Provide the constructor to dig container
 func (c *Constructor) Provide(di *dig.Container) (err error) {
-	return di.Provide(c.fn)
+	return di.Provide(c.fn, dig.Name(c.name))
 }
 
 // Fn is function of constructor

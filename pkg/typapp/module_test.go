@@ -13,7 +13,7 @@ import (
 func TestNewModule(t *testing.T) {
 	cmd := &cli.Command{}
 	preparation := typapp.NewPreparation(nil)
-	constructor := typapp.NewConstructor(nil)
+	constructor := typapp.NewConstructor("", nil)
 	destructor := typapp.NewDestructor(nil)
 	configuration := typcfg.NewConfiguration("", nil)
 

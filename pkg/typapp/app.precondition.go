@@ -29,16 +29,16 @@ func (a *App) generateConstructor(c *typbuildtool.PreconditionContext, filename 
 
 	store := c.ASTStore()
 
-	provideCtor := &typfactory.ProvideCtor{}
+	provideCtor := typfactory.NewProvideCtor()
 
 	for _, a := range store.Annots {
 		if a.Equal(constructorTag, typast.Function) {
-			provideCtor.FnDefs = append(provideCtor.FnDefs, ctorDef(a))
+			provideCtor.AppendCtor("", ctorDef(a))
 		}
 	}
 
 	for _, cfg := range a.Configurations() {
-		provideCtor.Cfgs = append(provideCtor.Cfgs, cfg)
+		provideCtor.AppendCfgCtor("", cfg)
 	}
 
 	initial := typfactory.NewInitialApp(retrImports(c.Core)...)

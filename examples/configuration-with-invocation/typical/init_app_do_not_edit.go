@@ -10,7 +10,7 @@ import (
 
 func init() {
 	typapp.AppendConstructor(
-		typapp.NewConstructor(func() (cfg *server.Config, err error) {
+		typapp.NewConstructor("", func() (cfg *server.Config, err error) {
 			cfg = new(server.Config)
 			if err = typcfg.Process("SERVER", cfg); err != nil {
 				return nil, err
