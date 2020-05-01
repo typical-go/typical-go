@@ -1,15 +1,19 @@
 package typapp
 
 import (
+	"fmt"
+	"os"
+
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typfactory"
 	"github.com/urfave/cli/v2"
 )
 
 const (
-	// DefaultInitFile is default init file path
-	DefaultInitFile = "init_app_do_not_edit.go"
+	constructorTag = "constructor"
 )
 
 var (
@@ -27,8 +31,6 @@ type App struct {
 	appSources []string
 	main       *Invocation
 	imports    []interface{}
-
-	initFile string
 }
 
 // EntryPoint create new instance of App with main invocation function
@@ -36,19 +38,17 @@ func EntryPoint(mainFn interface{}, appSource string, sources ...string) *App {
 	return &App{
 		appSources: append([]string{appSource}, sources...),
 		main:       NewInvocation(mainFn),
-		initFile:   DefaultInitFile,
 	}
+}
+
+// RunApp to run the applciation
+func (a *App) RunApp(d *typcore.Descriptor) (err error) {
+	return createAppCli(a, d).Run(os.Args)
 }
 
 // Imports either Provider, Preparer, Destroyer or Configurations
 func (a *App) Imports(imports ...interface{}) *App {
 	a.imports = imports
-	return a
-}
-
-// InitFile define path to generate initial requirement
-func (a *App) InitFile(initFile string) *App {
-	a.initFile = initFile
 	return a
 }
 
@@ -106,4 +106,31 @@ func (a *App) Configurations() (cfgs []*typcfg.Configuration) {
 // AppSources return source for app
 func (a *App) AppSources() []string {
 	return a.appSources
+}
+
+// Precondition the app
+func (a *App) Precondition(c *typbuildtool.PreconditionContext) (err error) {
+	c.Info("Precondition the typical-app")
+	store := c.ASTStore()
+
+	provideCtor := typfactory.NewProvideCtor()
+
+	for _, a := range store.Annots {
+		if a.Equal(constructorTag, typast.Function) {
+			provideCtor.AppendCtor("", ctorDef(a))
+		}
+	}
+
+	for _, cfg := range a.Configurations() {
+		provideCtor.AppendCfgCtor("", cfg)
+	}
+
+	// c.AppendImport(retrImports(c.Core)...)
+	c.AppendWriter(provideCtor)
+
+	return
+}
+
+func ctorDef(a *typast.Annotation) string {
+	return fmt.Sprintf("%s.%s", a.Pkg, a.Name)
 }

@@ -140,26 +140,5 @@ func (b *BuildTool) Configurations() (cfgs []*typcfg.Configuration) {
 
 // RunBuildTool to run the build-tool
 func (b *BuildTool) RunBuildTool(c *typcore.Context) (err error) {
-	return b.cli(c).Run(os.Args)
-}
-
-func (b *BuildTool) cli(core *typcore.Context) *cli.App {
-	app := cli.NewApp()
-	app.Name = core.Name
-	app.Usage = "Build-Tool"
-	app.Description = core.Description
-	app.Version = core.Version
-
-	app.Before = func(cli *cli.Context) (err error) {
-		return b.Precondition(&PreconditionContext{
-			Core: core,
-			Ctx:  cli.Context,
-		})
-	}
-	app.Commands = b.Commands(&Context{
-		Core:      core,
-		BuildTool: b,
-	})
-
-	return app
+	return createBuildToolCli(b, c).Run(os.Args)
 }
