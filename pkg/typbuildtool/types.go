@@ -70,7 +70,7 @@ func (c *CliContext) Info(args ...interface{}) {
 
 // Infof logger
 func (c *CliContext) Infof(format string, args ...interface{}) {
-	c.Core.Infof(format, args) // TODO: custom label from cli name
+	c.Core.Infof(format, args...) // TODO: custom label from cli name
 }
 
 // Warn logger

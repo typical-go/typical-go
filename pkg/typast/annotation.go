@@ -9,7 +9,7 @@ import (
 type Annotation struct {
 	*Decl
 	TagName  string
-	TagAttrs string
+	TagAttrs []byte
 }
 
 // CreateAnnotation parse raw string to annotation
@@ -36,7 +36,7 @@ func CreateAnnotation(decl *Decl, raw string) (a *Annotation, err error) {
 	return &Annotation{
 		Decl:     decl,
 		TagName:  strings.TrimSpace(raw[:i1]),
-		TagAttrs: strings.TrimSpace(raw[i1 : i2+1]),
+		TagAttrs: []byte(strings.TrimSpace(raw[i1 : i2+1])),
 	}, nil
 }
 

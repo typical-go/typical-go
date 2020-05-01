@@ -3,10 +3,6 @@ package typapp
 import "go.uber.org/dig"
 
 var (
-	global []*Constructor
-)
-
-var (
 	_ Provider = (*Constructor)(nil)
 )
 
@@ -37,9 +33,4 @@ func (c *Constructor) Fn() interface{} {
 // Constructors is list of constructor
 func (c *Constructor) Constructors() []*Constructor {
 	return []*Constructor{c}
-}
-
-// AppendConstructor to append constructor
-func AppendConstructor(cons ...*Constructor) {
-	global = append(global, cons...)
 }

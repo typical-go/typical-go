@@ -7,6 +7,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typfactory"
+	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/urfave/cli/v2"
 )
 
@@ -24,6 +25,10 @@ func createBuildToolCli(b *BuildTool, core *typcore.Context) *cli.App {
 		c := &PreconditionContext{
 			Precond: typfactory.Precond{
 				Imports: retrImports(core),
+			},
+			Logger: typlog.Logger{
+				Name:  "PRECOND",
+				Color: typlog.DefaultColor,
 			},
 			Core: core,
 			Ctx:  ctx,

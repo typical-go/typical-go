@@ -8,7 +8,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcfg"
 )
 
-const provideCtor = `typapp.AppendConstructor({{range $c := .Ctors}}
+const appPrecond = `typapp.Provide({{range $c := .Ctors}}
 	typapp.NewConstructor("{{$c.Name}}", {{$c.Def}}),{{end}}{{range $c := .CfgCtors}}
 	typapp.NewConstructor("{{$c.Name}}", func() (cfg {{$c.SpecType}}, err error) {
 		cfg = new({{$c.SpecType2}})
@@ -19,17 +19,19 @@ const provideCtor = `typapp.AppendConstructor({{range $c := .Ctors}}
 	}),{{end}}
 )`
 
-// ProvideCtor to generate provide constructor
-type ProvideCtor struct {
+// AppPrecond to generate provide constructor
+type AppPrecond struct {
 	Ctors    []*Ctor
 	CfgCtors []*CfgCtor
 }
 
+// Ctor is constructor model
 type Ctor struct {
 	Name string
 	Def  string
 }
 
+// CfgCtor is config constructor model
 type CfgCtor struct {
 	Name      string
 	Prefix    string
@@ -38,12 +40,12 @@ type CfgCtor struct {
 }
 
 // NewProvideCtor return new instance of ProvideCtor
-func NewProvideCtor() *ProvideCtor {
-	return &ProvideCtor{}
+func NewProvideCtor() *AppPrecond {
+	return &AppPrecond{}
 }
 
 // AppendCtor to append constructor
-func (t *ProvideCtor) AppendCtor(name, def string) {
+func (t *AppPrecond) AppendCtor(name, def string) {
 	t.Ctors = append(t.Ctors, &Ctor{
 		Name: name,
 		Def:  def,
@@ -51,7 +53,7 @@ func (t *ProvideCtor) AppendCtor(name, def string) {
 }
 
 // AppendCfgCtor to append config constructor
-func (t *ProvideCtor) AppendCfgCtor(name string, cfg *typcfg.Configuration) {
+func (t *AppPrecond) AppendCfgCtor(name string, cfg *typcfg.Configuration) {
 	specType := reflect.TypeOf(cfg.Spec).String()
 	t.CfgCtors = append(t.CfgCtors, &CfgCtor{
 		Name:      name,
@@ -62,9 +64,9 @@ func (t *ProvideCtor) AppendCfgCtor(name string, cfg *typcfg.Configuration) {
 }
 
 // Write the tyicalw
-func (t *ProvideCtor) Write(w io.Writer) (err error) {
+func (t *AppPrecond) Write(w io.Writer) (err error) {
 	var tmpl *template.Template
-	if tmpl, err = template.New("ProvideCtor").Parse(provideCtor); err != nil {
+	if tmpl, err = template.New("AppPrecond").Parse(appPrecond); err != nil {
 		return
 	}
 	return tmpl.Execute(w, t)

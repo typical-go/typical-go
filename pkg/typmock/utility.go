@@ -77,7 +77,7 @@ func generateMock(c *typbuildtool.CliContext) (err error) {
 
 			c.Infof("Mock '%s'", name)
 			if err = cmd.Run(); err != nil {
-				c.Warnf("Fail to mock '%s': %w", name, err)
+				c.Warnf("Fail to mock '%s': %s", name, err.Error())
 			}
 		}
 	}

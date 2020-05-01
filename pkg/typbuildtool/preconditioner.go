@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/typical-go/typical-go/pkg/typfactory"
+	"github.com/typical-go/typical-go/pkg/typlog"
 
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typcore"
@@ -17,6 +18,7 @@ type Preconditioner interface {
 // PreconditionContext is context of preconditioning
 type PreconditionContext struct {
 	typfactory.Precond
+	Logger   typlog.Logger
 	Core     *typcore.Context
 	Ctx      context.Context
 	astStore *typast.ASTStore
@@ -34,22 +36,27 @@ func (c *PreconditionContext) ASTStore() *typast.ASTStore {
 	return c.astStore
 }
 
+// SetASTStore to set ast store
+func (c *PreconditionContext) SetASTStore(astStore *typast.ASTStore) {
+	c.astStore = astStore
+}
+
 // Info logger
 func (c *PreconditionContext) Info(args ...interface{}) {
-	c.Core.Info(args...) // TODO: precondition label
+	c.Logger.Info(args...) // TODO: precondition label
 }
 
 // Infof logger
 func (c *PreconditionContext) Infof(format string, args ...interface{}) {
-	c.Core.Infof(format, args) // TODO: precondition label
+	c.Logger.Infof(format, args...) // TODO: precondition label
 }
 
 // Warn logger
 func (c *PreconditionContext) Warn(args ...interface{}) {
-	c.Core.Warn(args...) // TODO: precondition label
+	c.Logger.Warn(args...) // TODO: precondition label
 }
 
 // Warnf logger
 func (c *PreconditionContext) Warnf(format string, args ...interface{}) {
-	c.Core.Warnf(format, args...) // TODO: precondition label
+	c.Logger.Warnf(format, args...) // TODO: precondition label
 }

@@ -13,7 +13,7 @@ func TestProvide(t *testing.T) {
 	c2 := typapp.NewConstructor("", nil)
 	c3 := typapp.NewConstructor("", nil)
 	app := typapp.EntryPoint(nil, "").Imports(c1, c2)
-	typapp.AppendConstructor(c3)
+	typapp.Provide(c3)
 
 	require.EqualValues(t,
 		[]*typapp.Constructor{c1, c2, c3},

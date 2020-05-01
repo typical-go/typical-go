@@ -9,8 +9,6 @@ import (
 )
 
 var (
-	// Output for logger
-	output io.Writer = os.Stdout
 
 	// DefaultName is default name in log signature
 	DefaultName string = "TYPICAL"
@@ -21,29 +19,9 @@ var (
 
 // Logger is simple logger
 type Logger struct {
-	name  string
-	color color.Attribute
-}
-
-// SetOutput to set logger output
-func SetOutput(w io.Writer) func() {
-	output = w
-	return func() {
-		output = os.Stdout
-	}
-}
-
-// SetLogSignature to change signature. It return method to reset the signature.
-func (s *Logger) SetLogSignature(name string, color color.Attribute) func() {
-	s.name = name
-	s.color = color
-	return s.ResetLogSignature
-}
-
-// ResetLogSignature to reset signature
-func (s *Logger) ResetLogSignature() {
-	s.name = DefaultName
-	s.color = DefaultColor
+	Name  string
+	Color color.Attribute
+	Out   io.Writer
 }
 
 // Info level message
@@ -94,15 +72,22 @@ func (s *Logger) warnSign() {
 }
 
 func (s *Logger) typicalSign() {
-	if s.name == "" {
-		s.ResetLogSignature()
+	if s.Name == "" {
+		s.Name = DefaultName
+	}
+
+	if s.Color == 0 {
+		s.Color = DefaultColor
 	}
 
 	fmt.Fprint(s, "[")
-	color.New(s.color).Fprint(s, s.name)
+	color.New(s.Color).Fprint(s, s.Name)
 	fmt.Fprint(s, "]")
 }
 
 func (s Logger) Write(p []byte) (n int, err error) {
-	return output.Write(p)
+	if s.Out == nil {
+		s.Out = os.Stdout
+	}
+	return s.Out.Write(p)
 }

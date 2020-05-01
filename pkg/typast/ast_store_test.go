@@ -40,8 +40,15 @@ func TestCreateASTStore(t *testing.T) {
 	}, store.Decls)
 
 	require.EqualValues(t, []*typast.Annotation{
-		{Decl: sampleStructDecl, TagName: "tag1"},
-		{Decl: sampleStructDecl, TagName: "tag2", TagAttrs: `{"key1":"", "key2": "", "key3":"value3"}`},
+		{
+			Decl:    sampleStructDecl,
+			TagName: "tag1",
+		},
+		{
+			Decl:     sampleStructDecl,
+			TagName:  "tag2",
+			TagAttrs: []byte(`{"key1":"", "key2": "", "key3":"value3"}`),
+		},
 	}, store.Annots)
 }
 

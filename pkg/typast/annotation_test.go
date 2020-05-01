@@ -34,7 +34,7 @@ func TestCreateAnnotation(t *testing.T) {
 			raw:      `@mock{"pkg":"mock2"}`,
 			expected: &typast.Annotation{
 				TagName:  "mock",
-				TagAttrs: `{"pkg":"mock2"}`,
+				TagAttrs: []byte(`{"pkg":"mock2"}`),
 			},
 		},
 	}

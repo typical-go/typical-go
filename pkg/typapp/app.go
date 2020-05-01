@@ -1,19 +1,13 @@
 package typapp
 
 import (
-	"fmt"
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typfactory"
 	"github.com/urfave/cli/v2"
-)
-
-const (
-	constructorTag = "constructor"
 )
 
 var (
@@ -111,14 +105,11 @@ func (a *App) AppSources() []string {
 // Precondition the app
 func (a *App) Precondition(c *typbuildtool.PreconditionContext) (err error) {
 	c.Info("Precondition the typical-app")
-	store := c.ASTStore()
 
 	provideCtor := typfactory.NewProvideCtor()
 
-	for _, a := range store.Annots {
-		if a.Equal(constructorTag, typast.Function) {
-			provideCtor.AppendCtor("", ctorDef(a))
-		}
+	for _, a := range GetCtorAnnot(c) {
+		provideCtor.AppendCtor(a.Name, a.Def)
 	}
 
 	for _, cfg := range a.Configurations() {
@@ -129,8 +120,4 @@ func (a *App) Precondition(c *typbuildtool.PreconditionContext) (err error) {
 	c.AppendWriter(provideCtor)
 
 	return
-}
-
-func ctorDef(a *typast.Annotation) string {
-	return fmt.Sprintf("%s.%s", a.Pkg, a.Name)
 }

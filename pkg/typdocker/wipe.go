@@ -31,7 +31,7 @@ func (m *DockerUtility) dockerWipe(c *typbuildtool.CliContext) (err error) {
 	c.Info("Wipe all docker container")
 	for _, id := range ids {
 		if err = kill(c.Context, id); err != nil {
-			c.Warnf("Fail to kill #%s: %w", id, err)
+			c.Warnf("Fail to kill #%s: %s", id, err.Error())
 		}
 	}
 	return nil

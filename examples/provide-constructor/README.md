@@ -4,19 +4,28 @@ Example typical-go project to demonstrate how to provide constructor to dependen
 
 Put `@constructor` annotation in constructor function comment
 ```go
-// NewGreeter return new insteance of Greeter 
+// HelloWorld text
 // @constructor
-func NewGreeter() *Greeter {
-	return &Greeter{}
+func HelloWorld() string {
+	return "Hello World"
+}
+
+// HelloTypical text
+// @constructor {"name": "typical"}
+func HelloTypical() string {
+	return "Hello Typical"
 }
 ```
 
-`init_constructor_do_not_edit.go` will be generated in `typical/` folder
+`precond_DO_NOT_EDIT.go` will be generated in `typical/` folder to provide the constructor
 ```go
 func init() {
-	typapp.AppendConstructor(
-		NewConstructor(helloworld.NewGreeter),
+	typapp.Provide(
+		typapp.NewConstructor("", helloworld.HelloWorld),
+		typapp.NewConstructor("typical", helloworld.HelloTypical),
 	)
 }
 ```
+
+
 

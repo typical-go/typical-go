@@ -9,10 +9,9 @@ import (
 )
 
 func TestLogger(t *testing.T) {
-	var output strings.Builder
-	defer typlog.SetOutput(&output)()
-
+	var debugger strings.Builder
 	var logger typlog.Logger
+	logger.Out = &debugger
 
 	logger.Info("some information")
 	logger.Infof("formatted information: %s", "FOO")
@@ -25,17 +24,5 @@ func TestLogger(t *testing.T) {
 [TYPICAL][WARN] formatted warning: BAR
 `
 
-	require.Equal(t, expected, output.String())
-}
-
-func TestChangeSignature(t *testing.T) {
-	var output strings.Builder
-	defer typlog.SetOutput(&output)()
-
-	var logger typlog.Logger
-	defer logger.SetLogSignature("TEST", 0)()
-
-	logger.Info("some-info")
-
-	require.Equal(t, "[TEST][INFO] some-info\n", output.String())
+	require.Equal(t, expected, debugger.String())
 }
