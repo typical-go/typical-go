@@ -30,7 +30,7 @@ func (m *ReactDemoModule) Run(c *typbuildtool.CliContext) (err error) {
 func (m *ReactDemoModule) Clean(c *typbuildtool.CliContext) (err error) {
 	c.Info("Clean react-demo")
 	if err := os.RemoveAll(m.source + "/build"); err != nil {
-		c.Warnf("React-Demo: Clean: %w", err)
+		c.Warnf("React-Demo: Clean: %s", err.Error())
 	}
 	return
 }
