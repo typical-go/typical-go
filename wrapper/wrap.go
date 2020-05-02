@@ -88,13 +88,17 @@ func Wrap(c *Context) (err error) {
 		}
 
 		c.Info("Build the build-tool")
-		return buildkit.NewGoBuild(buildTool, srcPath).
+
+		cmd := buildkit.NewGoBuild(buildTool, srcPath).
 			SetVariable(typcore.DefaultProjectPkgVar, c.ProjectPkg).
 			SetVariable(typcore.DefaultTypicalTmpVar, c.TypicalTmp).
-			WithStdout(os.Stdout).
-			WithStderr(os.Stderr).
-			WithStdin(os.Stdin).
-			Execute(c.Ctx)
+			Command()
+
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Stdin = os.Stdin
+
+		return cmd.Run(c.Ctx)
 	}
 	return
 }

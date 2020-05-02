@@ -20,10 +20,13 @@ type ReactDemoModule struct {
 // Run the react-demo
 func (m *ReactDemoModule) Run(c *typbuildtool.CliContext) (err error) {
 	c.Info("Build react-demo")
-	err = buildkit.NewCommand("npm", "run", "build").
-		WithDir(m.source).
-		Execute(c.Context)
-	return
+	cmd := &buildkit.Command{
+		Name: "npm",
+		Args: []string{"run", "build"},
+		Dir:  m.source,
+	}
+
+	return cmd.Run(c.Context)
 }
 
 // Clean the react-demo

@@ -26,7 +26,7 @@ func (g *GoImports) Execute(ctx context.Context) (err error) {
 	goimports := fmt.Sprintf("%s/bin/goimports", g.typicalTmp)
 
 	if _, err = os.Stat(goimports); os.IsNotExist(err) {
-		if err = NewGoBuild(goimports, "golang.org/x/tools/cmd/goimports").Execute(ctx); err != nil {
+		if err = NewGoBuild(goimports, "golang.org/x/tools/cmd/goimports").Command().Run(ctx); err != nil {
 			return
 		}
 	}

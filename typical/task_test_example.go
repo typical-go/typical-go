@@ -15,11 +15,15 @@ func taskTestExample(c *typbuildtool.Context) []*cli.Command {
 			Aliases: []string{"e"},
 			Usage:   "Test all example",
 			Action: func(cliCtx *cli.Context) (err error) {
-				gotest := buildkit.NewGoTest("./examples/...").
-					WithStdout(os.Stdout).
-					WithStderr(os.Stderr)
+				gotest := &buildkit.GoTest{
+					Targets: []string{"./examples/..."},
+				}
 
-				return gotest.Execute(cliCtx.Context)
+				cmd := gotest.Command()
+				cmd.Stdout = os.Stdout
+				cmd.Stderr = os.Stderr
+
+				return cmd.Run(cliCtx.Context)
 			},
 		},
 	}

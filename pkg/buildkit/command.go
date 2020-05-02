@@ -2,63 +2,49 @@ package buildkit
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"os/exec"
+	"strings"
+
+	"github.com/fatih/color"
 )
 
-// Command of bash
+// Command is wrapper to exec.Command
 type Command struct {
-	name   string
-	args   []string
-	stdout io.Writer
-	stderr io.Writer
-	stdin  io.Reader
-	dir    string
+	Name   string
+	Args   []string
+	Stdout io.Writer
+	Stderr io.Writer
+	Stdin  io.Reader
+	Dir    string
+	Env    []string
 }
 
-// NewCommand return new instance of Command
-func NewCommand(name string, args ...string) *Command {
-	return &Command{
-		name: name,
-		args: args,
-	}
+// Run the comand
+func (c *Command) Run(ctx context.Context) (err error) {
+	return c.ExecCmd(ctx).Run()
 }
 
-// WithStdout return Command with new stdout
-func (c *Command) WithStdout(stdout io.Writer) *Command {
-	c.stdout = stdout
-	return c
+// ExecCmd return exec.Cmd
+func (c *Command) ExecCmd(ctx context.Context) *exec.Cmd {
+	cmd := exec.CommandContext(ctx, c.Name, c.Args...)
+	cmd.Stdout = c.Stdout
+	cmd.Stderr = c.Stderr
+	cmd.Stdin = c.Stdin
+	cmd.Dir = c.Dir
+	cmd.Env = c.Env
+	return cmd
 }
 
-// WithStderr return Command with new stderr
-func (c *Command) WithStderr(stderr io.Writer) *Command {
-	c.stderr = stderr
-	return c
+func (c Command) String() string {
+	return fmt.Sprintf("%s %s", c.Name, strings.Join(c.Args, " "))
 }
 
-// WithStdin return Command with new stdin
-func (c *Command) WithStdin(stdin io.Reader) *Command {
-	c.stdin = stdin
-	return c
-}
+// Print command
+func (c Command) Print(w io.Writer) {
+	color.New(color.FgMagenta).Fprint(w, "\n$ ")
+	fmt.Fprintf(w, "%s ", c.Name)
+	fmt.Fprintln(w, strings.Join(c.Args, " "))
 
-// WithDir return Command with new dir
-func (c *Command) WithDir(dir string) *Command {
-	c.dir = dir
-	return c
-}
-
-// Execute comand
-func (c *Command) Execute(ctx context.Context) (err error) {
-	cmd := exec.CommandContext(ctx, c.name, c.Args()...)
-	cmd.Stdout = c.stdout
-	cmd.Stderr = c.stderr
-	cmd.Stdin = c.stdin
-	cmd.Dir = c.dir
-	return cmd.Run()
-}
-
-// Args of command
-func (c *Command) Args() []string {
-	return c.args
 }

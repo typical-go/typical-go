@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"strings"
 	"time"
 
@@ -74,26 +73,66 @@ func (b *StdBuild) Run(c *CliContext) (err error) {
 
 	gobuild := buildkit.NewGoBuild(binary, src).
 		WithStdout(b.stdout).
-		WithStderr(b.stderr)
+		WithStderr(b.stderr).
+		Command()
 
-	if err = gobuild.Execute(c.Context); err != nil {
+	gobuild.Print(os.Stdout)
+
+	if err = gobuild.Run(c.Context); err != nil {
 		return fmt.Errorf("GoBuild: %w", err)
 	}
 
-	cmd := exec.CommandContext(c.Context, binary, c.Args().Slice()...)
-	cmd.Stdout = b.stdout
-	cmd.Stderr = b.stderr
+	binExec := &buildkit.Command{
+		Name:   binary,
+		Args:   c.Args().Slice(),
+		Stdout: b.stdout,
+		Stderr: b.stderr,
+	}
 
-	if err = cmd.Run(); err != nil {
+	binExec.Print(os.Stdout)
+	fmt.Printf("\n\n")
+
+	if err = binExec.Run(c.Context); err != nil {
 		return fmt.Errorf("%s: %w", binary, err)
 	}
 
 	return
 }
 
+// Test the project
+func (b *StdBuild) Test(c *CliContext) (err error) {
+	var (
+		targets []string
+	)
+
+	for _, source := range c.Core.AppSources {
+		targets = append(targets, fmt.Sprintf("./%s/...", source))
+	}
+
+	if len(targets) < 1 {
+		c.Info("Nothing to test")
+		return
+	}
+
+	gotest := buildkit.GoTest{
+		Targets:      targets,
+		Timeout:      b.testTimeout,
+		CoverProfile: b.coverProfile,
+		Race:         true,
+	}
+
+	cmd := gotest.Command()
+	cmd.Stdout = b.stdout
+	cmd.Stderr = b.stderr
+
+	cmd.Print(os.Stdout)
+	fmt.Println()
+
+	return cmd.Run(c.Context)
+}
+
 // Clean build result
 func (b *StdBuild) Clean(c *CliContext) (err error) {
-	c.Info("Standard-Build: Clean the project")
 	c.Infof("Remove All in '%s'", c.BuildTool.binFolder)
 	if err := os.RemoveAll(c.BuildTool.binFolder); err != nil {
 		c.Warn(err.Error())
@@ -121,16 +160,20 @@ func (b *StdBuild) releaseBuild(c *ReleaseContext, target ReleaseTarget) (binary
 	goarch := target.Arch()
 	binary = strings.Join([]string{c.Core.Name, c.Tag, goos, goarch}, "_")
 	// TODO: Support CGO
-	cmd := exec.CommandContext(c.Context,
-		"go", "build",
-		"-o", fmt.Sprintf("%s/%s", b.releaseFolder, binary),
-		"-ldflags", "-w -s",
-		fmt.Sprintf("./%s/%s", c.BuildTool.cmdFolder, c.Core.Name),
-	)
-	cmd.Env = append(os.Environ(), "GOOS="+goos, "GOARCH="+goarch)
-	cmd.Stdout = b.stdout
-	cmd.Stderr = b.stderr
 
-	err = cmd.Run()
+	gobuild := buildkit.Command{
+		Name: "go",
+		Args: []string{
+			"build",
+			"-o", fmt.Sprintf("%s/%s", b.releaseFolder, binary),
+			"-ldflags", "-w -s",
+			fmt.Sprintf("./%s/%s", c.BuildTool.cmdFolder, c.Core.Name),
+		},
+		Stdout: b.stdout,
+		Stderr: b.stderr,
+		Env:    append(os.Environ(), "GOOS="+goos, "GOARCH="+goarch),
+	}
+
+	err = gobuild.Run(c.Context)
 	return
 }

@@ -1,10 +1,8 @@
 package buildkit
 
 import (
-	"context"
 	"fmt"
 	"io"
-	"os/exec"
 	"strings"
 )
 
@@ -50,13 +48,11 @@ func (g *GoBuild) WithStdin(stdin io.Reader) *GoBuild {
 	return g
 }
 
-// Execute comand
-func (g *GoBuild) Execute(ctx context.Context) (err error) {
-	cmd := exec.CommandContext(ctx, "go", g.Args()...)
-	cmd.Stdout = g.stdout
-	cmd.Stderr = g.stderr
-	cmd.Stdin = g.stdin
-	return cmd.Run()
+func (g *GoBuild) Command() *Command {
+	return &Command{
+		Name: "go",
+		Args: g.Args(),
+	}
 }
 
 // Args is arguments for go build

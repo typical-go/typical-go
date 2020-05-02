@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"os/exec"
 
 	"github.com/typical-go/typical-go/pkg/typast"
 
@@ -67,16 +66,20 @@ func generateMock(c *typbuildtool.CliContext) (err error) {
 			dest := fmt.Sprintf("%s%s/%s.go", t.Parent, mockPkg, strcase.ToSnake(t.Source))
 			name := fmt.Sprintf("%s.%s", srcPkg, t.Source)
 
-			cmd := exec.CommandContext(c.Context, mockgen,
-				"-destination", dest,
-				"-package", mockPkg,
-				srcPkg,
-				t.Source,
-			)
-			cmd.Stderr = os.Stderr
+			cmd := &buildkit.Command{
+				Name: mockgen,
+				Args: []string{
+					"-destination", dest,
+					"-package", mockPkg,
+					srcPkg,
+					t.Source,
+				},
+				Stderr: os.Stderr,
+			}
 
-			c.Infof("Mock '%s'", name)
-			if err = cmd.Run(); err != nil {
+			cmd.Print(os.Stdout)
+
+			if err = cmd.Run(c.Context); err != nil {
 				c.Warnf("Fail to mock '%s': %s", name, err.Error())
 			}
 		}
@@ -86,9 +89,10 @@ func generateMock(c *typbuildtool.CliContext) (err error) {
 
 func installIfNotExist(ctx context.Context, mockgen string) (err error) {
 	if _, err = os.Stat(mockgen); os.IsNotExist(err) {
-		return buildkit.
+		cmd := buildkit.
 			NewGoBuild(mockgen, "github.com/golang/mock/mockgen").
-			Execute(ctx)
+			Command()
+		return cmd.Run(ctx)
 	}
 	return
 }

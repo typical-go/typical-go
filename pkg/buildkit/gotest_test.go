@@ -1,7 +1,6 @@
 package buildkit_test
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -13,31 +12,27 @@ import (
 func TestGotTest_Args(t *testing.T) {
 	testcases := []struct {
 		*buildkit.GoTest
-		expected []string
+		expected string
 	}{
 		{
-			GoTest:   buildkit.NewGoTest("target1", "target2"),
-			expected: []string{"test", "-timeout=20s", "target1", "target2"},
+			GoTest: &buildkit.GoTest{
+				Targets: []string{"target1", "target2"},
+			},
+			expected: "go test target1 target2",
 		},
 		{
-			GoTest: buildkit.NewGoTest("target1", "target2").
-				WithTimeout(10 * time.Second).
-				WithRace(true).
-				WithCoverProfile("some-coverprofile"),
-			expected: []string{"test", "-timeout=10s", "-coverprofile=some-coverprofile", "-race", "target1", "target2"},
+			GoTest: &buildkit.GoTest{
+				Targets:      []string{"target1", "target2"},
+				Timeout:      10 * time.Second,
+				Race:         true,
+				CoverProfile: "some-coverprofile",
+			},
+
+			expected: "go test -timeout=10s -coverprofile=some-coverprofile -race target1 target2",
 		},
 	}
 
 	for _, tt := range testcases {
-		require.Equal(t, tt.expected, tt.Args())
+		require.Equal(t, tt.expected, tt.Command().String())
 	}
-}
-
-func TestGoTest_Execute(t *testing.T) {
-	t.Run("GIVEN no test targets", func(t *testing.T) {
-		require.EqualError(t,
-			buildkit.NewGoTest().Execute(context.Background()),
-			"Nothing to test",
-		)
-	})
 }
