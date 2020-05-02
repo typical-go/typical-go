@@ -1,10 +1,12 @@
-package typfactory
+package typtmpl
 
 import (
 	"io"
 	"strings"
 	"text/template"
 )
+
+var _ Template = (*Precond)(nil)
 
 const precond = `package typical
 
@@ -36,14 +38,14 @@ func (i *Precond) AppendLine(line string) {
 }
 
 // AppendWriter to append init line with wirter
-func (i *Precond) AppendWriter(w Writer) {
+func (i *Precond) AppendWriter(tmpl Template) {
 	var b strings.Builder
-	w.Write(&b)
+	tmpl.Execute(&b)
 	i.AppendLine(b.String())
 }
 
-// Write the tyicalw
-func (i *Precond) Write(w io.Writer) (err error) {
+// Execute precond template
+func (i *Precond) Execute(w io.Writer) (err error) {
 	var tmpl *template.Template
 	if tmpl, err = template.New("precond").Parse(precond); err != nil {
 		return

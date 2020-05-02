@@ -3,7 +3,7 @@ package typbuildtool
 import (
 	"context"
 
-	"github.com/typical-go/typical-go/pkg/typfactory"
+	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/typical-go/typical-go/pkg/typlog"
 
 	"github.com/typical-go/typical-go/pkg/typast"
@@ -17,7 +17,7 @@ type Preconditioner interface {
 
 // PreconditionContext is context of preconditioning
 type PreconditionContext struct {
-	typfactory.Precond
+	typtmpl.Precond
 	Logger   typlog.Logger
 	Core     *typcore.Context
 	Ctx      context.Context

@@ -1,17 +1,17 @@
-package typfactory_test
+package typtmpl_test
 
 import (
 	"testing"
 
-	"github.com/typical-go/typical-go/pkg/typfactory"
+	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
 func TestProvideCtor(t *testing.T) {
-	testWriter(t,
+	testTemplate(t,
 		testcase{
 			testName: "common constructor",
-			Writer: &typfactory.AppPrecond{
-				Ctors: []*typfactory.Ctor{
+			Template: &typtmpl.AppPrecond{
+				Ctors: []*typtmpl.Ctor{
 					{Name: "", Def: "pkg1.NewFunction1"},
 					{Name: "", Def: "pkg2.NewFunction2"},
 				},
@@ -23,8 +23,8 @@ func TestProvideCtor(t *testing.T) {
 		},
 		testcase{
 			testName: "constructor for configuration",
-			Writer: &typfactory.AppPrecond{
-				CfgCtors: []*typfactory.CfgCtor{
+			Template: &typtmpl.AppPrecond{
+				CfgCtors: []*typtmpl.CfgCtor{
 					{Name: "", Prefix: "AAA", SpecType: "*Sample", SpecType2: "Sample"},
 				},
 			},

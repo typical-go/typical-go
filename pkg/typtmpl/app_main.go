@@ -1,9 +1,11 @@
-package typfactory
+package typtmpl
 
 import (
 	"io"
 	"text/template"
 )
+
+var _ Template = (*AppMain)(nil)
 
 const appMain = `package main
 
@@ -24,8 +26,8 @@ type AppMain struct {
 	DescPkg string
 }
 
-// Write the tyicalw
-func (t *AppMain) Write(w io.Writer) (err error) {
+// Execute app main template
+func (t *AppMain) Execute(w io.Writer) (err error) {
 	var tmpl *template.Template
 	if tmpl, err = template.New("").Parse(appMain); err != nil {
 		return

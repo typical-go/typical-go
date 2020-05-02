@@ -1,9 +1,11 @@
-package typfactory
+package typtmpl
 
 import (
 	"io"
 	"text/template"
 )
+
+var _ Template = (*BuildToolMain)(nil)
 
 const buildtoolMain = `package main
 
@@ -22,8 +24,8 @@ type BuildToolMain struct {
 	DescPkg string
 }
 
-// Write the tyicalw
-func (t *BuildToolMain) Write(w io.Writer) (err error) {
+// Execute build tool main template
+func (t *BuildToolMain) Execute(w io.Writer) (err error) {
 	var tmpl *template.Template
 	if tmpl, err = template.New("").Parse(buildtoolMain); err != nil {
 		return

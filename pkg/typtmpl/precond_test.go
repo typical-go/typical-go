@@ -1,15 +1,15 @@
-package typfactory_test
+package typtmpl_test
 
 import (
 	"testing"
 
-	"github.com/typical-go/typical-go/pkg/typfactory"
+	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
 func TestPrecond(t *testing.T) {
-	testWriter(t,
+	testTemplate(t,
 		testcase{
-			Writer: &typfactory.Precond{
+			Template: &typtmpl.Precond{
 				Imports: []string{"import1", "import2"},
 				Lines:   []string{"line1", "line2"},
 			},

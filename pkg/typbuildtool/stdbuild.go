@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
-	"github.com/typical-go/typical-go/pkg/typfactory"
+	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
 var (
@@ -63,11 +63,11 @@ func (b *StdBuild) Run(c *CliContext) (err error) {
 	// NOTE: create main.go if not exist
 	if _, err = os.Stat(src); os.IsNotExist(err) {
 		os.MkdirAll(srcDir, 0777)
-		appMain := &typfactory.AppMain{
+		appMain := &typtmpl.AppMain{
 			DescPkg: c.Core.ProjectPkg + "/typical",
 		}
 
-		if err = typfactory.WriteFile(src, 0777, appMain); err != nil {
+		if err = typtmpl.WriteFile(src, 0777, appMain); err != nil {
 			return fmt.Errorf("%s: %w", srcDir, err)
 		}
 	}

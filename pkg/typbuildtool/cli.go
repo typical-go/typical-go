@@ -6,7 +6,7 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/typfactory"
+	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/urfave/cli/v2"
 )
@@ -23,7 +23,7 @@ func createBuildToolCli(b *BuildTool, core *typcore.Context) *cli.App {
 		ctx := cli.Context
 
 		c := &PreconditionContext{
-			Precond: typfactory.Precond{
+			Precond: typtmpl.Precond{
 				Imports: retrImports(core),
 			},
 			Logger: typlog.Logger{
@@ -38,7 +38,7 @@ func createBuildToolCli(b *BuildTool, core *typcore.Context) *cli.App {
 			return
 		}
 
-		if err = typfactory.WriteFile(filename, 0777, c); err != nil {
+		if err = typtmpl.WriteFile(filename, 0777, c); err != nil {
 			return
 		}
 

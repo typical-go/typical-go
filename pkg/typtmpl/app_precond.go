@@ -1,4 +1,4 @@
-package typfactory
+package typtmpl
 
 import (
 	"io"
@@ -7,6 +7,8 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typcfg"
 )
+
+var _ Template = (*AppPrecond)(nil)
 
 const appPrecond = `typapp.Provide({{range $c := .Ctors}}
 	typapp.NewConstructor("{{$c.Name}}", {{$c.Def}}),{{end}}{{range $c := .CfgCtors}}
@@ -63,8 +65,8 @@ func (t *AppPrecond) AppendCfgCtor(name string, cfg *typcfg.Configuration) {
 	})
 }
 
-// Write the tyicalw
-func (t *AppPrecond) Write(w io.Writer) (err error) {
+// Execute app precondition template
+func (t *AppPrecond) Execute(w io.Writer) (err error) {
 	var tmpl *template.Template
 	if tmpl, err = template.New("AppPrecond").Parse(appPrecond); err != nil {
 		return

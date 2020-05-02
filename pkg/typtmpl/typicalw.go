@@ -1,9 +1,11 @@
-package typfactory
+package typtmpl
 
 import (
 	"io"
 	"text/template"
 )
+
+var _ Template = (*Typicalw)(nil)
 
 const typicalw = `#!/bin/bash
 
@@ -31,8 +33,8 @@ type Typicalw struct {
 	ProjectPkg    string
 }
 
-// Write the tyicalw
-func (t *Typicalw) Write(w io.Writer) (err error) {
+// Execute typicalw template
+func (t *Typicalw) Execute(w io.Writer) (err error) {
 	var tmpl *template.Template
 	if tmpl, err = template.New("").Parse(typicalw); err != nil {
 		return

@@ -1,15 +1,15 @@
-package typfactory_test
+package typtmpl_test
 
 import (
 	"testing"
 
-	"github.com/typical-go/typical-go/pkg/typfactory"
+	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
 func TestTypicalw(t *testing.T) {
-	testWriter(t,
+	testTemplate(t,
 		testcase{
-			Writer: &typfactory.Typicalw{
+			Template: &typtmpl.Typicalw{
 				TypicalSource: "some-source",
 				TypicalTmp:    "some-tmp",
 			},
@@ -32,7 +32,7 @@ $TYPTMP/bin/build-tool $@
 `,
 		},
 		testcase{
-			Writer: &typfactory.Typicalw{
+			Template: &typtmpl.Typicalw{
 				TypicalSource: "some-source",
 				TypicalTmp:    "some-tmp",
 				ProjectPkg:    "some-project-pkg",

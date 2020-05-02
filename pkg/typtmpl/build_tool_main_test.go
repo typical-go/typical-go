@@ -1,15 +1,15 @@
-package typfactory_test
+package typtmpl_test
 
 import (
 	"testing"
 
-	"github.com/typical-go/typical-go/pkg/typfactory"
+	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
 func TestBuildToolMain(t *testing.T) {
-	testWriter(t,
+	testTemplate(t,
 		testcase{
-			Writer: &typfactory.BuildToolMain{DescPkg: "some-package"},
+			Template: &typtmpl.BuildToolMain{DescPkg: "some-package"},
 			expected: `package main
 
 import (

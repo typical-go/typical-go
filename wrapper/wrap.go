@@ -11,7 +11,7 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/typfactory"
+	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
 // Context of wrapper
@@ -42,7 +42,7 @@ func Wrap(c *Context) (err error) {
 	gitignore := ".gitignore"
 	if _, err = os.Stat(gitignore); os.IsNotExist(err) {
 		c.Infof("Generate %s", gitignore)
-		if err = typfactory.WriteFile(gitignore, 0777, &typfactory.GitIgnore{}); err != nil {
+		if err = typtmpl.WriteFile(gitignore, 0777, &typtmpl.GitIgnore{}); err != nil {
 			return
 		}
 	}
@@ -50,7 +50,7 @@ func Wrap(c *Context) (err error) {
 	typicalw := "typicalw"
 	if _, err = os.Stat(typicalw); os.IsNotExist(err) {
 		c.Infof("Generate %s", typicalw)
-		if err = typfactory.WriteFile(typicalw, 0777, &typfactory.Typicalw{
+		if err = typtmpl.WriteFile(typicalw, 0777, &typtmpl.Typicalw{
 			TypicalSource: "github.com/typical-go/typical-go/cmd/typical-go",
 			TypicalTmp:    c.TypicalTmp,
 			ProjectPkg:    c.ProjectPkg,
@@ -77,7 +77,7 @@ func Wrap(c *Context) (err error) {
 
 		if _, err = os.Stat(srcPath); os.IsNotExist(err) {
 			c.Infof("Generate build-tool main source: %s", srcPath)
-			if err = typfactory.WriteFile(srcPath, 0777, &typfactory.BuildToolMain{
+			if err = typtmpl.WriteFile(srcPath, 0777, &typtmpl.BuildToolMain{
 				DescPkg: descriptorPkg,
 			}); err != nil {
 				return

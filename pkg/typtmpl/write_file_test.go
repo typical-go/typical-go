@@ -1,24 +1,24 @@
-package typfactory_test
+package typtmpl_test
 
 import (
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typfactory"
+	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
 type testcase struct {
 	testName string
-	typfactory.Writer
+	typtmpl.Template
 	expected string
 }
 
-func testWriter(t *testing.T, cases ...testcase) {
+func testTemplate(t *testing.T, cases ...testcase) {
 	for _, tt := range cases {
 		t.Run(tt.testName, func(t *testing.T) {
 			var debugger strings.Builder
-			require.NoError(t, tt.Write(&debugger))
+			require.NoError(t, tt.Execute(&debugger))
 			require.Equal(t, tt.expected, debugger.String())
 		})
 	}

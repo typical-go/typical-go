@@ -6,7 +6,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/typfactory"
+	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/urfave/cli/v2"
 )
 
@@ -106,7 +106,7 @@ func (a *App) AppSources() []string {
 func (a *App) Precondition(c *typbuildtool.PreconditionContext) (err error) {
 	c.Info("Precondition the typical-app")
 
-	provideCtor := typfactory.NewProvideCtor()
+	provideCtor := typtmpl.NewProvideCtor()
 
 	for _, a := range GetCtorAnnot(c) {
 		provideCtor.AppendCtor(a.Name, a.Def)

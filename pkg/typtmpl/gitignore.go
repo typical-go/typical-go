@@ -1,8 +1,10 @@
-package typfactory
+package typtmpl
 
 import (
 	"io"
 )
+
+var _ Template = (*GitIgnore)(nil)
 
 const gitignore = `/bin
 /release
@@ -17,7 +19,8 @@ const gitignore = `/bin
 // GitIgnore writer
 type GitIgnore struct{}
 
-func (*GitIgnore) Write(w io.Writer) (err error) {
+// Execute GitIgnore
+func (*GitIgnore) Execute(w io.Writer) (err error) {
 	_, err = w.Write([]byte(gitignore))
 	return
 }
