@@ -25,5 +25,8 @@ func Main(cfg *Config) error {
 
 // Configuration of server
 func Configuration() *typcfg.Configuration {
-	return typcfg.NewConfiguration(ConfigName, &Config{})
+	return &typcfg.Configuration{
+		Name: ConfigName,
+		Spec: &Config{},
+	}
 }
