@@ -13,7 +13,7 @@ func (m *DockerUtility) cmdDown(c *typbuildtool.Context) *cli.Command {
 		Name:    "down",
 		Aliases: []string{"stop"},
 		Usage:   "Take down all docker containers according docker-compose",
-		Action:  c.ActionFunc(dockerDown),
+		Action:  c.ActionFunc(m.name, dockerDown),
 	}
 }
 

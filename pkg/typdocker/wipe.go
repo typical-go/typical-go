@@ -15,7 +15,7 @@ func (m *DockerUtility) cmdWipe(c *typbuildtool.Context) *cli.Command {
 	return &cli.Command{
 		Name:   "wipe",
 		Usage:  "Kill all running docker container",
-		Action: c.ActionFunc(m.dockerWipe),
+		Action: c.ActionFunc(m.name, m.dockerWipe),
 	}
 }
 

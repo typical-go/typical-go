@@ -12,6 +12,7 @@ var (
 
 // DockerUtility for docker
 type DockerUtility struct {
+	name      string
 	version   string
 	composers []Composer
 }
@@ -19,6 +20,7 @@ type DockerUtility struct {
 // Compose new docker module
 func Compose(composers ...Composer) *DockerUtility {
 	return &DockerUtility{
+		name:      "docker",
 		version:   V3,
 		composers: composers,
 	}

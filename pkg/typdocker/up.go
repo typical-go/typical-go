@@ -16,7 +16,7 @@ func (m *DockerUtility) cmdUp(c *typbuildtool.Context) *cli.Command {
 			&cli.BoolFlag{Name: "wipe"},
 		},
 		Usage:  "Spin up docker containers according docker-compose",
-		Action: c.ActionFunc(m.dockerUp),
+		Action: c.ActionFunc(m.name, m.dockerUp),
 	}
 }
 

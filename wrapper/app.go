@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/urfave/cli/v2"
 )
 
@@ -40,7 +41,10 @@ func (t *App) RunApp(d *typcore.Descriptor) (err error) {
 			},
 			Action: func(cliCtx *cli.Context) (err error) {
 				return Wrap(&Context{
-					Descriptor:       d,
+					Descriptor: d,
+					Logger: typlog.Logger{
+						Name: "WRAPPER",
+					},
 					Ctx:              cliCtx.Context,
 					TypicalTmp:       cliCtx.String("typical-tmp"),
 					ProjectPkg:       cliCtx.String("project-pkg"),

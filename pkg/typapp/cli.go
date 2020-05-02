@@ -5,6 +5,7 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/urfave/cli/v2"
 )
 
@@ -12,6 +13,9 @@ func createAppCli(a *App, d *typcore.Descriptor) *cli.App {
 	c := &Context{
 		Descriptor: d,
 		App:        a,
+		Logger: typlog.Logger{
+			Name: d.Name,
+		},
 	}
 	app := cli.NewApp()
 	app.Name = d.Name
@@ -19,7 +23,6 @@ func createAppCli(a *App, d *typcore.Descriptor) *cli.App {
 	app.Description = d.Description
 	app.Before = func(*cli.Context) (err error) {
 		if configFile := os.Getenv("CONFIG"); configFile != "" {
-			c.Info("Load environments")
 			_, err = typcfg.Load(configFile)
 		}
 		return

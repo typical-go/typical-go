@@ -26,7 +26,7 @@ func commands(c *typbuildtool.Context) []*cli.Command {
 			Usage:       "Generate mock class",
 			UsageText:   "mock [package_names]",
 			Description: "If package_names is missing then check every package",
-			Action:      c.ActionFunc(generateMock),
+			Action:      c.ActionFunc("mock", generateMock),
 		},
 	}
 }

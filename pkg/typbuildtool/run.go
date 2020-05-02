@@ -8,7 +8,7 @@ func cmdRun(c *Context) *cli.Command {
 		Aliases:         []string{"r"},
 		Usage:           "Run the project in local environment",
 		SkipFlagParsing: true,
-		Action:          c.ActionFunc(run),
+		Action:          c.ActionFunc("", run),
 	}
 }
 

@@ -11,12 +11,15 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
 // Context of wrapper
 type Context struct {
 	*typcore.Descriptor
+	typlog.Logger
+
 	Ctx context.Context
 
 	TypicalTmp string

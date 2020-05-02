@@ -6,7 +6,6 @@ import (
 	"regexp"
 
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typlog"
 )
 
 var (
@@ -34,8 +33,6 @@ type Descriptor struct {
 
 	// BuildTool of the project (MANDATORY).
 	BuildTool
-
-	typlog.Logger
 }
 
 // LaunchApp to launch the app

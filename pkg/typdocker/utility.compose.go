@@ -17,7 +17,7 @@ func (m *DockerUtility) cmdCompose(c *typbuildtool.Context) *cli.Command {
 	return &cli.Command{
 		Name:   "compose",
 		Usage:  "Generate docker-compose.yaml",
-		Action: c.ActionFunc(m.dockerCompose),
+		Action: c.ActionFunc(m.name, m.dockerCompose),
 	}
 }
 

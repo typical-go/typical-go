@@ -2,7 +2,6 @@ package typbuildtool
 
 import (
 	"github.com/typical-go/typical-go/pkg/git"
-	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
@@ -34,53 +33,6 @@ type Publisher interface {
 // Runner responsible to run the project in local environment
 type Runner interface {
 	Run(c *CliContext) error
-}
-
-// Context of buildtool
-type Context struct {
-	*BuildTool
-	Core *typcore.Context
-}
-
-// CliFunc is command line function
-type CliFunc func(*CliContext) error
-
-// ActionFunc to return related action func
-func (c *Context) ActionFunc(fn CliFunc) func(*cli.Context) error {
-	return func(cli *cli.Context) error {
-		return fn(&CliContext{
-			Context:   cli,
-			Core:      c.Core,
-			BuildTool: c.BuildTool,
-		})
-	}
-}
-
-// CliContext is context of build
-type CliContext struct {
-	*cli.Context
-	Core      *typcore.Context
-	BuildTool *BuildTool
-}
-
-// Info logger
-func (c *CliContext) Info(args ...interface{}) {
-	c.Core.Info(args...) // TODO: custom label from cli name
-}
-
-// Infof logger
-func (c *CliContext) Infof(format string, args ...interface{}) {
-	c.Core.Infof(format, args...) // TODO: custom label from cli name
-}
-
-// Warn logger
-func (c *CliContext) Warn(args ...interface{}) {
-	c.Core.Warn(args...) // TODO: custom label from cli name
-}
-
-// Warnf logger
-func (c *CliContext) Warnf(format string, args ...interface{}) {
-	c.Core.Warnf(format, args...) // TODO: custom label from cli name
 }
 
 // ReleaseContext is context of release

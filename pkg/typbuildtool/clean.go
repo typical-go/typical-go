@@ -11,7 +11,7 @@ func cmdClean(c *Context) *cli.Command {
 		Name:    "clean",
 		Aliases: []string{"c"},
 		Usage:   "Clean the project",
-		Action:  c.ActionFunc(clean),
+		Action:  c.ActionFunc("", clean),
 	}
 }
 
