@@ -2,12 +2,13 @@ package typbuildtool
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/typical-go/typical-go/pkg/typlog"
+	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/urfave/cli/v2"
 )
 
@@ -38,12 +39,16 @@ func createBuildToolCli(b *BuildTool, core *typcore.Context) *cli.App {
 			return
 		}
 
-		if err = typtmpl.WriteFile(filename, 0777, c); err != nil {
-			return
-		}
-
-		if err = buildkit.NewGoImports(core.TypicalTmp, filename).Execute(ctx); err != nil {
-			return
+		if len(c.Lines) > 0 {
+			if err = typtmpl.WriteFile(filename, 0777, c); err != nil {
+				return
+			}
+			if err = buildkit.NewGoImports(core.TypicalTmp, filename).Execute(ctx); err != nil {
+				return
+			}
+		} else {
+			c.Info("No precondition to be generated")
+			os.Remove(filename)
 		}
 
 		return

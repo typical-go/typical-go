@@ -11,7 +11,8 @@ func Main(greeter Greeter, w io.Writer) {
 	fmt.Fprintln(w, greeter.Greet())
 }
 
-// GetWriter to get writer to greet the world [constructor]
+// GetWriter to get writer to greet the world
+// @constructor
 func GetWriter() io.Writer {
 	return os.Stdout
 }

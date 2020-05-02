@@ -10,7 +10,8 @@ type Greeter interface {
 type GreeterImpl struct {
 }
 
-// NewGreeter return new insteance of Greeter [constructor]
+// NewGreeter return new insteance of Greeter
+// @constructor
 func NewGreeter() Greeter {
 	return &GreeterImpl{}
 }
