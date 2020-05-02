@@ -62,5 +62,5 @@ func TestGetCtorAnnot(t *testing.T) {
 		{Name: "noname", Def: "somePkg.someFunc2"},
 	}, typapp.GetCtorAnnot(c))
 
-	require.Equal(t, "[PRECOND][WARN] CtorAnnot: Invalid tag attribute {invalid-json\n", debugger.String())
+	require.Equal(t, "PRECOND:WARN> CtorAnnot: Invalid tag attribute {invalid-json\n", debugger.String())
 }

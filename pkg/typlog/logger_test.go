@@ -10,18 +10,20 @@ import (
 
 func TestLogger(t *testing.T) {
 	var debugger strings.Builder
-	var logger typlog.Logger
-	logger.Out = &debugger
+	logger := typlog.Logger{
+		Out:  &debugger,
+		Name: "NONAME",
+	}
 
 	logger.Info("some information")
 	logger.Infof("formatted information: %s", "FOO")
 	logger.Warn("some warning")
 	logger.Warnf("formatted warning: %s", "BAR")
 
-	expected := `[TYPICAL][INFO] some information
-[TYPICAL][INFO] formatted information: FOO
-[TYPICAL][WARN] some warning
-[TYPICAL][WARN] formatted warning: BAR
+	expected := `NONAME:INFO> some information
+NONAME:INFO> formatted information: FOO
+NONAME:WARN> some warning
+NONAME:WARN> formatted warning: BAR
 `
 
 	require.Equal(t, expected, debugger.String())

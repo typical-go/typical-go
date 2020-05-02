@@ -7,7 +7,7 @@ func cmdTest(c *Context) *cli.Command {
 		Name:    "test",
 		Aliases: []string{"t"},
 		Usage:   "Test the project",
-		Action:  c.ActionFunc("", test),
+		Action:  c.ActionFunc("TEST", test),
 	}
 }
 

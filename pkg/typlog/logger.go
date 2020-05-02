@@ -58,31 +58,23 @@ func (s *Logger) printf(format string, args ...interface{}) {
 }
 
 func (s *Logger) infoSign() {
-	s.typicalSign()
-	fmt.Fprint(s, "[")
-	color.New(color.FgCyan).Fprint(s, "INFO")
-	fmt.Fprint(s, "] ")
+	s.level("INFO", color.FgCyan)
 }
 
 func (s *Logger) warnSign() {
-	s.typicalSign()
-	fmt.Fprint(s, "[")
-	color.New(color.FgYellow).Fprint(s, "WARN")
-	fmt.Fprint(s, "] ")
+	s.level("WARN", color.FgYellow)
 }
 
-func (s *Logger) typicalSign() {
-	if s.Name == "" {
-		s.Name = DefaultName
+func (s *Logger) level(lvl string, col color.Attribute) {
+	if s.Name != "" {
+		if s.Color == 0 {
+			s.Color = DefaultColor
+		}
+		color.New(s.Color).Fprint(s, s.Name)
+		fmt.Fprint(s, ":")
 	}
-
-	if s.Color == 0 {
-		s.Color = DefaultColor
-	}
-
-	fmt.Fprint(s, "[")
-	color.New(s.Color).Fprint(s, s.Name)
-	fmt.Fprint(s, "]")
+	color.New(col).Fprint(s, lvl)
+	fmt.Fprint(s, "> ")
 }
 
 func (s Logger) Write(p []byte) (n int, err error) {

@@ -19,7 +19,7 @@ func cmdPublish(c *Context) *cli.Command {
 			&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
 			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 		},
-		Action: c.ActionFunc("", Publish),
+		Action: c.ActionFunc("PUBLISH", Publish),
 	}
 }
 
