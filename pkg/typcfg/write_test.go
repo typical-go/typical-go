@@ -19,13 +19,19 @@ func TestWrite(t *testing.T) {
 		expectedErr string
 	}{
 		{
-			Configurer: typcfg.NewConfiguration("TEST", &someSpec{}),
-			expected:   "TEST_FIELD1=defaulValue1\nTEST_FIELD2=defaulValue2\n",
+			Configurer: &typcfg.Configuration{
+				Name: "TEST",
+				Spec: &someSpec{},
+			},
+			expected: "TEST_FIELD1=defaulValue1\nTEST_FIELD2=defaulValue2\n",
 		},
 		{
-			Configurer: typcfg.NewConfiguration("TEST", &someSpec{}),
-			before:     "XXXX=XXXX",
-			expected:   "XXXX=XXXX\nTEST_FIELD1=defaulValue1\nTEST_FIELD2=defaulValue2\n",
+			Configurer: &typcfg.Configuration{
+				Name: "TEST",
+				Spec: &someSpec{},
+			},
+			before:   "XXXX=XXXX",
+			expected: "XXXX=XXXX\nTEST_FIELD1=defaulValue1\nTEST_FIELD2=defaulValue2\n",
 		},
 	}
 

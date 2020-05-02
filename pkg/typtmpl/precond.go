@@ -3,7 +3,6 @@ package typtmpl
 import (
 	"io"
 	"strings"
-	"text/template"
 )
 
 var _ Template = (*Precond)(nil)
@@ -33,12 +32,12 @@ func (i *Precond) AppendImport(imports ...string) {
 }
 
 // AppendLine to append init line
-func (i *Precond) AppendLine(line string) {
-	i.Lines = append(i.Lines, line)
+func (i *Precond) AppendLine(lines ...string) {
+	i.Lines = append(i.Lines, lines...)
 }
 
-// AppendWriter to append init line with wirter
-func (i *Precond) AppendWriter(tmpl Template) {
+// AppendTemplate to append init line with wirter
+func (i *Precond) AppendTemplate(tmpl Template) {
 	var b strings.Builder
 	tmpl.Execute(&b)
 	i.AppendLine(b.String())
@@ -46,9 +45,5 @@ func (i *Precond) AppendWriter(tmpl Template) {
 
 // Execute precond template
 func (i *Precond) Execute(w io.Writer) (err error) {
-	var tmpl *template.Template
-	if tmpl, err = template.New("precond").Parse(precond); err != nil {
-		return
-	}
-	return tmpl.Execute(w, i)
+	return Execute("precond", precond, i, w)
 }

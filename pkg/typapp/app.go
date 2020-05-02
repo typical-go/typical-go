@@ -104,20 +104,20 @@ func (a *App) AppSources() []string {
 
 // Precondition the app
 func (a *App) Precondition(c *typbuildtool.PreconditionContext) (err error) {
-	c.Info("Precondition the typical-app")
+	c.AppendTemplate(a.appPrecond(c))
+	return
+}
 
-	provideCtor := typtmpl.NewProvideCtor()
+func (a *App) appPrecond(c *typbuildtool.PreconditionContext) *typtmpl.AppPrecond {
+	appPrecond := typtmpl.NewAppPrecond()
 
 	for _, a := range GetCtorAnnot(c) {
-		provideCtor.AppendCtor(a.Name, a.Def)
+		appPrecond.AppendCtor(a.Name, a.Def)
 	}
 
 	for _, cfg := range a.Configurations() {
-		provideCtor.AppendCfgCtor("", cfg)
+		appPrecond.AppendCfgCtor(cfg)
 	}
 
-	// c.AppendImport(retrImports(c.Core)...)
-	c.AppendWriter(provideCtor)
-
-	return
+	return appPrecond
 }

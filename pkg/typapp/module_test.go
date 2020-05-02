@@ -15,7 +15,7 @@ func TestNewModule(t *testing.T) {
 	preparation := typapp.NewPreparation(nil)
 	constructor := typapp.NewConstructor("", nil)
 	destructor := typapp.NewDestructor(nil)
-	configuration := typcfg.NewConfiguration("", nil)
+	configuration := &typcfg.Configuration{}
 
 	mod := typapp.NewModule().
 		Command(typapp.NewCommander(func(*typapp.Context) []*cli.Command {

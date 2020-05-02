@@ -3,7 +3,6 @@ package typtmpl
 import (
 	"io"
 	"reflect"
-	"text/template"
 
 	"github.com/typical-go/typical-go/pkg/typcfg"
 )
@@ -41,8 +40,8 @@ type CfgCtor struct {
 	SpecType2 string
 }
 
-// NewProvideCtor return new instance of ProvideCtor
-func NewProvideCtor() *AppPrecond {
+// NewAppPrecond return new instance of ProvideCtor
+func NewAppPrecond() *AppPrecond {
 	return &AppPrecond{}
 }
 
@@ -55,10 +54,10 @@ func (t *AppPrecond) AppendCtor(name, def string) {
 }
 
 // AppendCfgCtor to append config constructor
-func (t *AppPrecond) AppendCfgCtor(name string, cfg *typcfg.Configuration) {
+func (t *AppPrecond) AppendCfgCtor(cfg *typcfg.Configuration) {
 	specType := reflect.TypeOf(cfg.Spec).String()
 	t.CfgCtors = append(t.CfgCtors, &CfgCtor{
-		Name:      name,
+		Name:      cfg.CtorName,
 		Prefix:    cfg.Name,
 		SpecType:  specType,
 		SpecType2: specType[1:],
@@ -67,9 +66,5 @@ func (t *AppPrecond) AppendCfgCtor(name string, cfg *typcfg.Configuration) {
 
 // Execute app precondition template
 func (t *AppPrecond) Execute(w io.Writer) (err error) {
-	var tmpl *template.Template
-	if tmpl, err = template.New("AppPrecond").Parse(appPrecond); err != nil {
-		return
-	}
-	return tmpl.Execute(w, t)
+	return Execute("appPrecond", appPrecond, t, w)
 }

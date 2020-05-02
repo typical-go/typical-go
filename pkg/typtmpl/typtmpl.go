@@ -3,6 +3,7 @@ package typtmpl
 import (
 	"io"
 	"os"
+	"text/template"
 )
 
 // Template responsible to write
@@ -19,4 +20,13 @@ func WriteFile(filename string, perm os.FileMode, tmpl Template) (err error) {
 	defer f.Close()
 
 	return tmpl.Execute(f)
+}
+
+// Execute template
+func Execute(name, text string, data interface{}, w io.Writer) (err error) {
+	var tmpl *template.Template
+	if tmpl, err = template.New(name).Parse(text); err != nil {
+		return
+	}
+	return tmpl.Execute(w, data)
 }

@@ -3,6 +3,7 @@ package typtmpl_test
 import (
 	"testing"
 
+	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
@@ -29,5 +30,18 @@ func init() {
 `,
 		},
 	)
+
+}
+
+func TestPrecond_Append(t *testing.T) {
+	precond := &typtmpl.Precond{}
+	precond.AppendImport("import1", "import2")
+	precond.AppendLine("line1", "line2")
+	precond.AppendTemplate(&dummyTemplate{"template1"})
+
+	require.Equal(t, &typtmpl.Precond{
+		Imports: []string{"import1", "import2"},
+		Lines:   []string{"line1", "line2", "template1"},
+	}, precond)
 
 }

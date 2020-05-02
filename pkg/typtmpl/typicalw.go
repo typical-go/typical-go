@@ -2,7 +2,6 @@ package typtmpl
 
 import (
 	"io"
-	"text/template"
 )
 
 var _ Template = (*Typicalw)(nil)
@@ -35,9 +34,5 @@ type Typicalw struct {
 
 // Execute typicalw template
 func (t *Typicalw) Execute(w io.Writer) (err error) {
-	var tmpl *template.Template
-	if tmpl, err = template.New("").Parse(typicalw); err != nil {
-		return
-	}
-	return tmpl.Execute(w, t)
+	return Execute("typicalw", typicalw, t, w)
 }

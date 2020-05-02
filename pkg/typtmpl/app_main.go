@@ -2,7 +2,6 @@ package typtmpl
 
 import (
 	"io"
-	"text/template"
 )
 
 var _ Template = (*AppMain)(nil)
@@ -28,9 +27,5 @@ type AppMain struct {
 
 // Execute app main template
 func (t *AppMain) Execute(w io.Writer) (err error) {
-	var tmpl *template.Template
-	if tmpl, err = template.New("").Parse(appMain); err != nil {
-		return
-	}
-	return tmpl.Execute(w, t)
+	return Execute("appMain", appMain, t, w)
 }

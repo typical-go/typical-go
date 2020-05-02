@@ -13,16 +13,9 @@ var (
 
 // Configuration is alias from typcore.Configuration with Configurer implementation
 type Configuration struct {
-	Name string
-	Spec interface{}
-}
-
-// NewConfiguration return new instance of Configuration
-func NewConfiguration(name string, spec interface{}) *Configuration {
-	return &Configuration{
-		Name: name,
-		Spec: spec,
-	}
+	CtorName string
+	Name     string
+	Spec     interface{}
 }
 
 // Configurations of configuration instance
