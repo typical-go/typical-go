@@ -39,9 +39,3 @@ func CreateAnnotation(decl *Decl, raw string) (a *Annotation, err error) {
 		TagAttrs: []byte(strings.TrimSpace(raw[i1 : i2+1])),
 	}, nil
 }
-
-// Equal return true if annotation have same tag name and declaration type
-func (a *Annotation) Equal(tagName string, declType DeclType) bool {
-	return strings.ToLower(tagName) == strings.ToLower(a.TagName) &&
-		a.Type == declType
-}

@@ -10,8 +10,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typast"
 )
 
-func TestGetCtorAnnot(t *testing.T) {
-
+func TestGetConstructor(t *testing.T) {
 	astStore := &typast.ASTStore{
 		Annots: []*typast.Annotation{
 			{

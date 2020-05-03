@@ -3,6 +3,7 @@ package typannot
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/typical-go/typical-go/pkg/common"
 
@@ -23,18 +24,23 @@ type Constructor struct {
 // GetConstructor to get contructor annotation data
 func GetConstructor(store *typast.ASTStore) (annots []*Constructor, errs common.Errors) {
 	var err error
-	for _, a := range store.Annots {
-		if a.Equal(ConstructorTag, typast.Function) {
+	for _, annot := range store.Annots {
+		if isConstructor(annot) {
 			var ctorAnnot Constructor
-			if len(a.TagAttrs) > 0 {
-				if err = json.Unmarshal(a.TagAttrs, &ctorAnnot); err != nil {
-					errs.Append(fmt.Errorf("Invalid tag attribute %s", a.TagAttrs))
+			if len(annot.TagAttrs) > 0 {
+				if err = json.Unmarshal(annot.TagAttrs, &ctorAnnot); err != nil {
+					errs.Append(fmt.Errorf("Invalid tag attribute %s", annot.TagAttrs))
 					continue
 				}
 			}
-			ctorAnnot.Def = fmt.Sprintf("%s.%s", a.Pkg, a.Name)
+			ctorAnnot.Def = fmt.Sprintf("%s.%s", annot.Pkg, annot.Name)
 			annots = append(annots, &ctorAnnot)
 		}
 	}
 	return
+}
+
+func isConstructor(annot *typast.Annotation) bool {
+	return strings.EqualFold(annot.TagName, ConstructorTag) &&
+		annot.Type == typast.Function
 }

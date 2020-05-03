@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typast"
 
 	"github.com/iancoleman/strcase"
@@ -32,21 +33,22 @@ func commands(c *typbuildtool.Context) []*cli.Command {
 
 func generateMock(c *typbuildtool.CliContext) (err error) {
 	var (
-		mockery *Mockery
-		store   *typast.ASTStore
+		store *typast.ASTStore
 	)
 
 	if store, err = typast.CreateASTStore(c.Core.AppFiles...); err != nil {
 		return
 	}
 
-	if mockery, err = CreateMockery(store, c.Core.ProjectPkg); err != nil {
-		return
+	mockery := NewMockery(c.Core.ProjectPkg)
+
+	mocks := typannot.GetMock(store)
+	for _, mock := range mocks {
+		mockery.Put(mock)
 	}
 
 	targetMap := mockery.TargetMap(c.Args().Slice()...)
 	if len(targetMap) < 1 {
-		c.Info("Nothing to mock")
 		return
 	}
 
