@@ -3,6 +3,7 @@ package typapp
 import (
 	"os"
 
+	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
@@ -111,8 +112,14 @@ func (a *App) Precondition(c *typbuildtool.PreconditionContext) (err error) {
 func (a *App) appPrecond(c *typbuildtool.PreconditionContext) *typtmpl.AppPrecond {
 	appPrecond := typtmpl.NewAppPrecond()
 
-	for _, a := range GetCtorAnnot(c) {
-		appPrecond.AppendCtor(a.Name, a.Def)
+	ctors, errs := typannot.GetConstructor(c.ASTStore())
+
+	for _, ctor := range ctors {
+		appPrecond.AppendCtor(ctor.Name, ctor.Def)
+	}
+
+	for _, err := range errs {
+		c.Warnf("App-Precond: %s", err.Error())
 	}
 
 	for _, cfg := range a.Configurations() {

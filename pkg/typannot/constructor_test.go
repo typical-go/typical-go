@@ -1,18 +1,17 @@
-package typapp_test
+package typannot_test
 
 import (
-	"strings"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typapp"
+
+	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typast"
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
-	"github.com/typical-go/typical-go/pkg/typlog"
 )
 
 func TestGetCtorAnnot(t *testing.T) {
-	var debugger strings.Builder
+
 	astStore := &typast.ASTStore{
 		Annots: []*typast.Annotation{
 			{
@@ -52,15 +51,17 @@ func TestGetCtorAnnot(t *testing.T) {
 		},
 	}
 
-	c := &typbuildtool.PreconditionContext{
-		Logger: typlog.Logger{Name: "PRECOND", Out: &debugger},
-	}
-	c.SetASTStore(astStore)
+	ctors, errs := typannot.GetConstructor(astStore)
 
-	require.Equal(t, []*typapp.CtorAnnot{
+	require.Equal(t, []*typannot.Constructor{
 		{Name: "", Def: "somePkg.someFunc"},
 		{Name: "noname", Def: "somePkg.someFunc2"},
-	}, typapp.GetCtorAnnot(c))
+	}, ctors)
 
-	require.Equal(t, "PRECOND:WARN> CtorAnnot: Invalid tag attribute {invalid-json\n", debugger.String())
+	// require.EqualValues(t, []error{
+	// 	errors.New(""),
+	// }, errs)
+
+	fmt.Println(errs[0].Error())
+
 }
