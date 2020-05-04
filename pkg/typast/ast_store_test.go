@@ -28,15 +28,36 @@ var (
 		Type: typast.Function,
 		Name: "sampleFunction",
 	}
+
+	sampleInterface2Decl = &typast.Decl{
+		Path: "sample_test.go",
+		Pkg:  "typast_test",
+		Type: typast.Interface,
+		Name: "sampleInterface2",
+	}
+
+	sampleStruct2Decl = &typast.Decl{
+		Path: "sample_test.go",
+		Pkg:  "typast_test",
+		Type: typast.Struct,
+		Name: "sampleStruct2",
+	}
 )
 
 func TestCreateASTStore(t *testing.T) {
 	store, err := typast.CreateASTStore("sample_test.go")
 	require.NoError(t, err)
+
+	cnt := len(store.Decls)
+	require.Equal(t, len(store.DeclNodes), cnt)
+	require.Equal(t, len(store.Docs), cnt)
+
 	require.EqualValues(t, []*typast.Decl{
 		sampleInterfaceDecl,
 		sampleStructDecl,
 		sampleFunctionDecl,
+		sampleInterface2Decl,
+		sampleStruct2Decl,
 	}, store.Decls)
 
 	require.EqualValues(t, []*typast.Annotation{
@@ -48,6 +69,14 @@ func TestCreateASTStore(t *testing.T) {
 			Decl:     sampleStructDecl,
 			TagName:  "tag2",
 			TagAttrs: []byte(`{"key1":"", "key2": "", "key3":"value3"}`),
+		},
+		{
+			Decl:    sampleInterface2Decl,
+			TagName: "tag3",
+		},
+		{
+			Decl:    sampleStruct2Decl,
+			TagName: "tag4",
 		},
 	}, store.Annots)
 }

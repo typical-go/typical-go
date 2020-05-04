@@ -11,6 +11,7 @@ import (
 type ASTStore struct {
 	Paths     []string
 	Decls     []*Decl
+	Docs      []*ast.CommentGroup
 	DeclNodes []ast.Decl
 	Annots    []*Annotation
 }
@@ -31,56 +32,67 @@ func CreateASTStore(paths ...string) (store *ASTStore, err error) {
 
 		pkg := f.Name.Name
 		for _, node := range f.Decls {
-			store.DeclNodes = append(store.DeclNodes, node)
-			name, declType, doc := parseDecl(node)
-			decl := &Decl{
-				Name: name,
-				Type: declType,
-				Path: path,
-				Pkg:  pkg,
-			}
-			store.Decls = append(store.Decls, decl)
+			putDecls(store, node, path, pkg)
+		}
 
-			if err = putAnnots(store, decl, doc); err != nil {
+		for i, decl := range store.Decls {
+			if err = putAnnots(store, decl, store.Docs[i]); err != nil {
 				return
 			}
-
 		}
+
 	}
 
 	return store, nil
 }
 
-func parseDecl(decl ast.Decl) (name string, declType DeclType, doc *ast.CommentGroup) {
-	switch decl.(type) {
+func putDecls(store *ASTStore, node ast.Decl, path, pkg string) {
+	switch node.(type) {
 	case *ast.FuncDecl:
-		funcDecl := decl.(*ast.FuncDecl)
-		name = funcDecl.Name.Name
-		declType = Function
-		doc = funcDecl.Doc
-		return
+		funcDecl := node.(*ast.FuncDecl)
+
+		store.Decls = append(store.Decls, &Decl{
+			Name: funcDecl.Name.Name,
+			Type: Function,
+			Path: path,
+			Pkg:  pkg,
+		})
+		store.Docs = append(store.Docs, funcDecl.Doc)
+		store.DeclNodes = append(store.DeclNodes, node)
+
 	case *ast.GenDecl:
-		genDecl := decl.(*ast.GenDecl)
+		genDecl := node.(*ast.GenDecl)
 		for _, spec := range genDecl.Specs {
 			switch spec.(type) {
 			case *ast.TypeSpec:
 				typeSpec := spec.(*ast.TypeSpec)
-				name = typeSpec.Name.Name
-				doc = genDecl.Doc
 
+				declType := Generic
 				switch typeSpec.Type.(type) {
 				case *ast.InterfaceType:
 					declType = Interface
 				case *ast.StructType:
 					declType = Struct
-				default:
-					declType = Generic
 				}
-				return
+
+				store.Decls = append(store.Decls, &Decl{
+					Name: typeSpec.Name.Name,
+					Type: declType,
+					Path: path,
+					Pkg:  pkg,
+				})
+				store.DeclNodes = append(store.DeclNodes, node)
+
+				// NOTE: get type specific first before get the generic
+				doc := typeSpec.Doc
+				if doc == nil {
+					doc = genDecl.Doc
+				}
+				store.Docs = append(store.Docs, doc)
 			}
 		}
 	}
-	return
+
 }
 
 func putAnnots(store *ASTStore, decl *Decl, doc *ast.CommentGroup) (err error) {

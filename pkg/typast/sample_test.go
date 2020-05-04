@@ -15,3 +15,14 @@ type sampleStruct struct {
 func sampleFunction() {
 	// intentionally blank
 }
+
+type (
+	// @tag3
+	sampleInterface2 interface {
+		sampleMethod2()
+	}
+
+	// @tag4
+	sampleStruct2 struct {
+	}
+)
