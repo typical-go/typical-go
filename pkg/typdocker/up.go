@@ -22,7 +22,7 @@ func (m *DockerUtility) cmdUp(c *typbuildtool.Context) *cli.Command {
 
 func (m *DockerUtility) dockerUp(c *typbuildtool.CliContext) (err error) {
 
-	if c.Bool("wipe") {
+	if c.Cli.Bool("wipe") {
 		m.dockerWipe(c)
 	}
 

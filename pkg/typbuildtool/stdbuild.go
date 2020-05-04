@@ -84,7 +84,7 @@ func (b *StdBuild) Run(c *CliContext) (err error) {
 
 	binExec := &buildkit.Command{
 		Name:   binary,
-		Args:   c.Args().Slice(),
+		Args:   c.Cli.Args().Slice(),
 		Stdout: b.stdout,
 		Stderr: b.stderr,
 	}

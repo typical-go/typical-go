@@ -46,9 +46,9 @@ func (g *GithubModule) Publish(c *PublishContext) (err error) {
 		return errors.New("Environment 'GITHUB_TOKEN' is missing")
 	}
 
-	oauth := oauth2.NewClient(c.Context, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token}))
+	oauth := oauth2.NewClient(c, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token}))
 	repo := github.NewClient(oauth).Repositories
-	if _, _, err = repo.GetReleaseByTag(c.Context, g.owner, g.repoName, c.Tag); err == nil {
+	if _, _, err = repo.GetReleaseByTag(c, g.owner, g.repoName, c.Tag); err == nil {
 		return fmt.Errorf("Tag '%s' already published", c.Tag)
 	}
 	c.Infof("Create github release for %s/%s", g.owner, g.repoName)

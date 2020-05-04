@@ -32,7 +32,7 @@ func Publish(c *CliContext) (err error) {
 		gitLogs      []*git.Log
 	)
 
-	if !c.Bool("no-test") {
+	if !c.Cli.Bool("no-test") {
 		if err = test(c); err != nil {
 			return
 		}
@@ -43,13 +43,13 @@ func Publish(c *CliContext) (err error) {
 	}
 	defer git.Fetch(c.Context)
 
-	force := c.Bool("force")
+	force := c.Cli.Bool("force")
 
 	if status := git.Status(c.Context); status != "" && !force {
 		return fmt.Errorf("Please commit changes first:\n%s", status)
 	}
 
-	alpha := c.Bool("alpha")
+	alpha := c.Cli.Bool("alpha")
 	tag := releaseTag(c, alpha)
 
 	if latest = git.LatestTag(c.Context); latest == tag && !force {

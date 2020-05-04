@@ -1,6 +1,7 @@
 package typbuildtool
 
 import (
+	"context"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
@@ -16,8 +17,10 @@ type Context struct {
 
 // CliContext is context of build
 type CliContext struct {
-	*cli.Context
+	context.Context
 	typlog.Logger
+
+	Cli       *cli.Context
 	Name      string
 	Core      *typcore.Context
 	BuildTool *BuildTool
@@ -34,7 +37,8 @@ func (c *Context) ActionFunc(name string, fn CliFunc) func(*cli.Context) error {
 			Logger: typlog.Logger{
 				Name: strings.ToUpper(name),
 			},
-			Context:   cli,
+			Cli:       cli,
+			Context:   cli.Context,
 			Core:      c.Core,
 			BuildTool: c.BuildTool,
 		})
