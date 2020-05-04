@@ -47,7 +47,7 @@ func generateMock(c *typbuildtool.CliContext) (err error) {
 		mockery.Put(mock)
 	}
 
-	targetMap := mockery.TargetMap(c.Args().Slice()...)
+	targetMap := mockery.TargetMap(c.Cli.Args().Slice()...)
 	if len(targetMap) < 1 {
 		return
 	}
@@ -60,7 +60,7 @@ func generateMock(c *typbuildtool.CliContext) (err error) {
 	for pkg, targets := range targetMap {
 		mockPkg := fmt.Sprintf("mock_%s", pkg)
 
-		c.Infof("Remove package: %s", mockPkg)
+		fmt.Printf("\nRemove package '%s'\n", mockPkg)
 		os.RemoveAll(mockPkg)
 
 		for _, t := range targets {
