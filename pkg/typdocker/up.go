@@ -16,7 +16,7 @@ func (m *DockerUtility) cmdUp(c *typbuildtool.Context) *cli.Command {
 			&cli.BoolFlag{Name: "wipe"},
 		},
 		Usage:  "Spin up docker containers according docker-compose",
-		Action: c.ActionFunc(m.name, m.dockerUp),
+		Action: c.ActionFunc(LogName, m.dockerUp),
 	}
 }
 
@@ -26,7 +26,7 @@ func (m *DockerUtility) dockerUp(c *typbuildtool.CliContext) (err error) {
 		m.dockerWipe(c)
 	}
 
-	if _, err = os.Stat(dockerComposeFile); os.IsNotExist(err) {
+	if _, err = os.Stat(DockerComposeFile); os.IsNotExist(err) {
 		if err = m.dockerCompose(c); err != nil {
 			return
 		}

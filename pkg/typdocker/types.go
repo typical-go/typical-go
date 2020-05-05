@@ -5,11 +5,6 @@ const (
 	V3 = "3"
 )
 
-// Composer responsible to compose docker
-type Composer interface {
-	DockerCompose(version string) *Recipe
-}
-
 // Services descriptor in docker-compose.yml
 type Services map[string]interface{}
 

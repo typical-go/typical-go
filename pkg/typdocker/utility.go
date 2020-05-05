@@ -1,18 +1,26 @@
 package typdocker
 
 import (
+	"errors"
+	"io/ioutil"
+
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 
 	"github.com/urfave/cli/v2"
 )
 
-var (
-	_ typbuildtool.Utility = (*DockerUtility)(nil)
+var _ typbuildtool.Utility = (*DockerUtility)(nil)
+
+const (
+	// DockerComposeFile contain full path of docker-compose.yml file
+	DockerComposeFile = "docker-compose.yml"
+
+	// LogName of docker utility
+	LogName = "docker"
 )
 
 // DockerUtility for docker
 type DockerUtility struct {
-	name      string
 	version   string
 	composers []Composer
 }
@@ -20,7 +28,6 @@ type DockerUtility struct {
 // Compose new docker module
 func Compose(composers ...Composer) *DockerUtility {
 	return &DockerUtility{
-		name:      "docker",
 		version:   V3,
 		composers: composers,
 	}
@@ -46,4 +53,28 @@ func (m *DockerUtility) Commands(c *typbuildtool.Context) []*cli.Command {
 			},
 		},
 	}
+}
+
+func (m *DockerUtility) cmdCompose(c *typbuildtool.Context) *cli.Command {
+	return &cli.Command{
+		Name:   "compose",
+		Usage:  "Generate docker-compose.yaml",
+		Action: c.ActionFunc(LogName, m.dockerCompose),
+	}
+}
+
+func (m *DockerUtility) dockerCompose(c *typbuildtool.CliContext) (err error) {
+	var (
+		out []byte
+	)
+	if len(m.composers) < 1 {
+		return errors.New("Nothing to compose")
+	}
+
+	if out, err = ComposeRecipe(m.version, m.composers); err != nil {
+		return
+	}
+
+	c.Info("Generate docker-compose.yml")
+	return ioutil.WriteFile(DockerComposeFile, out, 0644)
 }
