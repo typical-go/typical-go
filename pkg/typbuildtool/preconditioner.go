@@ -3,8 +3,8 @@ package typbuildtool
 import (
 	"context"
 
-	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/typical-go/typical-go/pkg/typlog"
+	"github.com/typical-go/typical-go/pkg/typtmpl"
 
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typcore"
@@ -43,20 +43,20 @@ func (c *PreconditionContext) SetASTStore(astStore *typast.ASTStore) {
 
 // Info logger
 func (c *PreconditionContext) Info(args ...interface{}) {
-	c.Logger.Info(args...) // TODO: precondition label
+	c.Logger.Info(args...)
 }
 
 // Infof logger
 func (c *PreconditionContext) Infof(format string, args ...interface{}) {
-	c.Logger.Infof(format, args...) // TODO: precondition label
+	c.Logger.Infof(format, args...)
 }
 
 // Warn logger
 func (c *PreconditionContext) Warn(args ...interface{}) {
-	c.Logger.Warn(args...) // TODO: precondition label
+	c.Logger.Warn(args...)
 }
 
 // Warnf logger
 func (c *PreconditionContext) Warnf(format string, args ...interface{}) {
-	c.Logger.Warnf(format, args...) // TODO: precondition label
+	c.Logger.Warnf(format, args...)
 }

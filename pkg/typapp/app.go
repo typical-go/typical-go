@@ -23,7 +23,7 @@ var (
 
 // App is typical application model
 type App struct {
-	appSources []string
+	appSources []string // TODO: remove this
 	main       *Invocation
 	imports    []interface{}
 }
@@ -36,15 +36,15 @@ func EntryPoint(mainFn interface{}, appSource string, sources ...string) *App {
 	}
 }
 
-// RunApp to run the applciation
-func (a *App) RunApp(d *typcore.Descriptor) (err error) {
-	return createAppCli(a, d).Run(os.Args)
-}
-
 // Imports either Provider, Preparer, Destroyer or Configurations
 func (a *App) Imports(imports ...interface{}) *App {
 	a.imports = imports
 	return a
+}
+
+// RunApp to run the applciation
+func (a *App) RunApp(d *typcore.Descriptor) (err error) {
+	return createAppCli(a, d).Run(os.Args)
 }
 
 // Constructors of app

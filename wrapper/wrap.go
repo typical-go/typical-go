@@ -103,6 +103,7 @@ func Wrap(c *Context) (err error) {
 	return
 }
 
+// TODO: using go list -m to get package name
 func retrieveProjectPackage() (pkg string, err error) {
 	var (
 		root string
