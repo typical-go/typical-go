@@ -16,6 +16,12 @@ type ASTStore struct {
 	Annots    []*Annotation
 }
 
+func (a *ASTStore) put(decl *Decl, node ast.Decl, doc *ast.CommentGroup) {
+	a.Decls = append(a.Decls, decl)
+	a.DeclNodes = append(a.DeclNodes, node)
+	a.Docs = append(a.Docs, doc)
+}
+
 // CreateASTStore to walk through the filenames and store declaration and annotations
 func CreateASTStore(paths ...string) (store *ASTStore, err error) {
 
@@ -50,15 +56,14 @@ func putDecls(store *ASTStore, node ast.Decl, path, pkg string) {
 	switch node.(type) {
 	case *ast.FuncDecl:
 		funcDecl := node.(*ast.FuncDecl)
+		doc := funcDecl.Doc
 
-		store.Decls = append(store.Decls, &Decl{
+		store.put(&Decl{
 			Name: funcDecl.Name.Name,
 			Type: Function,
 			Path: path,
 			Pkg:  pkg,
-		})
-		store.Docs = append(store.Docs, funcDecl.Doc)
-		store.DeclNodes = append(store.DeclNodes, node)
+		}, node, doc)
 
 	case *ast.GenDecl:
 		genDecl := node.(*ast.GenDecl)
@@ -75,20 +80,18 @@ func putDecls(store *ASTStore, node ast.Decl, path, pkg string) {
 					declType = Struct
 				}
 
-				store.Decls = append(store.Decls, &Decl{
-					Name: typeSpec.Name.Name,
-					Type: declType,
-					Path: path,
-					Pkg:  pkg,
-				})
-				store.DeclNodes = append(store.DeclNodes, node)
-
 				// NOTE: get type specific first before get the generic
 				doc := typeSpec.Doc
 				if doc == nil {
 					doc = genDecl.Doc
 				}
-				store.Docs = append(store.Docs, doc)
+
+				store.put(&Decl{
+					Name: typeSpec.Name.Name,
+					Type: declType,
+					Path: path,
+					Pkg:  pkg,
+				}, node, doc)
 			}
 		}
 	}
