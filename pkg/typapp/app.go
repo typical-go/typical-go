@@ -8,7 +8,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
-	"github.com/urfave/cli/v2"
 )
 
 var (
@@ -18,13 +17,12 @@ var (
 	_ Provider                    = (*App)(nil)
 	_ Destroyer                   = (*App)(nil)
 	_ Preparer                    = (*App)(nil)
-	_ Commander                   = (*App)(nil)
 )
 
 // App is typical application model
 type App struct {
 	appSources []string // TODO: remove this
-	main       *Invocation
+	mainFn     interface{}
 	imports    []interface{}
 }
 
@@ -32,7 +30,7 @@ type App struct {
 func EntryPoint(mainFn interface{}, appSource string, sources ...string) *App {
 	return &App{
 		appSources: append([]string{appSource}, sources...),
-		main:       NewInvocation(mainFn),
+		mainFn:     mainFn,
 	}
 }
 
@@ -73,16 +71,6 @@ func (a *App) Preparations() (preparations []*Preparation) {
 	for _, module := range a.imports {
 		if preparer, ok := module.(Preparer); ok {
 			preparations = append(preparations, preparer.Preparations()...)
-		}
-	}
-	return
-}
-
-// Commands to return commands
-func (a *App) Commands(c *Context) (cmds []*cli.Command) {
-	for _, module := range a.imports {
-		if commander, ok := module.(Commander); ok {
-			cmds = append(cmds, commander.Commands(c)...)
 		}
 	}
 	return

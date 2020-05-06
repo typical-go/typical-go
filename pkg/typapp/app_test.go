@@ -9,9 +9,9 @@ import (
 )
 
 func TestProvide(t *testing.T) {
-	c1 := typapp.NewConstructor("", nil)
-	c2 := typapp.NewConstructor("", nil)
-	c3 := typapp.NewConstructor("", nil)
+	c1 := &typapp.Constructor{}
+	c2 := &typapp.Constructor{}
+	c3 := &typapp.Constructor{}
 	app := typapp.EntryPoint(nil, "").Imports(c1, c2)
 	typapp.Provide(c3)
 
@@ -22,9 +22,9 @@ func TestProvide(t *testing.T) {
 }
 
 func TestDestoy(t *testing.T) {
-	i1 := typapp.NewDestructor(nil)
-	i2 := typapp.NewDestructor(nil)
-	i3 := typapp.NewDestructor(nil)
+	i1 := &typapp.Destructor{}
+	i2 := &typapp.Destructor{}
+	i3 := &typapp.Destructor{}
 	app := typapp.EntryPoint(nil, "").Imports(i1, i2, i3)
 
 	require.EqualValues(t,
@@ -34,9 +34,9 @@ func TestDestoy(t *testing.T) {
 }
 
 func TestPrepare(t *testing.T) {
-	i1 := typapp.NewPreparation(nil)
-	i2 := typapp.NewPreparation(nil)
-	i3 := typapp.NewPreparation(nil)
+	i1 := &typapp.Preparation{}
+	i2 := &typapp.Preparation{}
+	i3 := &typapp.Preparation{}
 	app := typapp.EntryPoint(nil, "").Imports(i1, i2, i3)
 
 	require.EqualValues(t,

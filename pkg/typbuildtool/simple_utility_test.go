@@ -14,9 +14,9 @@ func TestSimpleCommander_Commands(t *testing.T) {
 	cmd2 := &cli.Command{}
 	cmd3 := &cli.Command{}
 
-	util := typbuildtool.NewUtility(func(ctx *typbuildtool.Context) []*cli.Command {
+	utility := typbuildtool.NewUtility(func(ctx *typbuildtool.Context) []*cli.Command {
 		return []*cli.Command{cmd1, cmd2, cmd3}
 	})
 
-	require.Equal(t, []*cli.Command{cmd1, cmd2, cmd3}, util.Commands(nil))
+	require.Equal(t, []*cli.Command{cmd1, cmd2, cmd3}, utility.Commands(nil))
 }

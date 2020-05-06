@@ -2,13 +2,7 @@ package typbuildtool
 
 import (
 	"github.com/typical-go/typical-go/pkg/git"
-	"github.com/urfave/cli/v2"
 )
-
-// Utility of build-tool
-type Utility interface {
-	Commands(c *Context) []*cli.Command
-}
 
 // Cleaner responsible to clean the project
 type Cleaner interface {

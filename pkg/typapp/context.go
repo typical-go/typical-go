@@ -20,38 +20,38 @@ type Context struct {
 // ActionFunc to return ActionFunc to invoke function fn
 func (c *Context) ActionFunc(v interface{}) func(*cli.Context) error {
 	return func(cliCtx *cli.Context) (err error) {
-		if invokable, ok := v.(*Invocation); ok {
-			return c.Invoke(cliCtx, invokable)
-		}
-
-		return c.Invoke(cliCtx, NewInvocation(v))
+		return c.Invoke(cliCtx, v)
 	}
 }
 
 // Invoke function with Dependency Injection
-func (c *Context) Invoke(cliCtx *cli.Context, invocation *Invocation) (err error) {
+func (c *Context) Invoke(cliCtx *cli.Context, fn interface{}) (err error) {
 	di := c.Container()
 
-	if err = NewConstructor("", func() *cli.Context {
-		return cliCtx
-	}).Provide(di); err != nil {
+	ctor := &Constructor{
+		Fn: func() *cli.Context {
+			return cliCtx
+		},
+	}
+
+	if err = provide(di, ctor); err != nil {
 		return
 	}
 
-	for _, constructor := range c.App.Constructors() {
-		if err = constructor.Provide(di); err != nil {
+	for _, ctor := range c.App.Constructors() {
+		if err = provide(di, ctor); err != nil {
 			return
 		}
 	}
 
 	// invoke preparation as register in descriptor
-	for _, preparation := range c.App.Preparations() {
-		if err = preparation.Invoke(di); err != nil {
+	for _, prep := range c.App.Preparations() {
+		if err = di.Invoke(prep.Fn); err != nil {
 			return
 		}
 	}
 
-	startFn := func() error { return invocation.Invoke(di) }
+	startFn := func() error { return di.Invoke(fn) }
 
 	for _, err := range common.StartGracefuly(startFn, c.stop) {
 		c.Warn(err.Error())
@@ -74,4 +74,11 @@ func (c *Context) stop() (err error) {
 		}
 	}
 	return
+}
+
+func provide(di *dig.Container, c *Constructor) (err error) {
+	if c.Fn == nil {
+		panic("provide: Fn is missing")
+	}
+	return di.Provide(c.Fn, dig.Name(c.Name))
 }
