@@ -1,10 +1,10 @@
-package typbuildtool_test
+package typbuild_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 
 	"github.com/urfave/cli/v2"
 )
@@ -14,7 +14,7 @@ func TestSimpleCommander_Commands(t *testing.T) {
 	cmd2 := &cli.Command{}
 	cmd3 := &cli.Command{}
 
-	utility := typbuildtool.NewUtility(func(ctx *typbuildtool.Context) []*cli.Command {
+	utility := typbuild.NewUtility(func(ctx *typbuild.Context) []*cli.Command {
 		return []*cli.Command{cmd1, cmd2, cmd3}
 	})
 

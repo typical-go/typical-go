@@ -1,10 +1,10 @@
-package typbuildtool_test
+package typbuild_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 )
 
 func TestNoPrefix(t *testing.T) {
@@ -27,7 +27,7 @@ func TestNoPrefix(t *testing.T) {
 		},
 	}
 	for _, tt := range testcases {
-		filter := typbuildtool.NoPrefix(tt.prefixes...)
+		filter := typbuild.NoPrefix(tt.prefixes...)
 		require.Equal(t, tt.expected, filter.ReleaseFilter(tt.message))
 	}
 }

@@ -4,11 +4,11 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/urfave/cli/v2"
 )
 
-func (m *DockerUtility) cmdDown(c *typbuildtool.Context) *cli.Command {
+func (m *DockerUtility) cmdDown(c *typbuild.Context) *cli.Command {
 	return &cli.Command{
 		Name:    "down",
 		Aliases: []string{"stop"},
@@ -17,7 +17,7 @@ func (m *DockerUtility) cmdDown(c *typbuildtool.Context) *cli.Command {
 	}
 }
 
-func dockerDown(c *typbuildtool.CliContext) error {
+func dockerDown(c *typbuild.CliContext) error {
 	c.Info("Docker down")
 	cmd := exec.CommandContext(c.Context, "docker-compose", "down")
 	cmd.Stderr = os.Stderr

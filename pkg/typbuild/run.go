@@ -1,4 +1,4 @@
-package typbuildtool
+package typbuild
 
 import "github.com/urfave/cli/v2"
 

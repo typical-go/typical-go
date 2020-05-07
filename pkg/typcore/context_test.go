@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/wrapper"
 )
@@ -28,9 +28,9 @@ func TestTypicalContext(t *testing.T) {
 	ctx, err := typcore.CreateContext(&typcore.Descriptor{
 		Name: "some-name",
 		App:  wrapper.New(),
-		BuildTool: &typbuildtool.BuildTool{
+		BuildTool: &typbuild.BuildTool{
 			BuildSequences: []interface{}{
-				typbuildtool.StandardBuild(),
+				typbuild.StandardBuild(),
 			},
 		},
 		Layouts: []string{

@@ -1,4 +1,4 @@
-package typbuildtool
+package typbuild
 
 var (
 	// DefaultReleaseFolder is default value for release folder location

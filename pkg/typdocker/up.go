@@ -4,11 +4,11 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/urfave/cli/v2"
 )
 
-func (m *DockerUtility) cmdUp(c *typbuildtool.Context) *cli.Command {
+func (m *DockerUtility) cmdUp(c *typbuild.Context) *cli.Command {
 	return &cli.Command{
 		Name:    "up",
 		Aliases: []string{"start"},
@@ -20,7 +20,7 @@ func (m *DockerUtility) cmdUp(c *typbuildtool.Context) *cli.Command {
 	}
 }
 
-func (m *DockerUtility) dockerUp(c *typbuildtool.CliContext) (err error) {
+func (m *DockerUtility) dockerUp(c *typbuild.CliContext) (err error) {
 
 	if c.Cli.Bool("wipe") {
 		m.dockerWipe(c)

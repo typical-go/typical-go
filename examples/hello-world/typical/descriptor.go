@@ -2,7 +2,7 @@ package typical
 
 import (
 	"github.com/typical-go/typical-go/examples/hello-world/helloworld"
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
@@ -13,9 +13,9 @@ var Descriptor = typcore.Descriptor{
 
 	App: typcore.NewApp(helloworld.Main), // the application
 
-	BuildTool: &typbuildtool.BuildTool{
+	BuildTool: &typbuild.BuildTool{
 		BuildSequences: []interface{}{
-			typbuildtool.StandardBuild(), // standard build module
+			typbuild.StandardBuild(), // standard build module
 		},
 	},
 }

@@ -1,4 +1,4 @@
-package typbuildtool
+package typbuild
 
 import (
 	"github.com/typical-go/typical-go/pkg/git"

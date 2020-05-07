@@ -4,12 +4,12 @@ import (
 	"errors"
 	"io/ioutil"
 
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 
 	"github.com/urfave/cli/v2"
 )
 
-var _ typbuildtool.Utility = (*DockerUtility)(nil)
+var _ typbuild.Utility = (*DockerUtility)(nil)
 
 const (
 	// DockerComposeFile contain full path of docker-compose.yml file
@@ -40,7 +40,7 @@ func (m *DockerUtility) WithVersion(version string) *DockerUtility {
 }
 
 // Commands of docker
-func (m *DockerUtility) Commands(c *typbuildtool.Context) []*cli.Command {
+func (m *DockerUtility) Commands(c *typbuild.Context) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:  "docker",
@@ -55,7 +55,7 @@ func (m *DockerUtility) Commands(c *typbuildtool.Context) []*cli.Command {
 	}
 }
 
-func (m *DockerUtility) cmdCompose(c *typbuildtool.Context) *cli.Command {
+func (m *DockerUtility) cmdCompose(c *typbuild.Context) *cli.Command {
 	return &cli.Command{
 		Name:   "compose",
 		Usage:  "Generate docker-compose.yaml",
@@ -63,7 +63,7 @@ func (m *DockerUtility) cmdCompose(c *typbuildtool.Context) *cli.Command {
 	}
 }
 
-func (m *DockerUtility) dockerCompose(c *typbuildtool.CliContext) (err error) {
+func (m *DockerUtility) dockerCompose(c *typbuild.CliContext) (err error) {
 	var (
 		out []byte
 	)

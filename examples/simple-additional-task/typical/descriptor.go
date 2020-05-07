@@ -2,7 +2,7 @@ package typical
 
 import (
 	"github.com/typical-go/typical-go/examples/simple-additional-task/helloworld"
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
@@ -13,12 +13,12 @@ var Descriptor = typcore.Descriptor{
 
 	App: typcore.NewApp(helloworld.Main),
 
-	BuildTool: &typbuildtool.BuildTool{
+	BuildTool: &typbuild.BuildTool{
 		BuildSequences: []interface{}{
-			typbuildtool.StandardBuild(),
+			typbuild.StandardBuild(),
 		},
-		Utilities: []typbuildtool.Utility{
-			typbuildtool.NewUtility(taskPrintContext), // Add custom task
+		Utilities: []typbuild.Utility{
+			typbuild.NewUtility(taskPrintContext), // Add custom task
 		},
 	},
 }

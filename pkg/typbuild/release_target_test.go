@@ -1,20 +1,20 @@
-package typbuildtool_test
+package typbuild_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 )
 
 func TestTarget(t *testing.T) {
 	testcases := []struct {
-		typbuildtool.ReleaseTarget
+		typbuild.ReleaseTarget
 		os   string
 		arch string
 	}{
-		{typbuildtool.ReleaseTarget(""), "", ""},
-		{typbuildtool.ReleaseTarget("linux/amd"), "linux", "amd"},
+		{typbuild.ReleaseTarget(""), "", ""},
+		{typbuild.ReleaseTarget("linux/amd"), "linux", "amd"},
 	}
 	for i, tt := range testcases {
 		require.Equal(t, tt.os, tt.OS(), i)
@@ -24,19 +24,19 @@ func TestTarget(t *testing.T) {
 
 func TestTarget_Validate(t *testing.T) {
 	testcases := []struct {
-		typbuildtool.ReleaseTarget
+		typbuild.ReleaseTarget
 		errMsg string
 	}{
 		{
-			typbuildtool.ReleaseTarget(""),
+			typbuild.ReleaseTarget(""),
 			"Can't be empty",
 		},
 		{
-			typbuildtool.ReleaseTarget("/amd"),
+			typbuild.ReleaseTarget("/amd"),
 			"Missing OS: Please make sure '/amd' using 'OS/ARCH' format",
 		},
 		{
-			typbuildtool.ReleaseTarget("linux/"),
+			typbuild.ReleaseTarget("linux/"),
 			"Missing Arch: Please make sure 'linux/' using 'OS/ARCH' format",
 		},
 	}

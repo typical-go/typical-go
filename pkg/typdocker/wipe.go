@@ -7,11 +7,11 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/urfave/cli/v2"
 )
 
-func (m *DockerUtility) cmdWipe(c *typbuildtool.Context) *cli.Command {
+func (m *DockerUtility) cmdWipe(c *typbuild.Context) *cli.Command {
 	return &cli.Command{
 		Name:   "wipe",
 		Usage:  "Kill all running docker container",
@@ -19,7 +19,7 @@ func (m *DockerUtility) cmdWipe(c *typbuildtool.Context) *cli.Command {
 	}
 }
 
-func (m *DockerUtility) dockerWipe(c *typbuildtool.CliContext) (err error) {
+func (m *DockerUtility) dockerWipe(c *typbuild.CliContext) (err error) {
 	var (
 		ids []string
 	)

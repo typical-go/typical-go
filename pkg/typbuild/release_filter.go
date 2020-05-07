@@ -1,4 +1,4 @@
-package typbuildtool
+package typbuild
 
 import "strings"
 

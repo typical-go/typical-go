@@ -5,14 +5,14 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/typannot"
-	"github.com/typical-go/typical-go/pkg/typbuildtool"
+	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
 var (
-	_ typbuildtool.Preconditioner = (*App)(nil)
+	_ typbuild.Preconditioner = (*App)(nil)
 	_ typcfg.Configurer           = (*App)(nil)
 	_ Provider                    = (*App)(nil)
 	_ Destroyer                   = (*App)(nil)
@@ -72,12 +72,12 @@ func (a *App) Configurations() (cfgs []*typcfg.Configuration) {
 }
 
 // Precondition the app
-func (a *App) Precondition(c *typbuildtool.PreconditionContext) (err error) {
+func (a *App) Precondition(c *typbuild.PreconditionContext) (err error) {
 	c.AppendTemplate(a.appPrecond(c))
 	return
 }
 
-func (a *App) appPrecond(c *typbuildtool.PreconditionContext) *typtmpl.AppPrecond {
+func (a *App) appPrecond(c *typbuild.PreconditionContext) *typtmpl.AppPrecond {
 	appPrecond := typtmpl.NewAppPrecond()
 	ctors, errs := typannot.GetCtors(c.ASTStore())
 
