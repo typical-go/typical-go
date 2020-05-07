@@ -13,11 +13,12 @@ var Descriptor = typcore.Descriptor{
 
 	App: typcore.NewApp(helloworld.Main),
 
-	BuildTool: typbuildtool.
-		BuildSequences(
+	BuildTool: &typbuildtool.BuildTool{
+		BuildSequences: []interface{}{
 			typbuildtool.StandardBuild(),
-		).
-		Utilities(
+		},
+		Utilities: []typbuildtool.Utility{
 			typbuildtool.NewUtility(taskPrintContext), // Add custom task
-		),
+		},
+	},
 }

@@ -29,6 +29,13 @@ var (
 		Name: "sampleFunction",
 	}
 
+	someFunctionDecl2 = &typast.Decl{
+		Path: "sample_test.go",
+		Pkg:  "typast_test",
+		Type: typast.Function,
+		Name: "sampleFunction2",
+	}
+
 	someInterface2Decl = &typast.Decl{
 		Path: "sample_test.go",
 		Pkg:  "typast_test",
@@ -56,6 +63,7 @@ func TestCreateASTStore(t *testing.T) {
 		someInterfaceDecl,
 		someStructDecl,
 		someFunctionDecl,
+		someFunctionDecl2,
 		someInterface2Decl,
 		someStruct2Decl,
 	}, store.Decls)
@@ -69,6 +77,10 @@ func TestCreateASTStore(t *testing.T) {
 			Decl:     someStructDecl,
 			TagName:  "tag2",
 			TagAttrs: []byte(`{"key1":"", "key2": "", "key3":"value3"}`),
+		},
+		{
+			Decl:    someFunctionDecl2,
+			TagName: "constructor",
 		},
 		{
 			Decl:    someInterface2Decl,

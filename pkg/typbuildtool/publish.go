@@ -84,7 +84,7 @@ func Publish(c *CliContext) (err error) {
 
 // Publish the project
 func publish(c *PublishContext) (err error) {
-	for _, module := range c.BuildTool.buildSequences {
+	for _, module := range c.BuildTool.BuildSequences {
 		if publisher, ok := module.(Publisher); ok {
 			if err = publisher.Publish(c); err != nil {
 				return
@@ -95,7 +95,7 @@ func publish(c *PublishContext) (err error) {
 }
 
 func release(c *ReleaseContext) (files []string, err error) {
-	for _, module := range c.BuildTool.buildSequences {
+	for _, module := range c.BuildTool.BuildSequences {
 		if releaser, ok := module.(Releaser); ok {
 			var files1 []string
 			if files1, err = releaser.Release(c); err != nil {
@@ -111,11 +111,11 @@ func releaseTag(c *CliContext, alpha bool) string {
 	var builder strings.Builder
 	builder.WriteString("v")
 	builder.WriteString(c.Core.Version)
-	if c.BuildTool.includeBranch {
+	if c.BuildTool.IncludeBranch {
 		builder.WriteString("_")
 		builder.WriteString(git.Branch(c.Context))
 	}
-	if c.BuildTool.includeCommitID {
+	if c.BuildTool.IncludeCommitID {
 		builder.WriteString("_")
 		builder.WriteString(git.LatestCommit(c.Context))
 	}

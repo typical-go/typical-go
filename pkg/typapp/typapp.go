@@ -1,10 +1,10 @@
 package typapp
 
 var (
-	global []*Constructor
+	_ctors []*Constructor
 )
 
 // Provide constructor globally
 func Provide(cons ...*Constructor) {
-	global = append(global, cons...)
+	_ctors = append(_ctors, cons...)
 }

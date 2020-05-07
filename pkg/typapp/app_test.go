@@ -9,10 +9,16 @@ import (
 )
 
 func TestProvide(t *testing.T) {
-	c1 := &typapp.Constructor{}
-	c2 := &typapp.Constructor{}
-	c3 := &typapp.Constructor{}
-	app := typapp.EntryPoint(nil, "").Imports(c1, c2)
+	var (
+		c1 = &typapp.Constructor{}
+		c2 = &typapp.Constructor{}
+		c3 = &typapp.Constructor{}
+
+		app = typapp.App{
+			Imports: []interface{}{c1, c2},
+		}
+	)
+
 	typapp.Provide(c3)
 
 	require.EqualValues(t,
@@ -22,10 +28,15 @@ func TestProvide(t *testing.T) {
 }
 
 func TestDestoy(t *testing.T) {
-	i1 := &typapp.Destructor{}
-	i2 := &typapp.Destructor{}
-	i3 := &typapp.Destructor{}
-	app := typapp.EntryPoint(nil, "").Imports(i1, i2, i3)
+	var (
+		i1 = &typapp.Destructor{}
+		i2 = &typapp.Destructor{}
+		i3 = &typapp.Destructor{}
+
+		app = typapp.App{
+			Imports: []interface{}{i1, i2, i3},
+		}
+	)
 
 	require.EqualValues(t,
 		[]*typapp.Destructor{i1, i2, i3},
@@ -34,10 +45,14 @@ func TestDestoy(t *testing.T) {
 }
 
 func TestPrepare(t *testing.T) {
-	i1 := &typapp.Preparation{}
-	i2 := &typapp.Preparation{}
-	i3 := &typapp.Preparation{}
-	app := typapp.EntryPoint(nil, "").Imports(i1, i2, i3)
+	var (
+		i1  = &typapp.Preparation{}
+		i2  = &typapp.Preparation{}
+		i3  = &typapp.Preparation{}
+		app = typapp.App{
+			Imports: []interface{}{i1, i2, i3},
+		}
+	)
 
 	require.EqualValues(t,
 		[]*typapp.Preparation{i1, i2, i3},

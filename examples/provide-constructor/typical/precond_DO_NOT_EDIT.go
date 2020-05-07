@@ -9,7 +9,13 @@ import (
 
 func init() {
 	typapp.Provide(
-		typapp.NewConstructor("", helloworld.HelloWorld),
-		typapp.NewConstructor("typical", helloworld.HelloTypical),
+		&typapp.Constructor{
+			Name: "",
+			Fn:   helloworld.HelloWorld,
+		},
+		&typapp.Constructor{
+			Name: "typical",
+			Fn:   helloworld.HelloTypical,
+		},
 	)
 }

@@ -11,10 +11,8 @@ var (
 	DefaultCmdFolder = "cmd"
 
 	// DefaultConfigFile is default config file path
+	// TODO: move typcfg package
 	DefaultConfigFile = ".env"
-
-	// DefaultEnablePrecondition is default precondition flag
-	DefaultEnablePrecondition = true
 
 	// Linux as releast target
 	Linux ReleaseTarget = "linux/amd64"

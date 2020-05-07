@@ -13,13 +13,20 @@ var Descriptor = typcore.Descriptor{
 	Name:    "generate-mock",
 	Version: "1.0.0",
 
-	App: typapp.EntryPoint(helloworld.Main, "helloworld"),
+	App: &typapp.App{
+		EntryPoint: helloworld.Main,
+	},
 
-	BuildTool: typbuildtool.
-		BuildSequences(
+	BuildTool: &typbuildtool.BuildTool{
+		BuildSequences: []interface{}{
 			typbuildtool.StandardBuild(), // standard build module
-		).
-		Utilities(
+		},
+		Utilities: []typbuildtool.Utility{
 			typmock.Utility(),
-		),
+		},
+	},
+
+	Layouts: []string{
+		"helloworld",
+	},
 }

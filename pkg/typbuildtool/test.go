@@ -12,7 +12,7 @@ func cmdTest(c *Context) *cli.Command {
 }
 
 func test(c *CliContext) (err error) {
-	for _, module := range c.BuildTool.buildSequences {
+	for _, module := range c.BuildTool.BuildSequences {
 		if tester, ok := module.(Tester); ok {
 			if err = tester.Test(c); err != nil {
 				return

@@ -55,8 +55,8 @@ func (b *StdBuild) Validate() (err error) {
 // Run the project locally
 func (b *StdBuild) Run(c *CliContext) (err error) {
 	c.Info("Standard-Build: Build the project")
-	binary := fmt.Sprintf("%s/%s", c.BuildTool.binFolder, c.Core.Name)
-	srcDir := fmt.Sprintf("%s/%s", c.BuildTool.cmdFolder, c.Core.Name)
+	binary := fmt.Sprintf("%s/%s", DefaultBinFolder, c.Core.Name)
+	srcDir := fmt.Sprintf("%s/%s", DefaultCmdFolder, c.Core.Name)
 	src := fmt.Sprintf("./%s/main.go", srcDir)
 
 	// NOTE: create main.go if not exist
@@ -105,8 +105,8 @@ func (b *StdBuild) Test(c *CliContext) (err error) {
 		targets []string
 	)
 
-	for _, source := range c.Core.AppSources {
-		targets = append(targets, fmt.Sprintf("./%s/...", source))
+	for _, layout := range c.Core.Layouts {
+		targets = append(targets, fmt.Sprintf("./%s/...", layout))
 	}
 
 	if len(targets) < 1 {
@@ -133,8 +133,8 @@ func (b *StdBuild) Test(c *CliContext) (err error) {
 
 // Clean build result
 func (b *StdBuild) Clean(c *CliContext) (err error) {
-	c.Infof("Remove All in '%s'", c.BuildTool.binFolder)
-	if err := os.RemoveAll(c.BuildTool.binFolder); err != nil {
+	c.Infof("Remove All in '%s'", DefaultBinFolder)
+	if err := os.RemoveAll(DefaultBinFolder); err != nil {
 		c.Warn(err.Error())
 	}
 	return
@@ -167,7 +167,7 @@ func (b *StdBuild) releaseBuild(c *ReleaseContext, target ReleaseTarget) (binary
 			"build",
 			"-o", fmt.Sprintf("%s/%s", b.releaseFolder, binary),
 			"-ldflags", "-w -s",
-			fmt.Sprintf("./%s/%s", c.BuildTool.cmdFolder, c.Core.Name),
+			fmt.Sprintf("./%s/%s", DefaultCmdFolder, c.Core.Name),
 		},
 		Stdout: b.stdout,
 		Stderr: b.stderr,

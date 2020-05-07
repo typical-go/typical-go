@@ -28,6 +28,6 @@ func createAppCli(a *App, d *typcore.Descriptor) *cli.App {
 		return
 	}
 	app.Version = d.Version
-	app.Action = c.ActionFunc(a.mainFn)
+	app.Action = c.ActionFunc(a.EntryPoint)
 	return app
 }

@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typbuildtool"
 )
 
@@ -14,21 +13,37 @@ func TestBuildTool_Validate(t *testing.T) {
 		expectedError string
 	}{
 		{
-			BuildTool: typbuildtool.BuildSequences(typbuildtool.StandardBuild()),
+			BuildTool: &typbuildtool.BuildTool{
+				BuildSequences: []interface{}{
+					typbuildtool.StandardBuild(),
+				},
+			},
 		},
 		{
-			BuildTool:     typbuildtool.BuildSequences(),
+			BuildTool: &typbuildtool.BuildTool{
+				BuildSequences: []interface{}{
+					typbuildtool.StandardBuild(),
+				},
+			},
 			expectedError: "No build-sequence",
 		},
 		{
-			BuildTool: typbuildtool.
-				BuildSequences(common.DummyValidator("build-seq-error")),
+			BuildTool: &typbuildtool.BuildTool{
+				BuildSequences: []interface{}{
+					typbuildtool.StandardBuild(),
+				},
+			},
 			expectedError: "BuildTool: build-seq-error",
 		},
 		{
-			BuildTool: typbuildtool.
-				BuildSequences(struct{}{}).
-				Utilities(&utilityWithErrors{errMsg: "utility-error"}),
+			BuildTool: &typbuildtool.BuildTool{
+				BuildSequences: []interface{}{
+					struct{}{},
+				},
+				Utilities: []typbuildtool.Utility{
+					&utilityWithErrors{errMsg: "utility-error"},
+				},
+			},
 			expectedError: "BuildTool: utility-error",
 		},
 	}

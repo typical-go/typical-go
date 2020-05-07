@@ -12,13 +12,18 @@ var Descriptor = typcore.Descriptor{
 	Name:    "configuration-with-invocation",
 	Version: "1.0.0",
 
-	App: typapp.EntryPoint(server.Main, "server").
-		Imports(
+	App: &typapp.App{
+		EntryPoint: server.Main,
+		Imports: []interface{}{
 			server.Configuration(), // Append configurer for the this project
-		),
+		},
+	},
 
-	BuildTool: typbuildtool.
-		BuildSequences(
+	BuildTool: &typbuildtool.BuildTool{
+		BuildSequences: []interface{}{
 			typbuildtool.StandardBuild(),
-		),
+		},
+	},
+
+	Layouts: []string{"server"},
 }

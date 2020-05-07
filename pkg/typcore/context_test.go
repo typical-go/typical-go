@@ -28,9 +28,15 @@ func TestTypicalContext(t *testing.T) {
 	ctx, err := typcore.CreateContext(&typcore.Descriptor{
 		Name: "some-name",
 		App:  wrapper.New(),
-		BuildTool: typbuildtool.BuildSequences(
-			typbuildtool.StandardBuild(),
-		),
+		BuildTool: &typbuildtool.BuildTool{
+			BuildSequences: []interface{}{
+				typbuildtool.StandardBuild(),
+			},
+		},
+		Layouts: []string{
+			"pkg",
+			"wrapper",
+		},
 	})
 
 	require.NoError(t, err)
@@ -40,7 +46,15 @@ func TestTypicalContext(t *testing.T) {
 
 	require.NoError(t, common.Validate(ctx))
 	require.Equal(t, "0.0.1", ctx.Version)
-	require.Equal(t, []string{"wrapper", "pkg"}, ctx.AppSources)
-	require.Equal(t, []string{"wrapper", "wrapper/some_pkg", "pkg", "pkg/some_lib"}, ctx.AppDirs)
-	require.Equal(t, []string{"wrapper/some_pkg/some_file.go", "pkg/some_lib/lib.go"}, ctx.AppFiles)
+	require.Equal(t, []string{
+		"pkg",
+		"pkg/some_lib",
+		"wrapper",
+		"wrapper/some_pkg",
+	}, ctx.AppDirs)
+
+	require.Equal(t, []string{
+		"pkg/some_lib/lib.go",
+		"wrapper/some_pkg/some_file.go",
+	}, ctx.AppFiles)
 }

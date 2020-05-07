@@ -13,27 +13,42 @@ var (
 	_ BuildToolLauncher = (*Descriptor)(nil)
 )
 
-// Descriptor describe the project
-type Descriptor struct {
+type (
 
-	// Name of the project (OPTIONAL).
-	// It should be a characters with/without underscore or dash.
-	// By default, project name is same with project folder
-	Name string
+	// Descriptor describe the project
+	Descriptor struct {
 
-	// Description of the project (OPTIONAL).
-	Description string
+		// Name of the project (OPTIONAL).
+		// It should be a characters with/without underscore or dash.
+		// By default, project name is same with project folder
+		Name string
 
-	// Version of the project (OPTIONAL).
-	// By default it is 0.0.1
-	Version string
+		// Description of the project (OPTIONAL).
+		Description string
 
-	// App of the project (MANDATORY).
-	App
+		// Version of the project (OPTIONAL).
+		// By default it is 0.0.1
+		Version string
 
-	// BuildTool of the project (MANDATORY).
-	BuildTool
-}
+		// App of the project (MANDATORY).
+		App
+
+		// BuildTool of the project (MANDATORY).
+		BuildTool
+
+		Layouts []string
+	}
+
+	// App is interface of app
+	App interface {
+		RunApp(*Descriptor) error
+	}
+
+	// BuildTool interface
+	BuildTool interface {
+		RunBuildTool(*Context) error
+	}
+)
 
 // LaunchApp to launch the app
 func (d *Descriptor) LaunchApp() (err error) {

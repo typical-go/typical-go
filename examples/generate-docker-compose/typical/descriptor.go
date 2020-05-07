@@ -14,13 +14,14 @@ var Descriptor = typcore.Descriptor{
 
 	App: typcore.NewApp(pinger.Main),
 
-	BuildTool: typbuildtool.
-		BuildSequences(
+	BuildTool: &typbuildtool.BuildTool{
+		BuildSequences: []interface{}{
 			typbuildtool.StandardBuild(), // standard build module
-		).
-		Utilities(
+		},
+		Utilities: []typbuildtool.Utility{
 			typdocker.Compose(redisRecipe),
-		),
+		},
+	},
 }
 
 var redisRecipe = &typdocker.Recipe{

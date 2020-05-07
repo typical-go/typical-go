@@ -8,8 +8,7 @@ import (
 )
 
 var (
-	// CtorTags is constructor tag
-	CtorTags = []string{
+	ctorTags = []string{
 		"ctor",
 		"constructor",
 	}
@@ -24,10 +23,10 @@ type Ctor struct {
 // GetCtors to get contructor annotation data
 func GetCtors(store *typast.ASTStore) (ctors []*Ctor, errs common.Errors) {
 	for _, annot := range store.Annots {
-		if IsFuncTag(annot, CtorTags) {
+		if IsFuncTag(annot, ctorTags) {
 			ctor := new(Ctor)
 			if err := annot.Unmarshal(ctor); err != nil {
-				errs.Append(fmt.Errorf("%s: %w", CtorTags[0], err))
+				errs.Append(fmt.Errorf("%s: %w", ctorTags[0], err))
 				continue
 			}
 			ctor.Annot = annot

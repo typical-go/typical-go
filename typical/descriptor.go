@@ -14,12 +14,18 @@ var Descriptor = typcore.Descriptor{
 
 	App: wrapper.New(),
 
-	BuildTool: typbuildtool.
-		BuildSequences(
+	BuildTool: &typbuildtool.BuildTool{
+		BuildSequences: []interface{}{
 			typbuildtool.StandardBuild(),
 			typbuildtool.Github("typical-go", "typical-go"),
-		).
-		Utilities(
+		},
+		Utilities: []typbuildtool.Utility{
 			typbuildtool.NewUtility(taskTestExample), // Test all the examples
-		),
+		},
+	},
+
+	Layouts: []string{
+		"wrapper",
+		"pkg",
+	},
 }

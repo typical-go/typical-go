@@ -13,7 +13,7 @@ func cmdRun(c *Context) *cli.Command {
 }
 
 func run(c *CliContext) (err error) {
-	for _, module := range c.BuildTool.buildSequences {
+	for _, module := range c.BuildTool.BuildSequences {
 		if runner, ok := module.(Runner); ok {
 			if err = runner.Run(c); err != nil {
 				return

@@ -19,8 +19,14 @@ func TestProvideCtor(t *testing.T) {
 				},
 			},
 			expected: `typapp.Provide(
-	typapp.NewConstructor("", pkg1.NewFunction1),
-	typapp.NewConstructor("", pkg2.NewFunction2),
+	&typapp.Constructor{
+		Name: "", 
+		Fn: pkg1.NewFunction1,
+	},
+	&typapp.Constructor{
+		Name: "", 
+		Fn: pkg2.NewFunction2,
+	},
 )`,
 		},
 		testcase{
@@ -31,13 +37,16 @@ func TestProvideCtor(t *testing.T) {
 				},
 			},
 			expected: `typapp.Provide(
-	typapp.NewConstructor("", func() (cfg *Sample, err error) {
-		cfg = new(Sample)
-		if err = typcfg.Process("AAA", cfg); err != nil {
-			return nil, err
-		}
-		return
-	}),
+	&typapp.Constructor{
+		Name: "", 
+		Fn: func() (cfg *Sample, err error) {
+			cfg = new(Sample)
+			if err = typcfg.Process("AAA", cfg); err != nil {
+				return nil, err
+			}
+			return
+		},
+	},
 )`,
 		},
 	)

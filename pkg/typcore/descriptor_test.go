@@ -8,28 +8,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/wrapper"
 )
-
-func TestDescriptor_ProjectSources(t *testing.T) {
-	testcases := []struct {
-		*typcore.Descriptor
-		expected []string
-	}{
-		{
-			Descriptor: &typcore.Descriptor{App: wrapper.New()},
-			expected:   []string{"wrapper"},
-		},
-		{
-			Descriptor: &typcore.Descriptor{App: typapp.EntryPoint(nil, "app")},
-			expected:   []string{"app"},
-		},
-	}
-
-	for _, tt := range testcases {
-		require.Equal(t, tt.expected, tt.AppSources())
-	}
-}
 
 func TestDescriptor_ValidateName(t *testing.T) {
 	t.Run("Valid Names", func(t *testing.T) {
@@ -74,7 +53,7 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 		{
 			Descriptor: &typcore.Descriptor{
 				Name:      "Typical Go",
-				App:       typapp.EntryPoint(nil, ""),
+				App:       &typapp.App{},
 				BuildTool: dummyBuildTool{},
 			},
 			expectedErr: "Descriptor: Invalid name",
@@ -82,7 +61,7 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 		{
 			Descriptor: &typcore.Descriptor{
 				Name:      "some-name",
-				App:       typapp.EntryPoint(nil, ""),
+				App:       &typapp.App{},
 				BuildTool: dummyBuildTool{errMessage: "Build: some-error"},
 			},
 			expectedErr: "Descriptor: Build: some-error",

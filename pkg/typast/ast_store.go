@@ -31,6 +31,7 @@ func CreateASTStore(paths ...string) (store *ASTStore, err error) {
 
 	fset := token.NewFileSet() // positions are relative to fset
 	for _, path := range paths {
+
 		var f *ast.File
 		if f, err = parser.ParseFile(fset, path, nil, parser.ParseComments); err != nil {
 			return
@@ -40,13 +41,12 @@ func CreateASTStore(paths ...string) (store *ASTStore, err error) {
 		for _, node := range f.Decls {
 			putDecls(store, node, path, pkg)
 		}
+	}
 
-		for i, decl := range store.Decls {
-			if err = putAnnots(store, decl, store.Docs[i]); err != nil {
-				return
-			}
+	for i, decl := range store.Decls {
+		if err = putAnnots(store, decl, store.Docs[i]); err != nil {
+			return
 		}
-
 	}
 
 	return store, nil
@@ -57,9 +57,10 @@ func putDecls(store *ASTStore, node ast.Decl, path, pkg string) {
 	case *ast.FuncDecl:
 		funcDecl := node.(*ast.FuncDecl)
 		doc := funcDecl.Doc
+		name := funcDecl.Name.Name
 
 		store.put(&Decl{
-			Name: funcDecl.Name.Name,
+			Name: name,
 			Type: Function,
 			Path: path,
 			Pkg:  pkg,
@@ -107,9 +108,9 @@ func putAnnots(store *ASTStore, decl *Decl, doc *ast.CommentGroup) (err error) {
 
 	RetrRawAnnots(&rawAnnots, doc.Text())
 
-	for _, line := range rawAnnots {
+	for _, raw := range rawAnnots {
 		var a *Annot
-		a, _ = CreateAnnot(decl, line)
+		a, _ = CreateAnnot(decl, raw)
 		if a != nil {
 			store.Annots = append(store.Annots, a)
 		}

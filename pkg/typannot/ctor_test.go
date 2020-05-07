@@ -29,5 +29,8 @@ func TestGetConstructor(t *testing.T) {
 		{Name: "", Annot: ctor3},
 	}, ctors)
 
-	require.EqualError(t, errs.Unwrap(), "ctor: invalid character 'i' looking for beginning of object key string")
+	require.EqualError(t,
+		errs.Unwrap(),
+		"ctor: invalid character 'i' looking for beginning of object key string",
+	)
 }

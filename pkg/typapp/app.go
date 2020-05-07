@@ -12,7 +12,6 @@ import (
 )
 
 var (
-	_ typcore.App                 = (*App)(nil)
 	_ typbuildtool.Preconditioner = (*App)(nil)
 	_ typcfg.Configurer           = (*App)(nil)
 	_ Provider                    = (*App)(nil)
@@ -22,23 +21,8 @@ var (
 
 // App is typical application model
 type App struct {
-	appSources []string // TODO: remove this
-	mainFn     interface{}
-	imports    []interface{}
-}
-
-// EntryPoint create new instance of App with main invocation function
-func EntryPoint(mainFn interface{}, appSource string, sources ...string) *App {
-	return &App{
-		appSources: append([]string{appSource}, sources...),
-		mainFn:     mainFn,
-	}
-}
-
-// Imports either Provider, Preparer, Destroyer or Configurations
-func (a *App) Imports(imports ...interface{}) *App {
-	a.imports = imports
-	return a
+	EntryPoint interface{}
+	Imports    []interface{}
 }
 
 // RunApp to run the applciation
@@ -48,8 +32,8 @@ func (a *App) RunApp(d *typcore.Descriptor) (err error) {
 
 // Constructors of app
 func (a *App) Constructors() (constructors []*Constructor) {
-	constructors = append(constructors, global...)
-	for _, module := range a.imports {
+	constructors = append(constructors, _ctors...)
+	for _, module := range a.Imports {
 		if provider, ok := module.(Provider); ok {
 			constructors = append(constructors, provider.Constructors()...)
 		}
@@ -59,7 +43,7 @@ func (a *App) Constructors() (constructors []*Constructor) {
 
 // Destructors of app
 func (a *App) Destructors() (destructors []*Destructor) {
-	for _, module := range a.imports {
+	for _, module := range a.Imports {
 		if destroyer, ok := module.(Destroyer); ok {
 			destructors = append(destructors, destroyer.Destructors()...)
 		}
@@ -69,7 +53,7 @@ func (a *App) Destructors() (destructors []*Destructor) {
 
 // Preparations of app
 func (a *App) Preparations() (preparations []*Preparation) {
-	for _, module := range a.imports {
+	for _, module := range a.Imports {
 		if preparer, ok := module.(Preparer); ok {
 			preparations = append(preparations, preparer.Preparations()...)
 		}
@@ -79,17 +63,12 @@ func (a *App) Preparations() (preparations []*Preparation) {
 
 // Configurations of app
 func (a *App) Configurations() (cfgs []*typcfg.Configuration) {
-	for _, module := range a.imports {
+	for _, module := range a.Imports {
 		if c, ok := module.(typcfg.Configurer); ok {
 			cfgs = append(cfgs, c.Configurations()...)
 		}
 	}
 	return
-}
-
-// AppSources return source for app
-func (a *App) AppSources() []string {
-	return a.appSources
 }
 
 // Precondition the app
@@ -100,11 +79,10 @@ func (a *App) Precondition(c *typbuildtool.PreconditionContext) (err error) {
 
 func (a *App) appPrecond(c *typbuildtool.PreconditionContext) *typtmpl.AppPrecond {
 	appPrecond := typtmpl.NewAppPrecond()
-
 	ctors, errs := typannot.GetCtors(c.ASTStore())
 
 	for _, ctor := range ctors {
-		appPrecond.AppendCtor(ctor.Name, fmt.Sprintf("%s.%s", ctor.Pkg, ctor.Name))
+		appPrecond.AppendCtor(ctor.Name, fmt.Sprintf("%s.%s", ctor.Decl.Pkg, ctor.Decl.Name))
 	}
 
 	for _, err := range errs {
