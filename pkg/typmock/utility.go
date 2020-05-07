@@ -40,7 +40,7 @@ func generateMock(c *typbuild.CliContext) (err error) {
 		return
 	}
 
-	mockery := NewMockery(c.Core.ProjectPkg)
+	mockery := NewMockery(typbuild.ProjectPkg)
 
 	mocks := typannot.GetMock(store)
 	for _, mock := range mocks {
@@ -52,7 +52,7 @@ func generateMock(c *typbuild.CliContext) (err error) {
 		return
 	}
 
-	mockgen := fmt.Sprintf("%s/bin/mockgen", c.Core.TypicalTmp)
+	mockgen := fmt.Sprintf("%s/bin/mockgen", typbuild.TypicalTmp)
 	if err = installIfNotExist(c.Context, mockgen); err != nil {
 		return
 	}
@@ -64,7 +64,7 @@ func generateMock(c *typbuild.CliContext) (err error) {
 		os.RemoveAll(mockPkg)
 
 		for _, t := range targets {
-			srcPkg := fmt.Sprintf("%s/%s", c.Core.ProjectPkg, t.Dir)
+			srcPkg := fmt.Sprintf("%s/%s", typbuild.ProjectPkg, t.Dir)
 			dest := fmt.Sprintf("%s%s/%s.go", t.Parent, mockPkg, strcase.ToSnake(t.Source))
 			name := fmt.Sprintf("%s.%s", srcPkg, t.Source)
 

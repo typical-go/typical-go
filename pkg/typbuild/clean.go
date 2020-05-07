@@ -24,7 +24,7 @@ func clean(c *CliContext) (err error) {
 		}
 	}
 
-	typicalTmp := c.Core.TypicalTmp
+	typicalTmp := TypicalTmp
 
 	c.Infof("Remove All: %s", typicalTmp)
 	if err := os.RemoveAll(typicalTmp); err != nil {

@@ -40,10 +40,6 @@ func TestTypicalContext(t *testing.T) {
 	})
 
 	require.NoError(t, err)
-
-	// NOTE: ProjectPackage need to set manually because its value get from ldflags
-	ctx.ProjectPkg = "some-package"
-
 	require.NoError(t, common.Validate(ctx))
 	require.Equal(t, "0.0.1", ctx.Version)
 	require.Equal(t, []string{

@@ -63,7 +63,7 @@ func (b *StdBuild) Run(c *CliContext) (err error) {
 	if _, err = os.Stat(src); os.IsNotExist(err) {
 		os.MkdirAll(srcDir, 0777)
 		appMain := &typtmpl.AppMain{
-			DescPkg: c.Core.ProjectPkg + "/typical",
+			DescPkg: ProjectPkg + "/typical",
 		}
 
 		if err = typtmpl.WriteFile(src, 0777, appMain); err != nil {

@@ -43,7 +43,7 @@ func createBuildToolCli(b *BuildTool, core *typcore.Context) *cli.App {
 			if err = typtmpl.WriteFile(filename, 0777, c); err != nil {
 				return
 			}
-			if err = buildkit.NewGoImports(core.TypicalTmp, filename).Execute(ctx); err != nil {
+			if err = buildkit.NewGoImports(TypicalTmp, filename).Execute(ctx); err != nil {
 				return
 			}
 		} else {
@@ -74,5 +74,5 @@ func retrImports(c *typcore.Context) []string {
 }
 
 func importDef(c *typcore.Context, dir string) string {
-	return fmt.Sprintf("%s/%s", c.ProjectPkg, dir)
+	return fmt.Sprintf("%s/%s", ProjectPkg, dir)
 }

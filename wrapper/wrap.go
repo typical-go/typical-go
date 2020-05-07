@@ -15,6 +15,11 @@ import (
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
+const (
+	projectPkgVar = "github.com/typical-go/typical-go/pkg/typbuild.ProjectPkg"
+	typicalTmpVar = "github.com/typical-go/typical-go/pkg/typbuild.TypicalTmp"
+)
+
 // Context of wrapper
 type Context struct {
 	*typcore.Descriptor
@@ -90,8 +95,8 @@ func Wrap(c *Context) (err error) {
 		c.Info("Build the build-tool")
 
 		cmd := buildkit.NewGoBuild(buildTool, srcPath).
-			SetVariable(typcore.DefaultProjectPkgVar, c.ProjectPkg).
-			SetVariable(typcore.DefaultTypicalTmpVar, c.TypicalTmp).
+			SetVariable(projectPkgVar, c.ProjectPkg).
+			SetVariable(typicalTmpVar, c.TypicalTmp).
 			Command()
 
 		cmd.Stdout = os.Stdout
