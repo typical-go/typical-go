@@ -1,6 +1,7 @@
 package typapp
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/typannot"
@@ -100,10 +101,10 @@ func (a *App) Precondition(c *typbuildtool.PreconditionContext) (err error) {
 func (a *App) appPrecond(c *typbuildtool.PreconditionContext) *typtmpl.AppPrecond {
 	appPrecond := typtmpl.NewAppPrecond()
 
-	ctors, errs := typannot.GetCtor(c.ASTStore())
+	ctors, errs := typannot.GetCtors(c.ASTStore())
 
 	for _, ctor := range ctors {
-		appPrecond.AppendCtor(ctor.Name, ctor.Def)
+		appPrecond.AppendCtor(ctor.Name, fmt.Sprintf("%s.%s", ctor.Pkg, ctor.Name))
 	}
 
 	for _, err := range errs {

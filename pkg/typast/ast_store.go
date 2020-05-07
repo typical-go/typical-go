@@ -13,7 +13,7 @@ type ASTStore struct {
 	Decls     []*Decl
 	Docs      []*ast.CommentGroup
 	DeclNodes []ast.Decl
-	Annots    []*Annotation
+	Annots    []*Annot
 }
 
 func (a *ASTStore) put(decl *Decl, node ast.Decl, doc *ast.CommentGroup) {
@@ -108,8 +108,8 @@ func putAnnots(store *ASTStore, decl *Decl, doc *ast.CommentGroup) (err error) {
 	RetrRawAnnots(&rawAnnots, doc.Text())
 
 	for _, line := range rawAnnots {
-		var a *Annotation
-		a, _ = CreateAnnotation(decl, line)
+		var a *Annot
+		a, _ = CreateAnnot(decl, line)
 		if a != nil {
 			store.Annots = append(store.Annots, a)
 		}

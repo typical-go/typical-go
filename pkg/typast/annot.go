@@ -1,19 +1,20 @@
 package typast
 
 import (
+	"encoding/json"
 	"errors"
 	"strings"
 )
 
-// Annotation contain extra additional information
-type Annotation struct {
+// Annot is annotation that contain extra additional information
+type Annot struct {
 	*Decl
 	TagName  string
 	TagAttrs []byte
 }
 
-// CreateAnnotation parse raw string to annotation
-func CreateAnnotation(decl *Decl, raw string) (a *Annotation, err error) {
+// CreateAnnot parse raw string to annotation
+func CreateAnnot(decl *Decl, raw string) (a *Annot, err error) {
 
 	if !strings.HasPrefix(raw, "@") {
 		return nil, errors.New("Annotation: should start with @")
@@ -22,7 +23,7 @@ func CreateAnnotation(decl *Decl, raw string) (a *Annotation, err error) {
 
 	i1 := strings.IndexRune(raw, '{')
 	if i1 < 0 {
-		return &Annotation{
+		return &Annot{
 			Decl:    decl,
 			TagName: strings.TrimSpace(raw),
 		}, nil
@@ -33,9 +34,17 @@ func CreateAnnotation(decl *Decl, raw string) (a *Annotation, err error) {
 		return nil, errors.New("Annotation: missing '}'")
 	}
 
-	return &Annotation{
+	return &Annot{
 		Decl:     decl,
 		TagName:  strings.TrimSpace(raw[:i1]),
 		TagAttrs: []byte(strings.TrimSpace(raw[i1 : i2+1])),
 	}, nil
+}
+
+// Unmarshal tag attributes
+func (a *Annot) Unmarshal(v interface{}) error {
+	if len(a.TagAttrs) > 0 {
+		return json.Unmarshal(a.TagAttrs, v)
+	}
+	return nil
 }

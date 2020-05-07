@@ -1,7 +1,6 @@
 package typannot_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -10,56 +9,25 @@ import (
 )
 
 func TestGetConstructor(t *testing.T) {
-	astStore := &typast.ASTStore{
-		Annots: []*typast.Annotation{
-			{
-				Decl: &typast.Decl{
-					Name: "someFunc",
-					Pkg:  "somePkg",
-					Type: typast.Function,
-				},
-				TagName: "constructor",
-			},
-			{
-				Decl: &typast.Decl{
-					Name: "someFunc2",
-					Pkg:  "somePkg",
-					Type: typast.Function,
-				},
-				TagName:  "constructor",
-				TagAttrs: []byte(`{"name": "noname"}`),
-			},
-			{
-				Decl: &typast.Decl{
-					Name: "someFunc3",
-					Pkg:  "somePkg",
-					Type: typast.Function,
-				},
-				TagName:  "constructor",
-				TagAttrs: []byte(`{invalid-json`),
-			},
-			{
-				Decl: &typast.Decl{
-					Name: "someStruct",
-					Pkg:  "somePkg",
-					Type: typast.Struct,
-				},
-				TagName: "constructor",
-			},
-		},
-	}
+	var (
+		ctor  = &typast.Annot{Decl: someFunc, TagName: "constructor"}
+		ctor2 = &typast.Annot{Decl: someFunc2, TagName: "constructor", TagAttrs: []byte(`{"name": "noname"}`)}
+		ctor3 = &typast.Annot{Decl: someFunc3, TagName: "ctor"}
+		ctor4 = &typast.Annot{Decl: someFunc4, TagName: "ctor", TagAttrs: []byte(`{invalid-json`)}
+		ctor5 = &typast.Annot{Decl: someStruct, TagName: "ctor"}
 
-	ctors, errs := typannot.GetCtor(astStore)
+		astStore = &typast.ASTStore{
+			Annots: []*typast.Annot{ctor, ctor2, ctor3, ctor4, ctor5},
+		}
+	)
+
+	ctors, errs := typannot.GetCtors(astStore)
 
 	require.Equal(t, []*typannot.Ctor{
-		{Name: "", Def: "somePkg.someFunc"},
-		{Name: "noname", Def: "somePkg.someFunc2"},
+		{Name: "", Annot: ctor},
+		{Name: "noname", Annot: ctor2},
+		{Name: "", Annot: ctor3},
 	}, ctors)
 
-	// require.EqualValues(t, []error{
-	// 	errors.New(""),
-	// }, errs)
-
-	fmt.Println(errs[0].Error())
-
+	require.EqualError(t, errs.Unwrap(), "ctor: invalid character 'i' looking for beginning of object key string")
 }

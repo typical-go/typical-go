@@ -1,9 +1,7 @@
 package typannot
 
 import (
-	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typast"
@@ -19,37 +17,22 @@ var (
 
 // Ctor is contructor annotation
 type Ctor struct {
+	*typast.Annot
 	Name string `json:"name"`
-	Def  string `json:"-"`
 }
 
-// GetCtor to get contructor annotation data
-func GetCtor(store *typast.ASTStore) (annots []*Ctor, errs common.Errors) {
-	var err error
-	for _, a := range store.Annots {
-		if isCtor(a) {
-			var ctorAnnot Ctor
-			if len(a.TagAttrs) > 0 {
-				if err = json.Unmarshal(a.TagAttrs, &ctorAnnot); err != nil {
-					errs.Append(fmt.Errorf("Invalid tag attribute %s", a.TagAttrs))
-					continue
-				}
+// GetCtors to get contructor annotation data
+func GetCtors(store *typast.ASTStore) (ctors []*Ctor, errs common.Errors) {
+	for _, annot := range store.Annots {
+		if IsFuncTag(annot, CtorTags) {
+			ctor := new(Ctor)
+			if err := annot.Unmarshal(ctor); err != nil {
+				errs.Append(fmt.Errorf("%s: %w", CtorTags[0], err))
+				continue
 			}
-			ctorAnnot.Def = fmt.Sprintf("%s.%s", a.Pkg, a.Name)
-			annots = append(annots, &ctorAnnot)
+			ctor.Annot = annot
+			ctors = append(ctors, ctor)
 		}
 	}
 	return
-}
-
-func isCtor(annot *typast.Annotation) bool {
-	if annot.Type == typast.Function {
-		for _, ctorTag := range CtorTags {
-			if strings.EqualFold(ctorTag, annot.TagName) {
-				return true
-			}
-		}
-	}
-
-	return false
 }

@@ -43,7 +43,7 @@ func GetMock(store *typast.ASTStore) (mocks []*Mock) {
 	return
 }
 
-func isMock(annot *typast.Annotation) bool {
+func isMock(annot *typast.Annot) bool {
 	return strings.EqualFold(annot.TagName, MockTag) &&
 		annot.Type == typast.Interface
 }

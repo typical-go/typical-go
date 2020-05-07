@@ -33,8 +33,3 @@ func (e *Errors) Unwrap() error {
 	}
 	return errors.New(e.Join("; "))
 }
-
-// Slice of error
-func (e *Errors) Slice() []error {
-	return *e
-}

@@ -15,7 +15,7 @@ func TestGetMock(t *testing.T) {
 	defer os.RemoveAll("sample")
 
 	store := &typast.ASTStore{
-		Annots: []*typast.Annotation{
+		Annots: []*typast.Annot{
 			{
 				Decl: &typast.Decl{
 					Path: "mock.go",

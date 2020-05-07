@@ -8,35 +8,35 @@ import (
 )
 
 var (
-	sampleInterfaceDecl = &typast.Decl{
+	someInterfaceDecl = &typast.Decl{
 		Path: "sample_test.go",
 		Pkg:  "typast_test",
 		Type: typast.Interface,
 		Name: "sampleInterface",
 	}
 
-	sampleStructDecl = &typast.Decl{
+	someStructDecl = &typast.Decl{
 		Path: "sample_test.go",
 		Pkg:  "typast_test",
 		Type: typast.Struct,
 		Name: "sampleStruct",
 	}
 
-	sampleFunctionDecl = &typast.Decl{
+	someFunctionDecl = &typast.Decl{
 		Path: "sample_test.go",
 		Pkg:  "typast_test",
 		Type: typast.Function,
 		Name: "sampleFunction",
 	}
 
-	sampleInterface2Decl = &typast.Decl{
+	someInterface2Decl = &typast.Decl{
 		Path: "sample_test.go",
 		Pkg:  "typast_test",
 		Type: typast.Interface,
 		Name: "sampleInterface2",
 	}
 
-	sampleStruct2Decl = &typast.Decl{
+	someStruct2Decl = &typast.Decl{
 		Path: "sample_test.go",
 		Pkg:  "typast_test",
 		Type: typast.Struct,
@@ -53,29 +53,29 @@ func TestCreateASTStore(t *testing.T) {
 	require.Equal(t, len(store.Docs), cnt)
 
 	require.EqualValues(t, []*typast.Decl{
-		sampleInterfaceDecl,
-		sampleStructDecl,
-		sampleFunctionDecl,
-		sampleInterface2Decl,
-		sampleStruct2Decl,
+		someInterfaceDecl,
+		someStructDecl,
+		someFunctionDecl,
+		someInterface2Decl,
+		someStruct2Decl,
 	}, store.Decls)
 
-	require.EqualValues(t, []*typast.Annotation{
+	require.EqualValues(t, []*typast.Annot{
 		{
-			Decl:    sampleStructDecl,
+			Decl:    someStructDecl,
 			TagName: "tag1",
 		},
 		{
-			Decl:     sampleStructDecl,
+			Decl:     someStructDecl,
 			TagName:  "tag2",
 			TagAttrs: []byte(`{"key1":"", "key2": "", "key3":"value3"}`),
 		},
 		{
-			Decl:    sampleInterface2Decl,
+			Decl:    someInterface2Decl,
 			TagName: "tag3",
 		},
 		{
-			Decl:    sampleStruct2Decl,
+			Decl:    someStruct2Decl,
 			TagName: "tag4",
 		},
 	}, store.Annots)
