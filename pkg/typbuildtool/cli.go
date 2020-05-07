@@ -47,7 +47,7 @@ func createBuildToolCli(b *BuildTool, core *typcore.Context) *cli.App {
 				return
 			}
 		} else {
-			c.Info("No precondition to be generated")
+			c.Info("No precondition")
 			os.Remove(filename)
 		}
 

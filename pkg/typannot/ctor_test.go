@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-
 	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typast"
 )
@@ -50,9 +49,9 @@ func TestGetConstructor(t *testing.T) {
 		},
 	}
 
-	ctors, errs := typannot.GetConstructor(astStore)
+	ctors, errs := typannot.GetCtor(astStore)
 
-	require.Equal(t, []*typannot.Constructor{
+	require.Equal(t, []*typannot.Ctor{
 		{Name: "", Def: "somePkg.someFunc"},
 		{Name: "noname", Def: "somePkg.someFunc2"},
 	}, ctors)

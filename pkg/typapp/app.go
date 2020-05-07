@@ -100,7 +100,7 @@ func (a *App) Precondition(c *typbuildtool.PreconditionContext) (err error) {
 func (a *App) appPrecond(c *typbuildtool.PreconditionContext) *typtmpl.AppPrecond {
 	appPrecond := typtmpl.NewAppPrecond()
 
-	ctors, errs := typannot.GetConstructor(c.ASTStore())
+	ctors, errs := typannot.GetCtor(c.ASTStore())
 
 	for _, ctor := range ctors {
 		appPrecond.AppendCtor(ctor.Name, ctor.Def)
