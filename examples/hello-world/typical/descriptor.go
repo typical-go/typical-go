@@ -11,7 +11,7 @@ var Descriptor = typcore.Descriptor{
 	Name:    "hello-world",
 	Version: "1.0.0",
 
-	App: typcore.NewApp(helloworld.Main), // the application
+	App: typcore.Run(helloworld.Main), // the application
 
 	BuildTool: &typbuild.BuildTool{
 		BuildSequences: []interface{}{

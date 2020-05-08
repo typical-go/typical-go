@@ -12,7 +12,7 @@ var Descriptor = typcore.Descriptor{
 	Name:    "generate-docker-compose",
 	Version: "1.0.0",
 
-	App: typcore.NewApp(pinger.Main),
+	App: typcore.Run(pinger.Main),
 
 	BuildTool: &typbuild.BuildTool{
 		BuildSequences: []interface{}{

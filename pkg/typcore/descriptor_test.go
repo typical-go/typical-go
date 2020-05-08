@@ -134,10 +134,6 @@ func (i dummyApp) Validate() error {
 	return nil
 }
 
-func (i dummyApp) RunApp(*typcore.Descriptor) error {
+func (i dummyApp) Run(*typcore.Descriptor) error {
 	return nil
-}
-
-func (i dummyApp) AppSources() []string {
-	return i.sources
 }

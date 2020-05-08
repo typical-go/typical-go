@@ -12,7 +12,7 @@ var Descriptor = typcore.Descriptor{
 	Name:    "typical-go",
 	Version: "0.9.50",
 
-	App: wrapper.New(),
+	App: typcore.Run(wrapper.Main),
 
 	BuildTool: &typbuild.BuildTool{
 		BuildSequences: []interface{}{

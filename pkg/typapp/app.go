@@ -12,11 +12,12 @@ import (
 )
 
 var (
+	_ typcore.Runner          = (*App)(nil)
 	_ typbuild.Preconditioner = (*App)(nil)
-	_ typcfg.Configurer           = (*App)(nil)
-	_ Provider                    = (*App)(nil)
-	_ Destroyer                   = (*App)(nil)
-	_ Preparer                    = (*App)(nil)
+	_ typcfg.Configurer       = (*App)(nil)
+	_ Provider                = (*App)(nil)
+	_ Destroyer               = (*App)(nil)
+	_ Preparer                = (*App)(nil)
 )
 
 // App is typical application model
@@ -25,8 +26,8 @@ type App struct {
 	Imports    []interface{}
 }
 
-// RunApp to run the applciation
-func (a *App) RunApp(d *typcore.Descriptor) (err error) {
+// Run the application
+func (a *App) Run(d *typcore.Descriptor) (err error) {
 	return createAppCli(a, d).Run(os.Args)
 }
 

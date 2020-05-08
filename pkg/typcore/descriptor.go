@@ -31,22 +31,12 @@ type (
 		Version string
 
 		// App of the project (MANDATORY).
-		App
+		App Runner
 
 		// BuildTool of the project (MANDATORY).
 		BuildTool Runner
 
 		Layouts []string
-	}
-
-	// App is interface of app
-	App interface {
-		RunApp(*Descriptor) error
-	}
-
-	// Runner responsible to run the application
-	Runner interface {
-		Run(*Descriptor) error
 	}
 )
 
@@ -55,7 +45,7 @@ func (d *Descriptor) LaunchApp() (err error) {
 	if err = d.Validate(); err != nil {
 		return
 	}
-	return d.RunApp(d)
+	return d.App.Run(d)
 }
 
 // LaunchBuildTool to launch the build tool

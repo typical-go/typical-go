@@ -11,7 +11,7 @@ var Descriptor = typcore.Descriptor{
 	Name:    "simple-additional-task",
 	Version: "1.0.0",
 
-	App: typcore.NewApp(helloworld.Main),
+	App: typcore.Run(helloworld.Main),
 
 	BuildTool: &typbuild.BuildTool{
 		BuildSequences: []interface{}{

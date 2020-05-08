@@ -8,21 +8,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var (
-	_ typcore.App = (*App)(nil)
-)
-
-// App of wrapper
-type App struct {
-}
-
-// New instance of TypicalGo
-func New() *App {
-	return &App{}
-}
-
-// RunApp to run the typical-go
-func (t *App) RunApp(d *typcore.Descriptor) (err error) {
+// Main function to run the typical-go
+func Main(d *typcore.Descriptor) (err error) {
 	app := cli.NewApp()
 	app.Name = d.Name
 	app.Usage = "" // NOTE: intentionally blank
@@ -55,9 +42,4 @@ func (t *App) RunApp(d *typcore.Descriptor) (err error) {
 		},
 	}
 	return app.Run(os.Args)
-}
-
-// AppSources is application source for typical-go
-func (t *App) AppSources() []string {
-	return []string{"wrapper"}
 }
