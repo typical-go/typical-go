@@ -12,7 +12,9 @@ import (
 // Context of buildtool
 type Context struct {
 	*BuildTool
-	Core *typcore.Context
+	*typcore.Descriptor
+	AppDirs  []string
+	AppFiles []string
 }
 
 // CliContext is context of build
@@ -22,7 +24,7 @@ type CliContext struct {
 
 	Cli       *cli.Context
 	Name      string
-	Core      *typcore.Context
+	Core      *Context
 	BuildTool *BuildTool
 }
 
@@ -39,7 +41,7 @@ func (c *Context) ActionFunc(name string, fn CliFunc) func(*cli.Context) error {
 			},
 			Cli:       cli,
 			Context:   cli.Context,
-			Core:      c.Core,
+			Core:      c,
 			BuildTool: c.BuildTool,
 		})
 	}

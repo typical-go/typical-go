@@ -118,7 +118,7 @@ func (i dummyBuildTool) Validate() error {
 	return nil
 }
 
-func (i dummyBuildTool) RunBuildTool(*typcore.Context) error {
+func (i dummyBuildTool) Run(*typcore.Descriptor) error {
 	return nil
 }
 

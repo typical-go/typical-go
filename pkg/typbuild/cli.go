@@ -6,18 +6,18 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
-	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/urfave/cli/v2"
 )
 
-func createBuildToolCli(b *BuildTool, core *typcore.Context) *cli.App {
+func createBuildToolCli(b *BuildTool, c *Context) *cli.App {
+
 	app := cli.NewApp()
-	app.Name = core.Name
+	app.Name = c.Name
 	app.Usage = "Build-Tool"
-	app.Description = core.Description
-	app.Version = core.Version
+	app.Description = c.Description
+	app.Version = c.Version
 
 	app.Before = func(cli *cli.Context) (err error) {
 		filename := "typical/precond_DO_NOT_EDIT.go"
@@ -25,13 +25,13 @@ func createBuildToolCli(b *BuildTool, core *typcore.Context) *cli.App {
 
 		c := &PreconditionContext{
 			Precond: typtmpl.Precond{
-				Imports: retrImports(core),
+				Imports: retrImports(c),
 			},
 			Logger: typlog.Logger{
 				Name:  "PRECOND",
 				Color: typlog.DefaultColor,
 			},
-			Core: core,
+			Core: c,
 			Ctx:  ctx,
 		}
 
@@ -53,15 +53,12 @@ func createBuildToolCli(b *BuildTool, core *typcore.Context) *cli.App {
 
 		return
 	}
-	app.Commands = b.Commands(&Context{
-		Core:      core,
-		BuildTool: b,
-	})
+	app.Commands = b.Commands(c)
 
 	return app
 }
 
-func retrImports(c *typcore.Context) []string {
+func retrImports(c *Context) []string {
 	imports := []string{
 		"github.com/typical-go/typical-go/pkg/typapp",
 	}
@@ -73,6 +70,6 @@ func retrImports(c *typcore.Context) []string {
 	return imports
 }
 
-func importDef(c *typcore.Context, dir string) string {
+func importDef(c *Context, dir string) string {
 	return fmt.Sprintf("%s/%s", ProjectPkg, dir)
 }

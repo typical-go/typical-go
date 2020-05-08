@@ -34,7 +34,7 @@ type (
 		App
 
 		// BuildTool of the project (MANDATORY).
-		BuildTool
+		BuildTool Runner
 
 		Layouts []string
 	}
@@ -44,9 +44,9 @@ type (
 		RunApp(*Descriptor) error
 	}
 
-	// BuildTool interface
-	BuildTool interface {
-		RunBuildTool(*Context) error
+	// Runner responsible to run the application
+	Runner interface {
+		Run(*Descriptor) error
 	}
 )
 
@@ -60,12 +60,12 @@ func (d *Descriptor) LaunchApp() (err error) {
 
 // LaunchBuildTool to launch the build tool
 func (d *Descriptor) LaunchBuildTool() (err error) {
-	var c *Context
-	if c, err = CreateContext(d); err != nil {
-		return
-	}
+	// var c *Context
+	// if c, err = CreateContext(d); err != nil {
+	// 	return
+	// }
 
-	return d.RunBuildTool(c)
+	return d.BuildTool.Run(d)
 }
 
 // Validate context

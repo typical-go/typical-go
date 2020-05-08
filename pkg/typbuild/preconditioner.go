@@ -7,7 +7,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 
 	"github.com/typical-go/typical-go/pkg/typast"
-	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 // Preconditioner responsible to precondition
@@ -19,7 +18,7 @@ type Preconditioner interface {
 type PreconditionContext struct {
 	typtmpl.Precond
 	Logger   typlog.Logger
-	Core     *typcore.Context
+	Core     *Context
 	Ctx      context.Context
 	astStore *typast.ASTStore
 }

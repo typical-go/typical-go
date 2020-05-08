@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcfg"
@@ -12,7 +14,7 @@ import (
 )
 
 var (
-	_ typcore.BuildTool = (*BuildTool)(nil)
+	_ typcore.Runner    = (*BuildTool)(nil)
 	_ typcfg.Configurer = (*BuildTool)(nil)
 	_ Utility           = (*BuildTool)(nil)
 	_ Preconditioner    = (*BuildTool)(nil)
@@ -111,7 +113,47 @@ func (b *BuildTool) Configurations() (cfgs []*typcfg.Configuration) {
 	return
 }
 
-// RunBuildTool to run the build-tool
-func (b *BuildTool) RunBuildTool(c *typcore.Context) (err error) {
-	return createBuildToolCli(b, c).Run(os.Args)
+// Run the build-tool
+func (b *BuildTool) Run(d *typcore.Descriptor) (err error) {
+
+	if err := d.Validate(); err != nil {
+		return err
+	}
+
+	appDirs, appFiles := WalkLayout(d.Layouts)
+
+	cli := createBuildToolCli(b, &Context{
+		Descriptor: d,
+		AppDirs:    appDirs,
+		AppFiles:   appFiles,
+		BuildTool:  b,
+	})
+	return cli.Run(os.Args)
+}
+
+// WalkLayout return dirs and files
+func WalkLayout(layouts []string) (dirs, files []string) {
+	for _, layout := range layouts {
+		filepath.Walk(layout, func(path string, info os.FileInfo, err error) error {
+			if info == nil {
+				return nil
+			}
+
+			if info.IsDir() {
+				dirs = append(dirs, path)
+				return nil
+			}
+
+			if isGoSource(path) {
+				files = append(files, path)
+			}
+			return nil
+		})
+	}
+	return
+}
+
+func isGoSource(path string) bool {
+	return strings.HasSuffix(path, ".go") &&
+		!strings.HasSuffix(path, "_test.go")
 }
