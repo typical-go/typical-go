@@ -35,8 +35,6 @@ type (
 
 		// BuildTool of the project (MANDATORY).
 		BuildTool Runner
-
-		Layouts []string
 	}
 )
 

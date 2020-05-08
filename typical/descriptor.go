@@ -22,10 +22,9 @@ var Descriptor = typcore.Descriptor{
 		Utilities: []typbuild.Utility{
 			typbuild.NewUtility(taskTestExample), // Test all the examples
 		},
-	},
-
-	Layouts: []string{
-		"wrapper",
-		"pkg",
+		Layouts: []string{
+			"wrapper",
+			"pkg",
+		},
 	},
 }

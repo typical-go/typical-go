@@ -20,9 +20,8 @@ var Descriptor = typcore.Descriptor{
 		BuildSequences: []interface{}{
 			typbuild.StandardBuild(),
 		},
-	},
-
-	Layouts: []string{
-		"helloworld",
+		Layouts: []string{
+			"helloworld",
+		},
 	},
 }

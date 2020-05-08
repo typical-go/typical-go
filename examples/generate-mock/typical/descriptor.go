@@ -24,9 +24,8 @@ var Descriptor = typcore.Descriptor{
 		Utilities: []typbuild.Utility{
 			typmock.Utility(),
 		},
-	},
-
-	Layouts: []string{
-		"helloworld",
+		Layouts: []string{
+			"helloworld",
+		},
 	},
 }

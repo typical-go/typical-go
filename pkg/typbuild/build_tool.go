@@ -24,8 +24,9 @@ var (
 type BuildTool struct {
 	BuildSequences []interface{}
 	Utilities      []Utility
+	Layouts        []string
 
-	SkipPrecondition bool
+	SkipPrecond bool
 
 	IncludeBranch   bool
 	IncludeCommitID bool
@@ -69,7 +70,7 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 
 // Precondition for this project
 func (b *BuildTool) Precondition(c *PreconditionContext) (err error) {
-	if b.SkipPrecondition {
+	if b.SkipPrecond {
 		c.Info("Skip the preconditon")
 		return
 	}
@@ -120,7 +121,7 @@ func (b *BuildTool) Run(d *typcore.Descriptor) (err error) {
 		return err
 	}
 
-	appDirs, appFiles := WalkLayout(d.Layouts)
+	appDirs, appFiles := WalkLayout(b.Layouts)
 
 	cli := createBuildToolCli(b, &Context{
 		Descriptor: d,
