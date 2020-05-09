@@ -1,4 +1,4 @@
-package typbuild
+package typcore
 
 import (
 	"fmt"

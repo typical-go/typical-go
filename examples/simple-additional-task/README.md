@@ -4,7 +4,7 @@ Example typical-go project to demonstrate how to add additional build-tool task
 
 Create task function 
 ```go
-func printContext(ctx *typbuild.Context) *cli.Command {
+func printContext(ctx *typcore.Context) *cli.Command {
 	return &cli.Command{
 		Name:    "context",
 		Aliases: []string{"ctx"},
@@ -26,12 +26,12 @@ Add commander to descriptor `typical/descriptor`
 var Descriptor = typcore.Descriptor{
 	// ... 
 	
-	BuildTool: typbuild.
+	BuildTool: typcore.
 		Create(
-			typbuild.StandardBuild(),
+			typcore.StandardBuild(),
 		).
 		WithCommanders(
-			typbuild.CreateCommander(taskPrintContext), // Add custom task
+			typcore.CreateCommander(taskPrintContext), // Add custom task
 		),
 ```
 

@@ -1,9 +1,8 @@
-package typbuild
+package typcore
 
 import (
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/urfave/cli/v2"
 )
@@ -11,7 +10,7 @@ import (
 // Context of buildtool
 type Context struct {
 	*BuildTool
-	*typcore.Descriptor
+	*Descriptor
 
 	AppDirs  []string
 	AppFiles []string

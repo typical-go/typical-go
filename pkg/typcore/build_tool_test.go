@@ -1,42 +1,42 @@
-package typbuild_test
+package typcore_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typbuild"
+	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 func TestBuildTool_Validate(t *testing.T) {
 	testcases := []struct {
-		*typbuild.BuildTool
+		*typcore.BuildTool
 		expectedError string
 	}{
 		{
-			BuildTool: &typbuild.BuildTool{
+			BuildTool: &typcore.BuildTool{
 				BuildSequences: []interface{}{
-					typbuild.StandardBuild(),
+					typcore.StandardBuild(),
 				},
 			},
 		},
 		{
-			BuildTool: &typbuild.BuildTool{
+			BuildTool: &typcore.BuildTool{
 				BuildSequences: []interface{}{
-					typbuild.StandardBuild(),
+					typcore.StandardBuild(),
 				},
 			},
 			expectedError: "No build-sequence",
 		},
 		{
-			BuildTool: &typbuild.BuildTool{
+			BuildTool: &typcore.BuildTool{
 				BuildSequences: []interface{}{
-					typbuild.StandardBuild(),
+					typcore.StandardBuild(),
 				},
 			},
 			expectedError: "build-seq-error",
 		},
 		{
-			BuildTool: &typbuild.BuildTool{
+			BuildTool: &typcore.BuildTool{
 				BuildSequences: []interface{}{
 					struct{}{},
 				},
@@ -56,6 +56,6 @@ func TestBuildTool_Validate(t *testing.T) {
 }
 
 type utilityWithErrors struct {
-	typbuild.SimpleUtility
+	typcore.SimpleUtility
 	errMsg string
 }

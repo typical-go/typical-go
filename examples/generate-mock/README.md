@@ -16,9 +16,9 @@ Add typmock utility to descriptor
 var Descriptor = typcore.Descriptor{
 	// ...
 
-	BuildTool: typbuild.
+	BuildTool: typcore.
 		BuildSequences(
-			typbuild.StandardBuild(), 
+			typcore.StandardBuild(), 
 		).
 		Utilities(
 			typmock.Utility(),

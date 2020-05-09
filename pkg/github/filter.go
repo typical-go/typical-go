@@ -1,4 +1,4 @@
-package typbuild
+package github
 
 import "strings"
 

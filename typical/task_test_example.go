@@ -4,11 +4,11 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
-	"github.com/typical-go/typical-go/pkg/typbuild"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
-func taskTestExample(c *typbuild.Context) []*cli.Command {
+func taskTestExample(c *typcore.Context) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:    "test-example",

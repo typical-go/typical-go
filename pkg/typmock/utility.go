@@ -11,16 +11,16 @@ import (
 
 	"github.com/iancoleman/strcase"
 	"github.com/typical-go/typical-go/pkg/buildkit"
-	"github.com/typical-go/typical-go/pkg/typbuild"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
 // Utility to generate mock class
-func Utility() typbuild.Utility {
-	return typbuild.NewUtility(commands)
+func Utility() typcore.Utility {
+	return typcore.NewUtility(commands)
 }
 
-func commands(c *typbuild.Context) []*cli.Command {
+func commands(c *typcore.Context) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:        "mock",
@@ -32,7 +32,7 @@ func commands(c *typbuild.Context) []*cli.Command {
 	}
 }
 
-func generateMock(c *typbuild.CliContext) (err error) {
+func generateMock(c *typcore.CliContext) (err error) {
 	var (
 		store *typast.ASTStore
 	)

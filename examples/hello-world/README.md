@@ -18,9 +18,9 @@ var Descriptor = typcore.Descriptor{
 
 	App: typcore.NewApp(helloworld.Main), // the application
 
-	BuildTool: typbuild.
+	BuildTool: typcore.
 		BuildSequences(
-			typbuild.StandardBuild(), // standard build module
+			typcore.StandardBuild(), // standard build module
 		),
 }
 ```

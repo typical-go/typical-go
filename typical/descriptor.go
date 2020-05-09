@@ -2,7 +2,7 @@ package typical
 
 import (
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typbuild"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/wrapper"
 )
@@ -17,15 +17,15 @@ var Descriptor = typcore.Descriptor{
 		EntryPoint: wrapper.Main,
 	},
 
-	BuildTool: &typbuild.BuildTool{
+	BuildTool: &typcore.BuildTool{
 		Layouts: []string{
 			"wrapper",
 			"pkg",
 		},
 		BuildSequences: []interface{}{
-			typbuild.StandardBuild(),
-			typbuild.Github("typical-go", "typical-go"),
+			typcore.StandardBuild(),
+			typcore.Github("typical-go", "typical-go"),
 		},
-		Utility: typbuild.NewUtility(taskTestExample), // Test all the examples
+		Utility: typcore.NewUtility(taskTestExample), // Test all the examples
 	},
 }

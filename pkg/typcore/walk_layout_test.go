@@ -1,11 +1,11 @@
-package typbuild_test
+package typcore_test
 
 import (
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typbuild"
+	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 func TestWalkLayout(t *testing.T) {
@@ -19,7 +19,7 @@ func TestWalkLayout(t *testing.T) {
 		os.RemoveAll("pkg")
 	}()
 
-	dirs, files := typbuild.WalkLayout([]string{
+	dirs, files := typcore.WalkLayout([]string{
 		"pkg",
 		"wrapper",
 	})

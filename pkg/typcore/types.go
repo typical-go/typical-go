@@ -1,4 +1,4 @@
-package typbuild
+package typcore
 
 import (
 	"github.com/typical-go/typical-go/pkg/git"
@@ -24,8 +24,8 @@ type Publisher interface {
 	Publish(*PublishContext) error
 }
 
-// Runner responsible to run the project in local environment
-type Runner interface {
+// Runner2 responsible to run the project in local environment
+type Runner2 interface {
 	Run(c *CliContext) error
 }
 

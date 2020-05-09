@@ -1,4 +1,4 @@
-package typbuild
+package github
 
 import (
 	"context"
@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/go-github/github"
 	"github.com/typical-go/typical-go/pkg/git"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typvar"
 	"golang.org/x/oauth2"
 )
@@ -40,7 +41,7 @@ func (g *GithubModule) Filter(filter ReleaseFilter) *GithubModule {
 }
 
 // Publish to github
-func (g *GithubModule) Publish(c *PublishContext) (err error) {
+func (g *GithubModule) Publish(c *typcore.PublishContext) (err error) {
 	token := os.Getenv("GITHUB_TOKEN")
 
 	if token == "" {

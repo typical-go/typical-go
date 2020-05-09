@@ -1,12 +1,11 @@
-package typbuild
+package typcore
 
 import (
 	"context"
 
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
-
-	"github.com/typical-go/typical-go/pkg/typast"
 )
 
 // Preconditioner responsible to precondition

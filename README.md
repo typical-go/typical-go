@@ -38,10 +38,10 @@ var Descriptor = typcore.Descriptor{
 			typpostgres.Module(), // create and destroy postgres db connection
 		),
 
-	BuildTool: typbuild.
+	BuildTool: typcore.
 		BuildSequences(
-			typbuild.StandardBuild(),
-			typbuild.Github("typical-go", "typical-rest-server"), // Create release to Github
+			typcore.StandardBuild(),
+			typcore.Github("typical-go", "typical-rest-server"), // Create release to Github
 		).
 		Utilities(
 			typpostgres.Utility(), // create database, drop, migrate, seed, etc.
@@ -70,7 +70,7 @@ You can make your own application implementation by implmenent `typcore.App` int
 
 `BuildTool` in descriptor define the build-tool. `./typicalw` run the build-tool based on this.
 
-`typbuild` package is common build-tool with build-sequence and utilities.
+`typcore` package is common build-tool with build-sequence and utilities.
 - `BuildSequence` is sequence of build process (check [Build Life-Cycle](#build-life-cycle) section)
 - `Utilities` custom task for development
 

@@ -24,9 +24,9 @@ Register docker build-task to BuildTool
 var Descriptor = typcore.Descriptor{
 	// ...
 
-	BuildTool: typbuild.
+	BuildTool: typcore.
 		BuildSequences(
-			typbuild.StandardBuild(), 
+			typcore.StandardBuild(), 
 		).
 		WithTasks(
 			typdocker.Compose( 

@@ -6,16 +6,15 @@ import (
 	"reflect"
 
 	"github.com/typical-go/typical-go/pkg/typannot"
-	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
 var (
-	_ typcore.Runner          = (*App)(nil)
-	_ typbuild.Preconditioner = (*App)(nil)
-	_ typcfg.Configurer       = (*App)(nil)
+	_ typcore.Runner         = (*App)(nil)
+	_ typcore.Preconditioner = (*App)(nil)
+	_ typcfg.Configurer      = (*App)(nil)
 )
 
 // App is typical application model
@@ -38,7 +37,7 @@ func (a *App) Configurations() []*typcfg.Configuration {
 }
 
 // Precondition the app
-func (a *App) Precondition(c *typbuild.PrecondContext) (err error) {
+func (a *App) Precondition(c *typcore.PrecondContext) (err error) {
 	appPrecond := a.appPrecond(c)
 	if appPrecond.NotEmpty() {
 		c.AppendTemplate(appPrecond)
@@ -46,7 +45,7 @@ func (a *App) Precondition(c *typbuild.PrecondContext) (err error) {
 	return
 }
 
-func (a *App) appPrecond(c *typbuild.PrecondContext) *typtmpl.AppPrecond {
+func (a *App) appPrecond(c *typcore.PrecondContext) *typtmpl.AppPrecond {
 	var (
 		ctors    []*typtmpl.Ctor
 		cfgCtors []*typtmpl.CfgCtor

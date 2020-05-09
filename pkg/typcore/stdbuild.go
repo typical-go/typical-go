@@ -1,4 +1,4 @@
-package typbuild
+package typcore
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 var (
 	_ Cleaner = (*StdBuild)(nil)
 	_ Tester  = (*StdBuild)(nil)
-	_ Runner  = (*StdBuild)(nil)
+	_ Runner2 = (*StdBuild)(nil)
 )
 
 // StdBuild is standard build module for go project

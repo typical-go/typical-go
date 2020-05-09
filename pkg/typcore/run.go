@@ -1,4 +1,4 @@
-package typbuild
+package typcore
 
 import "github.com/urfave/cli/v2"
 
@@ -14,7 +14,7 @@ func cmdRun(c *Context) *cli.Command {
 
 func run(c *CliContext) (err error) {
 	for _, module := range c.BuildTool.BuildSequences {
-		if runner, ok := module.(Runner); ok {
+		if runner, ok := module.(Runner2); ok {
 			if err = runner.Run(c); err != nil {
 				return
 			}

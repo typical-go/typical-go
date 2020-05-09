@@ -1,4 +1,4 @@
-package typbuild
+package typcore
 
 import (
 	"errors"
@@ -7,13 +7,12 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcfg"
-	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typvar"
 	"github.com/urfave/cli/v2"
 )
 
 var (
-	_ typcore.Runner = (*BuildTool)(nil)
+	_ Runner         = (*BuildTool)(nil)
 	_ Utility        = (*BuildTool)(nil)
 	_ Preconditioner = (*BuildTool)(nil)
 )
@@ -86,7 +85,7 @@ func (b *BuildTool) Precondition(c *PrecondContext) (err error) {
 }
 
 // Run the build-tool
-func (b *BuildTool) Run(d *typcore.Descriptor) (err error) {
+func (b *BuildTool) Run(d *Descriptor) (err error) {
 
 	if err := d.Validate(); err != nil {
 		return err

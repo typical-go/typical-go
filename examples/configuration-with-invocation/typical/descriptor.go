@@ -3,7 +3,7 @@ package typical
 import (
 	"github.com/typical-go/typical-go/examples/configuration-with-invocation/server"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typbuild"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
@@ -17,9 +17,9 @@ var Descriptor = typcore.Descriptor{
 		Configurer: server.Configuration(),
 	},
 
-	BuildTool: &typbuild.BuildTool{
+	BuildTool: &typcore.BuildTool{
 		BuildSequences: []interface{}{
-			typbuild.StandardBuild(),
+			typcore.StandardBuild(),
 		},
 		Layouts: []string{
 			"server",
