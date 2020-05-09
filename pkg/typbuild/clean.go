@@ -3,7 +3,7 @@ package typbuild
 import (
 	"os"
 
-	"github.com/typical-go/typical-go/wrapper"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/urfave/cli/v2"
 )
 
@@ -25,7 +25,7 @@ func clean(c *CliContext) (err error) {
 		}
 	}
 
-	typicalTmp := wrapper.TypicalTmp
+	typicalTmp := typcore.TypicalTmp
 
 	c.Infof("Remove All: %s", typicalTmp)
 	if err := os.RemoveAll(typicalTmp); err != nil {

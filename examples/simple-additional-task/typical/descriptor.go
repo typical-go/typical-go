@@ -20,8 +20,6 @@ var Descriptor = typcore.Descriptor{
 		BuildSequences: []interface{}{
 			typbuild.StandardBuild(),
 		},
-		Utilities: []typbuild.Utility{
-			typbuild.NewUtility(taskPrintContext), // Add custom task
-		},
+		Utility: typbuild.NewUtility(taskPrintContext), // Add custom task
 	},
 }

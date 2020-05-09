@@ -16,16 +16,8 @@ import (
 )
 
 const (
-	projectPkgVar = "github.com/typical-go/typical-go/wrapper.ProjectPkg"
-	typicalTmpVar = "github.com/typical-go/typical-go/wrapper.TypicalTmp"
-)
-
-var (
-	// ProjectPkg only available in BuildTool scope. The BuildTool must be compiled by wrapper.
-	ProjectPkg string
-
-	// TypicalTmp only available in BuildTool scope. The BuildTool must be compiled by wrapper.
-	TypicalTmp string
+	projectPkgVar = "github.com/typical-go/typical-go/pkg/typcore.ProjectPkg"
+	typicalTmpVar = "github.com/typical-go/typical-go/pkg/typcore.TypicalTmp"
 )
 
 // Context of wrapper

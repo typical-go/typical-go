@@ -21,9 +21,7 @@ var Descriptor = typcore.Descriptor{
 		BuildSequences: []interface{}{
 			typbuild.StandardBuild(), // standard build module
 		},
-		Utilities: []typbuild.Utility{
-			typdocker.Compose(redisRecipe),
-		},
+		Utility: typdocker.Compose(redisRecipe),
 	},
 }
 

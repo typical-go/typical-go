@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
-	"github.com/typical-go/typical-go/wrapper"
 )
 
 var (
@@ -64,7 +64,7 @@ func (b *StdBuild) Run(c *CliContext) (err error) {
 	if _, err = os.Stat(src); os.IsNotExist(err) {
 		os.MkdirAll(srcDir, 0777)
 		appMain := &typtmpl.AppMain{
-			DescPkg: wrapper.ProjectPkg + "/typical",
+			DescPkg: typcore.ProjectPkg + "/typical",
 		}
 
 		if err = typtmpl.WriteFile(src, 0777, appMain); err != nil {

@@ -7,7 +7,7 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typast"
-	"github.com/typical-go/typical-go/wrapper"
+	"github.com/typical-go/typical-go/pkg/typcore"
 
 	"github.com/iancoleman/strcase"
 	"github.com/typical-go/typical-go/pkg/buildkit"
@@ -41,7 +41,7 @@ func generateMock(c *typbuild.CliContext) (err error) {
 		return
 	}
 
-	mockery := NewMockery(wrapper.ProjectPkg)
+	mockery := NewMockery(typcore.ProjectPkg)
 
 	mocks := typannot.GetMock(store)
 	for _, mock := range mocks {
@@ -53,7 +53,7 @@ func generateMock(c *typbuild.CliContext) (err error) {
 		return
 	}
 
-	mockgen := fmt.Sprintf("%s/bin/mockgen", wrapper.TypicalTmp)
+	mockgen := fmt.Sprintf("%s/bin/mockgen", typcore.TypicalTmp)
 	if err = installIfNotExist(c.Cli.Context, mockgen); err != nil {
 		return
 	}
@@ -65,7 +65,7 @@ func generateMock(c *typbuild.CliContext) (err error) {
 		os.RemoveAll(mockPkg)
 
 		for _, t := range targets {
-			srcPkg := fmt.Sprintf("%s/%s", wrapper.ProjectPkg, t.Dir)
+			srcPkg := fmt.Sprintf("%s/%s", typcore.ProjectPkg, t.Dir)
 			dest := fmt.Sprintf("%s%s/%s.go", t.Parent, mockPkg, strcase.ToSnake(t.Source))
 			name := fmt.Sprintf("%s.%s", srcPkg, t.Source)
 

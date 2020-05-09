@@ -26,8 +26,6 @@ var Descriptor = typcore.Descriptor{
 			typbuild.StandardBuild(),
 			typbuild.Github("typical-go", "typical-go"),
 		},
-		Utilities: []typbuild.Utility{
-			typbuild.NewUtility(taskTestExample), // Test all the examples
-		},
+		Utility: typbuild.NewUtility(taskTestExample), // Test all the examples
 	},
 }

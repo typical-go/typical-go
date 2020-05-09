@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
-	"github.com/typical-go/typical-go/wrapper"
 	"github.com/urfave/cli/v2"
 )
 
@@ -50,7 +50,7 @@ func createBuildToolCli(b *BuildTool, c *Context) *cli.App {
 			if err = typtmpl.WriteFile(precondFile, 0777, c); err != nil {
 				return
 			}
-			if err = buildkit.NewGoImports(wrapper.TypicalTmp, precondFile).Execute(ctx); err != nil {
+			if err = buildkit.NewGoImports(typcore.TypicalTmp, precondFile).Execute(ctx); err != nil {
 				return
 			}
 		} else {
@@ -78,5 +78,5 @@ func retrImports(c *Context) []string {
 }
 
 func importDef(c *Context, dir string) string {
-	return fmt.Sprintf("%s/%s", wrapper.ProjectPkg, dir)
+	return fmt.Sprintf("%s/%s", typcore.ProjectPkg, dir)
 }
