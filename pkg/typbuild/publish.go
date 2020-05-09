@@ -111,14 +111,14 @@ func releaseTag(c *CliContext, alpha bool) string {
 	var builder strings.Builder
 	builder.WriteString("v")
 	builder.WriteString(c.Core.Version)
-	if c.BuildTool.IncludeBranch {
-		builder.WriteString("_")
-		builder.WriteString(git.Branch(c.Context))
-	}
-	if c.BuildTool.IncludeCommitID {
-		builder.WriteString("_")
-		builder.WriteString(git.LatestCommit(c.Context))
-	}
+	// if c.BuildTool.IncludeBranch {
+	// 	builder.WriteString("_")
+	// 	builder.WriteString(git.Branch(c.Context))
+	// }
+	// if c.BuildTool.IncludeCommitID {
+	// 	builder.WriteString("_")
+	// 	builder.WriteString(git.LatestCommit(c.Context))
+	// }
 	if alpha {
 		builder.WriteString("_alpha")
 	}

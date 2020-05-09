@@ -27,9 +27,6 @@ type BuildTool struct {
 	Layouts        []string
 
 	SkipPrecond bool
-
-	IncludeBranch   bool
-	IncludeCommitID bool
 }
 
 // Validate build
@@ -69,7 +66,7 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 }
 
 // Precondition for this project
-func (b *BuildTool) Precondition(c *PreconditionContext) (err error) {
+func (b *BuildTool) Precondition(c *PrecondContext) (err error) {
 	if b.SkipPrecond {
 		c.Info("Skip the preconditon")
 		return

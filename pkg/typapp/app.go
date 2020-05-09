@@ -73,12 +73,12 @@ func (a *App) Configurations() (cfgs []*typcfg.Configuration) {
 }
 
 // Precondition the app
-func (a *App) Precondition(c *typbuild.PreconditionContext) (err error) {
+func (a *App) Precondition(c *typbuild.PrecondContext) (err error) {
 	c.AppendTemplate(a.appPrecond(c))
 	return
 }
 
-func (a *App) appPrecond(c *typbuild.PreconditionContext) *typtmpl.AppPrecond {
+func (a *App) appPrecond(c *typbuild.PrecondContext) *typtmpl.AppPrecond {
 	appPrecond := typtmpl.NewAppPrecond()
 	ctors, errs := typannot.GetCtors(c.ASTStore())
 

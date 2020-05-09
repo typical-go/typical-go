@@ -12,6 +12,10 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+var (
+	precondFile = "typical/precond_DO_NOT_EDIT.go"
+)
+
 func createBuildToolCli(b *BuildTool, c *Context) *cli.App {
 
 	app := cli.NewApp()
@@ -21,10 +25,12 @@ func createBuildToolCli(b *BuildTool, c *Context) *cli.App {
 	app.Version = c.Version
 
 	app.Before = func(cli *cli.Context) (err error) {
-		filename := "typical/precond_DO_NOT_EDIT.go"
+
+		os.Remove(precondFile)
+
 		ctx := cli.Context
 
-		c := &PreconditionContext{
+		c := &PrecondContext{
 			Precond: typtmpl.Precond{
 				Imports: retrImports(c),
 			},
@@ -41,15 +47,15 @@ func createBuildToolCli(b *BuildTool, c *Context) *cli.App {
 		}
 
 		if len(c.Lines) > 0 {
-			if err = typtmpl.WriteFile(filename, 0777, c); err != nil {
+			if err = typtmpl.WriteFile(precondFile, 0777, c); err != nil {
 				return
 			}
-			if err = buildkit.NewGoImports(wrapper.TypicalTmp, filename).Execute(ctx); err != nil {
+			if err = buildkit.NewGoImports(wrapper.TypicalTmp, precondFile).Execute(ctx); err != nil {
 				return
 			}
 		} else {
 			c.Info("No precondition")
-			os.Remove(filename)
+			os.Remove(precondFile)
 		}
 
 		return

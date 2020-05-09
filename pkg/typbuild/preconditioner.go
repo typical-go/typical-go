@@ -11,11 +11,11 @@ import (
 
 // Preconditioner responsible to precondition
 type Preconditioner interface {
-	Precondition(c *PreconditionContext) error
+	Precondition(c *PrecondContext) error
 }
 
-// PreconditionContext is context of preconditioning
-type PreconditionContext struct {
+// PrecondContext is context of preconditioning
+type PrecondContext struct {
 	typtmpl.Precond
 	Logger   typlog.Logger
 	Core     *Context
@@ -24,7 +24,7 @@ type PreconditionContext struct {
 }
 
 // ASTStore return the ast store
-func (c *PreconditionContext) ASTStore() *typast.ASTStore {
+func (c *PrecondContext) ASTStore() *typast.ASTStore {
 	var err error
 	if c.astStore == nil {
 		c.astStore, err = typast.CreateASTStore(c.Core.AppFiles...)
@@ -36,26 +36,26 @@ func (c *PreconditionContext) ASTStore() *typast.ASTStore {
 }
 
 // SetASTStore to set ast store
-func (c *PreconditionContext) SetASTStore(astStore *typast.ASTStore) {
+func (c *PrecondContext) SetASTStore(astStore *typast.ASTStore) {
 	c.astStore = astStore
 }
 
 // Info logger
-func (c *PreconditionContext) Info(args ...interface{}) {
+func (c *PrecondContext) Info(args ...interface{}) {
 	c.Logger.Info(args...)
 }
 
 // Infof logger
-func (c *PreconditionContext) Infof(format string, args ...interface{}) {
+func (c *PrecondContext) Infof(format string, args ...interface{}) {
 	c.Logger.Infof(format, args...)
 }
 
 // Warn logger
-func (c *PreconditionContext) Warn(args ...interface{}) {
+func (c *PrecondContext) Warn(args ...interface{}) {
 	c.Logger.Warn(args...)
 }
 
 // Warnf logger
-func (c *PreconditionContext) Warnf(format string, args ...interface{}) {
+func (c *PrecondContext) Warnf(format string, args ...interface{}) {
 	c.Logger.Warnf(format, args...)
 }
