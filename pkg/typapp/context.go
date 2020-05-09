@@ -13,8 +13,8 @@ type Context struct {
 	*typcore.Descriptor
 	typlog.Logger
 
-	App       *App
-	container *dig.Container
+	App *App
+	di  *dig.Container
 }
 
 // ActionFunc to return ActionFunc to invoke function fn
@@ -26,7 +26,6 @@ func (c *Context) ActionFunc(v interface{}) func(*cli.Context) error {
 
 // Invoke function with Dependency Injection
 func (c *Context) Invoke(cliCtx *cli.Context, fn interface{}) (err error) {
-	di := c.Container()
 
 	ctor := &Constructor{
 		Fn: func() *cli.Context {
@@ -34,17 +33,17 @@ func (c *Context) Invoke(cliCtx *cli.Context, fn interface{}) (err error) {
 		},
 	}
 
-	if err = provide(di, ctor); err != nil {
+	if err = provide(c.di, ctor); err != nil {
 		return
 	}
 
-	for _, ctor := range c.App.Constructors() {
-		if err = provide(di, ctor); err != nil {
+	for _, ctor := range _ctors {
+		if err = provide(c.di, ctor); err != nil {
 			return
 		}
 	}
 
-	startFn := func() error { return di.Invoke(fn) }
+	startFn := func() error { return c.di.Invoke(fn) }
 
 	for _, err := range common.StartGracefuly(startFn, c.stop) {
 		c.Warn(err.Error())
@@ -52,17 +51,9 @@ func (c *Context) Invoke(cliCtx *cli.Context, fn interface{}) (err error) {
 	return
 }
 
-// Container for dependency-injection
-func (c *Context) Container() *dig.Container {
-	if c.container == nil {
-		c.container = dig.New()
-	}
-	return c.container
-}
-
 func (c *Context) stop() (err error) {
-	for _, destructor := range c.App.Destructors() {
-		if err = destructor.Invoke(c.Container()); err != nil {
+	for _, dtor := range _dtors {
+		if err = c.di.Invoke(dtor.Fn); err != nil {
 			return
 		}
 	}

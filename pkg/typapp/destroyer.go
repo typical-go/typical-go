@@ -1,7 +1,5 @@
 package typapp
 
-import "go.uber.org/dig"
-
 var (
 	_ Destroyer = (*Destructor)(nil)
 )
@@ -20,14 +18,6 @@ type (
 		Fn interface{}
 	}
 )
-
-// Invoke the invocation using dig container
-func (d *Destructor) Invoke(di *dig.Container) (err error) {
-	if d.Fn == nil {
-		panic("destroy: missing Fn")
-	}
-	return di.Invoke(d.Fn)
-}
 
 // Destructors return slice of destruction
 func (d *Destructor) Destructors() []*Destructor {

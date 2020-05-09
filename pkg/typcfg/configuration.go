@@ -12,10 +12,6 @@ var (
 )
 
 type (
-	// Configurer responsible to create config
-	Configurer interface {
-		Configurations() []*Configuration
-	}
 
 	// Configuration is alias from typcore.Configuration with Configurer implementation
 	Configuration struct {

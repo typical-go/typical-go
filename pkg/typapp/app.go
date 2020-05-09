@@ -16,14 +16,12 @@ var (
 	_ typcore.Runner          = (*App)(nil)
 	_ typbuild.Preconditioner = (*App)(nil)
 	_ typcfg.Configurer       = (*App)(nil)
-	_ Provider                = (*App)(nil)
-	_ Destroyer               = (*App)(nil)
 )
 
 // App is typical application model
 type App struct {
 	EntryPoint interface{}
-	Imports    []interface{}
+	typcfg.Configurer
 }
 
 // Run the application
@@ -31,36 +29,12 @@ func (a *App) Run(d *typcore.Descriptor) (err error) {
 	return createAppCli(a, d).Run(os.Args)
 }
 
-// Constructors of app
-func (a *App) Constructors() []*Constructor {
-	ctors := _ctors
-	for _, module := range a.Imports {
-		if provider, ok := module.(Provider); ok {
-			ctors = append(ctors, provider.Constructors()...)
-		}
-	}
-	return ctors
-}
-
-// Destructors of app
-func (a *App) Destructors() []*Destructor {
-	dtors := _dtors
-	for _, module := range a.Imports {
-		if destroyer, ok := module.(Destroyer); ok {
-			dtors = append(dtors, destroyer.Destructors()...)
-		}
-	}
-	return dtors
-}
-
 // Configurations of app
-func (a *App) Configurations() (cfgs []*typcfg.Configuration) {
-	for _, module := range a.Imports {
-		if c, ok := module.(typcfg.Configurer); ok {
-			cfgs = append(cfgs, c.Configurations()...)
-		}
+func (a *App) Configurations() []*typcfg.Configuration {
+	if a.Configurer != nil {
+		return a.Configurer.Configurations()
 	}
-	return
+	return nil
 }
 
 // Precondition the app

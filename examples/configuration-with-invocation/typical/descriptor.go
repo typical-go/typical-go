@@ -14,9 +14,7 @@ var Descriptor = typcore.Descriptor{
 
 	App: &typapp.App{
 		EntryPoint: server.Main,
-		Imports: []interface{}{
-			server.Configuration(), // Append configurer for the this project
-		},
+		Configurer: server.Configuration(),
 	},
 
 	BuildTool: &typbuild.BuildTool{

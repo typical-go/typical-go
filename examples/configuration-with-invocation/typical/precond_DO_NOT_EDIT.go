@@ -21,4 +21,5 @@ func init() {
 			},
 		},
 	)
+	typapp.Destroy()
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/urfave/cli/v2"
+	"go.uber.org/dig"
 )
 
 func createAppCli(a *App, d *typcore.Descriptor) *cli.App {
@@ -16,7 +17,9 @@ func createAppCli(a *App, d *typcore.Descriptor) *cli.App {
 		Logger: typlog.Logger{
 			Name: d.Name,
 		},
+		di: dig.New(),
 	}
+
 	app := cli.NewApp()
 	app.Name = d.Name
 	app.Usage = "" // NOTE: intentionally blank
