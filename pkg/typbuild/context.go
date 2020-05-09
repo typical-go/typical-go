@@ -1,7 +1,6 @@
 package typbuild
 
 import (
-	"context"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/typcore"
@@ -13,13 +12,13 @@ import (
 type Context struct {
 	*BuildTool
 	*typcore.Descriptor
+
 	AppDirs  []string
 	AppFiles []string
 }
 
 // CliContext is context of build
 type CliContext struct {
-	context.Context
 	typlog.Logger
 
 	Cli       *cli.Context
@@ -40,7 +39,6 @@ func (c *Context) ActionFunc(name string, fn CliFunc) func(*cli.Context) error {
 				Name: strings.ToUpper(name),
 			},
 			Cli:       cli,
-			Context:   cli.Context,
 			Core:      c,
 			BuildTool: c.BuildTool,
 		})

@@ -24,13 +24,13 @@ func (m *DockerUtility) dockerWipe(c *typbuild.CliContext) (err error) {
 		ids []string
 	)
 
-	if ids, err = dockerIDs(c.Context); err != nil {
+	if ids, err = dockerIDs(c.Cli.Context); err != nil {
 		return fmt.Errorf("Docker-ID: %w", err)
 	}
 
 	c.Info("Wipe all docker container")
 	for _, id := range ids {
-		if err = kill(c.Context, id); err != nil {
+		if err = kill(c.Cli.Context, id); err != nil {
 			c.Warnf("Fail to kill #%s: %s", id, err.Error())
 		}
 	}

@@ -72,7 +72,7 @@ func (b *BuildTool) Precondition(c *PrecondContext) (err error) {
 		return
 	}
 
-	app := c.Core.App
+	app := c.App
 	if configurer, ok := app.(typcfg.Configurer); ok {
 		if err = typcfg.Write(DefaultConfigFile, configurer); err != nil {
 			return

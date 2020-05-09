@@ -38,8 +38,8 @@ func createBuildToolCli(b *BuildTool, c *Context) *cli.App {
 				Name:  "PRECOND",
 				Color: typlog.DefaultColor,
 			},
-			Core: c,
-			Ctx:  ctx,
+			Context: c,
+			Ctx:     ctx,
 		}
 
 		if err = b.Precondition(c); err != nil {

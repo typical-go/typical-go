@@ -46,9 +46,10 @@ func (g *GithubModule) Publish(c *PublishContext) (err error) {
 		return errors.New("Environment 'GITHUB_TOKEN' is missing")
 	}
 
-	oauth := oauth2.NewClient(c, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token}))
+	ctx := c.Cli.Context
+	oauth := oauth2.NewClient(ctx, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token}))
 	repo := github.NewClient(oauth).Repositories
-	if _, _, err = repo.GetReleaseByTag(c, g.owner, g.repoName, c.Tag); err == nil {
+	if _, _, err = repo.GetReleaseByTag(ctx, g.owner, g.repoName, c.Tag); err == nil {
 		return fmt.Errorf("Tag '%s' already published", c.Tag)
 	}
 	c.Infof("Create github release for %s/%s", g.owner, g.repoName)
@@ -59,12 +60,12 @@ func (g *GithubModule) Publish(c *PublishContext) (err error) {
 		Draft:      github.Bool(false),
 		Prerelease: github.Bool(c.Alpha),
 	}
-	if githubRls, _, err = repo.CreateRelease(c.Context, g.owner, g.repoName, githubRls); err != nil {
+	if githubRls, _, err = repo.CreateRelease(ctx, g.owner, g.repoName, githubRls); err != nil {
 		return
 	}
 	for _, file := range c.ReleaseFiles {
 		c.Infof("Upload asset: %s", file)
-		if err = g.upload(c.Context, repo, *githubRls.ID, file); err != nil {
+		if err = g.upload(ctx, repo, *githubRls.ID, file); err != nil {
 			return
 		}
 	}

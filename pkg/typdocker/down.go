@@ -19,7 +19,7 @@ func (m *DockerUtility) cmdDown(c *typbuild.Context) *cli.Command {
 
 func dockerDown(c *typbuild.CliContext) error {
 	c.Info("Docker down")
-	cmd := exec.CommandContext(c.Context, "docker-compose", "down")
+	cmd := exec.CommandContext(c.Cli.Context, "docker-compose", "down")
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	return cmd.Run()

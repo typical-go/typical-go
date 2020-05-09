@@ -33,7 +33,7 @@ func (m *DockerUtility) dockerUp(c *typbuild.CliContext) (err error) {
 	}
 
 	c.Info("Docker up")
-	cmd := exec.CommandContext(c.Context, "docker-compose", "up", "--remove-orphans", "-d")
+	cmd := exec.CommandContext(c.Cli.Context, "docker-compose", "up", "--remove-orphans", "-d")
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	return cmd.Run()

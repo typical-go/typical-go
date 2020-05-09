@@ -79,7 +79,8 @@ func (b *StdBuild) Run(c *CliContext) (err error) {
 
 	gobuild.Print(os.Stdout)
 
-	if err = gobuild.Run(c.Context); err != nil {
+	ctx := c.Cli.Context
+	if err = gobuild.Run(ctx); err != nil {
 		return fmt.Errorf("GoBuild: %w", err)
 	}
 
@@ -93,7 +94,7 @@ func (b *StdBuild) Run(c *CliContext) (err error) {
 	binExec.Print(os.Stdout)
 	fmt.Printf("\n\n")
 
-	if err = binExec.Run(c.Context); err != nil {
+	if err = binExec.Run(ctx); err != nil {
 		return fmt.Errorf("%s: %w", binary, err)
 	}
 
@@ -129,7 +130,9 @@ func (b *StdBuild) Test(c *CliContext) (err error) {
 	cmd.Print(os.Stdout)
 	fmt.Println()
 
-	return cmd.Run(c.Context)
+	ctx := c.Cli.Context
+
+	return cmd.Run(ctx)
 }
 
 // Clean build result
@@ -175,6 +178,7 @@ func (b *StdBuild) releaseBuild(c *ReleaseContext, target ReleaseTarget) (binary
 		Env:    append(os.Environ(), "GOOS="+goos, "GOARCH="+goarch),
 	}
 
-	err = gobuild.Run(c.Context)
+	ctx := c.Cli.Context
+	err = gobuild.Run(ctx)
 	return
 }

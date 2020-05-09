@@ -16,9 +16,9 @@ type Preconditioner interface {
 
 // PrecondContext is context of preconditioning
 type PrecondContext struct {
+	*Context
 	typtmpl.Precond
 	Logger   typlog.Logger
-	Core     *Context
 	Ctx      context.Context
 	astStore *typast.ASTStore
 }
@@ -27,7 +27,7 @@ type PrecondContext struct {
 func (c *PrecondContext) ASTStore() *typast.ASTStore {
 	var err error
 	if c.astStore == nil {
-		c.astStore, err = typast.CreateASTStore(c.Core.AppFiles...)
+		c.astStore, err = typast.CreateASTStore(c.AppFiles...)
 		if err != nil {
 			c.Warn(err.Error())
 		}

@@ -54,7 +54,7 @@ func generateMock(c *typbuild.CliContext) (err error) {
 	}
 
 	mockgen := fmt.Sprintf("%s/bin/mockgen", wrapper.TypicalTmp)
-	if err = installIfNotExist(c.Context, mockgen); err != nil {
+	if err = installIfNotExist(c.Cli.Context, mockgen); err != nil {
 		return
 	}
 
@@ -82,7 +82,7 @@ func generateMock(c *typbuild.CliContext) (err error) {
 
 			cmd.Print(os.Stdout)
 
-			if err = cmd.Run(c.Context); err != nil {
+			if err = cmd.Run(c.Cli.Context); err != nil {
 				c.Warnf("Fail to mock '%s': %s", name, err.Error())
 			}
 		}

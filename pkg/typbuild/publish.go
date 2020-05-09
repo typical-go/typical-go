@@ -38,25 +38,27 @@ func Publish(c *CliContext) (err error) {
 		}
 	}
 
-	if err = git.Fetch(c.Context); err != nil {
+	ctx := c.Cli.Context
+
+	if err = git.Fetch(ctx); err != nil {
 		return fmt.Errorf("Failed git fetch: %w", err)
 	}
-	defer git.Fetch(c.Context)
+	defer git.Fetch(ctx)
 
 	force := c.Cli.Bool("force")
 
-	if status := git.Status(c.Context); status != "" && !force {
+	if status := git.Status(ctx); status != "" && !force {
 		return fmt.Errorf("Please commit changes first:\n%s", status)
 	}
 
 	alpha := c.Cli.Bool("alpha")
 	tag := releaseTag(c, alpha)
 
-	if latest = git.LatestTag(c.Context); latest == tag && !force {
+	if latest = git.LatestTag(ctx); latest == tag && !force {
 		return fmt.Errorf("%s already released", latest)
 	}
 
-	if gitLogs = git.RetrieveLogs(c.Context, latest); len(gitLogs) < 1 && !force {
+	if gitLogs = git.RetrieveLogs(ctx, latest); len(gitLogs) < 1 && !force {
 		return errors.New("No change to be released")
 	}
 
