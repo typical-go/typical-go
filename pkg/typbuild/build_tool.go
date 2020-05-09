@@ -40,13 +40,13 @@ func (b *BuildTool) Validate() (err error) {
 
 	for _, module := range b.BuildSequences {
 		if err = common.Validate(module); err != nil {
-			return fmt.Errorf("BuildTool: %w", err)
+			return err
 		}
 	}
 
 	for _, utility := range b.Utilities {
 		if err = common.Validate(utility); err != nil {
-			return fmt.Errorf("BuildTool: %w", err)
+			return err
 		}
 	}
 

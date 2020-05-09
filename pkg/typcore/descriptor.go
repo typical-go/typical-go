@@ -58,24 +58,20 @@ func (d *Descriptor) LaunchBuildTool() (err error) {
 
 // Validate context
 func (d *Descriptor) Validate() (err error) {
-	if err = validateName(d.Name); err != nil {
-		return fmt.Errorf("Descriptor: %w", err)
-	}
-
 	if d.Version == "" {
 		d.Version = "0.0.1"
 	}
 
-	if d.App == nil {
-		return errors.New("Descriptor: App can't be nil")
-	} else if err = common.Validate(d.App); err != nil {
+	if err = validateName(d.Name); err != nil {
 		return fmt.Errorf("Descriptor: %w", err)
 	}
 
-	if d.BuildTool == nil {
-		return errors.New("Descriptor: BuildTool can't be nil")
-	} else if err = common.Validate(d.BuildTool); err != nil {
-		return fmt.Errorf("Descriptor: %w", err)
+	if err = common.Validate(d.App); err != nil {
+		return fmt.Errorf("Descriptor: App: %w", err)
+	}
+
+	if err = common.Validate(d.BuildTool); err != nil {
+		return fmt.Errorf("Descriptor: BuildTool: %w", err)
 	}
 
 	return

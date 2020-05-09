@@ -62,14 +62,14 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 			Descriptor: &typcore.Descriptor{
 				Name:      "some-name",
 				App:       &typapp.App{},
-				BuildTool: dummyBuildTool{errMessage: "Build: some-error"},
+				BuildTool: dummyBuildTool{errMessage: "some-error"},
 			},
-			expectedErr: "Descriptor: Build: some-error",
+			expectedErr: "Descriptor: BuildTool: some-error",
 		},
 		{
 			Descriptor: &typcore.Descriptor{
 				Name:      "some-name",
-				App:       dummyApp{errMessage: "App: some-error"},
+				App:       dummyApp{errMessage: "some-error"},
 				BuildTool: dummyBuildTool{},
 			},
 			expectedErr: "Descriptor: App: some-error",
@@ -79,14 +79,14 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 				Name:      "some-name",
 				BuildTool: dummyBuildTool{},
 			},
-			expectedErr: "Descriptor: App can't be nil",
+			expectedErr: "Descriptor: App: nil",
 		},
 		{
 			Descriptor: &typcore.Descriptor{
 				Name: "some-name",
 				App:  dummyApp{},
 			},
-			expectedErr: "Descriptor: BuildTool can't be nil",
+			expectedErr: "Descriptor: BuildTool: nil",
 		},
 	}
 	for i, tt := range testcases {

@@ -11,12 +11,19 @@ var (
 	_ Configurer = &Configuration{}
 )
 
-// Configuration is alias from typcore.Configuration with Configurer implementation
-type Configuration struct {
-	CtorName string
-	Name     string
-	Spec     interface{}
-}
+type (
+	// Configurer responsible to create config
+	Configurer interface {
+		Configurations() []*Configuration
+	}
+
+	// Configuration is alias from typcore.Configuration with Configurer implementation
+	Configuration struct {
+		CtorName string
+		Name     string
+		Spec     interface{}
+	}
+)
 
 // Configurations of configuration instance
 func (c *Configuration) Configurations() []*Configuration {

@@ -1,6 +1,7 @@
 package common_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -10,23 +11,40 @@ import (
 
 func TestValidate(t *testing.T) {
 	testcases := []struct {
+		testname string
 		common.Validator
 		expectedErr string
 	}{
-		{},
 		{
-			Validator:   common.DummyValidator("some-error"),
+			Validator:   nil,
+			expectedErr: "nil",
+		},
+		{
+			Validator:   &dummyValidator{"some-error"},
 			expectedErr: "some-error",
 		},
 	}
 
 	for _, tt := range testcases {
-		err := common.Validate(tt.Validator)
-		if tt.expectedErr == "" {
-			require.NoError(t, err)
-		} else {
-			require.EqualError(t, err, tt.expectedErr)
-		}
+		t.Run(tt.testname, func(t *testing.T) {
+			err := common.Validate(tt.Validator)
+			if tt.expectedErr == "" {
+				require.NoError(t, err)
+			} else {
+				require.EqualError(t, err, tt.expectedErr)
+			}
+		})
 	}
+}
 
+type dummyValidator struct {
+	errMsg string
+}
+
+// Validate return error
+func (v *dummyValidator) Validate() error {
+	if v.errMsg == "" {
+		return nil
+	}
+	return errors.New(v.errMsg)
 }

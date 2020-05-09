@@ -33,7 +33,7 @@ func TestBuildTool_Validate(t *testing.T) {
 					typbuild.StandardBuild(),
 				},
 			},
-			expectedError: "BuildTool: build-seq-error",
+			expectedError: "build-seq-error",
 		},
 		{
 			BuildTool: &typbuild.BuildTool{
@@ -44,7 +44,7 @@ func TestBuildTool_Validate(t *testing.T) {
 					&utilityWithErrors{errMsg: "utility-error"},
 				},
 			},
-			expectedError: "BuildTool: utility-error",
+			expectedError: "utility-error",
 		},
 	}
 

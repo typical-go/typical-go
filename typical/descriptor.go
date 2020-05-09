@@ -15,16 +15,16 @@ var Descriptor = typcore.Descriptor{
 	App: typcore.Run(wrapper.Main),
 
 	BuildTool: &typbuild.BuildTool{
+		Layouts: []string{
+			"wrapper",
+			"pkg",
+		},
 		BuildSequences: []interface{}{
 			typbuild.StandardBuild(),
 			typbuild.Github("typical-go", "typical-go"),
 		},
 		Utilities: []typbuild.Utility{
 			typbuild.NewUtility(taskTestExample), // Test all the examples
-		},
-		Layouts: []string{
-			"wrapper",
-			"pkg",
 		},
 	},
 }
