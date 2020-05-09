@@ -3,12 +3,11 @@ package typical
 import (
 	"github.com/typical-go/typical-go/examples/simple-additional-task/helloworld"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 // Descriptor of sample
-var Descriptor = typcore.Descriptor{
+var Descriptor = typgo.Descriptor{
 	Name:    "simple-additional-task",
 	Version: "1.0.0",
 
@@ -16,10 +15,10 @@ var Descriptor = typcore.Descriptor{
 		EntryPoint: helloworld.Main,
 	},
 
-	BuildTool: &typcore.BuildTool{
+	BuildTool: &typgo.BuildTool{
 		BuildSequences: []interface{}{
-			typcore.StandardBuild(),
+			typgo.StandardBuild(),
 		},
-		Utility: typcore.NewUtility(taskPrintContext), // Add custom task
+		Utility: typgo.NewUtility(taskPrintContext), // Add custom task
 	},
 }

@@ -13,12 +13,12 @@ type Greeter interface {
 
 Add typmock utility to descriptor
 ```go
-var Descriptor = typcore.Descriptor{
+var Descriptor = typgo.Descriptor{
 	// ...
 
-	BuildTool: typcore.
+	BuildTool: typgo.
 		BuildSequences(
-			typcore.StandardBuild(), 
+			typgo.StandardBuild(), 
 		).
 		Utilities(
 			typmock.Utility(),

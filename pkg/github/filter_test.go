@@ -28,6 +28,6 @@ func TestNoPrefix(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		filter := github.NoPrefix(tt.prefixes...)
-		require.Equal(t, tt.expected, filter.ReleaseFilter(tt.message))
+		require.Equal(t, tt.expected, filter.MessageFilter(tt.message))
 	}
 }

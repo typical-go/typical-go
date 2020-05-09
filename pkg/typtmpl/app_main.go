@@ -12,11 +12,11 @@ const appMain = `package main
 
 import (
 	"{{.DescPkg}}"
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 func main() {
-	typcore.LaunchApp(&typical.Descriptor)
+	typgo.LaunchApp(&typical.Descriptor)
 }
 `
 

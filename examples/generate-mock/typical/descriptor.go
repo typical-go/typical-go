@@ -3,13 +3,12 @@ package typical
 import (
 	"github.com/typical-go/typical-go/examples/generate-mock/helloworld"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typmock"
 )
 
 // Descriptor of sample
-var Descriptor = typcore.Descriptor{
+var Descriptor = typgo.Descriptor{
 	Name:    "generate-mock",
 	Version: "1.0.0",
 
@@ -17,9 +16,9 @@ var Descriptor = typcore.Descriptor{
 		EntryPoint: helloworld.Main,
 	},
 
-	BuildTool: &typcore.BuildTool{
+	BuildTool: &typgo.BuildTool{
 		BuildSequences: []interface{}{
-			typcore.StandardBuild(), // standard build module
+			typgo.StandardBuild(), // standard build module
 		},
 		Utility: typmock.Utility(),
 		Layouts: []string{

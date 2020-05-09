@@ -2,7 +2,7 @@ package typapp
 
 import (
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/dig"
@@ -10,7 +10,7 @@ import (
 
 // Context of App
 type Context struct {
-	*typcore.Descriptor
+	*typgo.Descriptor
 	typlog.Logger
 
 	App *App

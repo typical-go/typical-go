@@ -4,11 +4,11 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
 
-func (m *DockerUtility) cmdDown(c *typcore.Context) *cli.Command {
+func (m *DockerUtility) cmdDown(c *typgo.Context) *cli.Command {
 	return &cli.Command{
 		Name:    "down",
 		Aliases: []string{"stop"},
@@ -17,7 +17,7 @@ func (m *DockerUtility) cmdDown(c *typcore.Context) *cli.Command {
 	}
 }
 
-func dockerDown(c *typcore.CliContext) error {
+func dockerDown(c *typgo.CliContext) error {
 	c.Info("Docker down")
 	cmd := exec.CommandContext(c.Cli.Context, "docker-compose", "down")
 	cmd.Stderr = os.Stderr

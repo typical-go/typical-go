@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
@@ -22,7 +22,7 @@ const (
 
 // Context of wrapper
 type Context struct {
-	*typcore.Descriptor
+	*typgo.Descriptor
 	typlog.Logger
 
 	Ctx context.Context

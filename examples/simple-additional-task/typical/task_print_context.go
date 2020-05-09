@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
 
-func taskPrintContext(c *typcore.Context) []*cli.Command {
+func taskPrintContext(c *typgo.Context) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:    "context",

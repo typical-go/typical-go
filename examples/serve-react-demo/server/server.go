@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 // Main function to run server
-func Main(d *typcore.Descriptor) error {
+func Main(d *typgo.Descriptor) error {
 	fs := http.FileServer(http.Dir("react-demo/build"))
 	http.Handle("/", fs)
 

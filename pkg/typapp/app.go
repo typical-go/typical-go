@@ -7,13 +7,13 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typcfg"
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
 var (
-	_ typcore.Runner         = (*App)(nil)
-	_ typcore.Preconditioner = (*App)(nil)
+	_ typgo.Runner         = (*App)(nil)
+	_ typgo.Preconditioner = (*App)(nil)
 	_ typcfg.Configurer      = (*App)(nil)
 )
 
@@ -24,7 +24,7 @@ type App struct {
 }
 
 // Run the application
-func (a *App) Run(d *typcore.Descriptor) (err error) {
+func (a *App) Run(d *typgo.Descriptor) (err error) {
 	return createAppCli(a, d).Run(os.Args)
 }
 
@@ -37,7 +37,7 @@ func (a *App) Configurations() []*typcfg.Configuration {
 }
 
 // Precondition the app
-func (a *App) Precondition(c *typcore.PrecondContext) (err error) {
+func (a *App) Precondition(c *typgo.PrecondContext) (err error) {
 	appPrecond := a.appPrecond(c)
 	if appPrecond.NotEmpty() {
 		c.AppendTemplate(appPrecond)
@@ -45,7 +45,7 @@ func (a *App) Precondition(c *typcore.PrecondContext) (err error) {
 	return
 }
 
-func (a *App) appPrecond(c *typcore.PrecondContext) *typtmpl.AppPrecond {
+func (a *App) appPrecond(c *typgo.PrecondContext) *typtmpl.AppPrecond {
 	var (
 		ctors    []*typtmpl.Ctor
 		cfgCtors []*typtmpl.CfgCtor

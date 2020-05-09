@@ -9,12 +9,12 @@ var _ Template = (*BuildToolMain)(nil)
 const buildtoolMain = `package main
 
 import (
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"{{.DescPkg}}"
 )
 
 func main() {
-	typcore.LaunchBuildTool(&typical.Descriptor)
+	typgo.LaunchBuildTool(&typical.Descriptor)
 }
 `
 

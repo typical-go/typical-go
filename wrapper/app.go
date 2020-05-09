@@ -3,13 +3,13 @@ package wrapper
 import (
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/urfave/cli/v2"
 )
 
 // Main function to run the typical-go
-func Main(d *typcore.Descriptor) (err error) {
+func Main(d *typgo.Descriptor) (err error) {
 	app := cli.NewApp()
 	app.Name = d.Name
 	app.Usage = "" // NOTE: intentionally blank

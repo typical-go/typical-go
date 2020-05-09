@@ -1,4 +1,4 @@
-package typcore
+package typgo
 
 import (
 	"strings"

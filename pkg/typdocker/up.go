@@ -4,11 +4,11 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
 
-func (m *DockerUtility) cmdUp(c *typcore.Context) *cli.Command {
+func (m *DockerUtility) cmdUp(c *typgo.Context) *cli.Command {
 	return &cli.Command{
 		Name:    "up",
 		Aliases: []string{"start"},
@@ -20,7 +20,7 @@ func (m *DockerUtility) cmdUp(c *typcore.Context) *cli.Command {
 	}
 }
 
-func (m *DockerUtility) dockerUp(c *typcore.CliContext) (err error) {
+func (m *DockerUtility) dockerUp(c *typgo.CliContext) (err error) {
 
 	if c.Cli.Bool("wipe") {
 		m.dockerWipe(c)

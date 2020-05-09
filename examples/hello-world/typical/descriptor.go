@@ -3,12 +3,11 @@ package typical
 import (
 	"github.com/typical-go/typical-go/examples/hello-world/helloworld"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 // Descriptor of sample
-var Descriptor = typcore.Descriptor{
+var Descriptor = typgo.Descriptor{
 	Name:    "hello-world",
 	Version: "1.0.0",
 
@@ -16,9 +15,9 @@ var Descriptor = typcore.Descriptor{
 		EntryPoint: helloworld.Main,
 	},
 
-	BuildTool: &typcore.BuildTool{
+	BuildTool: &typgo.BuildTool{
 		BuildSequences: []interface{}{
-			typcore.StandardBuild(), // standard build module
+			typgo.StandardBuild(), // standard build module
 		},
 	},
 }

@@ -4,12 +4,12 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 var (
-	_ typcore.Runner  = (*ReactDemoModule)(nil)
-	_ typcore.Cleaner = (*ReactDemoModule)(nil)
+	_ typgo.Runner2 = (*ReactDemoModule)(nil)
+	_ typgo.Cleaner = (*ReactDemoModule)(nil)
 )
 
 // ReactDemoModule is build module for react-demo
@@ -18,7 +18,7 @@ type ReactDemoModule struct {
 }
 
 // Run the react-demo
-func (m *ReactDemoModule) Run(c *typcore.CliContext) (err error) {
+func (m *ReactDemoModule) Run(c *typgo.CliContext) (err error) {
 	c.Info("Build react-demo")
 	cmd := &buildkit.Command{
 		Name: "npm",
@@ -30,7 +30,7 @@ func (m *ReactDemoModule) Run(c *typcore.CliContext) (err error) {
 }
 
 // Clean the react-demo
-func (m *ReactDemoModule) Clean(c *typcore.CliContext) (err error) {
+func (m *ReactDemoModule) Clean(c *typgo.CliContext) (err error) {
 	c.Info("Clean react-demo")
 	if err := os.RemoveAll(m.source + "/build"); err != nil {
 		c.Warnf("React-Demo: Clean: %s", err.Error())

@@ -1,4 +1,4 @@
-package typcore_test
+package typgo_test
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 func TestDescriptor_ValidateName(t *testing.T) {
@@ -19,7 +19,7 @@ func TestDescriptor_ValidateName(t *testing.T) {
 			"as-df",
 		}
 		for _, name := range valids {
-			d := &typcore.Descriptor{
+			d := &typgo.Descriptor{
 				Name:      name,
 				App:       dummyApp{},
 				BuildTool: dummyBuildTool{},
@@ -32,7 +32,7 @@ func TestDescriptor_ValidateName(t *testing.T) {
 			"Asdf!",
 		}
 		for _, name := range invalids {
-			d := &typcore.Descriptor{
+			d := &typgo.Descriptor{
 				Name:      name,
 				App:       dummyApp{},
 				BuildTool: dummyBuildTool{},
@@ -44,14 +44,14 @@ func TestDescriptor_ValidateName(t *testing.T) {
 
 func TestDecriptor_Validate_ReturnError(t *testing.T) {
 	testcases := []struct {
-		*typcore.Descriptor
+		*typgo.Descriptor
 		expectedErr string
 	}{
 		{
 			Descriptor: validDescriptor,
 		},
 		{
-			Descriptor: &typcore.Descriptor{
+			Descriptor: &typgo.Descriptor{
 				Name:      "Typical Go",
 				App:       &typapp.App{},
 				BuildTool: dummyBuildTool{},
@@ -59,7 +59,7 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 			expectedErr: "Descriptor: Invalid name",
 		},
 		{
-			Descriptor: &typcore.Descriptor{
+			Descriptor: &typgo.Descriptor{
 				Name:      "some-name",
 				App:       &typapp.App{},
 				BuildTool: dummyBuildTool{errMessage: "some-error"},
@@ -67,7 +67,7 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 			expectedErr: "Descriptor: BuildTool: some-error",
 		},
 		{
-			Descriptor: &typcore.Descriptor{
+			Descriptor: &typgo.Descriptor{
 				Name:      "some-name",
 				App:       dummyApp{errMessage: "some-error"},
 				BuildTool: dummyBuildTool{},
@@ -75,14 +75,14 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 			expectedErr: "Descriptor: App: some-error",
 		},
 		{
-			Descriptor: &typcore.Descriptor{
+			Descriptor: &typgo.Descriptor{
 				Name:      "some-name",
 				BuildTool: dummyBuildTool{},
 			},
 			expectedErr: "Descriptor: App: nil",
 		},
 		{
-			Descriptor: &typcore.Descriptor{
+			Descriptor: &typgo.Descriptor{
 				Name: "some-name",
 				App:  dummyApp{},
 			},
@@ -100,7 +100,7 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 }
 
 var (
-	validDescriptor = &typcore.Descriptor{
+	validDescriptor = &typgo.Descriptor{
 		Name:      "some-name",
 		App:       &dummyApp{},
 		BuildTool: &dummyBuildTool{},
@@ -118,7 +118,7 @@ func (i dummyBuildTool) Validate() error {
 	return nil
 }
 
-func (i dummyBuildTool) Run(*typcore.Descriptor) error {
+func (i dummyBuildTool) Run(*typgo.Descriptor) error {
 	return nil
 }
 
@@ -134,6 +134,6 @@ func (i dummyApp) Validate() error {
 	return nil
 }
 
-func (i dummyApp) Run(*typcore.Descriptor) error {
+func (i dummyApp) Run(*typgo.Descriptor) error {
 	return nil
 }

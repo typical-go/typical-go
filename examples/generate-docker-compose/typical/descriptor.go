@@ -3,13 +3,12 @@ package typical
 import (
 	"github.com/typical-go/typical-go/examples/generate-docker-compose/pinger"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typdocker"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 // Descriptor of sample
-var Descriptor = typcore.Descriptor{
+var Descriptor = typgo.Descriptor{
 	Name:    "generate-docker-compose",
 	Version: "1.0.0",
 
@@ -17,9 +16,9 @@ var Descriptor = typcore.Descriptor{
 		EntryPoint: pinger.Main,
 	},
 
-	BuildTool: &typcore.BuildTool{
+	BuildTool: &typgo.BuildTool{
 		BuildSequences: []interface{}{
-			typcore.StandardBuild(), // standard build module
+			typgo.StandardBuild(), // standard build module
 		},
 		Utility: typdocker.Compose(redisRecipe),
 	},

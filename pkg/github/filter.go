@@ -2,9 +2,9 @@ package github
 
 import "strings"
 
-// ReleaseFilter responsible to filter the commit message
-type ReleaseFilter interface {
-	ReleaseFilter(string) string
+// MessageFilter responsible to filter the commit message
+type MessageFilter interface {
+	MessageFilter(string) string
 }
 
 // NoPrefixFilter is filter no-prefix
@@ -36,8 +36,8 @@ func (f *NoPrefixFilter) Append(prefixes ...string) *NoPrefixFilter {
 	return f
 }
 
-// ReleaseFilter to filter the messages
-func (f *NoPrefixFilter) ReleaseFilter(msg string) string {
+// MessageFilter to filter the messages
+func (f *NoPrefixFilter) MessageFilter(msg string) string {
 	if f.exclude(msg) {
 		return ""
 	}

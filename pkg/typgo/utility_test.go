@@ -1,10 +1,10 @@
-package typcore_test
+package typgo_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 
 	"github.com/urfave/cli/v2"
 )
@@ -14,7 +14,7 @@ func TestSimpleCommander_Commands(t *testing.T) {
 	cmd2 := &cli.Command{}
 	cmd3 := &cli.Command{}
 
-	utility := typcore.NewUtility(func(ctx *typcore.Context) []*cli.Command {
+	utility := typgo.NewUtility(func(ctx *typgo.Context) []*cli.Command {
 		return []*cli.Command{cmd1, cmd2, cmd3}
 	})
 

@@ -5,7 +5,7 @@ Example typical-go project to demonstrate how to set the configuration
 Append the configurer to the project descriptor `typical/descriptor.go`
 ```go
 // Descriptor of sample
-var Descriptor = typcore.Descriptor{
+var Descriptor = typgo.Descriptor{
 	// ...
 
 	App: typapp.EntryPoint(server.Main, "server").

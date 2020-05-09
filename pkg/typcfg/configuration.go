@@ -13,7 +13,7 @@ var (
 
 type (
 
-	// Configuration is alias from typcore.Configuration with Configurer implementation
+	// Configuration is alias from typgo.Configuration with Configurer implementation
 	Configuration struct {
 		CtorName string
 		Name     string

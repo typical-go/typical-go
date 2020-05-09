@@ -7,11 +7,11 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
 
-func (m *DockerUtility) cmdWipe(c *typcore.Context) *cli.Command {
+func (m *DockerUtility) cmdWipe(c *typgo.Context) *cli.Command {
 	return &cli.Command{
 		Name:   "wipe",
 		Usage:  "Kill all running docker container",
@@ -19,7 +19,7 @@ func (m *DockerUtility) cmdWipe(c *typcore.Context) *cli.Command {
 	}
 }
 
-func (m *DockerUtility) dockerWipe(c *typcore.CliContext) (err error) {
+func (m *DockerUtility) dockerWipe(c *typgo.CliContext) (err error) {
 	var (
 		ids []string
 	)

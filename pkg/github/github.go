@@ -9,20 +9,20 @@ import (
 
 	"github.com/google/go-github/github"
 	"github.com/typical-go/typical-go/pkg/git"
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typvar"
 	"golang.org/x/oauth2"
 )
 
 var (
-	_ ReleaseFilter = (*GithubModule)(nil)
+	_ MessageFilter = (*GithubModule)(nil)
 )
 
 // GithubModule publisher
 type GithubModule struct {
 	owner    string
 	repoName string
-	filter   ReleaseFilter
+	filter   MessageFilter
 }
 
 // Github module
@@ -35,13 +35,13 @@ func Github(owner, repo string) *GithubModule {
 }
 
 // Filter define filter message
-func (g *GithubModule) Filter(filter ReleaseFilter) *GithubModule {
+func (g *GithubModule) Filter(filter MessageFilter) *GithubModule {
 	g.filter = filter
 	return g
 }
 
 // Publish to github
-func (g *GithubModule) Publish(c *typcore.PublishContext) (err error) {
+func (g *GithubModule) Publish(c *typgo.PublishContext) (err error) {
 	token := os.Getenv("GITHUB_TOKEN")
 
 	if token == "" {
@@ -91,7 +91,7 @@ func (g *GithubModule) upload(ctx context.Context, svc *github.RepositoriesServi
 func (g *GithubModule) releaseNote(gitLogs []*git.Log) string {
 	var b strings.Builder
 	for _, log := range gitLogs {
-		if m := g.ReleaseFilter(log.Message); m != "" {
+		if m := g.MessageFilter(log.Message); m != "" {
 			b.WriteString(log.Short)
 			b.WriteString(" ")
 			b.WriteString(log.Message)
@@ -101,10 +101,10 @@ func (g *GithubModule) releaseNote(gitLogs []*git.Log) string {
 	return b.String()
 }
 
-// ReleaseFilter to filter the message
-func (g *GithubModule) ReleaseFilter(msg string) string {
+// MessageFilter to filter the message
+func (g *GithubModule) MessageFilter(msg string) string {
 	if g.filter != nil {
-		return g.filter.ReleaseFilter(msg)
+		return g.filter.MessageFilter(msg)
 	}
 	return msg
 }

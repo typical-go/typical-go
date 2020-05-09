@@ -21,12 +21,12 @@ var redisRecipe = &typdocker.Recipe{
 
 Register docker build-task to BuildTool
 ```go
-var Descriptor = typcore.Descriptor{
+var Descriptor = typgo.Descriptor{
 	// ...
 
-	BuildTool: typcore.
+	BuildTool: typgo.
 		BuildSequences(
-			typcore.StandardBuild(), 
+			typgo.StandardBuild(), 
 		).
 		WithTasks(
 			typdocker.Compose( 

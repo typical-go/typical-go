@@ -26,7 +26,7 @@ Build-Tool as a framework (BAAF) is a concept where both build-tool and applicat
 Typically, the descriptor defined in `typical/descriptor.go` 
 ```go
 
-var Descriptor = typcore.Descriptor{
+var Descriptor = typgo.Descriptor{
 	Name:        "typical-rest-server",                                       // name of the project
 	Description: "Example of typical and scalable RESTful API Server for Go", // description of the project
 	Version:     "0.8.25",                                                    // version of the project
@@ -38,10 +38,10 @@ var Descriptor = typcore.Descriptor{
 			typpostgres.Module(), // create and destroy postgres db connection
 		),
 
-	BuildTool: typcore.
+	BuildTool: typgo.
 		BuildSequences(
-			typcore.StandardBuild(),
-			typcore.Github("typical-go", "typical-rest-server"), // Create release to Github
+			typgo.StandardBuild(),
+			typgo.Github("typical-go", "typical-rest-server"), // Create release to Github
 		).
 		Utilities(
 			typpostgres.Utility(), // create database, drop, migrate, seed, etc.
@@ -64,13 +64,13 @@ var Descriptor = typcore.Descriptor{
 - `EntryPoint` contain main function and source folder. 
 - `Imports` to put configurations, constructor, destructor or preparation into the application
 
-You can make your own application implementation by implmenent `typcore.App` interface
+You can make your own application implementation by implmenent `typgo.App` interface
 
 ## Build Tool
 
 `BuildTool` in descriptor define the build-tool. `./typicalw` run the build-tool based on this.
 
-`typcore` package is common build-tool with build-sequence and utilities.
+`typgo` package is common build-tool with build-sequence and utilities.
 - `BuildSequence` is sequence of build process (check [Build Life-Cycle](#build-life-cycle) section)
 - `Utilities` custom task for development
 

@@ -13,12 +13,12 @@ func TestBuildToolMain(t *testing.T) {
 			expected: `package main
 
 import (
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"some-package"
 )
 
 func main() {
-	typcore.LaunchBuildTool(&typical.Descriptor)
+	typgo.LaunchBuildTool(&typical.Descriptor)
 }
 `,
 		},

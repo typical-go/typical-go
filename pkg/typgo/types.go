@@ -1,4 +1,4 @@
-package typcore
+package typgo
 
 import (
 	"github.com/typical-go/typical-go/pkg/git"
