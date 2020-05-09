@@ -26,7 +26,7 @@ func (m *ReactDemoModule) Run(c *typbuild.CliContext) (err error) {
 		Dir:  m.source,
 	}
 
-	return cmd.Run(c.Context)
+	return cmd.Run(c.Cli.Context)
 }
 
 // Clean the react-demo
