@@ -3,6 +3,7 @@ package typapp
 import (
 	"fmt"
 	"os"
+	"reflect"
 
 	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typbuild"
@@ -32,24 +33,25 @@ func (a *App) Run(d *typcore.Descriptor) (err error) {
 }
 
 // Constructors of app
-func (a *App) Constructors() (constructors []*Constructor) {
-	constructors = append(constructors, _ctors...)
+func (a *App) Constructors() []*Constructor {
+	ctors := _ctors
 	for _, module := range a.Imports {
 		if provider, ok := module.(Provider); ok {
-			constructors = append(constructors, provider.Constructors()...)
+			ctors = append(ctors, provider.Constructors()...)
 		}
 	}
-	return
+	return ctors
 }
 
 // Destructors of app
-func (a *App) Destructors() (destructors []*Destructor) {
+func (a *App) Destructors() []*Destructor {
+	dtors := _dtors
 	for _, module := range a.Imports {
 		if destroyer, ok := module.(Destroyer); ok {
-			destructors = append(destructors, destroyer.Destructors()...)
+			dtors = append(dtors, destroyer.Destructors()...)
 		}
 	}
-	return
+	return dtors
 }
 
 // Preparations of app
@@ -79,11 +81,27 @@ func (a *App) Precondition(c *typbuild.PrecondContext) (err error) {
 }
 
 func (a *App) appPrecond(c *typbuild.PrecondContext) *typtmpl.AppPrecond {
-	appPrecond := typtmpl.NewAppPrecond()
-	ctors, errs := typannot.GetCtors(c.ASTStore())
+	var (
+		ctors    []*typtmpl.Ctor
+		cfgCtors []*typtmpl.CfgCtor
+		dtors    []*typtmpl.Dtor
+	)
 
-	for _, ctor := range ctors {
-		appPrecond.AppendCtor(ctor.Name, fmt.Sprintf("%s.%s", ctor.Decl.Pkg, ctor.Decl.Name))
+	store := c.ASTStore()
+
+	ctorAnnots, errs := typannot.GetCtors(store)
+	for _, a := range ctorAnnots {
+		ctors = append(ctors, &typtmpl.Ctor{
+			Name: a.Name,
+			Def:  fmt.Sprintf("%s.%s", a.Decl.Pkg, a.Decl.Name),
+		})
+	}
+
+	dtorAnnots, errs := typannot.GetDtors(store)
+	for _, a := range dtorAnnots {
+		dtors = append(dtors, &typtmpl.Dtor{
+			Def: fmt.Sprintf("%s.%s", a.Decl.Pkg, a.Decl.Name),
+		})
 	}
 
 	for _, err := range errs {
@@ -91,8 +109,18 @@ func (a *App) appPrecond(c *typbuild.PrecondContext) *typtmpl.AppPrecond {
 	}
 
 	for _, cfg := range a.Configurations() {
-		appPrecond.AppendCfgCtor(cfg)
+		specType := reflect.TypeOf(cfg.Spec).String()
+		cfgCtors = append(cfgCtors, &typtmpl.CfgCtor{
+			Name:      cfg.CtorName,
+			Prefix:    cfg.Name,
+			SpecType:  specType,
+			SpecType2: specType[1:],
+		})
 	}
 
-	return appPrecond
+	return &typtmpl.AppPrecond{
+		Ctors:    ctors,
+		CfgCtors: cfgCtors,
+		Dtors:    dtors,
+	}
 }

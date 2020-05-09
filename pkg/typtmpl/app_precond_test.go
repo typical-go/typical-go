@@ -3,8 +3,6 @@ package typtmpl_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
@@ -19,14 +17,10 @@ func TestProvideCtor(t *testing.T) {
 				},
 			},
 			expected: `typapp.Provide(
-	&typapp.Constructor{
-		Name: "", 
-		Fn: pkg1.NewFunction1,
-	},
-	&typapp.Constructor{
-		Name: "", 
-		Fn: pkg2.NewFunction2,
-	},
+	&typapp.Constructor{Name: "", Fn: pkg1.NewFunction1},
+	&typapp.Constructor{Name: "", Fn: pkg2.NewFunction2},
+)
+typapp.Destory(
 )`,
 		},
 		testcase{
@@ -47,45 +41,24 @@ func TestProvideCtor(t *testing.T) {
 			return
 		},
 	},
+)
+typapp.Destory(
+)`,
+		},
+		testcase{
+			testName: "constructor for configuration",
+			Template: &typtmpl.AppPrecond{
+				Dtors: []*typtmpl.Dtor{
+					{Def: "pkg1.NewFunction1"},
+				},
+			},
+			expected: `typapp.Provide(
+)
+typapp.Destory(
+	&typapp.Destructor{Fn: pkg1.NewFunction1},
 )`,
 		},
 	)
-}
-
-func TestAppend(t *testing.T) {
-	appPrecond := typtmpl.NewAppPrecond()
-	appPrecond.AppendCtor("some-name", "some-def")
-	appPrecond.AppendCtor("some-name2", "some-def2")
-	appPrecond.AppendCfgCtor(&typcfg.Configuration{
-		Name: "prefix",
-		Spec: &sample{},
-	})
-	appPrecond.AppendCfgCtor(&typcfg.Configuration{
-		CtorName: "prefix2",
-		Name:     "prefix2",
-		Spec:     &sample{},
-	})
-
-	require.Equal(t, &typtmpl.AppPrecond{
-		Ctors: []*typtmpl.Ctor{
-			{"some-name", "some-def"},
-			{"some-name2", "some-def2"},
-		},
-		CfgCtors: []*typtmpl.CfgCtor{
-			{
-				Name:      "",
-				Prefix:    "prefix",
-				SpecType:  "*typtmpl_test.sample",
-				SpecType2: "typtmpl_test.sample",
-			},
-			{
-				Name:      "prefix2",
-				Prefix:    "prefix2",
-				SpecType:  "*typtmpl_test.sample",
-				SpecType2: "typtmpl_test.sample",
-			},
-		},
-	}, appPrecond)
 }
 
 type sample struct{}

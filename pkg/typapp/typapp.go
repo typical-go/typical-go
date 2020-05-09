@@ -2,9 +2,15 @@ package typapp
 
 var (
 	_ctors []*Constructor
+	_dtors []*Destructor
 )
 
-// Provide constructor globally
-func Provide(cons ...*Constructor) {
-	_ctors = append(_ctors, cons...)
+// Provide constructor
+func Provide(ctors ...*Constructor) {
+	_ctors = append(_ctors, ctors...)
+}
+
+// Destroy destructor
+func Destroy(dtors ...*Destructor) {
+	_dtors = append(_dtors, dtors...)
 }

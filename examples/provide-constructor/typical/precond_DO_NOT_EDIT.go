@@ -9,13 +9,10 @@ import (
 
 func init() {
 	typapp.Provide(
-		&typapp.Constructor{
-			Name: "",
-			Fn:   helloworld.HelloWorld,
-		},
-		&typapp.Constructor{
-			Name: "typical",
-			Fn:   helloworld.HelloTypical,
-		},
+		&typapp.Constructor{Name: "", Fn: helloworld.HelloWorld},
+		&typapp.Constructor{Name: "typical", Fn: helloworld.HelloTypical},
+	)
+	typapp.Destroy(
+		&typapp.Destructor{Fn: helloworld.Close},
 	)
 }

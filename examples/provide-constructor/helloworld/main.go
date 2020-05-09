@@ -22,13 +22,19 @@ func Main2(greeter greeter) {
 }
 
 // HelloWorld text
-// @constructor
+// @ctor
 func HelloWorld() string {
 	return "Hello World"
 }
 
 // HelloTypical text
-// @constructor {"name": "typical"}
+// @ctor {"name": "typical"}
 func HelloTypical() string {
 	return "Hello Typical"
+}
+
+// Close the application
+// @dtor
+func Close() {
+	fmt.Println("close the app")
 }
