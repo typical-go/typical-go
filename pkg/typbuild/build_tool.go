@@ -4,8 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcfg"
@@ -14,16 +12,15 @@ import (
 )
 
 var (
-	_ typcore.Runner    = (*BuildTool)(nil)
-	_ typcfg.Configurer = (*BuildTool)(nil)
-	_ Utility           = (*BuildTool)(nil)
-	_ Preconditioner    = (*BuildTool)(nil)
+	_ typcore.Runner = (*BuildTool)(nil)
+	_ Utility        = (*BuildTool)(nil)
+	_ Preconditioner = (*BuildTool)(nil)
 )
 
 // BuildTool is typical Build Tool for golang project
 type BuildTool struct {
 	BuildSequences []interface{}
-	Utilities      []Utility
+	Utility        Utility
 	Layouts        []string
 
 	SkipPrecond bool
@@ -41,12 +38,6 @@ func (b *BuildTool) Validate() (err error) {
 		}
 	}
 
-	for _, utility := range b.Utilities {
-		if err = common.Validate(utility); err != nil {
-			return err
-		}
-	}
-
 	return
 }
 
@@ -59,9 +50,12 @@ func (b *BuildTool) Commands(c *Context) (cmds []*cli.Command) {
 		cmdClean(c),
 	}
 
-	for _, task := range b.Utilities {
-		cmds = append(cmds, task.Commands(c)...)
+	if b.Utility != nil {
+		for _, cmd := range b.Utility.Commands(c) {
+			cmds = append(cmds, cmd)
+		}
 	}
+
 	return cmds
 }
 
@@ -79,10 +73,6 @@ func (b *BuildTool) Precondition(c *PrecondContext) (err error) {
 		}
 	}
 
-	if err = typcfg.Write(DefaultConfigFile, b); err != nil {
-		return
-	}
-
 	if preconditioner, ok := app.(Preconditioner); ok {
 		if err = preconditioner.Precondition(c); err != nil {
 			return fmt.Errorf("Precondition-App: %w", err)
@@ -90,23 +80,6 @@ func (b *BuildTool) Precondition(c *PrecondContext) (err error) {
 	}
 
 	typcfg.Load(DefaultConfigFile)
-
-	return
-}
-
-// Configurations of Build-Tool
-func (b *BuildTool) Configurations() (cfgs []*typcfg.Configuration) {
-	for _, module := range b.BuildSequences {
-		if configurer, ok := module.(typcfg.Configurer); ok {
-			cfgs = append(cfgs, configurer.Configurations()...)
-		}
-	}
-
-	for _, utility := range b.Utilities {
-		if configurer, ok := utility.(typcfg.Configurer); ok {
-			cfgs = append(cfgs, configurer.Configurations()...)
-		}
-	}
 
 	return
 }
@@ -127,31 +100,4 @@ func (b *BuildTool) Run(d *typcore.Descriptor) (err error) {
 		BuildTool:  b,
 	})
 	return cli.Run(os.Args)
-}
-
-// WalkLayout return dirs and files
-func WalkLayout(layouts []string) (dirs, files []string) {
-	for _, layout := range layouts {
-		filepath.Walk(layout, func(path string, info os.FileInfo, err error) error {
-			if info == nil {
-				return nil
-			}
-
-			if info.IsDir() {
-				dirs = append(dirs, path)
-				return nil
-			}
-
-			if isGoSource(path) {
-				files = append(files, path)
-			}
-			return nil
-		})
-	}
-	return
-}
-
-func isGoSource(path string) bool {
-	return strings.HasSuffix(path, ".go") &&
-		!strings.HasSuffix(path, "_test.go")
 }

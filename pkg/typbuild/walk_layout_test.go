@@ -8,7 +8,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typbuild"
 )
 
-func TestTypicalContext(t *testing.T) {
+func TestWalkLayout(t *testing.T) {
 	os.MkdirAll("wrapper/some_pkg", os.ModePerm)
 	os.MkdirAll("pkg/some_lib", os.ModePerm)
 	os.Create("wrapper/some_pkg/some_file.go")

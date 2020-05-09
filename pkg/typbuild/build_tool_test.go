@@ -40,9 +40,7 @@ func TestBuildTool_Validate(t *testing.T) {
 				BuildSequences: []interface{}{
 					struct{}{},
 				},
-				Utilities: []typbuild.Utility{
-					&utilityWithErrors{errMsg: "utility-error"},
-				},
+				Utility: &utilityWithErrors{errMsg: "utility-error"},
 			},
 			expectedError: "utility-error",
 		},

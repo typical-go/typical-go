@@ -9,10 +9,13 @@ var (
 )
 
 type (
-	// Utility of build-tool
+	// Utility for build-tool
 	Utility interface {
 		Commands(c *Context) []*cli.Command
 	}
+
+	// Utilities is list of utility
+	Utilities []Utility
 
 	// SimpleUtility return command based on command function
 	SimpleUtility struct {
@@ -30,7 +33,12 @@ func NewUtility(fn UtilityFn) *SimpleUtility {
 	}
 }
 
-// Commands return list of command
-func (s *SimpleUtility) Commands(ctx *Context) (cmds []*cli.Command) {
+// Commands of SimpleUtility
+func (s *SimpleUtility) Commands(ctx *Context) []*cli.Command {
 	return s.fn(ctx)
+}
+
+// Commands of Utilities
+func (s *Utilities) Commands(ctx *Context) (cmds []*cli.Command) {
+	return
 }

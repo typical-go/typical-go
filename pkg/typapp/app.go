@@ -21,7 +21,7 @@ var (
 // App is typical application model
 type App struct {
 	EntryPoint interface{}
-	typcfg.Configurer
+	Configurer typcfg.Configurer
 }
 
 // Run the application
