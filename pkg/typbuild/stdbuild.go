@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
-	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
+	"github.com/typical-go/typical-go/pkg/typvar"
 )
 
 var (
@@ -56,15 +56,15 @@ func (b *StdBuild) Validate() (err error) {
 // Run the project locally
 func (b *StdBuild) Run(c *CliContext) (err error) {
 	c.Info("Standard-Build: Build the project")
-	binary := fmt.Sprintf("%s/%s", DefaultBinFolder, c.Core.Name)
-	srcDir := fmt.Sprintf("%s/%s", DefaultCmdFolder, c.Core.Name)
+	binary := fmt.Sprintf("%s/%s", typvar.BinFolder, c.Core.Name)
+	srcDir := fmt.Sprintf("%s/%s", typvar.CmdFolder, c.Core.Name)
 	src := fmt.Sprintf("./%s/main.go", srcDir)
 
 	// NOTE: create main.go if not exist
 	if _, err = os.Stat(src); os.IsNotExist(err) {
 		os.MkdirAll(srcDir, 0777)
 		appMain := &typtmpl.AppMain{
-			DescPkg: typcore.ProjectPkg + "/typical",
+			DescPkg: typvar.ProjectPkg + "/typical",
 		}
 
 		if err = typtmpl.WriteFile(src, 0777, appMain); err != nil {
@@ -137,8 +137,8 @@ func (b *StdBuild) Test(c *CliContext) (err error) {
 
 // Clean build result
 func (b *StdBuild) Clean(c *CliContext) (err error) {
-	c.Infof("Remove All in '%s'", DefaultBinFolder)
-	if err := os.RemoveAll(DefaultBinFolder); err != nil {
+	c.Infof("Remove All in '%s'", typvar.BinFolder)
+	if err := os.RemoveAll(typvar.BinFolder); err != nil {
 		c.Warn(err.Error())
 	}
 	return
@@ -171,7 +171,7 @@ func (b *StdBuild) releaseBuild(c *ReleaseContext, target ReleaseTarget) (binary
 			"build",
 			"-o", fmt.Sprintf("%s/%s", b.releaseFolder, binary),
 			"-ldflags", "-w -s",
-			fmt.Sprintf("./%s/%s", DefaultCmdFolder, c.Core.Name),
+			fmt.Sprintf("./%s/%s", typvar.CmdFolder, c.Core.Name),
 		},
 		Stdout: b.stdout,
 		Stderr: b.stderr,

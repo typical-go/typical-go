@@ -8,6 +8,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
+	"github.com/typical-go/typical-go/pkg/typvar"
 	"github.com/urfave/cli/v2"
 )
 
@@ -68,7 +69,7 @@ func (b *BuildTool) Precondition(c *PrecondContext) (err error) {
 
 	app := c.App
 	if configurer, ok := app.(typcfg.Configurer); ok {
-		if err = typcfg.Write(DefaultConfigFile, configurer); err != nil {
+		if err = typcfg.Write(typvar.ConfigFile, configurer); err != nil {
 			return
 		}
 	}
@@ -79,7 +80,7 @@ func (b *BuildTool) Precondition(c *PrecondContext) (err error) {
 		}
 	}
 
-	typcfg.Load(DefaultConfigFile)
+	typcfg.Load(typvar.ConfigFile)
 
 	return
 }

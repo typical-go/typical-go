@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	projectPkgVar = "github.com/typical-go/typical-go/pkg/typcore.ProjectPkg"
-	typicalTmpVar = "github.com/typical-go/typical-go/pkg/typcore.TypicalTmp"
+	projectPkgVar = "github.com/typical-go/typical-go/pkg/typvar.ProjectPkg"
+	typicalTmpVar = "github.com/typical-go/typical-go/pkg/typvar.TypicalTmp"
 )
 
 // Context of wrapper

@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/go-github/github"
 	"github.com/typical-go/typical-go/pkg/git"
+	"github.com/typical-go/typical-go/pkg/typvar"
 	"golang.org/x/oauth2"
 )
 
@@ -75,7 +76,7 @@ func (g *GithubModule) Publish(c *PublishContext) (err error) {
 func (g *GithubModule) upload(ctx context.Context, svc *github.RepositoriesService, id int64, binary string) (err error) {
 	var (
 		file       *os.File
-		binaryPath = fmt.Sprintf("%s/%s", DefaultReleaseFolder, binary)
+		binaryPath = fmt.Sprintf("%s/%s", typvar.ReleaseFolder, binary)
 	)
 	if file, err = os.Open(binaryPath); err != nil {
 		return
