@@ -5,7 +5,6 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typgo"
-	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/dig"
 )
@@ -16,12 +15,7 @@ func createAppCli(a *App, d *typgo.Descriptor) *cli.App {
 		return d
 	})
 
-	c := &Context{
-		Descriptor: d,
-		App:        a,
-		Logger: typlog.Logger{
-			Name: d.Name,
-		},
+	c := &AppContainer{
 		di: di,
 	}
 

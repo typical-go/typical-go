@@ -2,30 +2,24 @@ package typapp
 
 import (
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typgo"
-	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/dig"
 )
 
-// Context of App
-type Context struct {
-	*typgo.Descriptor
-	typlog.Logger
-
-	App *App
-	di  *dig.Container
+// AppContainer of App
+type AppContainer struct {
+	di *dig.Container
 }
 
 // ActionFunc to return ActionFunc to invoke function fn
-func (c *Context) ActionFunc(v interface{}) func(*cli.Context) error {
+func (c *AppContainer) ActionFunc(v interface{}) func(*cli.Context) error {
 	return func(cliCtx *cli.Context) (err error) {
 		return c.Invoke(cliCtx, v)
 	}
 }
 
 // Invoke function with Dependency Injection
-func (c *Context) Invoke(cliCtx *cli.Context, fn interface{}) (err error) {
+func (c *AppContainer) Invoke(cliCtx *cli.Context, fn interface{}) (err error) {
 
 	ctor := &Constructor{
 		Fn: func() *cli.Context {
@@ -45,13 +39,14 @@ func (c *Context) Invoke(cliCtx *cli.Context, fn interface{}) (err error) {
 
 	startFn := func() error { return c.di.Invoke(fn) }
 
-	for _, err := range common.StartGracefuly(startFn, c.stop) {
-		c.Warn(err.Error())
-	}
+	common.StartGracefuly(startFn, c.stop)
+	// for _, err := range common.StartGracefuly(startFn, c.stop) {
+	// c.Warn(err.Error())
+	// }
 	return
 }
 
-func (c *Context) stop() (err error) {
+func (c *AppContainer) stop() (err error) {
 	for _, dtor := range _dtors {
 		if err = c.di.Invoke(dtor.Fn); err != nil {
 			return

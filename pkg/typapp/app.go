@@ -14,7 +14,7 @@ import (
 var (
 	_ typgo.Runner         = (*App)(nil)
 	_ typgo.Preconditioner = (*App)(nil)
-	_ typcfg.Configurer      = (*App)(nil)
+	_ typcfg.Configurer    = (*App)(nil)
 )
 
 // App is typical application model
