@@ -1,4 +1,4 @@
-package typapp
+package typgo
 
 import (
 	"github.com/typical-go/typical-go/pkg/common"

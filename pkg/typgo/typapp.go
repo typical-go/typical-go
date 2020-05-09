@@ -1,4 +1,4 @@
-package typapp
+package typgo
 
 var (
 	_ctors []*Constructor

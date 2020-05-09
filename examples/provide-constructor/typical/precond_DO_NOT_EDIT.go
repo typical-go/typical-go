@@ -4,15 +4,15 @@ package typical
 
 import (
 	"github.com/typical-go/typical-go/examples/provide-constructor/helloworld"
-	"github.com/typical-go/typical-go/pkg/typapp"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 func init() {
-	typapp.Provide(
-		&typapp.Constructor{Name: "", Fn: helloworld.HelloWorld},
-		&typapp.Constructor{Name: "typical", Fn: helloworld.HelloTypical},
+	typgo.Provide(
+		&typgo.Constructor{Name: "", Fn: helloworld.HelloWorld},
+		&typgo.Constructor{Name: "typical", Fn: helloworld.HelloTypical},
 	)
-	typapp.Destroy(
-		&typapp.Destructor{Fn: helloworld.Close},
+	typgo.Destroy(
+		&typgo.Destructor{Fn: helloworld.Close},
 	)
 }

@@ -4,16 +4,16 @@ package typical
 
 import (
 	"github.com/typical-go/typical-go/examples/generate-mock/helloworld"
-	"github.com/typical-go/typical-go/pkg/typapp"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 func init() {
-	typapp.Provide(
-		&typapp.Constructor{
+	typgo.Provide(
+		&typgo.Constructor{
 			Name: "",
 			Fn:   helloworld.GetWriter,
 		},
-		&typapp.Constructor{
+		&typgo.Constructor{
 			Name: "",
 			Fn:   helloworld.NewGreeter,
 		},

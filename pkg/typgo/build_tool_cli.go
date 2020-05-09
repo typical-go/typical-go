@@ -67,7 +67,7 @@ func createBuildToolCli(b *BuildTool, c *Context) *cli.App {
 
 func retrImports(c *Context) []string {
 	imports := []string{
-		"github.com/typical-go/typical-go/pkg/typapp",
+		"github.com/typical-go/typical-go/pkg/typgo",
 	}
 	for _, dir := range c.AppDirs {
 		if !strings.Contains(dir, "internal") {

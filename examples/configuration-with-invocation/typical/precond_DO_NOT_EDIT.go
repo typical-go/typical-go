@@ -4,13 +4,13 @@ package typical
 
 import (
 	"github.com/typical-go/typical-go/examples/configuration-with-invocation/server"
-	"github.com/typical-go/typical-go/pkg/typapp"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typcfg"
 )
 
 func init() {
-	typapp.Provide(
-		&typapp.Constructor{
+	typgo.Provide(
+		&typgo.Constructor{
 			Name: "",
 			Fn: func() (cfg *server.Config, err error) {
 				cfg = new(server.Config)
@@ -21,5 +21,5 @@ func init() {
 			},
 		},
 	)
-	typapp.Destroy()
+	typgo.Destroy()
 }

@@ -17,11 +17,11 @@ func TestProvideCtor(t *testing.T) {
 					{Name: "", Def: "pkg2.NewFunction2"},
 				},
 			},
-			expected: `typapp.Provide(
-	&typapp.Constructor{Name: "", Fn: pkg1.NewFunction1},
-	&typapp.Constructor{Name: "", Fn: pkg2.NewFunction2},
+			expected: `typgo.Provide(
+	&typgo.Constructor{Name: "", Fn: pkg1.NewFunction1},
+	&typgo.Constructor{Name: "", Fn: pkg2.NewFunction2},
 )
-typapp.Destroy(
+typgo.Destroy(
 )`,
 		},
 		testcase{
@@ -31,8 +31,8 @@ typapp.Destroy(
 					{Name: "", Prefix: "AAA", SpecType: "*Sample", SpecType2: "Sample"},
 				},
 			},
-			expected: `typapp.Provide(
-	&typapp.Constructor{
+			expected: `typgo.Provide(
+	&typgo.Constructor{
 		Name: "", 
 		Fn: func() (cfg *Sample, err error) {
 			cfg = new(Sample)
@@ -43,7 +43,7 @@ typapp.Destroy(
 		},
 	},
 )
-typapp.Destroy(
+typgo.Destroy(
 )`,
 		},
 		testcase{
@@ -53,10 +53,10 @@ typapp.Destroy(
 					{Def: "pkg1.NewFunction1"},
 				},
 			},
-			expected: `typapp.Provide(
+			expected: `typgo.Provide(
 )
-typapp.Destroy(
-	&typapp.Destructor{Fn: pkg1.NewFunction1},
+typgo.Destroy(
+	&typgo.Destructor{Fn: pkg1.NewFunction1},
 )`,
 		},
 	)

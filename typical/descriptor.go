@@ -2,7 +2,6 @@ package typical
 
 import (
 	"github.com/typical-go/typical-go/pkg/github"
-	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/wrapper"
 )
@@ -13,7 +12,7 @@ var Descriptor = typgo.Descriptor{
 	Name:    "typical-go",
 	Version: "0.9.50",
 
-	App: &typapp.App{
+	App: &typgo.App{
 		EntryPoint: wrapper.Main,
 	},
 

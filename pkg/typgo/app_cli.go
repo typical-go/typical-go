@@ -1,17 +1,16 @@
-package typapp
+package typgo
 
 import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/typcfg"
-	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/dig"
 )
 
-func createAppCli(a *App, d *typgo.Descriptor) *cli.App {
+func createAppCli(a *App, d *Descriptor) *cli.App {
 	di := dig.New()
-	di.Provide(func() *typgo.Descriptor {
+	di.Provide(func() *Descriptor {
 		return d
 	})
 

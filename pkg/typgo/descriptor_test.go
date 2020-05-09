@@ -6,7 +6,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -53,7 +52,7 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 		{
 			Descriptor: &typgo.Descriptor{
 				Name:      "Typical Go",
-				App:       &typapp.App{},
+				App:       &typgo.App{},
 				BuildTool: dummyBuildTool{},
 			},
 			expectedErr: "Descriptor: Invalid name",
@@ -61,7 +60,7 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 		{
 			Descriptor: &typgo.Descriptor{
 				Name:      "some-name",
-				App:       &typapp.App{},
+				App:       &typgo.App{},
 				BuildTool: dummyBuildTool{errMessage: "some-error"},
 			},
 			expectedErr: "Descriptor: BuildTool: some-error",

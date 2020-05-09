@@ -31,7 +31,7 @@ var Descriptor = typgo.Descriptor{
 	Description: "Example of typical and scalable RESTful API Server for Go", // description of the project
 	Version:     "0.8.25",                                                    // version of the project
 
-	App: typapp.EntryPoint(server.Main, "server").
+	App: typgo.EntryPoint(server.Main, "server").
 		Imports(
 			server.Configuration(), 
 			typredis.Module(),    // create and destroy redis connection
@@ -60,7 +60,7 @@ var Descriptor = typgo.Descriptor{
 
 `App` in descriptor define the application. `./typicalw run` run the application based on this.
 
-`typapp` package is common golang application geared with dependency-injection and configuration. 
+`typgo` package is common golang application geared with dependency-injection and configuration. 
 - `EntryPoint` contain main function and source folder. 
 - `Imports` to put configurations, constructor, destructor or preparation into the application
 

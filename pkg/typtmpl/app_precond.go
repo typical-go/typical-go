@@ -6,9 +6,9 @@ import (
 
 var _ Template = (*AppPrecond)(nil)
 
-const appPrecond = `typapp.Provide({{range $c := .Ctors}}
-	&typapp.Constructor{Name: "{{$c.Name}}", Fn: {{$c.Def}}},{{end}}{{range $c := .CfgCtors}}
-	&typapp.Constructor{
+const appPrecond = `typgo.Provide({{range $c := .Ctors}}
+	&typgo.Constructor{Name: "{{$c.Name}}", Fn: {{$c.Def}}},{{end}}{{range $c := .CfgCtors}}
+	&typgo.Constructor{
 		Name: "{{$c.Name}}", 
 		Fn: func() (cfg {{$c.SpecType}}, err error) {
 			cfg = new({{$c.SpecType2}})
@@ -19,8 +19,8 @@ const appPrecond = `typapp.Provide({{range $c := .Ctors}}
 		},
 	},{{end}}
 )
-typapp.Destroy({{range $d := .Dtors}}
-	&typapp.Destructor{Fn: {{$d.Def}}},{{end}}
+typgo.Destroy({{range $d := .Dtors}}
+	&typgo.Destructor{Fn: {{$d.Def}}},{{end}}
 )`
 
 type (

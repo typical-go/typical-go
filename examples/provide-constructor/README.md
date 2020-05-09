@@ -20,9 +20,9 @@ func HelloTypical() string {
 `precond_DO_NOT_EDIT.go` will be generated in `typical/` folder to provide the constructor
 ```go
 func init() {
-	typapp.Provide(
-		typapp.NewConstructor("", helloworld.HelloWorld),
-		typapp.NewConstructor("typical", helloworld.HelloTypical),
+	typgo.Provide(
+		typgo.NewConstructor("", helloworld.HelloWorld),
+		typgo.NewConstructor("typical", helloworld.HelloTypical),
 	)
 }
 ```
