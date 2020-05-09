@@ -18,7 +18,6 @@ var (
 	_ typcfg.Configurer       = (*App)(nil)
 	_ Provider                = (*App)(nil)
 	_ Destroyer               = (*App)(nil)
-	_ Preparer                = (*App)(nil)
 )
 
 // App is typical application model
@@ -52,16 +51,6 @@ func (a *App) Destructors() []*Destructor {
 		}
 	}
 	return dtors
-}
-
-// Preparations of app
-func (a *App) Preparations() (preparations []*Preparation) {
-	for _, module := range a.Imports {
-		if preparer, ok := module.(Preparer); ok {
-			preparations = append(preparations, preparer.Preparations()...)
-		}
-	}
-	return
 }
 
 // Configurations of app

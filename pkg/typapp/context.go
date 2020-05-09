@@ -44,13 +44,6 @@ func (c *Context) Invoke(cliCtx *cli.Context, fn interface{}) (err error) {
 		}
 	}
 
-	// invoke preparation as register in descriptor
-	for _, prep := range c.App.Preparations() {
-		if err = di.Invoke(prep.Fn); err != nil {
-			return
-		}
-	}
-
 	startFn := func() error { return di.Invoke(fn) }
 
 	for _, err := range common.StartGracefuly(startFn, c.stop) {

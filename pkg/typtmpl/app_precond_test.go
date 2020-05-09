@@ -20,7 +20,7 @@ func TestProvideCtor(t *testing.T) {
 	&typapp.Constructor{Name: "", Fn: pkg1.NewFunction1},
 	&typapp.Constructor{Name: "", Fn: pkg2.NewFunction2},
 )
-typapp.Destory(
+typapp.Destroy(
 )`,
 		},
 		testcase{
@@ -42,7 +42,7 @@ typapp.Destory(
 		},
 	},
 )
-typapp.Destory(
+typapp.Destroy(
 )`,
 		},
 		testcase{
@@ -54,7 +54,7 @@ typapp.Destory(
 			},
 			expected: `typapp.Provide(
 )
-typapp.Destory(
+typapp.Destroy(
 	&typapp.Destructor{Fn: pkg1.NewFunction1},
 )`,
 		},

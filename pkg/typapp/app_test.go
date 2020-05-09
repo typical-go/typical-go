@@ -43,19 +43,3 @@ func TestDestoy(t *testing.T) {
 		app.Destructors(),
 	)
 }
-
-func TestPrepare(t *testing.T) {
-	var (
-		i1  = &typapp.Preparation{}
-		i2  = &typapp.Preparation{}
-		i3  = &typapp.Preparation{}
-		app = typapp.App{
-			Imports: []interface{}{i1, i2, i3},
-		}
-	)
-
-	require.EqualValues(t,
-		[]*typapp.Preparation{i1, i2, i3},
-		app.Preparations(),
-	)
-}
