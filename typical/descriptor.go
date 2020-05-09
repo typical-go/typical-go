@@ -1,6 +1,7 @@
 package typical
 
 import (
+	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typbuild"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/wrapper"
@@ -12,7 +13,9 @@ var Descriptor = typcore.Descriptor{
 	Name:    "typical-go",
 	Version: "0.9.50",
 
-	App: typcore.Run(wrapper.Main),
+	App: &typapp.App{
+		EntryPoint: wrapper.Main,
+	},
 
 	BuildTool: &typbuild.BuildTool{
 		Layouts: []string{

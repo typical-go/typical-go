@@ -3,6 +3,7 @@ package typtmpl_test
 import (
 	"testing"
 
+	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
@@ -59,6 +60,58 @@ typapp.Destroy(
 )`,
 		},
 	)
+}
+
+func TestAppPrecond_NotEmpty(t *testing.T) {
+	testcases := []struct {
+		testname string
+		typtmpl.AppPrecond
+		expected bool
+	}{
+		{
+			AppPrecond: typtmpl.AppPrecond{
+				Ctors:    []*typtmpl.Ctor{},
+				CfgCtors: []*typtmpl.CfgCtor{},
+				Dtors:    []*typtmpl.Dtor{},
+			},
+			expected: false,
+		},
+		{
+			AppPrecond: typtmpl.AppPrecond{
+				Ctors: []*typtmpl.Ctor{
+					&typtmpl.Ctor{},
+				},
+				CfgCtors: []*typtmpl.CfgCtor{},
+				Dtors:    []*typtmpl.Dtor{},
+			},
+			expected: true,
+		},
+		{
+			AppPrecond: typtmpl.AppPrecond{
+				Ctors: []*typtmpl.Ctor{},
+				CfgCtors: []*typtmpl.CfgCtor{
+					&typtmpl.CfgCtor{},
+				},
+				Dtors: []*typtmpl.Dtor{},
+			},
+			expected: true,
+		},
+		{
+			AppPrecond: typtmpl.AppPrecond{
+				Ctors:    []*typtmpl.Ctor{},
+				CfgCtors: []*typtmpl.CfgCtor{},
+				Dtors: []*typtmpl.Dtor{
+					&typtmpl.Dtor{},
+				},
+			},
+			expected: true,
+		},
+	}
+	for _, tt := range testcases {
+		t.Run(tt.testname, func(t *testing.T) {
+			require.Equal(t, tt.expected, tt.NotEmpty())
+		})
+	}
 }
 
 type sample struct{}

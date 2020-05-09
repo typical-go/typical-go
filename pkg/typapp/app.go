@@ -39,7 +39,10 @@ func (a *App) Configurations() []*typcfg.Configuration {
 
 // Precondition the app
 func (a *App) Precondition(c *typbuild.PrecondContext) (err error) {
-	c.AppendTemplate(a.appPrecond(c))
+	appPrecond := a.appPrecond(c)
+	if appPrecond.NotEmpty() {
+		c.AppendTemplate(appPrecond)
+	}
 	return
 }
 

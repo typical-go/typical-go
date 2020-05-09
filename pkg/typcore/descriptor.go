@@ -36,6 +36,11 @@ type (
 		// BuildTool of the project (MANDATORY).
 		BuildTool Runner
 	}
+
+	// Runner responsible to run the application
+	Runner interface {
+		Run(*Descriptor) error
+	}
 )
 
 // LaunchApp to launch the app

@@ -11,13 +11,18 @@ import (
 )
 
 func createAppCli(a *App, d *typcore.Descriptor) *cli.App {
+	di := dig.New()
+	di.Provide(func() *typcore.Descriptor {
+		return d
+	})
+
 	c := &Context{
 		Descriptor: d,
 		App:        a,
 		Logger: typlog.Logger{
 			Name: d.Name,
 		},
-		di: dig.New(),
+		di: di,
 	}
 
 	app := cli.NewApp()
