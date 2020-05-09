@@ -1,6 +1,8 @@
 // Package typvar contains typical variable
 package typvar
 
+import "time"
+
 var (
 	// ProjectPkg only available in BuildTool scope. The BuildTool must be compiled by wrapper.
 	ProjectPkg string
@@ -19,4 +21,10 @@ var (
 
 	// ConfigFile location
 	ConfigFile = ".env"
+
+	// TestTimeout duration
+	TestTimeout = 25 * time.Second
+
+	// TestCoverProfile location
+	TestCoverProfile = "cover.out"
 )

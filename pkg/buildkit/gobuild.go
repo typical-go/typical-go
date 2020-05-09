@@ -2,7 +2,6 @@ package buildkit
 
 import (
 	"fmt"
-	"io"
 	"strings"
 )
 
@@ -11,9 +10,6 @@ type GoBuild struct {
 	ldflags []string
 	out     string
 	src     string
-	stdout  io.Writer
-	stderr  io.Writer
-	stdin   io.Reader
 }
 
 // NewGoBuild return new instance of gobuild
@@ -27,24 +23,6 @@ func NewGoBuild(out, src string) *GoBuild {
 // SetVariable to set variable using linker
 func (g *GoBuild) SetVariable(name string, value interface{}) *GoBuild {
 	g.ldflags = append(g.ldflags, fmt.Sprintf("-X %s=%v", name, value))
-	return g
-}
-
-// WithStdout return Command with new stdout
-func (g *GoBuild) WithStdout(stdout io.Writer) *GoBuild {
-	g.stdout = stdout
-	return g
-}
-
-// WithStderr return Command with new stderr
-func (g *GoBuild) WithStderr(stderr io.Writer) *GoBuild {
-	g.stderr = stderr
-	return g
-}
-
-// WithStdin return Command with new stdin
-func (g *GoBuild) WithStdin(stdin io.Reader) *GoBuild {
-	g.stdin = stdin
 	return g
 }
 
