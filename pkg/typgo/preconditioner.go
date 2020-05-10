@@ -18,7 +18,7 @@ type (
 	PrecondContext struct {
 		*BuildTool
 		typtmpl.Precond
-		Logger   typlog.Logger
+		typlog.Logger
 		Ctx      context.Context
 		astStore *typast.ASTStore
 	}
@@ -39,24 +39,4 @@ func (c *PrecondContext) ASTStore() *typast.ASTStore {
 // SetASTStore to set ast store
 func (c *PrecondContext) SetASTStore(astStore *typast.ASTStore) {
 	c.astStore = astStore
-}
-
-// Info logger
-func (c *PrecondContext) Info(args ...interface{}) {
-	c.Logger.Info(args...)
-}
-
-// Infof logger
-func (c *PrecondContext) Infof(format string, args ...interface{}) {
-	c.Logger.Infof(format, args...)
-}
-
-// Warn logger
-func (c *PrecondContext) Warn(args ...interface{}) {
-	c.Logger.Warn(args...)
-}
-
-// Warnf logger
-func (c *PrecondContext) Warnf(format string, args ...interface{}) {
-	c.Logger.Warnf(format, args...)
 }

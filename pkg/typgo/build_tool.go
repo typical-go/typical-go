@@ -33,13 +33,25 @@ func (c *BuildTool) ActionFunc(name string, fn CliFunc) func(*cli.Context) error
 	}
 }
 
-func createBuildToolCli(c *BuildTool) *cli.App {
+func createBuildTool(d *Descriptor) *BuildTool {
+	appDirs, appFiles := WalkLayout(d.Layouts)
+
+	return &BuildTool{
+		Descriptor: d,
+		AppDirs:    appDirs,
+		AppFiles:   appFiles,
+	}
+}
+
+func createBuildToolCli(d *Descriptor) *cli.App {
 
 	app := cli.NewApp()
-	app.Name = c.Name
+	app.Name = d.Name
 	app.Usage = "Build-Tool"
-	app.Description = c.Description
-	app.Version = c.Version
+	app.Description = d.Description
+	app.Version = d.Version
+
+	c := createBuildTool(d)
 
 	app.Before = func(cli *cli.Context) (err error) {
 
@@ -51,10 +63,7 @@ func createBuildToolCli(c *BuildTool) *cli.App {
 			Precond: typtmpl.Precond{
 				Imports: retrImports(c),
 			},
-			Logger: typlog.Logger{
-				Name:  "PRECOND",
-				Color: typlog.DefaultColor,
-			},
+			Logger:    typlog.Logger{Name: "PRECOND", Color: typlog.DefaultColor},
 			BuildTool: c,
 			Ctx:       ctx,
 		}

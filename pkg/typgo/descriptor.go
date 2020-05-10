@@ -68,14 +68,7 @@ func (d *Descriptor) LaunchBuildTool() (err error) {
 		return err
 	}
 
-	appDirs, appFiles := WalkLayout(d.Layouts)
-
-	cli := createBuildToolCli(&BuildTool{
-		Descriptor: d,
-		AppDirs:    appDirs,
-		AppFiles:   appFiles,
-	})
-	return cli.Run(os.Args)
+	return createBuildToolCli(d).Run(os.Args)
 }
 
 // Validate context

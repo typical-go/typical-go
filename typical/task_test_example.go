@@ -8,7 +8,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func taskTestExample(c *typgo.Context) []*cli.Command {
+func taskTestExample(c *typgo.BuildTool) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:    "test-example",
