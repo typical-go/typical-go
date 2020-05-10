@@ -12,9 +12,7 @@ var Descriptor = typgo.Descriptor{
 	Name:    "typical-go",
 	Version: "0.9.50",
 
-	App: &typgo.App{
-		EntryPoint: wrapper.Main,
-	},
+	EntryPoint: wrapper.Main,
 
 	Layouts: []string{
 		"wrapper",

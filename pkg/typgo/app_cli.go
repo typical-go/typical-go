@@ -8,7 +8,7 @@ import (
 	"go.uber.org/dig"
 )
 
-func createAppCli(a *App, d *Descriptor) *cli.App {
+func createAppCli(d *Descriptor) *cli.App {
 	di := dig.New()
 	di.Provide(func() *Descriptor {
 		return d
@@ -29,6 +29,6 @@ func createAppCli(a *App, d *Descriptor) *cli.App {
 		return
 	}
 	app.Version = d.Version
-	app.Action = c.ActionFunc(a.EntryPoint)
+	app.Action = c.ActionFunc(d.EntryPoint)
 	return app
 }

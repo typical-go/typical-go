@@ -11,9 +11,7 @@ var Descriptor = typgo.Descriptor{
 	Name:    "generate-mock",
 	Version: "1.0.0",
 
-	App: &typgo.App{
-		EntryPoint: helloworld.Main,
-	},
+	EntryPoint: helloworld.Main,
 
 	BuildSequences: []interface{}{
 		typgo.StandardBuild(), // standard build module

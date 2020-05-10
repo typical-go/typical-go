@@ -1,7 +1,6 @@
 package typgo_test
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -57,32 +56,11 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 		{
 			Descriptor: &typgo.Descriptor{
 				Name: "Typical Go",
-				App:  &typgo.App{},
 				BuildSequences: []interface{}{
 					struct{}{},
 				},
 			},
 			expectedErr: "Descriptor: bad name",
-		},
-
-		{
-			Descriptor: &typgo.Descriptor{
-				Name: "some-name",
-				App:  dummyApp{errMessage: "some-error"},
-				BuildSequences: []interface{}{
-					struct{}{},
-				},
-			},
-			expectedErr: "Descriptor: App: some-error",
-		},
-		{
-			Descriptor: &typgo.Descriptor{
-				Name: "some-name",
-				BuildSequences: []interface{}{
-					struct{}{},
-				},
-			},
-			expectedErr: "Descriptor: App: nil",
 		},
 	}
 	for i, tt := range testcases {
@@ -100,25 +78,8 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 var (
 	validDescriptor = &typgo.Descriptor{
 		Name: "some-name",
-		App:  &dummyApp{},
 		BuildSequences: []interface{}{
 			struct{}{},
 		},
 	}
 )
-
-type dummyApp struct {
-	errMessage string
-	sources    []string
-}
-
-func (i dummyApp) Validate() error {
-	if i.errMessage != "" {
-		return errors.New(i.errMessage)
-	}
-	return nil
-}
-
-func (i dummyApp) Run(*typgo.Descriptor) error {
-	return nil
-}

@@ -4,10 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"reflect"
 	"regexp"
 
 	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/typical-go/typical-go/pkg/typvar"
 	"github.com/urfave/cli/v2"
 )
@@ -37,19 +40,17 @@ type (
 		// By default it is 0.0.1
 		Version string
 
-		// App of the project (MANDATORY).
-		App Runner
-
 		BuildSequences []interface{}
-		Utility        Utility
-		Layouts        []string
+
+		Utility Utility
+
+		Layouts []string
 
 		SkipPrecond bool
-	}
 
-	// Runner responsible to run the application
-	Runner interface {
-		Run(*Descriptor) error
+		EntryPoint interface{}
+
+		Configurer typcfg.Configurer
 	}
 )
 
@@ -58,7 +59,7 @@ func (d *Descriptor) LaunchApp() (err error) {
 	if err = d.Validate(); err != nil {
 		return
 	}
-	return d.App.Run(d)
+	return createAppCli(d).Run(os.Args)
 }
 
 // LaunchBuildTool to launch the build tool
@@ -85,10 +86,6 @@ func (d *Descriptor) Validate() (err error) {
 
 	if !ValidateName(d.Name) {
 		return errors.New("Descriptor: bad name")
-	}
-
-	if err = common.Validate(d.App); err != nil {
-		return fmt.Errorf("Descriptor: App: %w", err)
 	}
 
 	if len(d.BuildSequences) < 1 {
@@ -142,20 +139,65 @@ func (d *Descriptor) Precondition(c *PrecondContext) (err error) {
 		return
 	}
 
-	app := c.App
-	if configurer, ok := app.(typcfg.Configurer); ok {
-		if err = typcfg.Write(typvar.ConfigFile, configurer); err != nil {
+	if d.Configurer != nil {
+		if err = typcfg.Write(typvar.ConfigFile, d.Configurer); err != nil {
 			return
 		}
 	}
 
-	if preconditioner, ok := app.(Preconditioner); ok {
-		if err = preconditioner.Precondition(c); err != nil {
-			return fmt.Errorf("Precondition-App: %w", err)
-		}
+	appPrecond := d.appPrecond(c)
+	if appPrecond.NotEmpty() {
+		c.AppendTemplate(appPrecond)
 	}
 
 	typcfg.Load(typvar.ConfigFile)
 
 	return
+}
+
+func (d *Descriptor) appPrecond(c *PrecondContext) *typtmpl.AppPrecond {
+	var (
+		ctors    []*typtmpl.Ctor
+		cfgCtors []*typtmpl.CfgCtor
+		dtors    []*typtmpl.Dtor
+	)
+
+	store := c.ASTStore()
+
+	ctorAnnots, errs := typannot.GetCtors(store)
+	for _, a := range ctorAnnots {
+		ctors = append(ctors, &typtmpl.Ctor{
+			Name: a.Name,
+			Def:  fmt.Sprintf("%s.%s", a.Decl.Pkg, a.Decl.Name),
+		})
+	}
+
+	dtorAnnots, errs := typannot.GetDtors(store)
+	for _, a := range dtorAnnots {
+		dtors = append(dtors, &typtmpl.Dtor{
+			Def: fmt.Sprintf("%s.%s", a.Decl.Pkg, a.Decl.Name),
+		})
+	}
+
+	for _, err := range errs {
+		c.Warnf("App-Precond: %s", err.Error())
+	}
+
+	if d.Configurer != nil {
+		for _, cfg := range d.Configurer.Configurations() {
+			specType := reflect.TypeOf(cfg.Spec).String()
+			cfgCtors = append(cfgCtors, &typtmpl.CfgCtor{
+				Name:      cfg.CtorName,
+				Prefix:    cfg.Name,
+				SpecType:  specType,
+				SpecType2: specType[1:],
+			})
+		}
+	}
+
+	return &typtmpl.AppPrecond{
+		Ctors:    ctors,
+		CfgCtors: cfgCtors,
+		Dtors:    dtors,
+	}
 }

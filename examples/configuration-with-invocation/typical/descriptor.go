@@ -10,10 +10,9 @@ var Descriptor = typgo.Descriptor{
 	Name:    "configuration-with-invocation",
 	Version: "1.0.0",
 
-	App: &typgo.App{
-		EntryPoint: server.Main,
-		Configurer: server.Configuration(),
-	},
+	EntryPoint: server.Main,
+
+	Configurer: server.Configuration(),
 
 	BuildSequences: []interface{}{
 		typgo.StandardBuild(),

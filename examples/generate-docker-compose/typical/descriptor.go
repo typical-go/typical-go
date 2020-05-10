@@ -11,9 +11,7 @@ var Descriptor = typgo.Descriptor{
 	Name:    "generate-docker-compose",
 	Version: "1.0.0",
 
-	App: &typgo.App{
-		EntryPoint: pinger.Main,
-	},
+	EntryPoint: pinger.Main,
 
 	BuildSequences: []interface{}{
 		typgo.StandardBuild(), // standard build module

@@ -10,9 +10,7 @@ var Descriptor = typgo.Descriptor{
 	Name:    "provide-constructor",
 	Version: "1.0.0",
 
-	App: &typgo.App{
-		EntryPoint: helloworld.Main2,
-	},
+	EntryPoint: helloworld.Main2,
 
 	BuildSequences: []interface{}{
 		typgo.StandardBuild(),

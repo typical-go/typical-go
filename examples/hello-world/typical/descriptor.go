@@ -7,12 +7,12 @@ import (
 
 // Descriptor of sample
 var Descriptor = typgo.Descriptor{
-	Name:    "hello-world",
+
+	Name: "hello-world",
+
 	Version: "1.0.0",
 
-	App: &typgo.App{
-		EntryPoint: helloworld.Main,
-	},
+	EntryPoint: helloworld.Main,
 
 	BuildSequences: []interface{}{
 		typgo.StandardBuild(), // standard build module

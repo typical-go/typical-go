@@ -10,9 +10,7 @@ var Descriptor = typgo.Descriptor{
 	Name:    "server-echo-react",
 	Version: "1.0.0",
 
-	App: &typgo.App{
-		EntryPoint: server.Main,
-	},
+	EntryPoint: server.Main,
 
 	BuildSequences: []interface{}{
 		&ReactDemoModule{source: "react-demo"},
