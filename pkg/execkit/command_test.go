@@ -1,4 +1,4 @@
-package buildkit_test
+package execkit_test
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/buildkit"
+	"github.com/typical-go/typical-go/pkg/execkit"
 )
 
 func TestCommand(t *testing.T) {
@@ -15,7 +15,7 @@ func TestCommand(t *testing.T) {
 	input := strings.NewReader("hello world")
 	ctx := context.Background()
 
-	cmd := &buildkit.Command{
+	cmd := &execkit.Command{
 		Name:   "noname",
 		Args:   []string{"arg1", "arg2", "arg3"},
 		Stdout: debugger,

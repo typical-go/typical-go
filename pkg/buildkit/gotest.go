@@ -3,6 +3,8 @@ package buildkit
 import (
 	"fmt"
 	"time"
+
+	"github.com/typical-go/typical-go/pkg/execkit"
 )
 
 // GoTest builder
@@ -14,8 +16,8 @@ type GoTest struct {
 }
 
 // Command of go test
-func (g *GoTest) Command() *Command {
-	return &Command{
+func (g *GoTest) Command() *execkit.Command {
+	return &execkit.Command{
 		Name: "go",
 		Args: g.Args(),
 	}

@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
+	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/typical-go/typical-go/pkg/typvar"
 )
@@ -62,7 +63,7 @@ func (b *StdBuild) Run(c *CliContext) (err error) {
 		return fmt.Errorf("GoBuild: %w", err)
 	}
 
-	binExec := &buildkit.Command{
+	binExec := &execkit.Command{
 		Name:   binary,
 		Args:   c.Cli.Args().Slice(),
 		Stdout: b.stdout,

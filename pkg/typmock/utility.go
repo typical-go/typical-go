@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typvar"
@@ -69,7 +70,7 @@ func generateMock(c *typgo.CliContext) (err error) {
 			dest := fmt.Sprintf("%s%s/%s.go", t.Parent, mockPkg, strcase.ToSnake(t.Source))
 			name := fmt.Sprintf("%s.%s", srcPkg, t.Source)
 
-			cmd := &buildkit.Command{
+			cmd := &execkit.Command{
 				Name: mockgen,
 				Args: []string{
 					"-destination", dest,

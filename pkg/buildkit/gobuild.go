@@ -3,6 +3,8 @@ package buildkit
 import (
 	"fmt"
 	"strings"
+
+	"github.com/typical-go/typical-go/pkg/execkit"
 )
 
 // GoBuild builder
@@ -26,8 +28,9 @@ func (g *GoBuild) SetVariable(name string, value interface{}) *GoBuild {
 	return g
 }
 
-func (g *GoBuild) Command() *Command {
-	return &Command{
+// Command of GoBuild
+func (g *GoBuild) Command() *execkit.Command {
+	return &execkit.Command{
 		Name: "go",
 		Args: g.Args(),
 	}
