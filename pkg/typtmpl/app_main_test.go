@@ -16,7 +16,7 @@ func TestAppMain(t *testing.T) {
 
 import (
 	"some-package"
-	"github.com/typical-go/typical-go/pkg/typgo"
+	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 func main() {

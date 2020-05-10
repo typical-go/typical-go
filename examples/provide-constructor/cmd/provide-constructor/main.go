@@ -4,7 +4,7 @@ package main
 
 import (
 	"github.com/typical-go/typical-go/examples/provide-constructor/typical"
-	"github.com/typical-go/typical-go/pkg/typgo"
+	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 func main() {

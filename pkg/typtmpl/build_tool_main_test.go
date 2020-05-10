@@ -13,7 +13,7 @@ func TestBuildToolMain(t *testing.T) {
 			expected: `package main
 
 import (
-	"github.com/typical-go/typical-go/pkg/typgo"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"some-package"
 )
 
