@@ -30,4 +30,13 @@ var (
 
 	// PrecondFile location
 	PrecondFile = "typical/precond_DO_NOT_EDIT.go"
+
+	// Publish setting
+	Publish = struct {
+		ExcludedPrefixes []string
+	}{
+		ExcludedPrefixes: []string{
+			"merge", "bump", "revision", "generate", "wip",
+		},
+	}
 )

@@ -13,21 +13,11 @@ import (
 	"golang.org/x/oauth2"
 )
 
-var (
-	_ Excluder = (*Github)(nil)
-)
-
 type (
 	// Github to publish
 	Github struct {
 		Owner    string
 		RepoName string
-		PublishSetting
-	}
-
-	// PublishSetting contain setting for setting
-	PublishSetting struct {
-		ExcludeMessage Excluder
 	}
 )
 
@@ -82,7 +72,7 @@ func (g *Github) upload(ctx context.Context, svc *github.RepositoriesService, id
 func (g *Github) releaseNote(gitLogs []*git.Log) string {
 	var b strings.Builder
 	for _, log := range gitLogs {
-		if !g.Exclude(log.Message) {
+		if !ExcludeMessage(log.Message) {
 			b.WriteString(log.Short)
 			b.WriteString(" ")
 			b.WriteString(log.Message)
@@ -90,12 +80,4 @@ func (g *Github) releaseNote(gitLogs []*git.Log) string {
 		}
 	}
 	return b.String()
-}
-
-// Exclude message
-func (g *PublishSetting) Exclude(msg string) bool {
-	if g.ExcludeMessage != nil {
-		return g.ExcludeMessage.Exclude(msg)
-	}
-	return false
 }

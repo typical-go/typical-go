@@ -20,14 +20,7 @@ var Descriptor = typgo.Descriptor{
 
 	BuildSequences: []interface{}{
 		typgo.StandardBuild(),
-		&typgo.Github{
-			Owner:    "typical-go",
-			RepoName: "typical-go",
-
-			PublishSetting: typgo.PublishSetting{
-				ExcludeMessage: typgo.ExcludePrefix("merge", "bump", "revision", "generate", "wip"),
-			},
-		},
+		&typgo.Github{Owner: "typical-go", RepoName: "typical-go"},
 	},
 
 	Utility: typgo.NewUtility(taskTestExample), // Test all the examples
