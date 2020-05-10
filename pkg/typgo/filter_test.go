@@ -1,33 +1,34 @@
-package github_test
+package typgo_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/github"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 func TestNoPrefix(t *testing.T) {
 	testcases := []struct {
 		prefixes []string
 		message  string
-		expected string
+		expected bool
 	}{
 		{
 			prefixes: []string{"revision"},
 			message:  "revision: something",
+			expected: true,
 		},
 		{
 			prefixes: []string{"revision"},
 			message:  "REVISION: something",
+			expected: true,
 		},
 		{
-			message:  "something",
-			expected: "something",
+			message: "something",
 		},
 	}
 	for _, tt := range testcases {
-		filter := github.NoPrefix(tt.prefixes...)
-		require.Equal(t, tt.expected, filter.MessageFilter(tt.message))
+		filter := typgo.ExcludePrefix(tt.prefixes...)
+		require.Equal(t, tt.expected, filter.Exclude(tt.message))
 	}
 }

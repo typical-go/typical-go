@@ -1,4 +1,4 @@
-package github
+package typgo
 
 import (
 	"context"
@@ -9,39 +9,30 @@ import (
 
 	"github.com/google/go-github/github"
 	"github.com/typical-go/typical-go/pkg/git"
-	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typvar"
 	"golang.org/x/oauth2"
 )
 
 var (
-	_ MessageFilter = (*GithubModule)(nil)
+	_ Excluder = (*Github)(nil)
 )
 
-// GithubModule publisher
-type GithubModule struct {
-	owner    string
-	repoName string
-	filter   MessageFilter
-}
-
-// Github module
-func Github(owner, repo string) *GithubModule {
-	return &GithubModule{
-		owner:    owner,
-		repoName: repo,
-		filter:   DefaultNoPrefix(),
+type (
+	// Github to publish
+	Github struct {
+		Owner    string
+		RepoName string
+		PublishSetting
 	}
-}
 
-// Filter define filter message
-func (g *GithubModule) Filter(filter MessageFilter) *GithubModule {
-	g.filter = filter
-	return g
-}
+	// PublishSetting contain setting for setting
+	PublishSetting struct {
+		ExcludeMessage Excluder
+	}
+)
 
 // Publish to github
-func (g *GithubModule) Publish(c *typgo.PublishContext) (err error) {
+func (g *Github) Publish(c *PublishContext) (err error) {
 	token := os.Getenv("GITHUB_TOKEN")
 
 	if token == "" {
@@ -51,10 +42,10 @@ func (g *GithubModule) Publish(c *typgo.PublishContext) (err error) {
 	ctx := c.Cli.Context
 	oauth := oauth2.NewClient(ctx, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token}))
 	repo := github.NewClient(oauth).Repositories
-	if _, _, err = repo.GetReleaseByTag(ctx, g.owner, g.repoName, c.Tag); err == nil {
+	if _, _, err = repo.GetReleaseByTag(ctx, g.Owner, g.RepoName, c.Tag); err == nil {
 		return fmt.Errorf("Tag '%s' already published", c.Tag)
 	}
-	c.Infof("Create github release for %s/%s", g.owner, g.repoName)
+	c.Infof("Create github release for %s/%s", g.Owner, g.RepoName)
 	githubRls := &github.RepositoryRelease{
 		Name:       github.String(fmt.Sprintf("%s - %s", c.BuildTool.Name, c.Tag)),
 		TagName:    github.String(c.Tag),
@@ -62,7 +53,7 @@ func (g *GithubModule) Publish(c *typgo.PublishContext) (err error) {
 		Draft:      github.Bool(false),
 		Prerelease: github.Bool(c.Alpha),
 	}
-	if githubRls, _, err = repo.CreateRelease(ctx, g.owner, g.repoName, githubRls); err != nil {
+	if githubRls, _, err = repo.CreateRelease(ctx, g.Owner, g.RepoName, githubRls); err != nil {
 		return
 	}
 	for _, file := range c.ReleaseFiles {
@@ -74,7 +65,7 @@ func (g *GithubModule) Publish(c *typgo.PublishContext) (err error) {
 	return
 }
 
-func (g *GithubModule) upload(ctx context.Context, svc *github.RepositoriesService, id int64, binary string) (err error) {
+func (g *Github) upload(ctx context.Context, svc *github.RepositoriesService, id int64, binary string) (err error) {
 	var (
 		file       *os.File
 		binaryPath = fmt.Sprintf("%s/%s", typvar.ReleaseFolder, binary)
@@ -84,14 +75,14 @@ func (g *GithubModule) upload(ctx context.Context, svc *github.RepositoriesServi
 	}
 	defer file.Close()
 	opts := &github.UploadOptions{Name: binary}
-	_, _, err = svc.UploadReleaseAsset(ctx, g.owner, g.repoName, id, opts, file)
+	_, _, err = svc.UploadReleaseAsset(ctx, g.Owner, g.RepoName, id, opts, file)
 	return
 }
 
-func (g *GithubModule) releaseNote(gitLogs []*git.Log) string {
+func (g *Github) releaseNote(gitLogs []*git.Log) string {
 	var b strings.Builder
 	for _, log := range gitLogs {
-		if m := g.MessageFilter(log.Message); m != "" {
+		if !g.Exclude(log.Message) {
 			b.WriteString(log.Short)
 			b.WriteString(" ")
 			b.WriteString(log.Message)
@@ -101,10 +92,10 @@ func (g *GithubModule) releaseNote(gitLogs []*git.Log) string {
 	return b.String()
 }
 
-// MessageFilter to filter the message
-func (g *GithubModule) MessageFilter(msg string) string {
-	if g.filter != nil {
-		return g.filter.MessageFilter(msg)
+// Exclude message
+func (g *PublishSetting) Exclude(msg string) bool {
+	if g.ExcludeMessage != nil {
+		return g.ExcludeMessage.Exclude(msg)
 	}
-	return msg
+	return false
 }
