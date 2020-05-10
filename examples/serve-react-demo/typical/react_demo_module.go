@@ -3,7 +3,7 @@ package typical
 import (
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/buildkit"
+	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -20,7 +20,7 @@ type ReactDemoModule struct {
 // Run the react-demo
 func (m *ReactDemoModule) Run(c *typgo.CliContext) (err error) {
 	c.Info("Build react-demo")
-	cmd := &buildkit.Command{
+	cmd := &execkit.Command{
 		Name: "npm",
 		Args: []string{"run", "build"},
 		Dir:  m.source,
