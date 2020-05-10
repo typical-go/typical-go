@@ -8,19 +8,21 @@ import (
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
-// Preconditioner responsible to precondition
-type Preconditioner interface {
-	Precondition(c *PrecondContext) error
-}
+type (
+	// Preconditioner responsible to precondition
+	Preconditioner interface {
+		Precondition(c *PrecondContext) error
+	}
 
-// PrecondContext is context of preconditioning
-type PrecondContext struct {
-	*Context
-	typtmpl.Precond
-	Logger   typlog.Logger
-	Ctx      context.Context
-	astStore *typast.ASTStore
-}
+	// PrecondContext is context of preconditioning
+	PrecondContext struct {
+		*BuildTool
+		typtmpl.Precond
+		Logger   typlog.Logger
+		Ctx      context.Context
+		astStore *typast.ASTStore
+	}
+)
 
 // ASTStore return the ast store
 func (c *PrecondContext) ASTStore() *typast.ASTStore {

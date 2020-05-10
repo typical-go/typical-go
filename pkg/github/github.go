@@ -56,7 +56,7 @@ func (g *GithubModule) Publish(c *typgo.PublishContext) (err error) {
 	}
 	c.Infof("Create github release for %s/%s", g.owner, g.repoName)
 	githubRls := &github.RepositoryRelease{
-		Name:       github.String(fmt.Sprintf("%s - %s", c.Core.Name, c.Tag)),
+		Name:       github.String(fmt.Sprintf("%s - %s", c.BuildTool.Name, c.Tag)),
 		TagName:    github.String(c.Tag),
 		Body:       github.String(g.releaseNote(c.GitLogs)),
 		Draft:      github.Bool(false),

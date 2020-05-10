@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	_ typgo.Runner2 = (*ReactDemoModule)(nil)
+	_ typgo.Runner  = (*ReactDemoModule)(nil)
 	_ typgo.Cleaner = (*ReactDemoModule)(nil)
 )
 

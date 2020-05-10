@@ -2,7 +2,7 @@ package typgo
 
 import "github.com/urfave/cli/v2"
 
-func cmdTest(c *Context) *cli.Command {
+func cmdTest(c *BuildTool) *cli.Command {
 	return &cli.Command{
 		Name:    "test",
 		Aliases: []string{"t"},
@@ -12,7 +12,7 @@ func cmdTest(c *Context) *cli.Command {
 }
 
 func test(c *CliContext) (err error) {
-	for _, module := range c.Core.BuildSequences {
+	for _, module := range c.BuildTool.BuildSequences {
 		if tester, ok := module.(Tester); ok {
 			if err = tester.Test(c); err != nil {
 				return

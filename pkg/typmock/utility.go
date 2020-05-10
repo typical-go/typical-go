@@ -20,7 +20,7 @@ func Utility() typgo.Utility {
 	return typgo.NewUtility(commands)
 }
 
-func commands(c *typgo.Context) []*cli.Command {
+func commands(c *typgo.BuildTool) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:        "mock",
@@ -37,7 +37,7 @@ func generateMock(c *typgo.CliContext) (err error) {
 		store *typast.ASTStore
 	)
 
-	if store, err = typast.CreateASTStore(c.Core.AppFiles...); err != nil {
+	if store, err = typast.CreateASTStore(c.BuildTool.AppFiles...); err != nil {
 		return
 	}
 

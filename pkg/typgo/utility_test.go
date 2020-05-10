@@ -14,7 +14,7 @@ func TestSimpleCommander_Commands(t *testing.T) {
 	cmd2 := &cli.Command{}
 	cmd3 := &cli.Command{}
 
-	utility := typgo.NewUtility(func(ctx *typgo.Context) []*cli.Command {
+	utility := typgo.NewUtility(func(ctx *typgo.BuildTool) []*cli.Command {
 		return []*cli.Command{cmd1, cmd2, cmd3}
 	})
 

@@ -8,7 +8,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func taskPrintContext(c *typgo.Context) []*cli.Command {
+func taskPrintContext(c *typgo.BuildTool) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:    "context",

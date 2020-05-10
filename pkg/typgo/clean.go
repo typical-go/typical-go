@@ -7,7 +7,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func cmdClean(c *Context) *cli.Command {
+func cmdClean(c *BuildTool) *cli.Command {
 	return &cli.Command{
 		Name:    "clean",
 		Aliases: []string{"c"},
@@ -17,7 +17,7 @@ func cmdClean(c *Context) *cli.Command {
 }
 
 func clean(c *CliContext) (err error) {
-	for _, module := range c.Core.BuildSequences {
+	for _, module := range c.BuildTool.BuildSequences {
 		if cleaner, ok := module.(Cleaner); ok {
 			if err = cleaner.Clean(c); err != nil {
 				return

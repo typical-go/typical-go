@@ -70,7 +70,7 @@ func (d *Descriptor) LaunchBuildTool() (err error) {
 
 	appDirs, appFiles := WalkLayout(d.Layouts)
 
-	cli := createBuildToolCli(&Context{
+	cli := createBuildToolCli(&BuildTool{
 		Descriptor: d,
 		AppDirs:    appDirs,
 		AppFiles:   appFiles,
@@ -115,7 +115,7 @@ func ValidateName(name string) bool {
 }
 
 // Commands to return command
-func (d *Descriptor) Commands(c *Context) (cmds []*cli.Command) {
+func (d *Descriptor) Commands(c *BuildTool) (cmds []*cli.Command) {
 	cmds = []*cli.Command{
 		cmdTest(c),
 		cmdRun(c),

@@ -8,7 +8,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func (m *DockerUtility) cmdUp(c *typgo.Context) *cli.Command {
+func (m *DockerUtility) cmdUp(c *typgo.BuildTool) *cli.Command {
 	return &cli.Command{
 		Name:    "up",
 		Aliases: []string{"start"},

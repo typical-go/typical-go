@@ -40,7 +40,7 @@ func (m *DockerUtility) WithVersion(version string) *DockerUtility {
 }
 
 // Commands of docker
-func (m *DockerUtility) Commands(c *typgo.Context) []*cli.Command {
+func (m *DockerUtility) Commands(c *typgo.BuildTool) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:  "docker",
@@ -55,7 +55,7 @@ func (m *DockerUtility) Commands(c *typgo.Context) []*cli.Command {
 	}
 }
 
-func (m *DockerUtility) cmdCompose(c *typgo.Context) *cli.Command {
+func (m *DockerUtility) cmdCompose(c *typgo.BuildTool) *cli.Command {
 	return &cli.Command{
 		Name:   "compose",
 		Usage:  "Generate docker-compose.yaml",

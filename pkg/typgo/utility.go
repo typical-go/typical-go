@@ -11,7 +11,7 @@ var (
 type (
 	// Utility for build-tool
 	Utility interface {
-		Commands(c *Context) []*cli.Command
+		Commands(c *BuildTool) []*cli.Command
 	}
 
 	// Utilities is list of utility
@@ -23,7 +23,7 @@ type (
 	}
 
 	// UtilityFn is a function to return command
-	UtilityFn func(ctx *Context) []*cli.Command
+	UtilityFn func(ctx *BuildTool) []*cli.Command
 )
 
 // NewUtility return new instance of utility
@@ -34,11 +34,11 @@ func NewUtility(fn UtilityFn) *SimpleUtility {
 }
 
 // Commands of SimpleUtility
-func (s *SimpleUtility) Commands(ctx *Context) []*cli.Command {
+func (s *SimpleUtility) Commands(ctx *BuildTool) []*cli.Command {
 	return s.fn(ctx)
 }
 
 // Commands of Utilities
-func (s *Utilities) Commands(ctx *Context) (cmds []*cli.Command) {
+func (s *Utilities) Commands(ctx *BuildTool) (cmds []*cli.Command) {
 	return
 }

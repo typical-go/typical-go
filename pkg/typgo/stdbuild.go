@@ -13,7 +13,7 @@ import (
 var (
 	_ Cleaner = (*StdBuild)(nil)
 	_ Tester  = (*StdBuild)(nil)
-	_ Runner2 = (*StdBuild)(nil)
+	_ Runner  = (*StdBuild)(nil)
 )
 
 // StdBuild is standard build module for go project
@@ -35,8 +35,8 @@ func StandardBuild() *StdBuild {
 // Run the project locally
 func (b *StdBuild) Run(c *CliContext) (err error) {
 	c.Info("Standard-Build: Build the project")
-	binary := fmt.Sprintf("%s/%s", typvar.BinFolder, c.Core.Name)
-	srcDir := fmt.Sprintf("%s/%s", typvar.CmdFolder, c.Core.Name)
+	binary := fmt.Sprintf("%s/%s", typvar.BinFolder, c.BuildTool.Name)
+	srcDir := fmt.Sprintf("%s/%s", typvar.CmdFolder, c.BuildTool.Name)
 	src := fmt.Sprintf("./%s/main.go", srcDir)
 
 	// NOTE: create main.go if not exist
@@ -85,7 +85,7 @@ func (b *StdBuild) Test(c *CliContext) (err error) {
 		targets []string
 	)
 
-	for _, layout := range c.Core.Layouts {
+	for _, layout := range c.BuildTool.Layouts {
 		targets = append(targets, fmt.Sprintf("./%s/...", layout))
 	}
 

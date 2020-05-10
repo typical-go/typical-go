@@ -11,7 +11,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func (m *DockerUtility) cmdWipe(c *typgo.Context) *cli.Command {
+func (m *DockerUtility) cmdWipe(c *typgo.BuildTool) *cli.Command {
 	return &cli.Command{
 		Name:   "wipe",
 		Usage:  "Kill all running docker container",

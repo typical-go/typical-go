@@ -24,8 +24,8 @@ type Publisher interface {
 	Publish(*PublishContext) error
 }
 
-// Runner2 responsible to run the project in local environment
-type Runner2 interface {
+// Runner responsible to run the project in local environment
+type Runner interface {
 	Run(c *CliContext) error
 }
 
