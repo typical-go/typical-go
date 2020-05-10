@@ -5,44 +5,49 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 func TestDescriptor_ValidateName(t *testing.T) {
-	t.Run("Valid Names", func(t *testing.T) {
-		valids := []string{
-			"asdf",
-			"Asdf",
-			"As_df",
-			"as-df",
-		}
-		for _, name := range valids {
-			d := &typgo.Descriptor{
-				Name:      name,
-				App:       dummyApp{},
-				BuildTool: dummyBuildTool{},
-			}
-			require.NoError(t, common.Validate(d))
-		}
-	})
-	t.Run("Invalid Names", func(t *testing.T) {
-		invalids := []string{
-			"Asdf!",
-		}
-		for _, name := range invalids {
-			d := &typgo.Descriptor{
-				Name:      name,
-				App:       dummyApp{},
-				BuildTool: dummyBuildTool{},
-			}
-			require.EqualError(t, common.Validate(d), "Descriptor: Invalid name")
-		}
-	})
+
+	testcases := []struct {
+		testname string
+		name     string
+		expected bool
+	}{
+		{
+			name:     "asdf",
+			expected: true,
+		},
+		{
+			name:     "Asdf",
+			expected: true,
+		},
+		{
+			name:     "As_df",
+			expected: true,
+		},
+		{
+			name:     "as-df",
+			expected: true,
+		},
+		{
+			name:     "Asdf!",
+			expected: false,
+		},
+	}
+
+	for _, tt := range testcases {
+		t.Run(tt.testname, func(t *testing.T) {
+			require.Equal(t, tt.expected, typgo.ValidateName(tt.name))
+		})
+	}
+
 }
 
 func TestDecriptor_Validate_ReturnError(t *testing.T) {
 	testcases := []struct {
+		testname string
 		*typgo.Descriptor
 		expectedErr string
 	}{
@@ -51,75 +56,56 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 		},
 		{
 			Descriptor: &typgo.Descriptor{
-				Name:      "Typical Go",
-				App:       &typgo.App{},
-				BuildTool: dummyBuildTool{},
+				Name: "Typical Go",
+				App:  &typgo.App{},
+				BuildSequences: []interface{}{
+					struct{}{},
+				},
 			},
-			expectedErr: "Descriptor: Invalid name",
+			expectedErr: "Descriptor: bad name",
 		},
+
 		{
 			Descriptor: &typgo.Descriptor{
-				Name:      "some-name",
-				App:       &typgo.App{},
-				BuildTool: dummyBuildTool{errMessage: "some-error"},
-			},
-			expectedErr: "Descriptor: BuildTool: some-error",
-		},
-		{
-			Descriptor: &typgo.Descriptor{
-				Name:      "some-name",
-				App:       dummyApp{errMessage: "some-error"},
-				BuildTool: dummyBuildTool{},
+				Name: "some-name",
+				App:  dummyApp{errMessage: "some-error"},
+				BuildSequences: []interface{}{
+					struct{}{},
+				},
 			},
 			expectedErr: "Descriptor: App: some-error",
 		},
 		{
 			Descriptor: &typgo.Descriptor{
-				Name:      "some-name",
-				BuildTool: dummyBuildTool{},
+				Name: "some-name",
+				BuildSequences: []interface{}{
+					struct{}{},
+				},
 			},
 			expectedErr: "Descriptor: App: nil",
 		},
-		{
-			Descriptor: &typgo.Descriptor{
-				Name: "some-name",
-				App:  dummyApp{},
-			},
-			expectedErr: "Descriptor: BuildTool: nil",
-		},
 	}
 	for i, tt := range testcases {
-		err := tt.Validate()
-		if tt.expectedErr == "" {
-			require.NoError(t, err, i)
-		} else {
-			require.EqualError(t, err, tt.expectedErr, i)
-		}
+		t.Run(tt.testname, func(t *testing.T) {
+			err := tt.Validate()
+			if tt.expectedErr == "" {
+				require.NoError(t, err, i)
+			} else {
+				require.EqualError(t, err, tt.expectedErr, i)
+			}
+		})
 	}
 }
 
 var (
 	validDescriptor = &typgo.Descriptor{
-		Name:      "some-name",
-		App:       &dummyApp{},
-		BuildTool: &dummyBuildTool{},
+		Name: "some-name",
+		App:  &dummyApp{},
+		BuildSequences: []interface{}{
+			struct{}{},
+		},
 	}
 )
-
-type dummyBuildTool struct {
-	errMessage string
-}
-
-func (i dummyBuildTool) Validate() error {
-	if i.errMessage != "" {
-		return errors.New(i.errMessage)
-	}
-	return nil
-}
-
-func (i dummyBuildTool) Run(*typgo.Descriptor) error {
-	return nil
-}
 
 type dummyApp struct {
 	errMessage string

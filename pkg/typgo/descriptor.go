@@ -3,14 +3,21 @@ package typgo
 import (
 	"errors"
 	"fmt"
+	"os"
 	"regexp"
 
 	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typvar"
+	"github.com/urfave/cli/v2"
 )
 
 var (
 	_ AppLauncher       = (*Descriptor)(nil)
 	_ BuildToolLauncher = (*Descriptor)(nil)
+
+	_ Utility        = (*Descriptor)(nil)
+	_ Preconditioner = (*Descriptor)(nil)
 )
 
 type (
@@ -33,8 +40,11 @@ type (
 		// App of the project (MANDATORY).
 		App Runner
 
-		// BuildTool of the project (MANDATORY).
-		BuildTool Runner
+		BuildSequences []interface{}
+		Utility        Utility
+		Layouts        []string
+
+		SkipPrecond bool
 	}
 
 	// Runner responsible to run the application
@@ -53,12 +63,18 @@ func (d *Descriptor) LaunchApp() (err error) {
 
 // LaunchBuildTool to launch the build tool
 func (d *Descriptor) LaunchBuildTool() (err error) {
-	// var c *Context
-	// if c, err = CreateContext(d); err != nil {
-	// 	return
-	// }
+	if err := d.Validate(); err != nil {
+		return err
+	}
 
-	return d.BuildTool.Run(d)
+	appDirs, appFiles := WalkLayout(d.Layouts)
+
+	cli := createBuildToolCli(&Context{
+		Descriptor: d,
+		AppDirs:    appDirs,
+		AppFiles:   appFiles,
+	})
+	return cli.Run(os.Args)
 }
 
 // Validate context
@@ -67,29 +83,79 @@ func (d *Descriptor) Validate() (err error) {
 		d.Version = "0.0.1"
 	}
 
-	if err = validateName(d.Name); err != nil {
-		return fmt.Errorf("Descriptor: %w", err)
+	if !ValidateName(d.Name) {
+		return errors.New("Descriptor: bad name")
 	}
 
 	if err = common.Validate(d.App); err != nil {
 		return fmt.Errorf("Descriptor: App: %w", err)
 	}
 
-	if err = common.Validate(d.BuildTool); err != nil {
-		return fmt.Errorf("Descriptor: BuildTool: %w", err)
+	if len(d.BuildSequences) < 1 {
+		return errors.New("Descriptor:No build-sequence")
+	}
+
+	for _, module := range d.BuildSequences {
+		if err = common.Validate(module); err != nil {
+			return err
+		}
 	}
 
 	return
 }
 
-func validateName(name string) (err error) {
+// ValidateName to validate valid descriptor name
+func ValidateName(name string) bool {
 	if name == "" {
-		return errors.New("Name can't be empty")
+		return false
 	}
 
 	r, _ := regexp.Compile(`^[a-zA-Z\_\-]+$`)
 	if !r.MatchString(name) {
-		return errors.New("Invalid name")
+		return false
 	}
+	return true
+}
+
+// Commands to return command
+func (d *Descriptor) Commands(c *Context) (cmds []*cli.Command) {
+	cmds = []*cli.Command{
+		cmdTest(c),
+		cmdRun(c),
+		cmdPublish(c),
+		cmdClean(c),
+	}
+
+	if d.Utility != nil {
+		for _, cmd := range d.Utility.Commands(c) {
+			cmds = append(cmds, cmd)
+		}
+	}
+
+	return cmds
+}
+
+// Precondition for this project
+func (d *Descriptor) Precondition(c *PrecondContext) (err error) {
+	if d.SkipPrecond {
+		c.Info("Skip the preconditon")
+		return
+	}
+
+	app := c.App
+	if configurer, ok := app.(typcfg.Configurer); ok {
+		if err = typcfg.Write(typvar.ConfigFile, configurer); err != nil {
+			return
+		}
+	}
+
+	if preconditioner, ok := app.(Preconditioner); ok {
+		if err = preconditioner.Precondition(c); err != nil {
+			return fmt.Errorf("Precondition-App: %w", err)
+		}
+	}
+
+	typcfg.Load(typvar.ConfigFile)
+
 	return
 }

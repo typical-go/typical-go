@@ -86,7 +86,7 @@ func Publish(c *CliContext) (err error) {
 
 // Publish the project
 func publish(c *PublishContext) (err error) {
-	for _, module := range c.BuildTool.BuildSequences {
+	for _, module := range c.Core.BuildSequences {
 		if publisher, ok := module.(Publisher); ok {
 			if err = publisher.Publish(c); err != nil {
 				return
@@ -97,7 +97,7 @@ func publish(c *PublishContext) (err error) {
 }
 
 func release(c *ReleaseContext) (files []string, err error) {
-	for _, module := range c.BuildTool.BuildSequences {
+	for _, module := range c.Core.BuildSequences {
 		if releaser, ok := module.(Releaser); ok {
 			var files1 []string
 			if files1, err = releaser.Release(c); err != nil {

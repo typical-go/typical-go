@@ -15,24 +15,11 @@ var Descriptor = typgo.Descriptor{
 		EntryPoint: pinger.Main,
 	},
 
-	BuildTool: &typgo.BuildTool{
-		BuildSequences: []interface{}{
-			typgo.StandardBuild(), // standard build module
-		},
-		Utility: typdocker.Compose(redisRecipe),
+	BuildSequences: []interface{}{
+		typgo.StandardBuild(), // standard build module
 	},
-}
 
-var redisRecipe = &typdocker.Recipe{
-	Version: typdocker.V3,
-	Services: typdocker.Services{
-		"redis": typdocker.Service{
-			Image: "redis:4.0.5-alpine",
-			Ports: []string{"6379:6379"},
-		},
-		"webdis": typdocker.Service{
-			Image: "anapsix/webdis",
-			Ports: []string{"7379:7379"},
-		},
-	},
+	Utility: typdocker.Compose(
+		redisRecipe,
+	),
 }

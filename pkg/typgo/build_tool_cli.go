@@ -16,7 +16,7 @@ var (
 	precondFile = "typical/precond_DO_NOT_EDIT.go"
 )
 
-func createBuildToolCli(b *BuildTool, c *Context) *cli.App {
+func createBuildToolCli(c *Context) *cli.App {
 
 	app := cli.NewApp()
 	app.Name = c.Name
@@ -42,7 +42,7 @@ func createBuildToolCli(b *BuildTool, c *Context) *cli.App {
 			Ctx:     ctx,
 		}
 
-		if err = b.Precondition(c); err != nil {
+		if err = c.Precondition(c); err != nil {
 			return
 		}
 
@@ -60,7 +60,7 @@ func createBuildToolCli(b *BuildTool, c *Context) *cli.App {
 
 		return
 	}
-	app.Commands = b.Commands(c)
+	app.Commands = c.Commands(c)
 
 	return app
 }

@@ -15,13 +15,13 @@ var Descriptor = typgo.Descriptor{
 		EntryPoint: helloworld.Main,
 	},
 
-	BuildTool: &typgo.BuildTool{
-		BuildSequences: []interface{}{
-			typgo.StandardBuild(), // standard build module
-		},
-		Utility: typmock.Utility(),
-		Layouts: []string{
-			"helloworld",
-		},
+	BuildSequences: []interface{}{
+		typgo.StandardBuild(), // standard build module
+	},
+
+	Utility: typmock.Utility(),
+
+	Layouts: []string{
+		"helloworld",
 	},
 }

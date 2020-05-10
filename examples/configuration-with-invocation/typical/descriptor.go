@@ -15,12 +15,11 @@ var Descriptor = typgo.Descriptor{
 		Configurer: server.Configuration(),
 	},
 
-	BuildTool: &typgo.BuildTool{
-		BuildSequences: []interface{}{
-			typgo.StandardBuild(),
-		},
-		Layouts: []string{
-			"server",
-		},
+	BuildSequences: []interface{}{
+		typgo.StandardBuild(),
+	},
+
+	Layouts: []string{
+		"server",
 	},
 }

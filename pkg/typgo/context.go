@@ -9,7 +9,6 @@ import (
 
 // Context of buildtool
 type Context struct {
-	*BuildTool
 	*Descriptor
 
 	AppDirs  []string
@@ -20,10 +19,9 @@ type Context struct {
 type CliContext struct {
 	typlog.Logger
 
-	Cli       *cli.Context
-	Name      string
-	Core      *Context
-	BuildTool *BuildTool
+	Cli  *cli.Context
+	Name string
+	Core *Context
 }
 
 // CliFunc is command line function
@@ -37,9 +35,8 @@ func (c *Context) ActionFunc(name string, fn CliFunc) func(*cli.Context) error {
 			Logger: typlog.Logger{
 				Name: strings.ToUpper(name),
 			},
-			Cli:       cli,
-			Core:      c,
-			BuildTool: c.BuildTool,
+			Cli:  cli,
+			Core: c,
 		})
 	}
 }

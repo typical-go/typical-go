@@ -16,15 +16,16 @@ var Descriptor = typgo.Descriptor{
 		EntryPoint: wrapper.Main,
 	},
 
-	BuildTool: &typgo.BuildTool{
-		Layouts: []string{
-			"wrapper",
-			"pkg",
-		},
-		BuildSequences: []interface{}{
-			typgo.StandardBuild(),
-			github.Github("typical-go", "typical-go"),
-		},
-		Utility: typgo.NewUtility(taskTestExample), // Test all the examples
+	Layouts: []string{
+		"wrapper",
+		"pkg",
 	},
+
+	BuildSequences: []interface{}{
+		typgo.StandardBuild(),
+		github.Github("typical-go", "typical-go"),
+	},
+
+	Utility: typgo.NewUtility(taskTestExample), // Test all the examples
+
 }

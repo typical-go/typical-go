@@ -14,10 +14,8 @@ var Descriptor = typgo.Descriptor{
 		EntryPoint: server.Main,
 	},
 
-	BuildTool: &typgo.BuildTool{
-		BuildSequences: []interface{}{
-			&ReactDemoModule{source: "react-demo"},
-			typgo.StandardBuild(),
-		},
+	BuildSequences: []interface{}{
+		&ReactDemoModule{source: "react-demo"},
+		typgo.StandardBuild(),
 	},
 }

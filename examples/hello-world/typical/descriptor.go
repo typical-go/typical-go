@@ -14,9 +14,7 @@ var Descriptor = typgo.Descriptor{
 		EntryPoint: helloworld.Main,
 	},
 
-	BuildTool: &typgo.BuildTool{
-		BuildSequences: []interface{}{
-			typgo.StandardBuild(), // standard build module
-		},
+	BuildSequences: []interface{}{
+		typgo.StandardBuild(), // standard build module
 	},
 }
