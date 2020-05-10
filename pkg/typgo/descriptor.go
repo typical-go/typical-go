@@ -10,14 +10,15 @@ import (
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/typical-go/typical-go/pkg/typvar"
 	"github.com/urfave/cli/v2"
 )
 
 var (
-	_ AppLauncher       = (*Descriptor)(nil)
-	_ BuildToolLauncher = (*Descriptor)(nil)
+	_ typcore.AppLauncher       = (*Descriptor)(nil)
+	_ typcore.BuildToolLauncher = (*Descriptor)(nil)
 
 	_ Utility        = (*Descriptor)(nil)
 	_ Preconditioner = (*Descriptor)(nil)

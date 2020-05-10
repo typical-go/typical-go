@@ -8,5 +8,5 @@ import (
 )
 
 func main() {
-	typgo.LaunchApp(&typical.Descriptor)
+	typcore.LaunchApp(&typical.Descriptor)
 }

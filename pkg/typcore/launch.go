@@ -1,4 +1,4 @@
-package typgo
+package typcore
 
 import "log"
 

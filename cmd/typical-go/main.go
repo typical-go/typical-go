@@ -4,9 +4,9 @@ package main
 
 import (
 	"github.com/typical-go/typical-go/typical"
-	"github.com/typical-go/typical-go/pkg/typgo"
+	"github.com/typical-go/typical-go/pkg/typcore"
 )
 
 func main() {
-	typgo.LaunchApp(&typical.Descriptor)
+	typcore.LaunchApp(&typical.Descriptor)
 }

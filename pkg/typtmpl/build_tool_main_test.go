@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	typgo.LaunchBuildTool(&typical.Descriptor)
+	typcore.LaunchBuildTool(&typical.Descriptor)
 }
 `,
 		},
