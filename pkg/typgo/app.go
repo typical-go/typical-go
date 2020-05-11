@@ -2,91 +2,75 @@ package typgo
 
 import (
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcfg"
-	"github.com/urfave/cli/v2"
 	"go.uber.org/dig"
 )
 
-// App information
-type App struct {
-	di *dig.Container
-}
-
-// ActionFunc to return ActionFunc to invoke function fn
-func (c *App) ActionFunc(v interface{}) func(*cli.Context) error {
-	return func(cliCtx *cli.Context) (err error) {
-		return c.Invoke(cliCtx, v)
-	}
-}
-
-// Invoke function with Dependency Injection
-func (c *App) Invoke(cliCtx *cli.Context, fn interface{}) (err error) {
-
-	ctor := &Constructor{
-		Fn: func() *cli.Context {
-			return cliCtx
-		},
+func launchApp(d *Descriptor) (err error) {
+	if configFile := os.Getenv("CONFIG"); configFile != "" {
+		_, err = typcfg.Load(configFile)
 	}
 
-	if err = provide(c.di, ctor); err != nil {
-		return
-	}
-
-	for _, ctor := range _ctors {
-		if err = provide(c.di, ctor); err != nil {
-			return
-		}
-	}
-
-	startFn := func() error { return c.di.Invoke(fn) }
-
-	common.StartGracefuly(startFn, c.stop)
-	// for _, err := range common.StartGracefuly(startFn, c.stop) {
-	// c.Warn(err.Error())
-	// }
-	return
-}
-
-func (c *App) stop() (err error) {
-	for _, dtor := range _dtors {
-		if err = c.di.Invoke(dtor.Fn); err != nil {
-			return
-		}
-	}
-	return
-}
-
-func provide(di *dig.Container, c *Constructor) (err error) {
-	if c.Fn == nil {
-		panic("provide: Fn is missing")
-	}
-	return di.Provide(c.Fn, dig.Name(c.Name))
-}
-
-func createApp(d *Descriptor) *App {
 	di := dig.New()
-	di.Provide(func() *Descriptor {
-		return d
-	})
-	return &App{di: di}
+	if err = provide(di, d); err != nil {
+		return
+	}
+
+	startGracefuly(start(di, d), stop(di))
+	return
 }
 
-func createAppCli(d *Descriptor) *cli.App {
-	a := createApp(d)
+func provide(di *dig.Container, d *Descriptor) (err error) {
+	if err = di.Provide(func() *Descriptor { return d }); err != nil {
+		return
+	}
+	for _, c := range _ctors {
+		if err = di.Provide(c.Fn, dig.Name(c.Name)); err != nil {
+			return
+		}
+	}
+	return
+}
 
-	app := cli.NewApp()
-	app.Name = d.Name
-	app.Usage = "" // NOTE: intentionally blank
-	app.Description = d.Description
-	app.Before = func(*cli.Context) (err error) {
-		if configFile := os.Getenv("CONFIG"); configFile != "" {
-			_, err = typcfg.Load(configFile)
+func start(di *dig.Container, d *Descriptor) func() error {
+	return func() (err error) {
+		return di.Invoke(d.EntryPoint)
+	}
+}
+
+func stop(di *dig.Container) func() error {
+	return func() (err error) {
+		for _, dtor := range _dtors {
+			if err = di.Invoke(dtor.Fn); err != nil {
+				return
+			}
 		}
 		return
 	}
-	app.Version = d.Version
-	app.Action = a.ActionFunc(d.EntryPoint)
-	return app
+}
+
+func startGracefuly(startFn func() error, stopFn func() error) (errs common.Errors) {
+	gracefulStop := make(chan os.Signal)
+	signal.Notify(gracefulStop, syscall.SIGTERM)
+	signal.Notify(gracefulStop, syscall.SIGINT)
+	go func() {
+		defer func() {
+			gracefulStop <- syscall.SIGTERM
+		}()
+		if err := startFn(); err != nil {
+			// NOTE: if startFn got error, it should still execute stopFn
+			errs.Append(err)
+		}
+	}()
+	<-gracefulStop
+	if stopFn != nil {
+		if err := stopFn(); err != nil {
+			errs.Append(err)
+		}
+	}
+	return
 }

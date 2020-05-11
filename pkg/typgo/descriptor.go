@@ -3,7 +3,6 @@ package typgo
 import (
 	"errors"
 	"fmt"
-	"os"
 	"reflect"
 	"regexp"
 
@@ -60,7 +59,7 @@ func (d *Descriptor) LaunchApp() (err error) {
 	if err = d.Validate(); err != nil {
 		return
 	}
-	return createAppCli(d).Run(os.Args)
+	return launchApp(d)
 }
 
 // LaunchBuildTool to launch the build tool
@@ -69,7 +68,7 @@ func (d *Descriptor) LaunchBuildTool() (err error) {
 		return err
 	}
 
-	return createBuildToolCli(d).Run(os.Args)
+	return launchBuildTool(d)
 }
 
 // Validate context

@@ -43,7 +43,7 @@ func createBuildTool(d *Descriptor) *BuildTool {
 	}
 }
 
-func createBuildToolCli(d *Descriptor) *cli.App {
+func launchBuildTool(d *Descriptor) error {
 
 	app := cli.NewApp()
 	app.Name = d.Name
@@ -88,7 +88,7 @@ func createBuildToolCli(d *Descriptor) *cli.App {
 	}
 	app.Commands = c.Commands(c)
 
-	return app
+	return app.Run(os.Args)
 }
 
 func retrImports(c *BuildTool) []string {
