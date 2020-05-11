@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"os/exec"
 	"strings"
 
+	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
@@ -28,7 +28,6 @@ func (m *DockerUtility) dockerWipe(c *typgo.CliContext) (err error) {
 		return fmt.Errorf("Docker-ID: %w", err)
 	}
 
-	c.Info("Wipe all docker container")
 	for _, id := range ids {
 		if err = kill(c.Cli.Context, id); err != nil {
 			c.Warnf("Fail to kill #%s: %s", id, err.Error())
@@ -39,15 +38,16 @@ func (m *DockerUtility) dockerWipe(c *typgo.CliContext) (err error) {
 }
 
 func dockerIDs(ctx context.Context) (ids []string, err error) {
-	var (
-		out strings.Builder
-	)
+	var out strings.Builder
 
-	cmd := exec.CommandContext(ctx, "docker", "ps", "-q")
-	cmd.Stderr = os.Stderr
-	cmd.Stdout = &out
-
-	if err = cmd.Run(); err != nil {
+	cmd := execkit.Command{
+		Name:   "docker",
+		Args:   []string{"ps", "-q"},
+		Stderr: os.Stderr,
+		Stdout: &out,
+	}
+	cmd.Print(os.Stdout)
+	if err = cmd.Run(ctx); err != nil {
 		return
 	}
 
@@ -56,12 +56,15 @@ func dockerIDs(ctx context.Context) (ids []string, err error) {
 			ids = append(ids, id)
 		}
 	}
-
 	return
 }
 
 func kill(ctx context.Context, id string) (err error) {
-	cmd := exec.CommandContext(ctx, "docker", "kill", id)
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+	cmd := execkit.Command{
+		Name:   "docker",
+		Args:   []string{"kill", id},
+		Stderr: os.Stderr,
+	}
+	cmd.Print(os.Stdout)
+	return cmd.Run(ctx)
 }

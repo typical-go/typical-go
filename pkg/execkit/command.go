@@ -42,9 +42,8 @@ func (c Command) String() string {
 }
 
 // Print command
-func (c Command) Print(w io.Writer) {
-	color.New(color.FgMagenta).Fprint(w, "\n$ ")
-	fmt.Fprintf(w, "%s ", c.Name)
-	fmt.Fprintln(w, strings.Join(c.Args, " "))
-
+func (c Command) Print(printer io.Writer) {
+	color.New(color.FgMagenta).Fprint(printer, "\n$ ")
+	fmt.Fprintf(printer, "%s ", c.Name)
+	fmt.Fprintln(printer, strings.Join(c.Args, " "))
 }
