@@ -48,7 +48,7 @@ type (
 
 		EntryPoint interface{}
 
-		Configurer typcfg.Configurer
+		Config typcfg.Config
 	}
 )
 
@@ -112,8 +112,8 @@ func (d *Descriptor) Precondition(c *PrecondContext) (err error) {
 		return
 	}
 
-	if d.Configurer != nil {
-		if err = typcfg.Write(typvar.ConfigFile, d.Configurer); err != nil {
+	if d.Config != nil {
+		if err = typcfg.Write(typvar.ConfigFile, d.Config); err != nil {
 			return
 		}
 	}
@@ -154,8 +154,8 @@ func (d *Descriptor) appPrecond(c *PrecondContext) *typtmpl.AppPrecond {
 		c.Warnf("App-Precond: %s", err.Error())
 	}
 
-	if d.Configurer != nil {
-		for _, cfg := range d.Configurer.Configurations() {
+	if d.Config != nil {
+		for _, cfg := range d.Config.Configurations() {
 			specType := reflect.TypeOf(cfg.Spec).String()
 			cfgCtors = append(cfgCtors, &typtmpl.CfgCtor{
 				Name:      cfg.CtorName,

@@ -7,27 +7,31 @@ import (
 	"strings"
 )
 
-var (
-	_ Configurer = &Configuration{}
-)
+// Field of config
+type Field struct {
+	Name     string
+	Type     string
+	Default  string
+	Value    interface{}
+	IsZero   bool
+	Required bool
+}
 
-type (
-
-	// Configuration is alias from typgo.Configuration with Configurer implementation
-	Configuration struct {
-		CtorName string
-		Name     string
-		Spec     interface{}
+// GetValue to get value or default value if no value
+func (f *Field) GetValue() interface{} {
+	if f.IsZero {
+		return f.Default
 	}
-)
+	return f.Value
+}
 
 // Configurations of configuration instance
 func (c *Configuration) Configurations() []*Configuration {
 	return []*Configuration{c}
 }
 
-// Fields to retrieve fields from configuration
-func (c *Configuration) Fields() (fields []*Field) {
+// CreateFields to retrieve fields from configuration
+func CreateFields(c *Configuration) (fields []*Field) {
 	val := reflect.Indirect(reflect.ValueOf(c.Spec))
 	typ := val.Type()
 	for i := 0; i < typ.NumField(); i++ {

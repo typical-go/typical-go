@@ -6,7 +6,7 @@ import (
 )
 
 // Write configuration to file
-func Write(dest string, c Configurer) (err error) {
+func Write(dest string, c Config) (err error) {
 	var (
 		fields []*Field
 		f      *os.File
@@ -14,7 +14,7 @@ func Write(dest string, c Configurer) (err error) {
 	)
 
 	for _, cfg := range c.Configurations() {
-		for _, field := range cfg.Fields() {
+		for _, field := range CreateFields(cfg) {
 			fields = append(fields, field)
 		}
 	}

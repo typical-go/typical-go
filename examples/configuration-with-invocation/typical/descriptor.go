@@ -12,7 +12,7 @@ var Descriptor = typgo.Descriptor{
 
 	EntryPoint: server.Main,
 
-	Configurer: server.Configuration(),
+	Config: server.Configuration(),
 
 	BuildSequences: []interface{}{
 		typgo.StandardBuild(),

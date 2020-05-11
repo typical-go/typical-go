@@ -12,10 +12,10 @@ func TestConfigurers(t *testing.T) {
 	cfg2 := &typcfg.Configuration{}
 	cfg3 := &typcfg.Configuration{}
 	cfg4 := &typcfg.Configuration{}
-	configurers := typcfg.Configurers{
+	configs := typcfg.Configs{
 		cfg1,
 		cfg2,
-		typcfg.Configurers{
+		typcfg.Configs{
 			cfg3,
 			cfg4,
 		},
@@ -25,6 +25,6 @@ func TestConfigurers(t *testing.T) {
 		cfg2,
 		cfg3,
 		cfg4,
-	}, configurers.Configurations())
+	}, configs.Configurations())
 
 }

@@ -13,20 +13,20 @@ import (
 
 func TestWrite(t *testing.T) {
 	testcases := []struct {
-		typcfg.Configurer
+		typcfg.Config
 		before      string
 		expected    string
 		expectedErr string
 	}{
 		{
-			Configurer: &typcfg.Configuration{
+			Config: &typcfg.Configuration{
 				Name: "TEST",
 				Spec: &someSpec{},
 			},
 			expected: "TEST_FIELD1=defaulValue1\nTEST_FIELD2=defaulValue2\n",
 		},
 		{
-			Configurer: &typcfg.Configuration{
+			Config: &typcfg.Configuration{
 				Name: "TEST",
 				Spec: &someSpec{},
 			},
@@ -43,7 +43,7 @@ func TestWrite(t *testing.T) {
 			ioutil.WriteFile(dest, []byte(tt.before), 0777)
 		}
 
-		err := typcfg.Write(dest, tt.Configurer)
+		err := typcfg.Write(dest, tt.Config)
 		if tt.expectedErr != "" {
 			require.EqualError(t, err, tt.expectedErr)
 		} else {

@@ -1,17 +1,27 @@
 package typcfg
 
+var _ Config = (Configs)(nil)
+var _ Config = &Configuration{}
+
 type (
-	// Configurer responsible to create config
-	Configurer interface {
+	// Config responsible to create config
+	Config interface {
 		Configurations() []*Configuration
 	}
 
-	// Configurers is list of Configurer
-	Configurers []Configurer
+	// Configs is list of Configurer
+	Configs []Config
+
+	// Configuration is alias from typgo.Configuration with Configurer implementation
+	Configuration struct {
+		CtorName string
+		Name     string
+		Spec     interface{}
+	}
 )
 
 // Configurations of configurer
-func (c Configurers) Configurations() (cfgs []*Configuration) {
+func (c Configs) Configurations() (cfgs []*Configuration) {
 	for _, configurer := range c {
 		cfgs = append(cfgs, configurer.Configurations()...)
 	}
