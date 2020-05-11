@@ -5,25 +5,13 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+
+	"github.com/typical-go/typical-go/pkg/typvar"
 )
 
-// GoImports utility
-type GoImports struct {
-	typicalTmp string
-	target     string
-}
-
-// NewGoImports return new instance of GoImports
-func NewGoImports(typicalTmp, target string) *GoImports {
-	return &GoImports{
-		typicalTmp: typicalTmp,
-		target:     target,
-	}
-}
-
-// Execute goimports
-func (g *GoImports) Execute(ctx context.Context) (err error) {
-	goimports := fmt.Sprintf("%s/bin/goimports", g.typicalTmp)
+// GoImports target file
+func GoImports(ctx context.Context, target string) (err error) {
+	goimports := fmt.Sprintf("%s/bin/goimports", typvar.TypicalTmp)
 
 	if _, err = os.Stat(goimports); os.IsNotExist(err) {
 		if err = NewGoBuild(goimports, "golang.org/x/tools/cmd/goimports").Command().Run(ctx); err != nil {
@@ -31,7 +19,7 @@ func (g *GoImports) Execute(ctx context.Context) (err error) {
 		}
 	}
 
-	cmd := exec.CommandContext(ctx, goimports, "-w", g.target)
+	cmd := exec.CommandContext(ctx, goimports, "-w", target)
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
 }

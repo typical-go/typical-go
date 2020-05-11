@@ -16,7 +16,7 @@ func cmdClean(c *BuildTool) *cli.Command {
 	}
 }
 
-func clean(c *CliContext) (err error) {
+func clean(c *Context) (err error) {
 	for _, module := range c.BuildTool.BuildSequences {
 		if cleaner, ok := module.(Cleaner); ok {
 			if err = cleaner.Clean(c); err != nil {

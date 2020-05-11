@@ -34,7 +34,7 @@ func StandardBuild() *StdBuild {
 }
 
 // Run the project locally
-func (b *StdBuild) Run(c *CliContext) (err error) {
+func (b *StdBuild) Run(c *Context) (err error) {
 	c.Info("Standard-Build: Build the project")
 	binary := fmt.Sprintf("%s/%s", typvar.BinFolder, c.BuildTool.Name)
 	srcDir := fmt.Sprintf("%s/%s", typvar.CmdFolder, c.BuildTool.Name)
@@ -81,7 +81,7 @@ func (b *StdBuild) Run(c *CliContext) (err error) {
 }
 
 // Test the project
-func (b *StdBuild) Test(c *CliContext) (err error) {
+func (b *StdBuild) Test(c *Context) (err error) {
 	var (
 		targets []string
 	)
@@ -115,7 +115,7 @@ func (b *StdBuild) Test(c *CliContext) (err error) {
 }
 
 // Clean build result
-func (b *StdBuild) Clean(c *CliContext) (err error) {
+func (b *StdBuild) Clean(c *Context) (err error) {
 	c.Infof("Remove All in '%s'", typvar.BinFolder)
 	if err := os.RemoveAll(typvar.BinFolder); err != nil {
 		c.Warn(err.Error())

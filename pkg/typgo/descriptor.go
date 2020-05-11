@@ -12,14 +12,12 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/typical-go/typical-go/pkg/typvar"
-	"github.com/urfave/cli/v2"
 )
 
 var (
 	_ typcore.AppLauncher       = (*Descriptor)(nil)
 	_ typcore.BuildToolLauncher = (*Descriptor)(nil)
 
-	_ Utility        = (*Descriptor)(nil)
 	_ Preconditioner = (*Descriptor)(nil)
 )
 
@@ -107,24 +105,6 @@ func ValidateName(name string) bool {
 	return true
 }
 
-// Commands to return command
-func (d *Descriptor) Commands(c *BuildTool) (cmds []*cli.Command) {
-	cmds = []*cli.Command{
-		cmdTest(c),
-		cmdRun(c),
-		cmdPublish(c),
-		cmdClean(c),
-	}
-
-	if d.Utility != nil {
-		for _, cmd := range d.Utility.Commands(c) {
-			cmds = append(cmds, cmd)
-		}
-	}
-
-	return cmds
-}
-
 // Precondition for this project
 func (d *Descriptor) Precondition(c *PrecondContext) (err error) {
 	if d.SkipPrecond {
@@ -155,9 +135,7 @@ func (d *Descriptor) appPrecond(c *PrecondContext) *typtmpl.AppPrecond {
 		dtors    []*typtmpl.Dtor
 	)
 
-	store := c.ASTStore()
-
-	ctorAnnots, errs := typannot.GetCtors(store)
+	ctorAnnots, errs := typannot.GetCtors(c.ASTStore)
 	for _, a := range ctorAnnots {
 		ctors = append(ctors, &typtmpl.Ctor{
 			Name: a.Name,
@@ -165,7 +143,7 @@ func (d *Descriptor) appPrecond(c *PrecondContext) *typtmpl.AppPrecond {
 		})
 	}
 
-	dtorAnnots, errs := typannot.GetDtors(store)
+	dtorAnnots, errs := typannot.GetDtors(c.ASTStore)
 	for _, a := range dtorAnnots {
 		dtors = append(dtors, &typtmpl.Dtor{
 			Def: fmt.Sprintf("%s.%s", a.Decl.Pkg, a.Decl.Name),

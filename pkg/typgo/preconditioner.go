@@ -2,10 +2,13 @@ package typgo
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
+	"github.com/typical-go/typical-go/pkg/typvar"
 )
 
 type (
@@ -16,27 +19,50 @@ type (
 
 	// PrecondContext is context of preconditioning
 	PrecondContext struct {
-		*BuildTool
+		*Descriptor
 		typtmpl.Precond
 		typlog.Logger
 		Ctx      context.Context
-		astStore *typast.ASTStore
+		ASTStore *typast.ASTStore
 	}
 )
 
-// ASTStore return the ast store
-func (c *PrecondContext) ASTStore() *typast.ASTStore {
-	var err error
-	if c.astStore == nil {
-		c.astStore, err = typast.CreateASTStore(c.AppFiles...)
-		if err != nil {
-			c.Warn(err.Error())
-		}
+func createPrecondContext(ctx context.Context, d *Descriptor) *PrecondContext {
+	var (
+		err      error
+		astStore *typast.ASTStore
+	)
+
+	logger := typlog.Logger{
+		Name:  "PRECOND",
+		Color: typlog.DefaultColor,
 	}
-	return c.astStore
+
+	appDirs, appFiles := WalkLayout(d.Layouts)
+
+	if astStore, err = typast.CreateASTStore(appFiles...); err != nil {
+		logger.Warn(err.Error())
+	}
+
+	return &PrecondContext{
+		Precond: typtmpl.Precond{
+			Imports: retrImports(appDirs),
+		},
+		Logger:     logger,
+		Descriptor: d,
+		Ctx:        ctx,
+		ASTStore:   astStore,
+	}
 }
 
-// SetASTStore to set ast store
-func (c *PrecondContext) SetASTStore(astStore *typast.ASTStore) {
-	c.astStore = astStore
+func retrImports(dirs []string) []string {
+	imports := []string{
+		"github.com/typical-go/typical-go/pkg/typgo",
+	}
+	for _, dir := range dirs {
+		if !strings.Contains(dir, "internal") {
+			imports = append(imports, fmt.Sprintf("%s/%s", typvar.ProjectPkg, dir))
+		}
+	}
+	return imports
 }

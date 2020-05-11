@@ -24,7 +24,7 @@ func cmdPublish(c *BuildTool) *cli.Command {
 }
 
 // Publish project
-func Publish(c *CliContext) (err error) {
+func Publish(c *Context) (err error) {
 
 	var (
 		releaseFiles []string
@@ -63,10 +63,10 @@ func Publish(c *CliContext) (err error) {
 	}
 
 	rc := &ReleaseContext{
-		CliContext: c,
-		Alpha:      alpha,
-		Tag:        tag,
-		GitLogs:    gitLogs,
+		Context: c,
+		Alpha:   alpha,
+		Tag:     tag,
+		GitLogs: gitLogs,
 	}
 
 	if releaseFiles, err = release(rc); err != nil {
@@ -109,7 +109,7 @@ func release(c *ReleaseContext) (files []string, err error) {
 	return
 }
 
-func releaseTag(c *CliContext, alpha bool) string {
+func releaseTag(c *Context, alpha bool) string {
 	var builder strings.Builder
 	builder.WriteString("v")
 	builder.WriteString(c.BuildTool.Version)

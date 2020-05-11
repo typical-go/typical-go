@@ -6,12 +6,12 @@ import (
 
 // Cleaner responsible to clean the project
 type Cleaner interface {
-	Clean(*CliContext) error
+	Clean(*Context) error
 }
 
 // Tester responsible to test the project
 type Tester interface {
-	Test(*CliContext) error
+	Test(*Context) error
 }
 
 // Releaser responsible to release
@@ -26,12 +26,12 @@ type Publisher interface {
 
 // Runner responsible to run the project in local environment
 type Runner interface {
-	Run(c *CliContext) error
+	Run(c *Context) error
 }
 
 // ReleaseContext is context of release
 type ReleaseContext struct {
-	*CliContext
+	*Context
 	Alpha   bool
 	Tag     string
 	GitLogs []*git.Log

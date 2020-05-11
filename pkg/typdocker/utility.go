@@ -65,7 +65,7 @@ func (m *DockerUtility) cmdCompose(c *typgo.BuildTool) *cli.Command {
 	}
 }
 
-func (m *DockerUtility) dockerCompose(c *typgo.CliContext) (err error) {
+func (m *DockerUtility) dockerCompose(c *typgo.Context) (err error) {
 	var (
 		out []byte
 	)
@@ -94,7 +94,7 @@ func (m *DockerUtility) cmdUp(c *typgo.BuildTool) *cli.Command {
 	}
 }
 
-func (m *DockerUtility) dockerUp(c *typgo.CliContext) (err error) {
+func (m *DockerUtility) dockerUp(c *typgo.Context) (err error) {
 	if c.Cli.Bool("wipe") {
 		m.dockerWipe(c)
 	}
@@ -126,7 +126,7 @@ func (m *DockerUtility) cmdDown(c *typgo.BuildTool) *cli.Command {
 	}
 }
 
-func dockerDown(c *typgo.CliContext) error {
+func dockerDown(c *typgo.Context) error {
 	cmd := &execkit.Command{
 		Name:   "docker-compose",
 		Args:   []string{"down"},

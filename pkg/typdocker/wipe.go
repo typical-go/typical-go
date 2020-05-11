@@ -19,33 +19,28 @@ func (m *DockerUtility) cmdWipe(c *typgo.BuildTool) *cli.Command {
 	}
 }
 
-func (m *DockerUtility) dockerWipe(c *typgo.CliContext) (err error) {
-	var (
-		ids []string
-	)
-
+func (m *DockerUtility) dockerWipe(c *typgo.Context) (err error) {
+	var ids []string
 	if ids, err = dockerIDs(c.Cli.Context); err != nil {
 		return fmt.Errorf("Docker-ID: %w", err)
 	}
-
 	for _, id := range ids {
 		if err = kill(c.Cli.Context, id); err != nil {
 			c.Warnf("Fail to kill #%s: %s", id, err.Error())
 		}
 	}
 	return nil
-
 }
 
 func dockerIDs(ctx context.Context) (ids []string, err error) {
 	var out strings.Builder
-
 	cmd := execkit.Command{
 		Name:   "docker",
 		Args:   []string{"ps", "-q"},
 		Stderr: os.Stderr,
 		Stdout: &out,
 	}
+
 	cmd.Print(os.Stdout)
 	if err = cmd.Run(ctx); err != nil {
 		return

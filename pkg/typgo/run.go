@@ -12,7 +12,7 @@ func cmdRun(c *BuildTool) *cli.Command {
 	}
 }
 
-func run(c *CliContext) (err error) {
+func run(c *Context) (err error) {
 	for _, module := range c.BuildTool.BuildSequences {
 		if runner, ok := module.(Runner); ok {
 			if err = runner.Run(c); err != nil {

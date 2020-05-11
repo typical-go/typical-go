@@ -9,13 +9,8 @@ import (
 
 func init() {
 	typgo.Provide(
-		&typgo.Constructor{
-			Name: "",
-			Fn:   helloworld.GetWriter,
-		},
-		&typgo.Constructor{
-			Name: "",
-			Fn:   helloworld.NewGreeter,
-		},
+		&typgo.Constructor{Name: "", Fn: helloworld.GetWriter},
+		&typgo.Constructor{Name: "", Fn: helloworld.NewGreeter},
 	)
+	typgo.Destroy()
 }

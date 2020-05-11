@@ -33,12 +33,13 @@ func commands(c *typgo.BuildTool) []*cli.Command {
 	}
 }
 
-func generateMock(c *typgo.CliContext) (err error) {
+func generateMock(c *typgo.Context) (err error) {
 	var (
 		store *typast.ASTStore
 	)
 
-	if store, err = typast.CreateASTStore(c.BuildTool.AppFiles...); err != nil {
+	_, files := typgo.WalkLayout(c.BuildTool.Layouts)
+	if store, err = typast.CreateASTStore(files...); err != nil {
 		return
 	}
 
