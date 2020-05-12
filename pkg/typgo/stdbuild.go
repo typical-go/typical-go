@@ -2,7 +2,6 @@ package typgo
 
 import (
 	"fmt"
-	"io"
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
@@ -18,20 +17,7 @@ var (
 )
 
 // StdBuild is standard build module for go project
-type StdBuild struct {
-	stdout io.Writer
-	stderr io.Writer
-	stdin  io.Reader
-}
-
-// StandardBuild return new instance of Module
-func StandardBuild() *StdBuild {
-	return &StdBuild{
-		stdout: os.Stdout,
-		stderr: os.Stderr,
-		stdin:  os.Stdin,
-	}
-}
+type StdBuild struct{}
 
 // Run the project locally
 func (b *StdBuild) Run(c *Context) (err error) {
@@ -53,8 +39,8 @@ func (b *StdBuild) Run(c *Context) (err error) {
 	}
 
 	gobuild := buildkit.NewGoBuild(binary, src).Command()
-	gobuild.Stderr = b.stderr
-	gobuild.Stdout = b.stdout
+	gobuild.Stderr = os.Stderr
+	gobuild.Stdout = os.Stderr
 
 	gobuild.Print(os.Stdout)
 
@@ -66,8 +52,8 @@ func (b *StdBuild) Run(c *Context) (err error) {
 	binExec := &execkit.Command{
 		Name:   binary,
 		Args:   c.Cli.Args().Slice(),
-		Stdout: b.stdout,
-		Stderr: b.stderr,
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
 	}
 
 	binExec.Print(os.Stdout)
@@ -103,8 +89,8 @@ func (b *StdBuild) Test(c *Context) (err error) {
 	}
 
 	cmd := gotest.Command()
-	cmd.Stdout = b.stdout
-	cmd.Stderr = b.stderr
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 
 	cmd.Print(os.Stdout)
 	fmt.Println()
