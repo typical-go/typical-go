@@ -1,7 +1,9 @@
 // Package typvar contains typical variable
 package typvar
 
-import "time"
+import (
+	"time"
+)
 
 var (
 	// ProjectPkg only available in BuildTool scope. The BuildTool must be compiled by wrapper.
@@ -30,13 +32,4 @@ var (
 
 	// PrecondFile location
 	PrecondFile = "typical/precond_DO_NOT_EDIT.go"
-
-	// Publish setting
-	Publish = struct {
-		ExcludedPrefixes []string
-	}{
-		ExcludedPrefixes: []string{
-			"merge", "bump", "revision", "generate", "wip",
-		},
-	}
 )

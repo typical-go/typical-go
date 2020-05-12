@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/typical-go/typical-go/pkg/typvar"
+
 	"github.com/typical-go/typical-go/pkg/git"
 	"github.com/urfave/cli/v2"
 )
@@ -27,9 +29,8 @@ func cmdPublish(c *BuildTool) *cli.Command {
 func Publish(c *Context) (err error) {
 
 	var (
-		releaseFiles []string
-		latest       string
-		gitLogs      []*git.Log
+		latest  string
+		gitLogs []*git.Log
 	)
 
 	if !c.Cli.Bool("no-test") {
@@ -62,21 +63,15 @@ func Publish(c *Context) (err error) {
 		return errors.New("No change to be released")
 	}
 
-	rc := &ReleaseContext{
-		Context: c,
-		Alpha:   alpha,
-		Tag:     tag,
-		GitLogs: gitLogs,
-	}
+	typvar.Rls.Alpha = alpha
+	typvar.Rls.Tag = tag
+	typvar.Rls.GitLogs = gitLogs
 
-	if releaseFiles, err = release(rc); err != nil {
+	if err = release(c); err != nil {
 		return
 	}
 
-	if err = publish(&PublishContext{
-		ReleaseContext: rc,
-		ReleaseFiles:   releaseFiles,
-	}); err != nil {
+	if err = publish(c); err != nil {
 		return
 	}
 
@@ -85,7 +80,7 @@ func Publish(c *Context) (err error) {
 }
 
 // Publish the project
-func publish(c *PublishContext) (err error) {
+func publish(c *Context) (err error) {
 	for _, module := range c.BuildTool.BuildSequences {
 		if publisher, ok := module.(Publisher); ok {
 			if err = publisher.Publish(c); err != nil {
@@ -96,14 +91,12 @@ func publish(c *PublishContext) (err error) {
 	return
 }
 
-func release(c *ReleaseContext) (files []string, err error) {
+func release(c *Context) (err error) {
 	for _, module := range c.BuildTool.BuildSequences {
 		if releaser, ok := module.(Releaser); ok {
-			var files1 []string
-			if files1, err = releaser.Release(c); err != nil {
+			if err = releaser.Release(c); err != nil {
 				return
 			}
-			files = append(files, files1...)
 		}
 	}
 	return

@@ -22,7 +22,7 @@ type (
 )
 
 // Publish to github
-func (g *Github) Publish(c *PublishContext) (err error) {
+func (g *Github) Publish(c *Context) (err error) {
 	token := os.Getenv("GITHUB_TOKEN")
 
 	if token == "" {
@@ -30,23 +30,32 @@ func (g *Github) Publish(c *PublishContext) (err error) {
 	}
 
 	ctx := c.Cli.Context
-	oauth := oauth2.NewClient(ctx, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token}))
+	oauth := oauth2.NewClient(ctx,
+		oauth2.StaticTokenSource(
+			&oauth2.Token{AccessToken: token},
+		),
+	)
 	repo := github.NewClient(oauth).Repositories
-	if _, _, err = repo.GetReleaseByTag(ctx, g.Owner, g.RepoName, c.Tag); err == nil {
-		return fmt.Errorf("Tag '%s' already published", c.Tag)
+	tag := typvar.Rls.Tag
+	gitLogs := typvar.Rls.GitLogs
+	alpha := typvar.Rls.Alpha
+	releaseFiles := typvar.Rls.Files
+
+	if _, _, err = repo.GetReleaseByTag(ctx, g.Owner, g.RepoName, tag); err == nil {
+		return fmt.Errorf("Tag '%s' already published", tag)
 	}
 	c.Infof("Create github release for %s/%s", g.Owner, g.RepoName)
 	githubRls := &github.RepositoryRelease{
-		Name:       github.String(fmt.Sprintf("%s - %s", c.BuildTool.Name, c.Tag)),
-		TagName:    github.String(c.Tag),
-		Body:       github.String(g.releaseNote(c.GitLogs)),
+		Name:       github.String(fmt.Sprintf("%s - %s", c.BuildTool.Name, tag)),
+		TagName:    github.String(tag),
+		Body:       github.String(g.releaseNote(gitLogs)),
 		Draft:      github.Bool(false),
-		Prerelease: github.Bool(c.Alpha),
+		Prerelease: github.Bool(alpha),
 	}
 	if githubRls, _, err = repo.CreateRelease(ctx, g.Owner, g.RepoName, githubRls); err != nil {
 		return
 	}
-	for _, file := range c.ReleaseFiles {
+	for _, file := range releaseFiles {
 		c.Infof("Upload asset: %s", file)
 		if err = g.upload(ctx, repo, *githubRls.ID, file); err != nil {
 			return

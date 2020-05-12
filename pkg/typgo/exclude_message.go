@@ -9,7 +9,7 @@ import (
 // ExcludeMessage return true is message mean to be exclude
 func ExcludeMessage(msg string) bool {
 	msg = strings.ToLower(msg)
-	for _, prefix := range typvar.Publish.ExcludedPrefixes {
+	for _, prefix := range typvar.Rls.ExclMsgPrefix {
 		if strings.HasPrefix(msg, strings.ToLower(prefix)) {
 			return true
 		}

@@ -117,13 +117,11 @@ func (d *Descriptor) Precondition(c *PrecondContext) (err error) {
 		}
 	}
 
-	appPrecond := d.appPrecond(c)
-	if appPrecond.NotEmpty() {
+	if appPrecond := d.appPrecond(c); appPrecond.NotEmpty() {
 		c.AppendTemplate(appPrecond)
 	}
 
 	LoadConfig(typvar.ConfigFile)
-
 	return
 }
 
