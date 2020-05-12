@@ -6,12 +6,13 @@ import (
 
 var (
 	_ Utility = (*SimpleUtility)(nil)
+	_ Utility = (Utilities)(nil)
 )
 
 type (
 	// Utility for build-tool
 	Utility interface {
-		Commands(c *BuildTool) []*cli.Command
+		Commands(*BuildTool) []*cli.Command
 	}
 
 	// Utilities is list of utility
@@ -34,11 +35,14 @@ func NewUtility(fn UtilityFn) *SimpleUtility {
 }
 
 // Commands of SimpleUtility
-func (s *SimpleUtility) Commands(ctx *BuildTool) []*cli.Command {
-	return s.fn(ctx)
+func (s *SimpleUtility) Commands(b *BuildTool) []*cli.Command {
+	return s.fn(b)
 }
 
 // Commands of Utilities
-func (s *Utilities) Commands(ctx *BuildTool) (cmds []*cli.Command) {
+func (u Utilities) Commands(b *BuildTool) (cmds []*cli.Command) {
+	for _, utility := range u {
+		cmds = append(cmds, utility.Commands(b)...)
+	}
 	return
 }
