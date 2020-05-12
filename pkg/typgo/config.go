@@ -6,6 +6,8 @@ import (
 	"io"
 	"os"
 	"strings"
+
+	"github.com/kelseyhightower/envconfig"
 )
 
 // WriteConfig to write configuration to file
@@ -60,10 +62,10 @@ func LoadConfig(source string) (m map[string]string, err error) {
 	return
 }
 
-// // ProcessConfig to populates the specified struct based on environment variables
-// func ProcessConfig(name string, spec interface{}) error {
-// 	return envconfig.Process(name, spec)
-// }
+// ProcessConfig to populates the specified struct based on environment variables
+func ProcessConfig(name string, spec interface{}) error {
+	return envconfig.Process(name, spec)
+}
 
 // ReadConfig to read config from reader
 func ReadConfig(r io.Reader) (m map[string]string) {

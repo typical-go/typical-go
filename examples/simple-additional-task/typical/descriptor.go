@@ -13,7 +13,7 @@ var Descriptor = typgo.Descriptor{
 	EntryPoint: helloworld.Main,
 
 	BuildSequences: []interface{}{
-		typgo.StandardBuild(),
+		&typgo.StdBuild{},
 	},
 
 	Utility: typgo.NewUtility(taskPrintContext), // Add custom task

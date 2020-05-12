@@ -19,7 +19,7 @@ var Descriptor = typgo.Descriptor{
 	},
 
 	BuildSequences: []interface{}{
-		typgo.StandardBuild(),
+		&typgo.StdBuild{},
 		&typgo.Github{Owner: "typical-go", RepoName: "typical-go"},
 	},
 

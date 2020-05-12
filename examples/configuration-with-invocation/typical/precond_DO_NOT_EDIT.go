@@ -5,7 +5,6 @@ package typical
 import (
 	"github.com/typical-go/typical-go/examples/configuration-with-invocation/server"
 	"github.com/typical-go/typical-go/pkg/typgo"
-	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 func init() {
@@ -14,7 +13,7 @@ func init() {
 			Name: "",
 			Fn: func() (cfg *server.Config, err error) {
 				cfg = new(server.Config)
-				if err = typgo.Process("SERVER", cfg); err != nil {
+				if err = typgo.ProcessConfig("SERVER", cfg); err != nil {
 					return nil, err
 				}
 				return

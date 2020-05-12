@@ -14,6 +14,6 @@ var Descriptor = typgo.Descriptor{
 
 	BuildSequences: []interface{}{
 		&ReactDemoModule{source: "react-demo"},
-		typgo.StandardBuild(),
+		&typgo.StdBuild{},
 	},
 }

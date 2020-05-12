@@ -36,7 +36,7 @@ typgo.Destroy(
 		Name: "", 
 		Fn: func() (cfg *Sample, err error) {
 			cfg = new(Sample)
-			if err = typgo.Process("AAA", cfg); err != nil {
+			if err = typgo.ProcessConfig("AAA", cfg); err != nil {
 				return nil, err
 			}
 			return

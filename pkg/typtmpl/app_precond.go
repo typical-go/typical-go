@@ -12,7 +12,7 @@ const appPrecond = `typgo.Provide({{range $c := .Ctors}}
 		Name: "{{$c.Name}}", 
 		Fn: func() (cfg {{$c.SpecType}}, err error) {
 			cfg = new({{$c.SpecType2}})
-			if err = typgo.Process("{{$c.Prefix}}", cfg); err != nil {
+			if err = typgo.ProcessConfig("{{$c.Prefix}}", cfg); err != nil {
 				return nil, err
 			}
 			return

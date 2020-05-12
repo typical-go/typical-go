@@ -14,7 +14,7 @@ var Descriptor = typgo.Descriptor{
 	EntryPoint: pinger.Main,
 
 	BuildSequences: []interface{}{
-		typgo.StandardBuild(), // standard build module
+		&typgo.StdBuild{}, // standard build module
 	},
 
 	Utility: typdocker.Compose(
