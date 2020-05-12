@@ -8,7 +8,6 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typannot"
-	"github.com/typical-go/typical-go/pkg/typcfg"
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/typical-go/typical-go/pkg/typvar"
@@ -48,7 +47,7 @@ type (
 
 		EntryPoint interface{}
 
-		Configurer typcfg.Configurer
+		Configurer Configurer
 	}
 )
 
@@ -113,7 +112,7 @@ func (d *Descriptor) Precondition(c *PrecondContext) (err error) {
 	}
 
 	if d.Configurer != nil {
-		if err = typcfg.WriteConfig(typvar.ConfigFile, d.Configurer); err != nil {
+		if err = WriteConfig(typvar.ConfigFile, d.Configurer); err != nil {
 			return
 		}
 	}
@@ -123,7 +122,7 @@ func (d *Descriptor) Precondition(c *PrecondContext) (err error) {
 		c.AppendTemplate(appPrecond)
 	}
 
-	typcfg.LoadConfig(typvar.ConfigFile)
+	LoadConfig(typvar.ConfigFile)
 
 	return
 }

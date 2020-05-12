@@ -1,4 +1,4 @@
-package typcfg
+package typgo
 
 var _ Configurer = (Configurers)(nil)
 var _ Configurer = &Configuration{}

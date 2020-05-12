@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 const (
@@ -24,8 +24,8 @@ func Main(cfg *Config) error {
 }
 
 // Configuration of server
-func Configuration() *typcfg.Configuration {
-	return &typcfg.Configuration{
+func Configuration() *typgo.Configuration {
+	return &typgo.Configuration{
 		Name: ConfigName,
 		Spec: &Config{},
 	}

@@ -1,4 +1,4 @@
-package typcfg_test
+package typgo_test
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/typical-go/typical-go/pkg/typcfg"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 func TestReadConfig(t *testing.T) {
@@ -38,7 +38,7 @@ func TestReadConfig(t *testing.T) {
 		t.Run(tt.testName, func(t *testing.T) {
 			require.Equal(t,
 				tt.expected,
-				typcfg.ReadConfig(strings.NewReader(tt.raw)),
+				typgo.ReadConfig(strings.NewReader(tt.raw)),
 			)
 		})
 	}
@@ -47,20 +47,20 @@ func TestReadConfig(t *testing.T) {
 func TestWriteConfig(t *testing.T) {
 	testcases := []struct {
 		testName string
-		typcfg.Configurer
+		typgo.Configurer
 		before      string
 		expected    string
 		expectedErr string
 	}{
 		{
-			Configurer: &typcfg.Configuration{
+			Configurer: &typgo.Configuration{
 				Name: "TEST",
 				Spec: &someSpec{},
 			},
 			expected: "TEST_FIELD1=defaulValue1\nTEST_FIELD2=defaulValue2\n",
 		},
 		{
-			Configurer: &typcfg.Configuration{
+			Configurer: &typgo.Configuration{
 				Name: "TEST",
 				Spec: &someSpec{},
 			},
@@ -78,7 +78,7 @@ func TestWriteConfig(t *testing.T) {
 				ioutil.WriteFile(dest, []byte(tt.before), 0777)
 			}
 
-			err := typcfg.WriteConfig(dest, tt.Configurer)
+			err := typgo.WriteConfig(dest, tt.Configurer)
 			if tt.expectedErr != "" {
 				require.EqualError(t, err, tt.expectedErr)
 			} else {

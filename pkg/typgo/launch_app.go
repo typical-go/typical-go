@@ -6,13 +6,12 @@ import (
 	"syscall"
 
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typcfg"
 	"go.uber.org/dig"
 )
 
 func launchApp(d *Descriptor) (err error) {
 	if configFile := os.Getenv("CONFIG"); configFile != "" {
-		_, err = typcfg.LoadConfig(configFile)
+		_, err = LoadConfig(configFile)
 	}
 
 	di := dig.New()
