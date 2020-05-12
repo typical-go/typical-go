@@ -12,7 +12,7 @@ import (
 
 func launchApp(d *Descriptor) (err error) {
 	if configFile := os.Getenv("CONFIG"); configFile != "" {
-		_, err = typcfg.Load(configFile)
+		_, err = typcfg.LoadConfig(configFile)
 	}
 
 	di := dig.New()

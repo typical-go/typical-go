@@ -12,19 +12,17 @@ func TestConfigurers(t *testing.T) {
 	cfg2 := &typcfg.Configuration{}
 	cfg3 := &typcfg.Configuration{}
 	cfg4 := &typcfg.Configuration{}
-	configs := typcfg.Configs{
+	configs := typcfg.Configurers{
 		cfg1,
 		cfg2,
-		typcfg.Configs{
+		typcfg.Configurers{
 			cfg3,
 			cfg4,
 		},
 	}
-	require.Equal(t, []*typcfg.Configuration{
-		cfg1,
-		cfg2,
-		cfg3,
-		cfg4,
-	}, configs.Configurations())
+	require.Equal(t,
+		[]*typcfg.Configuration{cfg1, cfg2, cfg3, cfg4},
+		configs.Configurations(),
+	)
 
 }
