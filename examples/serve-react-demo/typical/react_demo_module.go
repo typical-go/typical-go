@@ -8,8 +8,7 @@ import (
 )
 
 var (
-	_ typgo.Runner  = (*ReactDemoModule)(nil)
-	_ typgo.Cleaner = (*ReactDemoModule)(nil)
+	_ typgo.Build = (*ReactDemoModule)(nil)
 )
 
 // ReactDemoModule is build module for react-demo
@@ -17,8 +16,18 @@ type ReactDemoModule struct {
 	source string
 }
 
-// Run the react-demo
-func (m *ReactDemoModule) Run(c *typgo.Context) (err error) {
+// Execute build
+func (m *ReactDemoModule) Execute(c *typgo.Context, phase typgo.Phase) (ok bool, err error) {
+	switch phase {
+	case typgo.RunPhase:
+		return true, m.executeRun(c)
+	case typgo.CleanPhase:
+		return true, m.executeClean(c)
+	}
+	return
+}
+
+func (m *ReactDemoModule) executeRun(c *typgo.Context) (err error) {
 	c.Info("Build react-demo")
 	cmd := &execkit.Command{
 		Name: "npm",
@@ -29,8 +38,7 @@ func (m *ReactDemoModule) Run(c *typgo.Context) (err error) {
 	return cmd.Run(c.Cli.Context)
 }
 
-// Clean the react-demo
-func (m *ReactDemoModule) Clean(c *typgo.Context) (err error) {
+func (m *ReactDemoModule) executeClean(c *typgo.Context) (err error) {
 	c.Info("Clean react-demo")
 	if err := os.RemoveAll(m.source + "/build"); err != nil {
 		c.Warnf("React-Demo: Clean: %s", err.Error())

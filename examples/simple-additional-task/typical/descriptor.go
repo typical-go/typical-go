@@ -7,14 +7,13 @@ import (
 
 // Descriptor of sample
 var Descriptor = typgo.Descriptor{
+
 	Name:    "simple-additional-task",
 	Version: "1.0.0",
 
 	EntryPoint: helloworld.Main,
 
-	BuildSequences: []interface{}{
-		&typgo.StdBuild{},
-	},
+	Build: &typgo.StdBuild{},
 
 	Utility: typgo.NewUtility(taskPrintContext), // Add custom task
 

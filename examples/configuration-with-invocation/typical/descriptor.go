@@ -14,9 +14,7 @@ var Descriptor = typgo.Descriptor{
 
 	Configurer: server.Configuration(),
 
-	BuildSequences: []interface{}{
-		&typgo.StdBuild{},
-	},
+	Build: &typgo.StdBuild{},
 
 	Layouts: []string{
 		"server",

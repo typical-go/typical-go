@@ -9,13 +9,28 @@ import (
 	"go.uber.org/dig"
 )
 
+var (
+	_ctors []*Constructor
+	_dtors []*Destructor
+)
+
+// Provide constructor
+func Provide(ctors ...*Constructor) {
+	_ctors = append(_ctors, ctors...)
+}
+
+// Destroy destructor
+func Destroy(dtors ...*Destructor) {
+	_dtors = append(_dtors, dtors...)
+}
+
 func launchApp(d *Descriptor) (err error) {
 	if configFile := os.Getenv("CONFIG"); configFile != "" {
 		_, err = LoadConfig(configFile)
 	}
 
 	di := dig.New()
-	if err = provide(di, d); err != nil {
+	if err = setDependencies(di, d); err != nil {
 		return
 	}
 
@@ -23,7 +38,7 @@ func launchApp(d *Descriptor) (err error) {
 	return
 }
 
-func provide(di *dig.Container, d *Descriptor) (err error) {
+func setDependencies(di *dig.Container, d *Descriptor) (err error) {
 	if err = di.Provide(func() *Descriptor { return d }); err != nil {
 		return
 	}

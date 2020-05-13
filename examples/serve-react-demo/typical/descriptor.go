@@ -12,7 +12,7 @@ var Descriptor = typgo.Descriptor{
 
 	EntryPoint: server.Main,
 
-	BuildSequences: []interface{}{
+	Build: typgo.Builds{
 		&ReactDemoModule{source: "react-demo"},
 		&typgo.StdBuild{},
 	},

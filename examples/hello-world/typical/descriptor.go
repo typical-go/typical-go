@@ -8,13 +8,10 @@ import (
 // Descriptor of sample
 var Descriptor = typgo.Descriptor{
 
-	Name: "hello-world",
-
+	Name:    "hello-world",
 	Version: "1.0.0",
 
 	EntryPoint: helloworld.Main,
 
-	BuildSequences: []interface{}{
-		&typgo.StdBuild{}, // standard build module
-	},
+	Build: &typgo.StdBuild{},
 }

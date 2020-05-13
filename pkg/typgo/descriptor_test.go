@@ -55,10 +55,8 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 		},
 		{
 			Descriptor: &typgo.Descriptor{
-				Name: "Typical Go",
-				BuildSequences: []interface{}{
-					struct{}{},
-				},
+				Name:  "Typical Go",
+				Build: &dummyBuild{},
 			},
 			expectedErr: "Descriptor: bad name",
 		},
@@ -77,9 +75,13 @@ func TestDecriptor_Validate_ReturnError(t *testing.T) {
 
 var (
 	validDescriptor = &typgo.Descriptor{
-		Name: "some-name",
-		BuildSequences: []interface{}{
-			struct{}{},
-		},
+		Name:  "some-name",
+		Build: &dummyBuild{},
 	}
 )
+
+type dummyBuild struct{}
+
+func (*dummyBuild) Execute(ctx *typgo.Context, phase typgo.Phase) (ok bool, err error) {
+	return
+}

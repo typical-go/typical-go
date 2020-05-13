@@ -14,16 +14,18 @@ const (
 	Generic
 )
 
-// Decl stand of declaration
-type Decl struct {
-	Name string
-	Path string
-	Pkg  string
-	Type DeclType
-}
+type (
+	// Decl stand of declaration
+	Decl struct {
+		Name string
+		Path string
+		Pkg  string
+		Type DeclType
+	}
 
-// DeclType is declaration type
-type DeclType int
+	// DeclType is declaration type
+	DeclType int
+)
 
 func (d DeclType) String() string {
 	return [...]string{"Function", "Interface", "Struct", "Generic"}[d]

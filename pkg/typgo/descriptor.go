@@ -37,7 +37,7 @@ type (
 		// By default it is 0.0.1
 		Version string
 
-		BuildSequences []interface{}
+		Build
 
 		Utility Utility
 
@@ -78,14 +78,8 @@ func (d *Descriptor) Validate() (err error) {
 		return errors.New("Descriptor: bad name")
 	}
 
-	if len(d.BuildSequences) < 1 {
-		return errors.New("Descriptor:No build-sequence")
-	}
-
-	for _, module := range d.BuildSequences {
-		if err = common.Validate(module); err != nil {
-			return err
-		}
+	if err = common.Validate(d.Build); err != nil {
+		return fmt.Errorf("Descriptor: %w", err)
 	}
 
 	return

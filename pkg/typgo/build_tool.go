@@ -29,25 +29,17 @@ type (
 	CliFunc func(*Context) error
 )
 
-func createBuildToolCmds(d *Descriptor) (cmds []*cli.Command) {
-	b := &BuildTool{
-		Descriptor: d,
-	}
+func launchBuildTool(d *Descriptor) error {
+	app := cli.NewApp()
+	app.Name = d.Name
+	app.Usage = "Build-Tool"
+	app.Description = d.Description
+	app.Version = d.Version
+	app.Before = beforeBuildTool(d)
 
-	cmds = []*cli.Command{
-		cmdTest(b),
-		cmdRun(b),
-		cmdPublish(b),
-		cmdClean(b),
-	}
+	app.Commands = createBuildToolCmds(d)
 
-	if d.Utility != nil {
-		for _, cmd := range d.Utility.Commands(b) {
-			cmds = append(cmds, cmd)
-		}
-	}
-
-	return cmds
+	return app.Run(os.Args)
 }
 
 func beforeBuildTool(d *Descriptor) cli.BeforeFunc {

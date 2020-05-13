@@ -13,6 +13,8 @@ import (
 	"golang.org/x/oauth2"
 )
 
+var _ Build = (*Github)(nil)
+
 type (
 	// Github to publish
 	Github struct {
@@ -21,8 +23,16 @@ type (
 	}
 )
 
-// Publish to github
-func (g *Github) Publish(c *Context) (err error) {
+// Execute build
+func (g *Github) Execute(c *Context, phase Phase) (ok bool, err error) {
+	switch phase {
+	case PublishPhase:
+		return true, g.executePublish(c)
+	}
+	return
+}
+
+func (g *Github) executePublish(c *Context) (err error) {
 	token := os.Getenv("GITHUB_TOKEN")
 
 	if token == "" {

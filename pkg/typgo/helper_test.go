@@ -8,6 +8,12 @@ import (
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
+func TestExcludeMessage(t *testing.T) {
+	require.True(t, typgo.ExcludeMessage("Merge something"))
+	require.True(t, typgo.ExcludeMessage("merge something"))
+	require.False(t, typgo.ExcludeMessage("asdf"))
+}
+
 func TestWalkLayout(t *testing.T) {
 	os.MkdirAll("wrapper/some_pkg", os.ModePerm)
 	os.MkdirAll("pkg/some_lib", os.ModePerm)

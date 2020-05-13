@@ -12,9 +12,7 @@ var Descriptor = typgo.Descriptor{
 
 	EntryPoint: helloworld.Main2,
 
-	BuildSequences: []interface{}{
-		&typgo.StdBuild{},
-	},
+	Build: &typgo.StdBuild{},
 
 	Layouts: []string{
 		"helloworld",

@@ -5,11 +5,60 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/typvar"
-
 	"github.com/typical-go/typical-go/pkg/git"
+	"github.com/typical-go/typical-go/pkg/typvar"
 	"github.com/urfave/cli/v2"
 )
+
+func createBuildToolCmds(d *Descriptor) (cmds []*cli.Command) {
+	b := &BuildTool{
+		Descriptor: d,
+	}
+
+	cmds = []*cli.Command{
+		cmdTest(b),
+		cmdRun(b),
+		cmdPublish(b),
+		cmdClean(b),
+	}
+
+	if d.Utility != nil {
+		for _, cmd := range d.Utility.Commands(b) {
+			cmds = append(cmds, cmd)
+		}
+	}
+
+	return cmds
+}
+
+func cmdTest(c *BuildTool) *cli.Command {
+	return &cli.Command{
+		Name:    "test",
+		Aliases: []string{"t"},
+		Usage:   "Test the project",
+		Action:  c.ActionFunc("TEST", test),
+	}
+}
+
+func test(c *Context) (err error) {
+	_, err = c.Execute(c, TestPhase)
+	return
+}
+
+func cmdRun(c *BuildTool) *cli.Command {
+	return &cli.Command{
+		Name:            "run",
+		Aliases:         []string{"r"},
+		Usage:           "Run the project in local environment",
+		SkipFlagParsing: true,
+		Action:          c.ActionFunc("RUN", run),
+	}
+}
+
+func run(c *Context) (err error) {
+	_, err = c.Execute(c, RunPhase)
+	return
+}
 
 func cmdPublish(c *BuildTool) *cli.Command {
 	return &cli.Command{
@@ -23,6 +72,22 @@ func cmdPublish(c *BuildTool) *cli.Command {
 		},
 		Action: c.ActionFunc("PUBLISH", Publish),
 	}
+}
+
+func cmdClean(c *BuildTool) *cli.Command {
+	return &cli.Command{
+		Name:    "clean",
+		Aliases: []string{"c"},
+		Usage:   "Clean the project",
+		Action:  c.ActionFunc("CLEAN", clean),
+	}
+}
+
+func clean(c *Context) (err error) {
+	if _, err = c.Execute(c, CleanPhase); err != nil {
+		return
+	}
+	return
 }
 
 // Publish project
@@ -47,13 +112,12 @@ func Publish(c *Context) (err error) {
 	defer git.Fetch(ctx)
 
 	force := c.Cli.Bool("force")
+	alpha := c.Cli.Bool("alpha")
+	tag := releaseTag(c, alpha)
 
 	if status := git.Status(ctx); status != "" && !force {
 		return fmt.Errorf("Please commit changes first:\n%s", status)
 	}
-
-	alpha := c.Cli.Bool("alpha")
-	tag := releaseTag(c, alpha)
 
 	if latest = git.LatestTag(ctx); latest == tag && !force {
 		return fmt.Errorf("%s already released", latest)
@@ -67,39 +131,16 @@ func Publish(c *Context) (err error) {
 	typvar.Rls.Tag = tag
 	typvar.Rls.GitLogs = gitLogs
 
-	if err = release(c); err != nil {
+	if _, err = c.Execute(c, ReleasePhase); err != nil {
 		return
 	}
 
-	if err = publish(c); err != nil {
+	if _, err = c.Execute(c, PublishPhase); err != nil {
 		return
 	}
 
 	return
 
-}
-
-// Publish the project
-func publish(c *Context) (err error) {
-	for _, module := range c.BuildTool.BuildSequences {
-		if publisher, ok := module.(Publisher); ok {
-			if err = publisher.Publish(c); err != nil {
-				return
-			}
-		}
-	}
-	return
-}
-
-func release(c *Context) (err error) {
-	for _, module := range c.BuildTool.BuildSequences {
-		if releaser, ok := module.(Releaser); ok {
-			if err = releaser.Release(c); err != nil {
-				return
-			}
-		}
-	}
-	return
 }
 
 func releaseTag(c *Context, alpha bool) string {

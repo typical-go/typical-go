@@ -13,9 +13,7 @@ var Descriptor = typgo.Descriptor{
 
 	EntryPoint: helloworld.Main,
 
-	BuildSequences: []interface{}{
-		&typgo.StdBuild{}, // standard build module
-	},
+	Build: &typgo.StdBuild{},
 
 	Utility: typmock.Utility(),
 

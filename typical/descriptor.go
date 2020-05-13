@@ -18,7 +18,7 @@ var Descriptor = typgo.Descriptor{
 		"pkg",
 	},
 
-	BuildSequences: []interface{}{
+	Build: typgo.Builds{
 		&typgo.StdBuild{},
 		&typgo.Github{Owner: "typical-go", RepoName: "typical-go"},
 	},
