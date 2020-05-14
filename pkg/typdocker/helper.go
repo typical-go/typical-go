@@ -2,34 +2,20 @@ package typdocker
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
-	"github.com/typical-go/typical-go/pkg/typgo"
-	"github.com/urfave/cli/v2"
 )
 
-func (m *DockerUtility) cmdWipe(c *typgo.BuildTool) *cli.Command {
-	return &cli.Command{
-		Name:   "wipe",
-		Usage:  "Kill all running docker container",
-		Action: c.ActionFunc(LogName, m.dockerWipe),
+// Major version from docker-composer version
+func Major(version string) string {
+	i := strings.IndexRune(version, '.')
+	if i < 0 {
+		return version
 	}
-}
 
-func (m *DockerUtility) dockerWipe(c *typgo.Context) (err error) {
-	var ids []string
-	if ids, err = dockerIDs(c.Cli.Context); err != nil {
-		return fmt.Errorf("Docker-ID: %w", err)
-	}
-	for _, id := range ids {
-		if err = kill(c.Cli.Context, id); err != nil {
-			c.Warnf("Fail to kill #%s: %s", id, err.Error())
-		}
-	}
-	return nil
+	return version[:i]
 }
 
 func dockerIDs(ctx context.Context) (ids []string, err error) {
