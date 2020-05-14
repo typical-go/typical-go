@@ -61,7 +61,7 @@ func generateMock(c *typgo.Context) (err error) {
 	}
 
 	for pkg, targets := range targetMap {
-		mockPkg := fmt.Sprintf("mock_%s", pkg)
+		mockPkg := fmt.Sprintf("%s_mock", pkg)
 
 		fmt.Printf("\nRemove package '%s'\n", mockPkg)
 		os.RemoveAll(mockPkg)
