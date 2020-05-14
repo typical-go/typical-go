@@ -1,6 +1,7 @@
 package typgo
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
@@ -36,7 +37,6 @@ func launchBuildTool(d *Descriptor) error {
 	app.Description = d.Description
 	app.Version = d.Version
 	app.Before = beforeBuildTool(d)
-
 	app.Commands = createBuildToolCmds(d)
 
 	return app.Run(os.Args)
@@ -44,24 +44,29 @@ func launchBuildTool(d *Descriptor) error {
 
 func beforeBuildTool(d *Descriptor) cli.BeforeFunc {
 	return func(cli *cli.Context) (err error) {
-		os.Remove(typvar.PrecondFile)
 		ctx := cli.Context
 		c := createPrecondContext(ctx, d)
+		precondFile := fmt.Sprintf("%s/%s/precond_DO_NOT_EDIT.go", typvar.CmdFolder, d.Name)
+
+		if d.SkipPrecond {
+			c.Info("Skip the preconditon")
+			return
+		}
+
+		os.Remove(precondFile)
 
 		if err = d.Precondition(c); err != nil {
 			return
 		}
 
 		if len(c.Lines) > 0 {
-			if err = typtmpl.WriteFile(typvar.PrecondFile, 0777, c); err != nil {
+			c.Infof("Write %s", precondFile)
+			if err = typtmpl.WriteFile(precondFile, 0777, c); err != nil {
 				return
 			}
-			if err = buildkit.GoImports(ctx, typvar.PrecondFile); err != nil {
+			if err = buildkit.GoImports(ctx, precondFile); err != nil {
 				return
 			}
-		} else {
-			c.Info("No precondition")
-			os.Remove(typvar.PrecondFile)
 		}
 		return
 	}

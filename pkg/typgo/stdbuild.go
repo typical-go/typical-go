@@ -32,21 +32,21 @@ func executeRun(c *Context) (err error) {
 	c.Info("Standard-Build: Build the project")
 	binary := fmt.Sprintf("%s/%s", typvar.BinFolder, c.BuildTool.Name)
 	srcDir := fmt.Sprintf("%s/%s", typvar.CmdFolder, c.BuildTool.Name)
-	src := fmt.Sprintf("./%s/main.go", srcDir)
+	srcMain := fmt.Sprintf("./%s/main.go", srcDir)
 
 	// NOTE: create main.go if not exist
-	if _, err = os.Stat(src); os.IsNotExist(err) {
+	if _, err = os.Stat(srcMain); os.IsNotExist(err) {
 		os.MkdirAll(srcDir, 0777)
 		appMain := &typtmpl.AppMain{
 			DescPkg: typvar.ProjectPkg + "/typical",
 		}
 
-		if err = typtmpl.WriteFile(src, 0777, appMain); err != nil {
+		if err = typtmpl.WriteFile(srcMain, 0777, appMain); err != nil {
 			return fmt.Errorf("%s: %w", srcDir, err)
 		}
 	}
 
-	gobuild := buildkit.NewGoBuild(binary, src).Command()
+	gobuild := buildkit.NewGoBuild(binary, "./"+srcDir).Command()
 	gobuild.Stderr = os.Stderr
 	gobuild.Stdout = os.Stderr
 

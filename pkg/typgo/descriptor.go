@@ -100,10 +100,6 @@ func ValidateName(name string) bool {
 
 // Precondition for this project
 func (d *Descriptor) Precondition(c *PrecondContext) (err error) {
-	if d.SkipPrecond {
-		c.Info("Skip the preconditon")
-		return
-	}
 
 	if d.Configurer != nil {
 		if err = WriteConfig(typvar.ConfigFile, d.Configurer); err != nil {

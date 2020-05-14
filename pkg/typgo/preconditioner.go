@@ -47,6 +47,7 @@ func createPrecondContext(ctx context.Context, d *Descriptor) *PrecondContext {
 	return &PrecondContext{
 		Precond: typtmpl.Precond{
 			Imports: retrImports(appDirs),
+			Package: "main",
 		},
 		Logger:     logger,
 		Descriptor: d,

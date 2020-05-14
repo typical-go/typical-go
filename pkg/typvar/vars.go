@@ -29,7 +29,4 @@ var (
 
 	// TestCoverProfile location
 	TestCoverProfile = "cover.out"
-
-	// PrecondFile location
-	PrecondFile = "typical/precond_DO_NOT_EDIT.go"
 )
