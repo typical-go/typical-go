@@ -26,7 +26,15 @@ type (
 )
 
 func (d Phase) String() string {
-	return [...]string{"Function", "Interface", "Struct", "Generic"}[d]
+	return [...]string{
+		"precond_phase",
+		"test_phase",
+		"compile_phase",
+		"run_phase",
+		"release_phase",
+		"publish_phase",
+		"clean_phase",
+	}[d]
 }
 
 // Execute build
