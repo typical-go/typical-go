@@ -14,9 +14,9 @@ type (
 
 	// Configuration is alias from typgo.Configuration with Configurer implementation
 	Configuration struct {
-		CtorName string
-		Name     string
-		Spec     interface{}
+		Ctor string
+		Name string
+		Spec interface{}
 	}
 )
 

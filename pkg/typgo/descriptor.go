@@ -145,7 +145,7 @@ func (d *Descriptor) appPrecond(c *PrecondContext) *typtmpl.AppPrecond {
 		for _, cfg := range d.Configurer.Configurations() {
 			specType := reflect.TypeOf(cfg.Spec).String()
 			cfgCtors = append(cfgCtors, &typtmpl.CfgCtor{
-				Name:      cfg.CtorName,
+				Name:      cfg.Ctor,
 				Prefix:    cfg.Name,
 				SpecType:  specType,
 				SpecType2: specType[1:],
