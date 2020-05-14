@@ -9,7 +9,7 @@ import (
 var Descriptor = typgo.Descriptor{
 
 	Name:    "typical-go",
-	Version: "0.9.52",
+	Version: "0.9.53",
 
 	EntryPoint: wrapper.Main,
 
