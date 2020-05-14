@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/examples/generate-mock/mock_helloworld"
 
 	"github.com/golang/mock/gomock"
 	"github.com/typical-go/typical-go/examples/generate-mock/helloworld"
+	"github.com/typical-go/typical-go/examples/generate-mock/helloworld_mock"
 )
 
 func TestPrint(t *testing.T) {
@@ -17,7 +17,7 @@ func TestPrint(t *testing.T) {
 
 	var debugger strings.Builder
 
-	greeter := mock_helloworld.NewMockGreeter(ctrl)
+	greeter := helloworld_mock.NewMockGreeter(ctrl)
 	greeter.EXPECT().Greet().Return("some-word")
 
 	helloworld.Main(greeter, &debugger)
