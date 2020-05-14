@@ -8,7 +8,6 @@ import (
 )
 
 func TestBuildPhase(t *testing.T) {
-	require.Equal(t, "precond_phase", typgo.PrecondPhase.String())
 	require.Equal(t, "test_phase", typgo.TestPhase.String())
 	require.Equal(t, "compile_phase", typgo.CompilePhase.String())
 	require.Equal(t, "run_phase", typgo.RunPhase.String())

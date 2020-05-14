@@ -1,8 +1,7 @@
 package typgo
 
 const (
-	PrecondPhase Phase = iota
-	TestPhase
+	TestPhase Phase = iota
 	CompilePhase
 	RunPhase
 	ReleasePhase
@@ -27,7 +26,6 @@ type (
 
 func (d Phase) String() string {
 	return [...]string{
-		"precond_phase",
 		"test_phase",
 		"compile_phase",
 		"run_phase",
