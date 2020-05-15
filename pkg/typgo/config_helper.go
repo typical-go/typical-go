@@ -29,8 +29,12 @@ func WriteConfig(dest string, c Configurer) (err error) {
 	}
 	defer f.Close()
 
-	stat, _ := f.Stat()
-	if stat.Size() > 0 {
+	hasNewLine, err := hasLastNewLine(f)
+	if err != nil {
+		return
+	}
+
+	if !hasNewLine {
 		fmt.Fprintln(f)
 	}
 
@@ -88,4 +92,26 @@ func ReadConfig(r io.Reader) (m map[string]string) {
 	}
 
 	return
+}
+
+func hasLastNewLine(f *os.File) (has bool, err error) {
+	stat, err := f.Stat()
+	if err != nil {
+		return
+	}
+
+	if stat.Size() <= 0 {
+		return true, nil
+	}
+
+	if _, err = f.Seek(-1, io.SeekEnd); err != nil{
+		return
+	}
+
+    char := make([]byte, 1)
+    if _, err = f.Read(char); err != nil {
+		return 
+	}
+
+	return (char[0] == '\n'), nil
 }
