@@ -80,6 +80,14 @@ func TestWriteConfig(t *testing.T) {
 			before:   "XXXX=XXXX",
 			expected: "XXXX=XXXX\nTEST_FIELD1=defaulValue1\nTEST_FIELD2=defaulValue2\n",
 		},
+		{
+			Configurer: &typgo.Configuration{
+				Name: "TEST",
+				Spec: &someSpec{},
+			},
+			before:   "XXXX=XXXX\nTEST_FIELD1=currentValue1\n",
+			expected: "XXXX=XXXX\nTEST_FIELD1=currentValue1\n\nTEST_FIELD2=defaulValue2\n",
+		},
 	}
 
 	for i, tt := range testcases {
