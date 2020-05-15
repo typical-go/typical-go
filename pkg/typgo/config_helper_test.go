@@ -19,6 +19,19 @@ func TestReadConfig(t *testing.T) {
 		expected map[string]string
 	}{
 		{
+			raw: "key1=value1",
+			expected: map[string]string{
+				"key1": "value1",
+			},
+		},
+		{
+			raw: "key1=value1\nkey2=value2\n",
+			expected: map[string]string{
+				"key1": "value1",
+				"key2": "value2",
+			},
+		},
+		{
 			raw: "key1=value1\nkey2=value2",
 			expected: map[string]string{
 				"key1": "value1",
