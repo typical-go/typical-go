@@ -34,6 +34,10 @@ func WriteConfig(dest string, c Configurer) (err error) {
 		fmt.Fprintln(f)
 	}
 
+	if _, err = f.Seek(0, io.SeekStart); err != nil {
+		return 
+	}
+
 	m = ReadConfig(f)
 	for _, field := range fields {
 		if _, ok := m[field.Name]; !ok {

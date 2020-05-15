@@ -19,6 +19,19 @@ func TestReadConfig(t *testing.T) {
 		expected map[string]string
 	}{
 		{
+			raw: "key1=value1",
+			expected: map[string]string{
+				"key1": "value1",
+			},
+		},
+		{
+			raw: "key1=value1\nkey2=value2\n",
+			expected: map[string]string{
+				"key1": "value1",
+				"key2": "value2",
+			},
+		},
+		{
 			raw: "key1=value1\nkey2=value2",
 			expected: map[string]string{
 				"key1": "value1",
@@ -66,6 +79,14 @@ func TestWriteConfig(t *testing.T) {
 			},
 			before:   "XXXX=XXXX",
 			expected: "XXXX=XXXX\nTEST_FIELD1=defaulValue1\nTEST_FIELD2=defaulValue2\n",
+		},
+		{
+			Configurer: &typgo.Configuration{
+				Name: "TEST",
+				Spec: &someSpec{},
+			},
+			before:   "XXXX=XXXX\nTEST_FIELD1=currentValue1\n",
+			expected: "XXXX=XXXX\nTEST_FIELD1=currentValue1\n\nTEST_FIELD2=defaulValue2\n",
 		},
 	}
 
