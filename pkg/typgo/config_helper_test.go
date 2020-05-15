@@ -86,7 +86,7 @@ func TestWriteConfig(t *testing.T) {
 				Spec: &someSpec{},
 			},
 			before:   "XXXX=XXXX\nTEST_FIELD1=currentValue1\n",
-			expected: "XXXX=XXXX\nTEST_FIELD1=currentValue1\n\nTEST_FIELD2=defaulValue2\n",
+			expected: "XXXX=XXXX\nTEST_FIELD1=currentValue1\nTEST_FIELD2=defaulValue2\n",
 		},
 	}
 
