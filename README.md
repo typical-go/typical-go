@@ -23,56 +23,23 @@ Build-Tool as a framework (BAAF) is a concept where both build-tool and applicat
 
 ## Descriptor File
 
-Typically, the descriptor defined in `typical/descriptor.go` 
-```go
-
+The descriptor defined in `typical/descriptor.go` with variable name `Descriptor`
+```go 
 var Descriptor = typgo.Descriptor{
-	Name:        "typical-rest-server",                                       // name of the project
-	Description: "Example of typical and scalable RESTful API Server for Go", // description of the project
-	Version:     "0.8.25",                                                    // version of the project
+	Name:    "configuration-with-invocation",
+	Version: "1.0.0",
 
-	App: typgo.EntryPoint(server.Main, "server").
-		Imports(
-			server.Configuration(), 
-			typredis.Module(),    // create and destroy redis connection
-			typpostgres.Module(), // create and destroy postgres db connection
-		),
+	EntryPoint: server.Main,
 
-	BuildTool: typgo.
-		BuildSequences(
-			typgo.StandardBuild(),
-			typgo.Github("typical-go", "typical-rest-server"), // Create release to Github
-		).
-		Utilities(
-			typpostgres.Utility(), // create database, drop, migrate, seed, etc.
-			typredis.Utility(),    // redis console
+	Configurer: server.Configuration(),
 
-			// Generate dockercompose and spin up docker
-			typdocker.Compose(
-				typpostgres.DockerRecipeV3(),
-				typredis.DockerRecipeV3(),
-			),
-		),
+	Build: &typgo.StdBuild{},
+
+	Layouts: []string{
+		"server",
+	},
 }
 ```
-
-## Application
-
-`App` in descriptor define the application. `./typicalw run` run the application based on this.
-
-`typgo` package is common golang application geared with dependency-injection and configuration. 
-- `EntryPoint` contain main function and source folder. 
-- `Imports` to put configurations, constructor, destructor or preparation into the application
-
-You can make your own application implementation by implmenent `typgo.App` interface
-
-## Build Tool
-
-`BuildTool` in descriptor define the build-tool. `./typicalw` run the build-tool based on this.
-
-`typgo` package is common build-tool with build-sequence and utilities.
-- `BuildSequence` is sequence of build process (check [Build Life-Cycle](#build-life-cycle) section)
-- `Utilities` custom task for development
 
 ## Wrapper
 
@@ -84,27 +51,20 @@ You can make your own application implementation by implmenent `typgo.App` inter
 
 ```
 NAME:
-   typical-rest-server - Build-Tool
+   configuration-with-invocation - Build-Tool
 
 USAGE:
    build-tool [global options] command [command options] [arguments...]
 
 VERSION:
-   0.8.25
-
-DESCRIPTION:
-   Example of typical and scalable RESTful API Server for Go
+   1.0.0
 
 COMMANDS:
-   test, t          Test the project
-   run, r           Run the project in local environment
-   publish, p       Publish the project
-   clean, c         Clean the project
-   mock          Generate mock class
-   postgres, pg  Postgres Utility
-   redis         Redis utility
-   docker        Docker utility
-   help, h       Shows a list of commands or help for one command
+   test, t     Test the project
+   run, r      Run the project in local environment
+   publish, p  Publish the project
+   clean, c    Clean the project
+   help, h     Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --help, -h     show help (default: false)
@@ -117,42 +77,6 @@ GLOBAL OPTIONS:
 Typical-tmp is an important folder that contains the build-tool mechanisms. By default, it is located in `.typical-tmp` and can be changed by hacking/editing the `typicalw` script.
 
 Since the typical-go project is still undergoing development, maybe there is some breaking change and deleting typical-tmp can solve the issue since it will be healed by itself.
-
-
-## Build Life-Cycle
-
-Each build-sequence contain either precondition, run, test, release or publish. 
-
-```
-        +--------------------+       
-        |    Precondition    |       
-        +--------------------+       
-            /            \           
-           /              \          
-          /                \         
-         /         +----------------+
-        /          |      Test      |
-+-------------+    +----------------+
-|     Run     |             |        
-+-------------+             |        
-                   +----------------+
-                   |     Release    |
-                   +----------------+
-                            |        
-                            |        
-                   +----------------+
-                   |     Publish    |
-                   +----------------+
-```
-
-| # | Phase | Description | Command | 
-|---|-------|-------------|---------|
-| 1 | Precondition | Setup the project; most likely generate file that required for application | `./typicalw` |
-| 2 | Test |  Test the project | `./typicalw test` |
-| 3 | Run | Run the project for local environment | `./typicalw run` |
-| 4 | Release | Execute before publish the project | n/a |
-| 5 | Publish | Publish the project | `./typicalw publish`  |
-
 
 
 ## Examples
