@@ -99,7 +99,7 @@ func ValidateName(name string) bool {
 }
 
 // Precondition for this project
-func (d *Descriptor) Precondition(c *PrecondContext) (err error) {
+func (d *Descriptor) Precondition(c *Context) (err error) {
 
 	if d.Configurer != nil {
 		if err = WriteConfig(typvar.ConfigFile, d.Configurer); err != nil {
@@ -108,14 +108,14 @@ func (d *Descriptor) Precondition(c *PrecondContext) (err error) {
 	}
 
 	if appPrecond := d.appPrecond(c); appPrecond.NotEmpty() {
-		c.AppendTemplate(appPrecond)
+		c.Precond.AppendTemplate(appPrecond)
 	}
 
 	LoadConfig(typvar.ConfigFile)
 	return
 }
 
-func (d *Descriptor) appPrecond(c *PrecondContext) *typtmpl.AppPrecond {
+func (d *Descriptor) appPrecond(c *Context) *typtmpl.AppPrecond {
 	var (
 		ctors    []*typtmpl.Ctor
 		cfgCtors []*typtmpl.CfgCtor

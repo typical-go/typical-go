@@ -10,27 +10,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func createBuildToolCmds(d *Descriptor) (cmds []*cli.Command) {
-	b := &BuildTool{
-		Descriptor: d,
-	}
-
-	cmds = []*cli.Command{
-		cmdTest(b),
-		cmdRun(b),
-		cmdPublish(b),
-		cmdClean(b),
-	}
-
-	if d.Utility != nil {
-		for _, cmd := range d.Utility.Commands(b) {
-			cmds = append(cmds, cmd)
-		}
-	}
-
-	return cmds
-}
-
 func cmdTest(c *BuildTool) *cli.Command {
 	return &cli.Command{
 		Name:    "test",
