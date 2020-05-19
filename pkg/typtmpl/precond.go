@@ -2,7 +2,6 @@ package typtmpl
 
 import (
 	"io"
-	"strings"
 )
 
 var _ Template = (*Precond)(nil)
@@ -15,36 +14,63 @@ import ({{range $import := .Imports}}
 	"{{$import}}"{{end}}
 )
 
-func init() { {{range $line := .Lines}}
-	{{$line}}{{end}}
-}
-`
+func init() {
+	typgo.Provide({{range $c := .Ctors}}
+		&typgo.Constructor{Name: "{{$c.Name}}", Fn: {{$c.Def}}},{{end}}{{range $c := .CfgCtors}}
+		&typgo.Constructor{
+			Name: "{{$c.Name}}",
+			Fn: func() (cfg {{$c.SpecType}}, err error) {
+				cfg = new({{$c.SpecType2}})
+				if err = typgo.ProcessConfig("{{$c.Prefix}}", cfg); err != nil {
+					return nil, err
+				}
+				return
+			},
+		},{{end}}
+	)
+	typgo.Destroy({{range $d := .Dtors}}
+		&typgo.Destructor{Fn: {{$d.Def}}},{{end}}
+	)
+}`
 
-// Precond writer
-type Precond struct {
-	Package string
-	Imports []string
-	Lines   []string
+type (
+	// Precond to generate precondition for app
+	Precond struct {
+		Package  string
+		Imports  []string
+		Ctors    []*Ctor
+		CfgCtors []*CfgCtor
+		Dtors    []*Dtor
+	}
+
+	// Ctor is constructor model
+	Ctor struct {
+		Name string
+		Def  string
+	}
+
+	// Dtor is destructor model
+	Dtor struct {
+		Def string
+	}
+
+	// CfgCtor is config constructor model
+	CfgCtor struct {
+		Name      string
+		Prefix    string
+		SpecType  string
+		SpecType2 string
+	}
+)
+
+// Execute app precondition template
+func (t *Precond) Execute(w io.Writer) (err error) {
+	return Execute("appPrecond", precond, t, w)
 }
 
-// AppendImport to append imports
-func (i *Precond) AppendImport(imports ...string) {
-	i.Imports = append(i.Imports, imports...)
-}
-
-// AppendLine to append init line
-func (i *Precond) AppendLine(lines ...string) {
-	i.Lines = append(i.Lines, lines...)
-}
-
-// AppendTemplate to append init line with wirter
-func (i *Precond) AppendTemplate(tmpl Template) {
-	var b strings.Builder
-	tmpl.Execute(&b)
-	i.AppendLine(b.String())
-}
-
-// Execute precond template
-func (i *Precond) Execute(w io.Writer) (err error) {
-	return Execute("precond", precond, i, w)
+// NotEmpty return true if not empty
+func (t *Precond) NotEmpty() bool {
+	return len(t.Ctors) > 0 ||
+		len(t.CfgCtors) > 0 ||
+		len(t.Dtors) > 0
 }

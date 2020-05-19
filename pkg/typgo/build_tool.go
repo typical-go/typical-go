@@ -97,7 +97,7 @@ func beforeBuildTool(b *BuildTool) cli.BeforeFunc {
 			return
 		}
 
-		if len(b.Precond.Lines) > 0 {
+		if b.Precond.NotEmpty() {
 			logger.Infof("Write %s", precondFile)
 			if err = typtmpl.WriteFile(precondFile, 0777, b.Precond); err != nil {
 				return

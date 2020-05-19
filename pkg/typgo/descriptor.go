@@ -107,24 +107,18 @@ func (d *Descriptor) Precondition(c *Context) (err error) {
 		}
 	}
 
-	if appPrecond := d.appPrecond(c); appPrecond.NotEmpty() {
-		c.Precond.AppendTemplate(appPrecond)
-	}
-
 	LoadConfig(typvar.ConfigFile)
+
+	d.appPrecond(c)
+
 	return
 }
 
-func (d *Descriptor) appPrecond(c *Context) *typtmpl.AppPrecond {
-	var (
-		ctors    []*typtmpl.Ctor
-		cfgCtors []*typtmpl.CfgCtor
-		dtors    []*typtmpl.Dtor
-	)
+func (d *Descriptor) appPrecond(c *Context) {
 
 	ctorAnnots, errs := typannot.GetCtors(c.ASTStore)
 	for _, a := range ctorAnnots {
-		ctors = append(ctors, &typtmpl.Ctor{
+		c.Precond.Ctors = append(c.Precond.Ctors, &typtmpl.Ctor{
 			Name: a.Name,
 			Def:  fmt.Sprintf("%s.%s", a.Decl.Pkg, a.Decl.Name),
 		})
@@ -132,7 +126,7 @@ func (d *Descriptor) appPrecond(c *Context) *typtmpl.AppPrecond {
 
 	dtorAnnots, errs := typannot.GetDtors(c.ASTStore)
 	for _, a := range dtorAnnots {
-		dtors = append(dtors, &typtmpl.Dtor{
+		c.Precond.Dtors = append(c.Precond.Dtors, &typtmpl.Dtor{
 			Def: fmt.Sprintf("%s.%s", a.Decl.Pkg, a.Decl.Name),
 		})
 	}
@@ -144,18 +138,12 @@ func (d *Descriptor) appPrecond(c *Context) *typtmpl.AppPrecond {
 	if d.Configurer != nil {
 		for _, cfg := range d.Configurer.Configurations() {
 			specType := reflect.TypeOf(cfg.Spec).String()
-			cfgCtors = append(cfgCtors, &typtmpl.CfgCtor{
+			c.Precond.CfgCtors = append(c.Precond.CfgCtors, &typtmpl.CfgCtor{
 				Name:      cfg.Ctor,
 				Prefix:    cfg.Name,
 				SpecType:  specType,
 				SpecType2: specType[1:],
 			})
 		}
-	}
-
-	return &typtmpl.AppPrecond{
-		Ctors:    ctors,
-		CfgCtors: cfgCtors,
-		Dtors:    dtors,
 	}
 }
