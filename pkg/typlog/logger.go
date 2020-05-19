@@ -66,15 +66,18 @@ func (s *Logger) warnSign() {
 }
 
 func (s *Logger) level(lvl string, col color.Attribute) {
+	color.New(col).Fprint(s, lvl)
+	fmt.Fprint(s, ": ")
+
 	if s.Name != "" {
+		fmt.Fprint(s, "(")
 		if s.Color == 0 {
 			s.Color = DefaultColor
 		}
 		color.New(s.Color).Fprint(s, s.Name)
-		fmt.Fprint(s, ":")
+		fmt.Fprint(s, ") ")
 	}
-	color.New(col).Fprint(s, lvl)
-	fmt.Fprint(s, "> ")
+
 }
 
 func (s Logger) Write(p []byte) (n int, err error) {

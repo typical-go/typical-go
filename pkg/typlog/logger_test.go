@@ -20,10 +20,10 @@ func TestLogger(t *testing.T) {
 	logger.Warn("some warning")
 	logger.Warnf("formatted warning: %s", "BAR")
 
-	expected := `NONAME:INFO> some information
-NONAME:INFO> formatted information: FOO
-NONAME:WARN> some warning
-NONAME:WARN> formatted warning: BAR
+	expected := `INFO: (NONAME) some information
+INFO: (NONAME) formatted information: FOO
+WARN: (NONAME) some warning
+WARN: (NONAME) formatted warning: BAR
 `
 
 	require.Equal(t, expected, debugger.String())
