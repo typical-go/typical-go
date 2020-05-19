@@ -29,7 +29,6 @@ func (b *StdBuild) Execute(c *Context, phase Phase) (ok bool, err error) {
 }
 
 func executeRun(c *Context) (err error) {
-	c.Info("Standard-Build: Build the project")
 	binary := fmt.Sprintf("%s/%s", typvar.BinFolder, c.BuildTool.Name)
 	srcDir := fmt.Sprintf("%s/%s", typvar.CmdFolder, c.BuildTool.Name)
 	srcMain := fmt.Sprintf("./%s/main.go", srcDir)
