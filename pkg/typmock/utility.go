@@ -7,7 +7,6 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typannot"
-	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typvar"
 
 	"github.com/iancoleman/strcase"
@@ -34,18 +33,10 @@ func commands(c *typgo.BuildTool) []*cli.Command {
 }
 
 func generateMock(c *typgo.Context) (err error) {
-	var (
-		store *typast.ASTStore
-	)
-
-	_, files := typgo.WalkLayout(c.BuildTool.Layouts)
-	if store, err = typast.CreateASTStore(files...); err != nil {
-		return
-	}
 
 	mockery := NewMockery(typvar.ProjectPkg)
 
-	mocks := typannot.GetMock(store)
+	mocks := typannot.GetMock(c.ASTStore)
 	for _, mock := range mocks {
 		mockery.Put(mock)
 	}
