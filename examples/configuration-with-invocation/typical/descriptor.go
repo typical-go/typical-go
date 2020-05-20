@@ -1,7 +1,7 @@
 package typical
 
 import (
-	"github.com/typical-go/typical-go/examples/configuration-with-invocation/server"
+	"github.com/typical-go/typical-go/examples/configuration-with-invocation/internal/server"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -17,6 +17,6 @@ var Descriptor = typgo.Descriptor{
 	Build: &typgo.StdBuild{},
 
 	Layouts: []string{
-		"server",
+		"internal",
 	},
 }

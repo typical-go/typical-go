@@ -19,20 +19,15 @@ var redisRecipe = &typdocker.Recipe{
 }
 ```
 
-Register docker build-task to BuildTool
+Register the docker utility
 ```go
 var Descriptor = typgo.Descriptor{
 	// ...
 
-	BuildTool: typgo.
-		BuildSequences(
-			typgo.StandardBuild(), 
-		).
-		WithTasks(
-			typdocker.Compose( 
-				redisDockerRecipe, 
-			),
-		),
+	Utility: typdocker.Compose(
+		redisRecipe,
+		// More recipe...
+	),
 }
 ```
 

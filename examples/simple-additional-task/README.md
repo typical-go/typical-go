@@ -4,18 +4,20 @@ Example typical-go project to demonstrate how to add additional build-tool task
 
 Create task function 
 ```go
-func printContext(ctx *typgo.Context) *cli.Command {
-	return &cli.Command{
-		Name:    "context",
-		Aliases: []string{"ctx"},
-		Usage:   "Print context as json",
-		Action: func(cliCtx *cli.Context) (err error) {
-			var b []byte
-			if b, err = json.MarshalIndent(ctx, "", "    "); err != nil {
+func taskPrintContext(b *typgo.BuildTool) []*cli.Command {
+	return []*cli.Command{
+		{
+			Name:    "context",
+			Aliases: []string{"ctx"},
+			Usage:   "Print context as json",
+			Action: func(cliCtx *cli.Context) (err error) {
+				var b []byte
+				if b, err = json.MarshalIndent(b, "", "    "); err != nil {
+					return
+				}
+				fmt.Println(string(b))
 				return
-			}
-			fmt.Println(string(b))
-			return
+			},
 		},
 	}
 }
@@ -26,13 +28,8 @@ Add commander to descriptor `typical/descriptor`
 var Descriptor = typgo.Descriptor{
 	// ... 
 	
-	BuildTool: typgo.
-		Create(
-			typgo.StandardBuild(),
-		).
-		WithCommanders(
-			typgo.CreateCommander(taskPrintContext), // Add custom task
-		),
+	Utility: typgo.NewUtility(taskPrintContext), // Add custom task
+}
 ```
 
 Execute the task

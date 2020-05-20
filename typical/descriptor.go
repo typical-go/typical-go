@@ -7,7 +7,6 @@ import (
 
 // Descriptor of typical-go
 var Descriptor = typgo.Descriptor{
-
 	Name:    "typical-go",
 	Version: "0.9.54",
 
@@ -24,5 +23,4 @@ var Descriptor = typgo.Descriptor{
 	},
 
 	Utility: typgo.NewUtility(taskTestExample), // Test all the examples
-
 }

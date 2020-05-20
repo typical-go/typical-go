@@ -1,7 +1,7 @@
 package typical
 
 import (
-	"github.com/typical-go/typical-go/examples/generate-docker-compose/pinger"
+	"github.com/typical-go/typical-go/examples/generate-docker-compose/internal/pinger"
 	"github.com/typical-go/typical-go/pkg/typdocker"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
@@ -18,4 +18,8 @@ var Descriptor = typgo.Descriptor{
 	Utility: typdocker.Compose(
 		redisRecipe,
 	),
+
+	Layouts: []string{
+		"internal",
+	},
 }

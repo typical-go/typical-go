@@ -16,15 +16,8 @@ Add typmock utility to descriptor
 var Descriptor = typgo.Descriptor{
 	// ...
 
-	BuildTool: typgo.
-		BuildSequences(
-			typgo.StandardBuild(), 
-		).
-		Utilities(
-			typmock.Utility(),
-		),
+	Utility: typmock.Utility(),
 }
-
 ```
 
 Generate mock

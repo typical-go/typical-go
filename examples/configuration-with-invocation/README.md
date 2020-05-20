@@ -8,9 +8,19 @@ Append the configurer to the project descriptor `typical/descriptor.go`
 var Descriptor = typgo.Descriptor{
 	// ...
 
-	App: typgo.EntryPoint(server.Main, "server").
-		Imports(
-			server.Configuration(), // Append configurer for the this project
-		),
+	Configurer: server.Configuration(),
+}
+```
+
+For multiple configuration
+```go
+// Descriptor of sample
+var Descriptor = typgo.Descriptor{
+	// ...
+
+	Configurer: typgo.Configurers{
+		server.Configuration(),
+		// More configurer...
+	}
 }
 ```

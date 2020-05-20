@@ -1,7 +1,7 @@
 package typical
 
 import (
-	"github.com/typical-go/typical-go/examples/serve-react-demo/server"
+	"github.com/typical-go/typical-go/examples/serve-react-demo/internal/server"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -15,5 +15,9 @@ var Descriptor = typgo.Descriptor{
 	Build: typgo.Builds{
 		&ReactDemoModule{source: "react-demo"},
 		&typgo.StdBuild{},
+	},
+
+	Layouts: []string{
+		"internal",
 	},
 }

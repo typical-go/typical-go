@@ -12,15 +12,14 @@ func Main(d *typgo.Descriptor) (err error) {
 
 Setup the typical descriptor
 ```go
+// Descriptor of sample
 var Descriptor = typgo.Descriptor{
 	Name:    "hello-world",
 	Version: "1.0.0",
 
-	App: typgo.NewApp(helloworld.Main), // the application
+	EntryPoint: helloworld.Main,
 
-	BuildTool: typgo.
-		BuildSequences(
-			typgo.StandardBuild(), // standard build module
-		),
+	Build: &typgo.StdBuild{},
 }
+
 ```

@@ -1,7 +1,7 @@
 package typical
 
 import (
-	"github.com/typical-go/typical-go/examples/provide-constructor/helloworld"
+	"github.com/typical-go/typical-go/examples/provide-constructor/internal/helloworld"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -15,6 +15,6 @@ var Descriptor = typgo.Descriptor{
 	Build: &typgo.StdBuild{},
 
 	Layouts: []string{
-		"helloworld",
+		"internal",
 	},
 }

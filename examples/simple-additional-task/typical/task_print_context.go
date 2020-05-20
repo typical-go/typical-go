@@ -1,28 +1,28 @@
 package typical
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
 
-func taskPrintContext(c *typgo.BuildTool) []*cli.Command {
+func taskPrintContext(bt *typgo.BuildTool) []*cli.Command {
 	return []*cli.Command{
 		{
-			Name:    "context",
-			Aliases: []string{"ctx"},
-			Usage:   "Print context as json",
+			Name:  "desc",
+			Usage: "Print descriptor",
 			Action: func(cliCtx *cli.Context) (err error) {
-				var b []byte
-				if b, err = json.MarshalIndent(c, "", "    "); err != nil {
-					return
-				}
-				fmt.Println(string(b))
+				// b, err := json.MarshalIndent(bt.Descriptor, "", "    ")
+				// b, err := json.Marshal(bt)
+				// if err != nil {
+				// 	return
+				// }
+				// fmt.Println(string(b))
+				fmt.Printf("name=%s\n", bt.Descriptor.Name)
+				fmt.Printf("version=%s\n", bt.Descriptor.Version)
 				return
 			},
 		},
 	}
-
 }

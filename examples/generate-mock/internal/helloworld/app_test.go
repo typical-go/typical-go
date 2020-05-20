@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/golang/mock/gomock"
-	"github.com/typical-go/typical-go/examples/generate-mock/helloworld"
-	"github.com/typical-go/typical-go/examples/generate-mock/helloworld_mock"
+	"github.com/typical-go/typical-go/examples/generate-mock/internal/helloworld"
+	"github.com/typical-go/typical-go/examples/generate-mock/internal/helloworld_mock"
 )
 
 func TestPrint(t *testing.T) {
