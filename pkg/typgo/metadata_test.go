@@ -15,8 +15,8 @@ func TestOpenMetadata_NotExist(t *testing.T) {
 	defer os.Remove("not-exist")
 
 	require.NoError(t, err)
-	require.Equal(t, "not-exist", db.Path())
-	require.Equal(t, map[string]interface{}{}, db.Map())
+	require.Equal(t, "not-exist", db.Path)
+	require.Equal(t, map[string]interface{}{}, db.Extras)
 
 	b, _ := ioutil.ReadFile("not-exist")
 	require.Equal(t, `{}`, string(b))
@@ -58,8 +58,8 @@ func TestOpenMetadata(t *testing.T) {
 			}
 
 			require.NoError(t, err)
-			require.Equal(t, tt.path, db.Path())
-			require.Equal(t, tt.expected, db.Map())
+			require.Equal(t, tt.path, db.Path)
+			require.Equal(t, tt.expected, db.Extras)
 		})
 
 	}

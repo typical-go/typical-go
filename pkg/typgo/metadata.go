@@ -9,8 +9,8 @@ import (
 type (
 	// Metadata is simple file-based json database
 	Metadata struct {
-		path string
-		m    map[string]interface{}
+		Path   string
+		Extras map[string]interface{}
 	}
 )
 
@@ -31,15 +31,15 @@ func OpenMetadata(path string) (db *Metadata, err error) {
 	}
 
 	return &Metadata{
-		path: path,
-		m:    m,
+		Path:   path,
+		Extras: m,
 	}, nil
 }
 
 func createEmpty(path string) (db *Metadata, err error) {
 	db = &Metadata{
-		path: path,
-		m:    map[string]interface{}{},
+		Path:   path,
+		Extras: map[string]interface{}{},
 	}
 	err = db.Save()
 	return
@@ -47,16 +47,6 @@ func createEmpty(path string) (db *Metadata, err error) {
 
 // Save db to file
 func (d *Metadata) Save() (err error) {
-	b, _ := json.Marshal(d.m)
-	return ioutil.WriteFile(d.path, b, 0777)
-}
-
-// Map of jsondb
-func (d *Metadata) Map() map[string]interface{} {
-	return d.m
-}
-
-// Path of jsondb
-func (d *Metadata) Path() string {
-	return d.path
+	b, _ := json.Marshal(d.Extras)
+	return ioutil.WriteFile(d.Path, b, 0777)
 }
