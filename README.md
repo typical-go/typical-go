@@ -18,7 +18,7 @@ A Build Tool (+ Framework) for Golang. <https://typical-go.github.io/>
 
 ## Wrapper
 
-Wrapper is a simple bash script (`typicalw`) to download, compile and run both build-tool and application. 
+Wrapper responsible to download, compile and run both build-tool and application through simple bash script called `typicalw`
 
 ```bash
 ./typicalw
