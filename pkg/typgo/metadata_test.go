@@ -15,8 +15,10 @@ func TestOpenMetadata_NotExist(t *testing.T) {
 	defer os.Remove("not-exist")
 
 	require.NoError(t, err)
-	require.Equal(t, "not-exist", db.Path)
-	require.Equal(t, map[string]interface{}{}, db.Extras)
+	require.Equal(t, &typgo.Metadata{
+		Path:  "not-exist",
+		Extra: map[string]interface{}{},
+	}, db)
 
 	b, _ := ioutil.ReadFile("not-exist")
 	require.Equal(t, `{}`, string(b))
@@ -27,15 +29,18 @@ func TestOpenMetadata(t *testing.T) {
 		testName    string
 		path        string
 		data        string
-		expected    map[string]interface{}
+		expected    *typgo.Metadata
 		expectedErr string
 	}{
 		{
 			path: "test.json",
-			data: `{"key-1": "value-1", "key-2": "value-2"}`,
-			expected: map[string]interface{}{
-				"key-1": "value-1",
-				"key-2": "value-2",
+			data: `{"path": "test.json", "extra": {"key-1":"value-1", "key-2":"value-2"}}`,
+			expected: &typgo.Metadata{
+				Path: "test.json",
+				Extra: map[string]interface{}{
+					"key-1": "value-1",
+					"key-2": "value-2",
+				},
 			},
 		},
 		{
@@ -58,8 +63,7 @@ func TestOpenMetadata(t *testing.T) {
 			}
 
 			require.NoError(t, err)
-			require.Equal(t, tt.path, db.Path)
-			require.Equal(t, tt.expected, db.Extras)
+			require.Equal(t, tt.expected, db)
 		})
 
 	}

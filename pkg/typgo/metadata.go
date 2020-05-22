@@ -9,37 +9,34 @@ import (
 type (
 	// Metadata is simple file-based json database
 	Metadata struct {
-		Path   string
-		Extras map[string]interface{}
+		Path  string                 `json:"path"`
+		Extra map[string]interface{} `json:"extra"`
 	}
 )
 
 // OpenMetadata to open metadata
-func OpenMetadata(path string) (db *Metadata, err error) {
-	if _, err = os.Stat(path); os.IsNotExist(err) {
+func OpenMetadata(path string) (*Metadata, error) {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return createEmpty(path)
 	}
 
 	var (
-		b []byte
-		m map[string]interface{}
+		metadata Metadata
+		err      error
 	)
 
-	b, _ = ioutil.ReadFile(path)
-	if err = json.Unmarshal(b, &m); err != nil {
-		return
+	b, _ := ioutil.ReadFile(path)
+	if err = json.Unmarshal(b, &metadata); err != nil {
+		return nil, err
 	}
 
-	return &Metadata{
-		Path:   path,
-		Extras: m,
-	}, nil
+	return &metadata, nil
 }
 
 func createEmpty(path string) (db *Metadata, err error) {
 	db = &Metadata{
-		Path:   path,
-		Extras: map[string]interface{}{},
+		Path:  path,
+		Extra: map[string]interface{}{},
 	}
 	err = db.Save()
 	return
@@ -47,6 +44,6 @@ func createEmpty(path string) (db *Metadata, err error) {
 
 // Save db to file
 func (d *Metadata) Save() (err error) {
-	b, _ := json.Marshal(d.Extras)
+	b, _ := json.Marshal(d)
 	return ioutil.WriteFile(d.Path, b, 0777)
 }
