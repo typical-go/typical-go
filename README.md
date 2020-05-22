@@ -10,40 +10,15 @@ A Build Tool (+ Framework) for Golang. <https://typical-go.github.io/>
 
 ## Introduction
 
-Typical-Go provides levels of abstraction for build/compile the (golang) project. The unique about Typical-Go is it use go-based descriptor file rather than DSL which is making it easier to understand and maintain.
+- Framework to Build-Tool  
+  Typical-Go provides levels of abstraction to develop your own build-tool. 
+- Build-Tool as a framework (BAAF)  
+  It is a concept where both build-tool and application utilize the same definition. We no longer see build-tool as a separate beast with the application but rather part of the same living organism. 
 
-You can use Typical-Go as:
-- Framework to create custom build-tool
-- Golang build-tool
-- Build-Tool as a framework 
-
-## Build-Tool As A Framework (BAAF)
-
-Build-Tool as a framework (BAAF) is a concept where both build-tool and application utilize the same definition/settings/descriptor. We no longer see build-tool as a separate beast with the application but rather part of the same living organism. This is only possible because the app, build-tool, and descriptor speak with the same tongue.
-
-## Descriptor File
-
-The descriptor defined in `typical/descriptor.go` with variable name `Descriptor`
-```go 
-var Descriptor = typgo.Descriptor{
-	Name:    "configuration-with-invocation",
-	Version: "1.0.0",
-
-	EntryPoint: server.Main,
-
-	Configurer: server.Configuration(),
-
-	Build: &typgo.StdBuild{},
-
-	Layouts: []string{
-		"server",
-	},
-}
-```
 
 ## Wrapper
 
-`typicalw` is your best friend. It will download, compile and run the actual build-tool for your day-to-day development.
+Wrapper is a simple bash script (`typicalw`) to download, compile and run both build-tool and application. 
 
 ```bash
 ./typicalw
@@ -71,6 +46,29 @@ GLOBAL OPTIONS:
    --version, -v  print the version (default: false)
 ```
 
+## Descriptor
+
+The unique about Typical-Go is it use go-based descriptor file rather than DSL which is making it easier to understand and maintain. 
+
+It should be defined at `typical/descriptor.go` with variable name `Descriptor`
+```go 
+var Descriptor = typgo.Descriptor{
+	Name:    "configuration-with-invocation",
+	Version: "1.0.0",
+
+	EntryPoint: server.Main,
+
+	Configurer: server.Configuration(),
+
+	Build: &typgo.StdBuild{},
+
+	Layouts: []string{
+		"server",
+	},
+}
+```
+
+
 
 ## Typical Tmp
 
@@ -81,6 +79,7 @@ Since the typical-go project is still undergoing development, maybe there is som
 
 ## Examples
 
+This repo contain both library, examples and wrapper source-code. The wrapper itself using Typical-Go as its build-tool which is an excellent example.
 - [x] [Hello World](https://github.com/typical-go/typical-go/tree/master/examples/hello-world)
 - [x] [Configuration With Invocation](https://github.com/typical-go/typical-go/tree/master/examples/configuration-with-invocation)
 - [x] [Simple Additional Task](https://github.com/typical-go/typical-go/tree/master/examples/simple-additional-task)
