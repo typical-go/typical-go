@@ -1,4 +1,4 @@
-package jsondb_test
+package typgo_test
 
 import (
 	"io/ioutil"
@@ -7,11 +7,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/typical-go/typical-go/pkg/jsondb"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
-func TestOpen_NotExist(t *testing.T) {
-	db, err := jsondb.Open("not-exist")
+func TestOpenMetadata_NotExist(t *testing.T) {
+	db, err := typgo.OpenMetadata("not-exist")
 	defer os.Remove("not-exist")
 
 	require.NoError(t, err)
@@ -22,7 +22,7 @@ func TestOpen_NotExist(t *testing.T) {
 	require.Equal(t, `{}`, string(b))
 }
 
-func TestOpen(t *testing.T) {
+func TestOpenMetadata(t *testing.T) {
 	testcases := []struct {
 		testName    string
 		path        string
@@ -51,7 +51,7 @@ func TestOpen(t *testing.T) {
 			ioutil.WriteFile(tt.path, []byte(tt.data), 0777)
 			defer os.Remove(tt.path)
 
-			db, err := jsondb.Open(tt.path)
+			db, err := typgo.OpenMetadata(tt.path)
 			if tt.expectedErr != "" {
 				require.EqualError(t, err, tt.expectedErr)
 				return

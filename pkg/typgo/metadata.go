@@ -1,4 +1,4 @@
-package jsondb
+package typgo
 
 import (
 	"encoding/json"
@@ -7,15 +7,15 @@ import (
 )
 
 type (
-	// DB is simple file-based json database
-	DB struct {
+	// Metadata is simple file-based json database
+	Metadata struct {
 		path string
 		m    map[string]interface{}
 	}
 )
 
-// Open path to create json database
-func Open(path string) (db *DB, err error) {
+// OpenMetadata to open metadata
+func OpenMetadata(path string) (db *Metadata, err error) {
 	if _, err = os.Stat(path); os.IsNotExist(err) {
 		return createEmpty(path)
 	}
@@ -30,14 +30,14 @@ func Open(path string) (db *DB, err error) {
 		return
 	}
 
-	return &DB{
+	return &Metadata{
 		path: path,
 		m:    m,
 	}, nil
 }
 
-func createEmpty(path string) (db *DB, err error) {
-	db = &DB{
+func createEmpty(path string) (db *Metadata, err error) {
+	db = &Metadata{
 		path: path,
 		m:    map[string]interface{}{},
 	}
@@ -46,17 +46,17 @@ func createEmpty(path string) (db *DB, err error) {
 }
 
 // Save db to file
-func (d *DB) Save() (err error) {
+func (d *Metadata) Save() (err error) {
 	b, _ := json.Marshal(d.m)
 	return ioutil.WriteFile(d.path, b, 0777)
 }
 
 // Map of jsondb
-func (d *DB) Map() map[string]interface{} {
+func (d *Metadata) Map() map[string]interface{} {
 	return d.m
 }
 
 // Path of jsondb
-func (d *DB) Path() string {
+func (d *Metadata) Path() string {
 	return d.path
 }
