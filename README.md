@@ -8,7 +8,7 @@
 
 A Build Tool (+ Framework) for Golang. <https://typical-go.github.io/>
 
-## Introduction
+## Use Cases
 
 - Framework to Build-Tool  
   Typical-Go provides levels of abstraction to develop your own build-tool. 
