@@ -21,7 +21,7 @@ func TestOpenMetadata_NotExist(t *testing.T) {
 	}, db)
 
 	b, _ := ioutil.ReadFile("not-exist")
-	require.Equal(t, `{}`, string(b))
+	require.Equal(t, "{\"extra\":{}}", string(b))
 }
 
 func TestOpenMetadata(t *testing.T) {
@@ -34,7 +34,7 @@ func TestOpenMetadata(t *testing.T) {
 	}{
 		{
 			path: "test.json",
-			data: `{"path": "test.json", "extra": {"key-1":"value-1", "key-2":"value-2"}}`,
+			data: `{"extra": {"key-1":"value-1", "key-2":"value-2"}}`,
 			expected: &typgo.Metadata{
 				Path: "test.json",
 				Extra: map[string]interface{}{

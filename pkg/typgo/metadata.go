@@ -9,7 +9,7 @@ import (
 type (
 	// Metadata is simple file-based json database
 	Metadata struct {
-		Path  string                 `json:"path"`
+		Path  string                 `json:"-"`
 		Extra map[string]interface{} `json:"extra"`
 	}
 )
@@ -29,6 +29,7 @@ func OpenMetadata(path string) (*Metadata, error) {
 	if err = json.Unmarshal(b, &metadata); err != nil {
 		return nil, err
 	}
+	metadata.Path = path
 
 	return &metadata, nil
 }
