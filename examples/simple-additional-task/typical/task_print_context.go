@@ -7,7 +7,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func taskPrintContext(bt *typgo.BuildTool) []*cli.Command {
+func taskPrintContext(c *typgo.BuildCli) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:  "desc",
@@ -19,8 +19,8 @@ func taskPrintContext(bt *typgo.BuildTool) []*cli.Command {
 				// 	return
 				// }
 				// fmt.Println(string(b))
-				fmt.Printf("name=%s\n", bt.Descriptor.Name)
-				fmt.Printf("version=%s\n", bt.Descriptor.Version)
+				fmt.Printf("name=%s\n", c.Descriptor.Name)
+				fmt.Printf("version=%s\n", c.Descriptor.Version)
 				return
 			},
 		},

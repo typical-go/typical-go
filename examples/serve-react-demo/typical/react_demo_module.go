@@ -35,7 +35,7 @@ func (m *ReactDemoModule) executeRun(c *typgo.Context) (err error) {
 		Dir:  m.source,
 	}
 
-	return cmd.Run(c.Cli.Context)
+	return cmd.Run(c.Ctx())
 }
 
 func (m *ReactDemoModule) executeClean(c *typgo.Context) (err error) {

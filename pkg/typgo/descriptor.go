@@ -19,8 +19,6 @@ import (
 var (
 	_ typcore.AppLauncher   = (*Descriptor)(nil)
 	_ typcore.BuildLauncher = (*Descriptor)(nil)
-
-	_ Preconditioner = (*Descriptor)(nil)
 )
 
 type (

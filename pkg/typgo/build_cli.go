@@ -25,18 +25,12 @@ type (
 	// Context of build tool
 	Context struct {
 		typlog.Logger
-
 		*cli.Context
 		*BuildCli
 	}
 
 	// CliFunc is command line function
 	CliFunc func(*Context) error
-
-	// Preconditioner responsible to precondition
-	Preconditioner interface {
-		Precondition(*Context) error
-	}
 )
 
 func createBuildCli(d *Descriptor) *BuildCli {
@@ -61,39 +55,48 @@ func createBuildCli(d *Descriptor) *BuildCli {
 	}
 }
 
+// Context of build-cli
+func (b *BuildCli) Context(name string, c *cli.Context) *Context {
+	return &Context{
+		Logger: typlog.Logger{
+			Name: name,
+		},
+		Context:  c,
+		BuildCli: b,
+	}
+}
+
 func beforeBuild(b *BuildCli) cli.BeforeFunc {
 	return func(cli *cli.Context) (err error) {
-		ctx := cli.Context
-		precondFile := fmt.Sprintf("%s/%s/precond_DO_NOT_EDIT.go", typvar.CmdFolder, b.Name)
 
-		logger := typlog.Logger{Name: "PRECOND"}
-
-		if b.SkipPrecond {
-			logger.Info("Skip the preconditon")
-			return
-		}
-
-		os.Remove(precondFile)
-
-		if err = b.Precondition(&Context{
-			BuildCli: b,
-			Context:  cli,
-			Logger:   logger,
-		}); err != nil {
-			return
-		}
-
-		if b.Precond.NotEmpty() {
-			logger.Infof("Write %s", precondFile)
-			if err = typtmpl.WriteFile(precondFile, 0777, b.Precond); err != nil {
-				return
-			}
-			if err = buildkit.GoImports(ctx, precondFile); err != nil {
+		if !b.SkipPrecond {
+			c := b.Context("PRECOND", cli)
+			if err = precond(c); err != nil {
 				return
 			}
 		}
+
 		return
 	}
+}
+
+func precond(c *Context) (err error) {
+	if err = c.Precondition(c); err != nil {
+		return
+	}
+
+	path := fmt.Sprintf("%s/%s/precond_DO_NOT_EDIT.go",
+		typvar.CmdFolder, c.Descriptor.Name)
+	os.Remove(path)
+	if c.Precond.NotEmpty() {
+		if err = typtmpl.WriteFile(path, 0777, c.Precond); err != nil {
+			return
+		}
+		if err = buildkit.GoImports(c.Ctx(), path); err != nil {
+			return
+		}
+	}
+	return
 }
 
 // Commands of build-tool
@@ -117,13 +120,8 @@ func (b *BuildCli) Commands() (cmds []*cli.Command) {
 // ActionFunc to return related action func
 func (b *BuildCli) ActionFunc(name string, fn CliFunc) func(*cli.Context) error {
 	return func(cli *cli.Context) error {
-		return fn(&Context{
-			Logger: typlog.Logger{
-				Name: strings.ToUpper(name),
-			},
-			Context:  cli,
-			BuildCli: b,
-		})
+		c := b.Context(strings.ToUpper(name), cli)
+		return fn(c)
 	}
 }
 
