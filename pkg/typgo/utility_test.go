@@ -14,7 +14,7 @@ func TestSimpleCommander_Commands(t *testing.T) {
 	cmd2 := &cli.Command{}
 	cmd3 := &cli.Command{}
 
-	utility := typgo.NewUtility(func(ctx *typgo.BuildTool) []*cli.Command {
+	utility := typgo.NewUtility(func(ctx *typgo.BuildCli) []*cli.Command {
 		return []*cli.Command{cmd1, cmd2, cmd3}
 	})
 
@@ -29,17 +29,17 @@ func TestUtilities(t *testing.T) {
 	cmd5 := &cli.Command{}
 
 	utilities := typgo.Utilities{
-		typgo.NewUtility(func(*typgo.BuildTool) []*cli.Command {
+		typgo.NewUtility(func(*typgo.BuildCli) []*cli.Command {
 			return []*cli.Command{cmd1}
 		}),
-		typgo.NewUtility(func(*typgo.BuildTool) []*cli.Command {
+		typgo.NewUtility(func(*typgo.BuildCli) []*cli.Command {
 			return []*cli.Command{cmd2}
 		}),
 		typgo.Utilities{
-			typgo.NewUtility(func(*typgo.BuildTool) []*cli.Command {
+			typgo.NewUtility(func(*typgo.BuildCli) []*cli.Command {
 				return []*cli.Command{cmd3}
 			}),
-			typgo.NewUtility(func(*typgo.BuildTool) []*cli.Command {
+			typgo.NewUtility(func(*typgo.BuildCli) []*cli.Command {
 				return []*cli.Command{cmd4, cmd5}
 			}),
 		},

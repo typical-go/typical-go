@@ -1,6 +1,7 @@
 package typgo
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strings"
@@ -14,8 +15,8 @@ import (
 )
 
 type (
-	// BuildTool detail
-	BuildTool struct {
+	// BuildCli detail
+	BuildCli struct {
 		*Descriptor
 		ASTStore *typast.ASTStore
 		Precond  *typtmpl.Precond
@@ -25,8 +26,8 @@ type (
 	Context struct {
 		typlog.Logger
 
-		Cli *cli.Context
-		*BuildTool
+		*cli.Context
+		*BuildCli
 	}
 
 	// CliFunc is command line function
@@ -38,7 +39,7 @@ type (
 	}
 )
 
-func createBuildTool(d *Descriptor) *BuildTool {
+func createBuildCli(d *Descriptor) *BuildCli {
 	var (
 		astStore *typast.ASTStore
 		err      error
@@ -50,7 +51,7 @@ func createBuildTool(d *Descriptor) *BuildTool {
 		// logger.Warn(err.Error())
 	}
 
-	return &BuildTool{
+	return &BuildCli{
 		Descriptor: d,
 		ASTStore:   astStore,
 		Precond: &typtmpl.Precond{
@@ -60,22 +61,7 @@ func createBuildTool(d *Descriptor) *BuildTool {
 	}
 }
 
-func launchBuildTool(d *Descriptor) error {
-	app := cli.NewApp()
-	app.Name = d.Name
-	app.Usage = "Build-Tool"
-	app.Description = d.Description
-	app.Version = d.Version
-
-	buildTool := createBuildTool(d)
-
-	app.Before = beforeBuildTool(buildTool)
-	app.Commands = buildTool.Commands()
-
-	return app.Run(os.Args)
-}
-
-func beforeBuildTool(b *BuildTool) cli.BeforeFunc {
+func beforeBuild(b *BuildCli) cli.BeforeFunc {
 	return func(cli *cli.Context) (err error) {
 		ctx := cli.Context
 		precondFile := fmt.Sprintf("%s/%s/precond_DO_NOT_EDIT.go", typvar.CmdFolder, b.Name)
@@ -90,9 +76,9 @@ func beforeBuildTool(b *BuildTool) cli.BeforeFunc {
 		os.Remove(precondFile)
 
 		if err = b.Precondition(&Context{
-			BuildTool: b,
-			Cli:       cli,
-			Logger:    logger,
+			BuildCli: b,
+			Context:  cli,
+			Logger:   logger,
 		}); err != nil {
 			return
 		}
@@ -111,7 +97,7 @@ func beforeBuildTool(b *BuildTool) cli.BeforeFunc {
 }
 
 // Commands of build-tool
-func (b *BuildTool) Commands() (cmds []*cli.Command) {
+func (b *BuildCli) Commands() (cmds []*cli.Command) {
 	cmds = []*cli.Command{
 		cmdTest(b),
 		cmdRun(b),
@@ -129,14 +115,14 @@ func (b *BuildTool) Commands() (cmds []*cli.Command) {
 }
 
 // ActionFunc to return related action func
-func (b *BuildTool) ActionFunc(name string, fn CliFunc) func(*cli.Context) error {
+func (b *BuildCli) ActionFunc(name string, fn CliFunc) func(*cli.Context) error {
 	return func(cli *cli.Context) error {
 		return fn(&Context{
 			Logger: typlog.Logger{
 				Name: strings.ToUpper(name),
 			},
-			Cli:       cli,
-			BuildTool: b,
+			Context:  cli,
+			BuildCli: b,
 		})
 	}
 }
@@ -151,4 +137,13 @@ func retrImports(dirs []string) []string {
 		}
 	}
 	return imports
+}
+
+//
+// Context
+//
+
+// Ctx return golang context
+func (c *Context) Ctx() context.Context {
+	return c.Context.Context
 }

@@ -8,22 +8,22 @@ type (
 		LaunchApp() error
 	}
 
-	// BuildToolLauncher responsible to launch the build-tool
-	BuildToolLauncher interface {
-		LaunchBuildTool() error
+	// BuildLauncher responsible to launch the build-tool
+	BuildLauncher interface {
+		LaunchBuild() error
 	}
 )
 
-// LaunchApp the application
+// LaunchApp to launch the application
 func LaunchApp(launcher AppLauncher) {
 	if err := launcher.LaunchApp(); err != nil {
 		log.Fatal(err.Error())
 	}
 }
 
-// LaunchBuildTool the build tool
-func LaunchBuildTool(launcher BuildToolLauncher) {
-	if err := launcher.LaunchBuildTool(); err != nil {
+// LaunchBuild to launch the build tool
+func LaunchBuild(launcher BuildLauncher) {
+	if err := launcher.LaunchBuild(); err != nil {
 		log.Fatal(err.Error())
 	}
 }

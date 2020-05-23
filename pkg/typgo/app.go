@@ -1,9 +1,6 @@
 package typgo
 
 import (
-	"os"
-
-	"github.com/typical-go/typical-go/pkg/common"
 	"go.uber.org/dig"
 )
 
@@ -20,20 +17,6 @@ func Provide(ctors ...*Constructor) {
 // Destroy destructor
 func Destroy(dtors ...*Destructor) {
 	_dtors = append(_dtors, dtors...)
-}
-
-func launchApp(d *Descriptor) (err error) {
-	if configFile := os.Getenv("CONFIG"); configFile != "" {
-		_, err = LoadConfig(configFile)
-	}
-
-	di := dig.New()
-	if err = setDependencies(di, d); err != nil {
-		return
-	}
-
-	errs := common.GracefulRun(start(di, d), stop(di))
-	return errs.Unwrap()
 }
 
 func setDependencies(di *dig.Container, d *Descriptor) (err error) {

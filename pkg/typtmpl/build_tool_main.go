@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	typcore.LaunchBuildTool(&typical.Descriptor)
+	typcore.LaunchBuild(&typical.Descriptor)
 }
 `
 

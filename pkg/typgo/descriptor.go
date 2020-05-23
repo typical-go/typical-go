@@ -3,6 +3,7 @@ package typgo
 import (
 	"errors"
 	"fmt"
+	"os"
 	"reflect"
 	"regexp"
 
@@ -11,11 +12,13 @@ import (
 	"github.com/typical-go/typical-go/pkg/typcore"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/typical-go/typical-go/pkg/typvar"
+	"github.com/urfave/cli/v2"
+	"go.uber.org/dig"
 )
 
 var (
-	_ typcore.AppLauncher       = (*Descriptor)(nil)
-	_ typcore.BuildToolLauncher = (*Descriptor)(nil)
+	_ typcore.AppLauncher   = (*Descriptor)(nil)
+	_ typcore.BuildLauncher = (*Descriptor)(nil)
 
 	_ Preconditioner = (*Descriptor)(nil)
 )
@@ -56,16 +59,37 @@ func (d *Descriptor) LaunchApp() (err error) {
 	if err = d.Validate(); err != nil {
 		return
 	}
-	return launchApp(d)
+	if configFile := os.Getenv("CONFIG"); configFile != "" {
+		_, err = LoadConfig(configFile)
+	}
+
+	di := dig.New()
+	if err = setDependencies(di, d); err != nil {
+		return
+	}
+
+	errs := common.GracefulRun(start(di, d), stop(di))
+	return errs.Unwrap()
 }
 
-// LaunchBuildTool to launch the build tool
-func (d *Descriptor) LaunchBuildTool() (err error) {
+// LaunchBuild to launch the build tool
+func (d *Descriptor) LaunchBuild() (err error) {
 	if err := d.Validate(); err != nil {
 		return err
 	}
 
-	return launchBuildTool(d)
+	app := cli.NewApp()
+	app.Name = d.Name
+	app.Usage = "Build-Tool"
+	app.Description = d.Description
+	app.Version = d.Version
+
+	buildCli := createBuildCli(d)
+
+	app.Before = beforeBuild(buildCli)
+	app.Commands = buildCli.Commands()
+
+	return app.Run(os.Args)
 }
 
 // Validate context

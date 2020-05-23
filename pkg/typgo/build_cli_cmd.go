@@ -10,7 +10,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func cmdTest(c *BuildTool) *cli.Command {
+func cmdTest(c *BuildCli) *cli.Command {
 	return &cli.Command{
 		Name:    "test",
 		Aliases: []string{"t"},
@@ -24,7 +24,7 @@ func test(c *Context) (err error) {
 	return
 }
 
-func cmdRun(c *BuildTool) *cli.Command {
+func cmdRun(c *BuildCli) *cli.Command {
 	return &cli.Command{
 		Name:            "run",
 		Aliases:         []string{"r"},
@@ -39,7 +39,7 @@ func run(c *Context) (err error) {
 	return
 }
 
-func cmdPublish(c *BuildTool) *cli.Command {
+func cmdPublish(c *BuildCli) *cli.Command {
 	return &cli.Command{
 		Name:    "publish",
 		Usage:   "Publish the project",
@@ -53,7 +53,7 @@ func cmdPublish(c *BuildTool) *cli.Command {
 	}
 }
 
-func cmdClean(c *BuildTool) *cli.Command {
+func cmdClean(c *BuildCli) *cli.Command {
 	return &cli.Command{
 		Name:    "clean",
 		Aliases: []string{"c"},
@@ -77,21 +77,21 @@ func Publish(c *Context) (err error) {
 		gitLogs []*git.Log
 	)
 
-	if !c.Cli.Bool("no-test") {
+	if !c.Bool("no-test") {
 		if err = test(c); err != nil {
 			return
 		}
 	}
 
-	ctx := c.Cli.Context
+	ctx := c.Ctx()
 
 	if err = git.Fetch(ctx); err != nil {
 		return fmt.Errorf("Failed git fetch: %w", err)
 	}
 	defer git.Fetch(ctx)
 
-	force := c.Cli.Bool("force")
-	alpha := c.Cli.Bool("alpha")
+	force := c.Bool("force")
+	alpha := c.Bool("alpha")
 	tag := releaseTag(c, alpha)
 
 	if status := git.Status(ctx); status != "" && !force {
@@ -125,7 +125,7 @@ func Publish(c *Context) (err error) {
 func releaseTag(c *Context, alpha bool) string {
 	var builder strings.Builder
 	builder.WriteString("v")
-	builder.WriteString(c.BuildTool.Version)
+	builder.WriteString(c.Descriptor.Version)
 	// if c.BuildTool.IncludeBranch {
 	// 	builder.WriteString("_")
 	// 	builder.WriteString(git.Branch(c.Context))

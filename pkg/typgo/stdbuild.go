@@ -29,8 +29,8 @@ func (b *StdBuild) Execute(c *Context, phase Phase) (ok bool, err error) {
 }
 
 func executeRun(c *Context) (err error) {
-	binary := fmt.Sprintf("%s/%s", typvar.BinFolder, c.BuildTool.Name)
-	srcDir := fmt.Sprintf("%s/%s", typvar.CmdFolder, c.BuildTool.Name)
+	binary := fmt.Sprintf("%s/%s", typvar.BinFolder, c.Descriptor.Name)
+	srcDir := fmt.Sprintf("%s/%s", typvar.CmdFolder, c.Descriptor.Name)
 	srcMain := fmt.Sprintf("./%s/main.go", srcDir)
 
 	// NOTE: create main.go if not exist
@@ -51,14 +51,14 @@ func executeRun(c *Context) (err error) {
 
 	gobuild.Print(os.Stdout)
 
-	ctx := c.Cli.Context
+	ctx := c.Ctx()
 	if err = gobuild.Run(ctx); err != nil {
 		return fmt.Errorf("GoBuild: %w", err)
 	}
 
 	binExec := &execkit.Command{
 		Name:   binary,
-		Args:   c.Cli.Args().Slice(),
+		Args:   c.Args().Slice(),
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,
 	}
@@ -78,7 +78,7 @@ func executeTest(c *Context) (err error) {
 		targets []string
 	)
 
-	for _, layout := range c.BuildTool.Layouts {
+	for _, layout := range c.Descriptor.Layouts {
 		targets = append(targets, fmt.Sprintf("./%s/...", layout))
 	}
 
@@ -101,9 +101,7 @@ func executeTest(c *Context) (err error) {
 	cmd.Print(os.Stdout)
 	fmt.Println()
 
-	ctx := c.Cli.Context
-
-	return cmd.Run(ctx)
+	return cmd.Run(c.Ctx())
 }
 
 func executeClean(c *Context) (err error) {

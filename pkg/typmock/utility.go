@@ -20,7 +20,7 @@ func Utility() typgo.Utility {
 	return typgo.NewUtility(commands)
 }
 
-func commands(c *typgo.BuildTool) []*cli.Command {
+func commands(c *typgo.BuildCli) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:        "mock",
@@ -41,13 +41,13 @@ func generateMock(c *typgo.Context) (err error) {
 		mockery.Put(mock)
 	}
 
-	targetMap := mockery.TargetMap(c.Cli.Args().Slice()...)
+	targetMap := mockery.TargetMap(c.Args().Slice()...)
 	if len(targetMap) < 1 {
 		return
 	}
 
 	mockgen := fmt.Sprintf("%s/bin/mockgen", typvar.TypicalTmp)
-	if err = installIfNotExist(c.Cli.Context, mockgen); err != nil {
+	if err = installIfNotExist(c.Ctx(), mockgen); err != nil {
 		return
 	}
 
@@ -75,7 +75,7 @@ func generateMock(c *typgo.Context) (err error) {
 
 			cmd.Print(os.Stdout)
 
-			if err = cmd.Run(c.Cli.Context); err != nil {
+			if err = cmd.Run(c.Ctx()); err != nil {
 				c.Warnf("Fail to mock '%s': %s", name, err.Error())
 			}
 		}

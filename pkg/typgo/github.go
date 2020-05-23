@@ -39,7 +39,7 @@ func (g *Github) executePublish(c *Context) (err error) {
 		return errors.New("Environment 'GITHUB_TOKEN' is missing")
 	}
 
-	ctx := c.Cli.Context
+	ctx := c.Ctx()
 	oauth := oauth2.NewClient(ctx,
 		oauth2.StaticTokenSource(
 			&oauth2.Token{AccessToken: token},
@@ -56,7 +56,7 @@ func (g *Github) executePublish(c *Context) (err error) {
 	}
 	c.Infof("Create github release for %s/%s", g.Owner, g.RepoName)
 	githubRls := &github.RepositoryRelease{
-		Name:       github.String(fmt.Sprintf("%s - %s", c.BuildTool.Name, tag)),
+		Name:       github.String(fmt.Sprintf("%s - %s", c.Descriptor.Name, tag)),
 		TagName:    github.String(tag),
 		Body:       github.String(g.releaseNote(gitLogs)),
 		Draft:      github.Bool(false),
