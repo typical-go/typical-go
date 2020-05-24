@@ -15,7 +15,7 @@ func cmdTest(c *BuildCli) *cli.Command {
 		Name:    "test",
 		Aliases: []string{"t"},
 		Usage:   "Test the project",
-		Action:  c.ActionFunc("TEST", test),
+		Action:  c.ActionFn("TEST", test),
 	}
 }
 
@@ -30,7 +30,7 @@ func cmdRun(c *BuildCli) *cli.Command {
 		Aliases:         []string{"r"},
 		Usage:           "Run the project in local environment",
 		SkipFlagParsing: true,
-		Action:          c.ActionFunc("RUN", run),
+		Action:          c.ActionFn("RUN", run),
 	}
 }
 
@@ -49,7 +49,7 @@ func cmdPublish(c *BuildCli) *cli.Command {
 			&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
 			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 		},
-		Action: c.ActionFunc("PUBLISH", Publish),
+		Action: c.ActionFn("PUBLISH", Publish),
 	}
 }
 
@@ -58,7 +58,7 @@ func cmdClean(c *BuildCli) *cli.Command {
 		Name:    "clean",
 		Aliases: []string{"c"},
 		Usage:   "Clean the project",
-		Action:  c.ActionFunc("CLEAN", clean),
+		Action:  c.ActionFn("CLEAN", clean),
 	}
 }
 

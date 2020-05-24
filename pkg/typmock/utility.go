@@ -27,7 +27,7 @@ func commands(c *typgo.BuildCli) []*cli.Command {
 			Usage:       "Generate mock class",
 			UsageText:   "mock [package_names]",
 			Description: "If package_names is missing then check every package",
-			Action:      c.ActionFunc("mock", generateMock),
+			Action:      c.ActionFn("mock", generateMock),
 		},
 	}
 }

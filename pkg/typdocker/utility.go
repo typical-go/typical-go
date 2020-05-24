@@ -65,7 +65,7 @@ func (m *DockerUtility) cmdCompose(c *typgo.BuildCli) *cli.Command {
 	return &cli.Command{
 		Name:   "compose",
 		Usage:  "Generate docker-compose.yaml",
-		Action: c.ActionFunc(LogName, m.dockerCompose),
+		Action: c.ActionFn(LogName, m.dockerCompose),
 	}
 }
 
@@ -73,7 +73,7 @@ func (m *DockerUtility) cmdWipe(c *typgo.BuildCli) *cli.Command {
 	return &cli.Command{
 		Name:   "wipe",
 		Usage:  "Kill all running docker container",
-		Action: c.ActionFunc(LogName, m.dockerWipe),
+		Action: c.ActionFn(LogName, m.dockerWipe),
 	}
 }
 
@@ -116,7 +116,7 @@ func (m *DockerUtility) cmdUp(c *typgo.BuildCli) *cli.Command {
 			&cli.BoolFlag{Name: "wipe"},
 		},
 		Usage:  "Spin up docker containers according docker-compose",
-		Action: c.ActionFunc(LogName, m.dockerUp),
+		Action: c.ActionFn(LogName, m.dockerUp),
 	}
 }
 
@@ -148,7 +148,7 @@ func (m *DockerUtility) cmdDown(c *typgo.BuildCli) *cli.Command {
 		Name:    "down",
 		Aliases: []string{"stop"},
 		Usage:   "Take down all docker containers according docker-compose",
-		Action:  c.ActionFunc(LogName, dockerDown),
+		Action:  c.ActionFn(LogName, dockerDown),
 	}
 }
 

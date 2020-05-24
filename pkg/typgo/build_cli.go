@@ -3,10 +3,8 @@ package typgo
 import (
 	"context"
 	"fmt"
-	"os"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
@@ -55,6 +53,18 @@ func createBuildCli(d *Descriptor) *BuildCli {
 	}
 }
 
+func retrImports(dirs []string) []string {
+	imports := []string{
+		"github.com/typical-go/typical-go/pkg/typgo",
+	}
+	for _, dir := range dirs {
+		if !strings.Contains(dir, "internal") {
+			imports = append(imports, fmt.Sprintf("%s/%s", typvar.ProjectPkg, dir))
+		}
+	}
+	return imports
+}
+
 // Context of build-cli
 func (b *BuildCli) Context(name string, c *cli.Context) *Context {
 	return &Context{
@@ -64,39 +74,6 @@ func (b *BuildCli) Context(name string, c *cli.Context) *Context {
 		Context:  c,
 		BuildCli: b,
 	}
-}
-
-func beforeBuild(b *BuildCli) cli.BeforeFunc {
-	return func(cli *cli.Context) (err error) {
-
-		if !b.SkipPrecond {
-			c := b.Context("PRECOND", cli)
-			if err = precond(c); err != nil {
-				return
-			}
-		}
-
-		return
-	}
-}
-
-func precond(c *Context) (err error) {
-	if err = c.Precondition(c); err != nil {
-		return
-	}
-
-	path := fmt.Sprintf("%s/%s/precond_DO_NOT_EDIT.go",
-		typvar.CmdFolder, c.Descriptor.Name)
-	os.Remove(path)
-	if c.Precond.NotEmpty() {
-		if err = typtmpl.WriteFile(path, 0777, c.Precond); err != nil {
-			return
-		}
-		if err = buildkit.GoImports(c.Ctx(), path); err != nil {
-			return
-		}
-	}
-	return
 }
 
 // Commands of build-tool
@@ -117,24 +94,12 @@ func (b *BuildCli) Commands() (cmds []*cli.Command) {
 	return cmds
 }
 
-// ActionFunc to return related action func
-func (b *BuildCli) ActionFunc(name string, fn CliFunc) func(*cli.Context) error {
+// ActionFn to return related action func
+func (b *BuildCli) ActionFn(name string, fn CliFunc) func(*cli.Context) error {
 	return func(cli *cli.Context) error {
 		c := b.Context(strings.ToUpper(name), cli)
 		return fn(c)
 	}
-}
-
-func retrImports(dirs []string) []string {
-	imports := []string{
-		"github.com/typical-go/typical-go/pkg/typgo",
-	}
-	for _, dir := range dirs {
-		if !strings.Contains(dir, "internal") {
-			imports = append(imports, fmt.Sprintf("%s/%s", typvar.ProjectPkg, dir))
-		}
-	}
-	return imports
 }
 
 //

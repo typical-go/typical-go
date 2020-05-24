@@ -4,15 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"reflect"
 	"regexp"
 
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"github.com/typical-go/typical-go/pkg/typtmpl"
-	"github.com/typical-go/typical-go/pkg/typvar"
-	"github.com/urfave/cli/v2"
 	"go.uber.org/dig"
 )
 
@@ -72,22 +67,7 @@ func (d *Descriptor) LaunchApp() (err error) {
 
 // LaunchBuild to launch the build tool
 func (d *Descriptor) LaunchBuild() (err error) {
-	if err := d.Validate(); err != nil {
-		return err
-	}
-
-	app := cli.NewApp()
-	app.Name = d.Name
-	app.Usage = "Build-Tool"
-	app.Description = d.Description
-	app.Version = d.Version
-
-	buildCli := createBuildCli(d)
-
-	app.Before = beforeBuild(buildCli)
-	app.Commands = buildCli.Commands()
-
-	return app.Run(os.Args)
+	return launchBuild(d)
 }
 
 // Validate context
@@ -118,54 +98,4 @@ func ValidateName(name string) bool {
 		return false
 	}
 	return true
-}
-
-// Precondition for this project
-func (d *Descriptor) Precondition(c *Context) (err error) {
-
-	if d.Configurer != nil {
-		if err = WriteConfig(typvar.ConfigFile, d.Configurer); err != nil {
-			return
-		}
-	}
-
-	LoadConfig(typvar.ConfigFile)
-
-	d.appPrecond(c)
-
-	return
-}
-
-func (d *Descriptor) appPrecond(c *Context) {
-
-	ctorAnnots, errs := typannot.GetCtors(c.ASTStore)
-	for _, a := range ctorAnnots {
-		c.Precond.Ctors = append(c.Precond.Ctors, &typtmpl.Ctor{
-			Name: a.Name,
-			Def:  fmt.Sprintf("%s.%s", a.Decl.Pkg, a.Decl.Name),
-		})
-	}
-
-	dtorAnnots, errs := typannot.GetDtors(c.ASTStore)
-	for _, a := range dtorAnnots {
-		c.Precond.Dtors = append(c.Precond.Dtors, &typtmpl.Dtor{
-			Def: fmt.Sprintf("%s.%s", a.Decl.Pkg, a.Decl.Name),
-		})
-	}
-
-	for _, err := range errs {
-		c.Warnf("App-Precond: %s", err.Error())
-	}
-
-	if d.Configurer != nil {
-		for _, cfg := range d.Configurer.Configurations() {
-			specType := reflect.TypeOf(cfg.Spec).String()
-			c.Precond.CfgCtors = append(c.Precond.CfgCtors, &typtmpl.CfgCtor{
-				Name:      cfg.Ctor,
-				Prefix:    cfg.Name,
-				SpecType:  specType,
-				SpecType2: specType[1:],
-			})
-		}
-	}
 }
