@@ -13,13 +13,21 @@ func TestGoBuild(t *testing.T) {
 		expected string
 	}{
 		{
-			GoBuild:  buildkit.NewGoBuild("some-output", "some-sources"),
+			GoBuild: &buildkit.GoBuild{
+				Out:    "some-output",
+				Source: "some-sources",
+			},
 			expected: "go build -o some-output some-sources",
 		},
 		{
-			GoBuild: buildkit.NewGoBuild("some-output", "some-sources").
-				SetVariable("name1", "value1").
-				SetVariable("name2", "value3"),
+			GoBuild: &buildkit.GoBuild{
+				Out:    "some-output",
+				Source: "some-sources",
+				Ldflags: []string{
+					buildkit.BuildVar("name1", "value1"),
+					buildkit.BuildVar("name2", "value3"),
+				},
+			},
 			expected: "go build -ldflags -X name1=value1 -X name2=value3 -o some-output some-sources",
 		},
 	}

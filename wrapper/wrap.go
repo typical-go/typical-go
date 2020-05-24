@@ -100,11 +100,16 @@ func Wrap(c *Context) (err error) {
 
 		c.Info("Build the build-tool")
 
-		cmd := buildkit.NewGoBuild(build.Binary, build.Source).
-			SetVariable(projectPkgVar, c.ProjectPkg).
-			SetVariable(typicalTmpVar, c.TypicalTmp).
-			Command()
+		gobuild := &buildkit.GoBuild{
+			Out:    build.Binary,
+			Source: build.Source,
+			Ldflags: []string{
+				buildkit.BuildVar(projectPkgVar, c.ProjectPkg),
+				buildkit.BuildVar(typicalTmpVar, c.TypicalTmp),
+			},
+		}
 
+		cmd := gobuild.Command()
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		cmd.Stdin = os.Stdin

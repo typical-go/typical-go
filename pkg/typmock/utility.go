@@ -85,9 +85,11 @@ func generateMock(c *typgo.Context) (err error) {
 
 func installIfNotExist(ctx context.Context, mockgen string) (err error) {
 	if _, err = os.Stat(mockgen); os.IsNotExist(err) {
-		cmd := buildkit.
-			NewGoBuild(mockgen, "github.com/golang/mock/mockgen").
-			Command()
+		gobuild := &buildkit.GoBuild{
+			Out:    mockgen,
+			Source: "github.com/golang/mock/mockgen",
+		}
+		cmd := gobuild.Command()
 		return cmd.Run(ctx)
 	}
 	return

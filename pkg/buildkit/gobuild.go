@@ -9,23 +9,14 @@ import (
 
 // GoBuild builder
 type GoBuild struct {
-	ldflags []string
-	out     string
-	src     string
+	Ldflags []string
+	Out     string
+	Source  string
 }
 
-// NewGoBuild return new instance of gobuild
-func NewGoBuild(out, src string) *GoBuild {
-	return &GoBuild{
-		out: out,
-		src: src,
-	}
-}
-
-// SetVariable to set variable using linker
-func (g *GoBuild) SetVariable(name string, value interface{}) *GoBuild {
-	g.ldflags = append(g.ldflags, fmt.Sprintf("-X %s=%v", name, value))
-	return g
+// BuildVar return ldflag argument for set build variable
+func BuildVar(name string, value interface{}) string {
+	return fmt.Sprintf("-X %s=%v", name, value)
 }
 
 // Command of GoBuild
@@ -39,9 +30,9 @@ func (g *GoBuild) Command() *execkit.Command {
 // Args is arguments for go build
 func (g *GoBuild) Args() []string {
 	args := []string{"build"}
-	if len(g.ldflags) > 0 {
-		args = append(args, "-ldflags", strings.Join(g.ldflags, " "))
+	if len(g.Ldflags) > 0 {
+		args = append(args, "-ldflags", strings.Join(g.Ldflags, " "))
 	}
-	args = append(args, "-o", g.out, g.src)
+	args = append(args, "-o", g.Out, g.Source)
 	return args
 }

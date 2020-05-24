@@ -43,14 +43,19 @@ func executeRun(c *Context) (err error) {
 		}
 	}
 
-	gobuild := buildkit.NewGoBuild(binary, "./"+srcDir).Command()
-	gobuild.Stderr = os.Stderr
-	gobuild.Stdout = os.Stderr
+	gobuild := &buildkit.GoBuild{
+		Out:    binary,
+		Source: "./" + srcDir,
+	}
 
-	gobuild.Print(os.Stdout)
+	gobuildCmd := gobuild.Command()
+	gobuildCmd.Stderr = os.Stderr
+	gobuildCmd.Stdout = os.Stderr
+
+	gobuildCmd.Print(os.Stdout)
 
 	ctx := c.Ctx()
-	if err = gobuild.Run(ctx); err != nil {
+	if err = gobuildCmd.Run(ctx); err != nil {
 		return fmt.Errorf("GoBuild: %w", err)
 	}
 
