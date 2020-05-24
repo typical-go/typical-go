@@ -83,8 +83,7 @@ func precond(c *Context) (err error) {
 		return
 	}
 
-	path := fmt.Sprintf("%s/%s/precond_DO_NOT_EDIT.go",
-		typvar.CmdFolder, c.Descriptor.Name)
+	path := typvar.Precond(c.Descriptor.Name)
 	os.Remove(path)
 
 	if c.Precond.NotEmpty() {

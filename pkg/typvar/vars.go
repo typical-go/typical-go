@@ -2,6 +2,7 @@
 package typvar
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -30,3 +31,8 @@ var (
 	// TestCoverProfile location
 	TestCoverProfile = "cover.out"
 )
+
+// Precond path
+func Precond(name string) string {
+	return fmt.Sprintf("%s/%s/precond_DO_NOT_EDIT.go", CmdFolder, name)
+}

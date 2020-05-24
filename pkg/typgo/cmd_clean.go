@@ -23,19 +23,23 @@ func clean(c *Context) (err error) {
 	remove(c, build.Binary)
 	remove(c, build.Checksum)
 	remove(c, build.Source)
+	remove(c, typvar.Precond(c.Descriptor.Name))
+
 	return
 }
 
 func removeAll(c *Context, folder string) {
-	c.Infof("RemoveAll: %s", folder)
 	if err := os.RemoveAll(folder); err != nil {
-		c.Warn(err.Error())
+		c.Warnf("RemoveAll: %s", err.Error())
+	} else {
+		c.Infof("RemoveAll: %s", folder)
 	}
 }
 
 func remove(c *Context, file string) {
-	c.Infof("Remove: %s", file)
 	if err := os.Remove(file); err != nil {
-		c.Warn(err.Error())
+		c.Warnf("Remove: %s", err.Error())
+	} else {
+		c.Infof("Remove: %s", file)
 	}
 }
