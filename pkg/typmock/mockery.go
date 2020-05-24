@@ -1,41 +1,48 @@
 package typmock
 
-import "github.com/typical-go/typical-go/pkg/typannot"
+var (
+	// MockTag is tag for mock
+	MockTag = "mock"
+)
 
-// Mockery is art of mocking
-type Mockery struct {
-	targetMap  map[string][]*typannot.Mock
-	projectPkg string
-}
-
-// NewMockery return new instance of store
-func NewMockery(projectPkg string) *Mockery {
-	return &Mockery{
-		targetMap:  make(map[string][]*typannot.Mock),
-		projectPkg: projectPkg,
+type (
+	// Mockery is art of mocking
+	Mockery struct {
+		TargetMap  TargetMap `json:"target_map"`
+		ProjectPkg string    `json:"project_pkg"`
 	}
-}
+
+	// TargetMap of mock
+	TargetMap map[string][]*Mock
+
+	// Mock annotation data
+	Mock struct {
+		Dir     string `json:"-"`
+		Pkg     string `json:"-"`
+		Source  string `json:"-"`
+		Parent  string `json:"-"`
+		MockPkg string `json:"-"`
+	}
+)
 
 // Put target to mockery
-func (b *Mockery) Put(target *typannot.Mock) {
-	key := target.Pkg
-	if _, ok := b.targetMap[key]; ok {
-		b.targetMap[key] = append(b.targetMap[key], target)
+func (b *Mockery) Put(target *Mock) {
+	key := target.Dir
+	if _, ok := b.TargetMap[key]; ok {
+		b.TargetMap[key] = append(b.TargetMap[key], target)
 	} else {
-		b.targetMap[key] = []*typannot.Mock{target}
+		b.TargetMap[key] = []*Mock{target}
 	}
 }
 
-// TargetMap contain package and target to be mock
-func (b *Mockery) TargetMap(pkgs ...string) map[string][]*typannot.Mock {
-	if len(pkgs) > 0 {
-		targetMap := make(map[string][]*typannot.Mock)
-		for _, pkg := range pkgs {
-			if _, ok := b.targetMap[pkg]; ok {
-				targetMap[pkg] = b.targetMap[pkg]
-			}
+// Filter contain package and target to be mock
+func (b *Mockery) Filter(pkgs ...string) TargetMap {
+	targetMap := make(map[string][]*Mock)
+	for _, pkg := range pkgs {
+		if _, ok := b.TargetMap[pkg]; ok {
+			targetMap[pkg] = b.TargetMap[pkg]
 		}
-		return targetMap
 	}
-	return b.targetMap
+	return targetMap
+
 }
