@@ -13,5 +13,4 @@ func TestBuildPhase(t *testing.T) {
 	require.Equal(t, "run_phase", typgo.RunPhase.String())
 	require.Equal(t, "release_phase", typgo.ReleasePhase.String())
 	require.Equal(t, "publish_phase", typgo.PublishPhase.String())
-	require.Equal(t, "clean_phase", typgo.CleanPhase.String())
 }

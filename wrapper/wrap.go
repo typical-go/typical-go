@@ -9,6 +9,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/typical-go/typical-go/pkg/typvar"
+
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typlog"
@@ -27,11 +29,9 @@ type Context struct {
 
 	Ctx context.Context
 
-	TypicalTmp string
-	ProjectPkg string
-
-	DescriptorFolder string
-	ChecksumFile     string
+	TypicalTmp    string
+	ProjectPkg    string
+	DescriptorPkg string
 }
 
 // Wrap the project
@@ -42,6 +42,9 @@ func Wrap(c *Context) (err error) {
 			return
 		}
 	}
+
+	typvar.TypicalTmp = c.TypicalTmp
+	typvar.ProjectPkg = c.ProjectPkg
 
 	// NOTE: create tmp folder if not exist
 	os.MkdirAll(c.TypicalTmp+"/build-tool", os.ModePerm)
@@ -67,25 +70,28 @@ func Wrap(c *Context) (err error) {
 		}
 	}
 
-	checksumPath := fmt.Sprintf("%s/%s", c.TypicalTmp, c.ChecksumFile)
-	buildTool := c.TypicalTmp + "/bin/build-tool"
-	srcPath := c.TypicalTmp + "/build-tool/main.go"
-	descriptorPkg := fmt.Sprintf("%s/%s", c.ProjectPkg, c.DescriptorFolder)
+	// checksumPath := fmt.Sprintf("%s/checksum", c.TypicalTmp)
+	// buildTool := c.TypicalTmp + "/bin/build-tool"
+	// srcPath := c.TypicalTmp + "/build-tool/main.go"
+
+	build := typvar.GetBuild()
+
+	descriptorPkg := fmt.Sprintf("%s/%s", c.ProjectPkg, c.DescriptorPkg)
 
 	var checksum *Checksum
-	if checksum, err = CreateChecksum(c.DescriptorFolder); err != nil {
+	if checksum, err = CreateChecksum(c.DescriptorPkg); err != nil {
 		return
 	}
 
-	if _, err = os.Stat(buildTool); os.IsNotExist(err) || !checksum.IsSame(checksumPath) {
+	if _, err = os.Stat(build.Binary); os.IsNotExist(err) || !checksum.IsSame(build.Checksum) {
 		c.Info("Update checksum")
-		if err = checksum.Save(checksumPath); err != nil {
+		if err = checksum.Save(build.Checksum); err != nil {
 			return
 		}
 
-		if _, err = os.Stat(srcPath); os.IsNotExist(err) {
-			c.Infof("Generate build-tool main source: %s", srcPath)
-			if err = typtmpl.WriteFile(srcPath, 0777, &typtmpl.BuildToolMain{
+		if _, err = os.Stat(build.Source); os.IsNotExist(err) {
+			c.Infof("Generate build-tool main source: %s", build.Source)
+			if err = typtmpl.WriteFile(build.Source, 0777, &typtmpl.BuildToolMain{
 				DescPkg: descriptorPkg,
 			}); err != nil {
 				return
@@ -94,7 +100,7 @@ func Wrap(c *Context) (err error) {
 
 		c.Info("Build the build-tool")
 
-		cmd := buildkit.NewGoBuild(buildTool, srcPath).
+		cmd := buildkit.NewGoBuild(build.Binary, build.Source).
 			SetVariable(projectPkgVar, c.ProjectPkg).
 			SetVariable(typicalTmpVar, c.TypicalTmp).
 			Command()

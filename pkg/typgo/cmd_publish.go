@@ -10,35 +10,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func cmdTest(c *BuildCli) *cli.Command {
-	return &cli.Command{
-		Name:    "test",
-		Aliases: []string{"t"},
-		Usage:   "Test the project",
-		Action:  c.ActionFn("TEST", test),
-	}
-}
-
-func test(c *Context) (err error) {
-	_, err = c.Execute(c, TestPhase)
-	return
-}
-
-func cmdRun(c *BuildCli) *cli.Command {
-	return &cli.Command{
-		Name:            "run",
-		Aliases:         []string{"r"},
-		Usage:           "Run the project in local environment",
-		SkipFlagParsing: true,
-		Action:          c.ActionFn("RUN", run),
-	}
-}
-
-func run(c *Context) (err error) {
-	_, err = c.Execute(c, RunPhase)
-	return
-}
-
 func cmdPublish(c *BuildCli) *cli.Command {
 	return &cli.Command{
 		Name:    "publish",
@@ -51,22 +22,6 @@ func cmdPublish(c *BuildCli) *cli.Command {
 		},
 		Action: c.ActionFn("PUBLISH", Publish),
 	}
-}
-
-func cmdClean(c *BuildCli) *cli.Command {
-	return &cli.Command{
-		Name:    "clean",
-		Aliases: []string{"c"},
-		Usage:   "Clean the project",
-		Action:  c.ActionFn("CLEAN", clean),
-	}
-}
-
-func clean(c *Context) (err error) {
-	if _, err = c.Execute(c, CleanPhase); err != nil {
-		return
-	}
-	return
 }
 
 // Publish project

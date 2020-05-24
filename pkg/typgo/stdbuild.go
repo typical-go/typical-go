@@ -22,8 +22,6 @@ func (b *StdBuild) Execute(c *Context, phase Phase) (ok bool, err error) {
 		return true, executeRun(c)
 	case TestPhase:
 		return true, executeTest(c)
-	case CleanPhase:
-		return true, executeClean(c)
 	}
 	return false, nil
 }
@@ -102,17 +100,4 @@ func executeTest(c *Context) (err error) {
 	fmt.Println()
 
 	return cmd.Run(c.Ctx())
-}
-
-func executeClean(c *Context) (err error) {
-	c.Infof("Remove All in '%s'", typvar.BinFolder)
-	if err := os.RemoveAll(typvar.BinFolder); err != nil {
-		c.Warn(err.Error())
-	}
-
-	c.Infof("Remove All: %s", typvar.TypicalTmp)
-	if err := os.RemoveAll(typvar.TypicalTmp); err != nil {
-		c.Warn(err.Error())
-	}
-	return
 }

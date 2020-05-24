@@ -76,24 +76,6 @@ func (b *BuildCli) Context(name string, c *cli.Context) *Context {
 	}
 }
 
-// Commands of build-tool
-func (b *BuildCli) Commands() (cmds []*cli.Command) {
-	cmds = []*cli.Command{
-		cmdTest(b),
-		cmdRun(b),
-		cmdPublish(b),
-		cmdClean(b),
-	}
-
-	if b.Utility != nil {
-		for _, cmd := range b.Utility.Commands(b) {
-			cmds = append(cmds, cmd)
-		}
-	}
-
-	return cmds
-}
-
 // ActionFn to return related action func
 func (b *BuildCli) ActionFn(name string, fn CliFunc) func(*cli.Context) error {
 	return func(cli *cli.Context) error {

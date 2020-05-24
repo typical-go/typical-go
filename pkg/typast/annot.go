@@ -8,9 +8,9 @@ import (
 
 // Annot is annotation that contain extra additional information
 type Annot struct {
-	*Decl
-	TagName  string
-	TagAttrs []byte
+	TagName  string `json:"tag_name"`
+	TagAttrs []byte `json:"tag_attrs"`
+	Decl     *Decl  `json:"decl"`
 }
 
 // CreateAnnot parse raw string to annotation

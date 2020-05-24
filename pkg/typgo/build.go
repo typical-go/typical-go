@@ -6,7 +6,6 @@ const (
 	RunPhase
 	ReleasePhase
 	PublishPhase
-	CleanPhase
 )
 
 var _ Build = (Builds)(nil)
@@ -31,7 +30,6 @@ func (d Phase) String() string {
 		"run_phase",
 		"release_phase",
 		"publish_phase",
-		"clean_phase",
 	}[d]
 }
 

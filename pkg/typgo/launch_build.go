@@ -1,7 +1,9 @@
 package typgo
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"reflect"
 
@@ -27,7 +29,7 @@ func launchBuild(d *Descriptor) (err error) {
 
 	app.Before = buildCli.ActionFn("BEFORE_BUILD", beforeBuild)
 	app.After = buildCli.ActionFn("AFTER_BUILD", afterBuild)
-	app.Commands = buildCli.Commands()
+	app.Commands = commands(buildCli)
 
 	return app.Run(os.Args)
 }
@@ -50,7 +52,29 @@ func beforeBuild(c *Context) (err error) {
 }
 
 func afterBuild(c *Context) (err error) {
+	store := c.BuildCli.ASTStore
+	b, _ := json.MarshalIndent(store.Annots, "", "\t")
+	if err = ioutil.WriteFile(fmt.Sprintf("%s/annots.json", typvar.TypicalTmp), b, 0777); err != nil {
+		return
+	}
 	return
+}
+
+func commands(b *BuildCli) (cmds []*cli.Command) {
+	cmds = []*cli.Command{
+		cmdTest(b),
+		cmdRun(b),
+		cmdPublish(b),
+		cmdClean(b),
+	}
+
+	if b.Utility != nil {
+		for _, cmd := range b.Utility.Commands(b) {
+			cmds = append(cmds, cmd)
+		}
+	}
+
+	return cmds
 }
 
 func precond(c *Context) (err error) {

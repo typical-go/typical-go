@@ -17,10 +17,10 @@ const (
 type (
 	// Decl stand of declaration
 	Decl struct {
-		Name string
-		Path string
-		Pkg  string
-		Type DeclType
+		Name string   `json:"name"`
+		Path string   `json:"path"`
+		Pkg  string   `json:"pkg"`
+		Type DeclType `json:"type"`
 	}
 
 	// DeclType is declaration type

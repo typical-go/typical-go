@@ -21,10 +21,18 @@ func Main(d *typgo.Descriptor) (err error) {
 			Name:  "wrap",
 			Usage: "wrap the project with its build-tool",
 			Flags: []cli.Flag{
-				&cli.StringFlag{Name: "typical-tmp", Value: ".typical-tmp"},
-				&cli.StringFlag{Name: "descriptor-folder", Value: "typical"},
-				&cli.StringFlag{Name: "checksum-file", Value: "checksum"},
-				&cli.StringFlag{Name: "project-pkg", Usage: "To override generated ProjectPackage in context"},
+				&cli.StringFlag{
+					Name:  "typical-tmp",
+					Value: ".typical-tmp",
+				},
+				&cli.StringFlag{
+					Name:  "descriptor-pkg",
+					Value: "typical",
+				},
+				&cli.StringFlag{
+					Name:     "project-pkg",
+					Required: true,
+				},
 			},
 			Action: func(cliCtx *cli.Context) (err error) {
 				return Wrap(&Context{
@@ -32,11 +40,10 @@ func Main(d *typgo.Descriptor) (err error) {
 					Logger: typlog.Logger{
 						Name: "WRAPPER",
 					},
-					Ctx:              cliCtx.Context,
-					TypicalTmp:       cliCtx.String("typical-tmp"),
-					ProjectPkg:       cliCtx.String("project-pkg"),
-					DescriptorFolder: cliCtx.String("descriptor-folder"),
-					ChecksumFile:     cliCtx.String("checksum-file"),
+					Ctx:           cliCtx.Context,
+					TypicalTmp:    cliCtx.String("typical-tmp"),
+					ProjectPkg:    cliCtx.String("project-pkg"),
+					DescriptorPkg: cliCtx.String("descriptor-pkg"),
 				})
 			},
 		},

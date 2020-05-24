@@ -24,8 +24,8 @@ type Mock struct {
 func GetMock(store *typast.ASTStore) (mocks []*Mock) {
 	for _, annot := range store.Annots {
 		if isMock(annot) {
-			pkg := annot.Pkg
-			dir := filepath.Dir(annot.Path)
+			pkg := annot.Decl.Pkg
+			dir := filepath.Dir(annot.Decl.Path)
 
 			parent := ""
 			if dir != "." {
@@ -35,7 +35,7 @@ func GetMock(store *typast.ASTStore) (mocks []*Mock) {
 			mocks = append(mocks, &Mock{
 				Dir:    dir,
 				Pkg:    pkg,
-				Source: annot.Name,
+				Source: annot.Decl.Name,
 				Parent: parent,
 			})
 		}
@@ -45,5 +45,5 @@ func GetMock(store *typast.ASTStore) (mocks []*Mock) {
 
 func isMock(annot *typast.Annot) bool {
 	return strings.EqualFold(annot.TagName, MockTag) &&
-		annot.Type == typast.Interface
+		annot.Decl.Type == typast.Interface
 }
