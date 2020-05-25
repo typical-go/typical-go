@@ -102,7 +102,7 @@ func appPrecond(c *Context) (err error) {
 	ctorAnnots, errs := typannot.GetCtors(c.ASTStore)
 	for _, a := range ctorAnnots {
 		c.Precond.Ctors = append(c.Precond.Ctors, &typtmpl.Ctor{
-			Name: a.Name,
+			Name: a.Param.Name,
 			Def:  fmt.Sprintf("%s.%s", a.Decl.Pkg, a.Decl.Name),
 		})
 	}

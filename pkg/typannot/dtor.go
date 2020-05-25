@@ -16,7 +16,7 @@ var (
 
 // Dtor is destructor tag
 type Dtor struct {
-	*typast.Annot
+	*typast.Annot `json:"-"`
 }
 
 // GetDtors return dtor tag

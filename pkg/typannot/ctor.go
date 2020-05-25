@@ -14,18 +14,25 @@ var (
 	}
 )
 
-// Ctor is contructor annotation
-type Ctor struct {
-	*typast.Annot
-	Name string `json:"name"`
-}
+type (
+	// Ctor is contructor annotation
+	Ctor struct {
+		*typast.Annot
+		Param CtorParam
+	}
+
+	// CtorParam is parameter for ctor annotation
+	CtorParam struct {
+		Name string `json:"name"`
+	}
+)
 
 // GetCtors to get contructor annotation data
 func GetCtors(store *typast.ASTStore) (ctors []*Ctor, errs common.Errors) {
 	for _, annot := range store.Annots {
 		if IsFuncTag(annot, ctorTags) {
 			ctor := new(Ctor)
-			if err := annot.Unmarshal(ctor); err != nil {
+			if err := annot.Unmarshal(&ctor.Param); err != nil {
 				errs.Append(fmt.Errorf("%s: %w", ctorTags[0], err))
 				continue
 			}
