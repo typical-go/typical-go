@@ -67,7 +67,43 @@ var Descriptor = typgo.Descriptor{
 	},
 }
 ```
+## Annotation
 
+Typical-Go support java-like annotation (expect the parameter in JSON format) for code-generation purpose.
+
+## Dependency Injection
+
+Typical-Go encourage dependency-injection using [dig](https://github.com/uber-go/dig) and annotation. See the [example](https://github.com/typical-go/typical-go/tree/master/examples/provide-constructor).
+
+```go
+// NewObject return new instance of object
+// @constructor
+func NewObject() Object{
+   // ...
+}
+```
+
+```go
+// Close object
+// @destructor
+func Close(obj Object){
+
+}
+```
+
+## Mock
+
+Typical-Go encourge mocking using [gomock](https://github.com/golang/mock) and annotation. See the [example](https://github.com/typical-go/typical-go/tree/master/examples/generate-mock).
+
+```go
+type(
+   // Reader responsible to read
+   // @mock
+   Reader interface{
+      Read() error
+   }
+)
+```
 
 
 ## Typical Tmp
@@ -75,6 +111,7 @@ var Descriptor = typgo.Descriptor{
 Typical-tmp is an important folder that contains the build-tool mechanisms. By default, it is located in `.typical-tmp` and can be changed by hacking/editing the `typicalw` script.
 
 Since the typical-go project is still undergoing development, maybe there is some breaking change and deleting typical-tmp can solve the issue since it will be healed by itself.
+
 
 
 ## Examples
