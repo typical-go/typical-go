@@ -7,40 +7,52 @@ import (
 	"github.com/typical-go/typical-go/pkg/typmock"
 )
 
+var (
+	target1 = &typmock.Mock{Pkg: "pkg1", Dir: "dir1", Source: "target1"}
+	target2 = &typmock.Mock{Pkg: "pkg1", Dir: "dir1", Source: "target2"}
+	target3 = &typmock.Mock{Pkg: "pkg2", Dir: "dir2", Source: "target3"}
+	target4 = &typmock.Mock{Pkg: "pkg1", Dir: "dir1", Source: "target4"}
+	target5 = &typmock.Mock{Pkg: "pkg1", Dir: "dir1", Source: "target5"}
+	target6 = &typmock.Mock{Pkg: "pkg2", Dir: "dir2", Source: "target6"}
+
+	targets = []*typmock.Mock{
+		target1,
+		target2,
+		target3,
+		target4,
+		target5,
+		target6,
+	}
+
+	dir1 = []*typmock.Mock{
+		target1,
+		target2,
+		target4,
+		target5,
+	}
+
+	dir2 = []*typmock.Mock{
+		target3,
+		target6,
+	}
+)
+
 func TestMockery(t *testing.T) {
 	mockery := &typmock.Mockery{
 		TargetMap: make(typmock.TargetMap),
 	}
-	mockery.Put(&typmock.Mock{Pkg: "pkg1", Source: "target1"})
-	mockery.Put(&typmock.Mock{Pkg: "pkg1", Source: "target2"})
-	mockery.Put(&typmock.Mock{Pkg: "pkg2", Source: "target3"})
-	mockery.Put(&typmock.Mock{Pkg: "pkg1", Source: "target4"})
-	mockery.Put(&typmock.Mock{Pkg: "pkg1", Source: "target5"})
-	mockery.Put(&typmock.Mock{Pkg: "pkg2", Source: "target6"})
 
-	pkg1 := []*typmock.Mock{
-		{Pkg: "pkg1", Source: "target1"},
-		{Pkg: "pkg1", Source: "target2"},
-		{Pkg: "pkg1", Source: "target4"},
-		{Pkg: "pkg1", Source: "target5"},
-	}
-
-	pkg2 := []*typmock.Mock{
-		{Pkg: "pkg2", Source: "target3"},
-		{Pkg: "pkg2", Source: "target6"},
+	for _, mock := range targets {
+		mockery.Put(mock)
 	}
 
 	require.Equal(t,
-		typmock.TargetMap{"pkg1": pkg1, "pkg2": pkg2},
-		mockery.Filter(),
+		typmock.TargetMap{"dir1": dir1, "dir2": dir2},
+		mockery.Filter("dir1", "dir2"),
 	)
 	require.Equal(t,
-		typmock.TargetMap{"pkg1": pkg1, "pkg2": pkg2},
-		mockery.Filter("pkg1", "pkg2"),
-	)
-	require.Equal(t,
-		typmock.TargetMap{"pkg1": pkg1},
-		mockery.Filter("pkg1"),
+		typmock.TargetMap{"dir1": dir1},
+		mockery.Filter("dir1"),
 	)
 	require.Equal(t,
 		typmock.TargetMap{},

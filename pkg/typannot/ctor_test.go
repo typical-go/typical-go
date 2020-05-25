@@ -24,9 +24,20 @@ func TestGetConstructor(t *testing.T) {
 	ctors, errs := typannot.GetCtors(astStore)
 
 	require.Equal(t, []*typannot.Ctor{
-		{Name: "", Annot: ctor},
-		{Name: "noname", Annot: ctor2},
-		{Name: "", Annot: ctor3},
+		{
+			Annot: ctor,
+			Param: typannot.CtorParam{},
+		},
+		{
+			Annot: ctor2,
+			Param: typannot.CtorParam{
+				Name: "noname",
+			},
+		},
+		{
+			Annot: ctor3,
+			Param: typannot.CtorParam{},
+		},
 	}, ctors)
 
 	require.EqualError(t,
