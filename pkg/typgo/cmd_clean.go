@@ -1,6 +1,7 @@
 package typgo
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/typvar"
@@ -20,7 +21,7 @@ func clean(c *Context) (err error) {
 	removeAll(c, typvar.BinFolder)
 
 	build := typvar.GetBuild()
-	remove(c, build.Binary)
+	removeAll(c, fmt.Sprintf("%s/bin", typvar.TypicalTmp))
 	remove(c, build.Checksum)
 	remove(c, build.Source)
 	remove(c, typvar.Precond(c.Descriptor.Name))
@@ -29,17 +30,13 @@ func clean(c *Context) (err error) {
 }
 
 func removeAll(c *Context, folder string) {
-	if err := os.RemoveAll(folder); err != nil {
-		c.Warnf("RemoveAll: %s", err.Error())
-	} else {
+	if err := os.RemoveAll(folder); err == nil {
 		c.Infof("RemoveAll: %s", folder)
 	}
 }
 
 func remove(c *Context, file string) {
-	if err := os.Remove(file); err != nil {
-		c.Warnf("Remove: %s", err.Error())
-	} else {
+	if err := os.Remove(file); err == nil {
 		c.Infof("Remove: %s", file)
 	}
 }
