@@ -14,14 +14,47 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+func init() {
+	cli.AppHelpTemplate = `Typical Build
+
+Usage:
+
+{{"\t"}}./typicalw <command> [argument]
+
+The commands are:
+{{range .Commands}}
+{{if not .HideHelp}}{{ "\t"}}{{join .Names ", "}}{{ "\t"}}{{.Usage}}{{end}}{{end}}
+
+Use "./typicalw help <topic>" for more information about that topic
+`
+
+	cli.SubcommandHelpTemplate = `{{.Usage}}
+
+Usage:
+
+	{{.Name}} [command]
+ 
+Commands:{{range .VisibleCategories}}
+{{if .Name}}{{.Name}}:{{range .VisibleCommands}}
+	  {{join .Names ", "}}{{"\t"}}{{.Usage}}{{end}}{{else}}{{range .VisibleCommands}}
+	{{join .Names ", "}}{{"\t"}}{{.Usage}}{{end}}{{end}}{{end}}
+	
+{{if .VisibleFlags}} 
+Options:
+	{{range .VisibleFlags}}{{.}}
+	{{end}}{{end}}
+`
+
+}
+
 func launchBuild(d *Descriptor) (err error) {
 	if err := d.Validate(); err != nil {
 		return err
 	}
 
 	app := cli.NewApp()
-	app.Name = d.Name
-	app.Usage = "Build-Tool"
+	app.Name = "./typicalw"
+	app.Usage = "./tyicalw"
 	app.Description = d.Description
 	app.Version = d.Version
 
