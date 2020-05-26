@@ -10,7 +10,7 @@ A Build Tool (+ Framework) for Golang. <https://typical-go.github.io/>
 
 ## Use Cases
 
-- Framework to Build-Tool  
+- Framework for Build-Tool  
   Typical-Go provides levels of abstraction to develop your own build-tool. 
 - Build-Tool as a framework (BAAF)  
   It is a concept where both build-tool and application utilize the same definition. We no longer see build-tool as a separate beast with the application but rather part of the same living organism. 
@@ -110,13 +110,12 @@ type(
 
 Typical-tmp is an important folder that contains the build-tool mechanisms. By default, it is located in `.typical-tmp` and can be changed by hacking/editing the `typicalw` script.
 
-Since the typical-go project is still undergoing development, maybe there is some breaking change and deleting typical-tmp can solve the issue since it will be healed by itself.
-
-
 
 ## Examples
 
 This repo contain both library, examples and wrapper source-code. The wrapper itself using Typical-Go as its build-tool which is an excellent example.
+
+List of example:
 - [x] [Hello World](https://github.com/typical-go/typical-go/tree/master/examples/hello-world)
 - [x] [Configuration With Invocation](https://github.com/typical-go/typical-go/tree/master/examples/configuration-with-invocation)
 - [x] [Simple Additional Task](https://github.com/typical-go/typical-go/tree/master/examples/simple-additional-task)
