@@ -25,25 +25,21 @@ Wrapper responsible to download, compile and run both build-tool and application
 ```
 
 ```
-NAME:
-   configuration-with-invocation - Build-Tool
+Typical Build
 
-USAGE:
-   build-tool [global options] command [command options] [arguments...]
+Usage:
 
-VERSION:
-   1.0.0
+  ./typicalw <command> [argument]
 
-COMMANDS:
-   test, t     Test the project
-   run, r      Run the project in local environment
-   publish, p  Publish the project
-   clean, c    Clean the project
-   help, h     Shows a list of commands or help for one command
+The commands are:
 
-GLOBAL OPTIONS:
-   --help, -h     show help (default: false)
-   --version, -v  print the version (default: false)
+  test, t     Test the project
+  run, r      Run the project in local environment
+  publish, p  Publish the project
+  clean, c    Clean the project
+  help, h     Shows a list of commands or help for one command
+
+Use "./typicalw help <topic>" for more information about that topic
 ```
 
 ## Descriptor
@@ -79,7 +75,6 @@ Typical-Go encourage dependency-injection using [dig](https://github.com/uber-go
 // NewObject return new instance of object
 // @constructor
 func NewObject() Object{
-   // ...
 }
 ```
 
@@ -87,7 +82,6 @@ func NewObject() Object{
 // Close object
 // @destructor
 func Close(obj Object){
-
 }
 ```
 
