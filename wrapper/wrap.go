@@ -84,13 +84,13 @@ func Wrap(c *Context) (err error) {
 	}
 
 	if _, err = os.Stat(build.Binary); os.IsNotExist(err) || !checksum.IsSame(build.Checksum) {
-		c.Info("Update checksum")
+		// c.Info("Update checksum")
 		if err = checksum.Save(build.Checksum); err != nil {
 			return
 		}
 
 		if _, err = os.Stat(build.Source); os.IsNotExist(err) {
-			c.Infof("Generate build-tool main source: %s", build.Source)
+			// c.Infof("Generate build-tool main source: %s", build.Source)
 			if err = typtmpl.WriteFile(build.Source, 0777, &typtmpl.BuildToolMain{
 				DescPkg: descriptorPkg,
 			}); err != nil {
@@ -98,7 +98,7 @@ func Wrap(c *Context) (err error) {
 			}
 		}
 
-		c.Info("Build the build-tool")
+		// c.Info("Build the build-tool")
 
 		gobuild := &buildkit.GoBuild{
 			Out:    build.Binary,
