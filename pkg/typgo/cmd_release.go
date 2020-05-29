@@ -12,25 +12,22 @@ import (
 
 func cmdPublish(c *BuildCli) *cli.Command {
 	return &cli.Command{
-		Name:    "publish",
-		Usage:   "Publish the project",
-		Aliases: []string{"p"},
+		Name:  "release",
+		Usage: "Release the project",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{Name: "no-test", Usage: "skip the test"},
 			&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
 			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 		},
-		Action: c.ActionFn("PUBLISH", Publish),
+		Action: c.ActionFn("RELEASE", Release),
 	}
 }
 
-// Publish project
-func Publish(c *Context) (err error) {
-
-	var (
-		latest  string
-		gitLogs []*git.Log
-	)
+// Release the project
+func Release(c *Context) (err error) {
+	if c.Releaser == nil {
+		return errors.New("No Releaser")
+	}
 
 	if !c.Bool("no-test") {
 		if err = test(c); err != nil {
@@ -53,11 +50,13 @@ func Publish(c *Context) (err error) {
 		return fmt.Errorf("Please commit changes first:\n%s", status)
 	}
 
-	if latest = git.LatestTag(ctx); latest == tag && !force {
+	latest := git.LatestTag(ctx)
+	if latest == tag && !force {
 		return fmt.Errorf("%s already released", latest)
 	}
 
-	if gitLogs = git.RetrieveLogs(ctx, latest); len(gitLogs) < 1 && !force {
+	gitLogs := git.RetrieveLogs(ctx, latest)
+	if len(gitLogs) < 1 && !force {
 		return errors.New("No change to be released")
 	}
 
@@ -65,11 +64,7 @@ func Publish(c *Context) (err error) {
 	typvar.Rls.Tag = tag
 	typvar.Rls.GitLogs = gitLogs
 
-	if _, err = c.Execute(c, ReleasePhase); err != nil {
-		return
-	}
-
-	if _, err = c.Execute(c, PublishPhase); err != nil {
+	if err = c.Releaser.Release(c); err != nil {
 		return
 	}
 

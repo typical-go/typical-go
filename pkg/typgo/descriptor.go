@@ -11,41 +11,36 @@ import (
 	"go.uber.org/dig"
 )
 
-var (
-	_ typcore.AppLauncher   = (*Descriptor)(nil)
-	_ typcore.BuildLauncher = (*Descriptor)(nil)
-)
-
 type (
 
 	// Descriptor describe the project
 	Descriptor struct {
-
 		// Name of the project (OPTIONAL).
 		// It should be a characters with/without underscore or dash.
 		// By default, project name is same with project folder
 		Name string
-
 		// Description of the project (OPTIONAL).
 		Description string
-
 		// Version of the project (OPTIONAL).
 		// By default it is 0.0.1
-		Version string
-
-		Build
-
-		Utility Utility
-
-		Layouts []string
-
+		Version     string
+		Build       Build
+		EntryPoint  interface{}
+		Releaser    Releaser
+		Utility     Utility
+		Layouts     []string
 		SkipPrecond bool
-
-		EntryPoint interface{}
-
-		Configurer Configurer
+		Configurer  Configurer
 	}
 )
+
+var _ typcore.AppLauncher = (*Descriptor)(nil)
+var _ typcore.BuildLauncher = (*Descriptor)(nil)
+var _ Build = (*Descriptor)(nil)
+
+//
+// Descriptor
+//
 
 // LaunchApp to launch the app
 func (d *Descriptor) LaunchApp() (err error) {
@@ -68,6 +63,14 @@ func (d *Descriptor) LaunchApp() (err error) {
 // LaunchBuild to launch the build tool
 func (d *Descriptor) LaunchBuild() (err error) {
 	return launchBuild(d)
+}
+
+// Execute Build
+func (d *Descriptor) Execute(c *Context, p Phase) (bool, error) {
+	if d.Build == nil {
+		return false, errors.New("descriptor: no build")
+	}
+	return d.Build.Execute(c, p)
 }
 
 // Validate context

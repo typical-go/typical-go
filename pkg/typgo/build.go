@@ -4,11 +4,7 @@ const (
 	TestPhase Phase = iota
 	CompilePhase
 	RunPhase
-	ReleasePhase
-	PublishPhase
 )
-
-var _ Build = (Builds)(nil)
 
 type (
 	// Phase of build process
@@ -22,6 +18,8 @@ type (
 	// Builds is array of build
 	Builds []Build
 )
+
+var _ Build = (Builds)(nil)
 
 func (d Phase) String() string {
 	return [...]string{

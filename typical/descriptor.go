@@ -17,9 +17,11 @@ var Descriptor = typgo.Descriptor{
 		"pkg",
 	},
 
-	Build: typgo.Builds{
-		&typgo.StdBuild{},
-		&typgo.Github{Owner: "typical-go", RepoName: "typical-go"},
+	Build: &typgo.StdBuild{},
+
+	Releaser: &typgo.Github{
+		Owner:    "typical-go",
+		RepoName: "typical-go",
 	},
 
 	Utility: typgo.NewUtility(taskTestExample), // Test all the examples
