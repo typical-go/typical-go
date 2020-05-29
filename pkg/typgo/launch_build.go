@@ -52,6 +52,8 @@ func launchBuild(d *Descriptor) (err error) {
 		return err
 	}
 
+	typvar.Init()
+
 	app := cli.NewApp()
 	app.Name = "./typicalw"
 	app.Usage = "./tyicalw"

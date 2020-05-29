@@ -43,12 +43,7 @@ func Wrap(c *Context) (err error) {
 		}
 	}
 
-	typvar.TypicalTmp = c.TypicalTmp
-	typvar.ProjectPkg = c.ProjectPkg
-
-	// NOTE: create tmp folder if not exist
-	os.MkdirAll(c.TypicalTmp+"/build-tool", os.ModePerm)
-	os.MkdirAll(c.TypicalTmp+"/bin", os.ModePerm)
+	typvar.Wrap(c.TypicalTmp, c.ProjectPkg)
 
 	gitignore := ".gitignore"
 	if _, err = os.Stat(gitignore); os.IsNotExist(err) {
@@ -70,12 +65,6 @@ func Wrap(c *Context) (err error) {
 		}
 	}
 
-	// checksumPath := fmt.Sprintf("%s/checksum", c.TypicalTmp)
-	// buildTool := c.TypicalTmp + "/bin/build-tool"
-	// srcPath := c.TypicalTmp + "/build-tool/main.go"
-
-	build := typvar.GetBuild()
-
 	descriptorPkg := fmt.Sprintf("%s/%s", c.ProjectPkg, c.DescriptorPkg)
 
 	var checksum *Checksum
@@ -83,26 +72,23 @@ func Wrap(c *Context) (err error) {
 		return
 	}
 
-	if _, err = os.Stat(build.Binary); os.IsNotExist(err) || !checksum.IsSame(build.Checksum) {
-		// c.Info("Update checksum")
-		if err = checksum.Save(build.Checksum); err != nil {
+	if _, err = os.Stat(typvar.BuildToolSrc + "/main.go"); os.IsNotExist(err) {
+		// c.Infof("Generate build-tool main source: %s", build.Source)
+		if err = typtmpl.WriteFile(typvar.BuildToolSrc+"/main.go", 0777, &typtmpl.BuildToolMain{
+			DescPkg: descriptorPkg,
+		}); err != nil {
+			return
+		}
+	}
+
+	if _, err = os.Stat(typvar.BuildToolBin); os.IsNotExist(err) || !checksum.IsSame(typvar.BuildChecksum) {
+		if err = checksum.Save(typvar.BuildChecksum); err != nil {
 			return
 		}
 
-		if _, err = os.Stat(build.Source); os.IsNotExist(err) {
-			// c.Infof("Generate build-tool main source: %s", build.Source)
-			if err = typtmpl.WriteFile(build.Source, 0777, &typtmpl.BuildToolMain{
-				DescPkg: descriptorPkg,
-			}); err != nil {
-				return
-			}
-		}
-
-		// c.Info("Build the build-tool")
-
 		gobuild := &buildkit.GoBuild{
-			Out:    build.Binary,
-			Source: build.Source,
+			Out:    typvar.BuildToolBin,
+			Source: "./" + typvar.BuildToolSrc,
 			Ldflags: []string{
 				buildkit.BuildVar(projectPkgVar, c.ProjectPkg),
 				buildkit.BuildVar(typicalTmpVar, c.TypicalTmp),

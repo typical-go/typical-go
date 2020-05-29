@@ -8,6 +8,7 @@
 
 A Build Tool (+ Framework) for Golang. <https://typical-go.github.io/>
 
+
 ## Use Cases
 
 - Framework for Build-Tool  
@@ -72,16 +73,16 @@ Typical-Go support java-like annotation (expect the parameter in JSON format) fo
 Typical-Go encourage dependency-injection using [dig](https://github.com/uber-go/dig) and annotation. See the [example](https://github.com/typical-go/typical-go/tree/master/examples/provide-constructor).
 
 ```go
-// NewObject return new instance of object
+// OpenConn open new database connection
 // @constructor
-func NewObject() Object{
+func OpenConn() *sql.DB{
 }
 ```
 
 ```go
-// Close object
+// CloseConn close the database connection
 // @destructor
-func Close(obj Object){
+func CloseConn(obj Object){
 }
 ```
 

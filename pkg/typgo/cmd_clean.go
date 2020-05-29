@@ -20,10 +20,9 @@ func cmdClean(c *BuildCli) *cli.Command {
 func clean(c *Context) (err error) {
 	removeAll(c, typvar.BinFolder)
 
-	build := typvar.GetBuild()
 	removeAll(c, fmt.Sprintf("%s/bin", typvar.TypicalTmp))
-	remove(c, build.Checksum)
-	remove(c, build.Source)
+	remove(c, typvar.BuildChecksum)
+	removeAll(c, typvar.BuildToolSrc)
 	remove(c, typvar.Precond(c.Descriptor.Name))
 
 	return
