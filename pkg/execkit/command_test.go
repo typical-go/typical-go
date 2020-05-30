@@ -33,6 +33,4 @@ func TestCommand(t *testing.T) {
 	require.Equal(t, "noname arg1 arg2 arg3", cmd.String())
 	require.Equal(t, expected, cmd.ExecCmd(ctx))
 
-	cmd.Print(debugger)
-	require.Equal(t, "\n$ noname arg1 arg2 arg3\n", debugger.String())
 }

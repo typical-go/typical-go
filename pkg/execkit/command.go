@@ -6,8 +6,6 @@ import (
 	"io"
 	"os/exec"
 	"strings"
-
-	"github.com/fatih/color"
 )
 
 // Command is wrapper to exec.Command
@@ -39,11 +37,4 @@ func (c *Command) ExecCmd(ctx context.Context) *exec.Cmd {
 
 func (c Command) String() string {
 	return fmt.Sprintf("%s %s", c.Name, strings.Join(c.Args, " "))
-}
-
-// Print command
-func (c Command) Print(printer io.Writer) {
-	color.New(color.FgMagenta).Fprint(printer, "\n$ ")
-	fmt.Fprintf(printer, "%s ", c.Name)
-	fmt.Fprintln(printer, strings.Join(c.Args, " "))
 }

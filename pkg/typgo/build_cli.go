@@ -20,13 +20,6 @@ type (
 		Precond  *typtmpl.Precond
 	}
 
-	// Context of build tool
-	Context struct {
-		typlog.Logger
-		*cli.Context
-		*BuildCli
-	}
-
 	// CliFunc is command line function
 	CliFunc func(*Context) error
 )

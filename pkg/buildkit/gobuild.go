@@ -2,7 +2,6 @@ package buildkit
 
 import (
 	"fmt"
-	"io"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
@@ -13,8 +12,6 @@ type GoBuild struct {
 	Ldflags []string
 	Out     string
 	Source  string
-	Stdout  io.Writer
-	Stderr  io.Writer
 }
 
 // BuildVar return ldflag argument for set build variable
@@ -25,10 +22,8 @@ func BuildVar(name string, value interface{}) string {
 // Command of GoBuild
 func (g *GoBuild) Command() *execkit.Command {
 	return &execkit.Command{
-		Name:   "go",
-		Args:   g.Args(),
-		Stdout: g.Stdout,
-		Stderr: g.Stderr,
+		Name: "go",
+		Args: g.Args(),
 	}
 }
 

@@ -1,21 +1,12 @@
 package typgo
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typvar"
 )
-
-func execute(c *Context, cmd *execkit.Command) error {
-	cmd.Print(os.Stdout)
-	fmt.Fprintln(os.Stdout)
-
-	return cmd.Run(c.Ctx())
-}
 
 // ExcludeMessage return true is message mean to be exclude
 func ExcludeMessage(msg string) bool {

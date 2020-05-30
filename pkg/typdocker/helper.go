@@ -20,14 +20,15 @@ func Major(version string) string {
 
 func dockerIDs(ctx context.Context) (ids []string, err error) {
 	var out strings.Builder
-	cmd := execkit.Command{
+	cmd := &execkit.Command{
 		Name:   "docker",
 		Args:   []string{"ps", "-q"},
 		Stderr: os.Stderr,
 		Stdout: &out,
 	}
 
-	cmd.Print(os.Stdout)
+	execkit.PrintCommand(cmd, os.Stdout)
+
 	if err = cmd.Run(ctx); err != nil {
 		return
 	}
@@ -41,11 +42,11 @@ func dockerIDs(ctx context.Context) (ids []string, err error) {
 }
 
 func kill(ctx context.Context, id string) (err error) {
-	cmd := execkit.Command{
+	cmd := &execkit.Command{
 		Name:   "docker",
 		Args:   []string{"kill", id},
 		Stderr: os.Stderr,
 	}
-	cmd.Print(os.Stdout)
+	execkit.PrintCommand(cmd, os.Stdout)
 	return cmd.Run(ctx)
 }

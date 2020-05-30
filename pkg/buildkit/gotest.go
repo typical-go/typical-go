@@ -22,11 +22,8 @@ type GoTest struct {
 // Command of go test
 func (g *GoTest) Command() *execkit.Command {
 	return &execkit.Command{
-		Name:   "go",
-		Args:   g.Args(),
-		Stdout: g.Stdout,
-		Stderr: g.Stderr,
-		Stdin:  g.Stdin,
+		Name: "go",
+		Args: g.Args(),
 	}
 }
 

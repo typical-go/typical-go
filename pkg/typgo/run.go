@@ -2,7 +2,6 @@ package typgo
 
 import (
 	"errors"
-	"os"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typvar"
@@ -64,11 +63,9 @@ func (r Runs) Run(c *Context) error {
 
 // Run for standard typical project
 func (*StdRun) Run(c *Context) error {
-	return execute(c, &execkit.Command{
-		Name:   typvar.AppBin(c.Descriptor.Name),
-		Args:   c.Args().Slice(),
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
+	return c.Execute(&execkit.Command{
+		Name: typvar.AppBin(c.Descriptor.Name),
+		Args: c.Args().Slice(),
 	})
 }
 

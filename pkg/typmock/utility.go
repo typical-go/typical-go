@@ -60,7 +60,7 @@ func mock(c *typgo.Context) (err error) {
 			dest := fmt.Sprintf("%s%s/%s.go", t.Parent, t.MockPkg, strcase.ToSnake(t.Source))
 			name := fmt.Sprintf("%s.%s", srcPkg, t.Source)
 
-			cmd := &execkit.Command{
+			if err = c.Execute(&execkit.Command{
 				Name: mockgen,
 				Args: []string{
 					"-destination", dest,
@@ -69,11 +69,7 @@ func mock(c *typgo.Context) (err error) {
 					t.Source,
 				},
 				Stderr: os.Stderr,
-			}
-
-			cmd.Print(os.Stdout)
-
-			if err = cmd.Run(c.Ctx()); err != nil {
+			}); err != nil {
 				c.Warnf("Fail to mock '%s': %s", name, err.Error())
 			}
 		}
