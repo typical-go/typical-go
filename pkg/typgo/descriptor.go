@@ -23,13 +23,15 @@ type (
 		Description string
 		// Version of the project (OPTIONAL).
 		// By default it is 0.0.1
-		Version     string
-		Build       Build
-		Test        Test
-		EntryPoint  interface{}
-		Release     Release
-		Utility     Utility
-		Layouts     []string
+		Version    string
+		EntryPoint interface{}
+		Layouts    []string
+
+		Build   Build
+		Test    Tester
+		Release Releaser
+		Utility Utility
+
 		SkipPrecond bool
 		Configurer  Configurer
 	}
@@ -38,10 +40,6 @@ type (
 var _ typcore.AppLauncher = (*Descriptor)(nil)
 var _ typcore.BuildLauncher = (*Descriptor)(nil)
 var _ Build = (*Descriptor)(nil)
-
-//
-// Descriptor
-//
 
 // LaunchApp to launch the app
 func (d *Descriptor) LaunchApp() (err error) {

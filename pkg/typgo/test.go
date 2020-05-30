@@ -11,8 +11,8 @@ import (
 )
 
 type (
-	// Test responsible to test
-	Test interface {
+	// Tester responsible to test
+	Tester interface {
 		Test(*Context) error
 	}
 
@@ -23,26 +23,26 @@ type (
 	TestFn func(*Context) error
 
 	// Tests for composite test
-	Tests []Test
+	Tests []Tester
 
-	testImpl struct {
+	testerImpl struct {
 		fn TestFn
 	}
 )
 
-var _ Test = (*StdTest)(nil)
-var _ Test = (Tests)(nil)
+var _ Tester = (*StdTest)(nil)
+var _ Tester = (Tests)(nil)
 
 //
-// testImpl
+// testerImpl
 //
 
 // NewTest return new instance of test
-func NewTest(fn TestFn) Test {
-	return &testImpl{fn: fn}
+func NewTest(fn TestFn) Tester {
+	return &testerImpl{fn: fn}
 }
 
-func (t *testImpl) Test(c *Context) error {
+func (t *testerImpl) Test(c *Context) error {
 	return t.fn(c)
 }
 

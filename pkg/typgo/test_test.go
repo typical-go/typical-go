@@ -10,27 +10,27 @@ import (
 
 func TestTests(t *testing.T) {
 	testcases := []struct {
-		testName    string
-		Test        typgo.Test
+		testName string
+		typgo.Tester
 		context     *typgo.Context
 		expectedErr string
 	}{
 		{
-			Test:        typgo.NewTest(func(*typgo.Context) error { return errors.New("some-error") }),
+			Tester:      typgo.NewTest(func(*typgo.Context) error { return errors.New("some-error") }),
 			expectedErr: "some-error",
 		},
 		{
-			Test: typgo.NewTest(func(*typgo.Context) error { return nil }),
+			Tester: typgo.NewTest(func(*typgo.Context) error { return nil }),
 		},
 		{
-			Test: typgo.Tests{
+			Tester: typgo.Tests{
 				typgo.NewTest(func(*typgo.Context) error { return errors.New("some-error") }),
 				typgo.NewTest(func(*typgo.Context) error { return nil }),
 			},
 			expectedErr: "some-error",
 		},
 		{
-			Test: typgo.Tests{
+			Tester: typgo.Tests{
 				typgo.NewTest(func(*typgo.Context) error { return nil }),
 				typgo.NewTest(func(*typgo.Context) error { return errors.New("some-error") }),
 			},
@@ -40,7 +40,7 @@ func TestTests(t *testing.T) {
 
 	for _, tt := range testcases {
 		t.Run(tt.testName, func(t *testing.T) {
-			err := tt.Test.Test(tt.context)
+			err := tt.Test(tt.context)
 			if tt.expectedErr != "" {
 				require.EqualError(t, err, tt.expectedErr)
 			} else {

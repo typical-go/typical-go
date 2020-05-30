@@ -11,13 +11,13 @@ import (
 )
 
 type (
-	// Release responsible to release
-	Release interface {
+	// Releaser responsible to release
+	Releaser interface {
 		Release(*Context) error
 	}
 
 	// Releases for composite release
-	Releases []Release
+	Releases []Releaser
 
 	// ReleaseFn release function
 	ReleaseFn func(*Context) error
@@ -27,14 +27,14 @@ type (
 	}
 )
 
-var _ Release = (Releases)(nil)
+var _ Releaser = (Releases)(nil)
 
 //
 // releaserImpl
 //
 
 // NewRelease return new instance of Releaser
-func NewRelease(fn ReleaseFn) Release {
+func NewRelease(fn ReleaseFn) Releaser {
 	return &releaserImpl{fn: fn}
 }
 

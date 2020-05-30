@@ -13,8 +13,6 @@ import (
 	"golang.org/x/oauth2"
 )
 
-var _ Release = (*Github)(nil)
-
 type (
 	// Github to publish
 	Github struct {
@@ -22,6 +20,8 @@ type (
 		RepoName string
 	}
 )
+
+var _ Releaser = (*Github)(nil)
 
 // Release to github
 func (g *Github) Release(c *Context) (err error) {
