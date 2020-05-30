@@ -50,19 +50,20 @@ The unique about Typical-Go is it use go-based descriptor file rather than DSL w
 It should be defined at `typical/descriptor.go` with variable name `Descriptor`
 ```go 
 var Descriptor = typgo.Descriptor{
-	Name:    "configuration-with-invocation",
-	Version: "1.0.0",
+	Name:    "typical-go",
+	Version: "0.9.55",
 
-	EntryPoint: server.Main,
+	EntryPoint: wrapper.Main,
+	Layouts:    []string{"wrapper", "pkg"},
 
-	Configurer: server.Configuration(),
+	Test:    &typgo.StdTest{},
+	Compile: &typgo.StdCompile{},
+	Run:     &typgo.StdRun{},
+	Release: &typgo.Github{Owner: "typical-go", RepoName: "typical-go"},
 
-	Build: &typgo.StdBuild{},
-
-	Layouts: []string{
-		"server",
-	},
+	Utility: typgo.NewUtility(taskExamples), // Test all the examples
 }
+
 ```
 ## Annotation
 

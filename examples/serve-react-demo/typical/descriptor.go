@@ -11,13 +11,14 @@ var Descriptor = typgo.Descriptor{
 	Version: "1.0.0",
 
 	EntryPoint: server.Main,
-
-	Build: typgo.Builds{
-		&ReactDemoModule{source: "react-demo"},
-		&typgo.StdBuild{},
-	},
-
 	Layouts: []string{
 		"internal",
 	},
+
+	Compile: typgo.Compiles{
+		&ReactDemoModule{source: "react-demo"},
+		&typgo.StdCompile{},
+	},
+
+	Run: &typgo.StdRun{},
 }

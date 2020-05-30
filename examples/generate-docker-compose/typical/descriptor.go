@@ -12,14 +12,14 @@ var Descriptor = typgo.Descriptor{
 	Version: "1.0.0",
 
 	EntryPoint: pinger.Main,
+	Layouts: []string{
+		"internal",
+	},
 
-	Build: &typgo.StdBuild{},
+	Compile: &typgo.StdCompile{},
+	Run:     &typgo.StdRun{},
 
 	Utility: typdocker.Compose(
 		redisRecipe,
 	),
-
-	Layouts: []string{
-		"internal",
-	},
 }

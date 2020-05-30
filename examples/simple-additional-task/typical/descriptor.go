@@ -12,7 +12,9 @@ var Descriptor = typgo.Descriptor{
 
 	EntryPoint: helloworld.Main,
 
-	Build: &typgo.StdBuild{},
+	Compile: &typgo.StdCompile{},
+
+	Run: &typgo.StdRun{},
 
 	Utility: typgo.NewUtility(taskPrintContext), // Add custom task
 }

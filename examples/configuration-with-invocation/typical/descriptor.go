@@ -11,12 +11,12 @@ var Descriptor = typgo.Descriptor{
 	Version: "1.0.0",
 
 	EntryPoint: server.Main,
-
-	Configurer: server.Configuration(),
-
-	Build: &typgo.StdBuild{},
-
 	Layouts: []string{
 		"internal",
 	},
+
+	Configurer: server.Configuration(),
+
+	Compile: &typgo.StdCompile{},
+	Run:     &typgo.StdRun{},
 }

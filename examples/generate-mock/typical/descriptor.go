@@ -12,12 +12,13 @@ var Descriptor = typgo.Descriptor{
 	Version: "1.0.0",
 
 	EntryPoint: helloworld.Main,
-
-	Build: &typgo.StdBuild{},
-
-	Utility: typmock.Utility(),
-
 	Layouts: []string{
 		"internal",
 	},
+
+	Compile: &typgo.StdCompile{},
+	Run:     &typgo.StdRun{},
+	Test:    &typgo.StdTest{},
+
+	Utility: typmock.Utility(),
 }
