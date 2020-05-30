@@ -12,28 +12,28 @@ import (
 func TestReleasers(t *testing.T) {
 	testcases := []struct {
 		testName string
-		typgo.Releaser
+		typgo.Release
 		context     *typgo.Context
 		expectedErr string
 	}{
 		{
-			Releaser:    typgo.NewReleaser(func(*typgo.Context) error { return errors.New("some-error") }),
+			Release:     typgo.NewRelease(func(*typgo.Context) error { return errors.New("some-error") }),
 			expectedErr: "some-error",
 		},
 		{
-			Releaser: typgo.NewReleaser(func(*typgo.Context) error { return nil }),
+			Release: typgo.NewRelease(func(*typgo.Context) error { return nil }),
 		},
 		{
-			Releaser: typgo.Releasers{
-				typgo.NewReleaser(func(*typgo.Context) error { return nil }),
-				typgo.NewReleaser(func(*typgo.Context) error { return errors.New("some-error") }),
+			Release: typgo.Releases{
+				typgo.NewRelease(func(*typgo.Context) error { return nil }),
+				typgo.NewRelease(func(*typgo.Context) error { return errors.New("some-error") }),
 			},
 			expectedErr: "some-error",
 		},
 		{
-			Releaser: typgo.Releasers{
-				typgo.NewReleaser(func(*typgo.Context) error { return errors.New("some-error") }),
-				typgo.NewReleaser(func(*typgo.Context) error { return nil }),
+			Release: typgo.Releases{
+				typgo.NewRelease(func(*typgo.Context) error { return errors.New("some-error") }),
+				typgo.NewRelease(func(*typgo.Context) error { return nil }),
 			},
 			expectedErr: "some-error",
 		},
@@ -41,7 +41,7 @@ func TestReleasers(t *testing.T) {
 
 	for _, tt := range testcases {
 		t.Run(tt.testName, func(t *testing.T) {
-			err := tt.Release(tt.context)
+			err := tt.Release.Release(tt.context)
 			if tt.expectedErr != "" {
 				require.EqualError(t, err, tt.expectedErr)
 			} else {

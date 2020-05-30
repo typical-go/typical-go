@@ -26,7 +26,7 @@ type (
 		Version     string
 		Build       Build
 		EntryPoint  interface{}
-		Releaser    Releaser
+		Release     Release
 		Utility     Utility
 		Layouts     []string
 		SkipPrecond bool

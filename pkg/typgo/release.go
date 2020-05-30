@@ -10,7 +10,57 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func cmdPublish(c *BuildCli) *cli.Command {
+type (
+	// Release responsible to release
+	Release interface {
+		Release(*Context) error
+	}
+
+	// Releases for composite release
+	Releases []Release
+
+	// ReleaseFn release function
+	ReleaseFn func(*Context) error
+
+	releaserImpl struct {
+		fn ReleaseFn
+	}
+)
+
+var _ Release = (Releases)(nil)
+
+//
+// releaserImpl
+//
+
+// NewRelease return new instance of Releaser
+func NewRelease(fn ReleaseFn) Release {
+	return &releaserImpl{fn: fn}
+}
+
+func (r *releaserImpl) Release(c *Context) error {
+	return r.fn(c)
+}
+
+//
+// Releaser
+//
+
+// Release the releasers
+func (r Releases) Release(c *Context) (err error) {
+	for _, releaser := range r {
+		if err = releaser.Release(c); err != nil {
+			return
+		}
+	}
+	return
+}
+
+//
+// Command
+//
+
+func cmdRelease(c *BuildCli) *cli.Command {
 	return &cli.Command{
 		Name:  "release",
 		Usage: "Release the project",
@@ -19,13 +69,12 @@ func cmdPublish(c *BuildCli) *cli.Command {
 			&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
 			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 		},
-		Action: c.ActionFn("RELEASE", Release),
+		Action: c.ActionFn("RELEASE", release),
 	}
 }
 
-// Release the project
-func Release(c *Context) (err error) {
-	if c.Releaser == nil {
+func release(c *Context) (err error) {
+	if c.Release == nil {
 		return errors.New("No Releaser")
 	}
 
@@ -64,7 +113,7 @@ func Release(c *Context) (err error) {
 	typvar.Rls.Tag = tag
 	typvar.Rls.GitLogs = gitLogs
 
-	if err = c.Releaser.Release(c); err != nil {
+	if err = c.Release.Release(c); err != nil {
 		return
 	}
 

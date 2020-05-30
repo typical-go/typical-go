@@ -13,7 +13,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-var _ Releaser = (*Github)(nil)
+var _ Release = (*Github)(nil)
 
 type (
 	// Github to publish

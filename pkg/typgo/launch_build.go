@@ -99,7 +99,7 @@ func commands(b *BuildCli) (cmds []*cli.Command) {
 	cmds = []*cli.Command{
 		cmdTest(b),
 		cmdRun(b),
-		cmdPublish(b),
+		cmdRelease(b),
 		cmdClean(b),
 	}
 
