@@ -15,11 +15,48 @@ type (
 		Run(*Context) error
 	}
 
+	// RunnerFn is runner function
+	RunnerFn func(*Context) error
+
+	runImpl struct {
+		fn RunnerFn
+	}
+
+	// Runs for composite run
+	Runs []Runner
+
 	// StdRun standard run
 	StdRun struct{}
 )
 
 var _ Runner = (*StdRun)(nil)
+
+//
+// runImpl
+//
+
+// NewRun return new instance of Run
+func NewRun(fn RunnerFn) Runner {
+	return &runImpl{fn: fn}
+}
+
+func (r *runImpl) Run(c *Context) error {
+	return r.fn(c)
+}
+
+//
+// Runs
+//
+
+// Run composite runner
+func (r Runs) Run(c *Context) error {
+	for _, runner := range r {
+		if err := runner.Run(c); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 //
 // StdRun
