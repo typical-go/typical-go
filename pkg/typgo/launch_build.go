@@ -48,17 +48,11 @@ Options:
 }
 
 func launchBuild(d *Descriptor) (err error) {
-	if err := d.Validate(); err != nil {
-		return err
-	}
-
 	typvar.Init()
 
 	app := cli.NewApp()
 	app.Name = "./typicalw"
 	app.Usage = "./tyicalw"
-	app.Description = d.Description
-	app.Version = d.Version
 
 	buildCli := createBuildCli(d)
 

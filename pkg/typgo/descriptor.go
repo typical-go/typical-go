@@ -1,9 +1,7 @@
 package typgo
 
 import (
-	"errors"
 	"os"
-	"regexp"
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcore"
@@ -41,9 +39,6 @@ var _ typcore.BuildLauncher = (*Descriptor)(nil)
 
 // LaunchApp to launch the app
 func (d *Descriptor) LaunchApp() (err error) {
-	if err = d.Validate(); err != nil {
-		return
-	}
 	if configFile := os.Getenv("CONFIG"); configFile != "" {
 		_, err = LoadConfig(configFile)
 	}
@@ -60,30 +55,4 @@ func (d *Descriptor) LaunchApp() (err error) {
 // LaunchBuild to launch the build tool
 func (d *Descriptor) LaunchBuild() (err error) {
 	return launchBuild(d)
-}
-
-// Validate context
-func (d *Descriptor) Validate() (err error) {
-	if d.Version == "" {
-		d.Version = "0.0.1"
-	}
-
-	if !ValidateName(d.Name) {
-		return errors.New("Descriptor: bad name")
-	}
-
-	return
-}
-
-// ValidateName to validate valid descriptor name
-func ValidateName(name string) bool {
-	if name == "" {
-		return false
-	}
-
-	r, _ := regexp.Compile(`^[a-zA-Z\_\-]+$`)
-	if !r.MatchString(name) {
-		return false
-	}
-	return true
 }

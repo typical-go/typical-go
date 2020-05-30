@@ -122,9 +122,14 @@ func release(c *Context) (err error) {
 }
 
 func releaseTag(c *Context, alpha bool) string {
+	version := "0.0.1"
+	if c.Descriptor.Version != "" {
+		version = c.Descriptor.Version
+	}
+
 	var builder strings.Builder
 	builder.WriteString("v")
-	builder.WriteString(c.Descriptor.Version)
+	builder.WriteString(version)
 	// if c.BuildTool.IncludeBranch {
 	// 	builder.WriteString("_")
 	// 	builder.WriteString(git.Branch(c.Context))
