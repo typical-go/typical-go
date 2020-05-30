@@ -17,11 +17,49 @@ type (
 		Compile(*Context) error
 	}
 
+	// Compiles for composite compile
+	Compiles []Compiler
+
+	// CompileFn compile function
+	CompileFn func(*Context) error
+
+	compilerImpl struct {
+		fn CompileFn
+	}
+
 	// StdCompile is standard compile
 	StdCompile struct{}
 )
 
 var _ (Compiler) = (*StdCompile)(nil)
+var _ (Compiler) = (Compiles)(nil)
+
+//
+// stdCompiler
+//
+
+// NewCompile return new instance of Compiler
+func NewCompile(fn CompileFn) Compiler {
+	return &compilerImpl{fn: fn}
+}
+
+func (i *compilerImpl) Compile(c *Context) error {
+	return i.fn(c)
+}
+
+//
+// Commpilers
+//
+
+// Compile array of compiler
+func (s Compiles) Compile(c *Context) error {
+	for _, compiler := range s {
+		if err := compiler.Compile(c); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 //
 // StdCompile
