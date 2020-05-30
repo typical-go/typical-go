@@ -18,9 +18,33 @@ type (
 
 	// StdTest is standard test
 	StdTest struct{}
+
+	// TestFn function
+	TestFn func(*Context) error
+
+	// Tests for composite test
+	Tests []Test
+
+	testImpl struct {
+		fn TestFn
+	}
 )
 
 var _ Test = (*StdTest)(nil)
+var _ Test = (Tests)(nil)
+
+//
+// testImpl
+//
+
+// NewTest return new instance of test
+func NewTest(fn TestFn) Test {
+	return &testImpl{fn: fn}
+}
+
+func (t *testImpl) Test(c *Context) error {
+	return t.fn(c)
+}
 
 //
 // StdTest
@@ -49,6 +73,20 @@ func (s *StdTest) Test(c *Context) (err error) {
 	}
 
 	return execute(c, gotest)
+}
+
+//
+// Tests
+//
+
+// Test composite
+func (t Tests) Test(c *Context) (err error) {
+	for _, test := range t {
+		if err = test.Test(c); err != nil {
+			return
+		}
+	}
+	return
 }
 
 //
