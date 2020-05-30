@@ -1,8 +1,7 @@
 package typgo
 
 const (
-	TestPhase Phase = iota
-	CompilePhase
+	CompilePhase Phase = iota
 	RunPhase
 )
 
@@ -23,11 +22,8 @@ var _ Build = (Builds)(nil)
 
 func (d Phase) String() string {
 	return [...]string{
-		"test_phase",
 		"compile_phase",
 		"run_phase",
-		"release_phase",
-		"publish_phase",
 	}[d]
 }
 

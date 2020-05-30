@@ -19,6 +19,8 @@ var Descriptor = typgo.Descriptor{
 
 	Build: &typgo.StdBuild{},
 
+	Test: &typgo.StdTest{},
+
 	Release: &typgo.Github{
 		Owner:    "typical-go",
 		RepoName: "typical-go",

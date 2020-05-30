@@ -25,6 +25,7 @@ type (
 		// By default it is 0.0.1
 		Version     string
 		Build       Build
+		Test        Test
 		EntryPoint  interface{}
 		Release     Release
 		Utility     Utility

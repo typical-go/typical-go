@@ -2,6 +2,7 @@ package buildkit
 
 import (
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
@@ -13,13 +14,19 @@ type GoTest struct {
 	CoverProfile string
 	Race         bool
 	Timeout      time.Duration
+	Stdout       io.Writer
+	Stderr       io.Writer
+	Stdin        io.Reader
 }
 
 // Command of go test
 func (g *GoTest) Command() *execkit.Command {
 	return &execkit.Command{
-		Name: "go",
-		Args: g.Args(),
+		Name:   "go",
+		Args:   g.Args(),
+		Stdout: g.Stdout,
+		Stderr: g.Stderr,
+		Stdin:  g.Stdin,
 	}
 }
 

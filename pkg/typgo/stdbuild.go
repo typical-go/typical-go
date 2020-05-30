@@ -20,8 +20,7 @@ func (b *StdBuild) Execute(c *Context, phase Phase) (ok bool, err error) {
 	switch phase {
 	case RunPhase:
 		return true, executeRun(c)
-	case TestPhase:
-		return true, executeTest(c)
+
 	}
 	return false, nil
 }
@@ -74,35 +73,4 @@ func executeRun(c *Context) (err error) {
 	}
 
 	return
-}
-
-func executeTest(c *Context) (err error) {
-	var (
-		targets []string
-	)
-
-	for _, layout := range c.Descriptor.Layouts {
-		targets = append(targets, fmt.Sprintf("./%s/...", layout))
-	}
-
-	if len(targets) < 1 {
-		c.Info("Nothing to test")
-		return
-	}
-
-	gotest := buildkit.GoTest{
-		Targets:      targets,
-		Timeout:      typvar.TestTimeout,
-		CoverProfile: typvar.TestCoverProfile,
-		Race:         true,
-	}
-
-	cmd := gotest.Command()
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	cmd.Print(os.Stdout)
-	fmt.Println()
-
-	return cmd.Run(c.Ctx())
 }
