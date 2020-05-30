@@ -13,27 +13,27 @@ func TestReleasers(t *testing.T) {
 	testcases := []struct {
 		testName string
 		typgo.Releaser
-		context     *typgo.Context
+		context     *typgo.ReleaseContext
 		expectedErr string
 	}{
 		{
-			Releaser:    typgo.NewRelease(func(*typgo.Context) error { return errors.New("some-error") }),
+			Releaser:    typgo.NewRelease(func(*typgo.ReleaseContext) error { return errors.New("some-error") }),
 			expectedErr: "some-error",
 		},
 		{
-			Releaser: typgo.NewRelease(func(*typgo.Context) error { return nil }),
+			Releaser: typgo.NewRelease(func(*typgo.ReleaseContext) error { return nil }),
 		},
 		{
 			Releaser: typgo.Releases{
-				typgo.NewRelease(func(*typgo.Context) error { return nil }),
-				typgo.NewRelease(func(*typgo.Context) error { return errors.New("some-error") }),
+				typgo.NewRelease(func(*typgo.ReleaseContext) error { return nil }),
+				typgo.NewRelease(func(*typgo.ReleaseContext) error { return errors.New("some-error") }),
 			},
 			expectedErr: "some-error",
 		},
 		{
 			Releaser: typgo.Releases{
-				typgo.NewRelease(func(*typgo.Context) error { return errors.New("some-error") }),
-				typgo.NewRelease(func(*typgo.Context) error { return nil }),
+				typgo.NewRelease(func(*typgo.ReleaseContext) error { return errors.New("some-error") }),
+				typgo.NewRelease(func(*typgo.ReleaseContext) error { return nil }),
 			},
 			expectedErr: "some-error",
 		},

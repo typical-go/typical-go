@@ -20,7 +20,7 @@ func execute(c *Context, cmd *execkit.Command) error {
 // ExcludeMessage return true is message mean to be exclude
 func ExcludeMessage(msg string) bool {
 	msg = strings.ToLower(msg)
-	for _, prefix := range typvar.Rls.ExclMsgPrefix {
+	for _, prefix := range typvar.ExclMsgPrefix {
 		if strings.HasPrefix(msg, strings.ToLower(prefix)) {
 			return true
 		}

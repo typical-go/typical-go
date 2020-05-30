@@ -1,7 +1,6 @@
 package typgo
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -9,7 +8,6 @@ import (
 
 	"github.com/google/go-github/github"
 	"github.com/typical-go/typical-go/pkg/git"
-	"github.com/typical-go/typical-go/pkg/typvar"
 	"golang.org/x/oauth2"
 )
 
@@ -24,7 +22,7 @@ type (
 var _ Releaser = (*Github)(nil)
 
 // Release to github
-func (g *Github) Release(c *Context) (err error) {
+func (g *Github) Release(c *ReleaseContext) (err error) {
 	token := os.Getenv("GITHUB_TOKEN")
 
 	if token == "" {
@@ -38,10 +36,9 @@ func (g *Github) Release(c *Context) (err error) {
 		),
 	)
 	repo := github.NewClient(oauth).Repositories
-	tag := typvar.Rls.Tag
-	gitLogs := typvar.Rls.GitLogs
-	alpha := typvar.Rls.Alpha
-	releaseFiles := typvar.Rls.Files
+	tag := c.Tag
+	gitLogs := c.GitLogs
+	alpha := c.Alpha
 
 	if _, _, err = repo.GetReleaseByTag(ctx, g.Owner, g.RepoName, tag); err == nil {
 		return fmt.Errorf("Tag '%s' already published", tag)
@@ -57,28 +54,31 @@ func (g *Github) Release(c *Context) (err error) {
 	if githubRls, _, err = repo.CreateRelease(ctx, g.Owner, g.RepoName, githubRls); err != nil {
 		return
 	}
-	for _, file := range releaseFiles {
-		c.Infof("Upload asset: %s", file)
-		if err = g.upload(ctx, repo, *githubRls.ID, file); err != nil {
-			return
-		}
-	}
+
+	// NOTE: upload file to Github not yet needed
+	// for _, file := range releaseFiles {
+	// 	c.Infof("Upload asset: %s", file)
+	// 	if err = g.upload(ctx, repo, *githubRls.ID, file); err != nil {
+	// 		return
+	// 	}
+	// }
 	return
 }
 
-func (g *Github) upload(ctx context.Context, svc *github.RepositoriesService, id int64, binary string) (err error) {
-	var (
-		file       *os.File
-		binaryPath = fmt.Sprintf("%s/%s", typvar.ReleaseFolder, binary)
-	)
-	if file, err = os.Open(binaryPath); err != nil {
-		return
-	}
-	defer file.Close()
-	opts := &github.UploadOptions{Name: binary}
-	_, _, err = svc.UploadReleaseAsset(ctx, g.Owner, g.RepoName, id, opts, file)
-	return
-}
+// NOTE: upload file to Github not yet needed
+// func (g *Github) upload(ctx context.Context, svc *github.RepositoriesService, id int64, binary string) (err error) {
+// 	var (
+// 		file       *os.File
+// 		binaryPath = fmt.Sprintf("%s/%s", typvar.ReleaseFolder, binary)
+// 	)
+// 	if file, err = os.Open(binaryPath); err != nil {
+// 		return
+// 	}
+// 	defer file.Close()
+// 	opts := &github.UploadOptions{Name: binary}
+// 	_, _, err = svc.UploadReleaseAsset(ctx, g.Owner, g.RepoName, id, opts, file)
+// 	return
+// }
 
 func (g *Github) releaseNote(gitLogs []*git.Log) string {
 	var b strings.Builder

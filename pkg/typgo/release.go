@@ -6,21 +6,29 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/git"
-	"github.com/typical-go/typical-go/pkg/typvar"
 	"github.com/urfave/cli/v2"
 )
 
 type (
 	// Releaser responsible to release
 	Releaser interface {
-		Release(*Context) error
+		Release(*ReleaseContext) error
+	}
+
+	// ReleaseContext contain data for release
+	ReleaseContext struct {
+		*Context
+
+		Alpha   bool
+		Tag     string
+		GitLogs []*git.Log
 	}
 
 	// Releases for composite release
 	Releases []Releaser
 
 	// ReleaseFn release function
-	ReleaseFn func(*Context) error
+	ReleaseFn func(*ReleaseContext) error
 
 	releaserImpl struct {
 		fn ReleaseFn
@@ -38,7 +46,7 @@ func NewRelease(fn ReleaseFn) Releaser {
 	return &releaserImpl{fn: fn}
 }
 
-func (r *releaserImpl) Release(c *Context) error {
+func (r *releaserImpl) Release(c *ReleaseContext) error {
 	return r.fn(c)
 }
 
@@ -47,7 +55,7 @@ func (r *releaserImpl) Release(c *Context) error {
 //
 
 // Release the releasers
-func (r Releases) Release(c *Context) (err error) {
+func (r Releases) Release(c *ReleaseContext) (err error) {
 	for _, releaser := range r {
 		if err = releaser.Release(c); err != nil {
 			return
@@ -95,7 +103,8 @@ func release(c *Context) (err error) {
 	alpha := c.Bool("alpha")
 	tag := releaseTag(c, alpha)
 
-	if status := git.Status(ctx); status != "" && !force {
+	status := git.Status(ctx)
+	if status != "" && !force {
 		return fmt.Errorf("Please commit changes first:\n%s", status)
 	}
 
@@ -109,15 +118,12 @@ func release(c *Context) (err error) {
 		return errors.New("No change to be released")
 	}
 
-	typvar.Rls.Alpha = alpha
-	typvar.Rls.Tag = tag
-	typvar.Rls.GitLogs = gitLogs
-
-	if err = c.Release.Release(c); err != nil {
-		return
-	}
-
-	return
+	return c.Release.Release(&ReleaseContext{
+		Context: c,
+		Alpha:   alpha,
+		Tag:     tag,
+		GitLogs: gitLogs,
+	})
 
 }
 
