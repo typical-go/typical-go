@@ -30,6 +30,7 @@ type (
 		Build   Build
 		Test    Tester
 		Release Releaser
+		Compile Compiler
 		Utility Utility
 
 		SkipPrecond bool

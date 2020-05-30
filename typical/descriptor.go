@@ -17,6 +17,8 @@ var Descriptor = typgo.Descriptor{
 		"pkg",
 	},
 
+	Compile: &typgo.StdCompile{},
+
 	Build: &typgo.StdBuild{},
 
 	Test: &typgo.StdTest{},

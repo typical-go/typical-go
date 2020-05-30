@@ -64,7 +64,7 @@ func launchBuild(d *Descriptor) (err error) {
 
 	app.Before = buildCli.ActionFn("BEFORE_BUILD", beforeBuild)
 	app.After = buildCli.ActionFn("AFTER_BUILD", afterBuild)
-	app.Commands = commands(buildCli)
+	app.Commands = buildCli.commands()
 
 	return app.Run(os.Args)
 }
@@ -93,23 +93,6 @@ func afterBuild(c *Context) (err error) {
 		return
 	}
 	return
-}
-
-func commands(b *BuildCli) (cmds []*cli.Command) {
-	cmds = []*cli.Command{
-		cmdTest(b),
-		cmdRun(b),
-		cmdRelease(b),
-		cmdClean(b),
-	}
-
-	if b.Utility != nil {
-		for _, cmd := range b.Utility.Commands(b) {
-			cmds = append(cmds, cmd)
-		}
-	}
-
-	return cmds
 }
 
 func precond(c *Context) (err error) {
