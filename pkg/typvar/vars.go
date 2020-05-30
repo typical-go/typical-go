@@ -36,3 +36,8 @@ var (
 func Precond(name string) string {
 	return fmt.Sprintf("%s/%s/precond_DO_NOT_EDIT.go", CmdFolder, name)
 }
+
+// AppBin path
+func AppBin(name string) string {
+	return fmt.Sprintf("%s/%s", BinFolder, name)
+}

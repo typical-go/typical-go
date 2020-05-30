@@ -29,7 +29,6 @@ var _ (Compiler) = (*StdCompile)(nil)
 
 // Compile standard go project
 func (*StdCompile) Compile(c *Context) (err error) {
-	binary := fmt.Sprintf("%s/%s", typvar.BinFolder, c.Descriptor.Name)
 	src := fmt.Sprintf("%s/%s", typvar.CmdFolder, c.Descriptor.Name)
 
 	// NOTE: create main.go if not exist
@@ -43,12 +42,14 @@ func (*StdCompile) Compile(c *Context) (err error) {
 		}
 	}
 
-	return execute(c, &buildkit.GoBuild{
-		Out:    binary,
+	gobuild := buildkit.GoBuild{
+		Out:    typvar.AppBin(c.Descriptor.Name),
 		Source: "./" + src,
 		Stderr: os.Stderr,
 		Stdout: os.Stderr,
-	})
+	}
+
+	return execute(c, gobuild.Command())
 }
 
 //

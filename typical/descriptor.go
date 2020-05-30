@@ -11,18 +11,14 @@ var Descriptor = typgo.Descriptor{
 	Version: "0.9.55",
 
 	EntryPoint: wrapper.Main,
-
 	Layouts: []string{
 		"wrapper",
 		"pkg",
 	},
 
+	Test:    &typgo.StdTest{},
 	Compile: &typgo.StdCompile{},
-
-	Build: &typgo.StdBuild{},
-
-	Test: &typgo.StdTest{},
-
+	Run:     &typgo.StdRun{},
 	Release: &typgo.Github{
 		Owner:    "typical-go",
 		RepoName: "typical-go",

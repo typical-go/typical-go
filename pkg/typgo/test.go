@@ -72,7 +72,7 @@ func (s *StdTest) Test(c *Context) (err error) {
 		Stderr:       os.Stderr,
 	}
 
-	return execute(c, gotest)
+	return execute(c, gotest.Command())
 }
 
 //

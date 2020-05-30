@@ -10,13 +10,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typvar"
 )
 
-type commander interface {
-	Command() *execkit.Command
-}
-
-func execute(c *Context, commander commander) error {
-	cmd := commander.Command()
-
+func execute(c *Context, cmd *execkit.Command) error {
 	cmd.Print(os.Stdout)
 	fmt.Fprintln(os.Stdout)
 
