@@ -1,9 +1,5 @@
 package typgo
 
-var (
-	_ Destroyer = (*Destructor)(nil)
-)
-
 type (
 	// Destroyer responsible to destroy the dependency [mock]
 	Destroyer interface {
@@ -18,6 +14,8 @@ type (
 		Fn interface{}
 	}
 )
+
+var _ Destroyer = (*Destructor)(nil)
 
 // Destructors return slice of destruction
 func (d *Destructor) Destructors() []*Destructor {

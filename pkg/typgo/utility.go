@@ -4,11 +4,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var (
-	_ Utility = (*SimpleUtility)(nil)
-	_ Utility = (Utilities)(nil)
-)
-
 type (
 	// Utility for build-tool
 	Utility interface {
@@ -26,6 +21,9 @@ type (
 	// UtilityFn is a function to return command
 	UtilityFn func(ctx *BuildCli) []*cli.Command
 )
+
+var _ Utility = (*SimpleUtility)(nil)
+var _ Utility = (Utilities)(nil)
 
 // NewUtility return new instance of utility
 func NewUtility(fn UtilityFn) *SimpleUtility {

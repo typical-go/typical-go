@@ -23,11 +23,12 @@ type (
 		EntryPoint interface{}
 		Layouts    []string
 
-		Test    Tester
-		Compile Compiler
-		Run     Runner
-		Release Releaser
-		Utility Utility
+		Prebuild Prebuilder
+		Test     Tester
+		Compile  Compiler
+		Run      Runner
+		Release  Releaser
+		Utility  Utility
 
 		SkipPrecond bool
 		Configurer  Configurer

@@ -1,8 +1,5 @@
 package typgo
 
-var _ Configurer = (Configurers)(nil)
-var _ Configurer = &Configuration{}
-
 type (
 	// Configurer responsible to create config
 	Configurer interface {
@@ -19,6 +16,9 @@ type (
 		Spec interface{}
 	}
 )
+
+var _ Configurer = (Configurers)(nil)
+var _ Configurer = &Configuration{}
 
 // Configurations of configurer
 func (c Configurers) Configurations() (cfgs []*Configuration) {

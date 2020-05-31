@@ -1,10 +1,5 @@
 package typgo
 
-var (
-	_ Provider = (*Constructor)(nil)
-	_ Provider = (*Providers)(nil)
-)
-
 type (
 	// Provider responsible to provide constructor
 	Provider interface {
@@ -20,6 +15,9 @@ type (
 		Fn   interface{}
 	}
 )
+
+var _ Provider = (*Constructor)(nil)
+var _ Provider = (*Providers)(nil)
 
 // Constructors is list of constructor
 func (c *Constructor) Constructors() []*Constructor {
