@@ -73,7 +73,8 @@ func cmdRelease(c *BuildCli) *cli.Command {
 		Name:  "release",
 		Usage: "Release the project",
 		Flags: []cli.Flag{
-			&cli.BoolFlag{Name: "no-test", Usage: "skip the test"},
+			&cli.BoolFlag{Name: "skip-test", Usage: "skip test"},
+			&cli.BoolFlag{Name: "skip-compile", Usage: "skip compile"},
 			&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
 			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 		},
@@ -86,8 +87,14 @@ func release(c *Context) (err error) {
 		return errors.New("No Releaser")
 	}
 
-	if !c.Bool("no-test") {
+	if !c.Bool("skip-test") {
 		if err = test(c); err != nil {
+			return
+		}
+	}
+
+	if !c.Bool("skip-compile") {
+		if err = compile(c); err != nil {
 			return
 		}
 	}
