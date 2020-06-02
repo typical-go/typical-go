@@ -8,7 +8,6 @@ import (
 	"reflect"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
-	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/typical-go/typical-go/pkg/typvar"
 	"github.com/urfave/cli/v2"
@@ -110,24 +109,9 @@ func precond(c *Context) (err error) {
 }
 
 func appPrecond(c *Context) (err error) {
-
-	ctorAnnots, errs := typannot.GetCtors(c.ASTStore)
-	for _, a := range ctorAnnots {
-		c.Precond.Ctors = append(c.Precond.Ctors, &typtmpl.Ctor{
-			Name: a.Param.Name,
-			Def:  fmt.Sprintf("%s.%s", a.Decl.Pkg, a.Decl.Name),
-		})
-	}
-
-	dtorAnnots, errs := typannot.GetDtors(c.ASTStore)
-	for _, a := range dtorAnnots {
-		c.Precond.Dtors = append(c.Precond.Dtors, &typtmpl.Dtor{
-			Def: fmt.Sprintf("%s.%s", a.Decl.Pkg, a.Decl.Name),
-		})
-	}
-
-	for _, err := range errs {
-		c.Warnf("App-Precond: %s", err.Error())
+	di := DependencyInjection{}
+	if err = di.Prebuild(c); err != nil {
+		return
 	}
 
 	cfgr := c.Descriptor.Configurer
