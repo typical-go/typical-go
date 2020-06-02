@@ -19,7 +19,10 @@ var Descriptor = typgo.Descriptor{
 	Compile: &typgo.StdCompile{},
 	Run:     &typgo.StdRun{},
 
-	Utility: typdocker.Compose(
-		redisRecipe,
-	),
+	Utility: &typdocker.Utility{
+		Version: typdocker.V3,
+		Composers: []typdocker.Composer{
+			redisRecipe,
+		},
+	},
 }
