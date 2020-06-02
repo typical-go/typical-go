@@ -1,17 +1,6 @@
 package typdocker
 
-import "gopkg.in/yaml.v2"
-
-var (
-	_ Composer = (*Recipe)(nil)
-)
-
 type (
-	// Composer responsible to compose docker
-	Composer interface {
-		DockerCompose() *Recipe
-	}
-
 	// Recipe represent docker-compose.yml
 	Recipe struct {
 		Version  string
@@ -46,33 +35,9 @@ type (
 	}
 )
 
-// DockerCompose to get the recipe
-func (c *Recipe) DockerCompose() *Recipe {
-	return c
-}
+var _ Composer = (*Recipe)(nil)
 
-// ComposeRecipe to compose recipe
-func ComposeRecipe(version string, composers []Composer) ([]byte, error) {
-	root := &Recipe{
-		Version:  version,
-		Services: make(Services),
-		Networks: make(Networks),
-		Volumes:  make(Volumes),
-	}
-	for _, composer := range composers {
-		obj := composer.DockerCompose()
-		if obj != nil && obj.Version == version {
-			for k, service := range obj.Services {
-				root.Services[k] = service
-			}
-			for k, network := range obj.Networks {
-				root.Networks[k] = network
-			}
-			for k, volume := range obj.Volumes {
-				root.Volumes[k] = volume
-			}
-		}
-	}
-
-	return yaml.Marshal(root)
+// Compose the recipe
+func (c *Recipe) Compose() (*Recipe, error) {
+	return c, nil
 }
