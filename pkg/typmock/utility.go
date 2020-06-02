@@ -1,18 +1,17 @@
 package typmock
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typvar"
 
 	"github.com/iancoleman/strcase"
-	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
@@ -39,7 +38,7 @@ func mock(c *typgo.Context) (err error) {
 	mockery := createMockery(c)
 
 	mockgen := fmt.Sprintf("%s/bin/mockgen", typvar.TypicalTmp)
-	if err = installIfNotExist(c.Ctx(), mockgen); err != nil {
+	if err = installIfNotExist(c, mockgen); err != nil {
 		return
 	}
 
@@ -112,14 +111,12 @@ func isMock(annot *typast.Annot) bool {
 		annot.Decl.Type == typast.Interface
 }
 
-func installIfNotExist(ctx context.Context, mockgen string) (err error) {
+func installIfNotExist(c *typgo.Context, mockgen string) (err error) {
 	if _, err = os.Stat(mockgen); os.IsNotExist(err) {
-		gobuild := &buildkit.GoBuild{
+		return c.Execute(&buildkit.GoBuild{
 			Out:    mockgen,
 			Source: "github.com/golang/mock/mockgen",
-		}
-		cmd := gobuild.Command()
-		return cmd.Run(ctx)
+		})
 	}
 	return
 }

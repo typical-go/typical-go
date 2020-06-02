@@ -18,7 +18,7 @@ func GoImports(ctx context.Context, target string) (err error) {
 			Out:    goimports,
 			Source: "golang.org/x/tools/cmd/goimports",
 		}
-		if err = gobuild.Command().Run(ctx); err != nil {
+		if err = gobuild.Run(ctx); err != nil {
 			return
 		}
 	}

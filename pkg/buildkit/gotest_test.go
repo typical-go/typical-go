@@ -4,13 +4,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/typical-go/typical-go/pkg/buildkit"
-
 	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/pkg/buildkit"
 )
 
 func TestGotTest_Args(t *testing.T) {
 	testcases := []struct {
+		testName string
 		*buildkit.GoTest
 		expected string
 	}{
@@ -33,6 +33,8 @@ func TestGotTest_Args(t *testing.T) {
 	}
 
 	for _, tt := range testcases {
-		require.Equal(t, tt.expected, tt.Command().String())
+		t.Run(tt.testName, func(t *testing.T) {
+			require.Equal(t, tt.expected, tt.String())
+		})
 	}
 }

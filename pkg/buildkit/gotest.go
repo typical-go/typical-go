@@ -1,8 +1,9 @@
 package buildkit
 
 import (
+	"context"
 	"fmt"
-	"io"
+	"os"
 	"time"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
@@ -14,16 +15,15 @@ type GoTest struct {
 	CoverProfile string
 	Race         bool
 	Timeout      time.Duration
-	Stdout       io.Writer
-	Stderr       io.Writer
-	Stdin        io.Reader
 }
 
 // Command of go test
 func (g *GoTest) Command() *execkit.Command {
 	return &execkit.Command{
-		Name: "go",
-		Args: g.Args(),
+		Name:   "go",
+		Args:   g.Args(),
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
 	}
 }
 
@@ -44,4 +44,13 @@ func (g *GoTest) Args() []string {
 	}
 
 	return append(args, g.Targets...)
+}
+
+// Run gotest
+func (g *GoTest) Run(ctx context.Context) error {
+	return g.Command().Run(ctx)
+}
+
+func (g GoTest) String() string {
+	return g.Command().String()
 }

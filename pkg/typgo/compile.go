@@ -80,12 +80,10 @@ func (*StdCompile) Compile(c *Context) (err error) {
 		}
 	}
 
-	gobuild := buildkit.GoBuild{
+	return c.Execute(&buildkit.GoBuild{
 		Out:    typvar.AppBin(c.Descriptor.Name),
 		Source: "./" + src,
-	}
-
-	return c.Execute(gobuild.Command())
+	})
 }
 
 //

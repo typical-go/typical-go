@@ -1,9 +1,11 @@
 package typgo
 
 import (
+	"context"
+	"fmt"
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/fatih/color"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/urfave/cli/v2"
 )
@@ -15,23 +17,17 @@ type (
 		*cli.Context
 		*BuildCli
 	}
+
+	exec interface {
+		Run(c context.Context) error
+	}
 )
 
 // Execute command
-func (c *Context) Execute(cmd *execkit.Command) error {
-	if cmd.Stderr == nil {
-		cmd.Stderr = os.Stderr
-	}
+func (c *Context) Execute(exec exec) error {
+	w := os.Stdout
+	color.New(color.FgMagenta).Fprint(w, "\n$ ")
+	fmt.Fprintln(w, exec)
 
-	if cmd.Stdin == nil {
-		cmd.Stdin = os.Stdin
-	}
-
-	if cmd.Stdout == nil {
-		cmd.Stdout = os.Stdout
-	}
-
-	execkit.PrintCommand(cmd, os.Stdout)
-
-	return cmd.Run(c.Ctx())
+	return exec.Run(c.Ctx())
 }

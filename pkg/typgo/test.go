@@ -3,7 +3,6 @@ package typgo
 import (
 	"errors"
 	"fmt"
-	"os"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typvar"
@@ -63,16 +62,12 @@ func (s *StdTest) Test(c *Context) (err error) {
 		return
 	}
 
-	gotest := &buildkit.GoTest{
+	return c.Execute(&buildkit.GoTest{
 		Targets:      targets,
 		Timeout:      typvar.TestTimeout,
 		CoverProfile: typvar.TestCoverProfile,
 		Race:         true,
-		Stdout:       os.Stdout,
-		Stderr:       os.Stderr,
-	}
-
-	return c.Execute(gotest.Command())
+	})
 }
 
 //

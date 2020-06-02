@@ -1,7 +1,9 @@
 package buildkit
 
 import (
+	"context"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
@@ -14,6 +16,8 @@ type GoBuild struct {
 	Source  string
 }
 
+var _ fmt.Stringer = (*GoBuild)(nil)
+
 // BuildVar return ldflag argument for set build variable
 func BuildVar(name string, value interface{}) string {
 	return fmt.Sprintf("-X %s=%v", name, value)
@@ -22,8 +26,10 @@ func BuildVar(name string, value interface{}) string {
 // Command of GoBuild
 func (g *GoBuild) Command() *execkit.Command {
 	return &execkit.Command{
-		Name: "go",
-		Args: g.Args(),
+		Name:   "go",
+		Args:   g.Args(),
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
 	}
 }
 
@@ -35,4 +41,13 @@ func (g *GoBuild) Args() []string {
 	}
 	args = append(args, "-o", g.Out, g.Source)
 	return args
+}
+
+// Run gobuild
+func (g *GoBuild) Run(ctx context.Context) error {
+	return g.Command().Run(ctx)
+}
+
+func (g GoBuild) String() string {
+	return g.Command().String()
 }

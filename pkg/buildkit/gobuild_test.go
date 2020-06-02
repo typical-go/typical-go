@@ -9,6 +9,7 @@ import (
 
 func TestGoBuild(t *testing.T) {
 	testcases := []struct {
+		testName string
 		*buildkit.GoBuild
 		expected string
 	}{
@@ -33,7 +34,8 @@ func TestGoBuild(t *testing.T) {
 	}
 
 	for _, tt := range testcases {
-		require.Equal(t, tt.expected, tt.Command().String())
+		t.Run(tt.testName, func(t *testing.T) {
+			require.Equal(t, tt.expected, tt.String())
+		})
 	}
-
 }
