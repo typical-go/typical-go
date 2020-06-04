@@ -20,5 +20,5 @@ var Descriptor = typgo.Descriptor{
 	Run:     &typgo.StdRun{},
 	Test:    &typgo.StdTest{},
 
-	Utility: typmock.Utility(),
+	Utility: &typmock.Utility{},
 }

@@ -17,11 +17,12 @@ import (
 )
 
 // Utility to generate mock class
-func Utility() typgo.Utility {
-	return typgo.NewUtility(commands)
-}
+type Utility struct{}
 
-func commands(c *typgo.BuildCli) []*cli.Command {
+var _ typgo.Utility = (*Utility)(nil)
+
+// Commands to utility
+func (*Utility) Commands(c *typgo.BuildCli) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:        "mock",
