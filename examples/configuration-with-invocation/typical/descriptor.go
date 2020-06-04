@@ -15,7 +15,11 @@ var Descriptor = typgo.Descriptor{
 		"internal",
 	},
 
-	Configurer: server.Configuration(),
+	Prebuild: &typgo.ConfigManager{
+		Configs: []*typgo.Configuration{
+			{Name: "SERVER", Spec: &server.Config{}},
+		},
+	},
 
 	Compile: &typgo.StdCompile{},
 	Run:     &typgo.StdRun{},

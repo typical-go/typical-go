@@ -59,31 +59,28 @@ func TestReadConfig(t *testing.T) {
 
 func TestWriteConfig(t *testing.T) {
 	testcases := []struct {
-		testName string
-		typgo.Configurer
+		testName    string
+		configs     []*typgo.Configuration
 		before      string
 		expected    string
 		expectedErr string
 	}{
 		{
-			Configurer: &typgo.Configuration{
-				Name: "TEST",
-				Spec: &someSpec{},
+			configs: []*typgo.Configuration{
+				{Name: "TEST", Spec: &someSpec{}},
 			},
 			expected: "TEST_FIELD1=defaulValue1\nTEST_FIELD2=defaulValue2\n",
 		},
 		{
-			Configurer: &typgo.Configuration{
-				Name: "TEST",
-				Spec: &someSpec{},
+			configs: []*typgo.Configuration{
+				{Name: "TEST", Spec: &someSpec{}},
 			},
 			before:   "XXXX=XXXX",
 			expected: "XXXX=XXXX\nTEST_FIELD1=defaulValue1\nTEST_FIELD2=defaulValue2\n",
 		},
 		{
-			Configurer: &typgo.Configuration{
-				Name: "TEST",
-				Spec: &someSpec{},
+			configs: []*typgo.Configuration{
+				{Name: "TEST", Spec: &someSpec{}},
 			},
 			before:   "XXXX=XXXX\nTEST_FIELD1=currentValue1\n",
 			expected: "XXXX=XXXX\nTEST_FIELD1=currentValue1\nTEST_FIELD2=defaulValue2\n",
@@ -99,15 +96,14 @@ func TestWriteConfig(t *testing.T) {
 				ioutil.WriteFile(dest, []byte(tt.before), 0777)
 			}
 
-			err := typgo.WriteConfig(dest, tt.Configurer)
+			err := typgo.WriteConfig(dest, tt.configs)
 			if tt.expectedErr != "" {
 				require.EqualError(t, err, tt.expectedErr)
 			} else {
 				require.NoError(t, err)
+				b, _ := ioutil.ReadFile(dest)
+				require.Equal(t, tt.expected, string(b))
 			}
-
-			b, _ := ioutil.ReadFile(dest)
-			require.Equal(t, tt.expected, string(b))
 		})
 	}
 }

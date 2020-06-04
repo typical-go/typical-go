@@ -29,9 +29,6 @@ type (
 		Run      Runner
 		Release  Releaser
 		Utility  Utility
-
-		SkipPrecond bool
-		Configurer  Configurer
 	}
 )
 

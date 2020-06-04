@@ -11,20 +11,16 @@ import (
 )
 
 // WriteConfig to write configuration to file
-func WriteConfig(dest string, c Configurer) (err error) {
-	var (
-		fields []*Field
-		f      *os.File
-		m      map[string]string
-	)
-
-	for _, cfg := range c.Configurations() {
+func WriteConfig(dest string, configs []*Configuration) (err error) {
+	var fields []*Field
+	for _, cfg := range configs {
 		for _, field := range CreateFields(cfg) {
 			fields = append(fields, field)
 		}
 	}
 
-	if f, err = os.OpenFile(dest, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666); err != nil {
+	f, err := os.OpenFile(dest, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	if err != nil {
 		return
 	}
 	defer f.Close()
@@ -39,10 +35,10 @@ func WriteConfig(dest string, c Configurer) (err error) {
 	}
 
 	if _, err = f.Seek(0, io.SeekStart); err != nil {
-		return 
+		return
 	}
 
-	m = ReadConfig(f)
+	m := ReadConfig(f)
 	for _, field := range fields {
 		if _, ok := m[field.Name]; !ok {
 			fmt.Fprintf(f, "%s=%v\n", field.Name, field.GetValue())
@@ -104,13 +100,13 @@ func hasLastNewLine(f *os.File) (has bool, err error) {
 		return true, nil
 	}
 
-	if _, err = f.Seek(-1, io.SeekEnd); err != nil{
+	if _, err = f.Seek(-1, io.SeekEnd); err != nil {
 		return
 	}
 
-    char := make([]byte, 1)
-    if _, err = f.Read(char); err != nil {
-		return 
+	char := make([]byte, 1)
+	if _, err = f.Read(char); err != nil {
+		return
 	}
 
 	return (char[0] == '\n'), nil

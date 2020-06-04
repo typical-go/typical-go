@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"reflect"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
@@ -63,19 +62,19 @@ func launchBuild(d *Descriptor) (err error) {
 }
 
 func beforeBuild(c *Context) (err error) {
-	if c.Configurer != nil {
-		if err = WriteConfig(typvar.ConfigFile, c.Configurer); err != nil {
-			return
+
+	if c.Descriptor.Prebuild != nil {
+		if err := c.Descriptor.Prebuild.Prebuild(c); err != nil {
+			return err
 		}
+	}
+
+	if err := savePrecond(c); err != nil {
+		return err
 	}
 
 	LoadConfig(typvar.ConfigFile)
 
-	if !c.Descriptor.SkipPrecond {
-		if err = precond(c); err != nil {
-			return
-		}
-	}
 	return
 }
 
@@ -88,45 +87,17 @@ func afterBuild(c *Context) (err error) {
 	return
 }
 
-func precond(c *Context) (err error) {
-
-	if err = appPrecond(c); err != nil {
-		return
-	}
-
+func savePrecond(c *Context) error {
 	path := typvar.Precond(c.Descriptor.Name)
 	os.Remove(path)
 
 	if c.Precond.NotEmpty() {
-		if err = typtmpl.WriteFile(path, 0777, c.Precond); err != nil {
-			return
+		if err := typtmpl.WriteFile(path, 0777, c.Precond); err != nil {
+			return err
 		}
-		if err = buildkit.GoImports(c.Ctx(), path); err != nil {
-			return
-		}
-	}
-	return
-}
-
-func appPrecond(c *Context) (err error) {
-	di := DependencyInjection{}
-	if err = di.Prebuild(c); err != nil {
-		return
-	}
-
-	cfgr := c.Descriptor.Configurer
-
-	if cfgr != nil {
-		for _, cfg := range cfgr.Configurations() {
-			specType := reflect.TypeOf(cfg.Spec).String()
-			c.Precond.CfgCtors = append(c.Precond.CfgCtors, &typtmpl.CfgCtor{
-				Name:      cfg.Ctor,
-				Prefix:    cfg.Name,
-				SpecType:  specType,
-				SpecType2: specType[1:],
-			})
+		if err := buildkit.GoImports(c.Ctx(), path); err != nil {
+			return err
 		}
 	}
-
-	return
+	return nil
 }

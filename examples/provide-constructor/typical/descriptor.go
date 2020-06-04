@@ -15,6 +15,7 @@ var Descriptor = typgo.Descriptor{
 		"internal",
 	},
 
-	Compile: &typgo.StdCompile{},
-	Run:     &typgo.StdRun{},
+	Prebuild: &typgo.DependencyInjection{},
+	Compile:  &typgo.StdCompile{},
+	Run:      &typgo.StdRun{},
 }
