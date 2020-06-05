@@ -28,7 +28,9 @@ type (
 		Compile  Compiler
 		Run      Runner
 		Release  Releaser
-		Utility  Utility
+		Clean    Cleaner
+
+		Utility Utility
 	}
 )
 
