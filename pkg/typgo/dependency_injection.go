@@ -3,14 +3,12 @@ package typgo
 import (
 	"fmt"
 
-	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
 type (
 	// DependencyInjection prebuilding
 	DependencyInjection struct {
-		Configs []*Configuration
 	}
 )
 
@@ -30,30 +28,31 @@ func (d *DependencyInjection) Prebuild(c *Context) (err error) {
 }
 
 func (*DependencyInjection) ctor(c *Context) error {
-	ctorAnnots, errs := typannot.GetCtors(c.ASTStore)
-	for _, a := range ctorAnnots {
-		c.Precond.Ctors = append(c.Precond.Ctors, &typtmpl.Ctor{
-			Name: a.Param.Name,
-			Def:  fmt.Sprintf("%s.%s", a.Decl.Pkg, a.Decl.Name),
-		})
+	for _, annot := range c.ASTStore.Annots {
+		ctor, err := CreateCtor(annot)
+		if err != nil {
+			c.Warnf("ctor: %s", err.Error())
+			continue
+		}
+		if ctor != nil {
+			c.Precond.Ctors = append(c.Precond.Ctors, &typtmpl.Ctor{
+				Name: ctor.Param.Name,
+				Def:  fmt.Sprintf("%s.%s", ctor.Decl.Pkg, ctor.Decl.Name),
+			})
+		}
 	}
 
-	for _, err := range errs {
-		c.Warnf("App-Precond: %s", err.Error())
-	}
 	return nil
 }
 
 func (*DependencyInjection) dtor(c *Context) error {
-	dtorAnnots, errs := typannot.GetDtors(c.ASTStore)
-	for _, a := range dtorAnnots {
-		c.Precond.Dtors = append(c.Precond.Dtors, &typtmpl.Dtor{
-			Def: fmt.Sprintf("%s.%s", a.Decl.Pkg, a.Decl.Name),
-		})
-	}
-
-	for _, err := range errs {
-		c.Warnf("App-Precond: %s", err.Error())
+	for _, annot := range c.ASTStore.Annots {
+		dtor := CreateDtor(annot)
+		if dtor != nil {
+			c.Precond.Dtors = append(c.Precond.Dtors, &typtmpl.Dtor{
+				Def: fmt.Sprintf("%s.%s", dtor.Decl.Pkg, dtor.Decl.Name),
+			})
+		}
 	}
 	return nil
 }

@@ -80,7 +80,7 @@ func TestCreateASTStore(t *testing.T) {
 		},
 		{
 			Decl:    someFunctionDecl2,
-			TagName: "constructor",
+			TagName: "ctor",
 		},
 		{
 			Decl:    someInterface2Decl,
