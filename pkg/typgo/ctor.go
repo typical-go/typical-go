@@ -27,13 +27,14 @@ type (
 
 // CreateCtor create ctor annotation
 func CreateCtor(annot *typast.Annot) (*Ctor, error) {
-	if IsFuncTag(annot, ctorTags...) {
-		ctor := new(Ctor)
-		if err := annot.Unmarshal(&ctor.Param); err != nil {
-			return nil, fmt.Errorf("%s: %w", annot.Decl.Name, err)
-		}
-		ctor.Annot = annot
-		return ctor, nil
+	if !IsFuncTag(annot, ctorTags...) {
+		return nil, nil
 	}
-	return nil, nil
+
+	ctor := new(Ctor)
+	if err := annot.Unmarshal(&ctor.Param); err != nil {
+		return nil, fmt.Errorf("%s: %w", annot.Decl.Name, err)
+	}
+	ctor.Annot = annot
+	return ctor, nil
 }

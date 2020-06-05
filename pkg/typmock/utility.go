@@ -3,12 +3,9 @@ package typmock
 import (
 	"fmt"
 	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/execkit"
-	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typvar"
 
 	"github.com/iancoleman/strcase"
@@ -46,7 +43,7 @@ func mock(c *typgo.Context) (err error) {
 	targetMap := mockery.TargetMap
 
 	if c.Args().Len() > 0 {
-		targetMap = mockery.Filter(c.Args().Slice()...)
+		targetMap = mockery.TargetMap.Filter(c.Args().Slice()...)
 	}
 
 	for key, targets := range targetMap {
@@ -75,41 +72,6 @@ func mock(c *typgo.Context) (err error) {
 		}
 	}
 	return
-}
-
-func createMockery(c *typgo.Context) *Mockery {
-	mockery := &Mockery{
-		TargetMap:  make(TargetMap),
-		ProjectPkg: typvar.ProjectPkg,
-	}
-
-	for _, annot := range c.ASTStore.Annots {
-		if isMock(annot) {
-			pkg := annot.Decl.Pkg
-			dir := filepath.Dir(annot.Decl.Path)
-
-			parent := ""
-			if dir != "." {
-				parent = dir[:len(dir)-len(pkg)]
-			}
-
-			mockery.Put(&Mock{
-				Dir:     dir,
-				Pkg:     pkg,
-				Source:  annot.Decl.Name,
-				Parent:  parent,
-				MockPkg: fmt.Sprintf("%s_mock", pkg),
-			})
-
-		}
-	}
-
-	return mockery
-}
-
-func isMock(annot *typast.Annot) bool {
-	return strings.EqualFold(annot.TagName, MockTag) &&
-		annot.Decl.Type == typast.Interface
 }
 
 func installIfNotExist(c *typgo.Context, mockgen string) (err error) {

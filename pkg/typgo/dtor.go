@@ -17,10 +17,11 @@ type Dtor struct {
 
 // CreateDtor to create create Dtor annotation
 func CreateDtor(annot *typast.Annot) *Dtor {
-	if IsFuncTag(annot, dtorTags...) {
-		return &Dtor{
-			Annot: annot,
-		}
+	if !IsFuncTag(annot, dtorTags...) {
+		return nil
 	}
-	return nil
+
+	return &Dtor{
+		Annot: annot,
+	}
 }
