@@ -12,7 +12,7 @@ func Main(greeter Greeter, w io.Writer) {
 }
 
 // GetWriter to get writer to greet the world
-// @constructor
+// @ctor
 func GetWriter() io.Writer {
 	return os.Stdout
 }

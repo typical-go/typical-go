@@ -17,7 +17,7 @@ func sampleFunction() {
 }
 
 // GetWriter to get writer to greet the world
-// @constructor
+// @ctor
 func sampleFunction2() {
 	// intentionally blank
 }

@@ -75,14 +75,14 @@ Typical-Go encourage dependency-injection using [dig](https://github.com/uber-go
 
 ```go
 // OpenConn open new database connection
-// @constructor
+// @ctor
 func OpenConn() *sql.DB{
 }
 ```
 
 ```go
 // CloseConn close the database connection
-// @destructor
+// @dtor
 func CloseConn(obj Object){
 }
 ```

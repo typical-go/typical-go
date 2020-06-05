@@ -10,7 +10,6 @@ import (
 var (
 	dtorTags = []string{
 		"dtor",
-		"destructor",
 	}
 )
 
@@ -22,7 +21,7 @@ type Dtor struct {
 // GetDtors return dtor tag
 func GetDtors(store *typast.ASTStore) (dtors []*Dtor, errs common.Errors) {
 	for _, annot := range store.Annots {
-		if IsFuncTag(annot, dtorTags) {
+		if IsFuncTag(annot, dtorTags...) {
 			dtor := new(Dtor)
 			if err := annot.Unmarshal(dtor); err != nil {
 				errs.Append(fmt.Errorf("%s: %w", dtorTags[0], err))

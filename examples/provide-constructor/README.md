@@ -2,22 +2,32 @@
 
 Example typical-go project to demonstrate how to provide constructor to dependency injection
 
-Put `@constructor` or `@ctor` annotation in constructor function comment
+Put `DependencyInject` in prebuild descriptor
+```go
+// Descriptor of sample
+var Descriptor = typgo.Descriptor{
+	// ...
+	Prebuild: &typgo.DependencyInjection{},
+}
+
+```
+
+Put `@ctor` annotation in constructor function comment
 ```go
 // HelloWorld text
-// @constructor
+// @ctor
 func HelloWorld() string {
 	return "Hello World"
 }
 
 // HelloTypical text
-// @constructor {"name": "typical"}
+// @ctor {"name": "typical"}
 func HelloTypical() string {
 	return "Hello Typical"
 }
 ```
 
-Put `@destructor` or `@dtor` annotation to function that called after application close
+Put `@dtor` annotation to function that called after application close
 ```go
 // Close the application
 // @dtor

@@ -11,7 +11,7 @@ type GreeterImpl struct {
 }
 
 // NewGreeter return new insteance of Greeter
-// @constructor
+// @ctor
 func NewGreeter() Greeter {
 	return &GreeterImpl{}
 }
