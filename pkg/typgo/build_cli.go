@@ -59,12 +59,20 @@ func retrImports(dirs []string) []string {
 }
 
 func (b *BuildCli) commands() (cmds []*cli.Command) {
-	cmds = []*cli.Command{
-		cmdTest(b),
-		cmdCompile(b),
-		cmdRun(b),
-		cmdRelease(b),
-		cmdClean(b),
+	if b.Test != nil {
+		cmds = append(cmds, cmdTest(b))
+	}
+	if b.Compile != nil {
+		cmds = append(cmds, cmdCompile(b))
+	}
+	if b.Run != nil {
+		cmds = append(cmds, cmdRun(b))
+	}
+	if b.Release != nil {
+		cmds = append(cmds, cmdRelease(b))
+	}
+	if b.Clean != nil {
+		cmds = append(cmds, cmdClean(b))
 	}
 
 	if b.Utility != nil {

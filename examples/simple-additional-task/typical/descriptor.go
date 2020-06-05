@@ -11,10 +11,11 @@ var Descriptor = typgo.Descriptor{
 	Version: "1.0.0",
 
 	EntryPoint: helloworld.Main,
+	Layouts:    []string{"internal"},
 
 	Compile: &typgo.StdCompile{},
-
-	Run: &typgo.StdRun{},
+	Run:     &typgo.StdRun{},
+	Clean:   &typgo.StdClean{},
 
 	Utility: typgo.NewUtility(taskPrintContext), // Add custom task
 }

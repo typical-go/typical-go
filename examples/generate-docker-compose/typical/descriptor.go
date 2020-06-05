@@ -18,6 +18,7 @@ var Descriptor = typgo.Descriptor{
 
 	Compile: &typgo.StdCompile{},
 	Run:     &typgo.StdRun{},
+	Clean:   &typgo.StdClean{},
 
 	Utility: &typdocker.Utility{
 		Version: typdocker.V3,

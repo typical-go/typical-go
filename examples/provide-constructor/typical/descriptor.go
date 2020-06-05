@@ -11,11 +11,10 @@ var Descriptor = typgo.Descriptor{
 	Version: "1.0.0",
 
 	EntryPoint: helloworld.Main2,
-	Layouts: []string{
-		"internal",
-	},
+	Layouts:    []string{"internal"},
 
 	Prebuild: &typgo.DependencyInjection{},
 	Compile:  &typgo.StdCompile{},
 	Run:      &typgo.StdRun{},
+	Clean:    &typgo.StdClean{},
 }

@@ -12,9 +12,7 @@ var Descriptor = typgo.Descriptor{
 	Version: "1.0.0",
 
 	EntryPoint: server.Main,
-	Layouts: []string{
-		"internal",
-	},
+	Layouts:    []string{"internal"},
 
 	Compile: typgo.Compiles{
 		typgo.NewCompile(func(c *typgo.Context) (err error) {
@@ -26,6 +24,6 @@ var Descriptor = typgo.Descriptor{
 		}),
 		&typgo.StdCompile{},
 	},
-
-	Run: &typgo.StdRun{},
+	Run:   &typgo.StdRun{},
+	Clean: &typgo.StdClean{},
 }

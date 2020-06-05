@@ -14,4 +14,5 @@ var Descriptor = typgo.Descriptor{
 
 	Compile: &typgo.StdCompile{},
 	Run:     &typgo.StdRun{},
+	Clean:   &typgo.StdClean{},
 }
