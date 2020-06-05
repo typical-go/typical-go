@@ -2,6 +2,7 @@ package typical
 
 import (
 	"github.com/typical-go/typical-go/examples/serve-react-demo/internal/server"
+	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -16,7 +17,13 @@ var Descriptor = typgo.Descriptor{
 	},
 
 	Compile: typgo.Compiles{
-		&ReactDemoModule{source: "react-demo"},
+		typgo.NewCompile(func(c *typgo.Context) (err error) {
+			return c.Execute(&execkit.Command{
+				Name: "npm",
+				Args: []string{"run", "build"},
+				Dir:  "react-demo",
+			})
+		}),
 		&typgo.StdCompile{},
 	},
 
