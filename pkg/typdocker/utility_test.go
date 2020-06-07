@@ -106,7 +106,7 @@ volumes:
 				Composers: tt.composers,
 			}
 
-			require.NoError(t, utility.DockerCompose(&typgo.Context{}))
+			require.NoError(t, utility.Compose(&typgo.Context{}))
 
 			b, _ := ioutil.ReadFile("docker-compose.yml")
 			require.Equal(t, tt.expected, string(b))

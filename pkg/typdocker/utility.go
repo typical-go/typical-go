@@ -23,11 +23,6 @@ const (
 )
 
 type (
-	// Composer responsible to compose docker
-	Composer interface {
-		Compose() (*Recipe, error)
-	}
-
 	// Utility for docker
 	Utility struct {
 		Version   string
@@ -57,12 +52,12 @@ func (m *Utility) cmdCompose(c *typgo.BuildCli) *cli.Command {
 	return &cli.Command{
 		Name:   "compose",
 		Usage:  "Generate docker-compose.yaml",
-		Action: c.ActionFn(logName, m.DockerCompose),
+		Action: c.ActionFn(logName, m.Compose),
 	}
 }
 
-// DockerCompose to genreate docker-compose.yml
-func (m *Utility) DockerCompose(c *typgo.Context) (err error) {
+// Compose to generate docker-compose.yml
+func (m *Utility) Compose(c *typgo.Context) (err error) {
 	if len(m.Composers) < 1 {
 		return errors.New("Nothing to compose")
 	}
@@ -149,7 +144,7 @@ func (m *Utility) dockerUp(c *typgo.Context) (err error) {
 	}
 
 	if _, err = os.Stat(dockerComposeOut); os.IsNotExist(err) {
-		if err = m.DockerCompose(c); err != nil {
+		if err = m.Compose(c); err != nil {
 			return
 		}
 	}
