@@ -8,7 +8,7 @@ import (
 // Descriptor of typical-go
 var Descriptor = typgo.Descriptor{
 	Name:    "typical-go",
-	Version: "0.9.55",
+	Version: "0.9.56",
 
 	EntryPoint: wrapper.Main,
 	Layouts:    []string{"wrapper", "pkg"},

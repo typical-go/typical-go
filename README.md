@@ -34,11 +34,13 @@ Usage:
 
 The commands are:
 
-  test, t     Test the project
-  run, r      Run the project in local environment
-  publish, p  Publish the project
-  clean, c    Clean the project
-  help, h     Shows a list of commands or help for one command
+  test, t          Test the project
+  compile          Compile the project
+  run, r           Run the project in local environment
+  release          Release the project
+  clean, c         Clean the project
+  test-example, e  Test all example
+  help, h          Shows a list of commands or help for one command
 
 Use "./typicalw help <topic>" for more information about that topic
 ```
@@ -59,10 +61,12 @@ var Descriptor = typgo.Descriptor{
 	Test:    &typgo.StdTest{},
 	Compile: &typgo.StdCompile{},
 	Run:     &typgo.StdRun{},
+	Clean:   &typgo.StdClean{},
 	Release: &typgo.Github{Owner: "typical-go", RepoName: "typical-go"},
 
 	Utility: typgo.NewUtility(taskExamples), // Test all the examples
 }
+
 
 ```
 ## Annotation
