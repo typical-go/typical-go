@@ -26,7 +26,7 @@ jobs:
       run: ./typicalw test
 
     - name: Test Example
-      run: ./typicalw test-example
+      run: ./typicalw examples
     
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
