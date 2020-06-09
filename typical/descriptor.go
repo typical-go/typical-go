@@ -24,7 +24,7 @@ var Descriptor = typgo.Descriptor{
 	Release: &typgo.Github{Owner: "typical-go", RepoName: "typical-go"},
 
 	Utility: typgo.CreateUtility(&cli.Command{
-		Name:    "test-example",
+		Name:    "examples",
 		Aliases: []string{"e"},
 		Usage:   "Test all example",
 		Action: func(cliCtx *cli.Context) (err error) {

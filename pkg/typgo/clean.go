@@ -89,9 +89,8 @@ func remove(c *Context, file string) {
 
 func cmdClean(c *BuildCli) *cli.Command {
 	return &cli.Command{
-		Name:    "clean",
-		Aliases: []string{"c"},
-		Usage:   "Clean the project",
-		Action:  c.ActionFn("CLEAN", c.Clean.Clean),
+		Name:   "clean",
+		Usage:  "Clean the project",
+		Action: c.ActionFn("CLEAN", c.Clean.Clean),
 	}
 }

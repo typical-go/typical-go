@@ -92,9 +92,10 @@ func (*StdCompile) Compile(c *Context) (err error) {
 
 func cmdCompile(c *BuildCli) *cli.Command {
 	return &cli.Command{
-		Name:   "compile",
-		Usage:  "Compile the project",
-		Action: c.ActionFn("COMPILE", compile),
+		Name:    "compile",
+		Aliases: []string{"c"},
+		Usage:   "Compile the project",
+		Action:  c.ActionFn("COMPILE", compile),
 	}
 }
 

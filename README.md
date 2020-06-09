@@ -34,13 +34,13 @@ Usage:
 
 The commands are:
 
-  test, t          Test the project
-  compile          Compile the project
-  run, r           Run the project in local environment
-  release          Release the project
-  clean, c         Clean the project
-  test-example, e  Test all example
-  help, h          Shows a list of commands or help for one command
+  test, t      Test the project
+  compile, c   Compile the project
+  run, r       Run the project in local environment
+  release      Release the project
+  clean        Clean the project
+  examples, e  Test all example
+  help, h      Shows a list of commands or help for one command
 
 Use "./typicalw help <topic>" for more information about that topic
 ```
