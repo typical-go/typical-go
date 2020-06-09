@@ -7,40 +7,57 @@ import (
 type (
 	// Utility for build-tool
 	Utility interface {
-		Commands(*BuildCli) []*cli.Command
+		Commands(*BuildCli) ([]*cli.Command, error)
 	}
-
 	// Utilities is list of utility
 	Utilities []Utility
-
-	// SimpleUtility return command based on command function
-	SimpleUtility struct {
-		fn UtilityFn
+	// CommandFn is a function to return command
+	CommandFn   func(ctx *BuildCli) ([]*cli.Command, error)
+	utilityImpl struct {
+		fn CommandFn
 	}
-
-	// UtilityFn is a function to return command
-	UtilityFn func(ctx *BuildCli) []*cli.Command
 )
 
-var _ Utility = (*SimpleUtility)(nil)
-var _ Utility = (Utilities)(nil)
+//
+// utilityImpl
+//
+
+var _ Utility = (*utilityImpl)(nil)
 
 // NewUtility return new instance of utility
-func NewUtility(fn UtilityFn) *SimpleUtility {
-	return &SimpleUtility{
+func NewUtility(fn CommandFn) Utility {
+	return &utilityImpl{
 		fn: fn,
 	}
 }
 
+// CreateUtility to create utility from commands
+func CreateUtility(cmds ...*cli.Command) Utility {
+	return NewUtility(func(ctx *BuildCli) ([]*cli.Command, error) {
+		return cmds, nil
+	})
+}
+
 // Commands of SimpleUtility
-func (s *SimpleUtility) Commands(b *BuildCli) []*cli.Command {
+func (s *utilityImpl) Commands(b *BuildCli) ([]*cli.Command, error) {
 	return s.fn(b)
 }
 
+//
+// Utilities
+//
+
+var _ Utility = (Utilities)(nil)
+
 // Commands of Utilities
-func (u Utilities) Commands(b *BuildCli) (cmds []*cli.Command) {
+func (u Utilities) Commands(b *BuildCli) ([]*cli.Command, error) {
+	var cmds []*cli.Command
 	for _, utility := range u {
-		cmds = append(cmds, utility.Commands(b)...)
+		cmds0, err := utility.Commands(b)
+		if err != nil {
+			return nil, err
+		}
+		cmds = append(cmds, cmds0...)
 	}
-	return
+	return cmds, nil
 }

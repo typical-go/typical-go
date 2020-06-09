@@ -1,6 +1,7 @@
 package typgo_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -10,15 +11,16 @@ import (
 )
 
 func TestSimpleCommander_Commands(t *testing.T) {
-	cmd1 := &cli.Command{}
-	cmd2 := &cli.Command{}
-	cmd3 := &cli.Command{}
+	expected := []*cli.Command{&cli.Command{}, &cli.Command{}, &cli.Command{}}
+	expectedErr := errors.New("")
 
-	utility := typgo.NewUtility(func(ctx *typgo.BuildCli) []*cli.Command {
-		return []*cli.Command{cmd1, cmd2, cmd3}
+	utility := typgo.NewUtility(func(ctx *typgo.BuildCli) ([]*cli.Command, error) {
+		return expected, expectedErr
 	})
 
-	require.Equal(t, []*cli.Command{cmd1, cmd2, cmd3}, utility.Commands(nil))
+	cmds, err := utility.Commands(nil)
+	require.Equal(t, expected, cmds)
+	require.Equal(t, expectedErr, err)
 }
 
 func TestUtilities(t *testing.T) {
@@ -29,24 +31,16 @@ func TestUtilities(t *testing.T) {
 	cmd5 := &cli.Command{}
 
 	utilities := typgo.Utilities{
-		typgo.NewUtility(func(*typgo.BuildCli) []*cli.Command {
-			return []*cli.Command{cmd1}
-		}),
-		typgo.NewUtility(func(*typgo.BuildCli) []*cli.Command {
-			return []*cli.Command{cmd2}
-		}),
+		typgo.CreateUtility(cmd1),
+		typgo.CreateUtility(cmd2),
 		typgo.Utilities{
-			typgo.NewUtility(func(*typgo.BuildCli) []*cli.Command {
-				return []*cli.Command{cmd3}
-			}),
-			typgo.NewUtility(func(*typgo.BuildCli) []*cli.Command {
-				return []*cli.Command{cmd4, cmd5}
-			}),
+			typgo.CreateUtility(cmd3),
+			typgo.CreateUtility(cmd4, cmd5),
 		},
 	}
 
-	require.Equal(t,
-		[]*cli.Command{cmd1, cmd2, cmd3, cmd4, cmd5},
-		utilities.Commands(nil),
-	)
+	cmds, err := utilities.Commands(nil)
+
+	require.Equal(t, []*cli.Command{cmd1, cmd2, cmd3, cmd4, cmd5}, cmds)
+	require.NoError(t, err)
 }

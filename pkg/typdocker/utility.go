@@ -33,7 +33,7 @@ type (
 var _ typgo.Utility = (*Utility)(nil)
 
 // Commands of docker
-func (m *Utility) Commands(c *typgo.BuildCli) []*cli.Command {
+func (m *Utility) Commands(c *typgo.BuildCli) ([]*cli.Command, error) {
 	return []*cli.Command{
 		{
 			Name:  "docker",
@@ -45,7 +45,7 @@ func (m *Utility) Commands(c *typgo.BuildCli) []*cli.Command {
 				m.cmdWipe(c),
 			},
 		},
-	}
+	}, nil
 }
 
 func (m *Utility) cmdCompose(c *typgo.BuildCli) *cli.Command {

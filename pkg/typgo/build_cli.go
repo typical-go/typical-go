@@ -58,7 +58,8 @@ func retrImports(dirs []string) []string {
 	return imports
 }
 
-func (b *BuildCli) commands() (cmds []*cli.Command) {
+func (b *BuildCli) commands() ([]*cli.Command, error) {
+	var cmds []*cli.Command
 	if b.Test != nil {
 		cmds = append(cmds, cmdTest(b))
 	}
@@ -76,12 +77,14 @@ func (b *BuildCli) commands() (cmds []*cli.Command) {
 	}
 
 	if b.Utility != nil {
-		for _, cmd := range b.Utility.Commands(b) {
-			cmds = append(cmds, cmd)
+		cmds0, err := b.Utility.Commands(b)
+		if err != nil {
+			return nil, err
 		}
+		cmds = append(cmds, cmds0...)
 	}
 
-	return cmds
+	return cmds, nil
 }
 
 // Context of build-cli

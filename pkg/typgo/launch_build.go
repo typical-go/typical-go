@@ -56,7 +56,12 @@ func launchBuild(d *Descriptor) (err error) {
 
 	app.Before = buildCli.ActionFn("BEFORE_BUILD", beforeBuild)
 	app.After = buildCli.ActionFn("AFTER_BUILD", afterBuild)
-	app.Commands = buildCli.commands()
+
+	cmds, err := buildCli.commands()
+	if err != nil {
+		return fmt.Errorf("commands: %w", err)
+	}
+	app.Commands = cmds
 
 	return app.Run(os.Args)
 }

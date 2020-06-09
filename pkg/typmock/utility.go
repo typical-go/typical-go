@@ -19,7 +19,7 @@ type Utility struct{}
 var _ typgo.Utility = (*Utility)(nil)
 
 // Commands to utility
-func (*Utility) Commands(c *typgo.BuildCli) []*cli.Command {
+func (*Utility) Commands(c *typgo.BuildCli) ([]*cli.Command, error) {
 	return []*cli.Command{
 		{
 			Name:        "mock",
@@ -28,7 +28,7 @@ func (*Utility) Commands(c *typgo.BuildCli) []*cli.Command {
 			Description: "If package_names is missing then check every package",
 			Action:      c.ActionFn("mock", mock),
 		},
-	}
+	}, nil
 }
 
 func mock(c *typgo.Context) (err error) {
