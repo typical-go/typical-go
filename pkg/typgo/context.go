@@ -34,3 +34,8 @@ func (c *Context) Execute(exec exec) error {
 	fmt.Fprintln(CtxExecWriter, exec)
 	return exec.Run(c.Ctx())
 }
+
+// Ctx return golang context
+func (c *Context) Ctx() context.Context {
+	return c.Context.Context
+}

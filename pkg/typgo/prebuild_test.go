@@ -12,27 +12,27 @@ func TestPrebuild(t *testing.T) {
 	testcases := []struct {
 		testName string
 		typgo.Prebuilder
-		context     *typgo.Context
+		context     *typgo.PrebuildContext
 		expectedErr string
 	}{
 		{
-			Prebuilder:  typgo.NewPrebuild(func(*typgo.Context) error { return errors.New("some-error") }),
+			Prebuilder:  typgo.NewPrebuild(func(*typgo.PrebuildContext) error { return errors.New("some-error") }),
 			expectedErr: "some-error",
 		},
 		{
-			Prebuilder: typgo.NewPrebuild(func(*typgo.Context) error { return nil }),
+			Prebuilder: typgo.NewPrebuild(func(*typgo.PrebuildContext) error { return nil }),
 		},
 		{
 			Prebuilder: typgo.Prebuilds{
-				typgo.NewPrebuild(func(*typgo.Context) error { return nil }),
-				typgo.NewPrebuild(func(*typgo.Context) error { return errors.New("some-error") }),
+				typgo.NewPrebuild(func(*typgo.PrebuildContext) error { return nil }),
+				typgo.NewPrebuild(func(*typgo.PrebuildContext) error { return errors.New("some-error") }),
 			},
 			expectedErr: "some-error",
 		},
 		{
 			Prebuilder: typgo.Prebuilds{
-				typgo.NewPrebuild(func(*typgo.Context) error { return errors.New("some-error") }),
-				typgo.NewPrebuild(func(*typgo.Context) error { return nil }),
+				typgo.NewPrebuild(func(*typgo.PrebuildContext) error { return errors.New("some-error") }),
+				typgo.NewPrebuild(func(*typgo.PrebuildContext) error { return nil }),
 			},
 			expectedErr: "some-error",
 		},

@@ -8,14 +8,13 @@ import (
 
 type (
 	// DependencyInjection prebuilding
-	DependencyInjection struct {
-	}
+	DependencyInjection struct{}
 )
 
 var _ Prebuilder = (*DependencyInjection)(nil)
 
 // Prebuild dependency-injection
-func (d *DependencyInjection) Prebuild(c *Context) (err error) {
+func (d *DependencyInjection) Prebuild(c *PrebuildContext) (err error) {
 	if err = d.ctor(c); err != nil {
 		return
 	}
@@ -27,7 +26,7 @@ func (d *DependencyInjection) Prebuild(c *Context) (err error) {
 	return
 }
 
-func (*DependencyInjection) ctor(c *Context) error {
+func (*DependencyInjection) ctor(c *PrebuildContext) error {
 	for _, annot := range c.ASTStore.Annots {
 		ctor, err := CreateCtor(annot)
 		if err != nil {
@@ -45,7 +44,7 @@ func (*DependencyInjection) ctor(c *Context) error {
 	return nil
 }
 
-func (*DependencyInjection) dtor(c *Context) error {
+func (*DependencyInjection) dtor(c *PrebuildContext) error {
 	for _, annot := range c.ASTStore.Annots {
 		dtor := CreateDtor(annot)
 		if dtor != nil {

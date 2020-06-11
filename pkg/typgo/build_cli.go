@@ -3,8 +3,10 @@ package typgo
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 
+	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
@@ -98,19 +100,42 @@ func (b *BuildCli) Context(name string, c *cli.Context) *Context {
 	}
 }
 
+// Prebuild process
+func (b *BuildCli) Prebuild() (err error) {
+	c := &PrebuildContext{
+		BuildCli: b,
+		ctx:      context.Background(),
+	}
+	if c.Descriptor.Prebuild != nil {
+		if err := c.Descriptor.Prebuild.Prebuild(c); err != nil {
+			return err
+		}
+	}
+	if err := savePrecond(c); err != nil {
+		return err
+	}
+	LoadConfig(typvar.ConfigFile)
+	return
+}
+
+func savePrecond(c *PrebuildContext) error {
+	path := typvar.Precond(c.Descriptor.Name)
+	os.Remove(path)
+	if c.Precond.NotEmpty() {
+		if err := typtmpl.WriteFile(path, 0777, c.Precond); err != nil {
+			return err
+		}
+		if err := buildkit.GoImports(c.Ctx(), path); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // ActionFn to return related action func
 func (b *BuildCli) ActionFn(name string, fn CliFunc) func(*cli.Context) error {
 	return func(cli *cli.Context) error {
 		c := b.Context(strings.ToUpper(name), cli)
 		return fn(c)
 	}
-}
-
-//
-// Context
-//
-
-// Ctx return golang context
-func (c *Context) Ctx() context.Context {
-	return c.Context.Context
 }

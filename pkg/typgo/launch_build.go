@@ -6,8 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/buildkit"
-	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/typical-go/typical-go/pkg/typvar"
 	"github.com/urfave/cli/v2"
 )
@@ -45,42 +43,28 @@ Options:
 
 }
 
-func launchBuild(d *Descriptor) (err error) {
-	typvar.Init()
-
-	app := cli.NewApp()
-	app.Name = "./typicalw"
-	app.Usage = "./tyicalw"
+func launchBuild(d *Descriptor) error {
+	if err := typvar.Init(); err != nil {
+		return fmt.Errorf("init-var: %w", err)
+	}
 
 	buildCli := createBuildCli(d)
-
-	app.Before = buildCli.ActionFn("BEFORE_BUILD", beforeBuild)
-	app.After = buildCli.ActionFn("AFTER_BUILD", afterBuild)
+	if err := buildCli.Prebuild(); err != nil {
+		return fmt.Errorf("prebuild: %w", err)
+	}
 
 	cmds, err := buildCli.commands()
 	if err != nil {
 		return fmt.Errorf("commands: %w", err)
 	}
+
+	app := cli.NewApp()
+	app.Name = "./typicalw"
+	app.Usage = "./tyicalw"
+	app.After = buildCli.ActionFn("AFTER_BUILD", afterBuild)
 	app.Commands = cmds
 
 	return app.Run(os.Args)
-}
-
-func beforeBuild(c *Context) (err error) {
-
-	if c.Descriptor.Prebuild != nil {
-		if err := c.Descriptor.Prebuild.Prebuild(c); err != nil {
-			return err
-		}
-	}
-
-	if err := savePrecond(c); err != nil {
-		return err
-	}
-
-	LoadConfig(typvar.ConfigFile)
-
-	return
 }
 
 func afterBuild(c *Context) (err error) {
@@ -90,19 +74,4 @@ func afterBuild(c *Context) (err error) {
 		return
 	}
 	return
-}
-
-func savePrecond(c *Context) error {
-	path := typvar.Precond(c.Descriptor.Name)
-	os.Remove(path)
-
-	if c.Precond.NotEmpty() {
-		if err := typtmpl.WriteFile(path, 0777, c.Precond); err != nil {
-			return err
-		}
-		if err := buildkit.GoImports(c.Ctx(), path); err != nil {
-			return err
-		}
-	}
-	return nil
 }

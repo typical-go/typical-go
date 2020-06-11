@@ -53,13 +53,13 @@ func AppBin(name string) string {
 	return fmt.Sprintf("%s/%s", BinFolder, name)
 }
 
-func Init() {
+func Init() error {
 	TmpBin = fmt.Sprintf("%s/bin", TypicalTmp)
 	TmpSrc = fmt.Sprintf("%s/src", TypicalTmp)
 	BuildChecksum = fmt.Sprintf("%s/checksum", TypicalTmp)
 	BuildToolSrc = fmt.Sprintf("%s/build-tool", TmpSrc)
 	BuildToolBin = fmt.Sprintf("%s/build-tool", TmpBin)
-
+	return nil
 }
 
 func Wrap(typicalTmp, projectPkg string) {

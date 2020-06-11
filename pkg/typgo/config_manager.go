@@ -25,7 +25,7 @@ type (
 var _ Prebuilder = (*ConfigManager)(nil)
 
 // Prebuild to prepare dependency-injection and env-file
-func (m *ConfigManager) Prebuild(c *Context) error {
+func (m *ConfigManager) Prebuild(c *PrebuildContext) error {
 	for _, cfg := range m.Configs {
 		specType := reflect.TypeOf(cfg.Spec).String()
 		c.Precond.CfgCtors = append(c.Precond.CfgCtors, &typtmpl.CfgCtor{
