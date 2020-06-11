@@ -3,11 +3,17 @@ package typgo
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/fatih/color"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/urfave/cli/v2"
+)
+
+var (
+	// CtxExecWriter write for context execute
+	CtxExecWriter io.Writer = os.Stdout
 )
 
 type (
@@ -17,7 +23,6 @@ type (
 		*cli.Context
 		*BuildCli
 	}
-
 	exec interface {
 		Run(c context.Context) error
 	}
@@ -25,9 +30,7 @@ type (
 
 // Execute command
 func (c *Context) Execute(exec exec) error {
-	w := os.Stdout
-	color.New(color.FgMagenta).Fprint(w, "\n$ ")
-	fmt.Fprintln(w, exec)
-
+	color.New(color.FgMagenta).Fprint(CtxExecWriter, "\n$ ")
+	fmt.Fprintln(CtxExecWriter, exec)
 	return exec.Run(c.Ctx())
 }
