@@ -30,8 +30,7 @@ func Main(d *typgo.Descriptor) (err error) {
 					Value: "typical",
 				},
 				&cli.StringFlag{
-					Name:     "project-pkg",
-					Required: true,
+					Name: "project-pkg",
 				},
 			},
 			Action: func(cliCtx *cli.Context) (err error) {

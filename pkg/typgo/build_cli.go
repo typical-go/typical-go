@@ -117,12 +117,7 @@ func (b *BuildCli) Prebuild() (err error) {
 		return fmt.Errorf("save-precond: %w", err)
 	}
 
-	envs, err := LoadConfig(typvar.ConfigFile)
-	if err != nil {
-		return err
-	}
-
-	if len(envs) > 0 {
+	if envs, _ := LoadConfig(typvar.ConfigFile); len(envs) > 0 {
 		printEnv(os.Stdout, envs)
 	}
 
