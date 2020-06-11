@@ -50,12 +50,12 @@ func launchBuild(d *Descriptor) error {
 
 	buildCli := createBuildCli(d)
 	if err := buildCli.Prebuild(); err != nil {
-		return fmt.Errorf("prebuild: %w", err)
+		return err
 	}
 
 	cmds, err := buildCli.commands()
 	if err != nil {
-		return fmt.Errorf("commands: %w", err)
+		return err
 	}
 
 	app := cli.NewApp()

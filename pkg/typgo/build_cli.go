@@ -3,9 +3,11 @@ package typgo
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typlog"
@@ -112,10 +114,29 @@ func (b *BuildCli) Prebuild() (err error) {
 		}
 	}
 	if err := savePrecond(c); err != nil {
+		return fmt.Errorf("save-precond: %w", err)
+	}
+
+	envs, err := LoadConfig(typvar.ConfigFile)
+	if err != nil {
 		return err
 	}
-	LoadConfig(typvar.ConfigFile)
+
+	if len(envs) > 0 {
+		printEnv(os.Stdout, envs)
+	}
+
 	return
+}
+
+func printEnv(w io.Writer, envs map[string]string) {
+	color.New(color.FgGreen).Fprint(w, "ENV")
+	fmt.Fprint(w, ": ")
+
+	for key := range envs {
+		fmt.Fprintf(w, "+%s ", key)
+	}
+	fmt.Fprintln(w)
 }
 
 func savePrecond(c *PrebuildContext) error {

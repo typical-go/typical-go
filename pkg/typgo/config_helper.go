@@ -50,20 +50,20 @@ func WriteConfig(dest string, configs []*Configuration) (err error) {
 }
 
 // LoadConfig to load configuration from source file
-func LoadConfig(source string) (m map[string]string, err error) {
-	var file *os.File
-
-	if file, err = os.Open(source); err != nil {
-		return
+func LoadConfig(source string) (map[string]string, error) {
+	file, err := os.Open(source)
+	if err != nil {
+		return nil, err
 	}
 	defer file.Close()
 
-	for key, value := range ReadConfig(file) {
-		if err = os.Setenv(key, value); err != nil {
-			return
+	m := ReadConfig(file)
+	for key, value := range m {
+		if err := os.Setenv(key, value); err != nil {
+			return nil, err
 		}
 	}
-	return
+	return m, nil
 }
 
 // ProcessConfig to populates the specified struct based on environment variables
