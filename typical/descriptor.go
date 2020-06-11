@@ -12,7 +12,7 @@ import (
 // Descriptor of typical-go
 var Descriptor = typgo.Descriptor{
 	Name:    "typical-go",
-	Version: "0.9.56",
+	Version: "0.9.57",
 
 	EntryPoint: wrapper.Main,
 	Layouts:    []string{"wrapper", "pkg"},
@@ -38,5 +38,5 @@ var Descriptor = typgo.Descriptor{
 
 			return cmd.Run(cliCtx.Context)
 		},
-	}), // Test all the examples
+	}),
 }
