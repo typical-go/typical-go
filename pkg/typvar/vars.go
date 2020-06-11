@@ -62,11 +62,12 @@ func Init() error {
 	return nil
 }
 
-func Wrap(typicalTmp, projectPkg string) {
+func Wrap(typicalTmp, projectPkg string) error {
 	TypicalTmp = typicalTmp
 	ProjectPkg = projectPkg
 	Init()
 
 	os.MkdirAll(BuildToolSrc, 0777)
 	os.MkdirAll(TmpBin, 0777)
+	return nil
 }
