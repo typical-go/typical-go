@@ -71,7 +71,7 @@ var Descriptor = typgo.Descriptor{
 ```
 ## Annotation
 
-Typical-Go support java-like annotation (expect the parameter in JSON format) for code-generation purpose.
+Typical-Go support java-like annotation (except the parameter in JSON format) for code-generation purpose.
 
 ## Dependency Injection
 
@@ -87,7 +87,7 @@ func OpenConn() *sql.DB{
 ```go
 // CloseConn close the database connection
 // @dtor
-func CloseConn(obj Object){
+func CloseConn(db *sql.DB){
 }
 ```
 
