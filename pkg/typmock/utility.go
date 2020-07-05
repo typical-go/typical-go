@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typvar"
 
@@ -76,7 +75,7 @@ func mock(c *typgo.Context) (err error) {
 
 func installIfNotExist(c *typgo.Context, mockgen string) (err error) {
 	if _, err = os.Stat(mockgen); os.IsNotExist(err) {
-		return c.Execute(&buildkit.GoBuild{
+		return c.Execute(&execkit.GoBuild{
 			Out:    mockgen,
 			Source: "github.com/golang/mock/mockgen",
 		})

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/buildkit"
+	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/typical-go/typical-go/pkg/typvar"
 	"github.com/urfave/cli/v2"
@@ -80,7 +80,7 @@ func (*StdCompile) Compile(c *Context) (err error) {
 		}
 	}
 
-	return c.Execute(&buildkit.GoBuild{
+	return c.Execute(&execkit.GoBuild{
 		Out:    typvar.AppBin(c.Descriptor.Name),
 		Source: "./" + src,
 	})

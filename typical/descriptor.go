@@ -3,7 +3,7 @@ package typical
 import (
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/buildkit"
+	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/wrapper"
 	"github.com/urfave/cli/v2"
@@ -28,7 +28,7 @@ var Descriptor = typgo.Descriptor{
 		Aliases: []string{"e"},
 		Usage:   "Test all example",
 		Action: func(cliCtx *cli.Context) (err error) {
-			gotest := &buildkit.GoTest{
+			gotest := &execkit.GoTest{
 				Targets: []string{"./examples/..."},
 			}
 

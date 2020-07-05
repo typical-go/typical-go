@@ -1,32 +1,32 @@
-package buildkit_test
+package execkit_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/buildkit"
+	"github.com/typical-go/typical-go/pkg/execkit"
 )
 
 func TestGoBuild(t *testing.T) {
 	testcases := []struct {
 		testName string
-		*buildkit.GoBuild
+		*execkit.GoBuild
 		expected string
 	}{
 		{
-			GoBuild: &buildkit.GoBuild{
+			GoBuild: &execkit.GoBuild{
 				Out:    "some-output",
 				Source: "some-sources",
 			},
 			expected: "go build -o some-output some-sources",
 		},
 		{
-			GoBuild: &buildkit.GoBuild{
+			GoBuild: &execkit.GoBuild{
 				Out:    "some-output",
 				Source: "some-sources",
 				Ldflags: []string{
-					buildkit.BuildVar("name1", "value1"),
-					buildkit.BuildVar("name2", "value3"),
+					execkit.BuildVar("name1", "value1"),
+					execkit.BuildVar("name2", "value3"),
 				},
 			},
 			expected: "go build -ldflags -X name1=value1 -X name2=value3 -o some-output some-sources",

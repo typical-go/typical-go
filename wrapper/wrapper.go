@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typlog"
@@ -89,12 +88,12 @@ func (w *wrapper) wrap(c *cli.Context) error {
 		}
 
 		w.Info("Build the build-tool")
-		gobuild := &buildkit.GoBuild{
+		gobuild := &execkit.GoBuild{
 			Out:    typvar.BuildToolBin,
 			Source: "./" + typvar.BuildToolSrc,
 			Ldflags: []string{
-				buildkit.BuildVar(projectPkgVar, projectPkg),
-				buildkit.BuildVar(typicalTmpVar, typicalTmp),
+				execkit.BuildVar(projectPkgVar, projectPkg),
+				execkit.BuildVar(typicalTmpVar, typicalTmp),
 			},
 		}
 

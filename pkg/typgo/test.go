@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/typical-go/typical-go/pkg/buildkit"
+	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/urfave/cli/v2"
 )
 
@@ -66,7 +66,7 @@ func (s *StdTest) Test(c *Context) (err error) {
 		return
 	}
 
-	return c.Execute(&buildkit.GoTest{
+	return c.Execute(&execkit.GoTest{
 		Targets:      testTargets(c),
 		Timeout:      s.getTimeout(),
 		CoverProfile: s.getCoverProfile(),

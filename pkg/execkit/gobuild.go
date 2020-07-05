@@ -1,12 +1,10 @@
-package buildkit
+package execkit
 
 import (
 	"context"
 	"fmt"
 	"os"
 	"strings"
-
-	"github.com/typical-go/typical-go/pkg/execkit"
 )
 
 // GoBuild builder
@@ -24,8 +22,8 @@ func BuildVar(name string, value interface{}) string {
 }
 
 // Command of GoBuild
-func (g *GoBuild) Command() *execkit.Command {
-	return &execkit.Command{
+func (g *GoBuild) Command() *Command {
+	return &Command{
 		Name:   "go",
 		Args:   g.Args(),
 		Stdout: os.Stdout,
