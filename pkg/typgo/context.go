@@ -23,19 +23,25 @@ type (
 		*cli.Context
 		*BuildCli
 	}
-	exec interface {
+	runner interface {
 		Run(c context.Context) error
 	}
 )
 
 // Execute command
-func (c *Context) Execute(exec exec) error {
+func (c *Context) Execute(runner runner) error {
 	color.New(color.FgMagenta).Fprint(CtxExecWriter, "\n$ ")
-	fmt.Fprintln(CtxExecWriter, exec)
-	return exec.Run(c.Ctx())
+	fmt.Fprintln(CtxExecWriter, runner)
+	return runner.Run(c.Ctx())
 }
 
 // Ctx return golang context
 func (c *Context) Ctx() context.Context {
 	return c.Context.Context
+}
+
+func execute(ctx context.Context, runner runner) error {
+	color.New(color.FgMagenta).Fprint(CtxExecWriter, "\n$ ")
+	fmt.Fprintln(CtxExecWriter, runner)
+	return runner.Run(ctx)
 }

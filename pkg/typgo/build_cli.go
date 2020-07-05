@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
-	"github.com/typical-go/typical-go/pkg/buildkit"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
@@ -146,7 +145,7 @@ func savePrecond(c *PrebuildContext) error {
 		if err := typtmpl.WriteFile(path, 0777, c.Precond); err != nil {
 			return err
 		}
-		if err := buildkit.GoImports(c.Ctx(), path); err != nil {
+		if err := GoImports(c.Ctx(), path); err != nil {
 			return err
 		}
 	}
