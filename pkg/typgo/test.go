@@ -3,10 +3,15 @@ package typgo
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/typical-go/typical-go/pkg/buildkit"
-	"github.com/typical-go/typical-go/pkg/typvar"
 	"github.com/urfave/cli/v2"
+)
+
+const (
+	defaultTestTimeout      = 25 * time.Second
+	defaultTestCoverProfile = "cover.out"
 )
 
 type (
@@ -16,7 +21,11 @@ type (
 	}
 
 	// StdTest is standard test
-	StdTest struct{}
+	StdTest struct {
+		Timeout      time.Duration
+		CoverProfile string
+		Race         bool
+	}
 
 	// TestFn function
 	TestFn func(*Context) error
@@ -51,23 +60,39 @@ func (t *testerImpl) Test(c *Context) error {
 
 // Test standard
 func (s *StdTest) Test(c *Context) (err error) {
-	var targets []string
 
-	for _, layout := range c.Descriptor.Layouts {
-		targets = append(targets, fmt.Sprintf("./%s/...", layout))
-	}
-
-	if len(targets) < 1 {
+	if len(c.Descriptor.Layouts) < 1 {
 		c.Info("Nothing to test")
 		return
 	}
 
 	return c.Execute(&buildkit.GoTest{
-		Targets:      targets,
-		Timeout:      typvar.TestTimeout,
-		CoverProfile: typvar.TestCoverProfile,
-		Race:         true,
+		Targets:      testTargets(c),
+		Timeout:      s.getTimeout(),
+		CoverProfile: s.getCoverProfile(),
+		Race:         s.Race,
 	})
+}
+
+func testTargets(c *Context) (targets []string) {
+	for _, layout := range c.Descriptor.Layouts {
+		targets = append(targets, fmt.Sprintf("./%s/...", layout))
+	}
+	return
+}
+
+func (s *StdTest) getTimeout() time.Duration {
+	if s.Timeout <= 0 {
+		return defaultTestTimeout
+	}
+	return s.Timeout
+}
+
+func (s *StdTest) getCoverProfile() string {
+	if s.CoverProfile == "" {
+		return defaultTestCoverProfile
+	}
+	return s.CoverProfile
 }
 
 //

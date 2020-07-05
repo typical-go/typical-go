@@ -4,7 +4,6 @@ package typvar
 import (
 	"fmt"
 	"os"
-	"time"
 )
 
 var (
@@ -22,15 +21,6 @@ var (
 
 	// CmdFolder location
 	CmdFolder = "cmd"
-
-	// ConfigFile location
-	ConfigFile = ".env"
-
-	// TestTimeout duration
-	TestTimeout = 25 * time.Second
-
-	// TestCoverProfile location
-	TestCoverProfile = "cover.out"
 
 	TmpBin        string
 	TmpSrc        string

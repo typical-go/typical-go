@@ -4,7 +4,6 @@ import (
 	"reflect"
 
 	"github.com/typical-go/typical-go/pkg/typtmpl"
-	"github.com/typical-go/typical-go/pkg/typvar"
 )
 
 type (
@@ -37,7 +36,7 @@ func (m *ConfigManager) Prebuild(c *PrebuildContext) error {
 	}
 
 	if !m.SkipEnvFile {
-		if err := WriteConfig(typvar.ConfigFile, m.Configs); err != nil {
+		if err := WriteConfig(ConfigFile, m.Configs); err != nil {
 			return err
 		}
 	}

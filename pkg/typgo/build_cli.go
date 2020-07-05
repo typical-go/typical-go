@@ -16,6 +16,11 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+var (
+	// ConfigFile location
+	ConfigFile = ".env"
+)
+
 type (
 	// BuildCli detail
 	BuildCli struct {
@@ -117,7 +122,7 @@ func (b *BuildCli) Prebuild() (err error) {
 		return fmt.Errorf("save-precond: %w", err)
 	}
 
-	if envs, _ := LoadConfig(typvar.ConfigFile); len(envs) > 0 {
+	if envs, _ := LoadConfig(ConfigFile); len(envs) > 0 {
 		printEnv(os.Stdout, envs)
 	}
 
