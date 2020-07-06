@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/typvar"
 	"github.com/urfave/cli/v2"
 )
 
@@ -44,7 +43,7 @@ Options:
 }
 
 func launchBuild(d *Descriptor) error {
-	if err := typvar.Init(); err != nil {
+	if err := Init(); err != nil {
 		return fmt.Errorf("init-var: %w", err)
 	}
 
@@ -70,7 +69,7 @@ func launchBuild(d *Descriptor) error {
 func afterBuild(c *Context) (err error) {
 	store := c.BuildCli.ASTStore
 	b, _ := json.MarshalIndent(store.Annots, "", "\t")
-	if err = ioutil.WriteFile(fmt.Sprintf("%s/annots.json", typvar.TypicalTmp), b, 0777); err != nil {
+	if err = ioutil.WriteFile(fmt.Sprintf("%s/annots.json", TypicalTmp), b, 0777); err != nil {
 		return
 	}
 	return

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/typvar"
 	"github.com/urfave/cli/v2"
 )
 
@@ -63,11 +62,11 @@ var _ Cleaner = (*StdClean)(nil)
 
 // Clean project
 func (s *StdClean) Clean(c *Context) error {
-	removeAll(c, typvar.BinFolder)
-	removeAll(c, fmt.Sprintf("%s/bin", typvar.TypicalTmp))
-	remove(c, typvar.BuildChecksum)
-	removeAll(c, typvar.BuildToolSrc)
-	remove(c, typvar.Precond(c.Descriptor.Name))
+	removeAll(c, BinFolder)
+	removeAll(c, fmt.Sprintf("%s/bin", TypicalTmp))
+	remove(c, BuildChecksum)
+	removeAll(c, BuildToolSrc)
+	remove(c, Precond(c.Descriptor.Name))
 	return nil
 }
 

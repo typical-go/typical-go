@@ -11,7 +11,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
-	"github.com/typical-go/typical-go/pkg/typvar"
 	"github.com/urfave/cli/v2"
 )
 
@@ -60,7 +59,7 @@ func retrImports(dirs []string) []string {
 	}
 	for _, dir := range dirs {
 		if !strings.Contains(dir, "internal") {
-			imports = append(imports, fmt.Sprintf("%s/%s", typvar.ProjectPkg, dir))
+			imports = append(imports, fmt.Sprintf("%s/%s", ProjectPkg, dir))
 		}
 	}
 	return imports
@@ -139,7 +138,7 @@ func printEnv(w io.Writer, envs map[string]string) {
 }
 
 func savePrecond(c *PrebuildContext) error {
-	path := typvar.Precond(c.Descriptor.Name)
+	path := Precond(c.Descriptor.Name)
 	os.Remove(path)
 	if c.Precond.NotEmpty() {
 		if err := typtmpl.WriteFile(path, 0777, c.Precond); err != nil {

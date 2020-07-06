@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/typast"
-	"github.com/typical-go/typical-go/pkg/typvar"
 )
 
 // IsTag return true if annotation same type and tag names
@@ -29,7 +28,7 @@ func IsFuncTag(a *typast.Annot, tagNames ...string) bool {
 // ExcludeMessage return true is message mean to be exclude
 func ExcludeMessage(msg string) bool {
 	msg = strings.ToLower(msg)
-	for _, prefix := range typvar.ExclMsgPrefix {
+	for _, prefix := range ExclMsgPrefix {
 		if strings.HasPrefix(msg, strings.ToLower(prefix)) {
 			return true
 		}

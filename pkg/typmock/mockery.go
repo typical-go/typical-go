@@ -2,7 +2,6 @@ package typmock
 
 import (
 	"github.com/typical-go/typical-go/pkg/typgo"
-	"github.com/typical-go/typical-go/pkg/typvar"
 )
 
 var (
@@ -27,6 +26,6 @@ func createMockery(c *typgo.Context) *Mockery {
 
 	return &Mockery{
 		TargetMap:  m,
-		ProjectPkg: typvar.ProjectPkg,
+		ProjectPkg: typgo.ProjectPkg,
 	}
 }

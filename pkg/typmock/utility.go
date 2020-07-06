@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/execkit"
-	"github.com/typical-go/typical-go/pkg/typvar"
-
 	"github.com/iancoleman/strcase"
+	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
@@ -34,7 +32,7 @@ func mock(c *typgo.Context) (err error) {
 
 	mockery := createMockery(c)
 
-	mockgen := fmt.Sprintf("%s/bin/mockgen", typvar.TypicalTmp)
+	mockgen := fmt.Sprintf("%s/bin/mockgen", typgo.TypicalTmp)
 	if err = installIfNotExist(c, mockgen); err != nil {
 		return
 	}
@@ -52,7 +50,7 @@ func mock(c *typgo.Context) (err error) {
 		os.RemoveAll(mockPkg)
 
 		for _, t := range targets {
-			srcPkg := fmt.Sprintf("%s/%s", typvar.ProjectPkg, t.Dir)
+			srcPkg := fmt.Sprintf("%s/%s", typgo.ProjectPkg, t.Dir)
 			dest := fmt.Sprintf("%s%s/%s.go", t.Parent, t.MockPkg, strcase.ToSnake(t.Source))
 			name := fmt.Sprintf("%s.%s", srcPkg, t.Source)
 

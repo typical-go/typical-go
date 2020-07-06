@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
-	"github.com/typical-go/typical-go/pkg/typvar"
 	"github.com/urfave/cli/v2"
 )
 
@@ -65,7 +64,7 @@ func (r Runs) Run(c *Context) error {
 // Run for standard typical project
 func (*StdRun) Run(c *Context) error {
 	return c.Execute(&execkit.Command{
-		Name:   typvar.AppBin(c.Descriptor.Name),
+		Name:   AppBin(c.Descriptor.Name),
 		Args:   c.Args().Slice(),
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,

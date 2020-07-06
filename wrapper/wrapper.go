@@ -14,13 +14,12 @@ import (
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
-	"github.com/typical-go/typical-go/pkg/typvar"
 	"github.com/urfave/cli/v2"
 )
 
 const (
-	projectPkgVar = "github.com/typical-go/typical-go/pkg/typvar.ProjectPkg"
-	typicalTmpVar = "github.com/typical-go/typical-go/pkg/typvar.TypicalTmp"
+	projectPkgVar = "github.com/typical-go/typical-go/pkg/typgo.ProjectPkg"
+	typicalTmpVar = "github.com/typical-go/typical-go/pkg/typgo.TypicalTmp"
 	gitignore     = ".gitignore"
 	typicalw      = "typicalw"
 )
@@ -64,7 +63,7 @@ func (w *wrapper) wrap(c *cli.Context) error {
 		return err
 	}
 
-	if err := typvar.Wrap(typicalTmp, projectPkg); err != nil {
+	if err := typgo.Wrap(typicalTmp, projectPkg); err != nil {
 		return err
 	}
 
@@ -82,15 +81,15 @@ func (w *wrapper) wrap(c *cli.Context) error {
 
 	chksum := createChecksum(descriptorPkg)
 
-	if _, err = os.Stat(typvar.BuildToolBin); os.IsNotExist(err) || !isSameChecksum(typvar.BuildChecksum, chksum) {
-		if err = saveChecksum(typvar.BuildChecksum, chksum); err != nil {
+	if _, err = os.Stat(typgo.BuildToolBin); os.IsNotExist(err) || !isSameChecksum(typgo.BuildChecksum, chksum) {
+		if err = saveChecksum(typgo.BuildChecksum, chksum); err != nil {
 			return err
 		}
 
 		w.Info("Build the build-tool")
 		gobuild := &execkit.GoBuild{
-			Out:    typvar.BuildToolBin,
-			Source: "./" + typvar.BuildToolSrc,
+			Out:    typgo.BuildToolBin,
+			Source: "./" + typgo.BuildToolSrc,
 			Ldflags: []string{
 				execkit.BuildVar(projectPkgVar, projectPkg),
 				execkit.BuildVar(typicalTmpVar, typicalTmp),
@@ -142,7 +141,7 @@ func (w *wrapper) generateTypicalwIfNotExist(typicalTmp, projectPkg string) erro
 }
 
 func (w *wrapper) generateBuildMain(projectPkg, descriptorPkg string) error {
-	src := typvar.BuildToolSrc + "/main.go"
+	src := typgo.BuildToolSrc + "/main.go"
 	if _, err := os.Stat(src); !os.IsNotExist(err) {
 		return nil
 	}

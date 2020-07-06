@@ -1,5 +1,4 @@
-// Package typvar contains typical variable
-package typvar
+package typgo
 
 import (
 	"fmt"
