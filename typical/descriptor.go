@@ -5,7 +5,6 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
-	"github.com/typical-go/typical-go/wrapper"
 	"github.com/urfave/cli/v2"
 )
 
@@ -14,8 +13,7 @@ var Descriptor = typgo.Descriptor{
 	Name:    "typical-go",
 	Version: "0.9.57",
 
-	EntryPoint: wrapper.Main,
-	Layouts:    []string{"wrapper", "pkg"},
+	Layouts: []string{"wrapper", "pkg"},
 
 	Test:    &typgo.StdTest{},
 	Compile: &typgo.StdCompile{},
