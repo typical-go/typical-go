@@ -29,11 +29,11 @@ import (
 )
 
 func init() {
-	typgo.Provide(
-		&typgo.Constructor{Name: "", Fn: pkg1.NewFunction1},
-		&typgo.Constructor{Name: "", Fn: pkg2.NewFunction2},
+	typapp.Provide(
+		&typapp.Constructor{Name: "", Fn: pkg1.NewFunction1},
+		&typapp.Constructor{Name: "", Fn: pkg2.NewFunction2},
 	)
-	typgo.Destroy(
+	typapp.Destroy(
 	)
 }`,
 		},
@@ -57,8 +57,8 @@ import (
 )
 
 func init() {
-	typgo.Provide(
-		&typgo.Constructor{
+	typapp.Provide(
+		&typapp.Constructor{
 			Name: "",
 			Fn: func() (cfg *Sample, err error) {
 				cfg = new(Sample)
@@ -69,7 +69,7 @@ func init() {
 			},
 		},
 	)
-	typgo.Destroy(
+	typapp.Destroy(
 	)
 }`,
 		},
@@ -93,10 +93,10 @@ import (
 )
 
 func init() {
-	typgo.Provide(
+	typapp.Provide(
 	)
-	typgo.Destroy(
-		&typgo.Destructor{Fn: pkg1.NewFunction1},
+	typapp.Destroy(
+		&typapp.Destructor{Fn: pkg1.NewFunction1},
 	)
 }`,
 		},
