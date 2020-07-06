@@ -3,7 +3,6 @@ package typical
 import (
 	"fmt"
 
-	"github.com/typical-go/typical-go/examples/simple-additional-task/internal/helloworld"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
@@ -12,9 +11,7 @@ import (
 var Descriptor = typgo.Descriptor{
 	Name:    "simple-additional-task",
 	Version: "1.0.0",
-
-	EntryPoint: helloworld.Main,
-	Layouts:    []string{"internal"},
+	Layouts: []string{"internal"},
 
 	Compile: &typgo.StdCompile{},
 	Run:     &typgo.StdRun{},

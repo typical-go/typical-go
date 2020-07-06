@@ -16,8 +16,7 @@ type (
 		// Version of the project (OPTIONAL). By default it is 0.0.1
 		Version string
 
-		EntryPoint interface{}
-		Layouts    []string
+		Layouts []string
 
 		Prebuild Prebuilder
 		Test     Tester
@@ -30,16 +29,7 @@ type (
 	}
 )
 
-var _ typcore.AppLauncher = (*Descriptor)(nil)
 var _ typcore.BuildLauncher = (*Descriptor)(nil)
-
-// LaunchApp to launch the app
-func (d *Descriptor) LaunchApp() (err error) {
-	app := &App{
-		EntryPoint: d.EntryPoint,
-	}
-	return app.Run()
-}
 
 // LaunchBuild to launch the build tool
 func (d *Descriptor) LaunchBuild() (err error) {

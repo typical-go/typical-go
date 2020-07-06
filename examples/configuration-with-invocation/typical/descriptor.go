@@ -10,10 +10,7 @@ var Descriptor = typgo.Descriptor{
 	Name:    "configuration-with-invocation",
 	Version: "1.0.0",
 
-	EntryPoint: server.Main,
-	Layouts: []string{
-		"internal",
-	},
+	Layouts: []string{"internal"},
 
 	Prebuild: &typgo.ConfigManager{
 		Configs: []*typgo.Configuration{

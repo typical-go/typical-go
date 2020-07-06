@@ -1,4 +1,4 @@
-package typgo
+package typapp
 
 type (
 	// Destroyer responsible to destroy the dependency [mock]

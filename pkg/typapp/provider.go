@@ -1,4 +1,4 @@
-package typgo
+package typapp
 
 type (
 	// Provider responsible to provide constructor
