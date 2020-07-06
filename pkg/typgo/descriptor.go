@@ -1,11 +1,7 @@
 package typgo
 
 import (
-	"os"
-
-	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typcore"
-	"go.uber.org/dig"
 )
 
 type (
@@ -39,17 +35,10 @@ var _ typcore.BuildLauncher = (*Descriptor)(nil)
 
 // LaunchApp to launch the app
 func (d *Descriptor) LaunchApp() (err error) {
-	if configFile := os.Getenv("CONFIG"); configFile != "" {
-		_, err = LoadConfig(configFile)
+	app := &App{
+		EntryPoint: d.EntryPoint,
 	}
-
-	di := dig.New()
-	if err = setDependencies(di, d); err != nil {
-		return
-	}
-
-	errs := common.GracefulRun(start(di, d), stop(di))
-	return errs.Unwrap()
+	return app.Run()
 }
 
 // LaunchBuild to launch the build tool

@@ -26,16 +26,17 @@ const (
 
 type (
 	wrapper struct {
-		*typgo.Descriptor
+		Name    string
+		Version string
 		typlog.Logger
 	}
 )
 
 func (w *wrapper) app() *cli.App {
 	app := cli.NewApp()
-	app.Name = w.Descriptor.Name
-	app.Usage = "" // NOTE: intentionally blank
-	app.Description = w.Descriptor.Description
+	app.Name = w.Name
+	app.Usage = ""       // NOTE: intentionally blank
+	app.Description = "" // NOTE: intentionally blank
 	app.Version = w.Version
 
 	app.Commands = []*cli.Command{

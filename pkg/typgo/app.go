@@ -1,6 +1,9 @@
 package typgo
 
 import (
+	"os"
+
+	"github.com/typical-go/typical-go/pkg/common"
 	"go.uber.org/dig"
 )
 
@@ -8,6 +11,10 @@ var (
 	_ctors []*Constructor
 	_dtors []*Destructor
 )
+
+type App struct {
+	EntryPoint interface{}
+}
 
 // Provide constructor
 func Provide(ctors ...*Constructor) {
@@ -19,25 +26,32 @@ func Destroy(dtors ...*Destructor) {
 	_dtors = append(_dtors, dtors...)
 }
 
-func setDependencies(di *dig.Container, d *Descriptor) (err error) {
-	if err = di.Provide(func() *Descriptor { return d }); err != nil {
-		return
-	}
-	for _, c := range _ctors {
-		if err = di.Provide(c.Fn, dig.Name(c.Name)); err != nil {
-			return
+// Run application
+func (a *App) Run() error {
+	if configFile := os.Getenv("CONFIG"); configFile != "" {
+		if _, err := LoadConfig(configFile); err != nil {
+			return err
 		}
 	}
-	return
+
+	di := dig.New()
+	for _, c := range _ctors {
+		if err := di.Provide(c.Fn, dig.Name(c.Name)); err != nil {
+			return err
+		}
+	}
+
+	errs := common.GracefulRun(a.startFn(di), a.stopFn(di))
+	return errs.Unwrap()
 }
 
-func start(di *dig.Container, d *Descriptor) func() error {
+func (a *App) startFn(di *dig.Container) common.Fn {
 	return func() (err error) {
-		return di.Invoke(d.EntryPoint)
+		return di.Invoke(a.EntryPoint)
 	}
 }
 
-func stop(di *dig.Container) func() error {
+func (a *App) stopFn(di *dig.Container) common.Fn {
 	return func() (err error) {
 		for _, dtor := range _dtors {
 			if err = di.Invoke(dtor.Fn); err != nil {
