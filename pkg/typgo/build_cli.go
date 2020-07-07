@@ -141,10 +141,7 @@ func savePrecond(c *PrebuildContext) error {
 	path := Precond(c.Descriptor.Name)
 	os.Remove(path)
 	if c.Precond.NotEmpty() {
-		if err := typtmpl.WriteFile(path, 0777, c.Precond); err != nil {
-			return err
-		}
-		if err := GoImports(c.Ctx(), path); err != nil {
+		if err := writeGoSource(c.Precond, path); err != nil {
 			return err
 		}
 	}

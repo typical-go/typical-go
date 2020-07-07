@@ -2,8 +2,6 @@ package typtmpl_test
 
 import (
 	"io"
-	"io/ioutil"
-	"os"
 	"strings"
 	"testing"
 
@@ -22,23 +20,6 @@ func TestExecute(t *testing.T) {
 		typtmpl.Execute("", "hello {{.Name}}", &data{Name: "world"}, &debugger),
 	)
 	require.Equal(t, "hello world", debugger.String())
-}
-
-func TestWriteFile(t *testing.T) {
-	require.EqualError(t,
-		typtmpl.WriteFile("bad/filename/", 0777, nil),
-		"open bad/filename/: no such file or directory",
-	)
-
-	filename := "dummy-template"
-	defer os.Remove(filename)
-
-	require.NoError(t,
-		typtmpl.WriteFile(filename, 0777, &dummyTemplate{"dummy"}),
-	)
-
-	b, _ := ioutil.ReadFile(filename)
-	require.Equal(t, []byte("dummy"), b)
 }
 
 type data struct {

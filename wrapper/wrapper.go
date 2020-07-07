@@ -121,12 +121,20 @@ func (w *wrapper) generateTypicalwIfNotExist(typicalTmp, projectPkg string) erro
 	if _, err := os.Stat(typicalw); !os.IsNotExist(err) {
 		return nil
 	}
+
 	w.Infof("Generate %s", typicalw)
-	return typtmpl.WriteFile(typicalw, 0777, &typtmpl.Typicalw{
+	f, err := os.OpenFile("typicalw", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	tmpl := &typtmpl.Typicalw{
 		TypicalSource: "github.com/typical-go/typical-go/cmd/typical-go",
 		TypicalTmp:    typicalTmp,
 		ProjectPkg:    projectPkg,
-	})
+	}
+	return tmpl.Execute(f)
 }
 
 func (w *wrapper) generateBuildMain(projectPkg, descriptorPkg string) error {
@@ -134,9 +142,17 @@ func (w *wrapper) generateBuildMain(projectPkg, descriptorPkg string) error {
 	if _, err := os.Stat(src); !os.IsNotExist(err) {
 		return nil
 	}
-	return typtmpl.WriteFile(src, 0777, &typtmpl.BuildToolMain{
+
+	f, err := os.OpenFile(src, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	tmpl := &typtmpl.BuildToolMain{
 		DescPkg: fmt.Sprintf("%s/%s", projectPkg, descriptorPkg),
-	})
+	}
+	return tmpl.Execute(f)
 }
 
 func createChecksum(source string) []byte {

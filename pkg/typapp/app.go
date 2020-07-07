@@ -9,10 +9,12 @@ import (
 	"go.uber.org/dig"
 )
 
+// App of typical program
 type App struct {
 	EntryPoint interface{}
 }
 
+// Start the entry points
 func Start(entryPoint interface{}) {
 	app := &App{
 		EntryPoint: entryPoint,

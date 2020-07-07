@@ -42,6 +42,7 @@ func AppBin(name string) string {
 	return fmt.Sprintf("%s/%s", BinFolder, name)
 }
 
+// Init vars
 func Init() error {
 	TmpBin = fmt.Sprintf("%s/bin", TypicalTmp)
 	TmpSrc = fmt.Sprintf("%s/src", TypicalTmp)
@@ -51,6 +52,7 @@ func Init() error {
 	return nil
 }
 
+// Wrap vars
 func Wrap(typicalTmp, projectPkg string) error {
 	TypicalTmp = typicalTmp
 	ProjectPkg = projectPkg

@@ -2,12 +2,11 @@
 
 set -e
 
-TYPSRC=github.com/typical-go/typical-go/cmd/typical-go
 TYPTMP=.typical-tmp
 TYPGO=$TYPTMP/bin/typical-go
 
 if ! [ -s $TYPGO ]; then
-	go build -o $TYPGO $TYPSRC
+	go build -o $TYPGO github.com/typical-go/typical-go/cmd/typical-go
 fi
 
 $TYPGO wrap \
