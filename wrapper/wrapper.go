@@ -68,10 +68,6 @@ func (w *wrapper) wrap(c *cli.Context) error {
 		return err
 	}
 
-	if err := w.generateGitIgnoreIfNotExist(); err != nil {
-		return err
-	}
-
 	if err := w.generateTypicalwIfNotExist(typicalTmp, projectPkg); err != nil {
 		return err
 	}
@@ -119,14 +115,6 @@ func (w *wrapper) projectPkg(c *cli.Context) (string, error) {
 		return "", errors.New(stderr.String())
 	}
 	return strings.TrimSpace(stdout.String()), nil
-}
-
-func (w *wrapper) generateGitIgnoreIfNotExist() error {
-	if _, err := os.Stat(gitignore); !os.IsNotExist(err) {
-		return nil
-	}
-	w.Infof("Generate %s", gitignore)
-	return typtmpl.WriteFile(gitignore, 0777, &typtmpl.GitIgnore{})
 }
 
 func (w *wrapper) generateTypicalwIfNotExist(typicalTmp, projectPkg string) error {
