@@ -1,6 +1,7 @@
 package typgo
 
 import (
+	"fmt"
 	"reflect"
 
 	"github.com/typical-go/typical-go/pkg/typtmpl"
@@ -25,14 +26,24 @@ var _ Prebuilder = (*ConfigManager)(nil)
 
 // Prebuild to prepare dependency-injection and env-file
 func (m *ConfigManager) Prebuild(c *PrebuildContext) error {
+	var cfgs []*typtmpl.CfgCtor
 	for _, cfg := range m.Configs {
 		specType := reflect.TypeOf(cfg.Spec).String()
-		c.Precond.CfgCtors = append(c.Precond.CfgCtors, &typtmpl.CfgCtor{
+		cfgs = append(cfgs, &typtmpl.CfgCtor{
 			Name:      cfg.Ctor,
 			Prefix:    cfg.Name,
 			SpecType:  specType,
 			SpecType2: specType[1:],
 		})
+	}
+
+	cfgGenerated := fmt.Sprintf("%s/%s/cfg_generated.go", CmdFolder, c.Descriptor.Name)
+	if err := writeGoSource(&typtmpl.CfgGenerated{
+		Package:  "main",
+		Imports:  c.Imports,
+		CfgCtors: cfgs,
+	}, cfgGenerated); err != nil {
+		return err
 	}
 
 	if !m.SkipEnvFile {

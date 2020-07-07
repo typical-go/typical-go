@@ -27,6 +27,7 @@ func (d *DependencyInjection) Prebuild(c *PrebuildContext) (err error) {
 }
 
 func (*DependencyInjection) ctor(c *PrebuildContext) error {
+	var ctors []*typtmpl.Ctor
 	for _, annot := range c.ASTStore.Annots {
 		ctor, err := CreateCtor(annot)
 		if err != nil {
@@ -34,24 +35,33 @@ func (*DependencyInjection) ctor(c *PrebuildContext) error {
 			continue
 		}
 		if ctor != nil {
-			c.Precond.Ctors = append(c.Precond.Ctors, &typtmpl.Ctor{
+			ctors = append(ctors, &typtmpl.Ctor{
 				Name: ctor.Param.Name,
 				Def:  fmt.Sprintf("%s.%s", ctor.Decl.Pkg, ctor.Decl.Name),
 			})
 		}
 	}
 
-	return nil
+	return writeGoSource(&typtmpl.CtorGenerated{
+		Package: "main",
+		Imports: c.Imports,
+		Ctors:   ctors,
+	}, fmt.Sprintf("%s/%s/ctor_generated.go", CmdFolder, c.Descriptor.Name))
 }
 
 func (*DependencyInjection) dtor(c *PrebuildContext) error {
+	var dtors []*typtmpl.Dtor
 	for _, annot := range c.ASTStore.Annots {
 		dtor := CreateDtor(annot)
 		if dtor != nil {
-			c.Precond.Dtors = append(c.Precond.Dtors, &typtmpl.Dtor{
+			dtors = append(dtors, &typtmpl.Dtor{
 				Def: fmt.Sprintf("%s.%s", dtor.Decl.Pkg, dtor.Decl.Name),
 			})
 		}
 	}
-	return nil
+	return writeGoSource(&typtmpl.DtorGenerated{
+		Package: "main",
+		Imports: c.Imports,
+		Dtors:   dtors,
+	}, fmt.Sprintf("%s/%s/dtor_generated.go", CmdFolder, c.Descriptor.Name))
 }

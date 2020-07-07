@@ -10,7 +10,6 @@ import (
 	"github.com/fatih/color"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typlog"
-	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/urfave/cli/v2"
 )
 
@@ -24,7 +23,7 @@ type (
 	BuildCli struct {
 		*Descriptor
 		ASTStore *typast.ASTStore
-		Precond  *typtmpl.Precond
+		Imports  []string
 	}
 
 	// CliFunc is command line function
@@ -43,24 +42,21 @@ func createBuildCli(d *Descriptor) *BuildCli {
 		// logger.Warn(err.Error())
 	}
 
+	imports := retrImports(appDirs)
 	return &BuildCli{
 		Descriptor: d,
 		ASTStore:   astStore,
-		Precond: &typtmpl.Precond{
-			Imports: retrImports(appDirs),
-			Package: "main",
-		},
+		Imports:    imports,
 	}
 }
 
 func retrImports(dirs []string) []string {
 	imports := []string{
 		"github.com/typical-go/typical-go/pkg/typgo",
+		"github.com/typical-go/typical-go/pkg/typapp",
 	}
 	for _, dir := range dirs {
-		if !strings.Contains(dir, "internal") {
-			imports = append(imports, fmt.Sprintf("%s/%s", ProjectPkg, dir))
-		}
+		imports = append(imports, fmt.Sprintf("%s/%s", ProjectPkg, dir))
 	}
 	return imports
 }
@@ -116,14 +112,9 @@ func (b *BuildCli) Prebuild() (err error) {
 			return err
 		}
 	}
-	if err := savePrecond(c); err != nil {
-		return fmt.Errorf("save-precond: %w", err)
-	}
-
 	if envs, _ := LoadConfig(ConfigFile); len(envs) > 0 {
 		printEnv(os.Stdout, envs)
 	}
-
 	return
 }
 
@@ -135,17 +126,6 @@ func printEnv(w io.Writer, envs map[string]string) {
 		fmt.Fprintf(w, "+%s ", key)
 	}
 	fmt.Fprintln(w)
-}
-
-func savePrecond(c *PrebuildContext) error {
-	path := Precond(c.Descriptor.Name)
-	os.Remove(path)
-	if c.Precond.NotEmpty() {
-		if err := writeGoSource(c.Precond, path); err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 // ActionFn to return related action func
