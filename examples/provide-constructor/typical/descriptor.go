@@ -12,7 +12,7 @@ var Descriptor = typgo.Descriptor{
 	Layouts: []string{"internal"},
 
 	Compile: &typgo.StdCompile{
-		Before: typgo.Compiles{
+		Before: typgo.Compilers{
 			&typgo.CtorAnnotation{},
 			&typgo.DtorAnnotation{},
 		},

@@ -23,14 +23,14 @@ func TestCompiler(t *testing.T) {
 			Compiler: typgo.NewCompile(func(*typgo.Context) error { return nil }),
 		},
 		{
-			Compiler: typgo.Compiles{
+			Compiler: typgo.Compilers{
 				typgo.NewCompile(func(*typgo.Context) error { return nil }),
 				typgo.NewCompile(func(*typgo.Context) error { return errors.New("some-error") }),
 			},
 			expectedErr: "some-error",
 		},
 		{
-			Compiler: typgo.Compiles{
+			Compiler: typgo.Compilers{
 				typgo.NewCompile(func(*typgo.Context) error { return errors.New("some-error") }),
 				typgo.NewCompile(func(*typgo.Context) error { return nil }),
 			},

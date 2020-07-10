@@ -13,8 +13,8 @@ type (
 	Compiler interface {
 		Compile(*Context) error
 	}
-	// Compiles for composite compile
-	Compiles []Compiler
+	// Compilers for composite compile
+	Compilers []Compiler
 	// CompileFn compile function
 	CompileFn    func(*Context) error
 	compilerImpl struct {
@@ -27,12 +27,11 @@ type (
 	}
 )
 
-var _ (Compiler) = (*StdCompile)(nil)
-var _ (Compiler) = (Compiles)(nil)
-
 //
 // stdCompiler
 //
+
+var _ (Compiler) = (*StdCompile)(nil)
 
 // NewCompile return new instance of Compiler
 func NewCompile(fn CompileFn) Compiler {
@@ -47,8 +46,10 @@ func (i *compilerImpl) Compile(c *Context) error {
 // Commpilers
 //
 
+var _ (Compiler) = (Compilers)(nil)
+
 // Compile array of compiler
-func (s Compiles) Compile(c *Context) error {
+func (s Compilers) Compile(c *Context) error {
 	for _, compiler := range s {
 		if err := compiler.Compile(c); err != nil {
 			return err
