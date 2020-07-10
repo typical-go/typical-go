@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -110,4 +111,14 @@ func hasLastNewLine(f *os.File) (has bool, err error) {
 	}
 
 	return (char[0] == '\n'), nil
+}
+
+func printEnv(w io.Writer, envs map[string]string) {
+	color.New(color.FgGreen).Fprint(w, "ENV")
+	fmt.Fprint(w, ": ")
+
+	for key := range envs {
+		fmt.Fprintf(w, "+%s ", key)
+	}
+	fmt.Fprintln(w)
 }

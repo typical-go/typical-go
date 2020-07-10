@@ -3,10 +3,9 @@ package typgo
 import (
 	"errors"
 	"fmt"
-	"io"
 	"strings"
 
-	"github.com/fatih/color"
+	"github.com/typical-go/typical-go/pkg/git"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/urfave/cli/v2"
@@ -99,16 +98,6 @@ func (b *BuildCli) Context(name string, c *cli.Context) *Context {
 	}
 }
 
-func printEnv(w io.Writer, envs map[string]string) {
-	color.New(color.FgGreen).Fprint(w, "ENV")
-	fmt.Fprint(w, ": ")
-
-	for key := range envs {
-		fmt.Fprintf(w, "+%s ", key)
-	}
-	fmt.Fprintln(w)
-}
-
 // ActionFn to return related action func
 func (b *BuildCli) ActionFn(name string, fn CliFunc) func(*cli.Context) error {
 	return func(cli *cli.Context) error {
@@ -167,4 +156,69 @@ func run(c *Context) error {
 		return err
 	}
 	return c.Run.Run(c)
+}
+
+func cmdRelease(c *BuildCli) *cli.Command {
+	return &cli.Command{
+		Name:  "release",
+		Usage: "Release the project",
+		Flags: []cli.Flag{
+			&cli.BoolFlag{Name: "skip-test", Usage: "skip test"},
+			&cli.BoolFlag{Name: "skip-compile", Usage: "skip compile"},
+			&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
+			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
+		},
+		Action: c.ActionFn("RELEASE", release),
+	}
+}
+
+func release(c *Context) (err error) {
+	if c.Release == nil {
+		return errors.New("No Releaser")
+	}
+
+	if !c.Bool("skip-test") {
+		if err = test(c); err != nil {
+			return
+		}
+	}
+
+	if !c.Bool("skip-compile") {
+		if err = compile(c); err != nil {
+			return
+		}
+	}
+
+	ctx := c.Ctx()
+
+	if err = git.Fetch(ctx); err != nil {
+		return fmt.Errorf("Failed git fetch: %w", err)
+	}
+	defer git.Fetch(ctx)
+
+	force := c.Bool("force")
+	alpha := c.Bool("alpha")
+	tag := releaseTag(c, alpha)
+
+	status := git.Status(ctx)
+	if status != "" && !force {
+		return fmt.Errorf("Please commit changes first:\n%s", status)
+	}
+
+	latest := git.LatestTag(ctx)
+	if latest == tag && !force {
+		return fmt.Errorf("%s already released", latest)
+	}
+
+	gitLogs := git.RetrieveLogs(ctx, latest)
+	if len(gitLogs) < 1 && !force {
+		return errors.New("No change to be released")
+	}
+
+	return c.Release.Release(&ReleaseContext{
+		Context: c,
+		Alpha:   alpha,
+		Tag:     tag,
+		GitLogs: gitLogs,
+	})
 }

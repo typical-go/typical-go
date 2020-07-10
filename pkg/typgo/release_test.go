@@ -17,23 +17,23 @@ func TestReleasers(t *testing.T) {
 		expectedErr string
 	}{
 		{
-			Releaser:    typgo.NewRelease(func(*typgo.ReleaseContext) error { return errors.New("some-error") }),
+			Releaser:    typgo.NewReleaser(func(*typgo.ReleaseContext) error { return errors.New("some-error") }),
 			expectedErr: "some-error",
 		},
 		{
-			Releaser: typgo.NewRelease(func(*typgo.ReleaseContext) error { return nil }),
+			Releaser: typgo.NewReleaser(func(*typgo.ReleaseContext) error { return nil }),
 		},
 		{
-			Releaser: typgo.Releases{
-				typgo.NewRelease(func(*typgo.ReleaseContext) error { return nil }),
-				typgo.NewRelease(func(*typgo.ReleaseContext) error { return errors.New("some-error") }),
+			Releaser: typgo.Releasers{
+				typgo.NewReleaser(func(*typgo.ReleaseContext) error { return nil }),
+				typgo.NewReleaser(func(*typgo.ReleaseContext) error { return errors.New("some-error") }),
 			},
 			expectedErr: "some-error",
 		},
 		{
-			Releaser: typgo.Releases{
-				typgo.NewRelease(func(*typgo.ReleaseContext) error { return errors.New("some-error") }),
-				typgo.NewRelease(func(*typgo.ReleaseContext) error { return nil }),
+			Releaser: typgo.Releasers{
+				typgo.NewReleaser(func(*typgo.ReleaseContext) error { return errors.New("some-error") }),
+				typgo.NewReleaser(func(*typgo.ReleaseContext) error { return nil }),
 			},
 			expectedErr: "some-error",
 		},
