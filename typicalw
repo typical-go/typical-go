@@ -10,7 +10,7 @@ if ! [ -s $TYPGO ]; then
 fi
 
 $TYPGO wrap \
+	-src="tools/typical-build" \
+	-proj-pkg="github.com/typical-go/typical-go" \
 	-typical-tmp=$TYPTMP \
-	-project-pkg="github.com/typical-go/typical-go" \
-
-$TYPTMP/bin/build-tool $@
+	$@

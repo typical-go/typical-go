@@ -1,7 +1,6 @@
 package typgo
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/urfave/cli/v2"
@@ -63,10 +62,7 @@ var _ Cleaner = (*StdClean)(nil)
 // Clean project
 func (s *StdClean) Clean(c *Context) error {
 	removeAll(c, BinFolder)
-	removeAll(c, fmt.Sprintf("%s/bin", TypicalTmp))
-	remove(c, BuildChecksum)
-	removeAll(c, BuildToolSrc)
-	remove(c, Precond(c.Descriptor.Name))
+	removeAll(c, TypicalTmp)
 	return nil
 }
 

@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
-	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/urfave/cli/v2"
@@ -22,6 +21,10 @@ const (
 	typicalTmpVar = "github.com/typical-go/typical-go/pkg/typgo.TypicalTmp"
 	gitignore     = ".gitignore"
 	typicalw      = "typicalw"
+
+	typicalTmpParam = "typical-tmp"
+	projPkgParam    = "proj-pkg"
+	srcParam        = "src"
 )
 
 type (
@@ -44,9 +47,9 @@ func (w *wrapper) app() *cli.App {
 			Name:  "wrap",
 			Usage: "wrap the project with its build-tool",
 			Flags: []cli.Flag{
-				&cli.StringFlag{Name: "typical-tmp", Value: ".typical-tmp"},
-				&cli.StringFlag{Name: "descriptor-pkg", Value: "typical"},
-				&cli.StringFlag{Name: "project-pkg"},
+				&cli.StringFlag{Name: typicalTmpParam, Value: ".typical-tmp"},
+				&cli.StringFlag{Name: srcParam, Value: "tools/typical-build"},
+				&cli.StringFlag{Name: projPkgParam},
 			},
 			Action: w.wrap,
 		},
@@ -55,54 +58,59 @@ func (w *wrapper) app() *cli.App {
 	return app
 }
 
-func (w *wrapper) wrap(c *cli.Context) error {
-	typicalTmp := c.String("typical-tmp")
-	descriptorPkg := c.String("descriptor-pkg")
+func (w *wrapper) wrap(c *cli.Context) (err error) {
+	var (
+		typicalTmp   = c.String(typicalTmpParam)
+		projectPkg   = c.String(projPkgParam)
+		src          = c.String(srcParam)
+		chksumTarget = fmt.Sprintf("%s/checksum", typicalTmp)
+		bin          = fmt.Sprintf("%s/bin/%s", typicalTmp, filepath.Base(src))
+	)
 
-	projectPkg, err := w.projectPkg(c)
-	if err != nil {
-		return err
+	if projectPkg != "" {
+		if projectPkg, err = w.retrieveProjPkg(c); err != nil {
+			return err
+		}
 	}
 
-	if err := typgo.Wrap(typicalTmp, projectPkg); err != nil {
-		return err
-	}
+	// if err := w.generateTypicalwIfNotExist(typicalTmp, projectPkg); err != nil {
+	// 	return err
+	// }
 
-	if err := w.generateTypicalwIfNotExist(typicalTmp, projectPkg); err != nil {
-		return err
-	}
+	chksum := generateChecksum(src)
+	chksum0, _ := ioutil.ReadFile(chksumTarget)
+	_, err = os.Stat(chksumTarget)
 
-	if err := w.generateBuildMain(projectPkg, descriptorPkg); err != nil {
-		return err
-	}
-
-	chksum := createChecksum(descriptorPkg)
-
-	if _, err = os.Stat(typgo.BuildToolBin); os.IsNotExist(err) || !isSameChecksum(typgo.BuildChecksum, chksum) {
-		if err = saveChecksum(typgo.BuildChecksum, chksum); err != nil {
+	if os.IsNotExist(err) || bytes.Compare(chksum, chksum0) != 0 {
+		if err = ioutil.WriteFile(chksumTarget, chksum, 0777); err != nil {
 			return err
 		}
 
 		w.Info("Build the build-tool")
 		gobuild := &execkit.GoBuild{
-			Out:    typgo.BuildToolBin,
-			Source: "./" + typgo.BuildToolSrc,
+			Out:    bin,
+			Source: "./" + src,
 			Ldflags: []string{
 				execkit.BuildVar(projectPkgVar, projectPkg),
 				execkit.BuildVar(typicalTmpVar, typicalTmp),
 			},
 		}
-
-		return gobuild.Run(c.Context)
+		if err := gobuild.Run(c.Context); err != nil {
+			return err
+		}
 	}
-	return nil
+
+	typicalBuild := &execkit.Command{
+		Name:   bin,
+		Args:   c.Args().Slice(),
+		Stdout: os.Stdout,
+		Stdin:  os.Stdin,
+		Stderr: os.Stderr,
+	}
+	return typicalBuild.Run(c.Context)
 }
 
-func (w *wrapper) projectPkg(c *cli.Context) (string, error) {
-	projectPkg := c.String("project-pkg")
-	if projectPkg != "" {
-		return projectPkg, nil
-	}
+func (w *wrapper) retrieveProjPkg(c *cli.Context) (string, error) {
 	var stderr strings.Builder
 	var stdout strings.Builder
 	cmd := execkit.Command{
@@ -137,25 +145,7 @@ func (w *wrapper) generateTypicalwIfNotExist(typicalTmp, projectPkg string) erro
 	return tmpl.Execute(f)
 }
 
-func (w *wrapper) generateBuildMain(projectPkg, descriptorPkg string) error {
-	src := typgo.BuildToolSrc + "/main.go"
-	if _, err := os.Stat(src); !os.IsNotExist(err) {
-		return nil
-	}
-
-	f, err := os.OpenFile(src, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	tmpl := &typtmpl.BuildToolMain{
-		DescPkg: fmt.Sprintf("%s/%s", projectPkg, descriptorPkg),
-	}
-	return tmpl.Execute(f)
-}
-
-func createChecksum(source string) []byte {
+func generateChecksum(source string) []byte {
 	h := sha256.New()
 	filepath.Walk(source, func(path string, info os.FileInfo, err error) error {
 		if b, err := ioutil.ReadFile(path); err == nil {
@@ -164,15 +154,4 @@ func createChecksum(source string) []byte {
 		return nil
 	})
 	return h.Sum(nil)
-}
-
-func isSameChecksum(filename string, checksum []byte) bool {
-	if b, err := ioutil.ReadFile(filename); err == nil {
-		return bytes.Compare(checksum, b) == 0
-	}
-	return false
-}
-
-func saveChecksum(filename string, checksum []byte) error {
-	return ioutil.WriteFile(filename, checksum, 0777)
 }

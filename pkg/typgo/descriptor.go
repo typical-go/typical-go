@@ -1,36 +1,48 @@
 package typgo
 
 import (
-	"github.com/typical-go/typical-go/pkg/typcore"
+	"fmt"
+	"os"
+
+	"github.com/urfave/cli/v2"
 )
 
-type (
+// Descriptor describe the project
+type Descriptor struct {
+	// Name of the project (OPTIONAL). It should be a characters with/without underscore or dash.
+	// By default, project name is same with project folder
+	Name string
+	// Description of the project (OPTIONAL).
+	Description string
+	// Version of the project (OPTIONAL). By default it is 0.0.1
+	Version string
+	Layouts []string
+	Test    Tester
+	Compile Compiler
+	Run     Runner
+	Release Releaser
+	Clean   Cleaner
+	Utility Utility
+}
 
-	// Descriptor describe the project
-	Descriptor struct {
-		// Name of the project (OPTIONAL). It should be a characters with/without underscore or dash.
-		// By default, project name is same with project folder
-		Name string
-		// Description of the project (OPTIONAL).
-		Description string
-		// Version of the project (OPTIONAL). By default it is 0.0.1
-		Version string
-
-		Layouts []string
-
-		Test    Tester
-		Compile Compiler
-		Run     Runner
-		Release Releaser
-		Clean   Cleaner
-
-		Utility Utility
+// Run typical build-tool
+func Run(d *Descriptor) error {
+	if err := Init(); err != nil {
+		return fmt.Errorf("init-var: %w", err)
 	}
-)
 
-var _ typcore.BuildLauncher = (*Descriptor)(nil)
+	buildCli := createBuildCli(d)
 
-// LaunchBuild to launch the build tool
-func (d *Descriptor) LaunchBuild() (err error) {
-	return launchBuild(d)
+	cmds, err := buildCli.commands()
+	if err != nil {
+		return err
+	}
+
+	cli.AppHelpTemplate = appHelpTemplate
+	cli.SubcommandHelpTemplate = subcommandHelpTemplate
+
+	app := cli.NewApp()
+	app.Commands = cmds
+
+	return app.Run(os.Args)
 }

@@ -1,6 +1,7 @@
-package typical
+package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
@@ -8,8 +9,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// Descriptor of typical-go
-var Descriptor = typgo.Descriptor{
+var descriptor = typgo.Descriptor{
 	Name:    "typical-go",
 	Version: "0.9.57",
 
@@ -37,4 +37,10 @@ var Descriptor = typgo.Descriptor{
 			return cmd.Run(cliCtx.Context)
 		},
 	}),
+}
+
+func main() {
+	if err := typgo.Run(&descriptor); err != nil {
+		log.Fatal(err.Error())
+	}
 }
