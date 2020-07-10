@@ -48,9 +48,6 @@ func launchBuild(d *Descriptor) error {
 	}
 
 	buildCli := createBuildCli(d)
-	if err := buildCli.Prebuild(); err != nil {
-		return err
-	}
 
 	cmds, err := buildCli.commands()
 	if err != nil {

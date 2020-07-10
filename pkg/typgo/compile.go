@@ -13,19 +13,18 @@ type (
 	Compiler interface {
 		Compile(*Context) error
 	}
-
 	// Compiles for composite compile
 	Compiles []Compiler
-
 	// CompileFn compile function
-	CompileFn func(*Context) error
-
+	CompileFn    func(*Context) error
 	compilerImpl struct {
 		fn CompileFn
 	}
-
 	// StdCompile is standard compile
-	StdCompile struct{}
+	StdCompile struct {
+		Before Compiler
+		After  Compiler
+	}
 )
 
 var _ (Compiler) = (*StdCompile)(nil)
@@ -63,7 +62,24 @@ func (s Compiles) Compile(c *Context) error {
 //
 
 // Compile standard go project
-func (*StdCompile) Compile(c *Context) (err error) {
+func (s *StdCompile) Compile(c *Context) error {
+	if s.Before != nil {
+		if err := s.Before.Compile(c); err != nil {
+			return err
+		}
+	}
+	if err := s.compile(c); err != nil {
+		return err
+	}
+	if s.After != nil {
+		if err := s.After.Compile(c); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s *StdCompile) compile(c *Context) error {
 	src := fmt.Sprintf("%s/%s", CmdFolder, c.Descriptor.Name)
 
 	return c.Execute(&execkit.GoBuild{

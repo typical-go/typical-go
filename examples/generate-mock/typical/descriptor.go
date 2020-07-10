@@ -12,11 +12,12 @@ var Descriptor = typgo.Descriptor{
 
 	Layouts: []string{"internal"},
 
-	Prebuild: &typgo.DependencyInjection{},
-	Compile:  &typgo.StdCompile{},
-	Run:      &typgo.StdRun{},
-	Test:     &typgo.StdTest{},
-	Clean:    &typgo.StdClean{},
+	Compile: &typgo.StdCompile{
+		Before: &typgo.DependencyInjection{},
+	},
+	Run:   &typgo.StdRun{},
+	Test:  &typgo.StdTest{},
+	Clean: &typgo.StdClean{},
 
 	Utility: &typmock.Utility{},
 }

@@ -23,10 +23,10 @@ import ({{range $import := .Imports}}
 	"{{$import}}"{{end}}
 )
 
-func init() {
+func init() { {{if .Dtors}}
 	typapp.Destroy({{range $d := .Dtors}}
 		&typapp.Destructor{Fn: {{$d.Def}}},{{end}}
-	)
+	){{end}}
 }`
 
 // Execute app precondition template

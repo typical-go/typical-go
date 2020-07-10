@@ -11,8 +11,9 @@ var Descriptor = typgo.Descriptor{
 
 	Layouts: []string{"internal"},
 
-	Prebuild: &typgo.DependencyInjection{},
-	Compile:  &typgo.StdCompile{},
-	Run:      &typgo.StdRun{},
-	Clean:    &typgo.StdClean{},
+	Compile: &typgo.StdCompile{
+		Before: &typgo.DependencyInjection{},
+	},
+	Run:   &typgo.StdRun{},
+	Clean: &typgo.StdClean{},
 }

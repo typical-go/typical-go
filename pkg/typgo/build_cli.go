@@ -1,10 +1,8 @@
 package typgo
 
 import (
-	"context"
 	"fmt"
 	"io"
-	"os"
 	"strings"
 
 	"github.com/fatih/color"
@@ -99,23 +97,6 @@ func (b *BuildCli) Context(name string, c *cli.Context) *Context {
 		Context:  c,
 		BuildCli: b,
 	}
-}
-
-// Prebuild process
-func (b *BuildCli) Prebuild() (err error) {
-	c := &PrebuildContext{
-		BuildCli: b,
-		ctx:      context.Background(),
-	}
-	if c.Descriptor.Prebuild != nil {
-		if err := c.Descriptor.Prebuild.Prebuild(c); err != nil {
-			return err
-		}
-	}
-	if envs, _ := LoadConfig(ConfigFile); len(envs) > 0 {
-		printEnv(os.Stdout, envs)
-	}
-	return
 }
 
 func printEnv(w io.Writer, envs map[string]string) {

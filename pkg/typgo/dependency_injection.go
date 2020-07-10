@@ -6,15 +6,13 @@ import (
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
-type (
-	// DependencyInjection prebuilding
-	DependencyInjection struct{}
-)
+// DependencyInjection prebuilding
+type DependencyInjection struct{}
 
-var _ Prebuilder = (*DependencyInjection)(nil)
+var _ Compiler = (*DependencyInjection)(nil)
 
-// Prebuild dependency-injection
-func (d *DependencyInjection) Prebuild(c *PrebuildContext) (err error) {
+// Compile dependency-injection
+func (d *DependencyInjection) Compile(c *Context) (err error) {
 	if err = d.ctor(c); err != nil {
 		return
 	}
@@ -26,7 +24,7 @@ func (d *DependencyInjection) Prebuild(c *PrebuildContext) (err error) {
 	return
 }
 
-func (*DependencyInjection) ctor(c *PrebuildContext) error {
+func (*DependencyInjection) ctor(c *Context) error {
 	var ctors []*typtmpl.Ctor
 	for _, annot := range c.ASTStore.Annots {
 		ctor, err := CreateCtor(annot)
@@ -49,7 +47,7 @@ func (*DependencyInjection) ctor(c *PrebuildContext) error {
 	}, fmt.Sprintf("%s/%s/ctor_generated.go", CmdFolder, c.Descriptor.Name))
 }
 
-func (*DependencyInjection) dtor(c *PrebuildContext) error {
+func (*DependencyInjection) dtor(c *Context) error {
 	var dtors []*typtmpl.Dtor
 	for _, annot := range c.ASTStore.Annots {
 		dtor := CreateDtor(annot)

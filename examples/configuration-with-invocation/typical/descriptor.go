@@ -12,13 +12,13 @@ var Descriptor = typgo.Descriptor{
 
 	Layouts: []string{"internal"},
 
-	Prebuild: &typgo.ConfigManager{
-		Configs: []*typgo.Configuration{
-			{Name: "SERVER", Spec: &server.Config{}},
+	Compile: &typgo.StdCompile{
+		Before: &typgo.ConfigManager{
+			Configs: []*typgo.Configuration{
+				{Name: "SERVER", Spec: &server.Config{}},
+			},
 		},
 	},
-
-	Compile: &typgo.StdCompile{},
-	Run:     &typgo.StdRun{},
-	Clean:   &typgo.StdClean{},
+	Run:   &typgo.StdRun{},
+	Clean: &typgo.StdClean{},
 }

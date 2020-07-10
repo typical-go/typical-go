@@ -30,7 +30,7 @@ import ({{range $import := .Imports}}
 	"{{$import}}"{{end}}
 )
 
-func init() {
+func init() { {{if .CfgCtors}}
 	typapp.Provide({{range $c := .CfgCtors}}
 		&typapp.Constructor{
 			Name: "{{$c.Name}}",
@@ -42,7 +42,7 @@ func init() {
 				return
 			},
 		},{{end}}
-	)
+	){{end}}
 }`
 
 // Execute app precondition template

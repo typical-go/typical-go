@@ -18,12 +18,11 @@ type (
 
 		Layouts []string
 
-		Prebuild Prebuilder
-		Test     Tester
-		Compile  Compiler
-		Run      Runner
-		Release  Releaser
-		Clean    Cleaner
+		Test    Tester
+		Compile Compiler
+		Run     Runner
+		Release Releaser
+		Clean   Cleaner
 
 		Utility Utility
 	}

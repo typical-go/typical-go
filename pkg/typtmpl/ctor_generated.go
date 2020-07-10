@@ -24,10 +24,10 @@ import ({{range $import := .Imports}}
 	"{{$import}}"{{end}}
 )
 
-func init() {
+func init() { {{if .Ctors}}
 	typapp.Provide({{range $c := .Ctors}}
 		&typapp.Constructor{Name: "{{$c.Name}}", Fn: {{$c.Def}}},{{end}}
-	)
+	){{end}}
 }`
 
 // Execute app precondition template
