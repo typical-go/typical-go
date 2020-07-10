@@ -12,7 +12,10 @@ var Descriptor = typgo.Descriptor{
 	Layouts: []string{"internal"},
 
 	Compile: &typgo.StdCompile{
-		Before: &typgo.DependencyInjection{},
+		Before: typgo.Compiles{
+			&typgo.CtorAnnotation{},
+			&typgo.DtorAnnotation{},
+		},
 	},
 	Run:   &typgo.StdRun{},
 	Clean: &typgo.StdClean{},

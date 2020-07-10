@@ -3,8 +3,8 @@ package typtmpl
 import "io"
 
 type (
-	// CtorGenerated template
-	CtorGenerated struct {
+	// CtorAnnotated template
+	CtorAnnotated struct {
 		Package string
 		Imports []string
 		Ctors   []*Ctor
@@ -31,6 +31,6 @@ func init() { {{if .Ctors}}
 }`
 
 // Execute app precondition template
-func (t *CtorGenerated) Execute(w io.Writer) (err error) {
+func (t *CtorAnnotated) Execute(w io.Writer) (err error) {
 	return Execute("ctorGenerated", ctorGenerated, t, w)
 }

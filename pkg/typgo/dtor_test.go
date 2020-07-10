@@ -28,7 +28,7 @@ func TestCreateDtor(t *testing.T) {
 
 	for _, tt := range testcases {
 		t.Run(tt.testName, func(t *testing.T) {
-			require.Equal(t, tt.expected, typgo.CreateDtor(tt.Annot))
+			require.Equal(t, tt.expected, typgo.ParseDtor(tt.Annot))
 		})
 	}
 }

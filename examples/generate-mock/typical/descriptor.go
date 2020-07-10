@@ -13,7 +13,7 @@ var Descriptor = typgo.Descriptor{
 	Layouts: []string{"internal"},
 
 	Compile: &typgo.StdCompile{
-		Before: &typgo.DependencyInjection{},
+		Before: &typgo.CtorAnnotation{},
 	},
 	Run:   &typgo.StdRun{},
 	Test:  &typgo.StdTest{},

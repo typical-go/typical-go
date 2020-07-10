@@ -6,16 +6,15 @@ import (
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
-func TestCtorGenerated(t *testing.T) {
+func TestDtorAnnotated(t *testing.T) {
 	testTemplate(t,
 		testcase{
 			testName: "common constructor",
-			Template: &typtmpl.CtorGenerated{
+			Template: &typtmpl.DtorAnnotated{
 				Package: "main",
 				Imports: []string{"pkg1", "pkg2"},
-				Ctors: []*typtmpl.Ctor{
-					{Name: "", Def: "pkg1.NewFunction1"},
-					{Name: "", Def: "pkg2.NewFunction2"},
+				Dtors: []*typtmpl.Dtor{
+					{Def: "pkg1.NewFunction1"},
 				},
 			},
 			expected: `package main
@@ -27,10 +26,9 @@ import (
 	"pkg2"
 )
 
-func init() {
-	typapp.Provide(
-		&typapp.Constructor{Name: "", Fn: pkg1.NewFunction1},
-		&typapp.Constructor{Name: "", Fn: pkg2.NewFunction2},
+func init() { 
+	typapp.Destroy(
+		&typapp.Destructor{Fn: pkg1.NewFunction1},
 	)
 }`,
 		},

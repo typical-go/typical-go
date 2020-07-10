@@ -6,11 +6,11 @@ import (
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
-func TestProvideCtor(t *testing.T) {
+func TestConfigAnnotated(t *testing.T) {
 	testTemplate(t,
 		testcase{
 			testName: "constructor for configuration",
-			Template: &typtmpl.CfgGenerated{
+			Template: &typtmpl.ConfigAnnotated{
 				Package: "main",
 				Imports: []string{"pkg1", "pkg2"},
 				CfgCtors: []*typtmpl.CfgCtor{
@@ -26,7 +26,7 @@ import (
 	"pkg2"
 )
 
-func init() {
+func init() { 
 	typapp.Provide(
 		&typapp.Constructor{
 			Name: "",

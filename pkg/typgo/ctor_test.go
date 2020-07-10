@@ -50,7 +50,7 @@ func TestCreateCtor(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		t.Run(tt.testName, func(t *testing.T) {
-			ctor, err := typgo.CreateCtor(tt.Annot)
+			ctor, err := typgo.ParseCtor(tt.Annot)
 			if tt.expectedErr != "" {
 				require.EqualError(t, err, tt.expectedErr)
 			} else {
