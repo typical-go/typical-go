@@ -11,29 +11,23 @@ type (
 	Runner interface {
 		Run(*Context) error
 	}
-
-	// RunnerFn is runner function
-	RunnerFn func(*Context) error
-
+	// Runners for composite run
+	Runners []Runner
+	// RunFn is runner function
+	RunFn   func(*Context) error
 	runImpl struct {
-		fn RunnerFn
+		fn RunFn
 	}
-
-	// Runs for composite run
-	Runs []Runner
-
 	// StdRun standard run
 	StdRun struct{}
 )
-
-var _ Runner = (*StdRun)(nil)
 
 //
 // runImpl
 //
 
-// NewRun return new instance of Run
-func NewRun(fn RunnerFn) Runner {
+// NewRunner return new instance of Run
+func NewRunner(fn RunFn) Runner {
 	return &runImpl{fn: fn}
 }
 
@@ -45,8 +39,10 @@ func (r *runImpl) Run(c *Context) error {
 // Runs
 //
 
+var _ Runner = (Runners)(nil)
+
 // Run composite runner
-func (r Runs) Run(c *Context) error {
+func (r Runners) Run(c *Context) error {
 	for _, runner := range r {
 		if err := runner.Run(c); err != nil {
 			return err
@@ -58,6 +54,8 @@ func (r Runs) Run(c *Context) error {
 //
 // StdRun
 //
+
+var _ Runner = (*StdRun)(nil)
 
 // Run for standard typical project
 func (*StdRun) Run(c *Context) error {

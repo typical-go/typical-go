@@ -16,23 +16,23 @@ func TestCompiler(t *testing.T) {
 		expectedErr string
 	}{
 		{
-			Compiler:    typgo.NewCompile(func(*typgo.Context) error { return errors.New("some-error") }),
+			Compiler:    typgo.NewCompiler(func(*typgo.Context) error { return errors.New("some-error") }),
 			expectedErr: "some-error",
 		},
 		{
-			Compiler: typgo.NewCompile(func(*typgo.Context) error { return nil }),
+			Compiler: typgo.NewCompiler(func(*typgo.Context) error { return nil }),
 		},
 		{
 			Compiler: typgo.Compilers{
-				typgo.NewCompile(func(*typgo.Context) error { return nil }),
-				typgo.NewCompile(func(*typgo.Context) error { return errors.New("some-error") }),
+				typgo.NewCompiler(func(*typgo.Context) error { return nil }),
+				typgo.NewCompiler(func(*typgo.Context) error { return errors.New("some-error") }),
 			},
 			expectedErr: "some-error",
 		},
 		{
 			Compiler: typgo.Compilers{
-				typgo.NewCompile(func(*typgo.Context) error { return errors.New("some-error") }),
-				typgo.NewCompile(func(*typgo.Context) error { return nil }),
+				typgo.NewCompiler(func(*typgo.Context) error { return errors.New("some-error") }),
+				typgo.NewCompiler(func(*typgo.Context) error { return nil }),
 			},
 			expectedErr: "some-error",
 		},

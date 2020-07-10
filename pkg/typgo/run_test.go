@@ -16,23 +16,23 @@ func TestRunner(t *testing.T) {
 		expectedErr string
 	}{
 		{
-			Runner:      typgo.NewRun(func(*typgo.Context) error { return errors.New("some-error") }),
+			Runner:      typgo.NewRunner(func(*typgo.Context) error { return errors.New("some-error") }),
 			expectedErr: "some-error",
 		},
 		{
-			Runner: typgo.NewRun(func(*typgo.Context) error { return nil }),
+			Runner: typgo.NewRunner(func(*typgo.Context) error { return nil }),
 		},
 		{
-			Runner: typgo.Runs{
-				typgo.NewRun(func(*typgo.Context) error { return nil }),
-				typgo.NewRun(func(*typgo.Context) error { return errors.New("some-error") }),
+			Runner: typgo.Runners{
+				typgo.NewRunner(func(*typgo.Context) error { return nil }),
+				typgo.NewRunner(func(*typgo.Context) error { return errors.New("some-error") }),
 			},
 			expectedErr: "some-error",
 		},
 		{
-			Runner: typgo.Runs{
-				typgo.NewRun(func(*typgo.Context) error { return errors.New("some-error") }),
-				typgo.NewRun(func(*typgo.Context) error { return nil }),
+			Runner: typgo.Runners{
+				typgo.NewRunner(func(*typgo.Context) error { return errors.New("some-error") }),
+				typgo.NewRunner(func(*typgo.Context) error { return nil }),
 			},
 			expectedErr: "some-error",
 		},
