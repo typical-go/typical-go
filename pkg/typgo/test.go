@@ -1,12 +1,10 @@
 package typgo
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
-	"github.com/urfave/cli/v2"
 )
 
 const (
@@ -19,27 +17,22 @@ type (
 	Tester interface {
 		Test(*Context) error
 	}
-
+	// Testers for composite test
+	Testers []Tester
 	// StdTest is standard test
 	StdTest struct {
 		Timeout      time.Duration
 		CoverProfile string
 		Race         bool
 	}
-
 	// TestFn function
-	TestFn func(*Context) error
-
-	// Tests for composite test
-	Tests []Tester
-
+	TestFn     func(*Context) error
 	testerImpl struct {
 		fn TestFn
 	}
 )
 
 var _ Tester = (*StdTest)(nil)
-var _ Tester = (Tests)(nil)
 
 //
 // testerImpl
@@ -99,32 +92,14 @@ func (s *StdTest) getCoverProfile() string {
 // Tests
 //
 
+var _ Tester = (Testers)(nil)
+
 // Test composite
-func (t Tests) Test(c *Context) (err error) {
+func (t Testers) Test(c *Context) (err error) {
 	for _, test := range t {
 		if err = test.Test(c); err != nil {
 			return
 		}
 	}
 	return
-}
-
-//
-// command
-//
-
-func cmdTest(c *BuildCli) *cli.Command {
-	return &cli.Command{
-		Name:    "test",
-		Aliases: []string{"t"},
-		Usage:   "Test the project",
-		Action:  c.ActionFn("TEST", test),
-	}
-}
-
-func test(c *Context) error {
-	if c.Test == nil {
-		return errors.New("test is missing")
-	}
-	return c.Test.Test(c)
 }

@@ -1,11 +1,9 @@
 package typgo
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
-	"github.com/urfave/cli/v2"
 )
 
 type (
@@ -33,8 +31,8 @@ type (
 
 var _ (Compiler) = (*StdCompile)(nil)
 
-// NewCompile return new instance of Compiler
-func NewCompile(fn CompileFn) Compiler {
+// NewCompiler return new instance of Compiler
+func NewCompiler(fn CompileFn) Compiler {
 	return &compilerImpl{fn: fn}
 }
 
@@ -91,24 +89,4 @@ func (s *StdCompile) compile(c *Context) error {
 			execkit.BuildVar("github.com/typical-go/typical-go/pkg/typapp.Version", c.Descriptor.Version),
 		},
 	})
-}
-
-//
-// Command
-//
-
-func cmdCompile(c *BuildCli) *cli.Command {
-	return &cli.Command{
-		Name:    "compile",
-		Aliases: []string{"c"},
-		Usage:   "Compile the project",
-		Action:  c.ActionFn("COMPILE", compile),
-	}
-}
-
-func compile(c *Context) error {
-	if c.Compile == nil {
-		return errors.New("compile is missing")
-	}
-	return c.Compile.Compile(c)
 }

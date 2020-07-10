@@ -23,14 +23,14 @@ func TestTests(t *testing.T) {
 			Tester: typgo.NewTest(func(*typgo.Context) error { return nil }),
 		},
 		{
-			Tester: typgo.Tests{
+			Tester: typgo.Testers{
 				typgo.NewTest(func(*typgo.Context) error { return errors.New("some-error") }),
 				typgo.NewTest(func(*typgo.Context) error { return nil }),
 			},
 			expectedErr: "some-error",
 		},
 		{
-			Tester: typgo.Tests{
+			Tester: typgo.Testers{
 				typgo.NewTest(func(*typgo.Context) error { return nil }),
 				typgo.NewTest(func(*typgo.Context) error { return errors.New("some-error") }),
 			},

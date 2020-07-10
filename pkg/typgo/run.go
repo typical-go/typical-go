@@ -1,11 +1,9 @@
 package typgo
 
 import (
-	"errors"
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
-	"github.com/urfave/cli/v2"
 )
 
 type (
@@ -70,30 +68,4 @@ func (*StdRun) Run(c *Context) error {
 		Stderr: os.Stderr,
 		Stdin:  os.Stdin,
 	})
-}
-
-//
-// command
-//
-
-func cmdRun(c *BuildCli) *cli.Command {
-	return &cli.Command{
-		Name:            "run",
-		Aliases:         []string{"r"},
-		Usage:           "Run the project in local environment",
-		SkipFlagParsing: true,
-		Action:          c.ActionFn("RUN", run),
-	}
-}
-
-func run(c *Context) error {
-	if c.Run == nil {
-		return errors.New("run is missing")
-	}
-
-	if err := compile(c); err != nil {
-		return err
-	}
-
-	return c.Run.Run(c)
 }

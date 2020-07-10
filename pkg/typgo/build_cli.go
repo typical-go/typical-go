@@ -1,6 +1,7 @@
 package typgo
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -23,7 +24,6 @@ type (
 		ASTStore *typast.ASTStore
 		Imports  []string
 	}
-
 	// CliFunc is command line function
 	CliFunc func(*Context) error
 )
@@ -115,4 +115,56 @@ func (b *BuildCli) ActionFn(name string, fn CliFunc) func(*cli.Context) error {
 		c := b.Context(strings.ToUpper(name), cli)
 		return fn(c)
 	}
+}
+
+func cmdTest(c *BuildCli) *cli.Command {
+	return &cli.Command{
+		Name:    "test",
+		Aliases: []string{"t"},
+		Usage:   "Test the project",
+		Action:  c.ActionFn("TEST", test),
+	}
+}
+
+func test(c *Context) error {
+	if c.Test == nil {
+		return errors.New("test is missing")
+	}
+	return c.Test.Test(c)
+}
+
+func cmdCompile(c *BuildCli) *cli.Command {
+	return &cli.Command{
+		Name:    "compile",
+		Aliases: []string{"c"},
+		Usage:   "Compile the project",
+		Action:  c.ActionFn("COMPILE", compile),
+	}
+}
+
+func compile(c *Context) error {
+	if c.Compile == nil {
+		return errors.New("compile is missing")
+	}
+	return c.Compile.Compile(c)
+}
+
+func cmdRun(c *BuildCli) *cli.Command {
+	return &cli.Command{
+		Name:            "run",
+		Aliases:         []string{"r"},
+		Usage:           "Run the project in local environment",
+		SkipFlagParsing: true,
+		Action:          c.ActionFn("RUN", run),
+	}
+}
+
+func run(c *Context) error {
+	if c.Run == nil {
+		return errors.New("run is missing")
+	}
+	if err := compile(c); err != nil {
+		return err
+	}
+	return c.Run.Run(c)
 }

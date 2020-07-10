@@ -11,16 +11,17 @@ var Descriptor = typgo.Descriptor{
 	Version: "1.0.0",
 	Layouts: []string{"internal"},
 
-	Compile: typgo.Compiles{
-		typgo.NewCompile(func(c *typgo.Context) (err error) {
-			return c.Execute(&execkit.Command{
-				Name: "npm",
-				Args: []string{"run", "build"},
-				Dir:  "react-demo",
-			})
-		}),
-		&typgo.StdCompile{},
+	Compile: &typgo.StdCompile{
+		Before: typgo.NewCompiler(npmBuild),
 	},
 	Run:   &typgo.StdRun{},
 	Clean: &typgo.StdClean{},
+}
+
+func npmBuild(c *typgo.Context) error {
+	return c.Execute(&execkit.Command{
+		Name: "npm",
+		Args: []string{"run", "build"},
+		Dir:  "react-demo",
+	})
 }
