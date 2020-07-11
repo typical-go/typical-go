@@ -13,7 +13,7 @@ var (
 		Name:    "typical-go",
 		Version: "0.9.57",
 
-		Layouts: []string{"wrapper", "pkg"},
+		Layouts: []string{"internal", "pkg"},
 
 		Test:    &typgo.StdTest{},
 		Compile: &typgo.StdCompile{},
