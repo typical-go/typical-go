@@ -1,4 +1,4 @@
-package wrapper
+package app
 
 import (
 	"context"
@@ -25,7 +25,7 @@ func Main() (err error) {
 	app.Commands = []*cli.Command{
 		{
 			Name:  "wrap",
-			Usage: "wrap the project with its build-tool",
+			Usage: "wrap the project and run the build-tool",
 			Flags: []cli.Flag{
 				&cli.StringFlag{Name: typicalTmpParam, Value: ".typical-tmp"},
 				&cli.StringFlag{Name: srcParam, Value: "tools/typical-build"},
