@@ -2,6 +2,7 @@ package wrapper
 
 import (
 	"bytes"
+	"context"
 	"crypto/sha256"
 	"errors"
 	"fmt"
@@ -17,10 +18,7 @@ import (
 )
 
 const (
-	projectPkgVar = "github.com/typical-go/typical-go/pkg/typgo.ProjectPkg"
-	typicalTmpVar = "github.com/typical-go/typical-go/pkg/typgo.TypicalTmp"
-	gitignore     = ".gitignore"
-	typicalw      = "typicalw"
+	typicalw = "typicalw"
 
 	typicalTmpParam = "typical-tmp"
 	projPkgParam    = "proj-pkg"
@@ -87,27 +85,29 @@ func (w *wrapper) wrap(c *cli.Context) (err error) {
 		}
 
 		w.Info("Build the build-tool")
-		gobuild := &execkit.GoBuild{
-			Out:    bin,
+		if err := run(c.Context, &execkit.GoBuild{
+			Output: bin,
 			Source: "./" + src,
-			Ldflags: []string{
-				execkit.BuildVar(projectPkgVar, projectPkg),
-				execkit.BuildVar(typicalTmpVar, typicalTmp),
+			Ldflags: execkit.BuildVars{
+				"github.com/typical-go/typical-go/pkg/typgo.ProjectPkg": projectPkg,
+				"github.com/typical-go/typical-go/pkg/typgo.TypicalTmp": typicalTmp,
 			},
-		}
-		if err := gobuild.Run(c.Context); err != nil {
+		}); err != nil {
 			return err
 		}
 	}
 
-	typicalBuild := &execkit.Command{
+	return run(c.Context, &execkit.Command{
 		Name:   bin,
 		Args:   c.Args().Slice(),
 		Stdout: os.Stdout,
 		Stdin:  os.Stdin,
 		Stderr: os.Stderr,
-	}
-	return typicalBuild.Run(c.Context)
+	})
+}
+
+func run(ctx context.Context, runner execkit.Runner) error {
+	return runner.Run(ctx)
 }
 
 func (w *wrapper) retrieveProjPkg(c *cli.Context) (string, error) {
@@ -125,13 +125,9 @@ func (w *wrapper) retrieveProjPkg(c *cli.Context) (string, error) {
 	return strings.TrimSpace(stdout.String()), nil
 }
 
-func (w *wrapper) generateTypicalwIfNotExist(typicalTmp, projectPkg string) error {
-	if _, err := os.Stat(typicalw); !os.IsNotExist(err) {
-		return nil
-	}
-
-	w.Infof("Generate %s", typicalw)
-	f, err := os.OpenFile("typicalw", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+func (w *wrapper) generateTypicalw(target, typicalTmp, projectPkg string) error {
+	w.Infof("Generate %s", target)
+	f, err := os.OpenFile(target, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
 	if err != nil {
 		return err
 	}

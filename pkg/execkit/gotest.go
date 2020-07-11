@@ -15,6 +15,9 @@ type GoTest struct {
 	Timeout      time.Duration
 }
 
+var _ Runner = (*GoTest)(nil)
+var _ fmt.Stringer = (*GoTest)(nil)
+
 // Command of go test
 func (g *GoTest) Command() *Command {
 	return &Command{

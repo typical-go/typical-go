@@ -19,6 +19,9 @@ type Command struct {
 	Env    []string
 }
 
+var _ Runner = (*Command)(nil)
+var _ fmt.Stringer = (*GoBuild)(nil)
+
 // Run the comand
 func (c *Command) Run(ctx context.Context) (err error) {
 	return c.ExecCmd(ctx).Run()

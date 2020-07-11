@@ -74,7 +74,7 @@ func mock(c *typgo.Context) (err error) {
 func installIfNotExist(c *typgo.Context, mockgen string) (err error) {
 	if _, err = os.Stat(mockgen); os.IsNotExist(err) {
 		return c.Execute(&execkit.GoBuild{
-			Out:    mockgen,
+			Output: mockgen,
 			Source: "github.com/golang/mock/mockgen",
 		})
 	}

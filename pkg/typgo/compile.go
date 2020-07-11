@@ -82,11 +82,11 @@ func (s *StdCompile) compile(c *Context) error {
 	src := fmt.Sprintf("%s/%s", CmdFolder, c.Descriptor.Name)
 
 	return c.Execute(&execkit.GoBuild{
-		Out:    AppBin(c.Descriptor.Name),
+		Output: AppBin(c.Descriptor.Name),
 		Source: "./" + src,
-		Ldflags: []string{
-			execkit.BuildVar("github.com/typical-go/typical-go/pkg/typapp.Name", c.Descriptor.Name),
-			execkit.BuildVar("github.com/typical-go/typical-go/pkg/typapp.Version", c.Descriptor.Version),
+		Ldflags: execkit.BuildVars{
+			"github.com/typical-go/typical-go/pkg/typapp.Name":    c.Descriptor.Name,
+			"github.com/typical-go/typical-go/pkg/typapp.Version": c.Descriptor.Version,
 		},
 	})
 }
