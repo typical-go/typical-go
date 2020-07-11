@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 )
 
@@ -62,11 +63,20 @@ var _ fmt.Stringer = (BuildVars)(nil)
 
 func (b BuildVars) String() string {
 	var args []string
-	for name, value := range b {
-		args = append(args, fmt.Sprintf("-X %s=%v", name, value))
-
+	for _, key := range b.Keys() {
+		args = append(args, fmt.Sprintf("-X %s=%v", key, b[key]))
 	}
 	return strings.Join(args, " ")
+}
+
+// Keys return sorted key
+func (b BuildVars) Keys() []string {
+	keys := make([]string, 0, len(b))
+	for k := range b {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
 }
 
 // BuildVar return ldflag argument for set build variable
