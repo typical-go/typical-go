@@ -9,7 +9,7 @@ if ! [ -s $TYPGO ]; then
 	go build -o $TYPGO github.com/typical-go/typical-go/cmd/typical-go
 fi
 
-$TYPGO wrap \
+$TYPGO \
 	-src="tools/typical-build" \
 	-proj-pkg="github.com/typical-go/typical-go/examples/generate-docker-compose" \
 	-typical-tmp=$TYPTMP \

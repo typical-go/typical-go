@@ -33,6 +33,7 @@ func (g *GoBuild) Command() *Command {
 		Args:   g.Args(),
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,
+		Stdin:  os.Stdin,
 	}
 }
 

@@ -7,13 +7,15 @@ import (
 	"time"
 )
 
-// GoTest builder
-type GoTest struct {
-	Targets      []string
-	CoverProfile string
-	Race         bool
-	Timeout      time.Duration
-}
+type (
+	// GoTest builder
+	GoTest struct {
+		Targets      []string
+		CoverProfile string
+		Race         bool
+		Timeout      time.Duration
+	}
+)
 
 var _ Runner = (*GoTest)(nil)
 var _ fmt.Stringer = (*GoTest)(nil)
@@ -25,25 +27,22 @@ func (g *GoTest) Command() *Command {
 		Args:   g.Args(),
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,
+		Stdin:  os.Stdin,
 	}
 }
 
 // Args is argument for gotest
 func (g *GoTest) Args() []string {
 	args := []string{"test"}
-
 	if g.Timeout > 0 {
 		args = append(args, fmt.Sprintf("-timeout=%s", g.Timeout.String()))
 	}
-
 	if g.CoverProfile != "" {
 		args = append(args, fmt.Sprintf("-coverprofile=%s", g.CoverProfile))
 	}
-
 	if g.Race {
 		args = append(args, "-race")
 	}
-
 	return append(args, g.Targets...)
 }
 
