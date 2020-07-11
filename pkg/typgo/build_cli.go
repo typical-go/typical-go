@@ -49,9 +49,9 @@ func createBuildCli(d *Descriptor) *BuildCli {
 
 func retrImports(dirs []string) []string {
 	imports := []string{
-		"github.com/typical-go/typical-go/pkg/typgo",
 		"github.com/typical-go/typical-go/pkg/typapp",
 	}
+
 	for _, dir := range dirs {
 		imports = append(imports, fmt.Sprintf("%s/%s", ProjectPkg, dir))
 	}

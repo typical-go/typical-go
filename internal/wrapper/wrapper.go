@@ -4,12 +4,10 @@ import (
 	"bytes"
 	"context"
 	"crypto/sha256"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
@@ -34,12 +32,6 @@ type wrapContext struct {
 }
 
 func wrap(c *wrapContext) (err error) {
-
-	if c.projectPkg != "" {
-		if c.projectPkg, err = retrieveProjPkg(c.Context); err != nil {
-			return err
-		}
-	}
 
 	// if err := w.generateTypicalwIfNotExist(typicalTmp, projectPkg); err != nil {
 	// 	return err
@@ -74,21 +66,6 @@ func wrap(c *wrapContext) (err error) {
 		Stdin:  os.Stdin,
 		Stderr: os.Stderr,
 	})
-}
-
-func retrieveProjPkg(ctx context.Context) (string, error) {
-	var stderr strings.Builder
-	var stdout strings.Builder
-	cmd := execkit.Command{
-		Name:   "go",
-		Args:   []string{"list", "-m"},
-		Stdout: &stdout,
-		Stderr: &stderr,
-	}
-	if err := cmd.Run(ctx); err != nil {
-		return "", errors.New(stderr.String())
-	}
-	return strings.TrimSpace(stdout.String()), nil
 }
 
 func generateTypicalw(target, typicalTmp, projectPkg string) error {

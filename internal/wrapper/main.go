@@ -1,10 +1,14 @@
 package wrapper
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
+	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/urfave/cli/v2"
 )
@@ -27,10 +31,16 @@ func Main() (err error) {
 				&cli.StringFlag{Name: srcParam, Value: "tools/typical-build"},
 				&cli.StringFlag{Name: projPkgParam},
 			},
-			Action: func(c *cli.Context) error {
+			Action: func(c *cli.Context) (err error) {
 				typicalTmp := c.String(typicalTmpParam)
 				projectPkg := c.String(projPkgParam)
 				src := c.String(srcParam)
+
+				if projectPkg == "" {
+					if projectPkg, err = retrieveProjPkg(c.Context); err != nil {
+						return err
+					}
+				}
 
 				return wrap(&wrapContext{
 					Context:      c.Context,
@@ -46,4 +56,19 @@ func Main() (err error) {
 	}
 
 	return app.Run(os.Args)
+}
+
+func retrieveProjPkg(ctx context.Context) (string, error) {
+	var stderr strings.Builder
+	var stdout strings.Builder
+	cmd := execkit.Command{
+		Name:   "go",
+		Args:   []string{"list", "-m"},
+		Stdout: &stdout,
+		Stderr: &stderr,
+	}
+	if err := cmd.Run(ctx); err != nil {
+		return "", errors.New(stderr.String())
+	}
+	return strings.TrimSpace(stdout.String()), nil
 }

@@ -2,16 +2,15 @@
 
 set -e
 
-TYPSRC=github.com/typical-go/typical-go/cmd/typical-go
 TYPTMP=.typical-tmp
 TYPGO=$TYPTMP/bin/typical-go
 
 if ! [ -s $TYPGO ]; then
-	go build -o $TYPGO $TYPSRC
+	go build -o $TYPGO github.com/typical-go/typical-go/cmd/typical-go
 fi
 
 $TYPGO wrap \
+	-src="tools/typical-build" \
+	-proj-pkg="github.com/typical-go/typical-go/examples/generate-docker-compose" \
 	-typical-tmp=$TYPTMP \
-	-project-pkg="github.com/typical-go/typical-go/examples/generate-docker-compose" \
-
-$TYPTMP/bin/build-tool $@
+	$@

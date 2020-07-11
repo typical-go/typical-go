@@ -2,12 +2,10 @@ package helloworld
 
 import (
 	"fmt"
-
-	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 // Main function of hello-world
-func Main(d *typgo.Descriptor) (err error) {
+func Main() (err error) {
 	fmt.Println("Hello World")
 	return
 }
