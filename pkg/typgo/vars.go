@@ -14,12 +14,6 @@ var (
 	// ReleaseFolder location
 	ReleaseFolder = "release"
 
-	// BinFolder location
-	BinFolder = "bin"
-
-	// CmdFolder location
-	CmdFolder = "cmd"
-
 	TmpBin string
 	TmpSrc string
 
@@ -58,11 +52,6 @@ Options:
 	{{end}}{{end}}
 `
 )
-
-// AppBin path
-func AppBin(name string) string {
-	return fmt.Sprintf("%s/%s", BinFolder, name)
-}
 
 // Init vars
 func Init() error {

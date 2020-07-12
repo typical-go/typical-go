@@ -45,7 +45,7 @@ func (*CtorAnnotation) Compile(c *Context) error {
 	}
 
 	return writeGoSource(
-		fmt.Sprintf("%s/%s/ctor_annotated.go", CmdFolder, c.Descriptor.Name),
+		fmt.Sprintf("cmd/%s/ctor_annotated.go", c.Descriptor.Name),
 		&typtmpl.CtorAnnotated{
 			Package: "main",
 			Imports: c.Imports,

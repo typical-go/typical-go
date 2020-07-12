@@ -38,7 +38,7 @@ func (m *ConfigManager) Compile(c *Context) error {
 	}
 
 	if err := writeGoSource(
-		fmt.Sprintf("%s/%s/config_annotated.go", CmdFolder, c.Descriptor.Name),
+		fmt.Sprintf("cmd/%s/config_annotated.go", c.Descriptor.Name),
 		&typtmpl.ConfigAnnotated{
 			Package:  "main",
 			Imports:  c.Imports,

@@ -20,8 +20,11 @@ type (
 	}
 	// StdCompile is standard compile
 	StdCompile struct {
-		Before Compiler
-		After  Compiler
+		Before  Compiler
+		After   Compiler
+		Source  string
+		Output  string
+		Ldflags fmt.Stringer
 	}
 )
 
@@ -79,14 +82,24 @@ func (s *StdCompile) Compile(c *Context) error {
 }
 
 func (s *StdCompile) compile(c *Context) error {
-	src := fmt.Sprintf("%s/%s", CmdFolder, c.Descriptor.Name)
+	if s.Source == "" {
+		s.Source = fmt.Sprintf("./cmd/%s", c.Descriptor.Name)
+	}
 
-	return c.Execute(&execkit.GoBuild{
-		Output: AppBin(c.Descriptor.Name),
-		Source: "./" + src,
-		Ldflags: execkit.BuildVars{
+	if s.Output == "" {
+		s.Output = fmt.Sprintf("bin/%s", c.Descriptor.Name)
+	}
+
+	if s.Ldflags == nil {
+		s.Ldflags = execkit.BuildVars{
 			"github.com/typical-go/typical-go/pkg/typapp.Name":    c.Descriptor.Name,
 			"github.com/typical-go/typical-go/pkg/typapp.Version": c.Descriptor.Version,
-		},
+		}
+	}
+
+	return c.Execute(&execkit.GoBuild{
+		Output:  s.Output,
+		Source:  s.Source,
+		Ldflags: s.Ldflags,
 	})
 }

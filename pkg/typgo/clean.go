@@ -2,8 +2,6 @@ package typgo
 
 import (
 	"os"
-
-	"github.com/urfave/cli/v2"
 )
 
 type (
@@ -61,7 +59,6 @@ var _ Cleaner = (*StdClean)(nil)
 
 // Clean project
 func (s *StdClean) Clean(c *Context) error {
-	removeAll(c, BinFolder)
 	removeAll(c, TypicalTmp)
 	return nil
 }
@@ -69,23 +66,5 @@ func (s *StdClean) Clean(c *Context) error {
 func removeAll(c *Context, folder string) {
 	if err := os.RemoveAll(folder); err == nil {
 		c.Infof("RemoveAll: %s", folder)
-	}
-}
-
-func remove(c *Context, file string) {
-	if err := os.Remove(file); err == nil {
-		c.Infof("Remove: %s", file)
-	}
-}
-
-//
-// commands
-//
-
-func cmdClean(c *BuildCli) *cli.Command {
-	return &cli.Command{
-		Name:   "clean",
-		Usage:  "Clean the project",
-		Action: c.ActionFn("CLEAN", c.Clean.Clean),
 	}
 }

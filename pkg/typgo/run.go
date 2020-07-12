@@ -1,6 +1,7 @@
 package typgo
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
@@ -19,7 +20,9 @@ type (
 		fn RunFn
 	}
 	// StdRun standard run
-	StdRun struct{}
+	StdRun struct {
+		Binary string
+	}
 )
 
 //
@@ -58,9 +61,13 @@ func (r Runners) Run(c *Context) error {
 var _ Runner = (*StdRun)(nil)
 
 // Run for standard typical project
-func (*StdRun) Run(c *Context) error {
+func (s *StdRun) Run(c *Context) error {
+	if s.Binary == "" {
+		s.Binary = fmt.Sprintf("bin/%s", c.Descriptor.Name)
+	}
+
 	return c.Execute(&execkit.Command{
-		Name:   AppBin(c.Descriptor.Name),
+		Name:   s.Binary,
 		Args:   c.Args().Slice(),
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,

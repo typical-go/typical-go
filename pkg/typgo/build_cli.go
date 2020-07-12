@@ -222,3 +222,11 @@ func release(c *Context) (err error) {
 		GitLogs: gitLogs,
 	})
 }
+
+func cmdClean(c *BuildCli) *cli.Command {
+	return &cli.Command{
+		Name:   "clean",
+		Usage:  "Clean the project",
+		Action: c.ActionFn("CLEAN", c.Clean.Clean),
+	}
+}
