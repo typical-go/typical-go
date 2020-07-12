@@ -1,21 +1,10 @@
 package typgo
 
-import (
-	"fmt"
-)
-
 var (
 	// ProjectPkg only available in BuildTool scope. The BuildTool must be compiled by wrapper.
 	ProjectPkg string
-
 	// TypicalTmp only available in BuildTool scope. The BuildTool must be compiled by wrapper.
 	TypicalTmp string
-
-	// ReleaseFolder location
-	ReleaseFolder = "release"
-
-	TmpBin string
-	TmpSrc string
 
 	ExclMsgPrefix = []string{
 		"merge", "bump", "revision", "generate", "wip",
@@ -52,10 +41,3 @@ Options:
 	{{end}}{{end}}
 `
 )
-
-// Init vars
-func Init() error {
-	TmpBin = fmt.Sprintf("%s/bin", TypicalTmp)
-	TmpSrc = fmt.Sprintf("%s/src", TypicalTmp)
-	return nil
-}

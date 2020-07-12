@@ -1,7 +1,6 @@
 package typgo
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/urfave/cli/v2"
@@ -27,10 +26,6 @@ type Descriptor struct {
 
 // Run typical build-tool
 func Run(d *Descriptor) error {
-	if err := Init(); err != nil {
-		return fmt.Errorf("init-var: %w", err)
-	}
-
 	buildCli := createBuildCli(d)
 
 	cmds, err := buildCli.commands()
