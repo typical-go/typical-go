@@ -14,12 +14,13 @@ var (
 
 		Layouts: []string{"internal"},
 
-		Compile: &typgo.StdCompile{
-			Before: &typgo.ConfigManager{
+		Compile: typgo.Compilers{
+			&typgo.ConfigManager{
 				Configs: []*typgo.Configuration{
 					{Name: "SERVER", Spec: &server.Config{}},
 				},
 			},
+			&typgo.StdCompile{},
 		},
 		Run:   &typgo.StdRun{},
 		Clean: &typgo.StdClean{},

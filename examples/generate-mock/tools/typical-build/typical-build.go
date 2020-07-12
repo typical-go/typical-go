@@ -14,8 +14,9 @@ var (
 
 		Layouts: []string{"internal"},
 
-		Compile: &typgo.StdCompile{
-			Before: &typgo.CtorAnnotation{},
+		Compile: typgo.Compilers{
+			&typgo.CtorAnnotation{},
+			&typgo.StdCompile{},
 		},
 		Run:   &typgo.StdRun{},
 		Test:  &typgo.StdTest{},

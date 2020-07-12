@@ -13,8 +13,9 @@ var (
 		Version: "1.0.0",
 		Layouts: []string{"internal"},
 
-		Compile: &typgo.StdCompile{
-			Before: typgo.NewCompiler(npmBuild),
+		Compile: typgo.Compilers{
+			typgo.NewCompiler(npmBuild),
+			&typgo.StdCompile{},
 		},
 		Run:   &typgo.StdRun{},
 		Clean: &typgo.StdClean{},

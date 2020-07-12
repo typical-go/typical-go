@@ -20,8 +20,6 @@ type (
 	}
 	// StdCompile is standard compile
 	StdCompile struct {
-		Before  Compiler
-		After   Compiler
 		Source  string
 		Output  string
 		Ldflags fmt.Stringer
@@ -65,23 +63,6 @@ func (s Compilers) Compile(c *Context) error {
 
 // Compile standard go project
 func (s *StdCompile) Compile(c *Context) error {
-	if s.Before != nil {
-		if err := s.Before.Compile(c); err != nil {
-			return err
-		}
-	}
-	if err := s.compile(c); err != nil {
-		return err
-	}
-	if s.After != nil {
-		if err := s.After.Compile(c); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (s *StdCompile) compile(c *Context) error {
 	if s.Source == "" {
 		s.Source = fmt.Sprintf("./cmd/%s", c.Descriptor.Name)
 	}
