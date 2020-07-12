@@ -31,42 +31,54 @@ func Main() (err error) {
 
 	app := cli.NewApp()
 	app.Name = typapp.Name
+	app.Version = typapp.Version
 	app.Usage = ""       // NOTE: intentionally blank
 	app.Description = "" // NOTE: intentionally blank
-	app.Version = typapp.Version
 	app.Flags = []cli.Flag{
 		&cli.StringFlag{Name: typicalTmpParam, Value: ".typical-tmp"},
 		&cli.StringFlag{Name: srcParam, Value: "tools/typical-build"},
 		&cli.StringFlag{Name: projPkgParam, Usage: "same with module package in go.mod if empty"},
 		&cli.BoolFlag{Name: createWrapperParam},
 	}
-	app.Action = execute
+	app.Action = action
 
 	return app.Run(os.Args)
 }
 
-func execute(c *cli.Context) (err error) {
-	var (
-		typicalTmp   = c.String(typicalTmpParam)
-		projectPkg   = c.String(projPkgParam)
-		src          = c.String(srcParam)
-		chksumTarget = fmt.Sprintf("%s/checksum", typicalTmp)
-		bin          = fmt.Sprintf("%s/bin/%s", typicalTmp, filepath.Base(src))
-	)
-
-	if projectPkg == "" {
-		if projectPkg, err = retrieveProjPkg(c.Context); err != nil {
-			return err
-		}
-	}
-
+func action(c *cli.Context) error {
 	if c.Bool(createWrapperParam) {
-		return typtmpl.ExecuteToFile(typicalw, &typtmpl.Typicalw{
-			Src:        src,
-			TypicalTmp: typicalTmp,
-			ProjectPkg: projectPkg,
-		})
+		return wrapper(c)
 	}
+	return execute(c)
+}
+
+func wrapper(c *cli.Context) error {
+	typicalTmp := getTypicalTmp(c)
+	src := getSrc(c)
+
+	projectPkg, err := getProjectPkg(c)
+	if err != nil {
+		return err
+	}
+
+	return typtmpl.ExecuteToFile(typicalw, &typtmpl.Typicalw{
+		Src:        src,
+		TypicalTmp: typicalTmp,
+		ProjectPkg: projectPkg,
+	})
+}
+
+func execute(c *cli.Context) error {
+	typicalTmp := getTypicalTmp(c)
+	src := getSrc(c)
+
+	projectPkg, err := getProjectPkg(c)
+	if err != nil {
+		return err
+	}
+
+	chksumTarget := fmt.Sprintf("%s/checksum", typicalTmp)
+	bin := fmt.Sprintf("%s/bin/%s", typicalTmp, filepath.Base(src))
 
 	chksum := generateChecksum(src)
 	chksum0, _ := ioutil.ReadFile(chksumTarget)
@@ -123,4 +135,22 @@ func generateChecksum(source string) []byte {
 		return nil
 	})
 	return h.Sum(nil)
+}
+
+func getTypicalTmp(c *cli.Context) string {
+	return c.String(typicalTmpParam)
+}
+
+func getProjectPkg(c *cli.Context) (s string, err error) {
+	projPkg := c.String(projPkgParam)
+	if projPkg == "" {
+		if projPkg, err = retrieveProjPkg(c.Context); err != nil {
+			return "", err
+		}
+	}
+	return projPkg, nil
+}
+
+func getSrc(c *cli.Context) string {
+	return c.String(srcParam)
 }
