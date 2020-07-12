@@ -21,7 +21,7 @@ const (
 	typicalw = "typicalw"
 
 	typicalTmpParam = "typical-tmp"
-	projPkgParam    = "proj-pkg"
+	projPkgParam    = "project-pkg"
 	srcParam        = "src"
 )
 
@@ -108,7 +108,7 @@ func retrieveProjPkg(ctx context.Context) (string, error) {
 	return strings.TrimSpace(stdout.String()), nil
 }
 
-func generateTypicalw(target, typicalTmp, projectPkg string) error {
+func generateTypicalw(target, src, typicalTmp, projectPkg string) error {
 	f, err := os.OpenFile(target, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
 	if err != nil {
 		return err
@@ -116,9 +116,9 @@ func generateTypicalw(target, typicalTmp, projectPkg string) error {
 	defer f.Close()
 
 	tmpl := &typtmpl.Typicalw{
-		TypicalSource: "github.com/typical-go/typical-go/cmd/typical-go",
-		TypicalTmp:    typicalTmp,
-		ProjectPkg:    projectPkg,
+		Src:        src,
+		TypicalTmp: typicalTmp,
+		ProjectPkg: projectPkg,
 	}
 	return tmpl.Execute(f)
 }

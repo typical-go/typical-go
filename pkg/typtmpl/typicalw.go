@@ -6,9 +6,9 @@ import (
 
 // Typicalw writer
 type Typicalw struct {
-	TypicalTmp    string
-	TypicalSource string
-	ProjectPkg    string
+	Src        string
+	TypicalTmp string
+	ProjectPkg string
 }
 
 var _ Template = (*Typicalw)(nil)
@@ -17,19 +17,18 @@ const typicalw = `#!/bin/bash
 
 set -e
 
-TYPSRC={{.TypicalSource}}
 TYPTMP={{.TypicalTmp}}
 TYPGO=$TYPTMP/bin/typical-go
 
 if ! [ -s $TYPGO ]; then
-	go build -o $TYPGO $TYPSRC
+	go build -o $TYPGO github.com/typical-go/typical-go/cmd/typical-go
 fi
 
-$TYPGO wrap \
+$TYPGO \
+	-src="{{.Src}}" \
+	-project-pkg="{{.ProjectPkg}}" \
 	-typical-tmp=$TYPTMP \
-{{if .ProjectPkg }}	-project-pkg="{{.ProjectPkg}}" \
-{{end}}
-$TYPTMP/bin/build-tool $@
+	$@
 `
 
 // Execute typicalw template

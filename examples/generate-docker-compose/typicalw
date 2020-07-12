@@ -11,6 +11,6 @@ fi
 
 $TYPGO \
 	-src="tools/typical-build" \
-	-proj-pkg="github.com/typical-go/typical-go/examples/generate-docker-compose" \
+	-project-pkg="github.com/typical-go/typical-go/examples/generate-docker-compose" \
 	-typical-tmp=$TYPTMP \
 	$@
