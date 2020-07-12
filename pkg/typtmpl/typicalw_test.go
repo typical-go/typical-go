@@ -7,13 +7,13 @@ import (
 )
 
 func TestTypicalw(t *testing.T) {
-	testTemplate(t,
-		testcase{
+	typtmpl.TestTemplate(t, []typtmpl.TestCase{
+		{
 			Template: &typtmpl.Typicalw{
 				TypicalSource: "some-source",
 				TypicalTmp:    "some-tmp",
 			},
-			expected: `#!/bin/bash
+			Expected: `#!/bin/bash
 
 set -e
 
@@ -31,13 +31,13 @@ $TYPGO wrap \
 $TYPTMP/bin/build-tool $@
 `,
 		},
-		testcase{
+		{
 			Template: &typtmpl.Typicalw{
 				TypicalSource: "some-source",
 				TypicalTmp:    "some-tmp",
 				ProjectPkg:    "some-project-pkg",
 			},
-			expected: `#!/bin/bash
+			Expected: `#!/bin/bash
 
 set -e
 
@@ -56,6 +56,6 @@ $TYPGO wrap \
 $TYPTMP/bin/build-tool $@
 `,
 		},
-	)
+	})
 
 }

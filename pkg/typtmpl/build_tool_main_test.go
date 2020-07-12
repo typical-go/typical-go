@@ -7,10 +7,10 @@ import (
 )
 
 func TestBuildToolMain(t *testing.T) {
-	testTemplate(t,
-		testcase{
+	typtmpl.TestTemplate(t, []typtmpl.TestCase{
+		{
 			Template: &typtmpl.BuildToolMain{DescPkg: "some-package"},
-			expected: `package main
+			Expected: `package main
 
 import (
 	"github.com/typical-go/typical-go/pkg/typcore"
@@ -22,5 +22,5 @@ func main() {
 }
 `,
 		},
-	)
+	})
 }

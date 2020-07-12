@@ -4,6 +4,13 @@ import (
 	"io"
 )
 
+// Typicalw writer
+type Typicalw struct {
+	TypicalTmp    string
+	TypicalSource string
+	ProjectPkg    string
+}
+
 var _ Template = (*Typicalw)(nil)
 
 const typicalw = `#!/bin/bash
@@ -24,13 +31,6 @@ $TYPGO wrap \
 {{end}}
 $TYPTMP/bin/build-tool $@
 `
-
-// Typicalw writer
-type Typicalw struct {
-	TypicalTmp    string
-	TypicalSource string
-	ProjectPkg    string
-}
 
 // Execute typicalw template
 func (t *Typicalw) Execute(w io.Writer) (err error) {
