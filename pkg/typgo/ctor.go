@@ -44,12 +44,14 @@ func (*CtorAnnotation) Compile(c *Context) error {
 		}
 	}
 
-	target := fmt.Sprintf("%s/%s/ctor_annotated.go", CmdFolder, c.Descriptor.Name)
-	return writeGoSource(&typtmpl.CtorAnnotated{
-		Package: "main",
-		Imports: c.Imports,
-		Ctors:   ctors,
-	}, target)
+	return writeGoSource(
+		fmt.Sprintf("%s/%s/ctor_annotated.go", CmdFolder, c.Descriptor.Name),
+		&typtmpl.CtorAnnotated{
+			Package: "main",
+			Imports: c.Imports,
+			Ctors:   ctors,
+		},
+	)
 }
 
 // ParseCtor annotation

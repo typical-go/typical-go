@@ -8,14 +8,8 @@ import (
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
-func writeGoSource(tmpl typtmpl.Template, target string) error {
-	f, err := os.OpenFile(target, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	if err := tmpl.Execute(f); err != nil {
+func writeGoSource(target string, tmpl typtmpl.Template) error {
+	if err := typtmpl.ExecuteToFile(target, tmpl); err != nil {
 		return err
 	}
 	return goImports(target)

@@ -20,9 +20,10 @@ import (
 const (
 	typicalw = "typicalw"
 
-	typicalTmpParam = "typical-tmp"
-	projPkgParam    = "project-pkg"
-	srcParam        = "src"
+	typicalTmpParam    = "typical-tmp"
+	projPkgParam       = "project-pkg"
+	srcParam           = "src"
+	createWrapperParam = "create:wrapper"
 )
 
 // Main function to run the typical-go
@@ -36,7 +37,8 @@ func Main() (err error) {
 	app.Flags = []cli.Flag{
 		&cli.StringFlag{Name: typicalTmpParam, Value: ".typical-tmp"},
 		&cli.StringFlag{Name: srcParam, Value: "tools/typical-build"},
-		&cli.StringFlag{Name: projPkgParam},
+		&cli.StringFlag{Name: projPkgParam, Usage: "same with module package in go.mod if empty"},
+		&cli.BoolFlag{Name: createWrapperParam},
 	}
 	app.Action = execute
 
@@ -58,9 +60,13 @@ func execute(c *cli.Context) (err error) {
 		}
 	}
 
-	// if err := w.generateTypicalwIfNotExist(typicalTmp, projectPkg); err != nil {
-	// 	return err
-	// }
+	if c.Bool(createWrapperParam) {
+		return typtmpl.ExecuteToFile(typicalw, &typtmpl.Typicalw{
+			Src:        src,
+			TypicalTmp: typicalTmp,
+			ProjectPkg: projectPkg,
+		})
+	}
 
 	chksum := generateChecksum(src)
 	chksum0, _ := ioutil.ReadFile(chksumTarget)
@@ -106,21 +112,6 @@ func retrieveProjPkg(ctx context.Context) (string, error) {
 		return "", errors.New(stderr.String())
 	}
 	return strings.TrimSpace(stdout.String()), nil
-}
-
-func generateTypicalw(target, src, typicalTmp, projectPkg string) error {
-	f, err := os.OpenFile(target, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	tmpl := &typtmpl.Typicalw{
-		Src:        src,
-		TypicalTmp: typicalTmp,
-		ProjectPkg: projectPkg,
-	}
-	return tmpl.Execute(f)
 }
 
 func generateChecksum(source string) []byte {

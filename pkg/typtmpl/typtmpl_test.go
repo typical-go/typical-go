@@ -2,6 +2,8 @@ package typtmpl_test
 
 import (
 	"io"
+	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -23,13 +25,22 @@ func TestParse(t *testing.T) {
 	})
 }
 
-type data struct {
-	Name string
+func TestExecuteToFile(t *testing.T) {
+	target := "dummy"
+	typtmpl.ExecuteToFile(target, &dummyTemplate{"some-parsed-text"})
+	defer os.Remove(target)
+	b, _ := ioutil.ReadFile(target)
+	require.Equal(t, []byte("some-parsed-text"), b)
 }
 
-type dummyTemplate struct {
-	text string
-}
+type (
+	data struct {
+		Name string
+	}
+	dummyTemplate struct {
+		text string
+	}
+)
 
 func (s *dummyTemplate) Execute(w io.Writer) (err error) {
 	w.Write([]byte(s.text))

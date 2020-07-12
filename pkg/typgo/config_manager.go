@@ -37,12 +37,14 @@ func (m *ConfigManager) Compile(c *Context) error {
 		})
 	}
 
-	target := fmt.Sprintf("%s/%s/config_annotated.go", CmdFolder, c.Descriptor.Name)
-	if err := writeGoSource(&typtmpl.ConfigAnnotated{
-		Package:  "main",
-		Imports:  c.Imports,
-		CfgCtors: cfgs,
-	}, target); err != nil {
+	if err := writeGoSource(
+		fmt.Sprintf("%s/%s/config_annotated.go", CmdFolder, c.Descriptor.Name),
+		&typtmpl.ConfigAnnotated{
+			Package:  "main",
+			Imports:  c.Imports,
+			CfgCtors: cfgs,
+		},
+	); err != nil {
 		return err
 	}
 

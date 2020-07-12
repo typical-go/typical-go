@@ -33,12 +33,14 @@ func (*DtorAnnotation) Compile(c *Context) error {
 			})
 		}
 	}
-	target := fmt.Sprintf("%s/%s/dtor_annotated.go", CmdFolder, c.Descriptor.Name)
-	return writeGoSource(&typtmpl.DtorAnnotated{
-		Package: "main",
-		Imports: c.Imports,
-		Dtors:   dtors,
-	}, target)
+	return writeGoSource(
+		fmt.Sprintf("%s/%s/dtor_annotated.go", CmdFolder, c.Descriptor.Name),
+		&typtmpl.DtorAnnotated{
+			Package: "main",
+			Imports: c.Imports,
+			Dtors:   dtors,
+		},
+	)
 }
 
 // ParseDtor annotation
