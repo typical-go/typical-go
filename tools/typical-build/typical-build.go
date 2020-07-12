@@ -15,8 +15,10 @@ var (
 
 		Layouts: []string{"internal", "pkg"},
 
-		Test:    &typgo.StdTest{},
-		Compile: &typgo.StdCompile{},
+		Test: &typgo.StdTest{},
+		Compile: &typgo.StdCompile{
+			Source: ".",
+		},
 		Run:     &typgo.StdRun{},
 		Clean:   &typgo.StdClean{},
 		Release: &typgo.Github{Owner: "typical-go", RepoName: "typical-go"},

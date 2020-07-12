@@ -20,8 +20,12 @@ type (
 	}
 	// StdCompile is standard compile
 	StdCompile struct {
-		Source  string
-		Output  string
+		// Source to be compiled. By default is cmd/PROJECT_NAME
+		Source string
+		// Output of compiler. By default is bin/PROJECT_NAME
+		Output string
+		// Ldflags argument. By default is set variable typapp.Name to PROJECT_NAME
+		// and typapp.Version to PROJECT-VERSION
 		Ldflags fmt.Stringer
 	}
 )

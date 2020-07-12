@@ -22,7 +22,7 @@ TYPGO=$TYPTMP/bin/typical-go
 
 if ! [ -s $TYPGO ]; then
 	echo "Build typical-go"
-	go build -o $TYPGO github.com/typical-go/typical-go/cmd/typical-go
+	go build -o $TYPGO github.com/typical-go/typical-go
 fi
 
 $TYPGO \
