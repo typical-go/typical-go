@@ -22,8 +22,8 @@ type (
 	}
 )
 
-// Execute template
-func Execute(name, text string, data interface{}, w io.Writer) (err error) {
+// Parse template
+func Parse(name, text string, data interface{}, w io.Writer) (err error) {
 	tmpl, err := template.New(name).Parse(text)
 	if err != nil {
 		return

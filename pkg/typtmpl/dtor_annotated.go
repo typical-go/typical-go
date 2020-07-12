@@ -31,5 +31,5 @@ func init() { {{if .Dtors}}
 
 // Execute app precondition template
 func (t *DtorAnnotated) Execute(w io.Writer) (err error) {
-	return Execute("dtorGenerated", dtorAnnotated, t, w)
+	return Parse("dtorGenerated", dtorAnnotated, t, w)
 }

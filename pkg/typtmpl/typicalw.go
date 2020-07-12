@@ -33,5 +33,5 @@ $TYPGO \
 
 // Execute typicalw template
 func (t *Typicalw) Execute(w io.Writer) (err error) {
-	return Execute("typicalw", typicalw, t, w)
+	return Parse("typicalw", typicalw, t, w)
 }

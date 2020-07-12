@@ -32,5 +32,5 @@ func init() { {{if .Ctors}}
 
 // Execute app precondition template
 func (t *CtorAnnotated) Execute(w io.Writer) (err error) {
-	return Execute("ctorGenerated", ctorGenerated, t, w)
+	return Parse("ctorGenerated", ctorGenerated, t, w)
 }

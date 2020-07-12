@@ -47,5 +47,5 @@ func init() { {{if .CfgCtors}}
 
 // Execute app precondition template
 func (t *ConfigAnnotated) Execute(w io.Writer) (err error) {
-	return Execute("appPrecond", configAnnotated, t, w)
+	return Parse("appPrecond", configAnnotated, t, w)
 }
