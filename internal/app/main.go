@@ -91,8 +91,8 @@ func execute(c *cli.Context) error {
 
 		fmt.Printf("Build %s as %s\n", src, bin)
 		if err := execkit.Run(c.Context, &execkit.GoBuild{
-			Output: bin,
-			Source: "./" + src,
+			Output:      bin,
+			MainPackage: "./" + src,
 			Ldflags: execkit.BuildVars{
 				"github.com/typical-go/typical-go/pkg/typgo.ProjectPkg": projectPkg,
 				"github.com/typical-go/typical-go/pkg/typgo.TypicalTmp": typicalTmp,

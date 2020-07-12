@@ -11,9 +11,9 @@ import (
 type (
 	// GoBuild builder
 	GoBuild struct {
-		Ldflags fmt.Stringer
-		Output  string
-		Source  string
+		Ldflags     fmt.Stringer
+		Output      string
+		MainPackage string
 	}
 	// BuildVars to injected variable when build
 	BuildVars map[string]string
@@ -43,7 +43,7 @@ func (g *GoBuild) Args() []string {
 	if g.Ldflags != nil {
 		args = append(args, "-ldflags", g.Ldflags.String())
 	}
-	args = append(args, "-o", g.Output, g.Source)
+	args = append(args, "-o", g.Output, g.MainPackage)
 	return args
 }
 

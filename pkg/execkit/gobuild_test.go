@@ -15,15 +15,15 @@ func TestGoBuild(t *testing.T) {
 	}{
 		{
 			GoBuild: &execkit.GoBuild{
-				Output: "some-output",
-				Source: "some-sources",
+				Output:      "some-output",
+				MainPackage: "some-sources",
 			},
 			expected: "go build -o some-output some-sources",
 		},
 		{
 			GoBuild: &execkit.GoBuild{
-				Output: "some-output",
-				Source: "some-sources",
+				Output:      "some-output",
+				MainPackage: "some-sources",
 				Ldflags: execkit.BuildVars{
 					"name1": "value1",
 					"name2": "value3",

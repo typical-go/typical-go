@@ -17,7 +17,7 @@ var (
 
 		Test: &typgo.StdTest{},
 		Compile: &typgo.StdCompile{
-			Source: ".",
+			MainPackage: ".",
 		},
 		Run:     &typgo.StdRun{},
 		Clean:   &typgo.StdClean{},

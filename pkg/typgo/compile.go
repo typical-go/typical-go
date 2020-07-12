@@ -20,8 +20,8 @@ type (
 	}
 	// StdCompile is standard compile
 	StdCompile struct {
-		// Source to be compiled. By default is cmd/PROJECT_NAME
-		Source string
+		// MainPackage to be compiled. By default is cmd/PROJECT_NAME
+		MainPackage string
 		// Output of compiler. By default is bin/PROJECT_NAME
 		Output string
 		// Ldflags argument. By default is set variable typapp.Name to PROJECT_NAME
@@ -67,8 +67,8 @@ func (s Compilers) Compile(c *Context) error {
 
 // Compile standard go project
 func (s *StdCompile) Compile(c *Context) error {
-	if s.Source == "" {
-		s.Source = fmt.Sprintf("./cmd/%s", c.Descriptor.Name)
+	if s.MainPackage == "" {
+		s.MainPackage = fmt.Sprintf("./cmd/%s", c.Descriptor.Name)
 	}
 
 	if s.Output == "" {
@@ -83,8 +83,8 @@ func (s *StdCompile) Compile(c *Context) error {
 	}
 
 	return c.Execute(&execkit.GoBuild{
-		Output:  s.Output,
-		Source:  s.Source,
-		Ldflags: s.Ldflags,
+		Output:      s.Output,
+		MainPackage: s.MainPackage,
+		Ldflags:     s.Ldflags,
 	})
 }
