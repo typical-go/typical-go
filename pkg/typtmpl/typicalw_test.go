@@ -26,7 +26,7 @@ if ! [ -s $TYPGO ]; then
 	go build -o $TYPGO github.com/typical-go/typical-go
 fi
 
-$TYPGO \
+$TYPGO run \
 	-src="some-src" \
 	-project-pkg="some-project-pkg" \
 	-typical-tmp=$TYPTMP \

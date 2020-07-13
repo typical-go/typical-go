@@ -9,22 +9,20 @@
 A Build Tool (+ Framework) for Golang. <https://typical-go.github.io/>
 
 
-## Use Cases
+## Install
 
-- Framework for Build-Tool  
-  Typical-Go provides levels of abstraction to develop your own build-tool. 
-- Build-Tool as a framework (BAAF)  
-  It is a concept where both build-tool and application utilize the same definition. We no longer see build-tool as a separate beast with the application but rather part of the same living organism. 
-
-
-## Wrapper
-
-Wrapper responsible to download, compile and run both build-tool and application through simple bash script called `typicalw`
-
-```bash
-./typicalw
+```
+$ go install github.com/typical-go/typical-go
 ```
 
+## Usage
+
+Run typical-go binary to build the build-system and run it.  
+```
+$ typical-go run
+```
+
+The build-system output view:
 ```
 Typical Build
 
@@ -45,30 +43,84 @@ The commands are:
 Use "./typicalw help <topic>" for more information about that topic
 ```
 
-## Descriptor
-
-The unique about Typical-Go is it use go-based descriptor file rather than DSL which is making it easier to understand and maintain. 
-
-It should be defined at `typical/descriptor.go` with variable name `Descriptor`
-```go 
-var Descriptor = typgo.Descriptor{
-	Name:    "typical-go",
-	Version: "0.9.55",
-
-	EntryPoint: wrapper.Main,
-	Layouts:    []string{"wrapper", "pkg"},
-
-	Test:    &typgo.StdTest{},
-	Compile: &typgo.StdCompile{},
-	Run:     &typgo.StdRun{},
-	Clean:   &typgo.StdClean{},
-	Release: &typgo.Github{Owner: "typical-go", RepoName: "typical-go"},
-
-	Utility: typgo.NewUtility(taskExamples), // Test all the examples
-}
-
-
+Check help for argument documentation
 ```
+$ typical-go help run
+```
+```
+NAME:
+   typical-go run - Run build-tool for project in current working directory
+
+USAGE:
+   typical-go run [command options] [arguments...]
+
+OPTIONS:
+   --src value          Build-tool source (default: "tools/typical-build")
+   --project-pkg value  Project package name. Same with module package in go.mod by default
+   --typical-tmp value  Temporary directory location to save builds-related files (default: ".typical-tmp")
+   --create:wrapper     Create wrapper script (default: false)
+```
+
+## Typical Build
+
+Typical Build is golang program that manage build and task for current project. By default located in `tools/typical-build`
+
+```go
+package main
+
+import (
+	"log"
+
+	"github.com/typical-go/typical-go/pkg/typgo"
+)
+
+var (
+	// Descriptor of sample
+	descriptor = typgo.Descriptor{
+		Name:    "hello-world",
+		Version: "1.0.0",
+
+    Compile: &typgo.StdCompile{},
+		Run:     &typgo.StdRun{},
+		Clean:   &typgo.StdClean{},
+	}
+)
+
+func main() {
+	if err := typgo.Run(&descriptor); err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+## Wrapper 
+
+The wrapper that invoke download typical-go and execute it. This is the recommendation way to use typical-go.
+```
+$ typical-go -create:wrapper
+```
+
+Run wrapper script
+```
+$ ./typicalw
+```
+```go 
+Typical Build
+
+Usage:
+
+  ./typicalw <command> [argument]
+
+The commands are:
+
+  compile, c  Compile the project
+  run, r      Run the project in local environment
+  clean       Clean the project
+  help, h     Shows a list of commands or help for one command
+
+Use "./typicalw help <topic>" for more information about that topic
+```
+
 ## Annotation
 
 Typical-Go support java-like annotation (except the parameter in JSON format) for code-generation purpose.
@@ -104,12 +156,6 @@ type(
    }
 )
 ```
-
-
-## Typical Tmp
-
-Typical-tmp is an important folder that contains the build-tool mechanisms. By default, it is located in `.typical-tmp` and can be changed by hacking/editing the `typicalw` script.
-
 
 ## Examples
 

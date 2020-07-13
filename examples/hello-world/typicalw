@@ -10,7 +10,7 @@ if ! [ -s $TYPGO ]; then
 	go build -o $TYPGO github.com/typical-go/typical-go
 fi
 
-$TYPGO \
+$TYPGO run \
 	-src="tools/typical-build" \
 	-project-pkg="github.com/typical-go/typical-go/examples/hello-world" \
 	-typical-tmp=$TYPTMP \

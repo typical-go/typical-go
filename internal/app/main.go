@@ -28,24 +28,28 @@ const (
 
 // Main function to run the typical-go
 func Main() (err error) {
-
 	app := cli.NewApp()
 	app.Name = typapp.Name
 	app.Version = typapp.Version
 	app.Usage = ""       // NOTE: intentionally blank
 	app.Description = "" // NOTE: intentionally blank
-	app.Flags = []cli.Flag{
-		&cli.StringFlag{Name: typicalTmpParam, Value: ".typical-tmp"},
-		&cli.StringFlag{Name: srcParam, Value: "tools/typical-build"},
-		&cli.StringFlag{Name: projPkgParam, Usage: "same with module package in go.mod if empty"},
-		&cli.BoolFlag{Name: createWrapperParam},
+	app.Commands = []*cli.Command{
+		{
+			Name:  "run",
+			Usage: "Run build-tool for project in current working directory",
+			Flags: []cli.Flag{
+				&cli.StringFlag{Name: srcParam, Usage: "Build-tool source", Value: "tools/typical-build"},
+				&cli.StringFlag{Name: projPkgParam, Usage: "Project package name. Same with module package in go.mod by default"},
+				&cli.StringFlag{Name: typicalTmpParam, Usage: "Temporary directory location to save builds-related files", Value: ".typical-tmp"},
+				&cli.BoolFlag{Name: createWrapperParam, Usage: "Create wrapper script"},
+			},
+			Action: run,
+		},
 	}
-	app.Action = action
-
 	return app.Run(os.Args)
 }
 
-func action(c *cli.Context) error {
+func run(c *cli.Context) error {
 	if c.Bool(createWrapperParam) {
 		return wrapper(c)
 	}
