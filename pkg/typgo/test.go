@@ -23,6 +23,7 @@ type (
 		Timeout      time.Duration
 		CoverProfile string
 		Race         bool
+		Packages     []string
 	}
 )
 
@@ -54,18 +55,20 @@ func (s *StdTest) Execute(c *Context) (err error) {
 	}
 
 	return c.Execute(&execkit.GoTest{
-		Targets:      testTargets(c),
+		Packages:     s.getPackages(c),
 		Timeout:      s.getTimeout(),
 		CoverProfile: s.getCoverProfile(),
 		Race:         s.Race,
 	})
 }
 
-func testTargets(c *Context) (targets []string) {
-	for _, layout := range c.Descriptor.Layouts {
-		targets = append(targets, fmt.Sprintf("./%s/...", layout))
+func (s *StdTest) getPackages(c *Context) []string {
+	if len(s.Packages) < 1 {
+		for _, layout := range c.Descriptor.Layouts {
+			s.Packages = append(s.Packages, fmt.Sprintf("./%s/...", layout))
+		}
 	}
-	return
+	return s.Packages
 }
 
 func (s *StdTest) getTimeout() time.Duration {

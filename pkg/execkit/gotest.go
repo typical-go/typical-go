@@ -10,7 +10,7 @@ import (
 type (
 	// GoTest builder
 	GoTest struct {
-		Targets      []string
+		Packages     []string
 		CoverProfile string
 		Race         bool
 		Timeout      time.Duration
@@ -43,7 +43,7 @@ func (g *GoTest) Args() []string {
 	if g.Race {
 		args = append(args, "-race")
 	}
-	return append(args, g.Targets...)
+	return append(args, g.Packages...)
 }
 
 // Run gotest

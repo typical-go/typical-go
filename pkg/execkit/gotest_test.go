@@ -16,13 +16,13 @@ func TestGotTest_Args(t *testing.T) {
 	}{
 		{
 			GoTest: &execkit.GoTest{
-				Targets: []string{"target1", "target2"},
+				Packages: []string{"target1", "target2"},
 			},
 			expected: "go test target1 target2",
 		},
 		{
 			GoTest: &execkit.GoTest{
-				Targets:      []string{"target1", "target2"},
+				Packages:     []string{"target1", "target2"},
 				Timeout:      10 * time.Second,
 				Race:         true,
 				CoverProfile: "some-coverprofile",

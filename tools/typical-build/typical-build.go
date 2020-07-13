@@ -42,7 +42,7 @@ var (
 
 func testExamples(c *typgo.Context) error {
 	return c.Execute(&execkit.GoTest{
-		Targets: []string{"./examples/..."},
+		Packages: []string{"./examples/..."},
 	})
 }
 
