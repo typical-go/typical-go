@@ -2,10 +2,8 @@ package typgo
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/typical-go/typical-go/pkg/typast"
-	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/urfave/cli/v2"
 )
 
@@ -55,20 +53,16 @@ func (b *BuildCli) commands() []*cli.Command {
 }
 
 // Context of build-cli
-func (b *BuildCli) Context(name string, c *cli.Context) *Context {
+func (b *BuildCli) Context(c *cli.Context) *Context {
 	return &Context{
-		Logger: typlog.Logger{
-			Name: name,
-		},
 		Context:  c,
 		BuildCli: b,
 	}
 }
 
 // ActionFn to return related action func
-func (b *BuildCli) ActionFn(name string, fn ExecuteFn) func(*cli.Context) error {
+func (b *BuildCli) ActionFn(fn ExecuteFn) func(*cli.Context) error {
 	return func(cli *cli.Context) error {
-		c := b.Context(strings.ToUpper(name), cli)
-		return fn(c)
+		return fn(b.Context(cli))
 	}
 }

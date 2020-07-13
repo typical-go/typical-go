@@ -36,7 +36,7 @@ func (t *TestCmd) Command(b *BuildCli) *cli.Command {
 		Name:    "test",
 		Aliases: []string{"t"},
 		Usage:   "Test the project",
-		Action:  b.ActionFn("TEST", t.Execute),
+		Action:  b.ActionFn(t.Execute),
 	}
 }
 
@@ -49,7 +49,7 @@ var _ Action = (*StdTest)(nil)
 // Execute standard test
 func (s *StdTest) Execute(c *Context) (err error) {
 	if len(c.Descriptor.Layouts) < 1 {
-		c.Info("Nothing to test")
+		fmt.Println("Nothing to test")
 		return
 	}
 

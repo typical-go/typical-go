@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
@@ -15,8 +16,6 @@ import (
 
 const (
 	dockerComposeOut = "docker-compose.yml"
-
-	logName = "docker"
 
 	// V3 is version 3
 	V3 = "3"
@@ -50,7 +49,7 @@ func (m *Command) cmdCompose(c *typgo.BuildCli) *cli.Command {
 	return &cli.Command{
 		Name:   "compose",
 		Usage:  "Generate docker-compose.yaml",
-		Action: c.ActionFn(logName, m.Compose),
+		Action: c.ActionFn(m.Compose),
 	}
 }
 
@@ -70,7 +69,7 @@ func (m *Command) Compose(c *typgo.Context) (err error) {
 		return err
 	}
 
-	c.Info("Generate docker-compose.yml")
+	fmt.Println("Generate docker-compose.yml")
 	return ioutil.WriteFile(dockerComposeOut, out, 0777)
 }
 
@@ -106,7 +105,7 @@ func (m *Command) cmdWipe(c *typgo.BuildCli) *cli.Command {
 	return &cli.Command{
 		Name:   "wipe",
 		Usage:  "Kill all running docker container",
-		Action: c.ActionFn(logName, m.dockerWipe),
+		Action: c.ActionFn(m.dockerWipe),
 	}
 }
 
@@ -118,7 +117,7 @@ func (m *Command) dockerWipe(c *typgo.Context) (err error) {
 	}
 	for _, id := range ids {
 		if err = kill(ctx, id); err != nil {
-			c.Warnf("Fail to kill #%s: %s", id, err.Error())
+			log.Printf("Fail to kill #%s: %s", id, err.Error())
 		}
 	}
 	return nil
@@ -132,7 +131,7 @@ func (m *Command) cmdUp(c *typgo.BuildCli) *cli.Command {
 			&cli.BoolFlag{Name: "wipe"},
 		},
 		Usage:  "Spin up docker containers according docker-compose",
-		Action: c.ActionFn(logName, m.dockerUp),
+		Action: c.ActionFn(m.dockerUp),
 	}
 }
 
@@ -158,7 +157,7 @@ func (m *Command) cmdDown(c *typgo.BuildCli) *cli.Command {
 		Name:    "down",
 		Aliases: []string{"stop"},
 		Usage:   "Take down all docker containers according docker-compose",
-		Action:  c.ActionFn(logName, dockerDown),
+		Action:  c.ActionFn(dockerDown),
 	}
 }
 

@@ -50,7 +50,7 @@ func (r *ReleaseCmd) Command(c *BuildCli) *cli.Command {
 			&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
 			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
 		},
-		Action: c.ActionFn("RELEASE", r.Execute),
+		Action: c.ActionFn(r.Execute),
 	}
 }
 

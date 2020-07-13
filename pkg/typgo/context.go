@@ -8,7 +8,6 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/typical-go/typical-go/pkg/execkit"
-	"github.com/typical-go/typical-go/pkg/typlog"
 	"github.com/urfave/cli/v2"
 )
 
@@ -20,7 +19,6 @@ var (
 type (
 	// Context of build tool
 	Context struct {
-		typlog.Logger
 		*cli.Context
 		*BuildCli
 	}

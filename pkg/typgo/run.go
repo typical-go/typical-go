@@ -32,7 +32,7 @@ func (r *RunCmd) Command(b *BuildCli) *cli.Command {
 		Aliases:         []string{"r"},
 		Usage:           "Run the project in local environment",
 		SkipFlagParsing: true,
-		Action:          b.ActionFn("RUN", r.Execute),
+		Action:          b.ActionFn(r.Execute),
 	}
 }
 

@@ -2,6 +2,7 @@ package typmock
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/iancoleman/strcase"
@@ -24,7 +25,7 @@ func (*Command) Command(c *typgo.BuildCli) *cli.Command {
 		Usage:       "Generate mock class",
 		UsageText:   "mock [package_names]",
 		Description: "If package_names is missing then check every package",
-		Action:      c.ActionFn("mock", mock),
+		Action:      c.ActionFn(mock),
 	}
 }
 
@@ -64,7 +65,7 @@ func mock(c *typgo.Context) (err error) {
 				},
 				Stderr: os.Stderr,
 			}); err != nil {
-				c.Warnf("Fail to mock '%s': %s", name, err.Error())
+				log.Printf("Fail to mock '%s': %s", name, err.Error())
 			}
 		}
 	}

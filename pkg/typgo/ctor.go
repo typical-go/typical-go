@@ -2,6 +2,7 @@ package typgo
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
@@ -33,7 +34,7 @@ func (*CtorAnnotation) Execute(c *Context) error {
 	for _, annot := range c.ASTStore.Annots {
 		ctor, err := ParseCtor(annot)
 		if err != nil {
-			c.Warnf("ctor: %s", err.Error())
+			log.Printf("WARN ctor: %s", err.Error())
 			continue
 		}
 		if ctor != nil {

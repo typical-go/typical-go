@@ -1,6 +1,7 @@
 package typgo
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/urfave/cli/v2"
@@ -26,7 +27,7 @@ func (c *CleanCmd) Command(b *BuildCli) *cli.Command {
 	return &cli.Command{
 		Name:   "clean",
 		Usage:  "Clean the project",
-		Action: b.ActionFn("CLEAN", c.Execute),
+		Action: b.ActionFn(c.Execute),
 	}
 }
 
@@ -44,6 +45,6 @@ func (s *StdClean) Execute(c *Context) error {
 
 func removeAll(c *Context, folder string) {
 	if err := os.RemoveAll(folder); err == nil {
-		c.Infof("RemoveAll: %s", folder)
+		fmt.Printf("RemoveAll: %s\n", folder)
 	}
 }

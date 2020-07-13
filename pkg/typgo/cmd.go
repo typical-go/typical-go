@@ -1,8 +1,6 @@
 package typgo
 
 import (
-	"strings"
-
 	"github.com/urfave/cli/v2"
 )
 
@@ -50,8 +48,7 @@ func (c *Command) Command(b *BuildCli) *cli.Command {
 		SkipFlagParsing: c.SkipFlagParsing,
 
 		Action: func(cliCtx *cli.Context) error {
-			ctx := b.Context(strings.ToUpper(c.Name), cliCtx)
-			return c.Action.Execute(ctx)
+			return c.Action.Execute(b.Context(cliCtx))
 		},
 	}
 }
