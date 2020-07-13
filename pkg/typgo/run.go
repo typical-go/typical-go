@@ -5,19 +5,13 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/urfave/cli/v2"
 )
 
 type (
-	// Runner responsible to run
-	Runner interface {
-		Run(*Context) error
-	}
-	// Runners for composite run
-	Runners []Runner
-	// RunFn is runner function
-	RunFn   func(*Context) error
-	runImpl struct {
-		fn RunFn
+	// RunCmd run command
+	RunCmd struct {
+		Action
 	}
 	// StdRun standard run
 	StdRun struct {
@@ -26,42 +20,30 @@ type (
 )
 
 //
-// runImpl
+// RunCmd
 //
 
-// NewRunner return new instance of Run
-func NewRunner(fn RunFn) Runner {
-	return &runImpl{fn: fn}
-}
+var _ Cmd = (*RunCmd)(nil)
 
-func (r *runImpl) Run(c *Context) error {
-	return r.fn(c)
-}
-
-//
-// Runs
-//
-
-var _ Runner = (Runners)(nil)
-
-// Run composite runner
-func (r Runners) Run(c *Context) error {
-	for _, runner := range r {
-		if err := runner.Run(c); err != nil {
-			return err
-		}
+// Command run
+func (r *RunCmd) Command(b *BuildCli) *cli.Command {
+	return &cli.Command{
+		Name:            "run",
+		Aliases:         []string{"r"},
+		Usage:           "Run the project in local environment",
+		SkipFlagParsing: true,
+		Action:          b.ActionFn("RUN", r.Execute),
 	}
-	return nil
 }
 
 //
 // StdRun
 //
 
-var _ Runner = (*StdRun)(nil)
+var _ Action = (*StdRun)(nil)
 
-// Run for standard typical project
-func (s *StdRun) Run(c *Context) error {
+// Execute standard run
+func (s *StdRun) Execute(c *Context) error {
 	if s.Binary == "" {
 		s.Binary = fmt.Sprintf("bin/%s", c.Descriptor.Name)
 	}

@@ -23,32 +23,30 @@ const (
 )
 
 type (
-	// Utility for docker
-	Utility struct {
+	// Command for docker
+	Command struct {
 		Version   string
 		Composers []Composer
 	}
 )
 
-var _ typgo.Utility = (*Utility)(nil)
+var _ typgo.Cmd = (*Command)(nil)
 
-// Commands of docker
-func (m *Utility) Commands(c *typgo.BuildCli) ([]*cli.Command, error) {
-	return []*cli.Command{
-		{
-			Name:  "docker",
-			Usage: "Docker utility",
-			Subcommands: []*cli.Command{
-				m.cmdCompose(c),
-				m.cmdUp(c),
-				m.cmdDown(c),
-				m.cmdWipe(c),
-			},
+// Command of docker
+func (m *Command) Command(c *typgo.BuildCli) *cli.Command {
+	return &cli.Command{
+		Name:  "docker",
+		Usage: "Docker utility",
+		Subcommands: []*cli.Command{
+			m.cmdCompose(c),
+			m.cmdUp(c),
+			m.cmdDown(c),
+			m.cmdWipe(c),
 		},
-	}, nil
+	}
 }
 
-func (m *Utility) cmdCompose(c *typgo.BuildCli) *cli.Command {
+func (m *Command) cmdCompose(c *typgo.BuildCli) *cli.Command {
 	return &cli.Command{
 		Name:   "compose",
 		Usage:  "Generate docker-compose.yaml",
@@ -57,7 +55,7 @@ func (m *Utility) cmdCompose(c *typgo.BuildCli) *cli.Command {
 }
 
 // Compose to generate docker-compose.yml
-func (m *Utility) Compose(c *typgo.Context) (err error) {
+func (m *Command) Compose(c *typgo.Context) (err error) {
 	if len(m.Composers) < 1 {
 		return errors.New("Nothing to compose")
 	}
@@ -104,7 +102,7 @@ func compile(version string, composers []Composer) (*Recipe, error) {
 	return root, nil
 }
 
-func (m *Utility) cmdWipe(c *typgo.BuildCli) *cli.Command {
+func (m *Command) cmdWipe(c *typgo.BuildCli) *cli.Command {
 	return &cli.Command{
 		Name:   "wipe",
 		Usage:  "Kill all running docker container",
@@ -112,7 +110,7 @@ func (m *Utility) cmdWipe(c *typgo.BuildCli) *cli.Command {
 	}
 }
 
-func (m *Utility) dockerWipe(c *typgo.Context) (err error) {
+func (m *Command) dockerWipe(c *typgo.Context) (err error) {
 	var ids []string
 	ctx := c.Ctx()
 	if ids, err = dockerIDs(ctx); err != nil {
@@ -126,7 +124,7 @@ func (m *Utility) dockerWipe(c *typgo.Context) (err error) {
 	return nil
 }
 
-func (m *Utility) cmdUp(c *typgo.BuildCli) *cli.Command {
+func (m *Command) cmdUp(c *typgo.BuildCli) *cli.Command {
 	return &cli.Command{
 		Name:    "up",
 		Aliases: []string{"start"},
@@ -138,7 +136,7 @@ func (m *Utility) cmdUp(c *typgo.BuildCli) *cli.Command {
 	}
 }
 
-func (m *Utility) dockerUp(c *typgo.Context) (err error) {
+func (m *Command) dockerUp(c *typgo.Context) (err error) {
 	if c.Bool("wipe") {
 		m.dockerWipe(c)
 	}
@@ -155,7 +153,7 @@ func (m *Utility) dockerUp(c *typgo.Context) (err error) {
 	})
 }
 
-func (m *Utility) cmdDown(c *typgo.BuildCli) *cli.Command {
+func (m *Command) cmdDown(c *typgo.BuildCli) *cli.Command {
 	return &cli.Command{
 		Name:    "down",
 		Aliases: []string{"stop"},

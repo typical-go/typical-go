@@ -25,10 +25,10 @@ type (
 	}
 )
 
-var _ Compiler = (*CtorAnnotation)(nil)
+var _ Action = (*CtorAnnotation)(nil)
 
-// Compile ctor annotation
-func (*CtorAnnotation) Compile(c *Context) error {
+// Execute ctor annotation
+func (*CtorAnnotation) Execute(c *Context) error {
 	var ctors []*typtmpl.Ctor
 	for _, annot := range c.ASTStore.Annots {
 		ctor, err := ParseCtor(annot)

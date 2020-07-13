@@ -11,18 +11,26 @@ var (
 	descriptor = typgo.Descriptor{
 		Name:    "generate-mock",
 		Version: "1.0.0",
-
 		Layouts: []string{"internal"},
 
-		Compile: typgo.Compilers{
-			&typgo.CtorAnnotation{},
-			&typgo.StdCompile{},
+		Commands: typgo.Commands{
+			&typgo.CompileCmd{
+				Action: typgo.Actions{
+					&typgo.CtorAnnotation{},
+					&typgo.StdCompile{},
+				},
+			},
+			&typgo.RunCmd{
+				Action: &typgo.StdRun{},
+			},
+			&typgo.TestCmd{
+				Action: &typgo.StdTest{},
+			},
+			&typgo.CleanCmd{
+				Action: &typgo.StdClean{},
+			},
+			&typmock.Command{},
 		},
-		Run:   &typgo.StdRun{},
-		Test:  &typgo.StdTest{},
-		Clean: &typgo.StdClean{},
-
-		Utility: &typmock.Utility{},
 	}
 )
 

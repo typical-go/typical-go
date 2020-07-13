@@ -13,12 +13,20 @@ var (
 		Version: "1.0.0",
 		Layouts: []string{"internal"},
 
-		Compile: typgo.Compilers{
-			typgo.NewCompiler(npmBuild),
-			&typgo.StdCompile{},
+		Commands: typgo.Commands{
+			&typgo.CompileCmd{
+				Action: typgo.Actions{
+					typgo.NewAction(npmBuild),
+					&typgo.StdCompile{},
+				},
+			},
+			&typgo.RunCmd{
+				Action: &typgo.StdRun{},
+			},
+			&typgo.CleanCmd{
+				Action: &typgo.StdClean{},
+			},
 		},
-		Run:   &typgo.StdRun{},
-		Clean: &typgo.StdClean{},
 	}
 )
 

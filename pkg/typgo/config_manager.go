@@ -22,10 +22,10 @@ type (
 	}
 )
 
-var _ Compiler = (*ConfigManager)(nil)
+var _ Action = (*ConfigManager)(nil)
 
-// Compile to prepare dependency-injection and env-file
-func (m *ConfigManager) Compile(c *Context) error {
+// Execute config-manager to prepare dependency-injection and env-file
+func (m *ConfigManager) Execute(c *Context) error {
 	var cfgs []*typtmpl.CfgCtor
 	for _, cfg := range m.Configs {
 		specType := reflect.TypeOf(cfg.Spec).String()

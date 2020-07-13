@@ -20,10 +20,10 @@ type (
 	}
 )
 
-var _ Compiler = (*DtorAnnotation)(nil)
+var _ Action = (*DtorAnnotation)(nil)
 
 // Compile @dtor
-func (*DtorAnnotation) Compile(c *Context) error {
+func (*DtorAnnotation) Execute(c *Context) error {
 	var dtors []*typtmpl.Dtor
 	for _, annot := range c.ASTStore.Annots {
 		dtor := ParseDtor(annot)

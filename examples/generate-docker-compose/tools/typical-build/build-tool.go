@@ -12,14 +12,22 @@ var (
 		Name:    "generate-docker-compose",
 		Version: "1.0.0",
 		Layouts: []string{"internal"},
-		Compile: &typgo.StdCompile{},
-		Run:     &typgo.StdRun{},
-		Clean:   &typgo.StdClean{},
 
-		Utility: &typdocker.Utility{
-			Version: typdocker.V3,
-			Composers: []typdocker.Composer{
-				redisRecipe,
+		Commands: typgo.Commands{
+			&typgo.CompileCmd{
+				Action: &typgo.StdCompile{},
+			},
+			&typgo.RunCmd{
+				Action: &typgo.StdRun{},
+			},
+			&typgo.CleanCmd{
+				Action: &typgo.StdClean{},
+			},
+			&typdocker.Command{
+				Version: typdocker.V3,
+				Composers: []typdocker.Composer{
+					redisRecipe,
+				},
 			},
 		},
 	}

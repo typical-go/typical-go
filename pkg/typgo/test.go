@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/urfave/cli/v2"
 )
 
 const (
@@ -13,47 +14,40 @@ const (
 )
 
 type (
-	// Tester responsible to test
-	Tester interface {
-		Test(*Context) error
+	// TestCmd command test
+	TestCmd struct {
+		Action
 	}
-	// Testers for composite test
-	Testers []Tester
-	// StdTest is standard test
+	// StdTest standard test
 	StdTest struct {
 		Timeout      time.Duration
 		CoverProfile string
 		Race         bool
 	}
-	// TestFn function
-	TestFn     func(*Context) error
-	testerImpl struct {
-		fn TestFn
-	}
 )
 
-var _ Tester = (*StdTest)(nil)
-
 //
-// testerImpl
+// TestCmd
 //
 
-// NewTest return new instance of test
-func NewTest(fn TestFn) Tester {
-	return &testerImpl{fn: fn}
-}
-
-func (t *testerImpl) Test(c *Context) error {
-	return t.fn(c)
+// Command test
+func (t *TestCmd) Command(b *BuildCli) *cli.Command {
+	return &cli.Command{
+		Name:    "test",
+		Aliases: []string{"t"},
+		Usage:   "Test the project",
+		Action:  b.ActionFn("TEST", t.Execute),
+	}
 }
 
 //
 // StdTest
 //
 
-// Test standard
-func (s *StdTest) Test(c *Context) (err error) {
+var _ Action = (*StdTest)(nil)
 
+// Execute standard test
+func (s *StdTest) Execute(c *Context) (err error) {
 	if len(c.Descriptor.Layouts) < 1 {
 		c.Info("Nothing to test")
 		return
@@ -86,20 +80,4 @@ func (s *StdTest) getCoverProfile() string {
 		return defaultTestCoverProfile
 	}
 	return s.CoverProfile
-}
-
-//
-// Tests
-//
-
-var _ Tester = (Testers)(nil)
-
-// Test composite
-func (t Testers) Test(c *Context) (err error) {
-	for _, test := range t {
-		if err = test.Test(c); err != nil {
-			return
-		}
-	}
-	return
 }

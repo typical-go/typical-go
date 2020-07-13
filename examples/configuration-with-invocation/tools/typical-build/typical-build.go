@@ -11,19 +11,26 @@ var (
 	descriptor = typgo.Descriptor{
 		Name:    "configuration-with-invocation",
 		Version: "1.0.0",
-
 		Layouts: []string{"internal"},
 
-		Compile: typgo.Compilers{
-			&typgo.ConfigManager{
-				Configs: []*typgo.Configuration{
-					{Name: "SERVER", Spec: &server.Config{}},
+		Commands: typgo.Commands{
+			&typgo.CompileCmd{
+				Action: typgo.Actions{
+					&typgo.ConfigManager{
+						Configs: []*typgo.Configuration{
+							{Name: "SERVER", Spec: &server.Config{}},
+						},
+					},
+					&typgo.StdCompile{},
 				},
 			},
-			&typgo.StdCompile{},
+			&typgo.RunCmd{
+				Action: &typgo.StdRun{},
+			},
+			&typgo.CleanCmd{
+				Action: &typgo.StdClean{},
+			},
 		},
-		Run:   &typgo.StdRun{},
-		Clean: &typgo.StdClean{},
 	}
 )
 

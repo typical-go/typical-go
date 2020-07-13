@@ -101,7 +101,7 @@ volumes:
 			os.Remove("docker-compose.yml")
 			defer os.Remove("docker-compose.yml")
 
-			utility := &typdocker.Utility{
+			utility := &typdocker.Command{
 				Version:   tt.version,
 				Composers: tt.composers,
 			}

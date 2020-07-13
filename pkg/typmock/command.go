@@ -10,22 +10,22 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// Utility to generate mock class
-type Utility struct{}
+type (
+	// Command mock
+	Command struct{}
+)
 
-var _ typgo.Utility = (*Utility)(nil)
+var _ typgo.Cmd = (*Command)(nil)
 
-// Commands to utility
-func (*Utility) Commands(c *typgo.BuildCli) ([]*cli.Command, error) {
-	return []*cli.Command{
-		{
-			Name:        "mock",
-			Usage:       "Generate mock class",
-			UsageText:   "mock [package_names]",
-			Description: "If package_names is missing then check every package",
-			Action:      c.ActionFn("mock", mock),
-		},
-	}, nil
+// Command to utility
+func (*Command) Command(c *typgo.BuildCli) *cli.Command {
+	return &cli.Command{
+		Name:        "mock",
+		Usage:       "Generate mock class",
+		UsageText:   "mock [package_names]",
+		Description: "If package_names is missing then check every package",
+		Action:      c.ActionFn("mock", mock),
+	}
 }
 
 func mock(c *typgo.Context) (err error) {

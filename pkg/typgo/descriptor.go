@@ -14,30 +14,20 @@ type Descriptor struct {
 	// Description of the project (OPTIONAL).
 	Description string
 	// Version of the project (OPTIONAL). By default it is 0.0.1
-	Version string
-	Layouts []string
-	Test    Tester
-	Compile Compiler
-	Run     Runner
-	Release Releaser
-	Clean   Cleaner
-	Utility Utility
+	Version  string
+	Layouts  []string
+	Commands Commands
 }
 
 // Run typical build-tool
 func Run(d *Descriptor) error {
 	buildCli := createBuildCli(d)
 
-	cmds, err := buildCli.commands()
-	if err != nil {
-		return err
-	}
-
 	cli.AppHelpTemplate = appHelpTemplate
 	cli.SubcommandHelpTemplate = subcommandHelpTemplate
 
 	app := cli.NewApp()
-	app.Commands = cmds
+	app.Commands = buildCli.commands()
 
 	return app.Run(os.Args)
 }

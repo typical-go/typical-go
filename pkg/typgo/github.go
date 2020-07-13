@@ -14,8 +14,8 @@ import (
 type (
 	// Github to publish
 	Github struct {
-		Owner    string
-		RepoName string
+		Owner string
+		Repo  string
 	}
 )
 
@@ -40,10 +40,10 @@ func (g *Github) Release(c *ReleaseContext) (err error) {
 	gitLogs := c.GitLogs
 	alpha := c.Alpha
 
-	if _, _, err = repo.GetReleaseByTag(ctx, g.Owner, g.RepoName, tag); err == nil {
+	if _, _, err = repo.GetReleaseByTag(ctx, g.Owner, g.Repo, tag); err == nil {
 		return fmt.Errorf("Tag '%s' already published", tag)
 	}
-	fmt.Printf("\nCreate github release for %s/%s\n", g.Owner, g.RepoName)
+	fmt.Printf("\nCreate github release for %s/%s\n", g.Owner, g.Repo)
 	githubRls := &github.RepositoryRelease{
 		Name:       github.String(fmt.Sprintf("%s - %s", c.Descriptor.Name, tag)),
 		TagName:    github.String(tag),
@@ -51,7 +51,7 @@ func (g *Github) Release(c *ReleaseContext) (err error) {
 		Draft:      github.Bool(false),
 		Prerelease: github.Bool(alpha),
 	}
-	if githubRls, _, err = repo.CreateRelease(ctx, g.Owner, g.RepoName, githubRls); err != nil {
+	if githubRls, _, err = repo.CreateRelease(ctx, g.Owner, g.Repo, githubRls); err != nil {
 		return
 	}
 

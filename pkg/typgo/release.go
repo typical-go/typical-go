@@ -1,12 +1,19 @@
 package typgo
 
 import (
+	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/git"
+	"github.com/urfave/cli/v2"
 )
 
 type (
+	// ReleaseCmd release command
+	ReleaseCmd struct {
+		Releaser
+	}
 	// Releaser responsible to release
 	Releaser interface {
 		Release(*ReleaseContext) error
@@ -26,6 +33,63 @@ type (
 		fn ReleaseFn
 	}
 )
+
+//
+// ReleaseCmd
+//
+
+var _ Cmd = (*ReleaseCmd)(nil)
+var _ Action = (*ReleaseCmd)(nil)
+
+// Command release
+func (r *ReleaseCmd) Command(c *BuildCli) *cli.Command {
+	return &cli.Command{
+		Name:  "release",
+		Usage: "Release the project",
+		Flags: []cli.Flag{
+			&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
+			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
+		},
+		Action: c.ActionFn("RELEASE", r.Execute),
+	}
+}
+
+// Execute release
+func (r *ReleaseCmd) Execute(c *Context) (err error) {
+
+	ctx := c.Ctx()
+
+	if err = git.Fetch(ctx); err != nil {
+		return fmt.Errorf("Failed git fetch: %w", err)
+	}
+	defer git.Fetch(ctx)
+
+	force := c.Bool("force")
+	alpha := c.Bool("alpha")
+	tag := releaseTag(c, alpha)
+
+	status := git.Status(ctx)
+	if status != "" && !force {
+		return fmt.Errorf("Please commit changes first:\n%s", status)
+	}
+
+	latest := git.LatestTag(ctx)
+	if latest == tag && !force {
+		return fmt.Errorf("%s already released", latest)
+	}
+
+	gitLogs := git.RetrieveLogs(ctx, latest)
+	if len(gitLogs) < 1 && !force {
+		return errors.New("No change to be released")
+	}
+
+	return r.Release(&ReleaseContext{
+		Context: c,
+		Alpha:   alpha,
+		Tag:     tag,
+		GitLogs: gitLogs,
+	})
+}
 
 //
 // releaserImpl
