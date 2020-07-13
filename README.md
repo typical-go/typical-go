@@ -80,9 +80,20 @@ var (
 		Name:    "hello-world",
 		Version: "1.0.0",
 
-    Compile: &typgo.StdCompile{},
-		Run:     &typgo.StdRun{},
-		Clean:   &typgo.StdClean{},
+		Commands: typgo.Commands{
+			&typgo.CompileCmd{
+				Action: &typgo.StdCompile{},
+			},
+			&typgo.RunCmd{
+				Action: &typgo.StdRun{},
+			},
+			&typgo.TestCmd{
+				Action: &typgo.StdTest{},
+			},
+			&typgo.CleanCmd{
+				Action: &typgo.StdClean{},
+			},
+		},
 	}
 )
 
