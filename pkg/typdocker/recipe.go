@@ -8,21 +8,16 @@ type (
 		Networks Networks
 		Volumes  Volumes
 	}
-
 	// Services descriptor in docker-compose.yml
 	Services map[string]interface{}
-
 	// Networks descriptor in docker-compose.yml
 	Networks map[string]interface{}
-
 	// Volumes descriptor in docker-compose.yml
 	Volumes map[string]interface{}
-
 	// Network in docker-compose.yaml
 	Network struct {
 		Driver string `yaml:"driver,omitempty"`
 	}
-
 	// Service in docker-compose.yaml
 	Service struct {
 		Image       string            `yaml:"image,omitempty"`
@@ -35,9 +30,13 @@ type (
 	}
 )
 
+//
+// Recipe
+//
+
 var _ Composer = (*Recipe)(nil)
 
-// Compose the recipe
-func (c *Recipe) Compose() (*Recipe, error) {
+// ComposeV3 the recipe
+func (c *Recipe) ComposeV3() (*Recipe, error) {
 	return c, nil
 }

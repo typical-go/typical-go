@@ -1,11 +1,13 @@
 package typdocker
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -14,20 +16,32 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-const (
-	dockerComposeOut = "docker-compose.yml"
-
-	// V3 is version 3
-	V3 = "3"
+var (
+	// DockerComposeYml is yml file
+	DockerComposeYml = "docker-compose.yml"
+	// Version of docker compose
+	Version = "3"
 )
 
 type (
 	// Command for docker
 	Command struct {
-		Version   string
 		Composers []Composer
 	}
+	// Composer responsible to compose docker
+	Composer interface {
+		ComposeV3() (*Recipe, error)
+	}
+	// ComposeFn function
+	ComposeFn    func() (*Recipe, error)
+	composerImpl struct {
+		fn ComposeFn
+	}
 )
+
+//
+// Command
+//
 
 var _ typgo.Cmd = (*Command)(nil)
 
@@ -59,7 +73,7 @@ func (m *Command) Compose(c *typgo.Context) (err error) {
 		return errors.New("Nothing to compose")
 	}
 
-	root, err := compile(m.Version, m.Composers)
+	root, err := compile(Version, m.Composers)
 	if err != nil {
 		return fmt.Errorf("compile: %w", err)
 	}
@@ -70,7 +84,7 @@ func (m *Command) Compose(c *typgo.Context) (err error) {
 	}
 
 	fmt.Println("Generate docker-compose.yml")
-	return ioutil.WriteFile(dockerComposeOut, out, 0777)
+	return ioutil.WriteFile(DockerComposeYml, out, 0777)
 }
 
 // Compile recipes to yaml
@@ -82,20 +96,18 @@ func compile(version string, composers []Composer) (*Recipe, error) {
 		Volumes:  make(Volumes),
 	}
 	for _, composer := range composers {
-		obj, err := composer.Compose()
+		obj, err := composer.ComposeV3()
 		if err != nil {
 			return nil, err
 		}
-		if obj != nil && obj.Version == version {
-			for k, service := range obj.Services {
-				root.Services[k] = service
-			}
-			for k, network := range obj.Networks {
-				root.Networks[k] = network
-			}
-			for k, volume := range obj.Volumes {
-				root.Volumes[k] = volume
-			}
+		for k, service := range obj.Services {
+			root.Services[k] = service
+		}
+		for k, network := range obj.Networks {
+			root.Networks[k] = network
+		}
+		for k, volume := range obj.Volumes {
+			root.Volumes[k] = volume
 		}
 	}
 	return root, nil
@@ -139,13 +151,11 @@ func (m *Command) dockerUp(c *typgo.Context) (err error) {
 	if c.Bool("wipe") {
 		m.dockerWipe(c)
 	}
-
-	if _, err = os.Stat(dockerComposeOut); os.IsNotExist(err) {
+	if _, err = os.Stat(DockerComposeYml); os.IsNotExist(err) {
 		if err = m.Compose(c); err != nil {
 			return
 		}
 	}
-
 	return c.Execute(&execkit.Command{
 		Name: "docker-compose",
 		Args: []string{"up", "--remove-orphans", "-d"},
@@ -166,4 +176,52 @@ func dockerDown(c *typgo.Context) error {
 		Name: "docker-compose",
 		Args: []string{"down"},
 	})
+}
+
+func dockerIDs(ctx context.Context) (ids []string, err error) {
+	var out strings.Builder
+	cmd := &execkit.Command{
+		Name:   "docker",
+		Args:   []string{"ps", "-q"},
+		Stderr: os.Stderr,
+		Stdout: &out,
+	}
+
+	execkit.PrintCommand(cmd, os.Stdout)
+
+	if err = cmd.Run(ctx); err != nil {
+		return
+	}
+
+	for _, id := range strings.Split(out.String(), "\n") {
+		if id != "" {
+			ids = append(ids, id)
+		}
+	}
+	return
+}
+
+func kill(ctx context.Context, id string) (err error) {
+	cmd := &execkit.Command{
+		Name:   "docker",
+		Args:   []string{"kill", id},
+		Stderr: os.Stderr,
+	}
+	execkit.PrintCommand(cmd, os.Stdout)
+	return cmd.Run(ctx)
+}
+
+//
+// composerImpl
+//
+
+var _ Composer = (*composerImpl)(nil)
+
+// NewCompose return new instance of composer
+func NewCompose(fn ComposeFn) Composer {
+	return &composerImpl{fn: fn}
+}
+
+func (i *composerImpl) ComposeV3() (*Recipe, error) {
+	return i.fn()
 }

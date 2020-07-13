@@ -1,6 +1,7 @@
 package typdocker_test
 
 import (
+	"errors"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -12,7 +13,6 @@ import (
 
 var (
 	redisV2 = &typdocker.Recipe{
-		Version: "2",
 		Services: typdocker.Services{
 			"redis":  "redis-service",
 			"webdis": "webdis-service",
@@ -25,7 +25,6 @@ var (
 		},
 	}
 	pgV2 = &typdocker.Recipe{
-		Version: "2",
 		Services: typdocker.Services{
 			"pg": "pg-service",
 		},
@@ -41,46 +40,16 @@ var (
 func TestComposeRecipe(t *testing.T) {
 	testcases := []struct {
 		testName  string
-		version   string
 		composers []typdocker.Composer
 		expected  string
 	}{
 		{
-			testName: "",
-			version:  "2",
-			composers: []typdocker.Composer{
-				redisV2,
-			},
-			expected: `version: "2"
-services:
-  redis: redis-service
-  webdis: webdis-service
-networks:
-  webdis: webdis-network
-volumes:
-  redis: redis-volume
-`,
-		},
-		{
-			testName: "version not match",
-			version:  "3",
-			composers: []typdocker.Composer{
-				redisV2,
-			},
-			expected: `version: "3"
-services: {}
-networks: {}
-volumes: {}
-`,
-		},
-		{
 			testName: "multiple composer",
-			version:  "2",
 			composers: []typdocker.Composer{
 				redisV2,
 				pgV2,
 			},
-			expected: `version: "2"
+			expected: `version: "3"
 services:
   pg: pg-service
   redis: redis-service
@@ -102,7 +71,6 @@ volumes:
 			defer os.Remove("docker-compose.yml")
 
 			utility := &typdocker.Command{
-				Version:   tt.version,
 				Composers: tt.composers,
 			}
 
@@ -112,4 +80,17 @@ volumes:
 			require.Equal(t, tt.expected, string(b))
 		})
 	}
+}
+
+func TestNewCompose(t *testing.T) {
+	expectedErr := errors.New("some-error")
+	expectedRecipe := &typdocker.Recipe{}
+
+	composer := typdocker.NewCompose(func() (*typdocker.Recipe, error) {
+		return expectedRecipe, expectedErr
+	})
+
+	recipe, err := composer.ComposeV3()
+	require.Equal(t, expectedRecipe, recipe)
+	require.Equal(t, expectedErr, err)
 }

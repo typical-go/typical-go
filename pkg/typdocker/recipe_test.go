@@ -8,8 +8,8 @@ import (
 )
 
 func TestRecipe_DockerCompose(t *testing.T) {
-	expected := &typdocker.Recipe{Version: "2"}
-	recipe, err := expected.Compose()
+	expected := &typdocker.Recipe{}
+	recipe, err := expected.ComposeV3()
 	require.Equal(t, expected, recipe)
 	require.NoError(t, err)
 }
