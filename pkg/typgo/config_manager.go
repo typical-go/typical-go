@@ -13,7 +13,6 @@ type (
 		SkipEnvFile bool
 		Configs     []*Configuration
 	}
-
 	// Configuration is alias from typgo.Configuration with Configurer implementation
 	Configuration struct {
 		Ctor string

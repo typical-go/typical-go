@@ -1,6 +1,9 @@
 package typgo
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 )
 
@@ -30,6 +33,13 @@ type (
 	ExecuteFn  func(*Context) error
 	actionImpl struct {
 		fn ExecuteFn
+	}
+	// CmdTestCase test-case for cmd interface
+	CmdTestCase struct {
+		TestName      string
+		Cmd           Cmd
+		Expected      Command
+		ExpectedError string
 	}
 )
 
@@ -83,4 +93,27 @@ func NewAction(fn ExecuteFn) Action {
 // Execute action
 func (a *actionImpl) Execute(c *Context) error {
 	return a.fn(c)
+}
+
+//
+// CmdTestCase
+//
+
+// Run test for Command
+func (tt *CmdTestCase) Run(t *testing.T) bool {
+	return t.Run(tt.TestName, func(t *testing.T) {
+		b := &BuildCli{}
+		cmd := tt.Cmd.Command(b)
+		require.Equal(t, tt.Expected.Name, cmd.Name)
+		require.Equal(t, tt.Expected.Usage, cmd.Usage)
+		require.Equal(t, tt.Expected.Aliases, cmd.Aliases)
+		require.Equal(t, tt.Expected.Flags, cmd.Flags)
+
+		err := cmd.Action(nil)
+		if tt.ExpectedError != "" {
+			require.EqualError(t, err, tt.ExpectedError)
+		} else {
+			require.NoError(t, err)
+		}
+	})
 }
