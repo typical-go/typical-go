@@ -22,7 +22,7 @@ type (
 
 var _ Action = (*DtorAnnotation)(nil)
 
-// Compile @dtor
+// Execute @dtor
 func (*DtorAnnotation) Execute(c *Context) error {
 	var dtors []*typtmpl.Dtor
 	for _, annot := range c.ASTStore.Annots {

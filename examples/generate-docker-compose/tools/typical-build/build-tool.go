@@ -24,7 +24,6 @@ var (
 				Action: &typgo.StdClean{},
 			},
 			&typdocker.Command{
-				Version: typdocker.V3,
 				Composers: []typdocker.Composer{
 					redisRecipe,
 				},
@@ -33,7 +32,6 @@ var (
 	}
 
 	redisRecipe = &typdocker.Recipe{
-		Version: typdocker.V3,
 		Services: typdocker.Services{
 			"redis": typdocker.Service{
 				Image: "redis:4.0.5-alpine",
