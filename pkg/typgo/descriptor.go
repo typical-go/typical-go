@@ -6,16 +6,20 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// Descriptor describe the project
-type Descriptor struct {
-	// Name of the project (OPTIONAL). It should be a characters with/without underscore or dash.
-	// By default, project name is same with project folder
-	Name string
-	// Version of the project (OPTIONAL). By default it is 0.0.1
-	Version  string
-	Layouts  []string
-	Commands Commands
-}
+type (
+	// Descriptor describe the project
+	Descriptor struct {
+		// Name of the project (OPTIONAL). It should be a characters with/without underscore or dash.
+		// By default, project name is same with project folder
+		Name string
+		// Version of the project (OPTIONAL). By default it is 0.0.1
+		Version  string
+		Layouts  Layouts
+		Commands Commands
+	}
+	// Layouts for project
+	Layouts []string
+)
 
 // Run typical build-tool
 func Run(d *Descriptor) error {

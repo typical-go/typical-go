@@ -11,7 +11,7 @@ var (
 	descriptor = typgo.Descriptor{
 		Name:    "typical-go",
 		Version: "0.9.57",
-		Layouts: []string{"internal", "pkg"},
+		Layouts: typgo.Layouts{"internal", "pkg"},
 
 		Commands: typgo.Commands{
 			&typgo.CompileCmd{

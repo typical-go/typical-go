@@ -12,7 +12,7 @@ var (
 	descriptor = typgo.Descriptor{
 		Name:    "simple-additional-task",
 		Version: "1.0.0",
-		Layouts: []string{"internal"},
+		Layouts: typgo.Layouts{"internal"},
 
 		Commands: typgo.Commands{
 			&typgo.CompileCmd{
