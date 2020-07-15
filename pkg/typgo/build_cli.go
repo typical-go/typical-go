@@ -7,11 +7,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var (
-	// ConfigFile location
-	ConfigFile = ".env"
-)
-
 type (
 	// BuildCli detail
 	BuildCli struct {

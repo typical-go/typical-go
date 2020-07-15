@@ -20,6 +20,7 @@ var (
 						Configs: []*typgo.Configuration{
 							{Name: "SERVER", Spec: &server.Config{}},
 						},
+						EnvFile: true,
 					},
 					&typgo.StdCompile{},
 				},
