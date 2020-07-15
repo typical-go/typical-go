@@ -14,13 +14,15 @@ var (
 
 type (
 	// CtorAnnotation represent @ctor annotation
-	CtorAnnotation struct{}
+	CtorAnnotation struct {
+		Target string
+	}
 )
 
 var _ Action = (*CtorAnnotation)(nil)
 
 // Execute ctor annotation
-func (*CtorAnnotation) Execute(c *Context) error {
+func (a *CtorAnnotation) Execute(c *Context) error {
 	var ctors []*typtmpl.Ctor
 	for _, annot := range c.ASTStore.Annots {
 		if annot.Check(ctorTag, typast.FuncType) {
@@ -34,11 +36,19 @@ func (*CtorAnnotation) Execute(c *Context) error {
 	}
 
 	return writeGoSource(
-		fmt.Sprintf("cmd/%s/ctor_annotated.go", c.Descriptor.Name),
+		a.GetTarget(c),
 		&typtmpl.CtorAnnotated{
 			Package: "main",
 			Imports: c.Imports,
 			Ctors:   ctors,
 		},
 	)
+}
+
+// GetTarget to return target generation of ctor
+func (a *CtorAnnotation) GetTarget(c *Context) string {
+	if a.Target == "" {
+		a.Target = fmt.Sprintf("cmd/%s/ctor_annotated.go", c.Descriptor.Name)
+	}
+	return a.Target
 }

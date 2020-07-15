@@ -12,7 +12,8 @@ func writeGoSource(target string, tmpl typtmpl.Template) error {
 	if err := typtmpl.ExecuteToFile(target, tmpl); err != nil {
 		return err
 	}
-	return goImports(target)
+	goImports(target)
+	return nil
 }
 
 func goImports(target string) error {
