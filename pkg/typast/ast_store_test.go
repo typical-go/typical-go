@@ -9,45 +9,45 @@ import (
 
 var (
 	someInterfaceDecl = &typast.Decl{
-		Path: "sample_test.go",
-		Pkg:  "typast_test",
-		Type: typast.Interface,
-		Name: "sampleInterface",
+		Path:    "sample_test.go",
+		Package: "typast_test",
+		Type:    typast.InterfaceType,
+		Name:    "sampleInterface",
 	}
 
 	someStructDecl = &typast.Decl{
-		Path: "sample_test.go",
-		Pkg:  "typast_test",
-		Type: typast.Struct,
-		Name: "sampleStruct",
+		Path:    "sample_test.go",
+		Package: "typast_test",
+		Type:    typast.StructType,
+		Name:    "sampleStruct",
 	}
 
 	someFunctionDecl = &typast.Decl{
-		Path: "sample_test.go",
-		Pkg:  "typast_test",
-		Type: typast.Function,
-		Name: "sampleFunction",
+		Path:    "sample_test.go",
+		Package: "typast_test",
+		Type:    typast.FuncType,
+		Name:    "sampleFunction",
 	}
 
 	someFunctionDecl2 = &typast.Decl{
-		Path: "sample_test.go",
-		Pkg:  "typast_test",
-		Type: typast.Function,
-		Name: "sampleFunction2",
+		Path:    "sample_test.go",
+		Package: "typast_test",
+		Type:    typast.FuncType,
+		Name:    "sampleFunction2",
 	}
 
 	someInterface2Decl = &typast.Decl{
-		Path: "sample_test.go",
-		Pkg:  "typast_test",
-		Type: typast.Interface,
-		Name: "sampleInterface2",
+		Path:    "sample_test.go",
+		Package: "typast_test",
+		Type:    typast.InterfaceType,
+		Name:    "sampleInterface2",
 	}
 
 	someStruct2Decl = &typast.Decl{
-		Path: "sample_test.go",
-		Pkg:  "typast_test",
-		Type: typast.Struct,
-		Name: "sampleStruct2",
+		Path:    "sample_test.go",
+		Package: "typast_test",
+		Type:    typast.StructType,
+		Name:    "sampleStruct2",
 	}
 )
 
@@ -68,7 +68,7 @@ func TestCreateASTStore(t *testing.T) {
 		someStruct2Decl,
 	}, store.Decls)
 
-	require.EqualValues(t, []*typast.Annot{
+	require.EqualValues(t, []*typast.Annotation{
 		{
 			Decl:    someStructDecl,
 			TagName: "tag1",

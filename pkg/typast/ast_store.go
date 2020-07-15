@@ -13,7 +13,7 @@ type ASTStore struct {
 	Decls     []*Decl
 	Docs      []*ast.CommentGroup
 	DeclNodes []ast.Decl
-	Annots    []*Annot
+	Annots    []*Annotation
 }
 
 func (a *ASTStore) put(decl *Decl, node ast.Decl, doc *ast.CommentGroup) {
@@ -60,10 +60,10 @@ func putDecls(store *ASTStore, node ast.Decl, path, pkg string) {
 		name := funcDecl.Name.Name
 
 		store.put(&Decl{
-			Name: name,
-			Type: Function,
-			Path: path,
-			Pkg:  pkg,
+			Name:    name,
+			Type:    FuncType,
+			Path:    path,
+			Package: pkg,
 		}, node, doc)
 
 	case *ast.GenDecl:
@@ -73,12 +73,12 @@ func putDecls(store *ASTStore, node ast.Decl, path, pkg string) {
 			case *ast.TypeSpec:
 				typeSpec := spec.(*ast.TypeSpec)
 
-				declType := Generic
+				declType := GenericType
 				switch typeSpec.Type.(type) {
 				case *ast.InterfaceType:
-					declType = Interface
+					declType = InterfaceType
 				case *ast.StructType:
-					declType = Struct
+					declType = StructType
 				}
 
 				// NOTE: get type specific first before get the generic
@@ -88,10 +88,10 @@ func putDecls(store *ASTStore, node ast.Decl, path, pkg string) {
 				}
 
 				store.put(&Decl{
-					Name: typeSpec.Name.Name,
-					Type: declType,
-					Path: path,
-					Pkg:  pkg,
+					Name:    typeSpec.Name.Name,
+					Type:    declType,
+					Path:    path,
+					Package: pkg,
 				}, node, doc)
 			}
 		}
@@ -109,8 +109,8 @@ func putAnnots(store *ASTStore, decl *Decl, doc *ast.CommentGroup) (err error) {
 	RetrRawAnnots(&rawAnnots, doc.Text())
 
 	for _, raw := range rawAnnots {
-		var a *Annot
-		a, _ = CreateAnnot(decl, raw)
+		var a *Annotation
+		a, _ = CreateAnnotation(decl, raw)
 		if a != nil {
 			store.Annots = append(store.Annots, a)
 		}

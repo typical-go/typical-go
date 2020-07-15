@@ -1,6 +1,11 @@
 package typtmpl
 
-import "io"
+import (
+	"fmt"
+	"io"
+
+	"github.com/typical-go/typical-go/pkg/typast"
+)
 
 type (
 	// CtorAnnotated template
@@ -11,10 +16,28 @@ type (
 	}
 	// Ctor is constructor model
 	Ctor struct {
-		Name string
-		Def  string
+		Name string `json:"name"`
+		Def  string `json:"-"`
 	}
 )
+
+//
+// Ctor
+//
+
+// CreateCtor to create new instance of Ctor
+func CreateCtor(annot *typast.Annotation) (*Ctor, error) {
+	var ctor Ctor
+	if err := annot.Unmarshal(&ctor); err != nil {
+		return nil, fmt.Errorf("%s: %w", annot.Decl.Name, err)
+	}
+	ctor.Def = fmt.Sprintf("%s.%s", annot.Decl.Package, annot.Decl.Name)
+	return &ctor, nil
+}
+
+//
+// CtorAnnotated
+//
 
 const ctorGenerated = `package {{.Package}}
 

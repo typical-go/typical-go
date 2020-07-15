@@ -3,7 +3,6 @@ package typmock
 import (
 	"fmt"
 	"path/filepath"
-	"strings"
 
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -43,7 +42,7 @@ func NewMockery(projectPkg string) *Mockery {
 func createMockery(c *typgo.Context) *Mockery {
 	m := NewMockery(typgo.ProjectPkg)
 	for _, annot := range c.ASTStore.Annots {
-		if IsMockAnnotated(annot) {
+		if annot.Check(MockTag, typast.InterfaceType) {
 			m.Put(CreateMock(annot))
 		}
 	}
@@ -73,8 +72,8 @@ func (m Mockery) Filter(pkgs ...string) Map {
 }
 
 // CreateMock to create mock
-func CreateMock(annot *typast.Annot) *Mock {
-	pkg := annot.Decl.Pkg
+func CreateMock(annot *typast.Annotation) *Mock {
+	pkg := annot.Decl.Package
 	dir := filepath.Dir(annot.Decl.Path)
 
 	parent := ""
@@ -89,10 +88,4 @@ func CreateMock(annot *typast.Annot) *Mock {
 		Parent:  parent,
 		MockPkg: fmt.Sprintf("%s_mock", pkg),
 	}
-}
-
-// IsMockAnnotated return true if mock annotated
-func IsMockAnnotated(annot *typast.Annot) bool {
-	return strings.EqualFold(annot.TagName, MockTag) &&
-		annot.Decl.Type == typast.Interface
 }

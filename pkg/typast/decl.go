@@ -1,30 +1,30 @@
 package typast
 
-const (
-	// Function type
-	Function DeclType = iota
-
-	// Interface type
-	Interface
-
-	// Struct type
-	Struct
-
-	// Generic type
-	Generic
-)
-
 type (
 	// Decl stand of declaration
 	Decl struct {
-		Name string   `json:"name"`
-		Path string   `json:"path"`
-		Pkg  string   `json:"pkg"`
-		Type DeclType `json:"type"`
+		Name    string
+		Path    string
+		Package string
+		Type    DeclType
 	}
-
 	// DeclType is declaration type
 	DeclType int
+)
+
+//
+// DeclType
+//
+
+const (
+	// FuncType type
+	FuncType DeclType = iota
+	// InterfaceType type
+	InterfaceType
+	// StructType type
+	StructType
+	// GenericType type
+	GenericType
 )
 
 func (d DeclType) String() string {

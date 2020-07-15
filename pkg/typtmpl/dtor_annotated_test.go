@@ -3,6 +3,8 @@ package typtmpl_test
 import (
 	"testing"
 
+	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
@@ -33,4 +35,29 @@ func init() {
 }`,
 		},
 	})
+}
+
+func TestCreateDtor(t *testing.T) {
+	testcases := []struct {
+		TestName string
+		*typast.Annotation
+		Expected *typtmpl.Dtor
+	}{
+		{
+			Annotation: &typast.Annotation{
+				Decl: &typast.Decl{
+					Package: "pkg",
+					Name:    "name",
+				},
+			},
+			Expected: &typtmpl.Dtor{
+				Def: "pkg.name",
+			},
+		},
+	}
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			require.Equal(t, tt.Expected, typtmpl.CreateDtor(tt.Annotation))
+		})
+	}
 }

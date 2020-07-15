@@ -52,16 +52,16 @@ func TestTargetMap(t *testing.T) {
 func TestCreateMock(t *testing.T) {
 	testcases := []struct {
 		testName string
-		annot    *typast.Annot
+		annot    *typast.Annotation
 		expected *typmock.Mock
 	}{
 		{
-			annot: &typast.Annot{
+			annot: &typast.Annotation{
 				Decl: &typast.Decl{
-					Pkg:  "somePkg",
-					Path: "/path/folder/source.go",
-					Type: typast.Interface,
-					Name: "SomeInterface",
+					Package: "somePkg",
+					Path:    "/path/folder/source.go",
+					Type:    typast.InterfaceType,
+					Name:    "SomeInterface",
 				},
 				TagName: "mock",
 			},
@@ -78,42 +78,6 @@ func TestCreateMock(t *testing.T) {
 	for _, tt := range testcases {
 		t.Run(tt.testName, func(t *testing.T) {
 			require.Equal(t, tt.expected, typmock.CreateMock(tt.annot))
-		})
-	}
-}
-
-func TestIsMockAnnotated(t *testing.T) {
-	testcases := []struct {
-		testName string
-		annot    *typast.Annot
-		expected bool
-	}{
-		{
-			annot: &typast.Annot{
-				Decl:    &typast.Decl{Type: typast.Interface},
-				TagName: "mock",
-			},
-			expected: true,
-		},
-		{
-			annot: &typast.Annot{
-				Decl:    &typast.Decl{Type: typast.Interface},
-				TagName: "wrong",
-			},
-			expected: false,
-		},
-		{
-			annot: &typast.Annot{
-				Decl:    &typast.Decl{Type: typast.Function},
-				TagName: "mock",
-			},
-			expected: false,
-		},
-	}
-
-	for _, tt := range testcases {
-		t.Run(tt.testName, func(t *testing.T) {
-			require.Equal(t, tt.expected, typmock.IsMockAnnotated(tt.annot))
 		})
 	}
 }

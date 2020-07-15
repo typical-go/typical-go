@@ -8,8 +8,8 @@ import (
 )
 
 func TestDeclType(t *testing.T) {
-	require.Equal(t, "Function", typast.Function.String())
-	require.Equal(t, "Interface", typast.Interface.String())
-	require.Equal(t, "Struct", typast.Struct.String())
-	require.Equal(t, "Generic", typast.Generic.String())
+	require.Equal(t, "Function", typast.FuncType.String())
+	require.Equal(t, "Interface", typast.InterfaceType.String())
+	require.Equal(t, "Struct", typast.StructType.String())
+	require.Equal(t, "Generic", typast.GenericType.String())
 }

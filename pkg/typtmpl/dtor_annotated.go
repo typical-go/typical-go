@@ -1,6 +1,11 @@
 package typtmpl
 
-import "io"
+import (
+	"fmt"
+	"io"
+
+	"github.com/typical-go/typical-go/pkg/typast"
+)
 
 type (
 	// DtorAnnotated template
@@ -14,6 +19,21 @@ type (
 		Def string
 	}
 )
+
+//
+// Dtor
+//
+
+// CreateDtor to create new instance of Dtor from Annotation
+func CreateDtor(annot *typast.Annotation) *Dtor {
+	return &Dtor{
+		Def: fmt.Sprintf("%s.%s", annot.Decl.Package, annot.Decl.Name),
+	}
+}
+
+//
+// DtorAnnotated
+//
 
 const dtorAnnotated = `package {{.Package}}
 
