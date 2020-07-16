@@ -21,9 +21,7 @@ func TestConfigManager_GetTarget(t *testing.T) {
 			TestName:      "initial target is not set",
 			ConfigManager: &typapp.ConfigManager{},
 			Context: &typgo.Context{
-				BuildCli: &typgo.BuildCli{
-					Descriptor: &typgo.Descriptor{Name: "name0"},
-				},
+				Descriptor: &typgo.Descriptor{Name: "name0"},
 			},
 			Expected: "cmd/name0/config_annotated.go",
 		},
@@ -57,9 +55,7 @@ func TestConfigManager_Execute(t *testing.T) {
 		},
 		EnvFile: true,
 	}
-	ctx := &typgo.Context{
-		BuildCli: &typgo.BuildCli{},
-	}
+	ctx := &typgo.Context{}
 
 	require.NoError(t, ctorAnnot.Execute(ctx))
 

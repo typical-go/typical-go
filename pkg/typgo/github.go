@@ -55,30 +55,8 @@ func (g *Github) Release(c *ReleaseContext) (err error) {
 		return
 	}
 
-	// NOTE: upload file to Github not yet needed
-	// for _, file := range releaseFiles {
-	// 	c.Infof("Upload asset: %s", file)
-	// 	if err = g.upload(ctx, repo, *githubRls.ID, file); err != nil {
-	// 		return
-	// 	}
-	// }
 	return
 }
-
-// NOTE: upload file to Github not yet needed
-// func (g *Github) upload(ctx context.Context, svc *github.RepositoriesService, id int64, binary string) (err error) {
-// 	var (
-// 		file       *os.File
-// 		binaryPath = fmt.Sprintf("%s/%s", ReleaseFolder, binary)
-// 	)
-// 	if file, err = os.Open(binaryPath); err != nil {
-// 		return
-// 	}
-// 	defer file.Close()
-// 	opts := &github.UploadOptions{Name: binary}
-// 	_, _, err = svc.UploadReleaseAsset(ctx, g.Owner, g.RepoName, id, opts, file)
-// 	return
-// }
 
 func (g *Github) releaseNote(gitLogs []*git.Log) string {
 	var b strings.Builder
@@ -91,4 +69,15 @@ func (g *Github) releaseNote(gitLogs []*git.Log) string {
 		}
 	}
 	return b.String()
+}
+
+// ExcludeMessage return true is message mean to be exclude
+func ExcludeMessage(msg string) bool {
+	msg = strings.ToLower(msg)
+	for _, prefix := range ExclMsgPrefix {
+		if strings.HasPrefix(msg, strings.ToLower(prefix)) {
+			return true
+		}
+	}
+	return false
 }

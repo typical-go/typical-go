@@ -13,7 +13,9 @@ type (
 		Action
 	}
 	// StdClean standard clean
-	StdClean struct{}
+	StdClean struct {
+		Paths []string
+	}
 )
 
 //
@@ -39,12 +41,22 @@ var _ Action = (*StdClean)(nil)
 
 // Execute standard clean
 func (s *StdClean) Execute(c *Context) error {
-	removeAll(c, TypicalTmp)
+	for _, path := range s.GetPaths() {
+		if err := os.RemoveAll(path); err != nil {
+			fmt.Printf("Failed removing %s\n", path)
+		} else {
+			fmt.Printf("Removing %s\n", path)
+		}
+
+	}
+	// removeAll(c, TypicalTmp)
 	return nil
 }
 
-func removeAll(c *Context, folder string) {
-	if err := os.RemoveAll(folder); err == nil {
-		fmt.Printf("RemoveAll: %s\n", folder)
+// GetPaths return paths to be clean
+func (s *StdClean) GetPaths() []string {
+	if len(s.Paths) < 1 {
+		s.Paths = []string{TypicalTmp}
 	}
+	return s.Paths
 }

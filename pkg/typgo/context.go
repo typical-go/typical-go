@@ -8,6 +8,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/urfave/cli/v2"
 )
 
@@ -20,7 +21,9 @@ type (
 	// Context of build tool
 	Context struct {
 		*cli.Context
-		*BuildCli
+		*Descriptor
+		ASTStore *typast.ASTStore
+		Imports  []string
 	}
 )
 

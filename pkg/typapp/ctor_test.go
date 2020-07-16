@@ -16,18 +16,16 @@ func TestCtorAnnotation_Execute(t *testing.T) {
 	defer os.Remove(target)
 	ctorAnnot := &typapp.CtorAnnotation{Target: target}
 	ctx := &typgo.Context{
-		BuildCli: &typgo.BuildCli{
-			ASTStore: &typast.ASTStore{
-				Annots: []*typast.Annotation{
-					{
-						TagName: "ctor",
-						Decl:    &typast.Decl{Name: "NewObject", Package: "pkg", Type: typast.FuncType},
-					},
-					{
-						TagName:  "ctor",
-						TagAttrs: []byte(`{"name":"obj2"}`),
-						Decl:     &typast.Decl{Name: "NewObject2", Package: "pkg2", Type: typast.FuncType},
-					},
+		ASTStore: &typast.ASTStore{
+			Annots: []*typast.Annotation{
+				{
+					TagName: "ctor",
+					Decl:    &typast.Decl{Name: "NewObject", Package: "pkg", Type: typast.FuncType},
+				},
+				{
+					TagName:  "ctor",
+					TagAttrs: []byte(`{"name":"obj2"}`),
+					Decl:     &typast.Decl{Name: "NewObject2", Package: "pkg2", Type: typast.FuncType},
 				},
 			},
 		},
@@ -63,9 +61,7 @@ func TestCtorAnnotation_GetTarget(t *testing.T) {
 			TestName:       "initial target is not set",
 			CtorAnnotation: &typapp.CtorAnnotation{},
 			Context: &typgo.Context{
-				BuildCli: &typgo.BuildCli{
-					Descriptor: &typgo.Descriptor{Name: "name0"},
-				},
+				Descriptor: &typgo.Descriptor{Name: "name0"},
 			},
 			Expected: "cmd/name0/ctor_annotated.go",
 		},

@@ -44,15 +44,19 @@ var _ Action = (*StdRun)(nil)
 
 // Execute standard run
 func (s *StdRun) Execute(c *Context) error {
-	if s.Binary == "" {
-		s.Binary = fmt.Sprintf("bin/%s", c.Descriptor.Name)
-	}
-
 	return c.Execute(&execkit.Command{
-		Name:   s.Binary,
+		Name:   s.GetBinary(c),
 		Args:   c.Args().Slice(),
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,
 		Stdin:  os.Stdin,
 	})
+}
+
+// GetBinary return binary to be run
+func (s *StdRun) GetBinary(c *Context) string {
+	if s.Binary == "" {
+		s.Binary = fmt.Sprintf("bin/%s", c.Descriptor.Name)
+	}
+	return s.Binary
 }

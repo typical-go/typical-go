@@ -48,24 +48,36 @@ var _ Action = (*StdCompile)(nil)
 
 // Execute standard compile
 func (s *StdCompile) Execute(c *Context) error {
+	return c.Execute(&execkit.GoBuild{
+		Output:      s.GetOutput(c),
+		MainPackage: s.GetMainPackage(c),
+		Ldflags:     s.GetLdflags(c),
+	})
+}
+
+// GetMainPackage return MainPackage
+func (s *StdCompile) GetMainPackage(c *Context) string {
 	if s.MainPackage == "" {
 		s.MainPackage = fmt.Sprintf("./cmd/%s", c.Descriptor.Name)
 	}
+	return s.MainPackage
+}
 
+// GetOutput return output
+func (s *StdCompile) GetOutput(c *Context) string {
 	if s.Output == "" {
 		s.Output = fmt.Sprintf("bin/%s", c.Descriptor.Name)
 	}
+	return s.Output
+}
 
+// GetLdflags return ldflags attributes
+func (s *StdCompile) GetLdflags(c *Context) fmt.Stringer {
 	if s.Ldflags == nil {
 		s.Ldflags = execkit.BuildVars{
 			"github.com/typical-go/typical-go/pkg/typapp.Name":    c.Descriptor.Name,
 			"github.com/typical-go/typical-go/pkg/typapp.Version": c.Descriptor.Version,
 		}
 	}
-
-	return c.Execute(&execkit.GoBuild{
-		Output:      s.Output,
-		MainPackage: s.MainPackage,
-		Ldflags:     s.Ldflags,
-	})
+	return s.Ldflags
 }
