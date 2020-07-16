@@ -18,8 +18,8 @@ var (
 			&typgo.CompileCmd{
 				Action: typgo.Actions{
 					&typapp.ConfigManager{
-						Configs: []*typapp.Configuration{
-							{Name: "SERVER", Spec: &server.Config{}},
+						Configs: []*typapp.Config{
+							{Prefix: "SERVER", Spec: &server.Config{}},
 						},
 						EnvFile: true,
 					},
