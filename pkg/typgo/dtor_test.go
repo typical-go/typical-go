@@ -18,7 +18,7 @@ func TestDtorAnnotation_Execute(t *testing.T) {
 		BuildCli: &typgo.BuildCli{
 			ASTStore: &typast.ASTStore{
 				Annots: []*typast.Annotation{
-					{TagName: "dtor", Decl: &typast.Decl{Name: "Clean", Package: "pkg"}},
+					{TagName: "dtor", Decl: &typast.Decl{Name: "Clean", Package: "pkg", Type: typast.FuncType}},
 				},
 			},
 		},

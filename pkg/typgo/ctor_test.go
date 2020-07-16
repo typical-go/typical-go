@@ -18,11 +18,14 @@ func TestCtorAnnotation_Execute(t *testing.T) {
 		BuildCli: &typgo.BuildCli{
 			ASTStore: &typast.ASTStore{
 				Annots: []*typast.Annotation{
-					{TagName: "ctor", Decl: &typast.Decl{Name: "NewObject", Package: "pkg"}},
+					{
+						TagName: "ctor",
+						Decl:    &typast.Decl{Name: "NewObject", Package: "pkg", Type: typast.FuncType},
+					},
 					{
 						TagName:  "ctor",
 						TagAttrs: []byte(`{"name":"obj2"}`),
-						Decl:     &typast.Decl{Name: "NewObject2", Package: "pkg2"},
+						Decl:     &typast.Decl{Name: "NewObject2", Package: "pkg2", Type: typast.FuncType},
 					},
 				},
 			},

@@ -18,7 +18,7 @@ type (
 
 const (
 	// FuncType type
-	FuncType DeclType = iota
+	FuncType DeclType = iota + 1
 	// InterfaceType type
 	InterfaceType
 	// StructType type
@@ -28,5 +28,5 @@ const (
 )
 
 func (d DeclType) String() string {
-	return [...]string{"Function", "Interface", "Struct", "Generic"}[d]
+	return [...]string{"", "Function", "Interface", "Struct", "Generic"}[d]
 }
