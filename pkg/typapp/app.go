@@ -1,6 +1,10 @@
 package typapp
 
 import (
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/typical-go/typical-go/pkg/common"
 	"go.uber.org/dig"
 )
@@ -23,23 +27,24 @@ func (a *App) Run() error {
 		}
 	}
 
-	errs := common.GracefulRun(a.startFn(di), a.stopFn(di))
-	return errs.Unwrap()
-}
+	exitSig := make(chan os.Signal)
+	signal.Notify(exitSig, syscall.SIGTERM)
+	signal.Notify(exitSig, syscall.SIGINT)
 
-func (a *App) startFn(di *dig.Container) common.Fn {
-	return func() (err error) {
-		return di.Invoke(a.EntryPoint)
-	}
-}
+	var errs common.Errors
 
-func (a *App) stopFn(di *dig.Container) common.Fn {
-	return func() (err error) {
-		for _, dtor := range a.Dtors {
-			if err = di.Invoke(dtor.Fn); err != nil {
-				return
-			}
+	go func() {
+		defer func() { exitSig <- syscall.SIGTERM }()
+		if err := di.Invoke(a.EntryPoint); err != nil {
+			errs.Append(err)
 		}
-		return
+	}()
+	<-exitSig
+
+	for _, dtor := range a.Dtors {
+		if err := di.Invoke(dtor.Fn); err != nil {
+			errs.Append(err)
+		}
 	}
+	return errs.Unwrap()
 }

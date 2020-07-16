@@ -27,12 +27,22 @@ func AppendDtor(dtors ...*Destructor) {
 	_dtors = append(_dtors, dtors...)
 }
 
-// GetCtors return list of global constructor
+// GetCtors return global constructors
 func GetCtors() []*Constructor {
 	return _ctors
 }
 
-// GetDtors return list of global destructor
+// GetDtors return global destructors
 func GetDtors() []*Destructor {
 	return _dtors
+}
+
+// ClearCtors clear global constructors
+func ClearCtors() {
+	_ctors = make([]*Constructor, 0)
+}
+
+// ClearDtors clear global destructors
+func ClearDtors() {
+	_dtors = make([]*Destructor, 0)
 }

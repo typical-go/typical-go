@@ -8,6 +8,8 @@ import (
 )
 
 func TestAppendConstructor(t *testing.T) {
+	defer typapp.ClearCtors()
+
 	c1 := &typapp.Constructor{}
 	c2 := &typapp.Constructor{}
 
@@ -16,6 +18,8 @@ func TestAppendConstructor(t *testing.T) {
 }
 
 func TestAppendDestructor(t *testing.T) {
+	defer typapp.ClearDtors()
+
 	d1 := &typapp.Destructor{}
 	d2 := &typapp.Destructor{}
 
