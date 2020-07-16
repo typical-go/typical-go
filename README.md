@@ -17,7 +17,7 @@ $ go install github.com/typical-go/typical-go
 
 ## Usage
 
-Run typical-go binary to build the build-system and run it.  
+Run build-tool for project in working directory
 ```
 $ typical-go run
 ```
@@ -63,7 +63,7 @@ OPTIONS:
 
 ## Typical Build
 
-Typical Build is golang program that manage build and task for current project. By default located in `tools/typical-build`
+Typical Build is a golang program that manage builds and tasks for the project. By default , the source located in `tools/typical-build`
 
 ```go
 package main
@@ -75,7 +75,6 @@ import (
 )
 
 var (
-	// Descriptor of sample
 	descriptor = typgo.Descriptor{
 		Name:    "hello-world",
 		Version: "1.0.0",
