@@ -79,8 +79,3 @@ func (b BuildVars) Keys() []string {
 	sort.Strings(keys)
 	return keys
 }
-
-// BuildVar return ldflag argument for set build variable
-func BuildVar(name string, value interface{}) string {
-	return fmt.Sprintf("-X %s=%v", name, value)
-}
