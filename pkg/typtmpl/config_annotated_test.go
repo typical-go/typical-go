@@ -27,7 +27,7 @@ import (
 )
 
 func init() { 
-	typapp.Provide(
+	typapp.AppendConstructor(
 		&typapp.Constructor{
 			Name: "",
 			Fn: func() (cfg *Sample, err error) {

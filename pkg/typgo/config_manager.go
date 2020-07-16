@@ -22,11 +22,6 @@ type (
 	}
 )
 
-var (
-	// EnvFile location
-	EnvFile = ".env"
-)
-
 var _ Action = (*ConfigManager)(nil)
 
 // Execute config-manager to prepare dependency-injection and env-file

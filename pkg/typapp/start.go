@@ -2,17 +2,17 @@ package typapp
 
 import (
 	"log"
-	"os"
 
 	"github.com/typical-go/typical-go/pkg/common"
-	"github.com/typical-go/typical-go/pkg/typgo"
 	"go.uber.org/dig"
 )
 
-// App of typical program
-type App struct {
-	EntryPoint interface{}
-}
+type (
+	// App of typical program
+	App struct {
+		EntryPoint interface{}
+	}
+)
 
 // Start the entry points
 func Start(entryPoint interface{}) {
@@ -27,12 +27,6 @@ func Start(entryPoint interface{}) {
 
 // Run application
 func (a *App) Run() error {
-	if configFile := os.Getenv("CONFIG"); configFile != "" {
-		if _, err := typgo.LoadConfig(configFile); err != nil {
-			return err
-		}
-	}
-
 	di := dig.New()
 	for _, c := range _ctors {
 		if err := di.Provide(c.Fn, dig.Name(c.Name)); err != nil {

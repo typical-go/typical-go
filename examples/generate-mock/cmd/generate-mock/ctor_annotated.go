@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	typapp.Provide(
+	typapp.AppendConstructor(
 		&typapp.Constructor{Name: "", Fn: helloworld.GetWriter},
 		&typapp.Constructor{Name: "", Fn: helloworld.NewGreeter},
 	)

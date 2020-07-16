@@ -44,7 +44,7 @@ import ({{range $import := .Imports}}
 )
 
 func init() { {{if .Dtors}}
-	typapp.Destroy({{range $d := .Dtors}}
+	typapp.AppendDestructor({{range $d := .Dtors}}
 		&typapp.Destructor{Fn: {{$d.Def}}},{{end}}
 	){{end}}
 }`

@@ -43,7 +43,7 @@ import (
 )
 
 func init() { 
-	typapp.Provide(
+	typapp.AppendConstructor(
 		&typapp.Constructor{Name: "", Fn: pkg.NewObject},
 		&typapp.Constructor{Name: "obj2", Fn: pkg2.NewObject2},
 	)

@@ -35,7 +35,7 @@ import (
 )
 
 func init() { 
-	typapp.Destroy(
+	typapp.AppendDestructor(
 		&typapp.Destructor{Fn: pkg.Clean},
 	)
 }`), b)
