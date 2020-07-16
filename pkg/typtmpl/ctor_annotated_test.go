@@ -30,7 +30,7 @@ import (
 )
 
 func init() { 
-	typapp.AppendConstructor(
+	typapp.AppendCtor(
 		&typapp.Constructor{Name: "", Fn: pkg1.NewFunction1},
 		&typapp.Constructor{Name: "", Fn: pkg2.NewFunction2},
 	)

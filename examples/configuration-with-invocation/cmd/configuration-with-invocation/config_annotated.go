@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	typapp.AppendConstructor(
+	typapp.AppendCtor(
 		&typapp.Constructor{
 			Name: "",
 			Fn: func() (cfg *server.Config, err error) {

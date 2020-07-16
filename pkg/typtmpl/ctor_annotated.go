@@ -48,7 +48,7 @@ import ({{range $import := .Imports}}
 )
 
 func init() { {{if .Ctors}}
-	typapp.AppendConstructor({{range $c := .Ctors}}
+	typapp.AppendCtor({{range $c := .Ctors}}
 		&typapp.Constructor{Name: "{{$c.Name}}", Fn: {{$c.Def}}},{{end}}
 	){{end}}
 }`

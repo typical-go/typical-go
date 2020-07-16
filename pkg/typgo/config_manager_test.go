@@ -71,7 +71,7 @@ import (
 )
 
 func init() { 
-	typapp.AppendConstructor(
+	typapp.AppendCtor(
 		&typapp.Constructor{
 			Name: "",
 			Fn: func() (cfg *typgo_test.sample, err error) {

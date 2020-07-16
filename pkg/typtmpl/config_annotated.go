@@ -31,7 +31,7 @@ import ({{range $import := .Imports}}
 )
 
 func init() { {{if .CfgCtors}}
-	typapp.AppendConstructor({{range $c := .CfgCtors}}
+	typapp.AppendCtor({{range $c := .CfgCtors}}
 		&typapp.Constructor{
 			Name: "{{$c.Name}}",
 			Fn: func() (cfg {{$c.SpecType}}, err error) {

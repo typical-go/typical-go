@@ -35,7 +35,7 @@ import (
 )
 
 func init() { 
-	typapp.AppendDestructor(
+	typapp.AppendDtor(
 		&typapp.Destructor{Fn: pkg.Clean},
 	)
 }`), b)

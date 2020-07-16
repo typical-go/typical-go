@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	typapp.AppendDestructor(
+	typapp.AppendDtor(
 		&typapp.Destructor{Fn: helloworld.Close},
 	)
 }
