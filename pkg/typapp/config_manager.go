@@ -2,12 +2,12 @@ package typapp
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"reflect"
 	"strconv"
 	"strings"
 
+	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
@@ -17,13 +17,22 @@ type (
 	ConfigManager struct {
 		Target  string
 		EnvFile bool
-		Configs []*Configuration
+		Configs []*Config
 	}
-	// Configuration is alias from typapp.Configuration with Configurer implementation
-	Configuration struct {
-		Ctor string
-		Name string
-		Spec interface{}
+	// Config model
+	Config struct {
+		Ctor   string
+		Prefix string
+		Spec   interface{}
+	}
+	// Field of config
+	Field struct {
+		Name     string
+		Type     string
+		Default  string
+		Value    interface{}
+		IsZero   bool
+		Required bool
 	}
 )
 
@@ -35,7 +44,7 @@ func (m *ConfigManager) Execute(c *typgo.Context) error {
 		return err
 	}
 	if m.EnvFile {
-		if err := WriteConfig(typgo.EnvFile, m.Configs); err != nil {
+		if err := m.Save(typgo.EnvFile); err != nil {
 			return err
 		}
 	}
@@ -48,13 +57,13 @@ func (m *ConfigManager) execute(c *typgo.Context) error {
 		specType := reflect.TypeOf(cfg.Spec).String()
 		cfgs = append(cfgs, &typtmpl.CfgCtor{
 			Name:      cfg.Ctor,
-			Prefix:    cfg.Name,
+			Prefix:    cfg.Prefix,
 			SpecType:  specType,
 			SpecType2: specType[1:],
 		})
 	}
 
-	return typgo.WriteGoSource(
+	return WriteGoSource(
 		m.GetTarget(c),
 		&typtmpl.ConfigAnnotated{Package: "main", Imports: c.Imports, CfgCtors: cfgs},
 	)
@@ -68,76 +77,49 @@ func (m *ConfigManager) GetTarget(c *typgo.Context) string {
 	return m.Target
 }
 
-// WriteConfig to write configuration to file
-func WriteConfig(dest string, configs []*Configuration) (err error) {
+// Save to file
+func (m *ConfigManager) Save(target string) error {
+	envmap, err := common.CreateEnvMapFromFile(target)
+	if err != nil {
+		envmap = make(common.EnvMap)
+	}
+
+	for _, field := range m.Fields() {
+		if _, ok := envmap[field.Name]; !ok {
+			envmap[field.Name] = fmt.Sprintf("%v", field.GetValue())
+		}
+	}
+
+	f, err := os.OpenFile(target, os.O_WRONLY|os.O_CREATE, 0777)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	return envmap.Save(f)
+}
+
+// Fields of config
+func (m *ConfigManager) Fields() []*Field {
 	var fields []*Field
-	for _, cfg := range configs {
+	for _, cfg := range m.Configs {
 		for _, field := range CreateFields(cfg) {
 			fields = append(fields, field)
 		}
 	}
-
-	f, err := os.OpenFile(dest, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
-	if err != nil {
-		return
-	}
-	defer f.Close()
-
-	hasNewLine, err := hasLastNewLine(f)
-	if err != nil {
-		return
-	}
-
-	if !hasNewLine {
-		fmt.Fprintln(f)
-	}
-
-	if _, err = f.Seek(0, io.SeekStart); err != nil {
-		return
-	}
-
-	m := typgo.ReadConfig(f)
-	for _, field := range fields {
-		if _, ok := m[field.Name]; !ok {
-			fmt.Fprintf(f, "%s=%v\n", field.Name, field.GetValue())
-		}
-	}
-
-	return
-}
-
-func hasLastNewLine(f *os.File) (has bool, err error) {
-	stat, err := f.Stat()
-	if err != nil {
-		return
-	}
-
-	if stat.Size() <= 0 {
-		return true, nil
-	}
-
-	if _, err = f.Seek(-1, io.SeekEnd); err != nil {
-		return
-	}
-
-	char := make([]byte, 1)
-	if _, err = f.Read(char); err != nil {
-		return
-	}
-
-	return (char[0] == '\n'), nil
+	return fields
 }
 
 // CreateFields to retrieve fields from configuration
-func CreateFields(c *Configuration) (fields []*Field) {
+func CreateFields(c *Config) (fields []*Field) {
 	val := reflect.Indirect(reflect.ValueOf(c.Spec))
 	typ := val.Type()
 	for i := 0; i < typ.NumField(); i++ {
 		field := typ.Field(i)
 		if !fieldIgnored(field) {
-			name := fmt.Sprintf("%s_%s", c.Name, fieldName(field))
+
 			fields = append(fields, &Field{
-				Name:     name,
+				Name:     fmt.Sprintf("%s_%s", c.Prefix, fieldName(field)),
 				Type:     field.Type.Name(),
 				Default:  fieldDefault(field),
 				Required: fieldRequired(field),
@@ -173,16 +155,6 @@ func fieldName(field reflect.StructField) (name string) {
 		name = v
 	}
 	return
-}
-
-// Field of config
-type Field struct {
-	Name     string
-	Type     string
-	Default  string
-	Value    interface{}
-	IsZero   bool
-	Required bool
 }
 
 // GetValue to get value or default value if no value

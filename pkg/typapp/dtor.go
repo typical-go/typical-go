@@ -29,7 +29,7 @@ func (a *DtorAnnotation) Execute(c *typgo.Context) error {
 			dtors = append(dtors, typtmpl.CreateDtor(annot))
 		}
 	}
-	return typgo.WriteGoSource(
+	return WriteGoSource(
 		a.GetTarget(c),
 		&typtmpl.DtorAnnotated{
 			Package: "main",

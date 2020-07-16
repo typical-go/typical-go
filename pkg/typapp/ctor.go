@@ -36,7 +36,7 @@ func (a *CtorAnnotation) Execute(c *typgo.Context) error {
 		}
 	}
 
-	return typgo.WriteGoSource(
+	return WriteGoSource(
 		a.GetTarget(c),
 		&typtmpl.CtorAnnotated{
 			Package: "main",

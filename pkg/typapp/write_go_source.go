@@ -1,10 +1,11 @@
-package typgo
+package typapp
 
 import (
 	"fmt"
 	"os"
 	"os/exec"
 
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
@@ -18,7 +19,7 @@ func WriteGoSource(target string, tmpl typtmpl.Template) error {
 }
 
 func goImports(target string) error {
-	goimport := fmt.Sprintf("%s/bin/goimports", TypicalTmp)
+	goimport := fmt.Sprintf("%s/bin/goimports", typgo.TypicalTmp)
 	src := "golang.org/x/tools/cmd/goimports"
 
 	if _, err := os.Stat(goimport); os.IsNotExist(err) {
