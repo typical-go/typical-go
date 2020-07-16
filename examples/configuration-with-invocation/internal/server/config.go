@@ -1,6 +1,6 @@
 package server
 
-import "github.com/typical-go/typical-go/pkg/typgo"
+import "github.com/typical-go/typical-go/pkg/typapp"
 
 const (
 	// ConfigName for server lookup key in config manaager
@@ -13,8 +13,8 @@ type Config struct {
 }
 
 // Configuration of server
-func Configuration() *typgo.Configuration {
-	return &typgo.Configuration{
+func Configuration() *typapp.Configuration {
+	return &typapp.Configuration{
 		Name: ConfigName,
 		Spec: &Config{},
 	}

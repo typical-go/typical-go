@@ -8,7 +8,8 @@ import (
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
-func writeGoSource(target string, tmpl typtmpl.Template) error {
+// WriteGoSource to write go source
+func WriteGoSource(target string, tmpl typtmpl.Template) error {
 	if err := typtmpl.ExecuteToFile(target, tmpl); err != nil {
 		return err
 	}

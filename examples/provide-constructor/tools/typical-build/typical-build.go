@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -15,8 +16,8 @@ var (
 		Commands: typgo.Commands{
 			&typgo.CompileCmd{
 				Action: &typgo.Actions{
-					&typgo.CtorAnnotation{},
-					&typgo.DtorAnnotation{},
+					&typapp.CtorAnnotation{},
+					&typapp.DtorAnnotation{},
 					&typgo.StdCompile{},
 				},
 			},

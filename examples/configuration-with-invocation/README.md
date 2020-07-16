@@ -8,8 +8,8 @@ Add `ConfigManager` in `typical/descriptor.go`
 var Descriptor = typgo.Descriptor{
 	// ...
 
-	Prebuild: &typgo.ConfigManager{
-		Configs: []*typgo.Configuration{
+	Prebuild: &typapp.ConfigManager{
+		Configs: []*typapp.Configuration{
 			{Name: "SERVER", Spec: &server.Config{}},
 		},
 	},

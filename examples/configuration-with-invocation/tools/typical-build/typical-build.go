@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/typical-go/typical-go/examples/configuration-with-invocation/internal/server"
+	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -16,8 +17,8 @@ var (
 		Commands: typgo.Commands{
 			&typgo.CompileCmd{
 				Action: typgo.Actions{
-					&typgo.ConfigManager{
-						Configs: []*typgo.Configuration{
+					&typapp.ConfigManager{
+						Configs: []*typapp.Configuration{
 							{Name: "SERVER", Spec: &server.Config{}},
 						},
 						EnvFile: true,
