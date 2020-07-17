@@ -7,10 +7,6 @@ var (
 	TypicalTmp string
 	// EnvFile location
 	EnvFile = ".env"
-	// ExclMsgPrefix excluded message prefix list
-	ExclMsgPrefix = []string{
-		"merge", "bump", "revision", "generate", "wip",
-	}
 )
 
 var (

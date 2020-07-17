@@ -1,4 +1,4 @@
-package typgo
+package typrls
 
 import (
 	"errors"
@@ -22,7 +22,7 @@ type (
 var _ Releaser = (*Github)(nil)
 
 // Release to github
-func (g *Github) Release(c *ReleaseContext) (err error) {
+func (g *Github) Release(c *Context) (err error) {
 	token := os.Getenv("GITHUB_TOKEN")
 
 	if token == "" {

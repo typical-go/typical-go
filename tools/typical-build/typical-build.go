@@ -5,6 +5,7 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
+	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
 var (
@@ -26,8 +27,9 @@ var (
 			&typgo.CleanCmd{
 				Action: &typgo.StdClean{},
 			},
-			&typgo.ReleaseCmd{
-				Releaser: &typgo.Github{Owner: "typical-go", Repo: "typical-go"},
+
+			&typrls.Command{
+				Releaser: &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
 			},
 
 			&typgo.Command{
