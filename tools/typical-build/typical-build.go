@@ -28,23 +28,17 @@ var (
 				Action: &typgo.StdClean{},
 			},
 
-			&typrls.Command{
-				Validation: &typrls.Validators{
-					&typrls.NoGitChangeValidation{},
-					&typrls.AlreadyReleasedValidation{},
-					&typrls.UncommittedValidation{},
-				},
-				Summary: &typrls.ChangeSummary{
-					ExcludePrefix: []string{"merge", "bump", "revision", "generate", "wip"},
-				},
-				Releaser: &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
-			},
-
 			&typgo.Command{
 				Name:    "examples",
 				Aliases: []string{"e"},
 				Usage:   "Test all example",
 				Action:  typgo.NewAction(testExamples),
+			},
+
+			&typrls.Command{
+				Validation: typrls.DefaultValidation,
+				Summary:    typrls.DefaultSummary,
+				Releaser:   &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
 			},
 		},
 	}

@@ -3,7 +3,6 @@ package typrls
 import (
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/typical-go/typical-go/pkg/git"
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -19,6 +18,7 @@ type (
 	// Command release command
 	Command struct {
 		Releaser
+		ReleaseTag string
 		Validation Validator
 		Summary    Summarizer
 	}
@@ -48,12 +48,9 @@ func (r *Command) Execute(c *typgo.Context) error {
 
 	ctx := c.Ctx()
 
-	if err := git.Fetch(ctx); err != nil {
-		return fmt.Errorf("Failed git fetch: %w", err)
-	}
+	git.Fetch(ctx)
 	defer git.Fetch(ctx)
 
-	releaseTag := r.releaseTag(c)
 	currentTag := git.CurrentTag(ctx)
 
 	rlsCtx := &Context{
@@ -63,7 +60,7 @@ func (r *Command) Execute(c *typgo.Context) error {
 			CurrentTag: currentTag,
 			Logs:       git.RetrieveLogs(ctx, currentTag),
 		},
-		ReleaseTag: releaseTag,
+		ReleaseTag: r.GetReleaseTag(c),
 	}
 
 	if r.Validation != nil && !c.Bool(forceParam) {
@@ -81,26 +78,19 @@ func (r *Command) Execute(c *typgo.Context) error {
 	return r.Release(rlsCtx)
 }
 
-func (r *Command) releaseTag(c *typgo.Context) string {
-	alpha := c.Bool(alphaParam)
-	version := "0.0.1"
-	if c.Descriptor.Version != "" {
-		version = c.Descriptor.Version
+// GetReleaseTag return release tag
+func (r *Command) GetReleaseTag(c *typgo.Context) string {
+	if r.ReleaseTag == "" {
+		if c.Descriptor.Version != "" {
+			r.ReleaseTag = fmt.Sprintf("v%s", c.Descriptor.Version)
+		} else {
+			r.ReleaseTag = "v0.0.1"
+		}
+
+		if c.Bool(alphaParam) {
+			r.ReleaseTag = r.ReleaseTag + "_alpha"
+		}
 	}
 
-	var builder strings.Builder
-	builder.WriteString("v")
-	builder.WriteString(version)
-	// if c.BuildTool.IncludeBranch {
-	// 	builder.WriteString("_")
-	// 	builder.WriteString(git.Branch(c.Context))
-	// }
-	// if c.BuildTool.IncludeCommitID {
-	// 	builder.WriteString("_")
-	// 	builder.WriteString(git.LatestCommit(c.Context))
-	// }
-	if alpha {
-		builder.WriteString("_alpha")
-	}
-	return builder.String()
+	return r.ReleaseTag
 }
