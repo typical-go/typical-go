@@ -11,7 +11,9 @@ type (
 		*typgo.Context
 		// ReleaseTag is next release tag
 		ReleaseTag string
-		Git
+		// Summary for the release
+		Summary string
+		*Git
 	}
 	// Git detail
 	Git struct {

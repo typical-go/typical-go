@@ -42,7 +42,7 @@ func TestValidator(t *testing.T) {
 			TestName:  "uncommitted change",
 			Validator: &typrls.UncommittedValidation{},
 			Context: &typrls.Context{
-				Git: typrls.Git{
+				Git: &typrls.Git{
 					Status: "some-status",
 				},
 			},
@@ -51,14 +51,14 @@ func TestValidator(t *testing.T) {
 		{
 			TestName:  "no uncommitted change",
 			Validator: &typrls.UncommittedValidation{},
-			Context:   &typrls.Context{},
+			Context:   &typrls.Context{Git: &typrls.Git{}},
 		},
 		{
 			TestName:  "already release",
 			Validator: &typrls.AlreadyReleasedValidation{},
 			Context: &typrls.Context{
 				ReleaseTag: "some-tag",
-				Git: typrls.Git{
+				Git: &typrls.Git{
 					CurrentTag: "some-tag",
 				},
 			},
@@ -69,7 +69,7 @@ func TestValidator(t *testing.T) {
 			Validator: &typrls.AlreadyReleasedValidation{},
 			Context: &typrls.Context{
 				ReleaseTag: "different-tag",
-				Git: typrls.Git{
+				Git: &typrls.Git{
 					CurrentTag: "some-tag",
 				},
 			},
@@ -77,14 +77,14 @@ func TestValidator(t *testing.T) {
 		{
 			TestName:    "not git change since last release",
 			Validator:   &typrls.NoGitChangeValidation{},
-			Context:     &typrls.Context{},
+			Context:     &typrls.Context{Git: &typrls.Git{}},
 			ExpectedErr: "No change to be released",
 		},
 		{
 			TestName:  "there are git change since last release",
 			Validator: &typrls.NoGitChangeValidation{},
 			Context: &typrls.Context{
-				Git: typrls.Git{
+				Git: &typrls.Git{
 					Logs: []*git.Log{
 						{ShortCode: "some-short", Message: "some-message"},
 					},

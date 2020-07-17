@@ -4,10 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/google/go-github/github"
-	"github.com/typical-go/typical-go/pkg/git"
 	"golang.org/x/oauth2"
 )
 
@@ -23,18 +21,15 @@ var _ Releaser = (*Github)(nil)
 
 // Release to github
 func (g *Github) Release(c *Context) (err error) {
-	token := os.Getenv("GITHUB_TOKEN")
+	githubToken := os.Getenv("GITHUB_TOKEN")
 
-	if token == "" {
+	if githubToken == "" {
 		return errors.New("Environment 'GITHUB_TOKEN' is missing")
 	}
 
 	ctx := c.Ctx()
-	oauth := oauth2.NewClient(ctx,
-		oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: token},
-		),
-	)
+	token := &oauth2.Token{AccessToken: githubToken}
+	oauth := oauth2.NewClient(ctx, oauth2.StaticTokenSource(token))
 	repo := github.NewClient(oauth).Repositories
 
 	if _, _, err = repo.GetReleaseByTag(ctx, g.Owner, g.Repo, c.ReleaseTag); err == nil {
@@ -44,7 +39,7 @@ func (g *Github) Release(c *Context) (err error) {
 	githubRls := &github.RepositoryRelease{
 		Name:       github.String(fmt.Sprintf("%s - %s", c.Descriptor.Name, c.ReleaseTag)),
 		TagName:    github.String(c.ReleaseTag),
-		Body:       github.String(g.releaseNote(c.Git.Logs)),
+		Body:       github.String(c.Summary),
 		Draft:      github.Bool(false),
 		Prerelease: github.Bool(c.GetAlpha()),
 	}
@@ -53,28 +48,4 @@ func (g *Github) Release(c *Context) (err error) {
 	}
 
 	return
-}
-
-func (g *Github) releaseNote(gitLogs []*git.Log) string {
-	var b strings.Builder
-	for _, log := range gitLogs {
-		if !ExcludeMessage(log.Message) {
-			b.WriteString(log.ShortCode)
-			b.WriteString(" ")
-			b.WriteString(log.Message)
-			b.WriteString("\n")
-		}
-	}
-	return b.String()
-}
-
-// ExcludeMessage return true is message mean to be exclude
-func ExcludeMessage(msg string) bool {
-	msg = strings.ToLower(msg)
-	for _, prefix := range ExclMsgPrefix {
-		if strings.HasPrefix(msg, strings.ToLower(prefix)) {
-			return true
-		}
-	}
-	return false
 }

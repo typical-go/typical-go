@@ -29,10 +29,13 @@ var (
 			},
 
 			&typrls.Command{
-				Validator: &typrls.Validators{
+				Validation: &typrls.Validators{
 					&typrls.NoGitChangeValidation{},
 					&typrls.AlreadyReleasedValidation{},
 					&typrls.UncommittedValidation{},
+				},
+				Summary: &typrls.ChangeSummary{
+					ExcludePrefix: []string{"merge", "bump", "revision", "generate", "wip"},
 				},
 				Releaser: &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
 			},

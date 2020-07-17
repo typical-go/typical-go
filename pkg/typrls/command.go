@@ -1,6 +1,7 @@
 package typrls
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -9,11 +10,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var (
-	// ExclMsgPrefix excluded message prefix list
-	ExclMsgPrefix = []string{
-		"merge", "bump", "revision", "generate", "wip",
-	}
+const (
 	forceParam = "force"
 	alphaParam = "alpha"
 )
@@ -22,7 +19,8 @@ type (
 	// Command release command
 	Command struct {
 		Releaser
-		Validator
+		Validation Validator
+		Summary    Summarizer
 	}
 )
 
@@ -44,6 +42,10 @@ func (r *Command) Command(c *typgo.BuildCli) *cli.Command {
 
 // Execute release
 func (r *Command) Execute(c *typgo.Context) error {
+	if r.Summary == nil {
+		return errors.New("typrls: missing summary")
+	}
+
 	ctx := c.Ctx()
 
 	if err := git.Fetch(ctx); err != nil {
@@ -54,9 +56,9 @@ func (r *Command) Execute(c *typgo.Context) error {
 	releaseTag := r.releaseTag(c)
 	currentTag := git.CurrentTag(ctx)
 
-	rlsContext := &Context{
+	rlsCtx := &Context{
 		Context: c,
-		Git: Git{
+		Git: &Git{
 			Status:     git.Status(ctx),
 			CurrentTag: currentTag,
 			Logs:       git.RetrieveLogs(ctx, currentTag),
@@ -64,13 +66,19 @@ func (r *Command) Execute(c *typgo.Context) error {
 		ReleaseTag: releaseTag,
 	}
 
-	if r.Validator != nil && !c.Bool(forceParam) {
-		if err := r.Validator.Validate(rlsContext); err != nil {
+	if r.Validation != nil && !c.Bool(forceParam) {
+		if err := r.Validation.Validate(rlsCtx); err != nil {
 			return err
 		}
 	}
 
-	return r.Release(rlsContext)
+	summary, err := r.Summary.Summarize(rlsCtx)
+	if err != nil {
+		return err
+	}
+	rlsCtx.Summary = summary
+
+	return r.Release(rlsCtx)
 }
 
 func (r *Command) releaseTag(c *typgo.Context) string {
