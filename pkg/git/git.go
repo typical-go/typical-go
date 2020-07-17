@@ -23,8 +23,8 @@ func Fetch(ctx context.Context) error {
 	return exec.CommandContext(ctx, "git", "fetch").Run()
 }
 
-// LatestTag to get latest tag and its hash key
-func LatestTag(ctx context.Context) string {
+// CurrentTag to get latest tag and its hash key
+func CurrentTag(ctx context.Context) string {
 	tag, err := git(ctx, "describe", "--tags", "--abbrev=0")
 	if err != nil {
 		return ""

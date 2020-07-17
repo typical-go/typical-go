@@ -36,20 +36,17 @@ func (g *Github) Release(c *Context) (err error) {
 		),
 	)
 	repo := github.NewClient(oauth).Repositories
-	tag := c.Tag
-	gitLogs := c.GitLogs
-	alpha := c.Alpha
 
-	if _, _, err = repo.GetReleaseByTag(ctx, g.Owner, g.Repo, tag); err == nil {
-		return fmt.Errorf("Tag '%s' already published", tag)
+	if _, _, err = repo.GetReleaseByTag(ctx, g.Owner, g.Repo, c.ReleaseTag); err == nil {
+		return fmt.Errorf("Tag '%s' already published", c.ReleaseTag)
 	}
 	fmt.Printf("\nCreate github release for %s/%s\n", g.Owner, g.Repo)
 	githubRls := &github.RepositoryRelease{
-		Name:       github.String(fmt.Sprintf("%s - %s", c.Descriptor.Name, tag)),
-		TagName:    github.String(tag),
-		Body:       github.String(g.releaseNote(gitLogs)),
+		Name:       github.String(fmt.Sprintf("%s - %s", c.Descriptor.Name, c.ReleaseTag)),
+		TagName:    github.String(c.ReleaseTag),
+		Body:       github.String(g.releaseNote(c.Git.Logs)),
 		Draft:      github.Bool(false),
-		Prerelease: github.Bool(alpha),
+		Prerelease: github.Bool(c.GetAlpha()),
 	}
 	if githubRls, _, err = repo.CreateRelease(ctx, g.Owner, g.Repo, githubRls); err != nil {
 		return
@@ -62,7 +59,7 @@ func (g *Github) releaseNote(gitLogs []*git.Log) string {
 	var b strings.Builder
 	for _, log := range gitLogs {
 		if !ExcludeMessage(log.Message) {
-			b.WriteString(log.Short)
+			b.WriteString(log.ShortCode)
 			b.WriteString(" ")
 			b.WriteString(log.Message)
 			b.WriteString("\n")

@@ -6,7 +6,7 @@ import (
 
 // Log of git
 type Log struct {
-	Short        string
+	ShortCode    string
 	Message      string
 	CoAuthoredBy string
 }
@@ -25,7 +25,7 @@ func CreateLog(raw string) *Log {
 
 	}
 	return &Log{
-		Short:        strings.TrimSpace(raw[:7]),
+		ShortCode:    strings.TrimSpace(raw[:7]),
 		Message:      strings.TrimSpace(message),
 		CoAuthoredBy: strings.TrimSpace(coAuthoredBy),
 	}

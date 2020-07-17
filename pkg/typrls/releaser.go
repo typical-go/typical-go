@@ -1,10 +1,5 @@
 package typrls
 
-import (
-	"github.com/typical-go/typical-go/pkg/git"
-	"github.com/typical-go/typical-go/pkg/typgo"
-)
-
 type (
 	// Releaser responsible to release
 	Releaser interface {
@@ -12,19 +7,21 @@ type (
 	}
 	// Releasers for composite release
 	Releasers []Releaser
-	// Context contain data for release
-	Context struct {
-		*typgo.Context
-		Alpha   bool
-		Tag     string
-		GitLogs []*git.Log
-	}
 	// ReleaseFn release function
 	ReleaseFn    func(*Context) error
 	releaserImpl struct {
 		fn ReleaseFn
 	}
 )
+
+//
+// Context
+//
+
+// GetAlpha get alpha parameter
+func (c *Context) GetAlpha() bool {
+	return c.Context.Bool(alphaParam)
+}
 
 //
 // releaserImpl

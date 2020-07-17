@@ -29,6 +29,11 @@ var (
 			},
 
 			&typrls.Command{
+				Validator: &typrls.Validators{
+					&typrls.NoGitChangeValidation{},
+					&typrls.AlreadyReleasedValidation{},
+					&typrls.UncommittedValidation{},
+				},
 				Releaser: &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
 			},
 

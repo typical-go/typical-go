@@ -1,7 +1,6 @@
 package typrls
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -15,18 +14,17 @@ var (
 	ExclMsgPrefix = []string{
 		"merge", "bump", "revision", "generate", "wip",
 	}
+	forceParam = "force"
+	alphaParam = "alpha"
 )
 
 type (
 	// Command release command
 	Command struct {
 		Releaser
+		Validator
 	}
 )
-
-//
-// ReleaseCmd
-//
 
 var _ typgo.Cmd = (*Command)(nil)
 var _ typgo.Action = (*Command)(nil)
@@ -37,54 +35,46 @@ func (r *Command) Command(c *typgo.BuildCli) *cli.Command {
 		Name:  "release",
 		Usage: "Release the project",
 		Flags: []cli.Flag{
-			&cli.BoolFlag{Name: "force", Usage: "Release by passed all validation"},
-			&cli.BoolFlag{Name: "alpha", Usage: "Release for alpha version"},
+			&cli.BoolFlag{Name: forceParam, Usage: "Release by passed all validation"},
+			&cli.BoolFlag{Name: alphaParam, Usage: "Release for alpha version"},
 		},
 		Action: c.ActionFn(r.Execute),
 	}
 }
 
 // Execute release
-func (r *Command) Execute(c *typgo.Context) (err error) {
+func (r *Command) Execute(c *typgo.Context) error {
 	ctx := c.Ctx()
 
-	if err = git.Fetch(ctx); err != nil {
+	if err := git.Fetch(ctx); err != nil {
 		return fmt.Errorf("Failed git fetch: %w", err)
 	}
 	defer git.Fetch(ctx)
 
-	force := c.Bool("force")
-	alpha := c.Bool("alpha")
-	tag := releaseTag(c, alpha)
+	releaseTag := r.releaseTag(c)
+	currentTag := git.CurrentTag(ctx)
 
-	status := git.Status(ctx)
-	if status != "" && !force {
-		return fmt.Errorf("Please commit changes first:\n%s", status)
-	}
-
-	latest := git.LatestTag(ctx)
-	if latest == tag && !force {
-		return fmt.Errorf("%s already released", latest)
-	}
-
-	gitLogs := git.RetrieveLogs(ctx, latest)
-	if len(gitLogs) < 1 && !force {
-		return errors.New("No change to be released")
-	}
-
-	return r.Release(&Context{
+	rlsContext := &Context{
 		Context: c,
-		Alpha:   alpha,
-		Tag:     tag,
-		GitLogs: gitLogs,
-	})
+		Git: Git{
+			Status:     git.Status(ctx),
+			CurrentTag: currentTag,
+			Logs:       git.RetrieveLogs(ctx, currentTag),
+		},
+		ReleaseTag: releaseTag,
+	}
+
+	if r.Validator != nil && !c.Bool(forceParam) {
+		if err := r.Validator.Validate(rlsContext); err != nil {
+			return err
+		}
+	}
+
+	return r.Release(rlsContext)
 }
 
-//
-// Command
-//
-
-func releaseTag(c *typgo.Context, alpha bool) string {
+func (r *Command) releaseTag(c *typgo.Context) string {
+	alpha := c.Bool(alphaParam)
 	version := "0.0.1"
 	if c.Descriptor.Version != "" {
 		version = c.Descriptor.Version
