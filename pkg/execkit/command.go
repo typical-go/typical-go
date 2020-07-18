@@ -6,21 +6,28 @@ import (
 	"io"
 	"os/exec"
 	"strings"
+
+	"github.com/fatih/color"
 )
 
-// Command is wrapper to exec.Command
-type Command struct {
-	Name   string
-	Args   []string
-	Stdout io.Writer
-	Stderr io.Writer
-	Stdin  io.Reader
-	Dir    string
-	Env    []string
-}
+type (
+	// Command is wrapper to exec.Command
+	Command struct {
+		Name   string
+		Args   []string
+		Stdout io.Writer
+		Stderr io.Writer
+		Stdin  io.Reader
+		Dir    string
+		Env    []string
+	}
+	// Commander responsible to command
+	Commander interface {
+		Command() *Command
+	}
+)
 
-var _ Runner = (*Command)(nil)
-var _ fmt.Stringer = (*GoBuild)(nil)
+var _ Commander = (*Command)(nil)
 
 // Run the comand
 func (c *Command) Run(ctx context.Context) (err error) {
@@ -38,6 +45,13 @@ func (c *Command) ExecCmd(ctx context.Context) *exec.Cmd {
 	return cmd
 }
 
-func (c Command) String() string {
-	return fmt.Sprintf("%s %s", c.Name, strings.Join(c.Args, " "))
+// Command return command
+func (c *Command) Command() *Command {
+	return c
+}
+
+// Print print command
+func (c *Command) Print(w io.Writer) {
+	color.New(color.FgMagenta).Fprint(w, "\n$ ")
+	fmt.Fprintln(w, fmt.Sprintf("%s %s", c.Name, strings.Join(c.Args, " ")))
 }

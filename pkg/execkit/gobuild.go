@@ -1,7 +1,6 @@
 package execkit
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"sort"
@@ -23,8 +22,7 @@ type (
 // GoBuild
 //
 
-var _ fmt.Stringer = (*GoBuild)(nil)
-var _ Runner = (*Command)(nil)
+var _ Commander = (*GoBuild)(nil)
 
 // Command of GoBuild
 func (g *GoBuild) Command() *Command {
@@ -45,15 +43,6 @@ func (g *GoBuild) Args() []string {
 	}
 	args = append(args, "-o", g.Output, g.MainPackage)
 	return args
-}
-
-// Run gobuild
-func (g *GoBuild) Run(ctx context.Context) error {
-	return g.Command().Run(ctx)
-}
-
-func (g GoBuild) String() string {
-	return g.Command().String()
 }
 
 //

@@ -187,7 +187,7 @@ func dockerIDs(ctx context.Context) (ids []string, err error) {
 		Stdout: &out,
 	}
 
-	execkit.PrintCommand(cmd, os.Stdout)
+	cmd.Print(os.Stdout)
 
 	if err = cmd.Run(ctx); err != nil {
 		return
@@ -207,7 +207,7 @@ func kill(ctx context.Context, id string) (err error) {
 		Args:   []string{"kill", id},
 		Stderr: os.Stderr,
 	}
-	execkit.PrintCommand(cmd, os.Stdout)
+	cmd.Print(os.Stdout)
 	return cmd.Run(ctx)
 }
 

@@ -30,7 +30,17 @@ func TestCommand(t *testing.T) {
 	expected.Stdin = input
 	expected.Dir = "some-dir"
 
-	require.Equal(t, "noname arg1 arg2 arg3", cmd.String())
 	require.Equal(t, expected, cmd.ExecCmd(ctx))
+	require.Equal(t, cmd, cmd.Command())
+}
 
+func TestPrintCommand(t *testing.T) {
+	var debugger strings.Builder
+	cmd := &execkit.Command{
+		Name: "some-name",
+		Args: []string{"arg-1", "arg-2"},
+	}
+	cmd.Print(&debugger)
+
+	require.Equal(t, "\n$ some-name arg-1 arg-2\n", debugger.String())
 }

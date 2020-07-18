@@ -11,14 +11,17 @@ func TestGoBuild(t *testing.T) {
 	testcases := []struct {
 		testName string
 		*execkit.GoBuild
-		expected string
+		expected *execkit.Command
 	}{
 		{
 			GoBuild: &execkit.GoBuild{
 				Output:      "some-output",
 				MainPackage: "some-sources",
 			},
-			expected: "go build -o some-output some-sources",
+			expected: &execkit.Command{
+				Name: "go",
+				Args: []string{"build", "-o", "some-output", "some-sources"},
+			},
 		},
 		{
 			GoBuild: &execkit.GoBuild{
@@ -29,13 +32,23 @@ func TestGoBuild(t *testing.T) {
 					"name2": "value3",
 				},
 			},
-			expected: "go build -ldflags -X name1=value1 -X name2=value3 -o some-output some-sources",
+			expected: &execkit.Command{
+				Name: "go",
+				Args: []string{
+					"build",
+					"-ldflags", "-X name1=value1 -X name2=value3",
+					"-o", "some-output",
+					"some-sources",
+				},
+			},
 		},
 	}
 
 	for _, tt := range testcases {
 		t.Run(tt.testName, func(t *testing.T) {
-			require.Equal(t, tt.expected, tt.String())
+			cmd := tt.Command()
+			require.Equal(t, tt.expected.Name, cmd.Name)
+			require.Equal(t, tt.expected.Args, cmd.Args)
 		})
 	}
 }

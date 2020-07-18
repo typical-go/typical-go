@@ -13,19 +13,10 @@ var (
 )
 
 type (
-	// Runner responsble to run
-	Runner interface {
-		Run(context.Context) error
-	}
-	// RunFn run function
-	RunFn      func(context.Context) error
-	runnerImpl struct {
-		fn RunFn
-	}
 	// RunExpectation is test expectation for execkit.Run
 	RunExpectation struct {
 		Ctx         context.Context
-		Runner      Runner
+		Command     Commander
 		ReturnError error
 	}
 	runMocker struct {
@@ -36,24 +27,11 @@ type (
 )
 
 // Run the runner
-func Run(ctx context.Context, runner Runner) error {
+func Run(ctx context.Context, cmder Commander) error {
 	if _mocker != nil {
-		return _mocker.run(ctx, runner)
+		return _mocker.run(ctx, cmder)
 	}
-	return runner.Run(ctx)
-}
-
-//
-// runnerImpl
-//
-
-// NewRunner return new instance of runners
-func NewRunner(fn RunFn) Runner {
-	return &runnerImpl{fn: fn}
-}
-
-func (r *runnerImpl) Run(ctx context.Context) error {
-	return r.fn(ctx)
+	return cmder.Command().Run(ctx)
 }
 
 //
@@ -86,7 +64,7 @@ func (r *runMocker) expectation() *RunExpectation {
 	return nil
 }
 
-func (r *runMocker) run(ctx context.Context, runner Runner) error {
+func (r *runMocker) run(ctx context.Context, cmder Commander) error {
 	expectation := r.expectation()
 	if expectation == nil {
 		return errors.New("execkit-mock: no run expectation")
@@ -94,8 +72,14 @@ func (r *runMocker) run(ctx context.Context, runner Runner) error {
 	if expectation.Ctx != nil && !reflect.DeepEqual(expectation.Ctx, ctx) {
 		return errors.New("execkit-mock: context not match")
 	}
-	if expectation.Runner != nil && !reflect.DeepEqual(expectation.Runner, runner) {
-		return fmt.Errorf("execkit-mock: runner not match: %v", runner)
+	if expectation.Command != nil {
+		cmd1 := cmder.Command()
+		cmd2 := expectation.Command.Command()
+		if cmd1.Name != cmd2.Name || !reflect.DeepEqual(cmd1.Args, cmd2.Args) {
+			return fmt.Errorf("execkit-mock: command not match: {%s %v} != {%s %v}",
+				cmd1.Name, cmd1.Args, cmd2.Name, cmd2.Args)
+		}
+
 	}
 	return expectation.ReturnError
 }

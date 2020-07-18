@@ -1,7 +1,6 @@
 package execkit
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"time"
@@ -17,8 +16,7 @@ type (
 	}
 )
 
-var _ Runner = (*GoTest)(nil)
-var _ fmt.Stringer = (*GoTest)(nil)
+var _ Commander = (*GoTest)(nil)
 
 // Command of go test
 func (g *GoTest) Command() *Command {
@@ -44,13 +42,4 @@ func (g *GoTest) Args() []string {
 		args = append(args, "-race")
 	}
 	return append(args, g.Packages...)
-}
-
-// Run gotest
-func (g *GoTest) Run(ctx context.Context) error {
-	return g.Command().Run(ctx)
-}
-
-func (g GoTest) String() string {
-	return g.Command().String()
 }
