@@ -15,15 +15,6 @@ type (
 )
 
 //
-// Context
-//
-
-// GetAlpha get alpha parameter
-func (c *Context) GetAlpha() bool {
-	return c.Context.Bool(alphaParam)
-}
-
-//
 // releaserImpl
 //
 

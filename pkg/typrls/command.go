@@ -10,8 +10,12 @@ import (
 )
 
 const (
-	forceParam = "force"
-	alphaParam = "alpha"
+	// ForceFlag -force cli param
+	ForceFlag = "force"
+	// AlphaFlag -alpha cli param
+	AlphaFlag = "alpha"
+	// TagFlag -tag cli param
+	TagFlag = "tag"
 )
 
 type (
@@ -19,6 +23,7 @@ type (
 	Command struct {
 		Releaser
 		ReleaseTag string
+		Alpha      bool
 		Validation Validator
 		Summary    Summarizer
 	}
@@ -33,8 +38,9 @@ func (r *Command) Command(c *typgo.BuildCli) *cli.Command {
 		Name:  "release",
 		Usage: "Release the project",
 		Flags: []cli.Flag{
-			&cli.BoolFlag{Name: forceParam, Usage: "Release by passed all validation"},
-			&cli.BoolFlag{Name: alphaParam, Usage: "Release for alpha version"},
+			&cli.BoolFlag{Name: ForceFlag, Usage: "Release by passed all validation"},
+			&cli.BoolFlag{Name: AlphaFlag, Usage: "Release for alpha version"},
+			&cli.StringFlag{Name: TagFlag, Usage: "Override the release-tag"},
 		},
 		Action: c.ActionFn(r.Execute),
 	}
@@ -51,10 +57,13 @@ func (r *Command) Execute(c *typgo.Context) error {
 	git.Fetch(ctx)
 	defer git.Fetch(ctx)
 
+	r.ReleaseTag = c.String(TagFlag)
+	r.Alpha = r.Alpha || c.Bool(AlphaFlag)
 	currentTag := git.CurrentTag(ctx)
 
 	rlsCtx := &Context{
 		Context: c,
+		Alpha:   r.Alpha,
 		Git: &Git{
 			Status:     git.Status(ctx),
 			CurrentTag: currentTag,
@@ -63,7 +72,7 @@ func (r *Command) Execute(c *typgo.Context) error {
 		ReleaseTag: r.GetReleaseTag(c),
 	}
 
-	if r.Validation != nil && !c.Bool(forceParam) {
+	if r.Validation != nil && !c.Bool(ForceFlag) {
 		if err := r.Validation.Validate(rlsCtx); err != nil {
 			return err
 		}
@@ -87,7 +96,7 @@ func (r *Command) GetReleaseTag(c *typgo.Context) string {
 			r.ReleaseTag = "v0.0.1"
 		}
 
-		if c.Bool(alphaParam) {
+		if r.Alpha {
 			r.ReleaseTag = r.ReleaseTag + "_alpha"
 		}
 	}

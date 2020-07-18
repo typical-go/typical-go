@@ -41,7 +41,7 @@ func (g *Github) Release(c *Context) (err error) {
 		TagName:    github.String(c.ReleaseTag),
 		Body:       github.String(c.Summary),
 		Draft:      github.Bool(false),
-		Prerelease: github.Bool(c.GetAlpha()),
+		Prerelease: github.Bool(c.Alpha),
 	}
 	if githubRls, _, err = repo.CreateRelease(ctx, g.Owner, g.Repo, githubRls); err != nil {
 		return
