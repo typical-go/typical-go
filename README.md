@@ -114,22 +114,6 @@ Run wrapper script
 ```
 $ ./typicalw
 ```
-```go 
-Typical Build
-
-Usage:
-
-  ./typicalw <command> [argument]
-
-The commands are:
-
-  compile, c  Compile the project
-  run, r      Run the project in local environment
-  clean       Clean the project
-  help, h     Shows a list of commands or help for one command
-
-Use "./typicalw help <topic>" for more information about that topic
-```
 
 ## Annotation
 
