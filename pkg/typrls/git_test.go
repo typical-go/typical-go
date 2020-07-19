@@ -17,10 +17,6 @@ func TestLog(t *testing.T) {
 			Raw: "123456",
 		},
 		{
-			Raw:      "5378feb",
-			Expected: &typrls.Log{ShortCode: "5378feb"},
-		},
-		{
 			Raw:      "5378feb something",
 			Expected: &typrls.Log{ShortCode: "5378feb", Message: "something"},
 		},

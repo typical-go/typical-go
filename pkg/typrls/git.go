@@ -2,6 +2,7 @@ package typrls
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
@@ -28,6 +29,10 @@ func CreateLog(raw string) *Log {
 		return nil
 	}
 	raw = strings.TrimSpace(raw)
+	i := strings.Index(raw, " ")
+	if i != 7 {
+		return nil
+	}
 	message := raw[7:]
 	coAuthoredBy := ""
 	if i := strings.Index(message, "Co-Authored-By:"); i >= 0 {
@@ -42,15 +47,16 @@ func CreateLog(raw string) *Log {
 	}
 }
 
-func gitStatus(ctx context.Context, files ...string) string {
-	args := []string{"status"}
-	args = append(args, files...)
-	args = append(args, "--porcelain")
-	status, err := git(ctx, args...)
-	if err != nil {
-		return err.Error()
+func gitStatus(ctx context.Context) string {
+	var out strings.Builder
+	if err := execkit.Run(ctx, &execkit.Command{
+		Name:   "git",
+		Args:   []string{"status", "--porcelain"},
+		Stdout: &out,
+	}); err != nil {
+		fmt.Printf("WARN: %s\n", err.Error())
 	}
-	return status
+	return out.String()
 }
 
 func gitFetch(ctx context.Context) error {
@@ -67,7 +73,7 @@ func gitTag(ctx context.Context) string {
 		Args:   []string{"describe", "--tags", "--abbrev=0"},
 		Stdout: &out,
 	}); err != nil {
-		return ""
+		fmt.Printf("WARN: %s\n", err.Error())
 	}
 	return strings.TrimSpace(out.String())
 }
@@ -80,39 +86,20 @@ func gitLogs(ctx context.Context, from string) (logs []*Log) {
 	}
 	args = append(args, "--oneline")
 
-	data, err := git(ctx, args...)
+	var out strings.Builder
+	err := execkit.Run(ctx, &execkit.Command{
+		Name:   "git",
+		Args:   args,
+		Stdout: &out,
+	})
 	if err != nil {
-		return
+		fmt.Printf("WARN: %s\n", err.Error())
 	}
-	for _, s := range strings.Split(data, "\n") {
+
+	for _, s := range strings.Split(out.String(), "\n") {
 		if log := CreateLog(s); log != nil {
 			logs = append(logs, log)
 		}
 	}
 	return
-}
-
-// Push files to git repo
-func Push(ctx context.Context, commitMessage string, files ...string) (err error) {
-	args := []string{"add"}
-	args = append(args, files...)
-	if _, err = git(ctx, args...); err != nil {
-		return
-	}
-	if _, err = git(ctx, "commit", "-m", commitMessage); err != nil {
-		return
-	}
-	_, err = git(ctx, "push")
-	return
-}
-
-func git(ctx context.Context, args ...string) (string, error) {
-	var builder strings.Builder
-	err := execkit.Run(ctx, &execkit.Command{
-		Name:   "git",
-		Args:   args,
-		Stdout: &builder,
-	})
-	s := strings.TrimSuffix(builder.String(), "\n")
-	return s, err
 }

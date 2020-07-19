@@ -15,8 +15,9 @@ var (
 type (
 	// RunExpectation is test expectation for execkit.Run
 	RunExpectation struct {
-		Ctx         context.Context
 		Command     Commander
+		OutputBytes []byte
+		ErrorBytes  []byte
 		ReturnError error
 	}
 	runMocker struct {
@@ -65,21 +66,37 @@ func (r *runMocker) expectation() *RunExpectation {
 }
 
 func (r *runMocker) run(ctx context.Context, cmder Commander) error {
-	expectation := r.expectation()
-	if expectation == nil {
+	expc := r.expectation()
+	if expc == nil {
 		return errors.New("execkit-mock: no run expectation")
 	}
-	if expectation.Ctx != nil && !reflect.DeepEqual(expectation.Ctx, ctx) {
-		return errors.New("execkit-mock: context not match")
-	}
-	if expectation.Command != nil {
-		cmd1 := cmder.Command()
-		cmd2 := expectation.Command.Command()
-		if cmd1.Name != cmd2.Name || !reflect.DeepEqual(cmd1.Args, cmd2.Args) {
-			return fmt.Errorf("execkit-mock: command not match: {%s %v} != {%s %v}",
-				cmd1.Name, cmd1.Args, cmd2.Name, cmd2.Args)
+	if expc.Command != nil {
+		if err := check(cmder, expc.Command); err != nil {
+			return err
+		}
+
+		cmd := cmder.Command()
+		if cmd.Stdout != nil {
+			if _, err := cmd.Stdout.Write(expc.OutputBytes); err != nil {
+				return err
+			}
+		}
+		if cmd.Stderr != nil {
+			if _, err := cmd.Stderr.Write(expc.ErrorBytes); err != nil {
+				return err
+			}
 		}
 
 	}
-	return expectation.ReturnError
+	return expc.ReturnError
+}
+
+func check(c1, c2 Commander) error {
+	cmd1 := c1.Command()
+	cmd2 := c2.Command()
+	if cmd1.Name != cmd2.Name || !reflect.DeepEqual(cmd1.Args, cmd2.Args) {
+		return fmt.Errorf("execkit-mock: command not match: {%s %v} != {%s %v}",
+			cmd1.Name, cmd1.Args, cmd2.Name, cmd2.Args)
+	}
+	return nil
 }
