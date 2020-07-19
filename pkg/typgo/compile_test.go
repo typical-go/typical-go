@@ -1,12 +1,14 @@
 package typgo_test
 
 import (
+	"context"
 	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
+	"github.com/urfave/cli/v2"
 )
 
 func TestCompileCmd(t *testing.T) {
@@ -31,31 +33,51 @@ func TestCompileCmd(t *testing.T) {
 }
 
 func TestStdCompile(t *testing.T) {
-	t.Run("predefine", func(t *testing.T) {
+	cmpl := &typgo.StdCompile{}
+	c := &typgo.Context{
+		Descriptor: &typgo.Descriptor{Name: "some-name", Version: "0.0.1"},
+		Context:    &cli.Context{Context: context.Background()},
+	}
 
-		cmpl := &typgo.StdCompile{
-			MainPackage: "some-package",
-			Output:      "some-output",
-			Ldflags: execkit.BuildVars{
-				"some-var": "some-value",
+	unpatch := execkit.Patch([]*execkit.RunExpectation{
+		{
+			CommandLine: []string{
+				"go", "build",
+				"-ldflags", "-X github.com/typical-go/typical-go/pkg/typapp.Name=some-name -X github.com/typical-go/typical-go/pkg/typapp.Version=0.0.1",
+				"-o", "bin/some-name",
+				"./cmd/some-name",
 			},
-		}
-		require.Equal(t, "-X some-var=some-value", cmpl.GetLdflags(nil).String())
-		require.Equal(t, "some-package", cmpl.GetMainPackage(nil))
-		require.Equal(t, "some-output", cmpl.GetOutput(nil))
-
+		},
 	})
-	t.Run("default", func(t *testing.T) {
-		cmpl := &typgo.StdCompile{}
-		ctx := &typgo.Context{
-			Descriptor: &typgo.Descriptor{
-				Name:    "some-name",
-				Version: "0.0.1",
+	defer unpatch(t)
+
+	require.NoError(t, cmpl.Execute(c))
+}
+
+func TestStdCompile_OverrideParams(t *testing.T) {
+	cmpl := &typgo.StdCompile{
+		MainPackage: "some-package",
+		Output:      "some-output",
+		Ldflags: execkit.BuildVars{
+			"some-var": "some-value",
+		},
+	}
+	c := &typgo.Context{
+		Descriptor: &typgo.Descriptor{Name: "some-name", Version: "0.0.1"},
+		Context:    &cli.Context{Context: context.Background()},
+	}
+
+	unpatch := execkit.Patch([]*execkit.RunExpectation{
+		{
+			CommandLine: []string{
+				"go", "build",
+				"-ldflags", "-X some-var=some-value",
+				"-o", "some-output",
+				"some-package",
 			},
-		}
-
-		require.Equal(t, "-X github.com/typical-go/typical-go/pkg/typapp.Name=some-name -X github.com/typical-go/typical-go/pkg/typapp.Version=0.0.1", cmpl.GetLdflags(ctx).String())
-		require.Equal(t, "./cmd/some-name", cmpl.GetMainPackage(ctx))
-		require.Equal(t, "bin/some-name", cmpl.GetOutput(ctx))
+		},
 	})
+	defer unpatch(t)
+
+	require.NoError(t, cmpl.Execute(c))
 }

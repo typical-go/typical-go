@@ -2,9 +2,8 @@ package execkit
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -15,7 +14,7 @@ var (
 type (
 	// RunExpectation is test expectation for execkit.Run
 	RunExpectation struct {
-		Command     Commander
+		CommandLine []string
 		OutputBytes []byte
 		ErrorBytes  []byte
 		ReturnError error
@@ -67,36 +66,45 @@ func (r *runMocker) expectation() *RunExpectation {
 
 func (r *runMocker) run(ctx context.Context, cmder Commander) error {
 	expc := r.expectation()
+	cmd := cmder.Command()
 	if expc == nil {
-		return errors.New("execkit-mock: no run expectation")
+		return fmt.Errorf("execkit-mock: no run expectation for {%s %v}",
+			cmd.Name, cmd.Args)
 	}
-	if expc.Command != nil {
-		if err := check(cmder, expc.Command); err != nil {
+
+	if !expc.match(cmd) {
+		return fmt.Errorf("execkit-mock: command not matched: [%s %s] != %v",
+			cmd.Name, strings.Join(cmd.Args, " "), expc.CommandLine)
+	}
+
+	if expc.OutputBytes != nil && cmd.Stdout != nil {
+		if _, err := cmd.Stdout.Write(expc.OutputBytes); err != nil {
 			return err
 		}
-
-		cmd := cmder.Command()
-		if cmd.Stdout != nil {
-			if _, err := cmd.Stdout.Write(expc.OutputBytes); err != nil {
-				return err
-			}
-		}
-		if cmd.Stderr != nil {
-			if _, err := cmd.Stderr.Write(expc.ErrorBytes); err != nil {
-				return err
-			}
-		}
-
 	}
+	if expc.ErrorBytes != nil && cmd.Stderr != nil {
+		if _, err := cmd.Stderr.Write(expc.ErrorBytes); err != nil {
+			return err
+		}
+	}
+
 	return expc.ReturnError
 }
 
-func check(c1, c2 Commander) error {
-	cmd1 := c1.Command()
-	cmd2 := c2.Command()
-	if cmd1.Name != cmd2.Name || !reflect.DeepEqual(cmd1.Args, cmd2.Args) {
-		return fmt.Errorf("execkit-mock: command not match: {%s %v} != {%s %v}",
-			cmd1.Name, cmd1.Args, cmd2.Name, cmd2.Args)
+func (r *RunExpectation) match(c *Command) bool {
+	if len(c.Args)+1 != len(r.CommandLine) {
+		return false
 	}
-	return nil
+
+	if r.CommandLine[0] != c.Name {
+		return false
+	}
+
+	for i, arg := range c.Args {
+		if arg != r.CommandLine[i+1] {
+			return false
+		}
+	}
+
+	return true
 }

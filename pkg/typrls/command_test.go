@@ -69,19 +69,10 @@ func TestCommand_Execute(t *testing.T) {
 				Descriptor: &typgo.Descriptor{},
 			},
 			RunExpectations: []*execkit.RunExpectation{
-				{Command: &execkit.Command{Name: "git", Args: []string{"fetch"}}},
-				{
-					Command:     &execkit.Command{Name: "git", Args: []string{"describe", "--tags", "--abbrev=0"}},
-					OutputBytes: []byte("some-tag"),
-				},
-				{
-					Command:     &execkit.Command{Name: "git", Args: []string{"status", "--porcelain"}},
-					OutputBytes: []byte("some-status"),
-				},
-				{
-					Command:     &execkit.Command{Name: "git", Args: []string{"--no-pager", "log", "some-tag..HEAD", "--oneline"}},
-					OutputBytes: []byte("5378feb one\n"),
-				},
+				{CommandLine: []string{"git", "fetch"}},
+				{CommandLine: []string{"git", "describe", "--tags", "--abbrev=0"}, OutputBytes: []byte("some-tag")},
+				{CommandLine: []string{"git", "status", "--porcelain"}, OutputBytes: []byte("some-status")},
+				{CommandLine: []string{"git", "--no-pager", "log", "some-tag..HEAD", "--oneline"}, OutputBytes: []byte("5378feb one\n")},
 			},
 			Expected: &typrls.Context{
 				ReleaseTag: "v0.0.1_alpha",
@@ -110,15 +101,9 @@ func TestCommand_Execute(t *testing.T) {
 				},
 			},
 			RunExpectations: []*execkit.RunExpectation{
-				{Command: &execkit.Command{Name: "git", Args: []string{"fetch"}}},
-				{
-					Command:     &execkit.Command{Name: "git", Args: []string{"describe", "--tags", "--abbrev=0"}},
-					OutputBytes: []byte("some-tag-1"),
-				},
-				{
-					Command:     &execkit.Command{Name: "git", Args: []string{"status", "--porcelain"}},
-					OutputBytes: []byte("some-status-1"),
-				},
+				{CommandLine: []string{"git", "fetch"}},
+				{CommandLine: []string{"git", "describe", "--tags", "--abbrev=0"}, OutputBytes: []byte("some-tag-1")},
+				{CommandLine: []string{"git", "status", "--porcelain"}, OutputBytes: []byte("some-status-1")},
 			},
 			Expected: &typrls.Context{
 				ReleaseTag: "v9.9.9",
@@ -141,15 +126,9 @@ func TestCommand_Execute(t *testing.T) {
 				},
 			},
 			RunExpectations: []*execkit.RunExpectation{
-				{Command: &execkit.Command{Name: "git", Args: []string{"fetch"}}},
-				{
-					Command:     &execkit.Command{Name: "git", Args: []string{"describe", "--tags", "--abbrev=0"}},
-					OutputBytes: []byte("some-tag-3"),
-				},
-				{
-					Command:     &execkit.Command{Name: "git", Args: []string{"status", "--porcelain"}},
-					OutputBytes: []byte("some-status-3"),
-				},
+				{CommandLine: []string{"git", "fetch"}},
+				{CommandLine: []string{"git", "describe", "--tags", "--abbrev=0"}, OutputBytes: []byte("some-tag-3")},
+				{CommandLine: []string{"git", "status", "--porcelain"}, OutputBytes: []byte("some-status-3")},
 			},
 			Expected: &typrls.Context{
 				ReleaseTag: "some-tag",
