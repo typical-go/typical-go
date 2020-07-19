@@ -72,7 +72,7 @@ func (m Mockery) Filter(pkgs ...string) Map {
 }
 
 // CreateMock to create mock
-func CreateMock(annot *typast.Annotation) *Mock {
+func CreateMock(annot *typast.Annot) *Mock {
 	pkg := annot.Decl.Package
 	dir := filepath.Dir(annot.Decl.Path)
 

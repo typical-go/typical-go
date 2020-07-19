@@ -42,12 +42,12 @@ func init() {
 func TestCreateCtor(t *testing.T) {
 	testcases := []struct {
 		TestName string
-		*typast.Annotation
+		*typast.Annot
 		Expected    *typtmpl.Ctor
 		ExpectedErr string
 	}{
 		{
-			Annotation: &typast.Annotation{
+			Annot: &typast.Annot{
 				Decl: &typast.Decl{
 					Package: "pkg",
 					Name:    "name",
@@ -56,7 +56,7 @@ func TestCreateCtor(t *testing.T) {
 			Expected: &typtmpl.Ctor{Name: "", Def: "pkg.name"},
 		},
 		{
-			Annotation: &typast.Annotation{
+			Annot: &typast.Annot{
 				TagAttrs: []byte(`{"name":"some-name"}`),
 				Decl: &typast.Decl{
 					Package: "pkg",
@@ -66,7 +66,7 @@ func TestCreateCtor(t *testing.T) {
 			Expected: &typtmpl.Ctor{Name: "some-name", Def: "pkg.name"},
 		},
 		{
-			Annotation: &typast.Annotation{
+			Annot: &typast.Annot{
 				TagAttrs: []byte(`{bad-attributes`),
 				Decl: &typast.Decl{
 					Package: "pkg",
@@ -78,7 +78,7 @@ func TestCreateCtor(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			ctor, err := typtmpl.CreateCtor(tt.Annotation)
+			ctor, err := typtmpl.CreateCtor(tt.Annot)
 			if tt.ExpectedErr != "" {
 				require.EqualError(t, err, tt.ExpectedErr)
 			} else {

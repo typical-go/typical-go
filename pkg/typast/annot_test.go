@@ -12,27 +12,27 @@ func TestCreateAnnotation(t *testing.T) {
 		testName      string
 		decl          *typast.Decl
 		raw           string
-		expected      *typast.Annotation
+		expected      *typast.Annot
 		expectedError string
 	}{
 		{
 			testName: "tag only",
 			raw:      `@autowire`,
-			expected: &typast.Annotation{
+			expected: &typast.Annot{
 				TagName: "autowire",
 			},
 		},
 		{
 			testName: "tag only with space",
 			raw:      `@  autowire  `,
-			expected: &typast.Annotation{
+			expected: &typast.Annot{
 				TagName: "autowire",
 			},
 		},
 		{
 			testName: "with attribute",
 			raw:      `@mock{"pkg":"mock2"}`,
-			expected: &typast.Annotation{
+			expected: &typast.Annot{
 				TagName:  "mock",
 				TagAttrs: []byte(`{"pkg":"mock2"}`),
 			},
@@ -40,7 +40,7 @@ func TestCreateAnnotation(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		t.Run(tt.testName, func(t *testing.T) {
-			annotation, err := typast.CreateAnnotation(tt.decl, tt.raw)
+			annotation, err := typast.CreateAnnot(tt.decl, tt.raw)
 			if tt.expectedError != "" {
 				require.EqualError(t, err, tt.expectedError)
 			} else {
@@ -54,13 +54,13 @@ func TestCreateAnnotation(t *testing.T) {
 func TestUnmarshall(t *testing.T) {
 	testcases := []struct {
 		testName string
-		*typast.Annotation
+		*typast.Annot
 		expected    map[string]string
 		expectedErr string
 	}{
 		{
 			testName: "",
-			Annotation: &typast.Annotation{
+			Annot: &typast.Annot{
 				TagName:  "mock",
 				TagAttrs: []byte(`{"key1":"value1"}`),
 			},
@@ -70,13 +70,13 @@ func TestUnmarshall(t *testing.T) {
 		},
 		{
 			testName: "",
-			Annotation: &typast.Annotation{
+			Annot: &typast.Annot{
 				TagName: "mock",
 			},
 		},
 		{
 			testName: "",
-			Annotation: &typast.Annotation{
+			Annot: &typast.Annot{
 				TagName:  "mock",
 				TagAttrs: []byte(`{"key1":"value1"`),
 			},
@@ -101,13 +101,13 @@ func TestUnmarshall(t *testing.T) {
 func TestAnnot_Check(t *testing.T) {
 	testcases := []struct {
 		TestName string
-		*typast.Annotation
+		*typast.Annot
 		TagName  string
 		Type     typast.DeclType
 		Expected bool
 	}{
 		{
-			Annotation: &typast.Annotation{
+			Annot: &typast.Annot{
 				TagName: "tagname",
 				Decl:    &typast.Decl{Type: typast.FuncType},
 			},
@@ -117,7 +117,7 @@ func TestAnnot_Check(t *testing.T) {
 		},
 		{
 			TestName: "upper-cased tagName",
-			Annotation: &typast.Annotation{
+			Annot: &typast.Annot{
 				TagName: "TAGNAME",
 				Decl:    &typast.Decl{Type: typast.FuncType},
 			},
@@ -127,7 +127,7 @@ func TestAnnot_Check(t *testing.T) {
 		},
 		{
 			TestName: "random-cased tagName",
-			Annotation: &typast.Annotation{
+			Annot: &typast.Annot{
 				TagName: "TaGNaMe",
 				Decl:    &typast.Decl{Type: typast.FuncType},
 			},
@@ -137,7 +137,7 @@ func TestAnnot_Check(t *testing.T) {
 		},
 		{
 			TestName: "wrong declaration type",
-			Annotation: &typast.Annotation{
+			Annot: &typast.Annot{
 				TagName: "tagname",
 				Decl:    &typast.Decl{Type: typast.InterfaceType},
 			},
@@ -147,7 +147,7 @@ func TestAnnot_Check(t *testing.T) {
 		},
 		{
 			TestName: "wrong declaration type",
-			Annotation: &typast.Annotation{
+			Annot: &typast.Annot{
 				TagName: "wrong",
 				Decl:    &typast.Decl{Type: typast.FuncType},
 			},

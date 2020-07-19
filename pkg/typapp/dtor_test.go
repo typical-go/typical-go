@@ -17,7 +17,7 @@ func TestDtorAnnotation_Execute(t *testing.T) {
 	dtorAnnot := &typapp.DtorAnnotation{Target: target}
 	ctx := &typgo.Context{
 		ASTStore: &typast.ASTStore{
-			Annots: []*typast.Annotation{
+			Annots: []*typast.Annot{
 				{TagName: "dtor", Decl: &typast.Decl{Name: "Clean", Package: "pkg", Type: typast.FuncType}},
 			},
 		},

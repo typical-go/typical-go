@@ -52,11 +52,11 @@ func TestTargetMap(t *testing.T) {
 func TestCreateMock(t *testing.T) {
 	testcases := []struct {
 		testName string
-		annot    *typast.Annotation
+		annot    *typast.Annot
 		expected *typmock.Mock
 	}{
 		{
-			annot: &typast.Annotation{
+			annot: &typast.Annot{
 				Decl: &typast.Decl{
 					Package: "somePkg",
 					Path:    "/path/folder/source.go",

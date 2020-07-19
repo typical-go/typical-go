@@ -25,7 +25,7 @@ type (
 //
 
 // CreateDtor to create new instance of Dtor from Annotation
-func CreateDtor(annot *typast.Annotation) *Dtor {
+func CreateDtor(annot *typast.Annot) *Dtor {
 	return &Dtor{
 		Def: fmt.Sprintf("%s.%s", annot.Decl.Package, annot.Decl.Name),
 	}

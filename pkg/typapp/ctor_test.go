@@ -17,7 +17,7 @@ func TestCtorAnnotation_Execute(t *testing.T) {
 	ctorAnnot := &typapp.CtorAnnotation{Target: target}
 	ctx := &typgo.Context{
 		ASTStore: &typast.ASTStore{
-			Annots: []*typast.Annotation{
+			Annots: []*typast.Annot{
 				{
 					TagName: "ctor",
 					Decl:    &typast.Decl{Name: "NewObject", Package: "pkg", Type: typast.FuncType},

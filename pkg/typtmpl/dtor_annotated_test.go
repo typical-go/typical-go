@@ -40,11 +40,11 @@ func init() {
 func TestCreateDtor(t *testing.T) {
 	testcases := []struct {
 		TestName string
-		*typast.Annotation
+		*typast.Annot
 		Expected *typtmpl.Dtor
 	}{
 		{
-			Annotation: &typast.Annotation{
+			Annot: &typast.Annot{
 				Decl: &typast.Decl{
 					Package: "pkg",
 					Name:    "name",
@@ -57,7 +57,7 @@ func TestCreateDtor(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			require.Equal(t, tt.Expected, typtmpl.CreateDtor(tt.Annotation))
+			require.Equal(t, tt.Expected, typtmpl.CreateDtor(tt.Annot))
 		})
 	}
 }

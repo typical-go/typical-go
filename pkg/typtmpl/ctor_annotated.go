@@ -26,7 +26,7 @@ type (
 //
 
 // CreateCtor to create new instance of Ctor
-func CreateCtor(annot *typast.Annotation) (*Ctor, error) {
+func CreateCtor(annot *typast.Annot) (*Ctor, error) {
 	var ctor Ctor
 	if err := annot.Unmarshal(&ctor); err != nil {
 		return nil, fmt.Errorf("%s: %w", annot.Decl.Name, err)
