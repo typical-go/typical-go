@@ -1,6 +1,9 @@
 package typgo
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 )
 
@@ -63,4 +66,27 @@ func (a Actions) Execute(c *Context) error {
 		}
 	}
 	return nil
+}
+
+//
+// CmdTestCase
+//
+
+// Run test for Command
+func (tt *CmdTestCase) Run(t *testing.T) bool {
+	return t.Run(tt.TestName, func(t *testing.T) {
+		b := &BuildCli{}
+		cmd := tt.Cmd.Command(b)
+		require.Equal(t, tt.Expected.Name, cmd.Name)
+		require.Equal(t, tt.Expected.Usage, cmd.Usage)
+		require.Equal(t, tt.Expected.Aliases, cmd.Aliases)
+		require.Equal(t, tt.Expected.Flags, cmd.Flags)
+
+		err := cmd.Action(nil)
+		if tt.ExpectedError != "" {
+			require.EqualError(t, err, tt.ExpectedError)
+		} else {
+			require.NoError(t, err)
+		}
+	})
 }
