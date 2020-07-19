@@ -54,7 +54,7 @@ func TestStdCompile(t *testing.T) {
 	require.NoError(t, cmpl.Execute(c))
 }
 
-func TestStdCompile_OverrideParams(t *testing.T) {
+func TestStdCompile_Predefined(t *testing.T) {
 	cmpl := &typgo.StdCompile{
 		MainPackage: "some-package",
 		Output:      "some-output",

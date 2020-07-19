@@ -68,8 +68,8 @@ func (r *runMocker) run(ctx context.Context, cmder Commander) error {
 	expc := r.expectation()
 	cmd := cmder.Command()
 	if expc == nil {
-		return fmt.Errorf("execkit-mock: no run expectation for {%s %v}",
-			cmd.Name, cmd.Args)
+		return fmt.Errorf("execkit-mock: no run expectation for [%s %s]",
+			cmd.Name, strings.Join(cmd.Args, " "))
 	}
 
 	if !expc.match(cmd) {

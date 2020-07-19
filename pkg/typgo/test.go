@@ -55,15 +55,14 @@ func (s *StdTest) Execute(c *Context) (err error) {
 	}
 
 	return c.Execute(&execkit.GoTest{
-		Packages:     s.GetPackages(c),
-		Timeout:      s.GetTimeout(),
-		CoverProfile: s.GetCoverProfile(),
+		Packages:     s.getPackages(c),
+		Timeout:      s.getTimeout(),
+		CoverProfile: s.getCoverProfile(),
 		Race:         s.Race,
 	})
 }
 
-// GetPackages return packages to be tested
-func (s *StdTest) GetPackages(c *Context) []string {
+func (s *StdTest) getPackages(c *Context) []string {
 	if len(s.Packages) < 1 {
 		for _, layout := range c.Descriptor.Layouts {
 			s.Packages = append(s.Packages, fmt.Sprintf("./%s/...", layout))
@@ -72,16 +71,14 @@ func (s *StdTest) GetPackages(c *Context) []string {
 	return s.Packages
 }
 
-// GetTimeout return test timeout
-func (s *StdTest) GetTimeout() time.Duration {
+func (s *StdTest) getTimeout() time.Duration {
 	if s.Timeout <= 0 {
 		return defaultTestTimeout
 	}
 	return s.Timeout
 }
 
-// GetCoverProfile return cover profile filename
-func (s *StdTest) GetCoverProfile() string {
+func (s *StdTest) getCoverProfile() string {
 	if s.CoverProfile == "" {
 		return defaultTestCoverProfile
 	}

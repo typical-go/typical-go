@@ -2,10 +2,13 @@ package typgo_test
 
 import (
 	"errors"
+	"flag"
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
+	"github.com/urfave/cli/v2"
 )
 
 func TestRunCompile(t *testing.T) {
@@ -31,17 +34,33 @@ func TestRunCompile(t *testing.T) {
 }
 
 func TestStdRun(t *testing.T) {
-	t.Run("predefined", func(t *testing.T) {
-		stdRun := &typgo.StdRun{
-			Binary: "some-binary",
-		}
-		require.Equal(t, "some-binary", stdRun.GetBinary(nil))
+	stdRun := &typgo.StdRun{}
+	c := &typgo.Context{
+		Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
+		Descriptor: &typgo.Descriptor{Name: "some-name"},
+	}
+
+	unpatch := execkit.Patch([]*execkit.RunExpectation{
+		{CommandLine: []string{"bin/some-name"}},
 	})
-	t.Run("default", func(t *testing.T) {
-		stdRun := &typgo.StdRun{}
-		ctx := &typgo.Context{
-			Descriptor: &typgo.Descriptor{Name: "some-name"},
-		}
-		require.Equal(t, "bin/some-name", stdRun.GetBinary(ctx))
+	defer unpatch(t)
+
+	require.NoError(t, stdRun.Execute(c))
+}
+
+func TestStdRun_Predefined(t *testing.T) {
+	stdRun := &typgo.StdRun{
+		Binary: "some-binary",
+	}
+	c := &typgo.Context{
+		Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
+		Descriptor: &typgo.Descriptor{Name: "some-name"},
+	}
+
+	unpatch := execkit.Patch([]*execkit.RunExpectation{
+		{CommandLine: []string{"some-binary"}},
 	})
+	defer unpatch(t)
+
+	require.NoError(t, stdRun.Execute(c))
 }

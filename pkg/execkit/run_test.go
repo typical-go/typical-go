@@ -89,6 +89,6 @@ func TestPatch_NoRunExpectation(t *testing.T) {
 
 	require.EqualError(t,
 		execkit.Run(context.Background(), &execkit.Command{Name: "name1", Args: []string{"arg1"}}),
-		"execkit-mock: no run expectation for {name1 [arg1]}",
+		"execkit-mock: no run expectation for [name1 arg1]",
 	)
 }
