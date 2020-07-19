@@ -1,5 +1,7 @@
 package typrls
 
+import "github.com/typical-go/typical-go/pkg/typgo"
+
 type (
 	// Releaser responsible to release
 	Releaser interface {
@@ -11,6 +13,17 @@ type (
 	ReleaseFn    func(*Context) error
 	releaserImpl struct {
 		fn ReleaseFn
+	}
+	// Context contain data for release
+	Context struct {
+		*typgo.Context
+		Alpha bool
+		// ReleaseTag is next release tag
+		ReleaseTag string
+		// Summary for the release
+		Summary string
+		// Git detail
+		Git *Git
 	}
 )
 

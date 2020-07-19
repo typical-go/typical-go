@@ -7,7 +7,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/execkit"
-	"github.com/typical-go/typical-go/pkg/git"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typrls"
 	"github.com/urfave/cli/v2"
@@ -76,7 +75,7 @@ func TestCommand_Execute(t *testing.T) {
 				Git: &typrls.Git{
 					Status:     "",
 					CurrentTag: "",
-					Logs:       []*git.Log{},
+					Logs:       []*typrls.Log{},
 				},
 			},
 		},

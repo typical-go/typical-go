@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/git"
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
@@ -31,7 +30,7 @@ func TestSummarizer(t *testing.T) {
 			},
 			Context: &typrls.Context{
 				Git: &typrls.Git{
-					Logs: []*git.Log{
+					Logs: []*typrls.Log{
 						{ShortCode: "1111", Message: "some-message-1"},
 						{ShortCode: "2222", Message: "revision: some-message-2"},
 						{ShortCode: "3333", Message: "some-message-3"},

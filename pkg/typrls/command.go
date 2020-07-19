@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/typical-go/typical-go/pkg/git"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
@@ -54,20 +53,20 @@ func (r *Command) Execute(c *typgo.Context) error {
 
 	ctx := c.Ctx()
 
-	git.Fetch(ctx)
-	defer git.Fetch(ctx)
+	gitFetch(ctx)
+	defer gitFetch(ctx)
 
 	r.ReleaseTag = c.String(TagFlag)
 	r.Alpha = r.Alpha || c.Bool(AlphaFlag)
-	currentTag := git.CurrentTag(ctx)
+	currentTag := gitTag(ctx)
 
 	rlsCtx := &Context{
 		Context: c,
 		Alpha:   r.Alpha,
 		Git: &Git{
-			Status:     git.Status(ctx),
+			Status:     gitStatus(ctx),
 			CurrentTag: currentTag,
-			Logs:       git.RetrieveLogs(ctx, currentTag),
+			Logs:       gitLogs(ctx, currentTag),
 		},
 		ReleaseTag: r.GetReleaseTag(c),
 	}

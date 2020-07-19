@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/git"
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
@@ -85,7 +84,7 @@ func TestValidator(t *testing.T) {
 			Validator: &typrls.NoGitChangeValidation{},
 			Context: &typrls.Context{
 				Git: &typrls.Git{
-					Logs: []*git.Log{
+					Logs: []*typrls.Log{
 						{ShortCode: "some-short", Message: "some-message"},
 					},
 				},
