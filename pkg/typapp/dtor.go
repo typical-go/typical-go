@@ -41,7 +41,7 @@ func (a *DtorAnnotation) Annotate(c *typannot.Context) error {
 // GetTarget to get generation target for dtor
 func (a *DtorAnnotation) GetTarget(c *typannot.Context) string {
 	if a.Target == "" {
-		a.Target = fmt.Sprintf("cmd/%s/dtor_annotated.go", c.Descriptor.Name)
+		a.Target = fmt.Sprintf("cmd/%s/dtor_annotated.go", c.BuildSys.Name)
 	}
 	return a.Target
 }

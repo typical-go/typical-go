@@ -55,7 +55,7 @@ func (s *StdRun) Execute(c *Context) error {
 
 func (s *StdRun) getBinary(c *Context) string {
 	if s.Binary == "" {
-		s.Binary = fmt.Sprintf("bin/%s", c.Descriptor.Name)
+		s.Binary = fmt.Sprintf("bin/%s", c.BuildSys.Name)
 	}
 	return s.Binary
 }

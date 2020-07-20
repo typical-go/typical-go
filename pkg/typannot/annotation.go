@@ -44,7 +44,7 @@ func (a Annotators) Execute(c *typgo.Context) error {
 
 // CreateContext return new instance of context
 func CreateContext(c *typgo.Context) (*Context, error) {
-	appDirs, appFiles := WalkLayout(c.Layouts)
+	appDirs, appFiles := WalkLayout(c.BuildSys.Layouts)
 	astStore, err := CreateASTStore(appFiles...)
 	if err != nil {
 		return nil, err

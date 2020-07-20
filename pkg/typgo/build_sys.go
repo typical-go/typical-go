@@ -33,10 +33,7 @@ func (b *BuildSys) app() *cli.App {
 
 // Context of build-cli
 func (b *BuildSys) Context(c *cli.Context) *Context {
-	return &Context{
-		Context:  c,
-		BuildSys: b,
-	}
+	return &Context{Context: c, BuildSys: b}
 }
 
 // ActionFn to return related action func

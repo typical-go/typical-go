@@ -37,7 +37,7 @@ func (g *Github) Release(c *Context) (err error) {
 	}
 	fmt.Printf("\nCreate github release for %s/%s\n", g.Owner, g.Repo)
 	githubRls := &github.RepositoryRelease{
-		Name:       github.String(fmt.Sprintf("%s - %s", c.Descriptor.Name, c.ReleaseTag)),
+		Name:       github.String(fmt.Sprintf("%s - %s", c.BuildSys.Name, c.ReleaseTag)),
 		TagName:    github.String(c.ReleaseTag),
 		Body:       github.String(c.Summary),
 		Draft:      github.Bool(false),

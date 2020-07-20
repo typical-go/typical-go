@@ -89,8 +89,8 @@ func (r *Command) Execute(c *typgo.Context) error {
 // GetReleaseTag return release tag
 func (r *Command) GetReleaseTag(c *typgo.Context) string {
 	if r.ReleaseTag == "" {
-		if c.Descriptor.Version != "" {
-			r.ReleaseTag = fmt.Sprintf("v%s", c.Descriptor.Version)
+		if c.BuildSys.Version != "" {
+			r.ReleaseTag = fmt.Sprintf("v%s", c.BuildSys.Version)
 		} else {
 			r.ReleaseTag = "v0.0.1"
 		}

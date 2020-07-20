@@ -73,7 +73,7 @@ func (m *ConfigManager) execute(c *typannot.Context) error {
 // GetTarget get target generation
 func (m *ConfigManager) GetTarget(c *typannot.Context) string {
 	if m.Target == "" {
-		m.Target = fmt.Sprintf("cmd/%s/config_annotated.go", c.Descriptor.Name)
+		m.Target = fmt.Sprintf("cmd/%s/config_annotated.go", c.BuildSys.Name)
 	}
 	return m.Target
 }

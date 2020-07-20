@@ -48,7 +48,7 @@ func (a *CtorAnnotation) Annotate(c *typannot.Context) error {
 // GetTarget to return target generation of ctor
 func (a *CtorAnnotation) GetTarget(c *typannot.Context) string {
 	if a.Target == "" {
-		a.Target = fmt.Sprintf("cmd/%s/ctor_annotated.go", c.Descriptor.Name)
+		a.Target = fmt.Sprintf("cmd/%s/ctor_annotated.go", c.BuildSys.Name)
 	}
 	return a.Target
 }
