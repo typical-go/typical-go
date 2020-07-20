@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -15,15 +15,15 @@ func TestDtorAnnotation_Execute(t *testing.T) {
 	target := "some-target"
 	defer os.Remove(target)
 	dtorAnnot := &typapp.DtorAnnotation{Target: target}
-	ctx := &typast.Context{
+	ctx := &typannot.Context{
 		Context: &typgo.Context{
 			BuildSys: &typgo.BuildSys{
 				Descriptor: &typgo.Descriptor{},
 			},
 		},
-		ASTStore: &typast.ASTStore{
-			Annots: []*typast.Annot{
-				{TagName: "dtor", Decl: &typast.Decl{Name: "Clean", Package: "pkg", Type: typast.FuncType}},
+		ASTStore: &typannot.ASTStore{
+			Annots: []*typannot.Annot{
+				{TagName: "dtor", Decl: &typannot.Decl{Name: "Clean", Package: "pkg", Type: typannot.FuncType}},
 			},
 		},
 	}
@@ -50,13 +50,13 @@ func TestDtorAnnotation_GetTarget(t *testing.T) {
 	testcases := []struct {
 		TestName string
 		*typapp.DtorAnnotation
-		Context  *typast.Context
+		Context  *typannot.Context
 		Expected string
 	}{
 		{
 			TestName:       "initial target is not set",
 			DtorAnnotation: &typapp.DtorAnnotation{},
-			Context: &typast.Context{
+			Context: &typannot.Context{
 				Context: &typgo.Context{
 					BuildSys: &typgo.BuildSys{
 						Descriptor: &typgo.Descriptor{Name: "name0"},

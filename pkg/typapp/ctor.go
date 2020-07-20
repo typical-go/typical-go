@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
@@ -19,13 +19,13 @@ type (
 	}
 )
 
-var _ typast.Annotator = (*CtorAnnotation)(nil)
+var _ typannot.Annotator = (*CtorAnnotation)(nil)
 
 // Annotate ctor
-func (a *CtorAnnotation) Annotate(c *typast.Context) error {
+func (a *CtorAnnotation) Annotate(c *typannot.Context) error {
 	var ctors []*typtmpl.Ctor
 	for _, annot := range c.ASTStore.Annots {
-		if annot.Check(ctorTag, typast.FuncType) {
+		if annot.Check(ctorTag, typannot.FuncType) {
 			ctor, err := typtmpl.CreateCtor(annot)
 			if err != nil {
 				log.Printf("WARN %s", err.Error())
@@ -46,7 +46,7 @@ func (a *CtorAnnotation) Annotate(c *typast.Context) error {
 }
 
 // GetTarget to return target generation of ctor
-func (a *CtorAnnotation) GetTarget(c *typast.Context) string {
+func (a *CtorAnnotation) GetTarget(c *typannot.Context) string {
 	if a.Target == "" {
 		a.Target = fmt.Sprintf("cmd/%s/ctor_annotated.go", c.Descriptor.Name)
 	}

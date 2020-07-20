@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -15,13 +15,13 @@ func TestConfigManager_GetTarget(t *testing.T) {
 	testcases := []struct {
 		TestName string
 		*typapp.ConfigManager
-		Context  *typast.Context
+		Context  *typannot.Context
 		Expected string
 	}{
 		{
 			TestName:      "initial target is not set",
 			ConfigManager: &typapp.ConfigManager{},
-			Context: &typast.Context{
+			Context: &typannot.Context{
 				Context: &typgo.Context{
 					BuildSys: &typgo.BuildSys{
 						Descriptor: &typgo.Descriptor{Name: "name0"},
@@ -60,7 +60,7 @@ func TestConfigManager_Execute(t *testing.T) {
 		},
 		EnvFile: true,
 	}
-	c := &typast.Context{
+	c := &typannot.Context{
 		Context: &typgo.Context{
 			BuildSys: &typgo.BuildSys{},
 		},

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
@@ -40,12 +40,12 @@ func init() {
 func TestCreateDtor(t *testing.T) {
 	testcases := []struct {
 		TestName string
-		*typast.Annot
+		*typannot.Annot
 		Expected *typtmpl.Dtor
 	}{
 		{
-			Annot: &typast.Annot{
-				Decl: &typast.Decl{
+			Annot: &typannot.Annot{
+				Decl: &typannot.Decl{
 					Package: "pkg",
 					Name:    "name",
 				},

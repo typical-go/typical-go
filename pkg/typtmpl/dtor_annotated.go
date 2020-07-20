@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typannot"
 )
 
 type (
@@ -25,7 +25,7 @@ type (
 //
 
 // CreateDtor to create new instance of Dtor from Annotation
-func CreateDtor(annot *typast.Annot) *Dtor {
+func CreateDtor(annot *typannot.Annot) *Dtor {
 	return &Dtor{
 		Def: fmt.Sprintf("%s.%s", annot.Decl.Package, annot.Decl.Name),
 	}

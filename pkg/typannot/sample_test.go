@@ -1,4 +1,4 @@
-package typast_test
+package typannot_test
 
 type sampleInterface interface {
 	sampleMethod()

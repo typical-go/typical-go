@@ -3,7 +3,7 @@ package typapp
 import (
 	"fmt"
 
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
@@ -18,13 +18,13 @@ type (
 	}
 )
 
-var _ typast.Annotator = (*DtorAnnotation)(nil)
+var _ typannot.Annotator = (*DtorAnnotation)(nil)
 
 // Annotate @dtor
-func (a *DtorAnnotation) Annotate(c *typast.Context) error {
+func (a *DtorAnnotation) Annotate(c *typannot.Context) error {
 	var dtors []*typtmpl.Dtor
 	for _, annot := range c.ASTStore.Annots {
-		if annot.Check(dtorTag, typast.FuncType) {
+		if annot.Check(dtorTag, typannot.FuncType) {
 			dtors = append(dtors, typtmpl.CreateDtor(annot))
 		}
 	}
@@ -39,7 +39,7 @@ func (a *DtorAnnotation) Annotate(c *typast.Context) error {
 }
 
 // GetTarget to get generation target for dtor
-func (a *DtorAnnotation) GetTarget(c *typast.Context) string {
+func (a *DtorAnnotation) GetTarget(c *typannot.Context) string {
 	if a.Target == "" {
 		a.Target = fmt.Sprintf("cmd/%s/dtor_annotated.go", c.Descriptor.Name)
 	}

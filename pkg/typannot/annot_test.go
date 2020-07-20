@@ -1,38 +1,38 @@
-package typast_test
+package typannot_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typannot"
 )
 
 func TestCreateAnnotation(t *testing.T) {
 	testcases := []struct {
 		testName      string
-		decl          *typast.Decl
+		decl          *typannot.Decl
 		raw           string
-		expected      *typast.Annot
+		expected      *typannot.Annot
 		expectedError string
 	}{
 		{
 			testName: "tag only",
 			raw:      `@autowire`,
-			expected: &typast.Annot{
+			expected: &typannot.Annot{
 				TagName: "autowire",
 			},
 		},
 		{
 			testName: "tag only with space",
 			raw:      `@  autowire  `,
-			expected: &typast.Annot{
+			expected: &typannot.Annot{
 				TagName: "autowire",
 			},
 		},
 		{
 			testName: "with attribute",
 			raw:      `@mock{"pkg":"mock2"}`,
-			expected: &typast.Annot{
+			expected: &typannot.Annot{
 				TagName:  "mock",
 				TagAttrs: []byte(`{"pkg":"mock2"}`),
 			},
@@ -40,7 +40,7 @@ func TestCreateAnnotation(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		t.Run(tt.testName, func(t *testing.T) {
-			annotation, err := typast.CreateAnnot(tt.decl, tt.raw)
+			annotation, err := typannot.CreateAnnot(tt.decl, tt.raw)
 			if tt.expectedError != "" {
 				require.EqualError(t, err, tt.expectedError)
 			} else {
@@ -54,13 +54,13 @@ func TestCreateAnnotation(t *testing.T) {
 func TestUnmarshall(t *testing.T) {
 	testcases := []struct {
 		testName string
-		*typast.Annot
+		*typannot.Annot
 		expected    map[string]string
 		expectedErr string
 	}{
 		{
 			testName: "",
-			Annot: &typast.Annot{
+			Annot: &typannot.Annot{
 				TagName:  "mock",
 				TagAttrs: []byte(`{"key1":"value1"}`),
 			},
@@ -70,13 +70,13 @@ func TestUnmarshall(t *testing.T) {
 		},
 		{
 			testName: "",
-			Annot: &typast.Annot{
+			Annot: &typannot.Annot{
 				TagName: "mock",
 			},
 		},
 		{
 			testName: "",
-			Annot: &typast.Annot{
+			Annot: &typannot.Annot{
 				TagName:  "mock",
 				TagAttrs: []byte(`{"key1":"value1"`),
 			},
@@ -101,58 +101,58 @@ func TestUnmarshall(t *testing.T) {
 func TestAnnot_Check(t *testing.T) {
 	testcases := []struct {
 		TestName string
-		*typast.Annot
+		*typannot.Annot
 		TagName  string
-		Type     typast.DeclType
+		Type     typannot.DeclType
 		Expected bool
 	}{
 		{
-			Annot: &typast.Annot{
+			Annot: &typannot.Annot{
 				TagName: "tagname",
-				Decl:    &typast.Decl{Type: typast.FuncType},
+				Decl:    &typannot.Decl{Type: typannot.FuncType},
 			},
 			TagName:  "tagname",
-			Type:     typast.FuncType,
+			Type:     typannot.FuncType,
 			Expected: true,
 		},
 		{
 			TestName: "upper-cased tagName",
-			Annot: &typast.Annot{
+			Annot: &typannot.Annot{
 				TagName: "TAGNAME",
-				Decl:    &typast.Decl{Type: typast.FuncType},
+				Decl:    &typannot.Decl{Type: typannot.FuncType},
 			},
 			TagName:  "tagname",
-			Type:     typast.FuncType,
+			Type:     typannot.FuncType,
 			Expected: true,
 		},
 		{
 			TestName: "random-cased tagName",
-			Annot: &typast.Annot{
+			Annot: &typannot.Annot{
 				TagName: "TaGNaMe",
-				Decl:    &typast.Decl{Type: typast.FuncType},
+				Decl:    &typannot.Decl{Type: typannot.FuncType},
 			},
 			TagName:  "tagname",
-			Type:     typast.FuncType,
+			Type:     typannot.FuncType,
 			Expected: true,
 		},
 		{
 			TestName: "wrong declaration type",
-			Annot: &typast.Annot{
+			Annot: &typannot.Annot{
 				TagName: "tagname",
-				Decl:    &typast.Decl{Type: typast.InterfaceType},
+				Decl:    &typannot.Decl{Type: typannot.InterfaceType},
 			},
 			TagName:  "tagname",
-			Type:     typast.FuncType,
+			Type:     typannot.FuncType,
 			Expected: false,
 		},
 		{
 			TestName: "wrong declaration type",
-			Annot: &typast.Annot{
+			Annot: &typannot.Annot{
 				TagName: "wrong",
-				Decl:    &typast.Decl{Type: typast.FuncType},
+				Decl:    &typannot.Decl{Type: typannot.FuncType},
 			},
 			TagName:  "tagname",
-			Type:     typast.FuncType,
+			Type:     typannot.FuncType,
 			Expected: false,
 		},
 	}

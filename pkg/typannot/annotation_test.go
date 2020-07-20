@@ -1,11 +1,11 @@
-package typast_test
+package typannot_test
 
 import (
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typannot"
 )
 
 func TestWalkLayout(t *testing.T) {
@@ -19,7 +19,7 @@ func TestWalkLayout(t *testing.T) {
 		os.RemoveAll("pkg")
 	}()
 
-	dirs, files := typast.WalkLayout([]string{
+	dirs, files := typannot.WalkLayout([]string{
 		"pkg",
 		"wrapper",
 	})

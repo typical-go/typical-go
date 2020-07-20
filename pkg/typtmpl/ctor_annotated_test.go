@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
@@ -42,13 +42,13 @@ func init() {
 func TestCreateCtor(t *testing.T) {
 	testcases := []struct {
 		TestName string
-		*typast.Annot
+		*typannot.Annot
 		Expected    *typtmpl.Ctor
 		ExpectedErr string
 	}{
 		{
-			Annot: &typast.Annot{
-				Decl: &typast.Decl{
+			Annot: &typannot.Annot{
+				Decl: &typannot.Decl{
 					Package: "pkg",
 					Name:    "name",
 				},
@@ -56,9 +56,9 @@ func TestCreateCtor(t *testing.T) {
 			Expected: &typtmpl.Ctor{Name: "", Def: "pkg.name"},
 		},
 		{
-			Annot: &typast.Annot{
+			Annot: &typannot.Annot{
 				TagAttrs: []byte(`{"name":"some-name"}`),
-				Decl: &typast.Decl{
+				Decl: &typannot.Decl{
 					Package: "pkg",
 					Name:    "name",
 				},
@@ -66,9 +66,9 @@ func TestCreateCtor(t *testing.T) {
 			Expected: &typtmpl.Ctor{Name: "some-name", Def: "pkg.name"},
 		},
 		{
-			Annot: &typast.Annot{
+			Annot: &typannot.Annot{
 				TagAttrs: []byte(`{bad-attributes`),
-				Decl: &typast.Decl{
+				Decl: &typannot.Decl{
 					Package: "pkg",
 					Name:    "name",
 				},

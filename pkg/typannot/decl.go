@@ -1,4 +1,4 @@
-package typast
+package typannot
 
 type (
 	// Decl stand of declaration

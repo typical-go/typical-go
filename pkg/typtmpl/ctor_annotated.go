@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typannot"
 )
 
 type (
@@ -26,7 +26,7 @@ type (
 //
 
 // CreateCtor to create new instance of Ctor
-func CreateCtor(annot *typast.Annot) (*Ctor, error) {
+func CreateCtor(annot *typannot.Annot) (*Ctor, error) {
 	var ctor Ctor
 	if err := annot.Unmarshal(&ctor); err != nil {
 		return nil, fmt.Errorf("%s: %w", annot.Decl.Name, err)

@@ -1,65 +1,65 @@
-package typast_test
+package typannot_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typannot"
 )
 
 var (
-	someInterfaceDecl = &typast.Decl{
+	someInterfaceDecl = &typannot.Decl{
 		Path:    "sample_test.go",
-		Package: "typast_test",
-		Type:    typast.InterfaceType,
+		Package: "typannot_test",
+		Type:    typannot.InterfaceType,
 		Name:    "sampleInterface",
 	}
 
-	someStructDecl = &typast.Decl{
+	someStructDecl = &typannot.Decl{
 		Path:    "sample_test.go",
-		Package: "typast_test",
-		Type:    typast.StructType,
+		Package: "typannot_test",
+		Type:    typannot.StructType,
 		Name:    "sampleStruct",
 	}
 
-	someFunctionDecl = &typast.Decl{
+	someFunctionDecl = &typannot.Decl{
 		Path:    "sample_test.go",
-		Package: "typast_test",
-		Type:    typast.FuncType,
+		Package: "typannot_test",
+		Type:    typannot.FuncType,
 		Name:    "sampleFunction",
 	}
 
-	someFunctionDecl2 = &typast.Decl{
+	someFunctionDecl2 = &typannot.Decl{
 		Path:    "sample_test.go",
-		Package: "typast_test",
-		Type:    typast.FuncType,
+		Package: "typannot_test",
+		Type:    typannot.FuncType,
 		Name:    "sampleFunction2",
 	}
 
-	someInterface2Decl = &typast.Decl{
+	someInterface2Decl = &typannot.Decl{
 		Path:    "sample_test.go",
-		Package: "typast_test",
-		Type:    typast.InterfaceType,
+		Package: "typannot_test",
+		Type:    typannot.InterfaceType,
 		Name:    "sampleInterface2",
 	}
 
-	someStruct2Decl = &typast.Decl{
+	someStruct2Decl = &typannot.Decl{
 		Path:    "sample_test.go",
-		Package: "typast_test",
-		Type:    typast.StructType,
+		Package: "typannot_test",
+		Type:    typannot.StructType,
 		Name:    "sampleStruct2",
 	}
 )
 
 func TestCreateASTStore(t *testing.T) {
-	store, err := typast.CreateASTStore("sample_test.go")
+	store, err := typannot.CreateASTStore("sample_test.go")
 	require.NoError(t, err)
 
 	cnt := len(store.Decls)
 	require.Equal(t, len(store.DeclNodes), cnt)
 	require.Equal(t, len(store.Docs), cnt)
 
-	require.EqualValues(t, []*typast.Decl{
+	require.EqualValues(t, []*typannot.Decl{
 		someInterfaceDecl,
 		someStructDecl,
 		someFunctionDecl,
@@ -68,7 +68,7 @@ func TestCreateASTStore(t *testing.T) {
 		someStruct2Decl,
 	}, store.Decls)
 
-	require.EqualValues(t, []*typast.Annot{
+	require.EqualValues(t, []*typannot.Annot{
 		{
 			Decl:    someStructDecl,
 			TagName: "tag1",
@@ -178,7 +178,7 @@ func TestRetrRawAnnots(t *testing.T) {
 	for _, tt := range testcases {
 		t.Run(tt.testname, func(t *testing.T) {
 			var initial []string
-			typast.RetrRawAnnots(&initial, tt.doc)
+			typannot.RetrRawAnnots(&initial, tt.doc)
 			require.Equal(t, tt.expected, initial)
 		})
 	}
