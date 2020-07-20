@@ -12,15 +12,12 @@ var (
 		Name:    "hello-world",
 		Version: "1.0.0",
 
-		Commands: typgo.Commands{
+		Cmds: []typgo.Cmd{
 			&typgo.CompileCmd{
 				Action: &typgo.StdCompile{},
 			},
 			&typgo.RunCmd{
 				Action: &typgo.StdRun{},
-			},
-			&typgo.TestCmd{
-				Action: &typgo.StdTest{},
 			},
 			&typgo.CleanCmd{
 				Action: &typgo.StdClean{},

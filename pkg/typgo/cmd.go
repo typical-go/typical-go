@@ -12,8 +12,6 @@ type (
 	Cmd interface {
 		Command(*BuildSys) *cli.Command
 	}
-	// Cmds list
-	Cmds []Cmd
 	// Command to run action
 	Command struct {
 		Name            string

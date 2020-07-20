@@ -15,17 +15,20 @@ func TestDtorAnnotation_Execute(t *testing.T) {
 	target := "some-target"
 	defer os.Remove(target)
 	dtorAnnot := &typapp.DtorAnnotation{Target: target}
-	ctx := &typgo.Context{
-		BuildSys: &typgo.BuildSys{
-			ASTStore: &typast.ASTStore{
-				Annots: []*typast.Annot{
-					{TagName: "dtor", Decl: &typast.Decl{Name: "Clean", Package: "pkg", Type: typast.FuncType}},
-				},
+	ctx := &typast.Context{
+		Context: &typgo.Context{
+			BuildSys: &typgo.BuildSys{
+				Descriptor: &typgo.Descriptor{},
+			},
+		},
+		ASTStore: &typast.ASTStore{
+			Annots: []*typast.Annot{
+				{TagName: "dtor", Decl: &typast.Decl{Name: "Clean", Package: "pkg", Type: typast.FuncType}},
 			},
 		},
 	}
 
-	require.NoError(t, dtorAnnot.Execute(ctx))
+	require.NoError(t, dtorAnnot.Annotate(ctx))
 
 	b, _ := ioutil.ReadFile(target)
 	require.Equal(t, []byte(`package main
@@ -47,15 +50,17 @@ func TestDtorAnnotation_GetTarget(t *testing.T) {
 	testcases := []struct {
 		TestName string
 		*typapp.DtorAnnotation
-		Context  *typgo.Context
+		Context  *typast.Context
 		Expected string
 	}{
 		{
 			TestName:       "initial target is not set",
 			DtorAnnotation: &typapp.DtorAnnotation{},
-			Context: &typgo.Context{
-				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{Name: "name0"},
+			Context: &typast.Context{
+				Context: &typgo.Context{
+					BuildSys: &typgo.BuildSys{
+						Descriptor: &typgo.Descriptor{Name: "name0"},
+					},
 				},
 			},
 			Expected: "cmd/name0/dtor_annotated.go",

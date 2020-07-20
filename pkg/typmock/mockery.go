@@ -39,15 +39,19 @@ func NewMockery(projectPkg string) *Mockery {
 	}
 }
 
-func createMockery(c *typgo.Context) *Mockery {
+func createMockery(c *typgo.Context) (*Mockery, error) {
 	m := NewMockery(typgo.ProjectPkg)
-	for _, annot := range c.ASTStore.Annots {
+	ac, err := typast.CreateContext(c)
+	if err != nil {
+		return nil, err
+	}
+	for _, annot := range ac.ASTStore.Annots {
 		if annot.Check(MockTag, typast.InterfaceType) {
 			m.Put(CreateMock(annot))
 		}
 	}
 
-	return m
+	return m, nil
 }
 
 // Put target to mockery

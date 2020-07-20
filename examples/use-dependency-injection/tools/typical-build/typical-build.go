@@ -3,20 +3,24 @@ package main
 import (
 	"log"
 
-	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/typapp"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 var (
 	descriptor = typgo.Descriptor{
-		Name:    "server-echo-react",
+		Name:    "use-dependency-injection",
 		Version: "1.0.0",
 		Layouts: []string{"internal"},
 
 		Cmds: []typgo.Cmd{
 			&typgo.CompileCmd{
-				Action: typgo.Actions{
-					typgo.NewAction(npmBuild),
+				Action: &typgo.Actions{
+					&typast.Annotators{
+						&typapp.CtorAnnotation{},
+						&typapp.DtorAnnotation{},
+					},
 					&typgo.StdCompile{},
 				},
 			},
@@ -29,14 +33,6 @@ var (
 		},
 	}
 )
-
-func npmBuild(c *typgo.Context) error {
-	return c.Execute(&execkit.Command{
-		Name: "npm",
-		Args: []string{"run", "build"},
-		Dir:  "react-demo",
-	})
-}
 
 func main() {
 	if err := typgo.Run(&descriptor); err != nil {

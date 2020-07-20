@@ -11,29 +11,28 @@ import (
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
-func TestCtorAnnotation_Execute(t *testing.T) {
+func TestCtorAnnotation_Annotate(t *testing.T) {
 	target := "some-target"
 	defer os.Remove(target)
 	ctorAnnot := &typapp.CtorAnnotation{Target: target}
-	ctx := &typgo.Context{
-		BuildSys: &typgo.BuildSys{
-			ASTStore: &typast.ASTStore{
-				Annots: []*typast.Annot{
-					{
-						TagName: "ctor",
-						Decl:    &typast.Decl{Name: "NewObject", Package: "pkg", Type: typast.FuncType},
-					},
-					{
-						TagName:  "ctor",
-						TagAttrs: []byte(`{"name":"obj2"}`),
-						Decl:     &typast.Decl{Name: "NewObject2", Package: "pkg2", Type: typast.FuncType},
-					},
+	ctx := &typast.Context{
+		Context: &typgo.Context{},
+		ASTStore: &typast.ASTStore{
+			Annots: []*typast.Annot{
+				{
+					TagName: "ctor",
+					Decl:    &typast.Decl{Name: "NewObject", Package: "pkg", Type: typast.FuncType},
+				},
+				{
+					TagName:  "ctor",
+					TagAttrs: []byte(`{"name":"obj2"}`),
+					Decl:     &typast.Decl{Name: "NewObject2", Package: "pkg2", Type: typast.FuncType},
 				},
 			},
 		},
 	}
 
-	require.NoError(t, ctorAnnot.Execute(ctx))
+	require.NoError(t, ctorAnnot.Annotate(ctx))
 
 	b, _ := ioutil.ReadFile(target)
 	require.Equal(t, []byte(`package main
@@ -56,15 +55,17 @@ func TestCtorAnnotation_GetTarget(t *testing.T) {
 	testcases := []struct {
 		TestName string
 		*typapp.CtorAnnotation
-		Context  *typgo.Context
+		Context  *typast.Context
 		Expected string
 	}{
 		{
 			TestName:       "initial target is not set",
 			CtorAnnotation: &typapp.CtorAnnotation{},
-			Context: &typgo.Context{
-				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{Name: "name0"},
+			Context: &typast.Context{
+				Context: &typgo.Context{
+					BuildSys: &typgo.BuildSys{
+						Descriptor: &typgo.Descriptor{Name: "name0"},
+					},
 				},
 			},
 			Expected: "cmd/name0/ctor_annotated.go",

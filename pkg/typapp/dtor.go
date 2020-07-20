@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/typast"
-	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
@@ -19,10 +18,10 @@ type (
 	}
 )
 
-var _ typgo.Action = (*DtorAnnotation)(nil)
+var _ typast.Annotator = (*DtorAnnotation)(nil)
 
-// Execute @dtor
-func (a *DtorAnnotation) Execute(c *typgo.Context) error {
+// Annotate @dtor
+func (a *DtorAnnotation) Annotate(c *typast.Context) error {
 	var dtors []*typtmpl.Dtor
 	for _, annot := range c.ASTStore.Annots {
 		if annot.Check(dtorTag, typast.FuncType) {
@@ -40,7 +39,7 @@ func (a *DtorAnnotation) Execute(c *typgo.Context) error {
 }
 
 // GetTarget to get generation target for dtor
-func (a *DtorAnnotation) GetTarget(c *typgo.Context) string {
+func (a *DtorAnnotation) GetTarget(c *typast.Context) string {
 	if a.Target == "" {
 		a.Target = fmt.Sprintf("cmd/%s/dtor_annotated.go", c.Descriptor.Name)
 	}

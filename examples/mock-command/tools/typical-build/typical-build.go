@@ -3,40 +3,45 @@ package main
 import (
 	"log"
 
-	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/typapp"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
+	"github.com/typical-go/typical-go/pkg/typmock"
 )
 
 var (
 	descriptor = typgo.Descriptor{
-		Name:    "server-echo-react",
+		Name:    "mock-command",
 		Version: "1.0.0",
 		Layouts: []string{"internal"},
 
 		Cmds: []typgo.Cmd{
+
 			&typgo.CompileCmd{
 				Action: typgo.Actions{
-					typgo.NewAction(npmBuild),
+					typast.Annotators{
+						&typapp.CtorAnnotation{},
+					},
 					&typgo.StdCompile{},
 				},
 			},
+
 			&typgo.RunCmd{
 				Action: &typgo.StdRun{},
 			},
+
+			&typgo.TestCmd{
+				Action: &typgo.StdTest{},
+			},
+
 			&typgo.CleanCmd{
 				Action: &typgo.StdClean{},
 			},
+
+			&typmock.Command{},
 		},
 	}
 )
-
-func npmBuild(c *typgo.Context) error {
-	return c.Execute(&execkit.Command{
-		Name: "npm",
-		Args: []string{"run", "build"},
-		Dir:  "react-demo",
-	})
-}
 
 func main() {
 	if err := typgo.Run(&descriptor); err != nil {

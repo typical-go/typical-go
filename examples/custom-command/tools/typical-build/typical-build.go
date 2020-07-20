@@ -1,42 +1,41 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
-	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 var (
+	// Descriptor of sample
 	descriptor = typgo.Descriptor{
-		Name:    "server-echo-react",
+		Name:    "custom-command",
 		Version: "1.0.0",
-		Layouts: []string{"internal"},
 
 		Cmds: []typgo.Cmd{
 			&typgo.CompileCmd{
-				Action: typgo.Actions{
-					typgo.NewAction(npmBuild),
-					&typgo.StdCompile{},
-				},
+				Action: &typgo.StdCompile{},
 			},
+
 			&typgo.RunCmd{
 				Action: &typgo.StdRun{},
 			},
+
 			&typgo.CleanCmd{
 				Action: &typgo.StdClean{},
+			},
+
+			&typgo.Command{
+				Name: "ping",
+				Action: typgo.NewAction(func(c *typgo.Context) error {
+					fmt.Println("pong")
+					return nil
+				}),
 			},
 		},
 	}
 )
-
-func npmBuild(c *typgo.Context) error {
-	return c.Execute(&execkit.Command{
-		Name: "npm",
-		Args: []string{"run", "build"},
-		Dir:  "react-demo",
-	})
-}
 
 func main() {
 	if err := typgo.Run(&descriptor); err != nil {

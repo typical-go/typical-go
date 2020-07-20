@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typapp"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -14,15 +15,17 @@ func TestConfigManager_GetTarget(t *testing.T) {
 	testcases := []struct {
 		TestName string
 		*typapp.ConfigManager
-		Context  *typgo.Context
+		Context  *typast.Context
 		Expected string
 	}{
 		{
 			TestName:      "initial target is not set",
 			ConfigManager: &typapp.ConfigManager{},
-			Context: &typgo.Context{
-				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{Name: "name0"},
+			Context: &typast.Context{
+				Context: &typgo.Context{
+					BuildSys: &typgo.BuildSys{
+						Descriptor: &typgo.Descriptor{Name: "name0"},
+					},
 				},
 			},
 			Expected: "cmd/name0/config_annotated.go",
@@ -57,11 +60,13 @@ func TestConfigManager_Execute(t *testing.T) {
 		},
 		EnvFile: true,
 	}
-	c := &typgo.Context{
-		BuildSys: &typgo.BuildSys{},
+	c := &typast.Context{
+		Context: &typgo.Context{
+			BuildSys: &typgo.BuildSys{},
+		},
 	}
 
-	require.NoError(t, cfgManager.Execute(c))
+	require.NoError(t, cfgManager.Annotate(c))
 
 	b, _ := ioutil.ReadFile(target)
 	require.Equal(t, []byte(`package main

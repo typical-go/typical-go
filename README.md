@@ -96,11 +96,11 @@ var (
    }
 )
 
-   func main() {
+func main() {
    if err := typgo.Run(&descriptor); err != nil {
       log.Fatal(err)
    }
-   }
+}
 ```
 
 ## Wrapper 
@@ -157,11 +157,11 @@ This repo contain both library, examples and wrapper source-code. The wrapper it
 
 List of example:
 - [x] [Hello World](https://github.com/typical-go/typical-go/tree/master/examples/hello-world)
-- [x] [Configuration With Invocation](https://github.com/typical-go/typical-go/tree/master/examples/configuration-with-invocation)
-- [x] [Simple Additional Task](https://github.com/typical-go/typical-go/tree/master/examples/simple-additional-task)
-- [x] [Provide Constructor](https://github.com/typical-go/typical-go/tree/master/examples/provide-constructor)
-- [x] [Generate Mock](https://github.com/typical-go/typical-go/tree/master/examples/generate-mock)
-- [x] [Generate Docker-Compose](https://github.com/typical-go/typical-go/tree/master/examples/generate-docker-compose)
+- [x] [Use Config](https://github.com/typical-go/typical-go/tree/master/examples/use-config)
+- [x] [Custom Command](https://github.com/typical-go/typical-go/tree/master/examples/custom-command)
+- [x] [Use Dependency Injection](https://github.com/typical-go/typical-go/tree/master/examples/use-dependency-injection)
+- [x] [Mock Command](https://github.com/typical-go/typical-go/tree/master/examples/mock-command)
+- [x] [Docker Command](https://github.com/typical-go/typical-go/tree/master/examples/docker-command)
 - [x] [Serve React Demo](https://github.com/typical-go/typical-go/tree/master/examples/serve-react-demo)
 
 

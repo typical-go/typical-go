@@ -12,11 +12,9 @@ type (
 		Name string
 		// Version of the project (OPTIONAL). By default it is 0.0.1
 		Version string
-		Layouts Layouts
-		Cmds    Cmds
+		Layouts []string
+		Cmds    []Cmd
 	}
-	// Layouts for project
-	Layouts []string
 )
 
 // Run typical build-tool

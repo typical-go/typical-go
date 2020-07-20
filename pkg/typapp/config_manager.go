@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
@@ -36,10 +37,10 @@ type (
 	}
 )
 
-var _ typgo.Action = (*ConfigManager)(nil)
+var _ typast.Annotator = (*ConfigManager)(nil)
 
-// Execute config-manager to prepare dependency-injection and env-file
-func (m *ConfigManager) Execute(c *typgo.Context) error {
+// Annotate config to prepare dependency-injection and env-file
+func (m *ConfigManager) Annotate(c *typast.Context) error {
 	if err := m.execute(c); err != nil {
 		return err
 	}
@@ -51,7 +52,7 @@ func (m *ConfigManager) Execute(c *typgo.Context) error {
 	return nil
 }
 
-func (m *ConfigManager) execute(c *typgo.Context) error {
+func (m *ConfigManager) execute(c *typast.Context) error {
 	var cfgs []*typtmpl.CfgCtor
 	for _, cfg := range m.Configs {
 		specType := reflect.TypeOf(cfg.Spec).String()
@@ -70,7 +71,7 @@ func (m *ConfigManager) execute(c *typgo.Context) error {
 }
 
 // GetTarget get target generation
-func (m *ConfigManager) GetTarget(c *typgo.Context) string {
+func (m *ConfigManager) GetTarget(c *typast.Context) string {
 	if m.Target == "" {
 		m.Target = fmt.Sprintf("cmd/%s/config_annotated.go", c.Descriptor.Name)
 	}

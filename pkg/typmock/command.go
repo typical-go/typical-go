@@ -29,17 +29,17 @@ func (*Command) Command(c *typgo.BuildSys) *cli.Command {
 	}
 }
 
-func mock(c *typgo.Context) (err error) {
+func mock(c *typgo.Context) error {
 
 	mockgen := fmt.Sprintf("%s/bin/mockgen", typgo.TypicalTmp)
-	if _, err = os.Stat(mockgen); os.IsNotExist(err) {
-		return c.Execute(&execkit.GoBuild{
-			Output:      mockgen,
-			MainPackage: "github.com/golang/mock/mockgen",
-		})
+	if _, err := os.Stat(mockgen); os.IsNotExist(err) {
+		return c.Execute(&execkit.GoBuild{Output: mockgen, MainPackage: "github.com/golang/mock/mockgen"})
 	}
 
-	mockery := createMockery(c)
+	mockery, err := createMockery(c)
+	if err != nil {
+		return err
+	}
 	targetMap := mockery.Map
 	if c.Args().Len() > 0 {
 		targetMap = mockery.Filter(c.Args().Slice()...)
@@ -70,5 +70,5 @@ func mock(c *typgo.Context) (err error) {
 			}
 		}
 	}
-	return
+	return nil
 }
