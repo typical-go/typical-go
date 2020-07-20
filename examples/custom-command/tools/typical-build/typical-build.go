@@ -19,7 +19,8 @@ var (
 			},
 
 			&typgo.RunCmd{
-				Action: &typgo.StdRun{},
+				Precmds: []string{"compile"},
+				Action:  &typgo.StdRun{},
 			},
 
 			&typgo.CleanCmd{

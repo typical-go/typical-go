@@ -11,7 +11,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func TestRunCompile(t *testing.T) {
+func TestRunCompile_Command(t *testing.T) {
 	testcases := []typgo.CmdTestCase{
 		{
 			Cmd: &typgo.RunCmd{
@@ -27,13 +27,34 @@ func TestRunCompile(t *testing.T) {
 			},
 			ExpectedError: "some-error",
 		},
+		{
+			TestName: "precmd error",
+			BuildSys: &typgo.BuildSys{
+				Commands: []*cli.Command{
+					{Name: "pre", Action: func(*cli.Context) error { return errors.New("pre-error") }},
+				},
+			},
+			Cmd: &typgo.RunCmd{
+				Precmds: []string{"pre"},
+				Action: typgo.NewAction(func(*typgo.Context) error {
+					return errors.New("some-error")
+				}),
+			},
+			Expected: typgo.Command{
+				Name:            "run",
+				Aliases:         []string{"r"},
+				Usage:           "Run the project in local environment",
+				SkipFlagParsing: true,
+			},
+			ExpectedError: "pre-error",
+		},
 	}
 	for _, tt := range testcases {
 		tt.Run(t)
 	}
 }
 
-func TestStdRun(t *testing.T) {
+func TestStdRun_Execute(t *testing.T) {
 	stdRun := &typgo.StdRun{}
 	c := &typgo.Context{
 		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
@@ -50,7 +71,7 @@ func TestStdRun(t *testing.T) {
 	require.NoError(t, stdRun.Execute(c))
 }
 
-func TestStdRun_Predefined(t *testing.T) {
+func TestStdRun_Execute_Predefined(t *testing.T) {
 	stdRun := &typgo.StdRun{
 		Binary: "some-binary",
 	}

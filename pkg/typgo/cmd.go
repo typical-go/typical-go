@@ -24,6 +24,7 @@ type (
 	// CmdTestCase test-case for cmd interface
 	CmdTestCase struct {
 		TestName      string
+		BuildSys      *BuildSys
 		Cmd           Cmd
 		Expected      Command
 		ExpectedError string
@@ -45,7 +46,7 @@ func (c *Command) Command(b *BuildSys) *cli.Command {
 		SkipFlagParsing: c.SkipFlagParsing,
 
 		Action: func(cliCtx *cli.Context) error {
-			return c.Action.Execute(b.Context(cliCtx))
+			return b.Execute(c.Action, cliCtx)
 		},
 	}
 }
@@ -73,8 +74,7 @@ func (a Actions) Execute(c *Context) error {
 // Run test for Command
 func (tt *CmdTestCase) Run(t *testing.T) bool {
 	return t.Run(tt.TestName, func(t *testing.T) {
-		b := &BuildSys{}
-		cmd := tt.Cmd.Command(b)
+		cmd := tt.Cmd.Command(tt.BuildSys)
 		require.Equal(t, tt.Expected.Name, cmd.Name)
 		require.Equal(t, tt.Expected.Usage, cmd.Usage)
 		require.Equal(t, tt.Expected.Aliases, cmd.Aliases)

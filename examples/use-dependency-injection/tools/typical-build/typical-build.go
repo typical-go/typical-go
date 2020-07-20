@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -25,7 +25,8 @@ var (
 				},
 			},
 			&typgo.RunCmd{
-				Action: &typgo.StdRun{},
+				Precmds: []string{"compile"},
+				Action:  &typgo.StdRun{},
 			},
 			&typgo.CleanCmd{
 				Action: &typgo.StdClean{},

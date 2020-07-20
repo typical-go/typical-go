@@ -12,18 +12,23 @@ var (
 	descriptor = typgo.Descriptor{
 		Name:    "typical-go",
 		Version: "0.9.57",
-		Layouts: typgo.Layouts{"internal", "pkg"},
+		Layouts: []string{"internal", "pkg"},
 
-		Cmds: typgo.Cmds{
+		Cmds: []typgo.Cmd{
+
 			&typgo.CompileCmd{
 				Action: &typgo.StdCompile{MainPackage: "."},
 			},
+
 			&typgo.RunCmd{
-				Action: &typgo.StdRun{},
+				Precmds: []string{"compile"},
+				Action:  &typgo.StdRun{},
 			},
+
 			&typgo.TestCmd{
 				Action: &typgo.StdTest{},
 			},
+
 			&typgo.CleanCmd{
 				Action: &typgo.StdClean{},
 			},
@@ -36,6 +41,7 @@ var (
 			},
 
 			&typrls.Command{
+				Precmds:    []string{"test", "compile"},
 				Validation: typrls.DefaultValidation,
 				Summary:    typrls.DefaultSummary,
 				Releaser:   &typrls.Github{Owner: "typical-go", Repo: "typical-go"},

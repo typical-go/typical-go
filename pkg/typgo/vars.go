@@ -7,9 +7,7 @@ var (
 	TypicalTmp string
 	// EnvFile location
 	EnvFile = ".env"
-)
 
-var (
 	appHelpTemplate = `Typical Build
 
 Usage:

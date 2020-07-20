@@ -84,7 +84,8 @@ var (
             Action: &typgo.StdCompile{},
          },
          &typgo.RunCmd{
-            Action: &typgo.StdRun{},
+            Precmds: []string{"compile"},
+            Action:  &typgo.StdRun{},
          },
          &typgo.TestCmd{
             Action: &typgo.StdTest{},

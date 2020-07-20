@@ -11,6 +11,7 @@ import (
 type (
 	// RunCmd run command
 	RunCmd struct {
+		Precmds []string
 		Action
 	}
 	// StdRun standard run
@@ -26,13 +27,21 @@ type (
 var _ Cmd = (*RunCmd)(nil)
 
 // Command run
-func (r *RunCmd) Command(b *BuildSys) *cli.Command {
+func (r *RunCmd) Command(sys *BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:            "run",
 		Aliases:         []string{"r"},
 		Usage:           "Run the project in local environment",
 		SkipFlagParsing: true,
-		Action:          b.ActionFn(r.Execute),
+
+		Action: func(cliCtx *cli.Context) error {
+			for _, precmd := range r.Precmds {
+				if err := sys.Run(precmd, cliCtx); err != nil {
+					return err
+				}
+			}
+			return sys.Execute(r.Action, cliCtx)
+		},
 	}
 }
 

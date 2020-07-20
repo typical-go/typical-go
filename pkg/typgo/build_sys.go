@@ -31,14 +31,30 @@ func (b *BuildSys) app() *cli.App {
 	return app
 }
 
-// Context of build-cli
-func (b *BuildSys) Context(c *cli.Context) *Context {
-	return &Context{Context: c, BuildSys: b}
+// Run command by name
+func (b *BuildSys) Run(name string, c *cli.Context) error {
+	for _, command := range b.Commands {
+		if command.Name == name {
+			return command.Action(c)
+		}
+	}
+	return nil
 }
 
 // ActionFn to return related action func
 func (b *BuildSys) ActionFn(fn ExecuteFn) func(*cli.Context) error {
-	return func(cli *cli.Context) error {
-		return fn(b.Context(cli))
+	return func(cliCtx *cli.Context) error {
+		return fn(&Context{
+			Context:  cliCtx,
+			BuildSys: b,
+		})
 	}
+}
+
+// Execute action
+func (b *BuildSys) Execute(action Action, cliCtx *cli.Context) error {
+	return action.Execute(&Context{
+		Context:  cliCtx,
+		BuildSys: b,
+	})
 }

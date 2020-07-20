@@ -20,6 +20,7 @@ const (
 type (
 	// Command release command
 	Command struct {
+		Precmds []string
 		Releaser
 		ReleaseTag string
 		Alpha      bool
@@ -32,7 +33,7 @@ var _ typgo.Cmd = (*Command)(nil)
 var _ typgo.Action = (*Command)(nil)
 
 // Command release
-func (r *Command) Command(c *typgo.BuildSys) *cli.Command {
+func (r *Command) Command(sys *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:  "release",
 		Usage: "Release the project",
@@ -41,7 +42,15 @@ func (r *Command) Command(c *typgo.BuildSys) *cli.Command {
 			&cli.BoolFlag{Name: AlphaFlag, Usage: "Release for alpha version"},
 			&cli.StringFlag{Name: TagFlag, Usage: "Override the release-tag"},
 		},
-		Action: c.ActionFn(r.Execute),
+		// Action: c.ActionFn(r.Execute),
+		Action: func(cliCtx *cli.Context) error {
+			for _, precmd := range r.Precmds {
+				if err := sys.Run(precmd, cliCtx); err != nil {
+					return err
+				}
+			}
+			return sys.Execute(r, cliCtx)
+		},
 	}
 }
 
