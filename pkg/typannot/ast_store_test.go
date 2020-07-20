@@ -1,6 +1,7 @@
 package typannot_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -55,9 +56,9 @@ func TestCreateASTStore(t *testing.T) {
 	store, err := typannot.CreateASTStore("sample_test.go")
 	require.NoError(t, err)
 
-	cnt := len(store.Decls)
-	require.Equal(t, len(store.DeclNodes), cnt)
-	require.Equal(t, len(store.Docs), cnt)
+	for _, decl := range store.Decls {
+		fmt.Println(decl)
+	}
 
 	require.EqualValues(t, []*typannot.Decl{
 		someInterfaceDecl,
