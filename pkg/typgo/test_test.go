@@ -37,8 +37,10 @@ func TestStdTest(t *testing.T) {
 
 	stdtest := &typgo.StdTest{}
 	c := &typgo.Context{
-		Context:    &cli.Context{Context: context.Background()},
-		Descriptor: &typgo.Descriptor{Layouts: []string{"pkg3", "pkg4"}},
+		Context: &cli.Context{Context: context.Background()},
+		BuildSys: &typgo.BuildSys{
+			Descriptor: &typgo.Descriptor{Layouts: []string{"pkg3", "pkg4"}},
+		},
 	}
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
@@ -57,8 +59,10 @@ func TestStdTest_Predefined(t *testing.T) {
 	}
 
 	c := &typgo.Context{
-		Context:    &cli.Context{Context: context.Background()},
-		Descriptor: &typgo.Descriptor{Layouts: []string{"pkg3", "pkg4"}},
+		Context: &cli.Context{Context: context.Background()},
+		BuildSys: &typgo.BuildSys{
+			Descriptor: &typgo.Descriptor{Layouts: []string{"pkg3", "pkg4"}},
+		},
 	}
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{

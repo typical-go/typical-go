@@ -16,9 +16,11 @@ func TestDtorAnnotation_Execute(t *testing.T) {
 	defer os.Remove(target)
 	dtorAnnot := &typapp.DtorAnnotation{Target: target}
 	ctx := &typgo.Context{
-		ASTStore: &typast.ASTStore{
-			Annots: []*typast.Annot{
-				{TagName: "dtor", Decl: &typast.Decl{Name: "Clean", Package: "pkg", Type: typast.FuncType}},
+		BuildSys: &typgo.BuildSys{
+			ASTStore: &typast.ASTStore{
+				Annots: []*typast.Annot{
+					{TagName: "dtor", Decl: &typast.Decl{Name: "Clean", Package: "pkg", Type: typast.FuncType}},
+				},
 			},
 		},
 	}
@@ -52,7 +54,9 @@ func TestDtorAnnotation_GetTarget(t *testing.T) {
 			TestName:       "initial target is not set",
 			DtorAnnotation: &typapp.DtorAnnotation{},
 			Context: &typgo.Context{
-				Descriptor: &typgo.Descriptor{Name: "name0"},
+				BuildSys: &typgo.BuildSys{
+					Descriptor: &typgo.Descriptor{Name: "name0"},
+				},
 			},
 			Expected: "cmd/name0/dtor_annotated.go",
 		},

@@ -10,10 +10,10 @@ import (
 type (
 	// Cmd interface return Command method
 	Cmd interface {
-		Command(*BuildCli) *cli.Command
+		Command(*BuildSys) *cli.Command
 	}
-	// Commands list
-	Commands []Cmd
+	// Cmds list
+	Cmds []Cmd
 	// Command to run action
 	Command struct {
 		Name            string
@@ -39,7 +39,7 @@ type (
 var _ Cmd = (*Command)(nil)
 
 // Command of command
-func (c *Command) Command(b *BuildCli) *cli.Command {
+func (c *Command) Command(b *BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:            c.Name,
 		Aliases:         c.Aliases,
@@ -75,7 +75,7 @@ func (a Actions) Execute(c *Context) error {
 // Run test for Command
 func (tt *CmdTestCase) Run(t *testing.T) bool {
 	return t.Run(tt.TestName, func(t *testing.T) {
-		b := &BuildCli{}
+		b := &BuildSys{}
 		cmd := tt.Cmd.Command(b)
 		require.Equal(t, tt.Expected.Name, cmd.Name)
 		require.Equal(t, tt.Expected.Usage, cmd.Usage)

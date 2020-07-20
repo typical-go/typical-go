@@ -11,24 +11,31 @@ import (
 )
 
 type (
-	// BuildCli detail
-	BuildCli struct {
+	// BuildSys detail
+	BuildSys struct {
 		*Descriptor
 		ASTStore *typast.ASTStore
 		Imports  []string
+		Commands []*cli.Command
 	}
 )
 
-func createBuildCli(d *Descriptor) *BuildCli {
+func createBuildSys(d *Descriptor) *BuildSys {
 	appDirs, appFiles := WalkLayout(d.Layouts)
 	astStore, _ := typast.CreateASTStore(appFiles...)
 	imports := retrImports(appDirs)
 
-	return &BuildCli{
+	sys := &BuildSys{
 		Descriptor: d,
 		ASTStore:   astStore,
 		Imports:    imports,
 	}
+
+	for _, cmd := range d.Cmds {
+		sys.Commands = append(sys.Commands, cmd.Command(sys))
+	}
+
+	return sys
 }
 
 func retrImports(dirs []string) []string {
@@ -42,26 +49,25 @@ func retrImports(dirs []string) []string {
 	return imports
 }
 
-func (b *BuildCli) commands() []*cli.Command {
-	var cmds []*cli.Command
-	for _, command := range b.Commands {
-		cmds = append(cmds, command.Command(b))
-	}
-	return cmds
+func (b *BuildSys) app() *cli.App {
+	cli.AppHelpTemplate = appHelpTemplate
+	cli.SubcommandHelpTemplate = subcommandHelpTemplate
+
+	app := cli.NewApp()
+	app.Commands = b.Commands
+	return app
 }
 
 // Context of build-cli
-func (b *BuildCli) Context(c *cli.Context) *Context {
+func (b *BuildSys) Context(c *cli.Context) *Context {
 	return &Context{
-		Context:    c,
-		Descriptor: b.Descriptor,
-		ASTStore:   b.ASTStore,
-		Imports:    b.Imports,
+		Context:  c,
+		BuildSys: b,
 	}
 }
 
 // ActionFn to return related action func
-func (b *BuildCli) ActionFn(fn ExecuteFn) func(*cli.Context) error {
+func (b *BuildSys) ActionFn(fn ExecuteFn) func(*cli.Context) error {
 	return func(cli *cli.Context) error {
 		return fn(b.Context(cli))
 	}

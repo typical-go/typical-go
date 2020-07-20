@@ -26,7 +26,7 @@ type (
 var _ Cmd = (*RunCmd)(nil)
 
 // Command run
-func (r *RunCmd) Command(b *BuildCli) *cli.Command {
+func (r *RunCmd) Command(b *BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:            "run",
 		Aliases:         []string{"r"},

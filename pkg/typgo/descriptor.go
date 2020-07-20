@@ -2,8 +2,6 @@ package typgo
 
 import (
 	"os"
-
-	"github.com/urfave/cli/v2"
 )
 
 type (
@@ -13,9 +11,9 @@ type (
 		// By default, project name is same with project folder
 		Name string
 		// Version of the project (OPTIONAL). By default it is 0.0.1
-		Version  string
-		Layouts  Layouts
-		Commands Commands
+		Version string
+		Layouts Layouts
+		Cmds    Cmds
 	}
 	// Layouts for project
 	Layouts []string
@@ -23,13 +21,6 @@ type (
 
 // Run typical build-tool
 func Run(d *Descriptor) error {
-	buildCli := createBuildCli(d)
-
-	cli.AppHelpTemplate = appHelpTemplate
-	cli.SubcommandHelpTemplate = subcommandHelpTemplate
-
-	app := cli.NewApp()
-	app.Commands = buildCli.commands()
-
-	return app.Run(os.Args)
+	b := createBuildSys(d)
+	return b.app().Run(os.Args)
 }

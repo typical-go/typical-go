@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
-	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/urfave/cli/v2"
 )
 
@@ -30,9 +29,7 @@ type (
 	// Context of build tool
 	Context struct {
 		*cli.Context
-		*Descriptor
-		ASTStore *typast.ASTStore
-		Imports  []string
+		*BuildSys
 	}
 )
 
@@ -62,6 +59,12 @@ func (c *Context) Execute(cmder execkit.Commander) error {
 	cmd.Print(Stdout)
 	return execkit.Run(c.Ctx(), cmd)
 }
+
+// func (c *Context) Run() {
+// 	for _, cmd := range c.Descriptor.Cmds {
+// 		cmd.Command()
+// 	}
+// }
 
 // Ctx return golang context
 func (c *Context) Ctx() context.Context {

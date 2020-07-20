@@ -36,8 +36,10 @@ func TestRunCompile(t *testing.T) {
 func TestStdRun(t *testing.T) {
 	stdRun := &typgo.StdRun{}
 	c := &typgo.Context{
-		Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
-		Descriptor: &typgo.Descriptor{Name: "some-name"},
+		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
+		BuildSys: &typgo.BuildSys{
+			Descriptor: &typgo.Descriptor{Name: "some-name"},
+		},
 	}
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
@@ -53,8 +55,10 @@ func TestStdRun_Predefined(t *testing.T) {
 		Binary: "some-binary",
 	}
 	c := &typgo.Context{
-		Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
-		Descriptor: &typgo.Descriptor{Name: "some-name"},
+		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
+		BuildSys: &typgo.BuildSys{
+			Descriptor: &typgo.Descriptor{Name: "some-name"},
+		},
 	}
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{

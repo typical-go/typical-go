@@ -19,7 +19,7 @@ type (
 var _ typgo.Cmd = (*Command)(nil)
 
 // Command to utility
-func (*Command) Command(c *typgo.BuildCli) *cli.Command {
+func (*Command) Command(c *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:        "mock",
 		Usage:       "Generate mock class",

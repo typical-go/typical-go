@@ -32,7 +32,7 @@ var _ typgo.Cmd = (*Command)(nil)
 var _ typgo.Action = (*Command)(nil)
 
 // Command release
-func (r *Command) Command(c *typgo.BuildCli) *cli.Command {
+func (r *Command) Command(c *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:  "release",
 		Usage: "Release the project",

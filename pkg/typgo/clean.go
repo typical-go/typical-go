@@ -25,7 +25,7 @@ type (
 var _ Cmd = (*CleanCmd)(nil)
 
 // Command clean
-func (c *CleanCmd) Command(b *BuildCli) *cli.Command {
+func (c *CleanCmd) Command(b *BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:   "clean",
 		Usage:  "Clean the project",

@@ -21,7 +21,9 @@ func TestConfigManager_GetTarget(t *testing.T) {
 			TestName:      "initial target is not set",
 			ConfigManager: &typapp.ConfigManager{},
 			Context: &typgo.Context{
-				Descriptor: &typgo.Descriptor{Name: "name0"},
+				BuildSys: &typgo.BuildSys{
+					Descriptor: &typgo.Descriptor{Name: "name0"},
+				},
 			},
 			Expected: "cmd/name0/config_annotated.go",
 		},
@@ -48,16 +50,18 @@ func TestConfigManager_Execute(t *testing.T) {
 	target := "some-target"
 	defer os.Remove(target)
 	defer os.Remove(typgo.EnvFile)
-	ctorAnnot := &typapp.ConfigManager{
+	cfgManager := &typapp.ConfigManager{
 		Target: target,
 		Configs: []*typapp.Config{
 			{Prefix: "SAMPLE", Spec: &sample{}},
 		},
 		EnvFile: true,
 	}
-	ctx := &typgo.Context{}
+	c := &typgo.Context{
+		BuildSys: &typgo.BuildSys{},
+	}
 
-	require.NoError(t, ctorAnnot.Execute(ctx))
+	require.NoError(t, cfgManager.Execute(c))
 
 	b, _ := ioutil.ReadFile(target)
 	require.Equal(t, []byte(`package main

@@ -32,7 +32,7 @@ type (
 //
 
 // Command test
-func (t *TestCmd) Command(b *BuildCli) *cli.Command {
+func (t *TestCmd) Command(b *BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:    "test",
 		Aliases: []string{"t"},

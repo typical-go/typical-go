@@ -46,7 +46,7 @@ type (
 var _ typgo.Cmd = (*Command)(nil)
 
 // Command of docker
-func (m *Command) Command(c *typgo.BuildCli) *cli.Command {
+func (m *Command) Command(c *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:  "docker",
 		Usage: "Docker utility",
@@ -59,7 +59,7 @@ func (m *Command) Command(c *typgo.BuildCli) *cli.Command {
 	}
 }
 
-func (m *Command) cmdCompose(c *typgo.BuildCli) *cli.Command {
+func (m *Command) cmdCompose(c *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:   "compose",
 		Usage:  "Generate docker-compose.yaml",
@@ -113,7 +113,7 @@ func compile(version string, composers []Composer) (*Recipe, error) {
 	return root, nil
 }
 
-func (m *Command) cmdWipe(c *typgo.BuildCli) *cli.Command {
+func (m *Command) cmdWipe(c *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:   "wipe",
 		Usage:  "Kill all running docker container",
@@ -135,7 +135,7 @@ func (m *Command) dockerWipe(c *typgo.Context) (err error) {
 	return nil
 }
 
-func (m *Command) cmdUp(c *typgo.BuildCli) *cli.Command {
+func (m *Command) cmdUp(c *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:    "up",
 		Aliases: []string{"start"},
@@ -162,7 +162,7 @@ func (m *Command) dockerUp(c *typgo.Context) (err error) {
 	})
 }
 
-func (m *Command) cmdDown(c *typgo.BuildCli) *cli.Command {
+func (m *Command) cmdDown(c *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:    "down",
 		Aliases: []string{"stop"},

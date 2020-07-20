@@ -31,7 +31,7 @@ type (
 var _ Cmd = (*CompileCmd)(nil)
 
 // Command compile
-func (c *CompileCmd) Command(b *BuildCli) *cli.Command {
+func (c *CompileCmd) Command(b *BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:    "compile",
 		Aliases: []string{"c"},

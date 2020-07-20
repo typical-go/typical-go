@@ -14,7 +14,7 @@ var (
 		Version: "0.9.57",
 		Layouts: typgo.Layouts{"internal", "pkg"},
 
-		Commands: typgo.Commands{
+		Cmds: typgo.Cmds{
 			&typgo.CompileCmd{
 				Action: &typgo.StdCompile{MainPackage: "."},
 			},

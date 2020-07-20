@@ -25,8 +25,10 @@ func TestCommand_Execute(t *testing.T) {
 			TestName: "missing summary",
 			Command:  &typrls.Command{},
 			Ctx: &typgo.Context{
-				Context:    createContext(),
-				Descriptor: &typgo.Descriptor{},
+				Context: createContext(),
+				BuildSys: &typgo.BuildSys{
+					Descriptor: &typgo.Descriptor{},
+				},
 			},
 			ExpectedErr: "typrls: missing summary",
 		},
@@ -38,8 +40,10 @@ func TestCommand_Execute(t *testing.T) {
 				}),
 			},
 			Ctx: &typgo.Context{
-				Context:    createContext(),
-				Descriptor: &typgo.Descriptor{},
+				Context: createContext(),
+				BuildSys: &typgo.BuildSys{
+					Descriptor: &typgo.Descriptor{},
+				},
 			},
 			ExpectedErr: "bad-summary",
 		},
@@ -52,8 +56,10 @@ func TestCommand_Execute(t *testing.T) {
 				}),
 			},
 			Ctx: &typgo.Context{
-				Context:    createContext(),
-				Descriptor: &typgo.Descriptor{},
+				Context: createContext(),
+				BuildSys: &typgo.BuildSys{
+					Descriptor: &typgo.Descriptor{},
+				},
 			},
 			ExpectedErr: "some-error",
 		},
@@ -65,8 +71,10 @@ func TestCommand_Execute(t *testing.T) {
 				}),
 			},
 			Ctx: &typgo.Context{
-				Context:    createContext("-alpha"),
-				Descriptor: &typgo.Descriptor{},
+				Context: createContext("-alpha"),
+				BuildSys: &typgo.BuildSys{
+					Descriptor: &typgo.Descriptor{},
+				},
 			},
 			RunExpectations: []*execkit.RunExpectation{
 				{CommandLine: []string{"git", "fetch"}},
@@ -96,8 +104,10 @@ func TestCommand_Execute(t *testing.T) {
 			},
 			Ctx: &typgo.Context{
 				Context: createContext(),
-				Descriptor: &typgo.Descriptor{
-					Version: "9.9.9",
+				BuildSys: &typgo.BuildSys{
+					Descriptor: &typgo.Descriptor{
+						Version: "9.9.9",
+					},
 				},
 			},
 			RunExpectations: []*execkit.RunExpectation{
@@ -121,8 +131,10 @@ func TestCommand_Execute(t *testing.T) {
 			},
 			Ctx: &typgo.Context{
 				Context: createContext("-tag=some-tag"),
-				Descriptor: &typgo.Descriptor{
-					Version: "9.9.9",
+				BuildSys: &typgo.BuildSys{
+					Descriptor: &typgo.Descriptor{
+						Version: "9.9.9",
+					},
 				},
 			},
 			RunExpectations: []*execkit.RunExpectation{

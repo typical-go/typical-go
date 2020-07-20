@@ -35,8 +35,10 @@ func TestCompileCmd(t *testing.T) {
 func TestStdCompile(t *testing.T) {
 	cmpl := &typgo.StdCompile{}
 	c := &typgo.Context{
-		Descriptor: &typgo.Descriptor{Name: "some-name", Version: "0.0.1"},
-		Context:    &cli.Context{Context: context.Background()},
+		BuildSys: &typgo.BuildSys{
+			Descriptor: &typgo.Descriptor{Name: "some-name", Version: "0.0.1"},
+		},
+		Context: &cli.Context{Context: context.Background()},
 	}
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
@@ -63,8 +65,10 @@ func TestStdCompile_Predefined(t *testing.T) {
 		},
 	}
 	c := &typgo.Context{
-		Descriptor: &typgo.Descriptor{Name: "some-name", Version: "0.0.1"},
-		Context:    &cli.Context{Context: context.Background()},
+		BuildSys: &typgo.BuildSys{
+			Descriptor: &typgo.Descriptor{Name: "some-name", Version: "0.0.1"},
+		},
+		Context: &cli.Context{Context: context.Background()},
 	}
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
