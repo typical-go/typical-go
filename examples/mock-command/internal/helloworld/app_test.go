@@ -4,11 +4,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	"github.com/golang/mock/gomock"
-	"github.com/typical-go/typical-go/examples/generate-mock/internal/helloworld"
-	"github.com/typical-go/typical-go/examples/generate-mock/internal/helloworld_mock"
+	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/examples/mock-command/internal/helloworld"
+	"github.com/typical-go/typical-go/examples/mock-command/internal/helloworld_mock"
 )
 
 func TestPrint(t *testing.T) {
