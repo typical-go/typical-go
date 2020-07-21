@@ -98,68 +98,92 @@ func TestUnmarshall(t *testing.T) {
 	}
 }
 
-func TestAnnot_Check(t *testing.T) {
+func TestAnnot_CheckFunc(t *testing.T) {
 	testcases := []struct {
 		TestName string
 		*typannot.Annot
 		TagName  string
-		Type     typannot.DeclType
 		Expected bool
 	}{
 		{
-			Annot: &typannot.Annot{
-				TagName: "tagname",
-				Decl:    &typannot.Decl{Type: typannot.FuncType},
-			},
+			Annot:    &typannot.Annot{TagName: "tagname", Decl: &typannot.Decl{Type: &typannot.FuncType{}}},
 			TagName:  "tagname",
-			Type:     typannot.FuncType,
 			Expected: true,
 		},
 		{
-			TestName: "upper-cased tagName",
-			Annot: &typannot.Annot{
-				TagName: "TAGNAME",
-				Decl:    &typannot.Decl{Type: typannot.FuncType},
-			},
-			TagName:  "tagname",
-			Type:     typannot.FuncType,
-			Expected: true,
-		},
-		{
-			TestName: "random-cased tagName",
-			Annot: &typannot.Annot{
-				TagName: "TaGNaMe",
-				Decl:    &typannot.Decl{Type: typannot.FuncType},
-			},
-			TagName:  "tagname",
-			Type:     typannot.FuncType,
-			Expected: true,
-		},
-		{
-			TestName: "wrong declaration type",
-			Annot: &typannot.Annot{
-				TagName: "tagname",
-				Decl:    &typannot.Decl{Type: typannot.InterfaceType},
-			},
-			TagName:  "tagname",
-			Type:     typannot.FuncType,
+			Annot:    &typannot.Annot{TagName: "tagname", Decl: &typannot.Decl{Type: &typannot.FuncType{}}},
+			TagName:  "tagname1",
 			Expected: false,
 		},
 		{
-			TestName: "wrong declaration type",
-			Annot: &typannot.Annot{
-				TagName: "wrong",
-				Decl:    &typannot.Decl{Type: typannot.FuncType},
-			},
+			Annot:    &typannot.Annot{TagName: "tagname", Decl: &typannot.Decl{Type: &typannot.StructType{}}},
 			TagName:  "tagname",
-			Type:     typannot.FuncType,
 			Expected: false,
 		},
 	}
-
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			require.Equal(t, tt.Expected, tt.Check(tt.TagName, tt.Type))
+			require.Equal(t, tt.Expected, tt.CheckFunc(tt.TagName))
+		})
+	}
+}
+
+func TestAnnot_CheckStruct(t *testing.T) {
+	testcases := []struct {
+		TestName string
+		*typannot.Annot
+		TagName  string
+		Expected bool
+	}{
+		{
+			Annot:    &typannot.Annot{TagName: "tagname", Decl: &typannot.Decl{Type: &typannot.StructType{}}},
+			TagName:  "tagname",
+			Expected: true,
+		},
+		{
+			Annot:    &typannot.Annot{TagName: "tagname", Decl: &typannot.Decl{Type: &typannot.StructType{}}},
+			TagName:  "tagname1",
+			Expected: false,
+		},
+		{
+			Annot:    &typannot.Annot{TagName: "tagname", Decl: &typannot.Decl{Type: &typannot.FuncType{}}},
+			TagName:  "tagname",
+			Expected: false,
+		},
+	}
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			require.Equal(t, tt.Expected, tt.CheckStruct(tt.TagName))
+		})
+	}
+}
+
+func TestAnnot_CheckInterface(t *testing.T) {
+	testcases := []struct {
+		TestName string
+		*typannot.Annot
+		TagName  string
+		Expected bool
+	}{
+		{
+			Annot:    &typannot.Annot{TagName: "tagname", Decl: &typannot.Decl{Type: &typannot.InterfaceType{}}},
+			TagName:  "tagname",
+			Expected: true,
+		},
+		{
+			Annot:    &typannot.Annot{TagName: "tagname", Decl: &typannot.Decl{Type: &typannot.InterfaceType{}}},
+			TagName:  "tagname1",
+			Expected: false,
+		},
+		{
+			Annot:    &typannot.Annot{TagName: "tagname", Decl: &typannot.Decl{Type: &typannot.FuncType{}}},
+			TagName:  "tagname",
+			Expected: false,
+		},
+	}
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			require.Equal(t, tt.Expected, tt.CheckInterface(tt.TagName))
 		})
 	}
 }

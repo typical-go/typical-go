@@ -11,7 +11,7 @@ type (
 	Annot struct {
 		TagName  string `json:"tag_name"`
 		TagAttrs []byte `json:"tag_attrs"`
-		Decl     *Decl  `json:"decl"`
+		*Decl    `json:"decl"`
 	}
 )
 
@@ -51,7 +51,20 @@ func (a *Annot) Unmarshal(v interface{}) error {
 	return nil
 }
 
-// Check if annotation
-func (a *Annot) Check(tagName string, typ DeclType) bool {
-	return strings.EqualFold(tagName, a.TagName) && a.Decl.Type == typ
+// CheckFunc return true if annot is function type with same tagName
+func (a *Annot) CheckFunc(tagName string) bool {
+	_, ok := a.Type.(*FuncType)
+	return strings.EqualFold(tagName, a.TagName) && ok
+}
+
+// CheckInterface return true if annot is interface type with same tagName
+func (a *Annot) CheckInterface(tagName string) bool {
+	_, ok := a.Type.(*InterfaceType)
+	return strings.EqualFold(tagName, a.TagName) && ok
+}
+
+// CheckStruct return true if annot is struct type with same tagName
+func (a *Annot) CheckStruct(tagName string) bool {
+	_, ok := a.Type.(*StructType)
+	return strings.EqualFold(tagName, a.TagName) && ok
 }

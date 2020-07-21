@@ -14,6 +14,19 @@ type (
 		Decls  []*Decl
 		Annots []*Annot
 	}
+	// Decl stand of declaration
+	Decl struct {
+		Name    string
+		Path    string
+		Package string
+		Type    interface{}
+	}
+	// FuncType function type
+	FuncType struct{}
+	// InterfaceType interface type
+	InterfaceType struct{}
+	// StructType struct type
+	StructType struct{}
 )
 
 // CreateASTStore to walk through the filenames and store declaration and annotations
@@ -37,7 +50,7 @@ func CreateASTStore(paths ...string) (*ASTStore, error) {
 			case *ast.FuncDecl:
 				funcDecl := node.(*ast.FuncDecl)
 				name := funcDecl.Name.Name
-				decl := &Decl{Name: name, Type: FuncType, Path: path, Package: pkg}
+				decl := &Decl{Name: name, Type: &FuncType{}, Path: path, Package: pkg}
 
 				decls = append(decls, decl)
 				annots = append(annots, retrieveAnnots(decl, funcDecl.Doc)...)
@@ -49,12 +62,12 @@ func CreateASTStore(paths ...string) (*ASTStore, error) {
 					case *ast.TypeSpec:
 						typeSpec := spec.(*ast.TypeSpec)
 
-						declType := GenericType
+						var declType interface{}
 						switch typeSpec.Type.(type) {
 						case *ast.InterfaceType:
-							declType = InterfaceType
+							declType = &InterfaceType{}
 						case *ast.StructType:
-							declType = StructType
+							declType = &StructType{}
 						}
 
 						// NOTE: get type specific first before get the generic
@@ -79,7 +92,7 @@ func CreateASTStore(paths ...string) (*ASTStore, error) {
 
 func retrieveAnnots(decl *Decl, doc *ast.CommentGroup) []*Annot {
 	var rawAnnots []string
-	RetrRawAnnots(&rawAnnots, doc.Text())
+	RetrieveRawAnnots(&rawAnnots, doc.Text())
 
 	var annots []*Annot
 	for _, raw := range rawAnnots {
@@ -91,13 +104,13 @@ func retrieveAnnots(decl *Decl, doc *ast.CommentGroup) []*Annot {
 	return annots
 }
 
-// RetrRawAnnots retrieve raw of annotation for godoc text
-func RetrRawAnnots(rawAnnots *[]string, docText string) {
+// RetrieveRawAnnots retrieve raw of annotation for godoc text
+func RetrieveRawAnnots(rawAnnots *[]string, docText string) {
 	docText = strings.TrimSpace(docText)
 	enter := strings.IndexRune(docText, '\n')
 	if !strings.HasPrefix(docText, "@") {
 		if enter > 0 {
-			RetrRawAnnots(rawAnnots, docText[enter+1:])
+			RetrieveRawAnnots(rawAnnots, docText[enter+1:])
 		}
 		return
 	}
@@ -106,7 +119,7 @@ func RetrRawAnnots(rawAnnots *[]string, docText string) {
 
 	if enter < open && enter > 0 {
 		*rawAnnots = append(*rawAnnots, docText[:enter])
-		RetrRawAnnots(rawAnnots, docText[enter+1:])
+		RetrieveRawAnnots(rawAnnots, docText[enter+1:])
 		return
 	}
 
@@ -115,7 +128,7 @@ func RetrRawAnnots(rawAnnots *[]string, docText string) {
 			*rawAnnots = append(*rawAnnots, docText)
 		} else {
 			*rawAnnots = append(*rawAnnots, docText[:enter])
-			RetrRawAnnots(rawAnnots, docText[enter+1:])
+			RetrieveRawAnnots(rawAnnots, docText[enter+1:])
 		}
 		return
 	}
@@ -133,6 +146,6 @@ func RetrRawAnnots(rawAnnots *[]string, docText string) {
 	}
 	enter2 = close + enter2
 	*rawAnnots = append(*rawAnnots, docText[:enter2])
-	RetrRawAnnots(rawAnnots, docText[enter2+1:])
+	RetrieveRawAnnots(rawAnnots, docText[enter2+1:])
 	return
 }

@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -23,7 +23,7 @@ func TestDtorAnnotation_Execute(t *testing.T) {
 		},
 		ASTStore: &typannot.ASTStore{
 			Annots: []*typannot.Annot{
-				{TagName: "dtor", Decl: &typannot.Decl{Name: "Clean", Package: "pkg", Type: typannot.FuncType}},
+				{TagName: "dtor", Decl: &typannot.Decl{Name: "Clean", Package: "pkg", Type: &typannot.FuncType{}}},
 			},
 		},
 	}

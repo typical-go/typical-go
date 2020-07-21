@@ -46,7 +46,7 @@ func createMockery(c *typgo.Context) (*Mockery, error) {
 		return nil, err
 	}
 	for _, annot := range ac.ASTStore.Annots {
-		if annot.Check(MockTag, typannot.InterfaceType) {
+		if annot.CheckInterface(MockTag) {
 			m.Put(CreateMock(annot))
 		}
 	}

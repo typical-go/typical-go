@@ -12,42 +12,42 @@ var (
 	someInterfaceDecl = &typannot.Decl{
 		Path:    "sample_test.go",
 		Package: "typannot_test",
-		Type:    typannot.InterfaceType,
+		Type:    &typannot.InterfaceType{},
 		Name:    "sampleInterface",
 	}
 
 	someStructDecl = &typannot.Decl{
 		Path:    "sample_test.go",
 		Package: "typannot_test",
-		Type:    typannot.StructType,
+		Type:    &typannot.StructType{},
 		Name:    "sampleStruct",
 	}
 
 	someFunctionDecl = &typannot.Decl{
 		Path:    "sample_test.go",
 		Package: "typannot_test",
-		Type:    typannot.FuncType,
+		Type:    &typannot.FuncType{},
 		Name:    "sampleFunction",
 	}
 
 	someFunctionDecl2 = &typannot.Decl{
 		Path:    "sample_test.go",
 		Package: "typannot_test",
-		Type:    typannot.FuncType,
+		Type:    &typannot.FuncType{},
 		Name:    "sampleFunction2",
 	}
 
 	someInterface2Decl = &typannot.Decl{
 		Path:    "sample_test.go",
 		Package: "typannot_test",
-		Type:    typannot.InterfaceType,
+		Type:    &typannot.InterfaceType{},
 		Name:    "sampleInterface2",
 	}
 
 	someStruct2Decl = &typannot.Decl{
 		Path:    "sample_test.go",
 		Package: "typannot_test",
-		Type:    typannot.StructType,
+		Type:    &typannot.StructType{},
 		Name:    "sampleStruct2",
 	}
 )
@@ -179,7 +179,7 @@ func TestRetrRawAnnots(t *testing.T) {
 	for _, tt := range testcases {
 		t.Run(tt.testname, func(t *testing.T) {
 			var initial []string
-			typannot.RetrRawAnnots(&initial, tt.doc)
+			typannot.RetrieveRawAnnots(&initial, tt.doc)
 			require.Equal(t, tt.expected, initial)
 		})
 	}

@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -21,12 +21,12 @@ func TestCtorAnnotation_Annotate(t *testing.T) {
 			Annots: []*typannot.Annot{
 				{
 					TagName: "ctor",
-					Decl:    &typannot.Decl{Name: "NewObject", Package: "pkg", Type: typannot.FuncType},
+					Decl:    &typannot.Decl{Name: "NewObject", Package: "pkg", Type: &typannot.FuncType{}},
 				},
 				{
 					TagName:  "ctor",
 					TagAttrs: []byte(`{"name":"obj2"}`),
-					Decl:     &typannot.Decl{Name: "NewObject2", Package: "pkg2", Type: typannot.FuncType},
+					Decl:     &typannot.Decl{Name: "NewObject2", Package: "pkg2", Type: &typannot.FuncType{}},
 				},
 			},
 		},

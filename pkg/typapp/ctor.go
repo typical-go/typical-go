@@ -25,7 +25,7 @@ var _ typannot.Annotator = (*CtorAnnotation)(nil)
 func (a *CtorAnnotation) Annotate(c *typannot.Context) error {
 	var ctors []*typtmpl.Ctor
 	for _, annot := range c.ASTStore.Annots {
-		if annot.Check(ctorTag, typannot.FuncType) {
+		if annot.CheckFunc(ctorTag) {
 			ctor, err := typtmpl.CreateCtor(annot)
 			if err != nil {
 				log.Printf("WARN %s", err.Error())

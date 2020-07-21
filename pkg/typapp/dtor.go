@@ -24,7 +24,7 @@ var _ typannot.Annotator = (*DtorAnnotation)(nil)
 func (a *DtorAnnotation) Annotate(c *typannot.Context) error {
 	var dtors []*typtmpl.Dtor
 	for _, annot := range c.ASTStore.Annots {
-		if annot.Check(dtorTag, typannot.FuncType) {
+		if annot.CheckFunc(dtorTag) {
 			dtors = append(dtors, typtmpl.CreateDtor(annot))
 		}
 	}
