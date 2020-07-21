@@ -16,6 +16,11 @@ type (
 	Annotator interface {
 		Annotate(*Context) error
 	}
+	// AnnotateFn annotate function
+	AnnotateFn    func(*Context) error
+	annotatorImpl struct {
+		fn AnnotateFn
+	}
 	// Context of annotation
 	Context struct {
 		*typgo.Context
@@ -32,13 +37,11 @@ func (a Annotators) Execute(c *typgo.Context) error {
 	if err != nil {
 		return err
 	}
-
 	for _, annotator := range a {
 		if err := annotator.Annotate(annCtx); err != nil {
 			return err
 		}
 	}
-
 	return nil
 }
 
@@ -93,4 +96,17 @@ func WalkLayout(layouts []string) (dirs, files []string) {
 func isGoSource(path string) bool {
 	return strings.HasSuffix(path, ".go") &&
 		!strings.HasSuffix(path, "_test.go")
+}
+
+//
+// annotatorImpl
+//
+
+// NewAnnotator return new instance of annotator
+func NewAnnotator(fn AnnotateFn) Annotator {
+	return &annotatorImpl{fn: fn}
+}
+
+func (a *annotatorImpl) Annotate(c *Context) (err error) {
+	return a.fn(c)
 }
