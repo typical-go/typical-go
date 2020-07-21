@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"reflect"
 	"strings"
 )
 
@@ -26,7 +27,15 @@ type (
 	// InterfaceType interface type
 	InterfaceType struct{}
 	// StructType struct type
-	StructType struct{}
+	StructType struct {
+		Fields []*Field
+	}
+	// Field information
+	Field struct {
+		Name string
+		Type string
+		Tag  reflect.StructTag
+	}
 )
 
 // CreateASTStore to walk through the filenames and store declaration and annotations
@@ -62,12 +71,12 @@ func CreateASTStore(paths ...string) (*ASTStore, error) {
 					case *ast.TypeSpec:
 						typeSpec := spec.(*ast.TypeSpec)
 
-						var declType interface{}
+						var typ interface{}
 						switch typeSpec.Type.(type) {
 						case *ast.InterfaceType:
-							declType = &InterfaceType{}
+							typ = &InterfaceType{}
 						case *ast.StructType:
-							declType = &StructType{}
+							typ = convertStructType(typeSpec.Type.(*ast.StructType))
 						}
 
 						// NOTE: get type specific first before get the generic
@@ -77,7 +86,7 @@ func CreateASTStore(paths ...string) (*ASTStore, error) {
 						}
 
 						name := typeSpec.Name.Name
-						decl := &Decl{Name: name, Type: declType, Path: path, Package: pkg}
+						decl := &Decl{Name: name, Type: typ, Path: path, Package: pkg}
 
 						decls = append(decls, decl)
 						annots = append(annots, retrieveAnnots(decl, doc)...)
@@ -88,6 +97,32 @@ func CreateASTStore(paths ...string) (*ASTStore, error) {
 	}
 
 	return &ASTStore{Paths: paths, Decls: decls, Annots: annots}, nil
+}
+
+func convertStructType(s *ast.StructType) *StructType {
+	var fields []*Field
+	for _, field := range s.Fields.List {
+		switch field.Type.(type) {
+		case *ast.Ident:
+			i := field.Type.(*ast.Ident)
+			for _, name := range field.Names {
+				fields = append(fields, &Field{
+					Name: name.Name,
+					Type: i.Name,
+					Tag:  nakedStructTag(field.Tag.Value),
+				})
+			}
+		}
+	}
+	return &StructType{Fields: fields}
+}
+
+func nakedStructTag(s string) reflect.StructTag {
+	n := len(s)
+	if n < 2 {
+		return ""
+	}
+	return reflect.StructTag(s[1 : len(s)-1])
 }
 
 func retrieveAnnots(decl *Decl, doc *ast.CommentGroup) []*Annot {

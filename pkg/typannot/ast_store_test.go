@@ -1,7 +1,7 @@
 package typannot_test
 
 import (
-	"fmt"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -19,8 +19,13 @@ var (
 	someStructDecl = &typannot.Decl{
 		Path:    "sample_test.go",
 		Package: "typannot_test",
-		Type:    &typannot.StructType{},
-		Name:    "sampleStruct",
+		Type: &typannot.StructType{
+			Fields: []*typannot.Field{
+				{Name: "sampleInt", Type: "int", Tag: reflect.StructTag(`default:"value1"`)},
+				{Name: "sampleString", Type: "string", Tag: reflect.StructTag(`default:"value2"`)},
+			},
+		},
+		Name: "sampleStruct",
 	}
 
 	someFunctionDecl = &typannot.Decl{
@@ -55,10 +60,6 @@ var (
 func TestCreateASTStore(t *testing.T) {
 	store, err := typannot.CreateASTStore("sample_test.go")
 	require.NoError(t, err)
-
-	for _, decl := range store.Decls {
-		fmt.Println(decl)
-	}
 
 	require.EqualValues(t, []*typannot.Decl{
 		someInterfaceDecl,

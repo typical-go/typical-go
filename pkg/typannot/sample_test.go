@@ -8,8 +8,8 @@ type sampleInterface interface {
 // @tag1
 // @tag2 {"key1":"", "key2": "", "key3":"value3"}
 type sampleStruct struct {
-	sampleInt    int
-	sampleString string
+	sampleInt    int    `default:"value1"`
+	sampleString string `default:"value2"`
 }
 
 func sampleFunction() {
