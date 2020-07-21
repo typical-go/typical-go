@@ -12,24 +12,14 @@ import (
 )
 
 func TestCompileCmd(t *testing.T) {
-	testcases := []typgo.CmdTestCase{
-		{
-			Cmd: &typgo.CompileCmd{
-				Action: typgo.NewAction(func(*typgo.Context) error {
-					return errors.New("some-error")
-				}),
-			},
-			Expected: typgo.Command{
-				Name:    "compile",
-				Aliases: []string{"c"},
-				Usage:   "Compile the project",
-			},
-			ExpectedError: "some-error",
-		},
+
+	compileCmd := &typgo.CompileCmd{
+		Action: typgo.NewAction(func(*typgo.Context) error {
+			return errors.New("some-error")
+		}),
 	}
-	for _, tt := range testcases {
-		tt.Run(t)
-	}
+	command := compileCmd.Command(&typgo.BuildSys{})
+	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
 }
 
 func TestStdCompile(t *testing.T) {

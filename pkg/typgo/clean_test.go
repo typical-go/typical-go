@@ -6,26 +6,17 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typgo"
+	"github.com/urfave/cli/v2"
 )
 
 func TestCleanCmd(t *testing.T) {
-	testcases := []typgo.CmdTestCase{
-		{
-			Cmd: &typgo.CleanCmd{
-				Action: typgo.NewAction(func(*typgo.Context) error {
-					return errors.New("some-error")
-				}),
-			},
-			Expected: typgo.Command{
-				Name:  "clean",
-				Usage: "Clean the project",
-			},
-			ExpectedError: "some-error",
-		},
+	cleanCmd := &typgo.CleanCmd{
+		Action: typgo.NewAction(func(*typgo.Context) error {
+			return errors.New("some-error")
+		}),
 	}
-	for _, tt := range testcases {
-		tt.Run(t)
-	}
+	command := cleanCmd.Command(&typgo.BuildSys{})
+	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
 }
 
 func TestStdClean(t *testing.T) {

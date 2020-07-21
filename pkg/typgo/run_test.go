@@ -12,46 +12,30 @@ import (
 )
 
 func TestRunCompile_Command(t *testing.T) {
-	testcases := []typgo.CmdTestCase{
-		{
-			Cmd: &typgo.RunCmd{
-				Action: typgo.NewAction(func(*typgo.Context) error {
-					return errors.New("some-error")
-				}),
-			},
-			Expected: typgo.Command{
-				Name:            "run",
-				Aliases:         []string{"r"},
-				Usage:           "Run the project in local environment",
-				SkipFlagParsing: true,
-			},
-			ExpectedError: "some-error",
-		},
-		{
-			TestName: "precmd error",
-			BuildSys: &typgo.BuildSys{
-				Commands: []*cli.Command{
-					{Name: "pre", Action: func(*cli.Context) error { return errors.New("pre-error") }},
-				},
-			},
-			Cmd: &typgo.RunCmd{
-				Precmds: []string{"pre"},
-				Action: typgo.NewAction(func(*typgo.Context) error {
-					return errors.New("some-error")
-				}),
-			},
-			Expected: typgo.Command{
-				Name:            "run",
-				Aliases:         []string{"r"},
-				Usage:           "Run the project in local environment",
-				SkipFlagParsing: true,
-			},
-			ExpectedError: "pre-error",
+	runCmd := &typgo.RunCmd{
+		Action: typgo.NewAction(func(*typgo.Context) error {
+			return errors.New("some-error")
+		}),
+	}
+	command := runCmd.Command(&typgo.BuildSys{})
+	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
+}
+
+func TestRunCompile_Precmd(t *testing.T) {
+	sys := &typgo.BuildSys{
+		Commands: []*cli.Command{
+			{Name: "pre", Action: func(*cli.Context) error { return errors.New("pre-error") }},
 		},
 	}
-	for _, tt := range testcases {
-		tt.Run(t)
+
+	runCmd := &typgo.RunCmd{
+		Precmds: []string{"pre"},
+		Action: typgo.NewAction(func(*typgo.Context) error {
+			return errors.New("some-error")
+		}),
 	}
+	command := runCmd.Command(sys)
+	require.EqualError(t, command.Action(&cli.Context{}), "pre-error")
 }
 
 func TestStdRun_Execute(t *testing.T) {

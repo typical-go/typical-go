@@ -13,24 +13,13 @@ import (
 )
 
 func TestTestCmd(t *testing.T) {
-	testcases := []typgo.CmdTestCase{
-		{
-			Cmd: &typgo.TestCmd{
-				Action: typgo.NewAction(func(*typgo.Context) error {
-					return errors.New("some-error")
-				}),
-			},
-			Expected: typgo.Command{
-				Name:    "test",
-				Aliases: []string{"t"},
-				Usage:   "Test the project",
-			},
-			ExpectedError: "some-error",
-		},
+	testCmd := &typgo.TestCmd{
+		Action: typgo.NewAction(func(*typgo.Context) error {
+			return errors.New("some-error")
+		}),
 	}
-	for _, tt := range testcases {
-		tt.Run(t)
-	}
+	command := testCmd.Command(&typgo.BuildSys{})
+	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
 }
 
 func TestStdTest(t *testing.T) {
