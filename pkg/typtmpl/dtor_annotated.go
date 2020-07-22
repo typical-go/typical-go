@@ -1,10 +1,7 @@
 package typtmpl
 
 import (
-	"fmt"
 	"io"
-
-	"github.com/typical-go/typical-go/pkg/typannot"
 )
 
 type (
@@ -19,17 +16,6 @@ type (
 		Def string
 	}
 )
-
-//
-// Dtor
-//
-
-// CreateDtor to create new instance of Dtor from Annotation
-func CreateDtor(annot *typannot.Annot) *Dtor {
-	return &Dtor{
-		Def: fmt.Sprintf("%s.%s", annot.Decl.Package, annot.Decl.Name),
-	}
-}
 
 //
 // DtorAnnotated

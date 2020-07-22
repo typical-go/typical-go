@@ -3,8 +3,6 @@ package typtmpl_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
@@ -37,54 +35,4 @@ func init() {
 }`,
 		},
 	})
-}
-
-func TestCreateCtor(t *testing.T) {
-	testcases := []struct {
-		TestName string
-		*typannot.Annot
-		Expected    *typtmpl.Ctor
-		ExpectedErr string
-	}{
-		{
-			Annot: &typannot.Annot{
-				Decl: &typannot.Decl{
-					Package: "pkg",
-					Name:    "name",
-				},
-			},
-			Expected: &typtmpl.Ctor{Name: "", Def: "pkg.name"},
-		},
-		{
-			Annot: &typannot.Annot{
-				TagAttrs: []byte(`{"name":"some-name"}`),
-				Decl: &typannot.Decl{
-					Package: "pkg",
-					Name:    "name",
-				},
-			},
-			Expected: &typtmpl.Ctor{Name: "some-name", Def: "pkg.name"},
-		},
-		{
-			Annot: &typannot.Annot{
-				TagAttrs: []byte(`{bad-attributes`),
-				Decl: &typannot.Decl{
-					Package: "pkg",
-					Name:    "name",
-				},
-			},
-			ExpectedErr: "name: invalid character 'b' looking for beginning of object key string",
-		},
-	}
-	for _, tt := range testcases {
-		t.Run(tt.TestName, func(t *testing.T) {
-			ctor, err := typtmpl.CreateCtor(tt.Annot)
-			if tt.ExpectedErr != "" {
-				require.EqualError(t, err, tt.ExpectedErr)
-			} else {
-				require.NoError(t, err)
-				require.Equal(t, tt.Expected, ctor)
-			}
-		})
-	}
 }

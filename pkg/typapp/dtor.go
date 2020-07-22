@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	dtorTag = "dtor"
+	dtorTag = "@dtor"
 )
 
 type (
@@ -25,9 +25,12 @@ func (a *DtorAnnotation) Annotate(c *typannot.Context) error {
 	var dtors []*typtmpl.Dtor
 	for _, annot := range c.ASTStore.Annots {
 		if annot.CheckFunc(dtorTag) {
-			dtors = append(dtors, typtmpl.CreateDtor(annot))
+			dtors = append(dtors, &typtmpl.Dtor{
+				Def: fmt.Sprintf("%s.%s", annot.Decl.Package, annot.Decl.Name),
+			})
 		}
 	}
+
 	return WriteGoSource(
 		a.GetTarget(c),
 		&typtmpl.DtorAnnotated{

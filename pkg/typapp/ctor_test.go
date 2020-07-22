@@ -20,12 +20,12 @@ func TestCtorAnnotation_Annotate(t *testing.T) {
 		ASTStore: &typannot.ASTStore{
 			Annots: []*typannot.Annot{
 				{
-					TagName: "ctor",
+					TagName: "@ctor",
 					Decl:    &typannot.Decl{Name: "NewObject", Package: "pkg", Type: &typannot.FuncType{}},
 				},
 				{
-					TagName:  "ctor",
-					TagAttrs: []byte(`{"name":"obj2"}`),
+					TagName:  "@ctor",
+					TagAttrs: `name:"obj2"`,
 					Decl:     &typannot.Decl{Name: "NewObject2", Package: "pkg2", Type: &typannot.FuncType{}},
 				},
 			},

@@ -1,54 +1,43 @@
 package typannot
 
 import (
-	"encoding/json"
-	"errors"
+	"reflect"
 	"strings"
 )
 
 type (
 	// Annot that contain extra additional information
 	Annot struct {
-		TagName  string `json:"tag_name"`
-		TagAttrs []byte `json:"tag_attrs"`
+		TagName  string            `json:"tag_name"`
+		TagAttrs reflect.StructTag `json:"tag_attrs"`
 		*Decl    `json:"decl"`
 	}
 )
 
-// CreateAnnot parse raw string to annotation
-func CreateAnnot(decl *Decl, raw string) (a *Annot, err error) {
+// ParseAnnot parse raw string to annotation
+func ParseAnnot(raw string) (tagName, tagAttrs string) {
+	iOpen := strings.IndexRune(raw, '(')
+	iSpace := strings.IndexRune(raw, ' ')
 
-	if !strings.HasPrefix(raw, "@") {
-		return nil, errors.New("Annotation: should start with @")
+	if iOpen < 0 {
+		if iSpace < 0 {
+			tagName = strings.TrimSpace(raw)
+			return tagName, ""
+		}
+		tagName = raw[:iSpace]
+	} else {
+		if iSpace < 0 {
+			tagName = raw[:iOpen]
+		} else {
+			tagName = raw[:iSpace]
+		}
+
+		if iClose := strings.IndexRune(raw, ')'); iClose > 0 {
+			tagAttrs = raw[iOpen+1 : iClose]
+		}
 	}
-	raw = raw[1:]
 
-	i1 := strings.IndexRune(raw, '{')
-	if i1 < 0 {
-		return &Annot{
-			Decl:    decl,
-			TagName: strings.TrimSpace(raw),
-		}, nil
-	}
-
-	i2 := strings.IndexRune(raw, '}')
-	if i2 < 0 {
-		return nil, errors.New("Annotation: missing '}'")
-	}
-
-	return &Annot{
-		Decl:     decl,
-		TagName:  strings.TrimSpace(raw[:i1]),
-		TagAttrs: []byte(strings.TrimSpace(raw[i1 : i2+1])),
-	}, nil
-}
-
-// Unmarshal tag attributes
-func (a *Annot) Unmarshal(v interface{}) error {
-	if len(a.TagAttrs) > 0 {
-		return json.Unmarshal(a.TagAttrs, v)
-	}
-	return nil
+	return tagName, tagAttrs
 }
 
 // CheckFunc return true if annot is function type with same tagName

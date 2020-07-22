@@ -126,61 +126,25 @@ func nakedStructTag(s string) reflect.StructTag {
 }
 
 func retrieveAnnots(decl *Decl, doc *ast.CommentGroup) []*Annot {
-	var rawAnnots []string
-	RetrieveRawAnnots(&rawAnnots, doc.Text())
+	if doc == nil {
+		return nil
+	}
 
 	var annots []*Annot
-	for _, raw := range rawAnnots {
-		if annot, _ := CreateAnnot(decl, raw); annot != nil {
-			annots = append(annots, annot)
+	for _, comment := range doc.List {
+		raw := comment.Text
+		if strings.HasPrefix(raw, "//") {
+			raw = strings.TrimSpace(raw[2:])
+		}
+		if strings.HasPrefix(raw, "@") {
+			tagName, tagAttrs := ParseAnnot(raw)
+			annots = append(annots, &Annot{
+				TagName:  tagName,
+				TagAttrs: reflect.StructTag(tagAttrs),
+				Decl:     decl,
+			})
 		}
 	}
 
 	return annots
-}
-
-// RetrieveRawAnnots retrieve raw of annotation for godoc text
-func RetrieveRawAnnots(rawAnnots *[]string, docText string) {
-	docText = strings.TrimSpace(docText)
-	enter := strings.IndexRune(docText, '\n')
-	if !strings.HasPrefix(docText, "@") {
-		if enter > 0 {
-			RetrieveRawAnnots(rawAnnots, docText[enter+1:])
-		}
-		return
-	}
-
-	open := strings.IndexRune(docText, '{')
-
-	if enter < open && enter > 0 {
-		*rawAnnots = append(*rawAnnots, docText[:enter])
-		RetrieveRawAnnots(rawAnnots, docText[enter+1:])
-		return
-	}
-
-	if open < 0 {
-		if enter < 0 {
-			*rawAnnots = append(*rawAnnots, docText)
-		} else {
-			*rawAnnots = append(*rawAnnots, docText[:enter])
-			RetrieveRawAnnots(rawAnnots, docText[enter+1:])
-		}
-		return
-	}
-
-	close := strings.IndexRune(docText, '}')
-	if close < 0 {
-		*rawAnnots = append(*rawAnnots, docText)
-		return
-	}
-
-	enter2 := strings.IndexRune(docText[close:], '\n')
-	if enter2 < 0 {
-		*rawAnnots = append(*rawAnnots, docText)
-		return
-	}
-	enter2 = close + enter2
-	*rawAnnots = append(*rawAnnots, docText[:enter2])
-	RetrieveRawAnnots(rawAnnots, docText[enter2+1:])
-	return
 }

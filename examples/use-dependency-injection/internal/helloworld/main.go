@@ -28,7 +28,7 @@ func HelloWorld() string {
 }
 
 // HelloTypical text
-// @ctor {"name": "typical"}
+// @ctor (name:"typical")
 func HelloTypical() string {
 	return "Hello Typical"
 }

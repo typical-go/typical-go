@@ -10,7 +10,7 @@ import (
 
 var (
 	// MockTag is tag for mock
-	MockTag = "mock"
+	MockTag = "@mock"
 )
 
 type (

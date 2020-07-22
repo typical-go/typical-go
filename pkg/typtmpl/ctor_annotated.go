@@ -1,10 +1,7 @@
 package typtmpl
 
 import (
-	"fmt"
 	"io"
-
-	"github.com/typical-go/typical-go/pkg/typannot"
 )
 
 type (
@@ -20,20 +17,6 @@ type (
 		Def  string `json:"-"`
 	}
 )
-
-//
-// Ctor
-//
-
-// CreateCtor to create new instance of Ctor
-func CreateCtor(annot *typannot.Annot) (*Ctor, error) {
-	var ctor Ctor
-	if err := annot.Unmarshal(&ctor); err != nil {
-		return nil, fmt.Errorf("%s: %w", annot.Decl.Name, err)
-	}
-	ctor.Def = fmt.Sprintf("%s.%s", annot.Decl.Package, annot.Decl.Name)
-	return &ctor, nil
-}
 
 //
 // CtorAnnotated

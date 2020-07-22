@@ -6,7 +6,7 @@ type sampleInterface interface {
 
 // sampleStruct
 // @tag1
-// @tag2 {"key1":"", "key2": "", "key3":"value3"}
+// @tag2 (key1:"", key2: "", key3:"value3")
 type sampleStruct struct {
 	sampleInt    int    `default:"value1"`
 	sampleString string `default:"value2"`

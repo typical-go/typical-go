@@ -2,14 +2,13 @@ package typapp
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
 var (
-	ctorTag = "ctor"
+	ctorTag = "@ctor"
 )
 
 type (
@@ -26,22 +25,16 @@ func (a *CtorAnnotation) Annotate(c *typannot.Context) error {
 	var ctors []*typtmpl.Ctor
 	for _, annot := range c.ASTStore.Annots {
 		if annot.CheckFunc(ctorTag) {
-			ctor, err := typtmpl.CreateCtor(annot)
-			if err != nil {
-				log.Printf("WARN %s", err.Error())
-				continue
-			}
-			ctors = append(ctors, ctor)
+			ctors = append(ctors, &typtmpl.Ctor{
+				Name: annot.TagAttrs.Get("name"),
+				Def:  fmt.Sprintf("%s.%s", annot.Decl.Package, annot.Decl.Name),
+			})
 		}
 	}
 
 	return WriteGoSource(
 		a.GetTarget(c),
-		&typtmpl.CtorAnnotated{
-			Package: "main",
-			Imports: c.Imports,
-			Ctors:   ctors,
-		},
+		&typtmpl.CtorAnnotated{Package: "main", Imports: c.Imports, Ctors: ctors},
 	)
 }
 
