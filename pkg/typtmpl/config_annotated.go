@@ -13,10 +13,9 @@ type (
 	}
 	// CfgCtor is config constructor model
 	CfgCtor struct {
-		Name      string
-		Prefix    string
-		SpecType  string
-		SpecType2 string
+		Name     string
+		Prefix   string
+		SpecType string
 	}
 )
 
@@ -34,12 +33,12 @@ func init() { {{if .CfgCtors}}
 	typapp.AppendCtor({{range $c := .CfgCtors}}
 		&typapp.Constructor{
 			Name: "{{$c.Name}}",
-			Fn: func() (cfg {{$c.SpecType}}, err error) {
-				cfg = new({{$c.SpecType2}})
-				if err = typgo.ProcessConfig("{{$c.Prefix}}", cfg); err != nil {
+			Fn: func() (*{{$c.SpecType}}, error) {
+				var cfg {{$c.SpecType}}
+				if err := typgo.ProcessConfig("{{$c.Prefix}}", &cfg); err != nil {
 					return nil, err
 				}
-				return
+				return &cfg, nil
 			},
 		},{{end}}
 	){{end}}

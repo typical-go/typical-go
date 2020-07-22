@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 
-	"github.com/typical-go/typical-go/examples/use-config/internal/server"
 	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -19,10 +18,7 @@ var (
 			&typgo.CompileCmd{
 				Action: typgo.Actions{
 					&typannot.Annotators{
-						&typapp.ConfigManager{
-							Configs: []*typapp.Config{{Prefix: "SERVER", Spec: &server.Config{}}},
-							EnvFile: true,
-						},
+						&typapp.ConfigAnnotation{EnvFile: true},
 					},
 					&typgo.StdCompile{},
 				},

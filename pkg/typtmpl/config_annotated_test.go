@@ -14,7 +14,7 @@ func TestConfigAnnotated(t *testing.T) {
 				Package: "main",
 				Imports: []string{"pkg1", "pkg2"},
 				CfgCtors: []*typtmpl.CfgCtor{
-					{Name: "", Prefix: "AAA", SpecType: "*Sample", SpecType2: "Sample"},
+					{Name: "", Prefix: "AAA", SpecType: "Sample"},
 				},
 			},
 			Expected: `package main
@@ -30,12 +30,12 @@ func init() {
 	typapp.AppendCtor(
 		&typapp.Constructor{
 			Name: "",
-			Fn: func() (cfg *Sample, err error) {
-				cfg = new(Sample)
-				if err = typgo.ProcessConfig("AAA", cfg); err != nil {
+			Fn: func() (*Sample, error) {
+				var cfg Sample
+				if err := typgo.ProcessConfig("AAA", &cfg); err != nil {
 					return nil, err
 				}
-				return
+				return &cfg, nil
 			},
 		},
 	)

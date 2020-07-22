@@ -12,12 +12,12 @@ func init() {
 	typapp.AppendCtor(
 		&typapp.Constructor{
 			Name: "",
-			Fn: func() (cfg *server.Config, err error) {
-				cfg = new(server.Config)
-				if err = typgo.ProcessConfig("SERVER", cfg); err != nil {
+			Fn: func() (*server.Config, error) {
+				var cfg server.Config
+				if err := typgo.ProcessConfig("CONFIG", &cfg); err != nil {
 					return nil, err
 				}
-				return
+				return &cfg, nil
 			},
 		},
 	)

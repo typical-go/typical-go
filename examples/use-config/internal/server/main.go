@@ -8,6 +8,7 @@ import (
 
 type (
 	// Config of app
+	// @config
 	Config struct {
 		Address string `default:":8080" required:"true"`
 	}

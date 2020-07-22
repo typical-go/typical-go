@@ -21,8 +21,8 @@ var (
 		Package: "typannot_test",
 		Type: &typannot.StructType{
 			Fields: []*typannot.Field{
-				{Name: "sampleInt", Type: "int", Tag: reflect.StructTag(`default:"value1"`)},
-				{Name: "sampleString", Type: "string", Tag: reflect.StructTag(`default:"value2"`)},
+				{Name: "sampleInt", Type: "int", StructTag: reflect.StructTag(`default:"value1"`)},
+				{Name: "sampleString", Type: "string", StructTag: reflect.StructTag(`default:"value2"`)},
 			},
 		},
 		Name: "sampleStruct",

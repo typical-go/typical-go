@@ -34,7 +34,7 @@ type (
 	Field struct {
 		Name string
 		Type string
-		Tag  reflect.StructTag
+		reflect.StructTag
 	}
 )
 
@@ -107,9 +107,9 @@ func convertStructType(s *ast.StructType) *StructType {
 			i := field.Type.(*ast.Ident)
 			for _, name := range field.Names {
 				fields = append(fields, &Field{
-					Name: name.Name,
-					Type: i.Name,
-					Tag:  nakedStructTag(field.Tag.Value),
+					Name:      name.Name,
+					Type:      i.Name,
+					StructTag: nakedStructTag(field.Tag.Value),
 				})
 			}
 		}
