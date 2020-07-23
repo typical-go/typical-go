@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 
 	"github.com/typical-go/typical-go/pkg/typannot"
-	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 var (
@@ -37,21 +36,6 @@ func NewMockery(projectPkg string) *Mockery {
 		Map:        make(map[string][]*Mock),
 		ProjectPkg: projectPkg,
 	}
-}
-
-func createMockery(c *typgo.Context) (*Mockery, error) {
-	m := NewMockery(typgo.ProjectPkg)
-	ac, err := typannot.CreateContext(c)
-	if err != nil {
-		return nil, err
-	}
-	for _, annot := range ac.ASTStore.Annots {
-		if annot.CheckInterface(MockTag) {
-			m.Put(CreateMock(annot))
-		}
-	}
-
-	return m, nil
 }
 
 // Put target to mockery
