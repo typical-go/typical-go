@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
@@ -31,14 +32,14 @@ func (a *DtorAnnotation) Annotate(c *typannot.Context) error {
 		}
 	}
 
-	return WriteGoSource(
-		a.GetTarget(c),
-		&typtmpl.DtorAnnotated{
-			Package: "main",
-			Imports: c.Imports,
-			Dtors:   dtors,
-		},
-	)
+	target := a.GetTarget(c)
+	return WriteGoSource(target, &typtmpl.DtorAnnotated{
+		Package: "main",
+		Imports: c.CreateImports(typgo.ProjectPkg,
+			"github.com/typical-go/typical-go/pkg/typapp",
+		),
+		Dtors: dtors,
+	})
 }
 
 // GetTarget to get generation target for dtor
