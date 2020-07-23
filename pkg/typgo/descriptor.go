@@ -1,7 +1,12 @@
 package typgo
 
 import (
+	"fmt"
+	"io"
 	"os"
+
+	"github.com/fatih/color"
+	"github.com/typical-go/typical-go/pkg/common"
 )
 
 type (
@@ -19,6 +24,21 @@ type (
 
 // Run typical build-tool
 func Run(d *Descriptor) error {
-	b := createBuildSys(d)
-	return b.app().Run(os.Args)
+	if envmap, _ := common.CreateEnvMapFromFile(".env"); envmap != nil {
+		if err := envmap.Setenv(); err == nil {
+			printEnv(os.Stdout, envmap)
+		}
+	}
+
+	return createBuildSys(d).app().Run(os.Args)
+}
+
+func printEnv(w io.Writer, envs map[string]string) {
+	color.New(color.FgGreen).Fprint(w, "ENV")
+	fmt.Fprint(w, ": ")
+
+	for key := range envs {
+		fmt.Fprintf(w, "+%s ", key)
+	}
+	fmt.Fprintln(w)
 }

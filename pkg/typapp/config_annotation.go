@@ -45,7 +45,7 @@ func (m *ConfigAnnotation) Annotate(c *typannot.Context) error {
 	if err := WriteGoSource(target, &typtmpl.ConfigAnnotated{
 		Package: "main",
 		Imports: c.CreateImports(typgo.ProjectPkg,
-			"github.com/typical-go/typical-go/pkg/typapp",
+			"github.com/kelseyhightower/envconfig",
 		),
 		CfgCtors: cfgs,
 	}); err != nil {

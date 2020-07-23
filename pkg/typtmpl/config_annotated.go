@@ -35,7 +35,7 @@ func init() { {{if .CfgCtors}}
 			Name: "{{$c.Name}}",
 			Fn: func() (*{{$c.SpecType}}, error) {
 				var cfg {{$c.SpecType}}
-				if err := typgo.ProcessConfig("{{$c.Prefix}}", &cfg); err != nil {
+				if err := envconfig.Process("{{$c.Prefix}}", &cfg); err != nil {
 					return nil, err
 				}
 				return &cfg, nil

@@ -39,7 +39,7 @@ func init() {
 			Name: "",
 			Fn: func() (*Sample, error) {
 				var cfg Sample
-				if err := typgo.ProcessConfig("AAA", &cfg); err != nil {
+				if err := envconfig.Process("AAA", &cfg); err != nil {
 					return nil, err
 				}
 				return &cfg, nil
