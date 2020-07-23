@@ -12,7 +12,7 @@ var (
 )
 
 type (
-	// DtorAnnotation represent @dtor annotation
+	// DtorAnnotation handle @dtor annotation. No Attributes required.
 	DtorAnnotation struct {
 		Target string
 	}

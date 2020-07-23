@@ -12,7 +12,8 @@ var (
 )
 
 type (
-	// CtorAnnotation represent @ctor annotation
+	// CtorAnnotation handle @ctor annotation
+	// e.g. `@ctor (name:"NAME")`
 	CtorAnnotation struct {
 		Target string
 	}
