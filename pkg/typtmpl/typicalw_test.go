@@ -1,13 +1,20 @@
 package typtmpl_test
 
 import (
+	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
 func TestTypicalw(t *testing.T) {
-	typtmpl.TestTemplate(t, []typtmpl.TestCase{
+
+	testcases := []struct {
+		TestName string
+		typtmpl.Template
+		Expected string
+	}{
 		{
 			Template: &typtmpl.Typicalw{
 				Src:        "some-src",
@@ -33,6 +40,14 @@ $TYPGO run \
 	$@
 `,
 		},
-	})
+	}
+
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			var out strings.Builder
+			require.NoError(t, tt.Execute(&out))
+			require.Equal(t, tt.Expected, out.String())
+		})
+	}
 
 }
