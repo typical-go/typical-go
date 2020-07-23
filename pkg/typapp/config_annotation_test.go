@@ -56,7 +56,7 @@ func TestConfigManager_Execute(t *testing.T) {
 			Annots: []*typannot.Annot{
 				{
 					TagName:  "@config",
-					TagAttrs: `name:"ctor1"`,
+					TagAttrs: `ctor_name:"ctor1" prefix:"SS"`,
 					Decl: &typannot.Decl{
 						Name:    "SomeSample",
 						Package: "mypkg",
@@ -88,7 +88,7 @@ func init() {
 			Name: "ctor1",
 			Fn: func() (*mypkg.SomeSample, error) {
 				var cfg mypkg.SomeSample
-				if err := typgo.ProcessConfig("SOME_SAMPLE", &cfg); err != nil {
+				if err := typgo.ProcessConfig("SS", &cfg); err != nil {
 					return nil, err
 				}
 				return &cfg, nil
@@ -98,7 +98,7 @@ func init() {
 }`, string(b))
 
 	b, _ = ioutil.ReadFile(typgo.EnvFile)
-	require.Equal(t, "SOME_SAMPLE_SOME_FIELD_1=some-text\nSOME_SAMPLE_SOME_FIELD_2=9876\n", string(b))
+	require.Equal(t, "SS_SOMEFIELD1=some-text\nSS_SOMEFIELD2=9876\n", string(b))
 }
 
 func TestSaveEnvFile(t *testing.T) {
@@ -112,7 +112,7 @@ func TestSaveEnvFile(t *testing.T) {
 					Fields: []*typannot.Field{
 						{Name: "Key1", Type: "string"},
 						{Name: "Key2", Type: "string", StructTag: `default:"value2"`},
-						{Name: "Key3", Type: "string", StructTag: `envconfig:"KEY_4" default:"value3"`},
+						{Name: "Key3", Type: "string", StructTag: `envconfig:"KEY4" default:"value3"`},
 					},
 				},
 			},
@@ -125,17 +125,17 @@ func TestSaveEnvFile(t *testing.T) {
 		require.NoError(t, typapp.SaveEnvFile(target, annots))
 
 		b, _ := ioutil.ReadFile(target)
-		require.Equal(t, "SAMPLE_KEY_1=\nSAMPLE_KEY_2=value2\nSAMPLE_KEY_4=value3\n", string(b))
+		require.Equal(t, "SAMPLE_KEY1=\nSAMPLE_KEY2=value2\nSAMPLE_KEY4=value3\n", string(b))
 	})
 
 	t.Run("envfile already exist", func(t *testing.T) {
 		target := "env2"
-		ioutil.WriteFile(target, []byte("SAMPLE_KEY_1=value11\nSAMPLE_KEY_2=value22\n"), 0777)
+		ioutil.WriteFile(target, []byte("SAMPLE_KEY1=value11\nSAMPLE_KEY2=value22\n"), 0777)
 		defer os.Remove(target)
 		require.NoError(t, typapp.SaveEnvFile(target, annots))
 
 		b, _ := ioutil.ReadFile(target)
-		require.Equal(t, "SAMPLE_KEY_1=value11\nSAMPLE_KEY_2=value22\nSAMPLE_KEY_4=value3\n", string(b))
+		require.Equal(t, "SAMPLE_KEY1=value11\nSAMPLE_KEY2=value22\nSAMPLE_KEY4=value3\n", string(b))
 	})
 
 }

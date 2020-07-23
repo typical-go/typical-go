@@ -3,8 +3,8 @@ package typapp
 import (
 	"fmt"
 	"os"
+	"strings"
 
-	"github.com/iancoleman/strcase"
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -16,7 +16,8 @@ var (
 )
 
 type (
-	// ConfigAnnotation manage the configs
+	// ConfigAnnotation handle @config annotation
+	// e.g. `@config (prefix: "PREFIX" ctor_name:"CTOR")`
 	ConfigAnnotation struct {
 		Target  string
 		EnvFile bool
@@ -33,8 +34,8 @@ func (m *ConfigAnnotation) Annotate(c *typannot.Context) error {
 		if annot.CheckStruct(configTag) {
 			annots = append(annots, annot)
 			cfgs = append(cfgs, &typtmpl.CfgCtor{
-				Name:     annot.TagAttrs.Get("name"),
-				Prefix:   strcase.ToScreamingSnake(annot.Name),
+				Name:     getCtorName(annot),
+				Prefix:   getPrefix(annot),
 				SpecType: fmt.Sprintf("%s.%s", annot.Package, annot.Name),
 			})
 		}
@@ -72,14 +73,10 @@ func SaveEnvFile(target string, annots []*typannot.Annot) error {
 	}
 
 	for _, annot := range annots {
-		prefix := strcase.ToScreamingSnake(annot.Name)
+		prefix := getPrefix(annot)
 		if structType, ok := annot.Type.(*typannot.StructType); ok {
 			for _, field := range structType.Fields {
-				name := field.Get("envconfig")
-				if name == "" {
-					name = strcase.ToScreamingSnake(field.Name)
-				}
-				key := fmt.Sprintf("%s_%s", prefix, name)
+				key := fmt.Sprintf("%s_%s", prefix, getFieldName(field))
 				if _, ok := envmap[key]; !ok {
 					envmap[key] = field.Get("default")
 				}
@@ -94,4 +91,24 @@ func SaveEnvFile(target string, annots []*typannot.Annot) error {
 	defer f.Close()
 
 	return envmap.Save(f)
+}
+
+func getCtorName(annot *typannot.Annot) string {
+	return annot.TagAttrs.Get("ctor_name")
+}
+
+func getPrefix(annot *typannot.Annot) string {
+	prefix := annot.TagAttrs.Get("prefix")
+	if prefix == "" {
+		prefix = strings.ToUpper(annot.Name)
+	}
+	return prefix
+}
+
+func getFieldName(field *typannot.Field) string {
+	name := field.Get("envconfig")
+	if name == "" {
+		name = strings.ToUpper(field.Name)
+	}
+	return name
 }
