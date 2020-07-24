@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typrls"
@@ -57,7 +55,5 @@ func testExamples(c *typgo.Context) error {
 }
 
 func main() {
-	if err := typgo.Run(&descriptor); err != nil {
-		log.Fatal(err.Error())
-	}
+	typgo.Start(&descriptor)
 }

@@ -3,6 +3,7 @@ package typgo
 import (
 	"fmt"
 	"io"
+	"log"
 	"os"
 
 	"github.com/fatih/color"
@@ -22,15 +23,17 @@ type (
 	}
 )
 
-// Run typical build-tool
-func Run(d *Descriptor) error {
+// Start typical build-tool
+func Start(d *Descriptor) {
 	if envmap, _ := common.CreateEnvMapFromFile(".env"); envmap != nil {
 		if err := envmap.Setenv(); err == nil {
 			printEnv(os.Stdout, envmap)
 		}
 	}
 
-	return createBuildSys(d).app().Run(os.Args)
+	if err := createBuildSys(d).app().Run(os.Args); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func printEnv(w io.Writer, envs map[string]string) {

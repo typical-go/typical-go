@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	"github.com/typical-go/typical-go/pkg/typdocker"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
@@ -48,7 +46,5 @@ var (
 )
 
 func main() {
-	if err := typgo.Run(&descriptor); err != nil {
-		log.Fatal(err)
-	}
+	typgo.Start(&descriptor)
 }
