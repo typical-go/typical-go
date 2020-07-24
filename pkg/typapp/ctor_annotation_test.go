@@ -30,7 +30,7 @@ func TestCtorAnnotation_Annotate(t *testing.T) {
 				},
 				{
 					TagName:  "@ctor",
-					TagAttrs: `name:"obj2"`,
+					TagParam: `name:"obj2"`,
 					Decl:     &typannot.Decl{Name: "NewObject2", Package: "pkg2", Type: &typannot.FuncType{}},
 				},
 			},

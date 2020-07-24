@@ -39,7 +39,7 @@ func (a *CtorAnnotation) Annotate(c *typannot.Context) error {
 	for _, annot := range c.ASTStore.Annots {
 		if annot.CheckFunc(ctorTag) {
 			ctors = append(ctors, &Ctor{
-				Name: annot.TagAttrs.Get("name"),
+				Name: annot.TagParam.Get("name"),
 				Def:  fmt.Sprintf("%s.%s", annot.Decl.Package, annot.Decl.Name),
 			})
 		}

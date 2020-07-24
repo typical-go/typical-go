@@ -132,11 +132,11 @@ func (m *ConfigAnnotation) GetTarget(c *typannot.Context) string {
 }
 
 func getCtorName(annot *typannot.Annot) string {
-	return annot.TagAttrs.Get("ctor_name")
+	return annot.TagParam.Get("ctor_name")
 }
 
 func getPrefix(annot *typannot.Annot) string {
-	prefix := annot.TagAttrs.Get("prefix")
+	prefix := annot.TagParam.Get("prefix")
 	if prefix == "" {
 		prefix = strings.ToUpper(annot.Name)
 	}

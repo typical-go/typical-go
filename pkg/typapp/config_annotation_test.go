@@ -61,7 +61,7 @@ func TestConfigManager_Execute(t *testing.T) {
 			Annots: []*typannot.Annot{
 				{
 					TagName:  "@config",
-					TagAttrs: `ctor_name:"ctor1" prefix:"SS"`,
+					TagParam: `ctor_name:"ctor1" prefix:"SS"`,
 					Decl: &typannot.Decl{
 						Name:    "SomeSample",
 						Package: "mypkg",

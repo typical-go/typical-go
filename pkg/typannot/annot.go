@@ -9,7 +9,7 @@ type (
 	// Annot that contain extra additional information
 	Annot struct {
 		TagName  string            `json:"tag_name"`
-		TagAttrs reflect.StructTag `json:"tag_attrs"`
+		TagParam reflect.StructTag `json:"tag_param"`
 		*Decl    `json:"decl"`
 	}
 )

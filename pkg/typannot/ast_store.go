@@ -140,7 +140,7 @@ func retrieveAnnots(decl *Decl, doc *ast.CommentGroup) []*Annot {
 			tagName, tagAttrs := ParseAnnot(raw)
 			annots = append(annots, &Annot{
 				TagName:  tagName,
-				TagAttrs: reflect.StructTag(tagAttrs),
+				TagParam: reflect.StructTag(tagAttrs),
 				Decl:     decl,
 			})
 		}
