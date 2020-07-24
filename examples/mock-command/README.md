@@ -11,14 +11,6 @@ type Greeter interface {
 }
 ```
 
-Add typmock utility to descriptor
-```go
-var Descriptor = typgo.Descriptor{
-	// ...
-
-	Utility: typmock.Utility(),
-}
-```
 
 Generate mock
 ```bash
