@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -49,6 +50,10 @@ func TestConfigManager_Execute(t *testing.T) {
 	target := "some-target"
 	defer os.Remove(target)
 	defer os.Remove(typgo.EnvFile)
+
+	unpatch := execkit.Patch([]*execkit.RunExpectation{})
+	defer unpatch(t)
+
 	cfgManager := &typapp.ConfigAnnotation{Target: target, EnvFile: true}
 	c := &typannot.Context{
 		Context: &typgo.Context{BuildSys: &typgo.BuildSys{}},

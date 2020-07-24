@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -14,6 +15,10 @@ import (
 func TestDtorAnnotation_Execute(t *testing.T) {
 	target := "some-target"
 	defer os.Remove(target)
+
+	unpatch := execkit.Patch([]*execkit.RunExpectation{})
+	defer unpatch(t)
+
 	dtorAnnot := &typapp.DtorAnnotation{Target: target}
 	ctx := &typannot.Context{
 		Context: &typgo.Context{
