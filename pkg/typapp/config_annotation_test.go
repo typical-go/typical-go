@@ -105,4 +105,6 @@ func init() {
 
 	b, _ = ioutil.ReadFile(typgo.EnvFile)
 	require.Equal(t, "SS_SOMEFIELD1=some-text\nSS_SOMEFIELD2=9876\n", string(b))
+	require.Equal(t, "some-text", os.Getenv("SS_SOMEFIELD1"))
+	require.Equal(t, "9876", os.Getenv("SS_SOMEFIELD2"))
 }
