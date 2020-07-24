@@ -8,10 +8,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
-var (
-	ctorTag = "@ctor"
-)
-
 type (
 	// CtorAnnotation handle @ctor annotation
 	// e.g. `@ctor (name:"NAME")`

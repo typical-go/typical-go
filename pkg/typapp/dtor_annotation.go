@@ -8,10 +8,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
-var (
-	dtorTag = "@dtor"
-)
-
 type (
 	// DtorAnnotation handle @dtor annotation. No Attributes required.
 	DtorAnnotation struct {

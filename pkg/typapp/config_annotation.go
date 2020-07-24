@@ -10,10 +10,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
-var (
-	configTag = "@config"
-)
-
 type (
 	// ConfigAnnotation handle @config annotation
 	// e.g. `@config (prefix: "PREFIX" ctor_name:"CTOR")`
