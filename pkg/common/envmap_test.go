@@ -55,8 +55,8 @@ func TestEnvMap_Setenv(t *testing.T) {
 		"key1": "value1",
 		"key2": "value2",
 	}
-	defer m.Unsetenv()
-	require.NoError(t, m.Setenv())
+	defer common.Unsetenv(m)
+	common.Setenv(m)
 	require.Equal(t, "value1", os.Getenv("key1"))
 	require.Equal(t, "value2", os.Getenv("key2"))
 }

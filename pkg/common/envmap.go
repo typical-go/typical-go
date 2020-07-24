@@ -7,6 +7,8 @@ import (
 	"os"
 	"sort"
 	"strings"
+
+	"github.com/fatih/color"
 )
 
 type (
@@ -38,17 +40,22 @@ func CreateEnvMapFromFile(source string) (EnvMap, error) {
 }
 
 // Setenv set environment variable based on map
-func (m EnvMap) Setenv() error {
+func Setenv(m EnvMap) {
+	w := os.Stdout
+	color.New(color.FgGreen).Fprint(w, "ENV")
+	fmt.Fprint(w, ": ")
+	defer fmt.Fprintln(w)
 	for k, v := range m {
 		if err := os.Setenv(k, v); err != nil {
-			return err
+			fmt.Fprintf(w, "failed: %s ", err.Error())
+			return
 		}
+		fmt.Fprintf(w, "+%s ", k)
 	}
-	return nil
 }
 
 // Unsetenv unset environment variable
-func (m EnvMap) Unsetenv() error {
+func Unsetenv(m EnvMap) error {
 	for k := range m {
 		if err := os.Unsetenv(k); err != nil {
 			return err

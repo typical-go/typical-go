@@ -23,15 +23,21 @@ type (
 	}
 	// ConfigAnnotated template
 	ConfigAnnotated struct {
-		Package  string
-		Imports  []string
-		CfgCtors []*Config
+		Package string
+		Imports []string
+		Configs []*Config
 	}
-	// Config is config constructor model
+	// Config model
 	Config struct {
-		Name     string
+		CtorName string
 		Prefix   string
 		SpecType string
+		Fields   []*Field
+	}
+	// Field model
+	Field struct {
+		Key     string
+		Default string
 	}
 )
 
@@ -39,36 +45,82 @@ var _ typannot.Annotator = (*ConfigAnnotation)(nil)
 
 // Annotate config to prepare dependency-injection and env-file
 func (m *ConfigAnnotation) Annotate(c *typannot.Context) error {
-	var cfgs []*Config
-	var annots []*typannot.Annot
-	for _, annot := range c.ASTStore.Annots {
-		if annot.CheckStruct(configTag) {
-			annots = append(annots, annot)
-			cfgs = append(cfgs, &Config{
-				Name:     getCtorName(annot),
-				Prefix:   getPrefix(annot),
-				SpecType: fmt.Sprintf("%s.%s", annot.Package, annot.Name),
-			})
+
+	configs := m.createConfigs(c)
+
+	if err := m.generate(c, configs); err != nil {
+		return err
+	}
+
+	target := typgo.EnvFile
+	envmap, err := common.CreateEnvMapFromFile(target)
+	if err != nil {
+		envmap = make(common.EnvMap)
+	}
+
+	if m.EnvFile {
+		for _, config := range configs {
+			for _, field := range config.Fields {
+				if _, ok := envmap[field.Key]; !ok {
+					envmap[field.Key] = field.Default
+				}
+			}
+		}
+
+		f, err := os.OpenFile(target, os.O_WRONLY|os.O_CREATE, 0777)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+
+		if err := envmap.Save(f); err != nil {
+			return err
 		}
 	}
 
+	if len(envmap) > 0 {
+		common.Setenv(envmap)
+	}
+	return nil
+}
+
+func (m *ConfigAnnotation) generate(c *typannot.Context, configs []*Config) error {
 	target := m.GetTarget(c)
 	if err := common.ExecuteTmplToFile(target, configAnnotTmpl, &ConfigAnnotated{
 		Package: "main",
 		Imports: c.CreateImports(typgo.ProjectPkg,
 			"github.com/kelseyhightower/envconfig",
 		),
-		CfgCtors: cfgs,
+		Configs: configs,
 	}); err != nil {
 		return err
 	}
 	goImports(target)
-	if m.EnvFile {
-		if err := SaveEnvFile(typgo.EnvFile, annots); err != nil {
-			return err
+	return nil
+}
+
+func (m *ConfigAnnotation) createConfigs(c *typannot.Context) []*Config {
+	var configs []*Config
+	for _, annot := range c.ASTStore.Annots {
+		if annot.CheckStruct(configTag) {
+			prefix := getPrefix(annot)
+			var fields []*Field
+			for _, field := range annot.Type.(*typannot.StructType).Fields {
+				fields = append(fields, &Field{
+					Key:     fmt.Sprintf("%s_%s", prefix, getFieldName(field)),
+					Default: field.Get("default"),
+				})
+			}
+
+			configs = append(configs, &Config{
+				CtorName: getCtorName(annot),
+				Prefix:   prefix,
+				SpecType: fmt.Sprintf("%s.%s", annot.Package, annot.Name),
+				Fields:   fields,
+			})
 		}
 	}
-	return nil
+	return configs
 }
 
 // GetTarget get target generation
@@ -77,34 +129,6 @@ func (m *ConfigAnnotation) GetTarget(c *typannot.Context) string {
 		m.Target = fmt.Sprintf("cmd/%s/config_annotated.go", c.BuildSys.Name)
 	}
 	return m.Target
-}
-
-// SaveEnvFile save env file
-func SaveEnvFile(target string, annots []*typannot.Annot) error {
-	envmap, err := common.CreateEnvMapFromFile(target)
-	if err != nil {
-		envmap = make(common.EnvMap)
-	}
-
-	for _, annot := range annots {
-		prefix := getPrefix(annot)
-		if structType, ok := annot.Type.(*typannot.StructType); ok {
-			for _, field := range structType.Fields {
-				key := fmt.Sprintf("%s_%s", prefix, getFieldName(field))
-				if _, ok := envmap[key]; !ok {
-					envmap[key] = field.Get("default")
-				}
-			}
-		}
-	}
-
-	f, err := os.OpenFile(target, os.O_WRONLY|os.O_CREATE, 0777)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	return envmap.Save(f)
 }
 
 func getCtorName(annot *typannot.Annot) string {

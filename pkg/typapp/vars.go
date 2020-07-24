@@ -17,10 +17,10 @@ import ({{range $import := .Imports}}
 	"{{$import}}"{{end}}
 )
 
-func init() { {{if .CfgCtors}}
-	typapp.AppendCtor({{range $c := .CfgCtors}}
+func init() { {{if .Configs}}
+	typapp.AppendCtor({{range $c := .Configs}}
 		&typapp.Constructor{
-			Name: "{{$c.Name}}",
+			Name: "{{$c.CtorName}}",
 			Fn: func() (*{{$c.SpecType}}, error) {
 				var cfg {{$c.SpecType}}
 				if err := envconfig.Process("{{$c.Prefix}}", &cfg); err != nil {
