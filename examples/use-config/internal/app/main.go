@@ -1,4 +1,4 @@
-package server
+package app
 
 import (
 	"fmt"
@@ -7,16 +7,16 @@ import (
 )
 
 type (
-	// Config of app
-	// @config
-	Config struct {
-		Address string `default:":8080" required:"true"`
+	// ServerCfg configuration
+	// @config (prefix:"SERVER")
+	ServerCfg struct {
+		Address string `envconfig:"ADDRESS" default:":8080" required:"true"`
 	}
 	handler struct{}
 )
 
 // Main function to run server
-func Main(cfg *Config) error {
+func Main(cfg *ServerCfg) error {
 	fmt.Printf("Configuration With Invocation -- Serve http at %s\n", cfg.Address)
 	return http.ListenAndServe(cfg.Address, &handler{})
 }

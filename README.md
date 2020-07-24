@@ -21,8 +21,6 @@ Run build-tool for project in working directory
 ```
 $ typical-go run
 ```
-
-The build-system output view:
 ```
 Typical Build
 
@@ -47,18 +45,17 @@ Check help for argument documentation
 ```
 $ typical-go help run
 ```
+
+## Wrapper 
+
+The wrapper that invoke download typical-go and execute it. This is the recommendation way to use typical-go.
 ```
-NAME:
-   typical-go run - Run build-tool for project in current working directory
+$ typical-go -create:wrapper
+```
 
-USAGE:
-   typical-go run [command options] [arguments...]
-
-OPTIONS:
-   --src value          Build-tool source (default: "tools/typical-build")
-   --project-pkg value  Project package name. Same with module package in go.mod by default
-   --typical-tmp value  Temporary directory location to save builds-related files (default: ".typical-tmp")
-   --create:wrapper     Create wrapper script (default: false)
+Run wrapper script
+```
+$ ./typicalw
 ```
 
 ## Typical Build
@@ -104,25 +101,19 @@ func main() {
 }
 ```
 
-## Wrapper 
-
-The wrapper that invoke download typical-go and execute it. This is the recommendation way to use typical-go.
-```
-$ typical-go -create:wrapper
-```
-
-Run wrapper script
-```
-$ ./typicalw
-```
-
 ## Annotation
 
-Typical-Go support java-like annotation (except the parameter in JSON format) for code-generation purpose.
+Typical-Go support java-like annotation (except the parameter in [StructTag](https://www.digitalocean.com/community/tutorials/how-to-use-struct-tags-in-go) format) for code-generation purpose.
+
+```go
+// @mytag (key1:"val1" key2:"val2")
+func myFunc(){
+}
+```
 
 ## Dependency Injection
 
-Typical-Go encourage dependency-injection using [dig](https://github.com/uber-go/dig) and annotation. See the [example](https://github.com/typical-go/typical-go/tree/master/examples/provide-constructor).
+Typical-Go encourage dependency-injection using [dig](https://github.com/uber-go/dig) and annotations (`@ctor` for constructor and `@dtor` for destructor). See the [example](https://github.com/typical-go/typical-go/tree/master/examples/use-dependency-injection).
 
 ```go
 // OpenConn open new database connection
@@ -138,9 +129,9 @@ func CloseConn(db *sql.DB){
 }
 ```
 
-## Mock
+## Mocking
 
-Typical-Go encourge mocking using [gomock](https://github.com/golang/mock) and annotation. See the [example](https://github.com/typical-go/typical-go/tree/master/examples/generate-mock).
+Typical-Go encourage mocking using [gomock](https://github.com/golang/mock) and annotation(`@mock`). See the [example](https://github.com/typical-go/typical-go/tree/master/examples/mock-command).
 
 ```go
 type(
@@ -152,11 +143,23 @@ type(
 )
 ```
 
+## Application Config
+
+Typical-go encourage [config with environment variables](https://12factor.net/config) using [envconfig](https://github.com/kelseyhightower/envconfig) and annotation (`@config`). See the [example](https://github.com/typical-go/typical-go/tree/master/examples/use-config).
+
+```go
+type (
+   // ServerCfg configuration
+   // @config (prefix:"SERVER")
+   ServerCfg struct {
+      Address string `envconfig:"ADDRESS" default:":8080" required:"true"`
+   }
+)
+```
+
 ## Examples
 
-This repo contain both library, examples and wrapper source-code. The wrapper itself using Typical-Go as its build-tool which is an excellent example.
-
-List of example:
+Typical-Go using itself as build-tool which is an excellent example. For other examples:
 - [x] [Hello World](https://github.com/typical-go/typical-go/tree/master/examples/hello-world)
 - [x] [Use Config](https://github.com/typical-go/typical-go/tree/master/examples/use-config)
 - [x] [Use Dependency Injection](https://github.com/typical-go/typical-go/tree/master/examples/use-dependency-injection)
