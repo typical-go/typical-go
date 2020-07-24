@@ -3,9 +3,9 @@ package typapp
 import (
 	"fmt"
 
+	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typgo"
-	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
 var (
@@ -17,29 +17,44 @@ type (
 	DtorAnnotation struct {
 		Target string
 	}
+	// DtorAnnotated template
+	DtorAnnotated struct {
+		Package string
+		Imports []string
+		Dtors   []*Dtor
+	}
+	// Dtor is destructor model
+	Dtor struct {
+		Def string
+	}
 )
 
 var _ typannot.Annotator = (*DtorAnnotation)(nil)
 
 // Annotate @dtor
 func (a *DtorAnnotation) Annotate(c *typannot.Context) error {
-	var dtors []*typtmpl.Dtor
+	var dtors []*Dtor
 	for _, annot := range c.ASTStore.Annots {
 		if annot.CheckFunc(dtorTag) {
-			dtors = append(dtors, &typtmpl.Dtor{
+			dtors = append(dtors, &Dtor{
 				Def: fmt.Sprintf("%s.%s", annot.Decl.Package, annot.Decl.Name),
 			})
 		}
 	}
 
 	target := a.GetTarget(c)
-	return WriteGoSource(target, &typtmpl.DtorAnnotated{
+	if err := common.ExecuteTmplToFile(target, dtorAnnotTmpl, &DtorAnnotated{
 		Package: "main",
 		Imports: c.CreateImports(typgo.ProjectPkg,
 			"github.com/typical-go/typical-go/pkg/typapp",
 		),
 		Dtors: dtors,
-	})
+	}); err != nil {
+		return err
+	}
+	goImports(target)
+
+	return nil
 }
 
 // GetTarget to get generation target for dtor

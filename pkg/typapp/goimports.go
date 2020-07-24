@@ -7,17 +7,16 @@ import (
 
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
-	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
-// WriteGoSource to write go source
-func WriteGoSource(target string, tmpl typtmpl.Template) error {
-	if err := typtmpl.ExecuteToFile(target, tmpl); err != nil {
-		return err
-	}
-	goImports(target)
-	return nil
-}
+// // WriteGoSource to write go source
+// func WriteGoSource(target string, tmpl common.Template) error {
+// 	if err := common.ExecuteTmplToFile(target, tmpl); err != nil {
+// 		return err
+// 	}
+// 	goImports(target)
+// 	return nil
+// }
 
 func goImports(target string) error {
 	goimport := fmt.Sprintf("%s/bin/goimports", typgo.TypicalTmp)

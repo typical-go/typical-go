@@ -60,12 +60,6 @@ func (c *Context) Execute(cmder execkit.Commander) error {
 	return execkit.Run(c.Ctx(), cmd)
 }
 
-// func (c *Context) Run() {
-// 	for _, cmd := range c.Descriptor.Cmds {
-// 		cmd.Command()
-// 	}
-// }
-
 // Ctx return golang context
 func (c *Context) Ctx() context.Context {
 	return c.Context.Context

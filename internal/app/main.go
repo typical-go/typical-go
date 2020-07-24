@@ -11,19 +11,19 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typtmpl"
 	"github.com/urfave/cli/v2"
 )
 
-const (
-	typicalw = "typicalw"
-
-	typicalTmpParam    = "typical-tmp"
-	projPkgParam       = "project-pkg"
-	srcParam           = "src"
-	createWrapperParam = "create:wrapper"
+type (
+	// Typicalw writer
+	Typicalw struct {
+		Src        string
+		TypicalTmp string
+		ProjectPkg string
+	}
 )
 
 // Main function to run the typical-go
@@ -65,7 +65,7 @@ func wrapper(c *cli.Context) error {
 		return err
 	}
 
-	return typtmpl.ExecuteToFile(typicalw, &typtmpl.Typicalw{
+	return common.ExecuteTmplToFile(typicalw, TypicalwTmpl, &Typicalw{
 		Src:        src,
 		TypicalTmp: typicalTmp,
 		ProjectPkg: projectPkg,

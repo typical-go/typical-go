@@ -8,7 +8,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typgo"
-	"github.com/typical-go/typical-go/pkg/typtmpl"
 )
 
 var (
@@ -22,18 +21,30 @@ type (
 		Target  string
 		EnvFile bool
 	}
+	// ConfigAnnotated template
+	ConfigAnnotated struct {
+		Package  string
+		Imports  []string
+		CfgCtors []*Config
+	}
+	// Config is config constructor model
+	Config struct {
+		Name     string
+		Prefix   string
+		SpecType string
+	}
 )
 
 var _ typannot.Annotator = (*ConfigAnnotation)(nil)
 
 // Annotate config to prepare dependency-injection and env-file
 func (m *ConfigAnnotation) Annotate(c *typannot.Context) error {
-	var cfgs []*typtmpl.CfgCtor
+	var cfgs []*Config
 	var annots []*typannot.Annot
 	for _, annot := range c.ASTStore.Annots {
 		if annot.CheckStruct(configTag) {
 			annots = append(annots, annot)
-			cfgs = append(cfgs, &typtmpl.CfgCtor{
+			cfgs = append(cfgs, &Config{
 				Name:     getCtorName(annot),
 				Prefix:   getPrefix(annot),
 				SpecType: fmt.Sprintf("%s.%s", annot.Package, annot.Name),
@@ -42,7 +53,7 @@ func (m *ConfigAnnotation) Annotate(c *typannot.Context) error {
 	}
 
 	target := m.GetTarget(c)
-	if err := WriteGoSource(target, &typtmpl.ConfigAnnotated{
+	if err := common.ExecuteTmplToFile(target, configAnnotTmpl, &ConfigAnnotated{
 		Package: "main",
 		Imports: c.CreateImports(typgo.ProjectPkg,
 			"github.com/kelseyhightower/envconfig",
@@ -51,6 +62,7 @@ func (m *ConfigAnnotation) Annotate(c *typannot.Context) error {
 	}); err != nil {
 		return err
 	}
+	goImports(target)
 	if m.EnvFile {
 		if err := SaveEnvFile(typgo.EnvFile, annots); err != nil {
 			return err
