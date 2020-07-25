@@ -95,9 +95,7 @@ var (
 )
 
 func main() {
-   if err := typgo.Run(&descriptor); err != nil {
-      log.Fatal(err)
-   }
+   typgo.Start(&descriptor)
 }
 ```
 
