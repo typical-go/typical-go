@@ -16,7 +16,7 @@ var (
 			&typgo.CompileCmd{
 				Action: typgo.Actions{
 					&typannot.Annotators{
-						&typapp.ConfigAnnotation{EnvFile: true},
+						&typapp.CfgAnnotation{EnvFile: true},
 					},
 					&typgo.StdCompile{},
 				},
