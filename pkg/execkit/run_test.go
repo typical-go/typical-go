@@ -65,7 +65,7 @@ func TestPatch_CommandNoMatchedByName(t *testing.T) {
 
 	require.EqualError(t,
 		execkit.Run(context.Background(), &execkit.Command{Name: "wrong", Args: []string{"arg2"}}),
-		"execkit-mock: command not matched: [wrong arg2] != [name1 arg2]",
+		"execkit-mock: [wrong arg2] should be [name1 arg2]",
 	)
 }
 
@@ -79,7 +79,7 @@ func TestPatch_CommandNoMatchedByArgs(t *testing.T) {
 
 	require.EqualError(t,
 		execkit.Run(context.Background(), &execkit.Command{Name: "name2", Args: []string{"arg2"}}),
-		"execkit-mock: command not matched: [name2 arg2] != [name2 arg1 arg2]",
+		"execkit-mock: [name2 arg2] should be [name2 arg1 arg2]",
 	)
 }
 

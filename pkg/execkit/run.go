@@ -73,7 +73,7 @@ func (r *runMocker) run(ctx context.Context, cmder Commander) error {
 	}
 
 	if !expc.match(cmd) {
-		return fmt.Errorf("execkit-mock: command not matched: [%s %s] != %v",
+		return fmt.Errorf("execkit-mock: [%s %s] should be %v",
 			cmd.Name, strings.Join(cmd.Args, " "), expc.CommandLine)
 	}
 

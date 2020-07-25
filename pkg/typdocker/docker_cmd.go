@@ -1,11 +1,9 @@
 package typdocker
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"strings"
 
@@ -24,18 +22,9 @@ var (
 )
 
 type (
-	// Command for docker
-	Command struct {
+	// DockerCmd for docker
+	DockerCmd struct {
 		Composers []Composer
-	}
-	// Composer responsible to compose docker
-	Composer interface {
-		ComposeV3() (*Recipe, error)
-	}
-	// ComposeFn function
-	ComposeFn    func() (*Recipe, error)
-	composerImpl struct {
-		fn ComposeFn
 	}
 )
 
@@ -43,32 +32,32 @@ type (
 // Command
 //
 
-var _ typgo.Cmd = (*Command)(nil)
+var _ typgo.Cmd = (*DockerCmd)(nil)
 
 // Command of docker
-func (m *Command) Command(c *typgo.BuildSys) *cli.Command {
+func (m *DockerCmd) Command(sys *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:  "docker",
 		Usage: "Docker utility",
 		Subcommands: []*cli.Command{
-			m.cmdCompose(c),
-			m.cmdUp(c),
-			m.cmdDown(c),
-			m.cmdWipe(c),
+			m.CmdCompose(sys),
+			m.CmdUp(sys),
+			m.CmdDown(sys),
+			m.CmdWipe(sys),
 		},
 	}
 }
 
-func (m *Command) cmdCompose(c *typgo.BuildSys) *cli.Command {
+// CmdCompose command compose
+func (m *DockerCmd) CmdCompose(c *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:   "compose",
 		Usage:  "Generate docker-compose.yaml",
-		Action: c.ActionFn(m.Compose),
+		Action: c.ActionFn(m.compose),
 	}
 }
 
-// Compose to generate docker-compose.yml
-func (m *Command) Compose(c *typgo.Context) (err error) {
+func (m *DockerCmd) compose(c *typgo.Context) (err error) {
 	if len(m.Composers) < 1 {
 		return errors.New("Nothing to compose")
 	}
@@ -113,7 +102,8 @@ func compile(version string, composers []Composer) (*Recipe, error) {
 	return root, nil
 }
 
-func (m *Command) cmdWipe(c *typgo.BuildSys) *cli.Command {
+// CmdWipe command wipe
+func (m *DockerCmd) CmdWipe(c *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:   "wipe",
 		Usage:  "Kill all running docker container",
@@ -121,21 +111,21 @@ func (m *Command) cmdWipe(c *typgo.BuildSys) *cli.Command {
 	}
 }
 
-func (m *Command) dockerWipe(c *typgo.Context) (err error) {
-	var ids []string
-	ctx := c.Ctx()
-	if ids, err = dockerIDs(ctx); err != nil {
+func (m *DockerCmd) dockerWipe(c *typgo.Context) error {
+	ids, err := dockerIDs(c)
+	if err != nil {
 		return fmt.Errorf("Docker-ID: %w", err)
 	}
 	for _, id := range ids {
-		if err = kill(ctx, id); err != nil {
-			log.Printf("Fail to kill #%s: %s", id, err.Error())
+		if err := kill(c, id); err != nil {
+			return fmt.Errorf("Fail to kill #%s: %s", id, err.Error())
 		}
 	}
 	return nil
 }
 
-func (m *Command) cmdUp(c *typgo.BuildSys) *cli.Command {
+// CmdUp command up
+func (m *DockerCmd) CmdUp(c *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:    "up",
 		Aliases: []string{"start"},
@@ -147,13 +137,10 @@ func (m *Command) cmdUp(c *typgo.BuildSys) *cli.Command {
 	}
 }
 
-func (m *Command) dockerUp(c *typgo.Context) (err error) {
+func (m *DockerCmd) dockerUp(c *typgo.Context) (err error) {
 	if c.Bool("wipe") {
-		m.dockerWipe(c)
-	}
-	if _, err = os.Stat(DockerComposeYml); os.IsNotExist(err) {
-		if err = m.Compose(c); err != nil {
-			return
+		if err := m.dockerWipe(c); err != nil {
+			return err
 		}
 	}
 	return c.Execute(&execkit.Command{
@@ -162,7 +149,8 @@ func (m *Command) dockerUp(c *typgo.Context) (err error) {
 	})
 }
 
-func (m *Command) cmdDown(c *typgo.BuildSys) *cli.Command {
+// CmdDown command down
+func (m *DockerCmd) CmdDown(c *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:    "down",
 		Aliases: []string{"stop"},
@@ -178,18 +166,15 @@ func dockerDown(c *typgo.Context) error {
 	})
 }
 
-func dockerIDs(ctx context.Context) (ids []string, err error) {
+func dockerIDs(c *typgo.Context) (ids []string, err error) {
 	var out strings.Builder
-	cmd := &execkit.Command{
+
+	if err = c.Execute(&execkit.Command{
 		Name:   "docker",
 		Args:   []string{"ps", "-q"},
 		Stderr: os.Stderr,
 		Stdout: &out,
-	}
-
-	cmd.Print(os.Stdout)
-
-	if err = cmd.Run(ctx); err != nil {
+	}); err != nil {
 		return
 	}
 
@@ -201,27 +186,10 @@ func dockerIDs(ctx context.Context) (ids []string, err error) {
 	return
 }
 
-func kill(ctx context.Context, id string) (err error) {
-	cmd := &execkit.Command{
+func kill(c *typgo.Context, id string) (err error) {
+	return c.Execute(&execkit.Command{
 		Name:   "docker",
 		Args:   []string{"kill", id},
 		Stderr: os.Stderr,
-	}
-	cmd.Print(os.Stdout)
-	return cmd.Run(ctx)
-}
-
-//
-// composerImpl
-//
-
-var _ Composer = (*composerImpl)(nil)
-
-// NewCompose return new instance of composer
-func NewCompose(fn ComposeFn) Composer {
-	return &composerImpl{fn: fn}
-}
-
-func (i *composerImpl) ComposeV3() (*Recipe, error) {
-	return i.fn()
+	})
 }

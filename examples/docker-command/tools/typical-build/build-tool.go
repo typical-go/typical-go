@@ -25,7 +25,7 @@ var (
 				Action: &typgo.StdClean{},
 			},
 
-			&typdocker.Command{
+			&typdocker.DockerCmd{
 				Composers: []typdocker.Composer{
 					&typdocker.Recipe{
 						Services: typdocker.Services{
