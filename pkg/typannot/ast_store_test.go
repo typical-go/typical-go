@@ -55,6 +55,17 @@ var (
 		Type:    &typannot.StructType{},
 		Name:    "sampleStruct2",
 	}
+	someStruct3Decl = &typannot.Decl{
+		Path:    "sample_test.go",
+		Package: "typannot_test",
+		Type: &typannot.StructType{
+			Fields: []*typannot.Field{
+				{Name: "Name", Type: "string"},
+				{Name: "Address", Type: "string"},
+			},
+		},
+		Name: "sampleStruct3",
+	}
 )
 
 func TestCreateASTStore(t *testing.T) {
@@ -68,6 +79,7 @@ func TestCreateASTStore(t *testing.T) {
 		someFunctionDecl2,
 		someInterface2Decl,
 		someStruct2Decl,
+		someStruct3Decl,
 	}, store.Decls)
 
 	require.EqualValues(t, []*typannot.Annot{

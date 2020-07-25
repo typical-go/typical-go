@@ -109,7 +109,7 @@ func convertStructType(s *ast.StructType) *StructType {
 				fields = append(fields, &Field{
 					Name:      name.Name,
 					Type:      i.Name,
-					StructTag: nakedStructTag(field.Tag.Value),
+					StructTag: nakedStructTag(field.Tag),
 				})
 			}
 		}
@@ -117,12 +117,16 @@ func convertStructType(s *ast.StructType) *StructType {
 	return &StructType{Fields: fields}
 }
 
-func nakedStructTag(s string) reflect.StructTag {
+func nakedStructTag(tag *ast.BasicLit) reflect.StructTag {
+	if tag == nil {
+		return ""
+	}
+	s := tag.Value
 	n := len(s)
 	if n < 2 {
 		return ""
 	}
-	return reflect.StructTag(s[1 : len(s)-1])
+	return reflect.StructTag(s[1 : n-1])
 }
 
 func retrieveAnnots(decl *Decl, doc *ast.CommentGroup) []*Annot {

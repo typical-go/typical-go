@@ -33,3 +33,8 @@ type (
 	sampleStruct2 struct {
 	}
 )
+
+type sampleStruct3 struct {
+	Name    string
+	Address string
+}
