@@ -8,7 +8,7 @@ import (
 
 type (
 	// ServerCfg configuration
-	// @config (prefix:"SERVER")
+	// @cfg (prefix:"SERVER")
 	ServerCfg struct {
 		Address string `envconfig:"ADDRESS" default:":8080" required:"true"`
 	}

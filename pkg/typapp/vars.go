@@ -10,7 +10,7 @@ var (
 )
 
 var (
-	configTag = "@config"
+	configTag = "@cfg"
 	ctorTag   = "@ctor"
 	dtorTag   = "@dtor"
 )

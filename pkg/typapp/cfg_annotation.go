@@ -11,14 +11,14 @@ import (
 )
 
 type (
-	// ConfigAnnotation handle @config annotation
-	// e.g. `@config (prefix: "PREFIX" ctor_name:"CTOR")`
-	ConfigAnnotation struct {
+	// CfgAnnotation handle @cfg annotation
+	// e.g. `@cfg (prefix: "PREFIX" ctor_name:"CTOR")`
+	CfgAnnotation struct {
 		Target  string
 		EnvFile bool
 	}
-	// ConfigAnnotated template
-	ConfigAnnotated struct {
+	// CfgAnnotated template
+	CfgAnnotated struct {
 		Package string
 		Imports []string
 		Configs []*Config
@@ -37,10 +37,10 @@ type (
 	}
 )
 
-var _ typannot.Annotator = (*ConfigAnnotation)(nil)
+var _ typannot.Annotator = (*CfgAnnotation)(nil)
 
 // Annotate config to prepare dependency-injection and env-file
-func (m *ConfigAnnotation) Annotate(c *typannot.Context) error {
+func (m *CfgAnnotation) Annotate(c *typannot.Context) error {
 
 	configs := m.createConfigs(c)
 
@@ -80,9 +80,9 @@ func (m *ConfigAnnotation) Annotate(c *typannot.Context) error {
 	return nil
 }
 
-func (m *ConfigAnnotation) generate(c *typannot.Context, configs []*Config) error {
+func (m *CfgAnnotation) generate(c *typannot.Context, configs []*Config) error {
 	target := m.GetTarget(c)
-	if err := common.ExecuteTmplToFile(target, configAnnotTmpl, &ConfigAnnotated{
+	if err := common.ExecuteTmplToFile(target, configAnnotTmpl, &CfgAnnotated{
 		Package: "main",
 		Imports: c.CreateImports(typgo.ProjectPkg,
 			"github.com/kelseyhightower/envconfig",
@@ -95,7 +95,7 @@ func (m *ConfigAnnotation) generate(c *typannot.Context, configs []*Config) erro
 	return nil
 }
 
-func (m *ConfigAnnotation) createConfigs(c *typannot.Context) []*Config {
+func (m *CfgAnnotation) createConfigs(c *typannot.Context) []*Config {
 	var configs []*Config
 	for _, annot := range c.ASTStore.Annots {
 		if annot.CheckStruct(configTag) {
@@ -120,7 +120,7 @@ func (m *ConfigAnnotation) createConfigs(c *typannot.Context) []*Config {
 }
 
 // GetTarget get target generation
-func (m *ConfigAnnotation) GetTarget(c *typannot.Context) string {
+func (m *CfgAnnotation) GetTarget(c *typannot.Context) string {
 	if m.Target == "" {
 		m.Target = fmt.Sprintf("cmd/%s/config_annotated.go", c.BuildSys.Name)
 	}

@@ -12,16 +12,16 @@ import (
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
-func TestConfigManager_GetTarget(t *testing.T) {
+func TestCfgAnnotation_GetTarget(t *testing.T) {
 	testcases := []struct {
 		TestName string
-		*typapp.ConfigAnnotation
+		*typapp.CfgAnnotation
 		Context  *typannot.Context
 		Expected string
 	}{
 		{
-			TestName:         "initial target is not set",
-			ConfigAnnotation: &typapp.ConfigAnnotation{},
+			TestName:      "initial target is not set",
+			CfgAnnotation: &typapp.CfgAnnotation{},
 			Context: &typannot.Context{
 				Context: &typgo.Context{
 					BuildSys: &typgo.BuildSys{
@@ -33,7 +33,7 @@ func TestConfigManager_GetTarget(t *testing.T) {
 		},
 		{
 			TestName: "initial target is set",
-			ConfigAnnotation: &typapp.ConfigAnnotation{
+			CfgAnnotation: &typapp.CfgAnnotation{
 				Target: "some-target",
 			},
 			Expected: "some-target",
@@ -46,7 +46,7 @@ func TestConfigManager_GetTarget(t *testing.T) {
 	}
 }
 
-func TestConfigManager_Execute(t *testing.T) {
+func TestCfgAnnotation_Execute(t *testing.T) {
 	target := "some-target"
 	defer os.Remove(target)
 	defer os.Remove(typgo.EnvFile)
@@ -54,13 +54,13 @@ func TestConfigManager_Execute(t *testing.T) {
 	unpatch := execkit.Patch([]*execkit.RunExpectation{})
 	defer unpatch(t)
 
-	cfgManager := &typapp.ConfigAnnotation{Target: target, EnvFile: true}
+	cfgManager := &typapp.CfgAnnotation{Target: target, EnvFile: true}
 	c := &typannot.Context{
 		Context: &typgo.Context{BuildSys: &typgo.BuildSys{}},
 		ASTStore: &typannot.ASTStore{
 			Annots: []*typannot.Annot{
 				{
-					TagName:  "@config",
+					TagName:  "@cfg",
 					TagParam: `ctor_name:"ctor1" prefix:"SS"`,
 					Decl: &typannot.Decl{
 						Name:    "SomeSample",

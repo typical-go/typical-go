@@ -145,12 +145,12 @@ type(
 
 ## Application Config
 
-Typical-go encourage [config with environment variables](https://12factor.net/config) using [envconfig](https://github.com/kelseyhightower/envconfig) and annotation (`@config`). See the [example](https://github.com/typical-go/typical-go/tree/master/examples/use-config).
+Typical-go encourage [config with environment variables](https://12factor.net/config) using [envconfig](https://github.com/kelseyhightower/envconfig) and annotation (`@cfg`). See the [example](https://github.com/typical-go/typical-go/tree/master/examples/use-config).
 
 ```go
 type (
    // ServerCfg configuration
-   // @config (prefix:"SERVER")
+   // @cfg (prefix:"SERVER")
    ServerCfg struct {
       Address string `envconfig:"ADDRESS" default:":8080" required:"true"`
    }
