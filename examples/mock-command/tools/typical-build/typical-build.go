@@ -37,7 +37,7 @@ var (
 				Action: &typgo.StdClean{},
 			},
 
-			&typmock.Command{},
+			&typmock.MockCmd{},
 		},
 	}
 )

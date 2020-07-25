@@ -13,14 +13,14 @@ import (
 )
 
 type (
-	// Command mock
-	Command struct{}
+	// MockCmd mock
+	MockCmd struct{}
 )
 
-var _ typgo.Cmd = (*Command)(nil)
+var _ typgo.Cmd = (*MockCmd)(nil)
 
 // Command to utility
-func (d *Command) Command(c *typgo.BuildSys) *cli.Command {
+func (d *MockCmd) Command(c *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:        "mock",
 		Usage:       "Generate mock class",
