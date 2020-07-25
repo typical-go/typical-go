@@ -64,3 +64,19 @@ func (c *Context) Execute(cmder execkit.Commander) error {
 func (c *Context) Ctx() context.Context {
 	return c.Context.Context
 }
+
+//
+// Actions
+//
+
+var _ Action = (Actions)(nil)
+
+// Execute actions
+func (a Actions) Execute(c *Context) error {
+	for _, action := range a {
+		if err := action.Execute(c); err != nil {
+			return err
+		}
+	}
+	return nil
+}

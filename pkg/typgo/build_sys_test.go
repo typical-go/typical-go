@@ -23,6 +23,8 @@ func TestBuildSys_Run(t *testing.T) {
 		},
 	}
 	c := &cli.Context{}
+	require.EqualError(t, sys.Run("noname", c), "typgo: no command with name 'noname'")
 	require.EqualError(t, sys.Run("cmd1", c), "some-error")
 	require.NoError(t, sys.Run("cmd2", c))
+
 }

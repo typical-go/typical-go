@@ -49,3 +49,20 @@ func TestAction(t *testing.T) {
 		})
 	}
 }
+
+func TestActions(t *testing.T) {
+	var seq []string
+	actions := typgo.Actions{
+		typgo.NewAction(func(*typgo.Context) error {
+			seq = append(seq, "1")
+			return nil
+		}),
+		typgo.NewAction(func(*typgo.Context) error {
+			seq = append(seq, "2")
+			return nil
+		}),
+	}
+
+	require.NoError(t, actions.Execute(nil))
+	require.Equal(t, []string{"1", "2"}, seq)
+}

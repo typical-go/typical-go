@@ -1,6 +1,8 @@
 package typgo
 
 import (
+	"fmt"
+
 	"github.com/urfave/cli/v2"
 )
 
@@ -36,7 +38,7 @@ func (b *BuildSys) Run(name string, c *cli.Context) error {
 			return command.Action(c)
 		}
 	}
-	return nil
+	return fmt.Errorf("typgo: no command with name '%s'", name)
 }
 
 // ActionFn to return related action func

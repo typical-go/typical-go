@@ -39,19 +39,3 @@ func (c *Command) Command(b *BuildSys) *cli.Command {
 		},
 	}
 }
-
-//
-// Actions
-//
-
-var _ Action = (Actions)(nil)
-
-// Execute actions
-func (a Actions) Execute(c *Context) error {
-	for _, action := range a {
-		if err := action.Execute(c); err != nil {
-			return err
-		}
-	}
-	return nil
-}
