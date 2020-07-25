@@ -2,7 +2,6 @@ package typapp
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/common"
@@ -14,11 +13,13 @@ type (
 	// CfgAnnotation handle @cfg annotation
 	// e.g. `@cfg (prefix: "PREFIX" ctor_name:"CTOR")`
 	CfgAnnotation struct {
-		Target  string
+		// Target code generation
+		Target string
+		// If true then create and load envfile
 		EnvFile bool
 	}
-	// CfgAnnotated template
-	CfgAnnotated struct {
+	// CfgTmplData template
+	CfgTmplData struct {
 		Package string
 		Imports []string
 		Configs []*Config
@@ -41,57 +42,46 @@ var _ typannot.Annotator = (*CfgAnnotation)(nil)
 
 // Annotate config to prepare dependency-injection and env-file
 func (m *CfgAnnotation) Annotate(c *typannot.Context) error {
-
 	configs := m.createConfigs(c)
 
-	if err := m.generate(c, configs); err != nil {
-		return err
-	}
-
-	target := typgo.EnvFile
-	envmap, err := common.CreateEnvMapFromFile(target)
-	if err != nil {
-		envmap = make(common.EnvMap)
-	}
-
-	if m.EnvFile {
-		for _, config := range configs {
-			for _, field := range config.Fields {
-				if _, ok := envmap[field.Key]; !ok {
-					envmap[field.Key] = field.Default
-				}
-			}
-		}
-
-		f, err := os.OpenFile(target, os.O_WRONLY|os.O_CREATE, 0777)
-		if err != nil {
-			return err
-		}
-		defer f.Close()
-
-		if err := envmap.Save(f); err != nil {
-			return err
-		}
-	}
-
-	if len(envmap) > 0 {
-		common.Setenv(envmap)
-	}
-	return nil
-}
-
-func (m *CfgAnnotation) generate(c *typannot.Context, configs []*Config) error {
-	target := m.GetTarget(c)
-	if err := common.ExecuteTmplToFile(target, configAnnotTmpl, &CfgAnnotated{
+	target := m.getTarget(c)
+	data := &CfgTmplData{
 		Package: "main",
-		Imports: c.CreateImports(typgo.ProjectPkg,
-			"github.com/kelseyhightower/envconfig",
-		),
+		Imports: c.CreateImports(typgo.ProjectPkg, "github.com/kelseyhightower/envconfig"),
 		Configs: configs,
-	}); err != nil {
+	}
+	if err := common.ExecuteTmplToFile(target, configAnnotTmpl, data); err != nil {
 		return err
 	}
 	goImports(target)
+	if m.EnvFile {
+		if err := CreateAndLoadEnvFile(".env", configs); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// CreateAndLoadEnvFile to create and load envfile
+func CreateAndLoadEnvFile(envfile string, configs []*Config) error {
+	envmap, err := common.CreateEnvMapFromFile(envfile)
+	if err != nil {
+		envmap = make(common.EnvMap)
+	}
+	for _, config := range configs {
+		for _, field := range config.Fields {
+			if _, ok := envmap[field.Key]; !ok {
+				envmap[field.Key] = field.Default
+			}
+		}
+	}
+	if err := envmap.SaveToFile(envfile); err != nil {
+		return err
+	}
+	if len(envmap) > 0 {
+		common.Setenv(envmap)
+	}
 	return nil
 }
 
@@ -120,7 +110,7 @@ func (m *CfgAnnotation) createConfigs(c *typannot.Context) []*Config {
 }
 
 // GetTarget get target generation
-func (m *CfgAnnotation) GetTarget(c *typannot.Context) string {
+func (m *CfgAnnotation) getTarget(c *typannot.Context) string {
 	if m.Target == "" {
 		m.Target = fmt.Sprintf("cmd/%s/config_annotated.go", c.BuildSys.Name)
 	}

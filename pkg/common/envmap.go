@@ -87,7 +87,7 @@ func (m EnvMap) Keys() []string {
 	return keys
 }
 
-// Save map to writer
+// Save envmap to writer
 func (m EnvMap) Save(w io.Writer) error {
 	sortedKeys := m.Keys()
 	sort.Strings(sortedKeys)
@@ -97,4 +97,14 @@ func (m EnvMap) Save(w io.Writer) error {
 		}
 	}
 	return nil
+}
+
+// SaveToFile save envmap to file
+func (m EnvMap) SaveToFile(target string) error {
+	f, err := os.OpenFile(target, os.O_WRONLY|os.O_CREATE, 0777)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	return m.Save(f)
 }

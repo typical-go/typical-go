@@ -13,8 +13,8 @@ type (
 	DtorAnnotation struct {
 		Target string
 	}
-	// DtorAnnotated template
-	DtorAnnotated struct {
+	// DtorTmplData template
+	DtorTmplData struct {
 		Package string
 		Imports []string
 		Dtors   []*Dtor
@@ -39,7 +39,7 @@ func (a *DtorAnnotation) Annotate(c *typannot.Context) error {
 	}
 
 	target := a.GetTarget(c)
-	if err := common.ExecuteTmplToFile(target, dtorAnnotTmpl, &DtorAnnotated{
+	if err := common.ExecuteTmplToFile(target, dtorAnnotTmpl, &DtorTmplData{
 		Package: "main",
 		Imports: c.CreateImports(typgo.ProjectPkg,
 			"github.com/typical-go/typical-go/pkg/typapp",
