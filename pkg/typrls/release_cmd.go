@@ -18,8 +18,8 @@ const (
 )
 
 type (
-	// Command release command
-	Command struct {
+	// ReleaseCmd release command
+	ReleaseCmd struct {
 		Precmds []string
 		Releaser
 		ReleaseTag string
@@ -29,11 +29,11 @@ type (
 	}
 )
 
-var _ typgo.Cmd = (*Command)(nil)
-var _ typgo.Action = (*Command)(nil)
+var _ typgo.Cmd = (*ReleaseCmd)(nil)
+var _ typgo.Action = (*ReleaseCmd)(nil)
 
 // Command release
-func (r *Command) Command(sys *typgo.BuildSys) *cli.Command {
+func (r *ReleaseCmd) Command(sys *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:  "release",
 		Usage: "Release the project",
@@ -55,7 +55,7 @@ func (r *Command) Command(sys *typgo.BuildSys) *cli.Command {
 }
 
 // Execute release
-func (r *Command) Execute(c *typgo.Context) error {
+func (r *ReleaseCmd) Execute(c *typgo.Context) error {
 	if r.Summary == nil {
 		return errors.New("typrls: missing summary")
 	}
@@ -96,7 +96,7 @@ func (r *Command) Execute(c *typgo.Context) error {
 }
 
 // GetReleaseTag return release tag
-func (r *Command) GetReleaseTag(c *typgo.Context) string {
+func (r *ReleaseCmd) GetReleaseTag(c *typgo.Context) string {
 	if r.ReleaseTag == "" {
 		if c.BuildSys.Version != "" {
 			r.ReleaseTag = fmt.Sprintf("v%s", c.BuildSys.Version)

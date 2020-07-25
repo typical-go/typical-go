@@ -14,16 +14,16 @@ import (
 
 func TestCommand_Execute(t *testing.T) {
 	testcases := []struct {
-		TestName        string
-		*typrls.Command // NOTE: don't set releaser
-		Ctx             *typgo.Context
-		RunExpectations []*execkit.RunExpectation
-		Expected        *typrls.Context
-		ExpectedErr     string
+		TestName           string
+		*typrls.ReleaseCmd // NOTE: don't set releaser
+		Ctx                *typgo.Context
+		RunExpectations    []*execkit.RunExpectation
+		Expected           *typrls.Context
+		ExpectedErr        string
 	}{
 		{
-			TestName: "missing summary",
-			Command:  &typrls.Command{},
+			TestName:   "missing summary",
+			ReleaseCmd: &typrls.ReleaseCmd{},
 			Ctx: &typgo.Context{
 				Context: createContext(),
 				BuildSys: &typgo.BuildSys{
@@ -34,7 +34,7 @@ func TestCommand_Execute(t *testing.T) {
 		},
 		{
 			TestName: "bad summary",
-			Command: &typrls.Command{
+			ReleaseCmd: &typrls.ReleaseCmd{
 				Summary: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
 					return "", errors.New("bad-summary")
 				}),
@@ -49,7 +49,7 @@ func TestCommand_Execute(t *testing.T) {
 		},
 		{
 			TestName: "invalid",
-			Command: &typrls.Command{
+			ReleaseCmd: &typrls.ReleaseCmd{
 				Summary: typrls.DefaultSummary,
 				Validation: typrls.NewValidator(func(*typrls.Context) error {
 					return errors.New("some-error")
@@ -65,7 +65,7 @@ func TestCommand_Execute(t *testing.T) {
 		},
 		{
 			TestName: "with alpha tag",
-			Command: &typrls.Command{
+			ReleaseCmd: &typrls.ReleaseCmd{
 				Summary: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
 					return "some-summary", nil
 				}),
@@ -97,7 +97,7 @@ func TestCommand_Execute(t *testing.T) {
 		},
 		{
 			TestName: "success",
-			Command: &typrls.Command{
+			ReleaseCmd: &typrls.ReleaseCmd{
 				Summary: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
 					return "some-summary", nil
 				}),
@@ -124,7 +124,7 @@ func TestCommand_Execute(t *testing.T) {
 		},
 		{
 			TestName: "override release-tag",
-			Command: &typrls.Command{
+			ReleaseCmd: &typrls.ReleaseCmd{
 				Summary: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
 					return "some-summary", nil
 				}),

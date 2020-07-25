@@ -38,8 +38,8 @@ var (
 				Action:  typgo.NewAction(testExamples),
 			},
 
-			&typrls.Command{
-				Precmds:    []string{"test", "compile"},
+			&typrls.ReleaseCmd{
+				Precmds:    []string{"test", "examples", "compile"},
 				Validation: typrls.DefaultValidation,
 				Summary:    typrls.DefaultSummary,
 				Releaser:   &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
