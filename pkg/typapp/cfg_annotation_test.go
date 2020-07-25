@@ -48,11 +48,12 @@ func TestCfgAnnotation_GetTarget(t *testing.T) {
 
 func TestCfgAnnotation_Execute(t *testing.T) {
 	target := "some-target"
+	unpatch := execkit.Patch([]*execkit.RunExpectation{})
+
+	defer unpatch(t)
+	defer os.Clearenv()
 	defer os.Remove(target)
 	defer os.Remove(typgo.EnvFile)
-
-	unpatch := execkit.Patch([]*execkit.RunExpectation{})
-	defer unpatch(t)
 
 	cfgManager := &typapp.CfgAnnotation{Target: target, EnvFile: true}
 	c := &typannot.Context{

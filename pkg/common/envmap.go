@@ -64,6 +64,20 @@ func Unsetenv(m EnvMap) error {
 	return nil
 }
 
+// LoadEnv to setenv from file
+func LoadEnv(filename string) error {
+	envmap, err := CreateEnvMapFromFile(filename)
+	if err != nil {
+		return err
+	}
+	Setenv(envmap)
+	return nil
+}
+
+//
+// EnvMap
+//
+
 // Keys of EnvMap
 func (m EnvMap) Keys() []string {
 	var keys []string

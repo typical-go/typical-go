@@ -40,14 +40,18 @@ func TestEnvMap(t *testing.T) {
 	}
 }
 
-func TestCreateEnvMapFromFile(t *testing.T) {
+func TestLoadEnv(t *testing.T) {
 	filename := "env1"
 	ioutil.WriteFile(filename, []byte("key1=value1"), 0777)
 	defer os.Remove(filename)
+	defer os.Clearenv()
 
-	m, err := common.CreateEnvMapFromFile(filename)
-	require.NoError(t, err)
-	require.Equal(t, common.EnvMap{"key1": "value1"}, m)
+	require.NoError(t, common.LoadEnv(filename))
+	require.Equal(t, "value1", os.Getenv("key1"))
+}
+
+func TestLoadEnv_NoFileExit(t *testing.T) {
+	require.EqualError(t, common.LoadEnv("not-exit"), "open not-exit: no such file or directory")
 }
 
 func TestEnvMap_Setenv(t *testing.T) {
