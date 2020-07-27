@@ -17,7 +17,7 @@ type (
 		// Target code generation
 		Target string
 		// If true then create and load envfile
-		EnvFile bool
+		DotEnv bool
 	}
 	// CfgTmplData template
 	CfgTmplData struct {
@@ -55,8 +55,8 @@ func (m *CfgAnnotation) Annotate(c *typannot.Context) error {
 		return err
 	}
 	goImports(target)
-	if m.EnvFile {
-		if err := CreateAndLoadEnvFile(".env", configs); err != nil {
+	if m.DotEnv {
+		if err := CreateAndLoadDotEnv(".env", configs); err != nil {
 			return err
 		}
 	}
@@ -64,15 +64,14 @@ func (m *CfgAnnotation) Annotate(c *typannot.Context) error {
 	return nil
 }
 
-// CreateAndLoadEnvFile to create and load envfile
-func CreateAndLoadEnvFile(envfile string, configs []*Config) error {
+// CreateAndLoadDotEnv to create and load envfile
+func CreateAndLoadDotEnv(envfile string, configs []*Config) error {
 	envmap, err := common.CreateEnvMapFromFile(envfile)
 	if err != nil {
 		envmap = make(common.EnvMap)
 	}
 
 	var updatedKeys []string
-
 	for _, config := range configs {
 		for _, field := range config.Fields {
 			if _, ok := envmap[field.Key]; !ok {

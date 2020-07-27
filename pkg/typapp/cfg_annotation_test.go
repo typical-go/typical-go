@@ -21,7 +21,7 @@ func TestCfgAnnotation_Annotate(t *testing.T) {
 	defer os.Remove(target)
 	defer os.Remove(".env")
 
-	cfgAnnotation := &typapp.CfgAnnotation{Target: target, EnvFile: true}
+	cfgAnnotation := &typapp.CfgAnnotation{Target: target, DotEnv: true}
 	c := &typannot.Context{
 		Context: &typgo.Context{
 			BuildSys: &typgo.BuildSys{
@@ -142,7 +142,7 @@ func init() {
 
 }
 
-func TestCreateAndLoadEnvFile_EnvFileExist(t *testing.T) {
+func TestCreateAndLoadDotEnv_EnvFileExist(t *testing.T) {
 	target := "some-env"
 	ioutil.WriteFile(target, []byte("key1=val111\nkey2=val222"), 0777)
 	var out strings.Builder
@@ -150,7 +150,7 @@ func TestCreateAndLoadEnvFile_EnvFileExist(t *testing.T) {
 	defer os.Remove(target)
 	defer func() { typapp.Stdout = os.Stdout }()
 
-	typapp.CreateAndLoadEnvFile(target, []*typapp.Config{
+	typapp.CreateAndLoadDotEnv(target, []*typapp.Config{
 		{
 			Fields: []*typapp.Field{
 				{Key: "key1", Default: "val1"},
