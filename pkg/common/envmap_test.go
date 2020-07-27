@@ -51,7 +51,7 @@ func TestLoadEnv(t *testing.T) {
 }
 
 func TestLoadEnv_NoFileExit(t *testing.T) {
-	require.EqualError(t, common.LoadEnv("not-exit"), "open not-exit: no such file or directory")
+	require.NoError(t, common.LoadEnv("not-exist"))
 }
 
 func TestEnvMap_Setenv(t *testing.T) {

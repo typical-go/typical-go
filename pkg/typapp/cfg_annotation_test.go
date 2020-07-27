@@ -3,6 +3,7 @@ package typapp_test
 import (
 	"io/ioutil"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -144,7 +145,10 @@ func init() {
 func TestCreateAndLoadEnvFile_EnvFileExist(t *testing.T) {
 	target := "some-env"
 	ioutil.WriteFile(target, []byte("key1=val111\nkey2=val222"), 0777)
+	var out strings.Builder
+	typapp.Stdout = &out
 	defer os.Remove(target)
+	defer func() { typapp.Stdout = os.Stdout }()
 
 	typapp.CreateAndLoadEnvFile(target, []*typapp.Config{
 		{
@@ -158,4 +162,5 @@ func TestCreateAndLoadEnvFile_EnvFileExist(t *testing.T) {
 
 	b, _ := ioutil.ReadFile(target)
 	require.Equal(t, "key1=val111\nkey2=val222\nkey3=val3\n", string(b))
+	require.Equal(t, "UPDATE_ENV: +key3\n", out.String())
 }

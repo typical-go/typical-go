@@ -3,6 +3,7 @@ package typgo
 import (
 	"fmt"
 
+	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/urfave/cli/v2"
 )
 
@@ -27,6 +28,9 @@ func (b *BuildSys) app() *cli.App {
 	cli.SubcommandHelpTemplate = subcommandHelpTemplate
 
 	app := cli.NewApp()
+	app.Before = func(*cli.Context) error {
+		return common.LoadEnv(".env")
+	}
 	app.Commands = b.Commands
 	return app
 }

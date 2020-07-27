@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -69,20 +70,27 @@ func CreateAndLoadEnvFile(envfile string, configs []*Config) error {
 	if err != nil {
 		envmap = make(common.EnvMap)
 	}
+
+	var updatedKeys []string
+
 	for _, config := range configs {
 		for _, field := range config.Fields {
 			if _, ok := envmap[field.Key]; !ok {
+				updatedKeys = append(updatedKeys, "+"+field.Key)
 				envmap[field.Key] = field.Default
 			}
 		}
 	}
+	if len(updatedKeys) > 0 {
+		color.New(color.FgGreen).Fprint(Stdout, "UPDATE_ENV")
+		fmt.Fprintln(Stdout, ": "+strings.Join(updatedKeys, " "))
+	}
+
 	if err := envmap.SaveToFile(envfile); err != nil {
 		return err
 	}
-	if len(envmap) > 0 {
-		common.Setenv(envmap)
-	}
-	return nil
+
+	return common.Setenv(envmap)
 }
 
 func (m *CfgAnnotation) createConfigs(c *typannot.Context) []*Config {

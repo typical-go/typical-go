@@ -40,18 +40,13 @@ func CreateEnvMapFromFile(source string) (EnvMap, error) {
 }
 
 // Setenv set environment variable based on map
-func Setenv(m EnvMap) {
-	w := os.Stdout
-	color.New(color.FgGreen).Fprint(w, "ENV")
-	fmt.Fprint(w, ": ")
-	defer fmt.Fprintln(w)
+func Setenv(m EnvMap) error {
 	for k, v := range m {
 		if err := os.Setenv(k, v); err != nil {
-			fmt.Fprintf(w, "failed: %s ", err.Error())
-			return
+			return err
 		}
-		fmt.Fprintf(w, "+%s ", k)
 	}
+	return nil
 }
 
 // Unsetenv unset environment variable
@@ -66,12 +61,21 @@ func Unsetenv(m EnvMap) error {
 
 // LoadEnv to setenv from file
 func LoadEnv(filename string) error {
-	envmap, err := CreateEnvMapFromFile(filename)
-	if err != nil {
-		return err
+	envmap, _ := CreateEnvMapFromFile(filename)
+	if len(envmap) < 1 {
+		return nil
 	}
-	Setenv(envmap)
-	return nil
+	printEnv(os.Stdout, envmap)
+	return Setenv(envmap)
+}
+
+func printEnv(w io.Writer, m EnvMap) {
+	color.New(color.FgGreen).Fprint(w, "ENV")
+	fmt.Fprint(w, ": ")
+	for k := range m {
+		fmt.Fprintf(w, "+%s ", k)
+	}
+	fmt.Fprintln(w)
 }
 
 //
