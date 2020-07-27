@@ -146,8 +146,10 @@ func (m *DockerCmd) dockerUp(c *typgo.Context) (err error) {
 		}
 	}
 	return c.Execute(&execkit.Command{
-		Name: "docker-compose",
-		Args: []string{"up", "--remove-orphans", "-d"},
+		Name:   "docker-compose",
+		Args:   []string{"up", "--remove-orphans", "-d"},
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
 	})
 }
 
@@ -163,8 +165,10 @@ func (m *DockerCmd) CmdDown(c *typgo.BuildSys) *cli.Command {
 
 func dockerDown(c *typgo.Context) error {
 	return c.Execute(&execkit.Command{
-		Name: "docker-compose",
-		Args: []string{"down"},
+		Name:   "docker-compose",
+		Args:   []string{"down"},
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
 	})
 }
 
