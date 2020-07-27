@@ -20,8 +20,8 @@ const (
 type (
 	// ReleaseCmd release command
 	ReleaseCmd struct {
-		Precmds []string
 		Releaser
+		Before     typgo.Action
 		ReleaseTag string
 		Alpha      bool
 		Validation Validator
@@ -42,15 +42,8 @@ func (r *ReleaseCmd) Command(sys *typgo.BuildSys) *cli.Command {
 			&cli.BoolFlag{Name: AlphaFlag, Usage: "Release for alpha version"},
 			&cli.StringFlag{Name: TagFlag, Usage: "Override the release-tag"},
 		},
-		// Action: c.ActionFn(r.Execute),
-		Action: func(cliCtx *cli.Context) error {
-			for _, precmd := range r.Precmds {
-				if err := sys.Run(precmd, cliCtx); err != nil {
-					return err
-				}
-			}
-			return sys.Execute(r, cliCtx)
-		},
+		Before: sys.ActionFn(r.Before),
+		Action: sys.ActionFn(r),
 	}
 }
 

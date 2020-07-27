@@ -12,7 +12,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func TestCommand_Execute(t *testing.T) {
+func TestReleaseCmd_Execute(t *testing.T) {
 	testcases := []struct {
 		TestName           string
 		*typrls.ReleaseCmd // NOTE: don't set releaser
@@ -182,4 +182,14 @@ func createContext(args ...string) *cli.Context {
 	flagSet.String(typrls.TagFlag, "", "")
 	flagSet.Parse(args)
 	return cli.NewContext(nil, flagSet, nil)
+}
+
+func TestReleaseCmd_Before(t *testing.T) {
+	cmd := &typrls.ReleaseCmd{
+		Before: typgo.NewAction(func(*typgo.Context) error {
+			return errors.New("some-error")
+		}),
+	}
+	command := cmd.Command(&typgo.BuildSys{})
+	require.EqualError(t, command.Before(&cli.Context{}), "some-error")
 }
