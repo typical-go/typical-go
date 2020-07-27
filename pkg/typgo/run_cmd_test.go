@@ -19,23 +19,22 @@ func TestRunCompile_Command(t *testing.T) {
 	}
 	command := runCmd.Command(&typgo.BuildSys{})
 	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
+	require.NoError(t, command.Before(&cli.Context{}))
 }
 
 func TestRunCompile_Precmd(t *testing.T) {
-	sys := &typgo.BuildSys{
-		Commands: []*cli.Command{
-			{Name: "pre", Action: func(*cli.Context) error { return errors.New("pre-error") }},
-		},
-	}
-
 	runCmd := &typgo.RunCmd{
-		Precmds: []string{"pre"},
+		Before: typgo.NewAction(func(*typgo.Context) error {
+			return errors.New("before-error")
+		}),
 		Action: typgo.NewAction(func(*typgo.Context) error {
-			return errors.New("some-error")
+			return errors.New("action-error")
 		}),
 	}
-	command := runCmd.Command(sys)
-	require.EqualError(t, command.Action(&cli.Context{}), "pre-error")
+	command := runCmd.Command(&typgo.BuildSys{})
+
+	require.EqualError(t, command.Action(&cli.Context{}), "action-error")
+	require.EqualError(t, command.Before(&cli.Context{}), "before-error")
 }
 
 func TestStdRun_Execute(t *testing.T) {

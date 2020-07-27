@@ -11,7 +11,7 @@ import (
 type (
 	// RunCmd run command
 	RunCmd struct {
-		Precmds []string
+		Before Action
 		Action
 	}
 	// StdRun standard run
@@ -33,13 +33,14 @@ func (r *RunCmd) Command(sys *BuildSys) *cli.Command {
 		Aliases:         []string{"r"},
 		Usage:           "Run the project in local environment",
 		SkipFlagParsing: true,
+		Before: func(cliCtx *cli.Context) error {
+			if r.Before == nil {
+				return nil
+			}
+			return sys.Execute(r.Before, cliCtx)
+		},
 
 		Action: func(cliCtx *cli.Context) error {
-			for _, precmd := range r.Precmds {
-				if err := sys.Run(precmd, cliCtx); err != nil {
-					return err
-				}
-			}
 			return sys.Execute(r.Action, cliCtx)
 		},
 	}

@@ -16,14 +16,14 @@ var (
 			&typgo.CompileCmd{
 				Action: typgo.Actions{
 					&typannot.Annotators{
-						&typapp.CfgAnnotation{EnvFile: true},
+						&typapp.CfgAnnotation{DotEnv: true},
 					},
 					&typgo.StdCompile{},
 				},
 			},
 			&typgo.RunCmd{
-				Precmds: []string{"compile"},
-				Action:  &typgo.StdRun{},
+				Before: typgo.BuildSysRuns{"compile"},
+				Action: &typgo.StdRun{},
 			},
 			&typgo.CleanCmd{
 				Action: &typgo.StdClean{},

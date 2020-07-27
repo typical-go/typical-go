@@ -18,8 +18,8 @@ var (
 			},
 
 			&typgo.RunCmd{
-				Precmds: []string{"compile"},
-				Action:  &typgo.StdRun{},
+				Before: typgo.BuildSysRuns{"compile"},
+				Action: &typgo.StdRun{},
 			},
 
 			&typgo.CleanCmd{
