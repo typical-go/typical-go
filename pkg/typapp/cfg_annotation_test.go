@@ -142,6 +142,21 @@ func init() {
 
 }
 
+func TestCfgAnnotation_Annotate_RemoveTargetWhenNoAnnotation(t *testing.T) {
+	target := "target1"
+	defer os.Remove(target)
+	ioutil.WriteFile(target, []byte("some-content"), 0777)
+	c := &typannot.Context{
+		Context:  &typgo.Context{},
+		ASTStore: &typannot.ASTStore{},
+	}
+
+	cfgAnnotation := &typapp.CfgAnnotation{Target: target}
+	require.NoError(t, cfgAnnotation.Annotate(c))
+	_, err := os.Stat(target)
+	require.True(t, os.IsNotExist(err))
+}
+
 func TestCreateAndLoadDotEnv_EnvFileExist(t *testing.T) {
 	target := "some-env"
 	ioutil.WriteFile(target, []byte("key1=val111\nkey2=val222"), 0777)

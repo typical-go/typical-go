@@ -52,6 +52,20 @@ func init() {
 
 }
 
+func TestDtorAnnotation_Annotate_RemoveTargetWhenNoAnnotation(t *testing.T) {
+	target := "some-target"
+	defer os.Remove(target)
+	ioutil.WriteFile(target, []byte("some-content"), 0777)
+	dtorAnnot := &typapp.DtorAnnotation{Target: target}
+	ctx := &typannot.Context{
+		Context:  &typgo.Context{},
+		ASTStore: &typannot.ASTStore{},
+	}
+	require.NoError(t, dtorAnnot.Annotate(ctx))
+	_, err := os.Stat(target)
+	require.True(t, os.IsNotExist(err))
+}
+
 func TestDtorAnnotation_GetTarget(t *testing.T) {
 	testcases := []struct {
 		TestName string

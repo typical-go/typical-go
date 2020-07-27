@@ -2,6 +2,7 @@ package typapp
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/fatih/color"
@@ -43,14 +44,18 @@ var _ typannot.Annotator = (*CfgAnnotation)(nil)
 
 // Annotate config to prepare dependency-injection and env-file
 func (m *CfgAnnotation) Annotate(c *typannot.Context) error {
-	configs := m.createConfigs(c)
-
+	configs := m.CreateConfigs(c)
 	target := m.getTarget(c)
+	if len(configs) < 1 {
+		os.Remove(target)
+		return nil
+	}
 	data := &CfgTmplData{
 		Package: "main",
 		Imports: c.CreateImports(typgo.ProjectPkg, "github.com/kelseyhightower/envconfig"),
 		Configs: configs,
 	}
+	fmt.Fprintf(Stdout, "Generate @cfg to %s\n", target)
 	if err := common.ExecuteTmplToFile(target, configAnnotTmpl, data); err != nil {
 		return err
 	}
@@ -92,7 +97,8 @@ func CreateAndLoadDotEnv(envfile string, configs []*Config) error {
 	return common.Setenv(envmap)
 }
 
-func (m *CfgAnnotation) createConfigs(c *typannot.Context) []*Config {
+// CreateConfigs create configs
+func (m *CfgAnnotation) CreateConfigs(c *typannot.Context) []*Config {
 	var configs []*Config
 	for _, annot := range c.ASTStore.Annots {
 		if annot.CheckStruct(configTag) {
