@@ -39,7 +39,7 @@ var (
 			},
 
 			&typrls.ReleaseCmd{
-				Precmds:    []string{"test", "examples", "compile"},
+				Before:     typgo.BuildSysRuns{"test", "examples", "compile"},
 				Validation: typrls.DefaultValidation,
 				Summary:    typrls.DefaultSummary,
 				Releaser:   &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
