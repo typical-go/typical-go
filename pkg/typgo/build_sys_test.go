@@ -10,6 +10,7 @@ import (
 )
 
 func TestBuildSys_Run(t *testing.T) {
+	var seq []string
 	sys := &typgo.BuildSys{
 		Commands: []*cli.Command{
 			{
@@ -18,7 +19,8 @@ func TestBuildSys_Run(t *testing.T) {
 			},
 			{
 				Name:   "cmd2",
-				Action: func(*cli.Context) error { return nil },
+				Before: func(*cli.Context) error { seq = append(seq, "1"); return nil },
+				Action: func(*cli.Context) error { seq = append(seq, "2"); return nil },
 			},
 		},
 	}
@@ -26,6 +28,7 @@ func TestBuildSys_Run(t *testing.T) {
 	require.EqualError(t, sys.Run("noname", c), "typgo: no command with name 'noname'")
 	require.EqualError(t, sys.Run("cmd1", c), "some-error")
 	require.NoError(t, sys.Run("cmd2", c))
+	require.Equal(t, []string{"1", "2"}, seq)
 }
 
 func TestBuildSys_ActionFn(t *testing.T) {

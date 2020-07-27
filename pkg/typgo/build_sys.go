@@ -39,6 +39,11 @@ func (b *BuildSys) app() *cli.App {
 func (b *BuildSys) Run(name string, c *cli.Context) error {
 	for _, command := range b.Commands {
 		if command.Name == name {
+			if command.Before != nil {
+				if err := command.Before(c); err != nil {
+					return err
+				}
+			}
 			return command.Action(c)
 		}
 	}

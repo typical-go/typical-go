@@ -14,13 +14,11 @@ var (
 
 		Cmds: []typgo.Cmd{
 			&typgo.CompileCmd{
-				Action: &typgo.Actions{
-					&typannot.Annotators{
-						&typapp.CtorAnnotation{},
-						&typapp.DtorAnnotation{},
-					},
-					&typgo.StdCompile{},
+				Before: &typannot.Annotators{
+					&typapp.CtorAnnotation{},
+					&typapp.DtorAnnotation{},
 				},
+				Action: &typgo.StdCompile{},
 			},
 			&typgo.RunCmd{
 				Before: typgo.BuildSysRuns{"compile"},

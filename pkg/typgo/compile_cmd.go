@@ -10,6 +10,7 @@ import (
 type (
 	// CompileCmd compile command
 	CompileCmd struct {
+		Before Action
 		Action
 	}
 	// StdCompile is standard compile
@@ -36,6 +37,7 @@ func (c *CompileCmd) Command(b *BuildSys) *cli.Command {
 		Name:    "compile",
 		Aliases: []string{"c"},
 		Usage:   "Compile the project",
+		Before:  b.ActionFn(c.Before),
 		Action:  b.ActionFn(c),
 	}
 }

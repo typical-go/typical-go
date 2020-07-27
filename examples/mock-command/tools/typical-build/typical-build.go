@@ -16,12 +16,10 @@ var (
 		Cmds: []typgo.Cmd{
 
 			&typgo.CompileCmd{
-				Action: typgo.Actions{
-					typannot.Annotators{
-						&typapp.CtorAnnotation{},
-					},
-					&typgo.StdCompile{},
+				Before: typannot.Annotators{
+					&typapp.CtorAnnotation{},
 				},
+				Action: &typgo.StdCompile{},
 			},
 
 			&typgo.RunCmd{
