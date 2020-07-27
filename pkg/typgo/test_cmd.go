@@ -37,7 +37,7 @@ func (t *TestCmd) Command(b *BuildSys) *cli.Command {
 		Name:    "test",
 		Aliases: []string{"t"},
 		Usage:   "Test the project",
-		Action:  b.ActionFn(t.Execute),
+		Action:  b.ActionFn(t),
 	}
 }
 

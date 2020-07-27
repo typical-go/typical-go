@@ -29,7 +29,7 @@ func (c *CleanCmd) Command(b *BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:   "clean",
 		Usage:  "Clean the project",
-		Action: b.ActionFn(c.Execute),
+		Action: b.ActionFn(c),
 	}
 }
 

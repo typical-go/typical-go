@@ -46,9 +46,12 @@ func (b *BuildSys) Run(name string, c *cli.Context) error {
 }
 
 // ActionFn to return related action func
-func (b *BuildSys) ActionFn(fn ExecuteFn) func(*cli.Context) error {
+func (b *BuildSys) ActionFn(action Action) func(*cli.Context) error {
 	return func(cliCtx *cli.Context) error {
-		return fn(&Context{
+		if action == nil {
+			return nil
+		}
+		return action.Execute(&Context{
 			Context:  cliCtx,
 			BuildSys: b,
 		})

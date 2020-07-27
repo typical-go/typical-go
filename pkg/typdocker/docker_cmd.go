@@ -33,6 +33,7 @@ type (
 //
 
 var _ typgo.Cmd = (*DockerCmd)(nil)
+var _ typgo.Action = (*DockerCmd)(nil)
 
 // Command of docker
 func (m *DockerCmd) Command(sys *typgo.BuildSys) *cli.Command {
@@ -53,11 +54,12 @@ func (m *DockerCmd) CmdCompose(c *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:   "compose",
 		Usage:  "Generate docker-compose.yaml",
-		Action: c.ActionFn(m.compose),
+		Action: c.ActionFn(m),
 	}
 }
 
-func (m *DockerCmd) compose(c *typgo.Context) (err error) {
+// Execute docker command
+func (m *DockerCmd) Execute(c *typgo.Context) error {
 	if len(m.Composers) < 1 {
 		return errors.New("Nothing to compose")
 	}
@@ -107,7 +109,7 @@ func (m *DockerCmd) CmdWipe(c *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:   "wipe",
 		Usage:  "Kill all running docker container",
-		Action: c.ActionFn(m.dockerWipe),
+		Action: c.ActionFn(typgo.NewAction(m.dockerWipe)),
 	}
 }
 
@@ -133,7 +135,7 @@ func (m *DockerCmd) CmdUp(c *typgo.BuildSys) *cli.Command {
 			&cli.BoolFlag{Name: "wipe"},
 		},
 		Usage:  "Spin up docker containers according docker-compose",
-		Action: c.ActionFn(m.dockerUp),
+		Action: c.ActionFn(typgo.NewAction(m.dockerUp)),
 	}
 }
 
@@ -155,7 +157,7 @@ func (m *DockerCmd) CmdDown(c *typgo.BuildSys) *cli.Command {
 		Name:    "down",
 		Aliases: []string{"stop"},
 		Usage:   "Take down all docker containers according docker-compose",
-		Action:  c.ActionFn(dockerDown),
+		Action:  c.ActionFn(typgo.NewAction(dockerDown)),
 	}
 }
 

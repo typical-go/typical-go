@@ -33,16 +33,8 @@ func (r *RunCmd) Command(sys *BuildSys) *cli.Command {
 		Aliases:         []string{"r"},
 		Usage:           "Run the project in local environment",
 		SkipFlagParsing: true,
-		Before: func(cliCtx *cli.Context) error {
-			if r.Before == nil {
-				return nil
-			}
-			return sys.Execute(r.Before, cliCtx)
-		},
-
-		Action: func(cliCtx *cli.Context) error {
-			return sys.Execute(r.Action, cliCtx)
-		},
+		Before:          sys.ActionFn(r.Before),
+		Action:          sys.ActionFn(r),
 	}
 }
 

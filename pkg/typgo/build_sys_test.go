@@ -26,5 +26,13 @@ func TestBuildSys_Run(t *testing.T) {
 	require.EqualError(t, sys.Run("noname", c), "typgo: no command with name 'noname'")
 	require.EqualError(t, sys.Run("cmd1", c), "some-error")
 	require.NoError(t, sys.Run("cmd2", c))
+}
 
+func TestBuildSys_ActionFn(t *testing.T) {
+	sys := &typgo.BuildSys{}
+	require.NoError(t, sys.ActionFn(nil)(&cli.Context{}))
+	action := typgo.NewAction(func(*typgo.Context) error {
+		return errors.New("some-error")
+	})
+	require.EqualError(t, sys.ActionFn(action)(&cli.Context{}), "some-error")
 }

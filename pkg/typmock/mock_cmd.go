@@ -26,14 +26,17 @@ func (d *MockCmd) Command(c *typgo.BuildSys) *cli.Command {
 		Usage:       "Generate mock class",
 		UsageText:   "mock [package_names]",
 		Description: "If package_names is missing then check every package",
-		Action: c.ActionFn(func(c *typgo.Context) error {
-			ac, err := typannot.CreateContext(c)
-			if err != nil {
-				return err
-			}
-			return Annotate(ac)
-		}),
+		Action:      c.ActionFn(d),
 	}
+}
+
+// Execute mock command
+func (d *MockCmd) Execute(c *typgo.Context) error {
+	ac, err := typannot.CreateContext(c)
+	if err != nil {
+		return err
+	}
+	return Annotate(ac)
 }
 
 // Annotate mock
