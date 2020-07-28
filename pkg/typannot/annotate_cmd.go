@@ -2,11 +2,14 @@ package typannot
 
 import (
 	"github.com/typical-go/typical-go/pkg/typgo"
+	"github.com/urfave/cli/v2"
 )
 
 type (
-	// Annotators is extra information from source code
-	Annotators []Annotator
+	// AnnotateCmd annotate cmd
+	AnnotateCmd struct {
+		Annotators []Annotator
+	}
 	// Annotator responsible to annotate
 	Annotator interface {
 		Annotate(*Context) error
@@ -18,15 +21,29 @@ type (
 	}
 )
 
-var _ typgo.Action = (Annotators)(nil)
+//
+// AnnotateCmd
+//
+
+var _ typgo.Cmd = (*AnnotateCmd)(nil)
+var _ typgo.Action = (*AnnotateCmd)(nil)
+
+// Command annotate
+func (a *AnnotateCmd) Command(sys *typgo.BuildSys) *cli.Command {
+	return &cli.Command{
+		Name:   "annotate",
+		Usage:  "Annotate the project and generate code",
+		Action: sys.ActionFn(a),
+	}
+}
 
 // Execute annotation
-func (a Annotators) Execute(c *typgo.Context) error {
+func (a *AnnotateCmd) Execute(c *typgo.Context) error {
 	ac, err := CreateContext(c)
 	if err != nil {
 		return err
 	}
-	for _, annotator := range a {
+	for _, annotator := range a.Annotators {
 		if err := annotator.Annotate(ac); err != nil {
 			return err
 		}

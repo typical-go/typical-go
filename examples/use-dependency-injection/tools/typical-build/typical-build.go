@@ -13,15 +13,17 @@ var (
 		Layouts: []string{"internal"},
 
 		Cmds: []typgo.Cmd{
-			&typgo.CompileCmd{
-				Before: &typannot.Annotators{
+			&typannot.AnnotateCmd{
+				Annotators: []typannot.Annotator{
 					&typapp.CtorAnnotation{},
 					&typapp.DtorAnnotation{},
 				},
+			},
+			&typgo.CompileCmd{
 				Action: &typgo.StdCompile{},
 			},
 			&typgo.RunCmd{
-				Before: typgo.BuildSysRuns{"compile"},
+				Before: typgo.BuildSysRuns{"annotate", "compile"},
 				Action: &typgo.StdRun{},
 			},
 			&typgo.CleanCmd{

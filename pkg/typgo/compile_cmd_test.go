@@ -13,16 +13,12 @@ import (
 
 func TestCompileCmd(t *testing.T) {
 	compileCmd := &typgo.CompileCmd{
-		Before: typgo.NewAction(func(*typgo.Context) error {
-			return errors.New("before-error")
-		}),
 		Action: typgo.NewAction(func(*typgo.Context) error {
 			return errors.New("action-error")
 		}),
 	}
 	command := compileCmd.Command(&typgo.BuildSys{})
 	require.EqualError(t, command.Action(&cli.Context{}), "action-error")
-	require.EqualError(t, command.Before(&cli.Context{}), "before-error")
 }
 
 func TestStdCompile(t *testing.T) {
