@@ -163,10 +163,9 @@ Typical-Go using itself as build-tool which is an excellent example. For other e
 - [x] [Hello World](https://github.com/typical-go/typical-go/tree/master/examples/hello-world)
 - [x] [Use Config](https://github.com/typical-go/typical-go/tree/master/examples/use-config)
 - [x] [Use Dependency Injection](https://github.com/typical-go/typical-go/tree/master/examples/use-dependency-injection)
-- [x] [Custom Command](https://github.com/typical-go/typical-go/tree/master/examples/custom-command)
 - [x] [Mock Command](https://github.com/typical-go/typical-go/tree/master/examples/mock-command)
 - [x] [Docker Command](https://github.com/typical-go/typical-go/tree/master/examples/docker-command)
-- [x] [Serve React Demo](https://github.com/typical-go/typical-go/tree/master/examples/serve-react-demo)
+- [x] [Custom Command](https://github.com/typical-go/typical-go/tree/master/examples/custom-command)
 
 
 ## License
