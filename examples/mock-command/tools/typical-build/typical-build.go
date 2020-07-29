@@ -7,38 +7,44 @@ import (
 	"github.com/typical-go/typical-go/pkg/typmock"
 )
 
-var (
-	descriptor = typgo.Descriptor{
-		Name:    "mock-command",
-		Version: "1.0.0",
-		Layouts: []string{"internal"},
+var descriptor = typgo.Descriptor{
+	Name:    "mock-command",
+	Version: "1.0.0",
+	Layouts: []string{"internal"},
 
-		Cmds: []typgo.Cmd{
-			&typannot.AnnotateCmd{
-				Annotators: []typannot.Annotator{
-					&typapp.CtorAnnotation{},
-				},
+	Cmds: []typgo.Cmd{
+		// annotate
+		&typannot.AnnotateCmd{
+			Annotators: []typannot.Annotator{
+				&typapp.CtorAnnotation{},
 			},
-			&typgo.CompileCmd{
-				Action: &typgo.StdCompile{},
-			},
-			&typgo.RunCmd{
-				Before: typgo.BuildSysRuns{"annotate", "compile"},
-				Action: &typgo.StdRun{},
-			},
-
-			&typgo.TestCmd{
-				Action: &typgo.StdTest{},
-			},
-
-			&typgo.CleanCmd{
-				Action: &typgo.StdClean{},
-			},
-
-			&typmock.MockCmd{},
 		},
-	}
-)
+
+		// compile
+		&typgo.CompileCmd{
+			Action: &typgo.StdCompile{},
+		},
+
+		// run
+		&typgo.RunCmd{
+			Before: typgo.BuildSysRuns{"annotate", "compile"},
+			Action: &typgo.StdRun{},
+		},
+
+		// test
+		&typgo.TestCmd{
+			Action: &typgo.StdTest{},
+		},
+
+		// clean
+		&typgo.CleanCmd{
+			Action: &typgo.StdClean{},
+		},
+
+		// mock
+		&typmock.MockCmd{},
+	},
+}
 
 func main() {
 	typgo.Start(&descriptor)
