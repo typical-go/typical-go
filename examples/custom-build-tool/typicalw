@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e
+
+TYPTMP=.typical-tmp                            # temporary file location 
+TYPGO=$TYPTMP/bin/typical-go                   # typical-go output
+TYPGO_SRC=github.com/typical-go/typical-go     # typical-go source
+BUILDTOOL_SRC=tools/typical-build              # build-tool source
+PROJECT_PKG=github.com/typical-go/typical-go/examples/custom-command  # project package
+
+if ! [ -s $TYPGO ]; then
+	echo "Build typical-go"
+	go build -o $TYPGO $TYPGO_SRC
+fi
+
+$TYPGO run \
+	-src=$BUILDTOOL_SRC \
+	-project-pkg=$PROJECT_PKG \
+	-typical-tmp=$TYPTMP \
+	$@
