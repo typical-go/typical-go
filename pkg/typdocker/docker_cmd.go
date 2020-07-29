@@ -166,7 +166,7 @@ func (m *DockerCmd) CmdDown(c *typgo.BuildSys) *cli.Command {
 func dockerDown(c *typgo.Context) error {
 	return c.Execute(&execkit.Command{
 		Name:   "docker-compose",
-		Args:   []string{"down"},
+		Args:   []string{"down", "-v"},
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,
 	})

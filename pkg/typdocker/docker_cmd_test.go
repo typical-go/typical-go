@@ -142,7 +142,7 @@ func TestCmdWipe(t *testing.T) {
 
 func TestCmdDown(t *testing.T) {
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: []string{"docker-compose", "down"}},
+		{CommandLine: []string{"docker-compose", "down", "-v"}},
 	})
 	defer unpatch(t)
 	cmd := &typdocker.DockerCmd{}
