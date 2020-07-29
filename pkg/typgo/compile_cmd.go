@@ -10,15 +10,16 @@ import (
 type (
 	// CompileCmd compile command
 	CompileCmd struct {
+		Name    string   // By default is "compile"
+		Aliases []string // By default is "c"
+		Usage   string   // By default is "Compile the project"
 		Action
 	}
 	// StdCompile is standard compile
 	StdCompile struct {
-		// MainPackage to be compiled. By default is cmd/PROJECT_NAME
-		MainPackage string
-		// Output of compiler. By default is bin/PROJECT_NAME
-		Output string
-		// Ldflags argument. By default is set variable typapp.Name to PROJECT_NAME
+		MainPackage string // By default is "cmd/PROJECT_NAME"
+		Output      string // By default is "bin/PROJECT_NAME"
+		// By default is set variable typapp.Name to PROJECT_NAME
 		// and typapp.Version to PROJECT-VERSION
 		Ldflags fmt.Stringer
 	}
@@ -33,11 +34,32 @@ var _ Cmd = (*CompileCmd)(nil)
 // Command compile
 func (c *CompileCmd) Command(b *BuildSys) *cli.Command {
 	return &cli.Command{
-		Name:    "compile",
-		Aliases: []string{"c"},
-		Usage:   "Compile the project",
-		Action:  b.ActionFn(c),
+		Name:    c.getName(),
+		Aliases: c.getAliases(),
+		Usage:   c.getUsage(),
+		Action:  b.ActionFn(c.Action),
 	}
+}
+
+func (c *CompileCmd) getName() string {
+	if c.Name == "" {
+		c.Name = "compile"
+	}
+	return c.Name
+}
+
+func (c *CompileCmd) getAliases() []string {
+	if len(c.Aliases) < 1 {
+		c.Aliases = []string{"c"}
+	}
+	return c.Aliases
+}
+
+func (c *CompileCmd) getUsage() string {
+	if c.Usage == "" {
+		c.Usage = "Compile the project"
+	}
+	return c.Usage
 }
 
 //

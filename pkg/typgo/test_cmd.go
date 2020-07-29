@@ -16,6 +16,9 @@ const (
 type (
 	// TestCmd command test
 	TestCmd struct {
+		Name    string   // By default is "test"
+		Aliases []string // By default is "t"
+		Usage   string   // By default is "Test the project"
 		Action
 	}
 	// StdTest standard test
@@ -34,11 +37,32 @@ type (
 // Command test
 func (t *TestCmd) Command(b *BuildSys) *cli.Command {
 	return &cli.Command{
-		Name:    "test",
-		Aliases: []string{"t"},
-		Usage:   "Test the project",
-		Action:  b.ActionFn(t),
+		Name:    t.getName(),
+		Aliases: t.getAliases(),
+		Usage:   t.getUsage(),
+		Action:  b.ActionFn(t.Action),
 	}
+}
+
+func (t *TestCmd) getName() string {
+	if t.Name == "" {
+		t.Name = "test"
+	}
+	return t.Name
+}
+
+func (t *TestCmd) getAliases() []string {
+	if len(t.Aliases) < 1 {
+		t.Aliases = []string{"t"}
+	}
+	return t.Aliases
+}
+
+func (t *TestCmd) getUsage() string {
+	if t.Usage == "" {
+		t.Usage = "Test the project"
+	}
+	return t.Usage
 }
 
 //

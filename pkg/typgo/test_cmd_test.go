@@ -13,17 +13,31 @@ import (
 )
 
 func TestTestCmd(t *testing.T) {
+	testCmd := &typgo.TestCmd{}
+	command := testCmd.Command(&typgo.BuildSys{})
+	require.Equal(t, "test", command.Name)
+	require.Equal(t, "Test the project", command.Usage)
+	require.Equal(t, []string{"t"}, command.Aliases)
+	require.NoError(t, command.Action(&cli.Context{}))
+}
+
+func TestTestCmd_Predefined(t *testing.T) {
 	testCmd := &typgo.TestCmd{
+		Name:    "some-name",
+		Usage:   "some-usage",
+		Aliases: []string{"x"},
 		Action: typgo.NewAction(func(*typgo.Context) error {
 			return errors.New("some-error")
 		}),
 	}
 	command := testCmd.Command(&typgo.BuildSys{})
+	require.Equal(t, "some-name", command.Name)
+	require.Equal(t, "some-usage", command.Usage)
+	require.Equal(t, []string{"x"}, command.Aliases)
 	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
 }
 
 func TestStdTest(t *testing.T) {
-
 	stdtest := &typgo.StdTest{}
 	c := &typgo.Context{
 		Context: &cli.Context{Context: context.Background()},

@@ -10,12 +10,24 @@ import (
 )
 
 func TestCleanCmd(t *testing.T) {
+	cleanCmd := &typgo.CleanCmd{}
+	command := cleanCmd.Command(&typgo.BuildSys{})
+	require.Equal(t, "clean", command.Name)
+	require.Equal(t, "Clean the project", command.Usage)
+	require.NoError(t, command.Action(&cli.Context{}))
+}
+
+func TestCleanCmd_Predefined(t *testing.T) {
 	cleanCmd := &typgo.CleanCmd{
+		Name:  "some-name",
+		Usage: "some-usage",
 		Action: typgo.NewAction(func(*typgo.Context) error {
 			return errors.New("some-error")
 		}),
 	}
 	command := cleanCmd.Command(&typgo.BuildSys{})
+	require.Equal(t, "some-name", command.Name)
+	require.Equal(t, "some-usage", command.Usage)
 	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
 }
 

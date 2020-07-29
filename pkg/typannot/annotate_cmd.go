@@ -8,6 +8,9 @@ import (
 type (
 	// AnnotateCmd annotate cmd
 	AnnotateCmd struct {
+		Name       string   // By default is "annotate"
+		Aliases    []string // By default is "a"
+		Usage      string   // By default is "Annotate the project and generate code"
 		Annotators []Annotator
 	}
 	// Annotator responsible to annotate
@@ -31,9 +34,10 @@ var _ typgo.Action = (*AnnotateCmd)(nil)
 // Command annotate
 func (a *AnnotateCmd) Command(sys *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
-		Name:   "annotate",
-		Usage:  "Annotate the project and generate code",
-		Action: sys.ActionFn(a),
+		Name:    a.getName(),
+		Aliases: a.getAliases(),
+		Usage:   a.getUsage(),
+		Action:  sys.ActionFn(a),
 	}
 }
 
@@ -49,6 +53,27 @@ func (a *AnnotateCmd) Execute(c *typgo.Context) error {
 		}
 	}
 	return nil
+}
+
+func (a *AnnotateCmd) getUsage() string {
+	if a.Usage == "" {
+		a.Usage = "Annotate the project and generate code"
+	}
+	return a.Usage
+}
+
+func (a *AnnotateCmd) getName() string {
+	if a.Name == "" {
+		a.Name = "annotate"
+	}
+	return a.Name
+}
+
+func (a *AnnotateCmd) getAliases() []string {
+	if len(a.Aliases) < 1 {
+		a.Aliases = []string{"a"}
+	}
+	return a.Aliases
 }
 
 //

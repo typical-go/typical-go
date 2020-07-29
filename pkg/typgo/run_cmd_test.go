@@ -11,19 +11,22 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func TestRunCompile_Command(t *testing.T) {
-	runCmd := &typgo.RunCmd{
-		Action: typgo.NewAction(func(*typgo.Context) error {
-			return errors.New("some-error")
-		}),
-	}
+func TestRunCmd(t *testing.T) {
+	runCmd := &typgo.RunCmd{}
 	command := runCmd.Command(&typgo.BuildSys{})
-	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
+	require.Equal(t, "run", command.Name)
+	require.Equal(t, []string{"r"}, command.Aliases)
+	require.Equal(t, "Run the project", command.Usage)
+	require.True(t, command.SkipFlagParsing)
+	require.NoError(t, command.Action(&cli.Context{}), "some-error")
 	require.NoError(t, command.Before(&cli.Context{}))
 }
 
-func TestRunCompile_Precmd(t *testing.T) {
+func TestRunCommand_(t *testing.T) {
 	runCmd := &typgo.RunCmd{
+		Name:    "some-name",
+		Usage:   "some-usage",
+		Aliases: []string{"x"},
 		Before: typgo.NewAction(func(*typgo.Context) error {
 			return errors.New("before-error")
 		}),
@@ -32,7 +35,9 @@ func TestRunCompile_Precmd(t *testing.T) {
 		}),
 	}
 	command := runCmd.Command(&typgo.BuildSys{})
-
+	require.Equal(t, "some-name", command.Name)
+	require.Equal(t, "some-usage", command.Usage)
+	require.Equal(t, []string{"x"}, command.Aliases)
 	require.EqualError(t, command.Action(&cli.Context{}), "action-error")
 	require.EqualError(t, command.Before(&cli.Context{}), "before-error")
 }
