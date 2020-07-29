@@ -9,15 +9,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
-// // WriteGoSource to write go source
-// func WriteGoSource(target string, tmpl common.Template) error {
-// 	if err := common.ExecuteTmplToFile(target, tmpl); err != nil {
-// 		return err
-// 	}
-// 	goImports(target)
-// 	return nil
-// }
-
 func goImports(target string) error {
 	goimport := fmt.Sprintf("%s/bin/goimports", typgo.TypicalTmp)
 	src := "golang.org/x/tools/cmd/goimports"

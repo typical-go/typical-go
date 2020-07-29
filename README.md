@@ -68,35 +68,46 @@ Typical Build is a golang program that manage builds and tasks for the project. 
 package main
 
 import (
-   "github.com/typical-go/typical-go/pkg/typgo"
+	"fmt"
+
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
-// Descriptor of sample
 var descriptor = typgo.Descriptor{
-   Name:    "hello-world",
-   Version: "1.0.0",
+	Name:    "custom-command",
+	Version: "1.0.0",
 
-   Cmds: []typgo.Cmd{
-      // compile
-      &typgo.CompileCmd{
-         Action: &typgo.StdCompile{},
-      },
+	Cmds: []typgo.Cmd{
 
-      // run
-      &typgo.RunCmd{
-         Before: typgo.BuildSysRuns{"compile"},
-         Action: &typgo.StdRun{},
-      },
+		// compile
+		&typgo.CompileCmd{
+			Action: &typgo.StdCompile{},
+		},
 
-      // clean
-      &typgo.CleanCmd{
-         Action: &typgo.StdClean{},
-      },
-   },
+		// run
+		&typgo.RunCmd{
+			Before: typgo.BuildSysRuns{"compile"},
+			Action: &typgo.StdRun{},
+		},
+
+		// clean
+		&typgo.CleanCmd{
+			Action: &typgo.StdClean{},
+		},
+
+		// ping
+		&typgo.Command{
+			Name: "ping",
+			Action: typgo.NewAction(func(c *typgo.Context) error {
+				fmt.Println("pong")
+				return nil
+			}),
+		},
+	},
 }
 
 func main() {
-   typgo.Start(&descriptor)
+	typgo.Start(&descriptor)
 }
 ```
 

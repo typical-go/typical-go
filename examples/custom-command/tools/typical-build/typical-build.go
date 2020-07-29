@@ -6,12 +6,12 @@ import (
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
-// Descriptor of sample
 var descriptor = typgo.Descriptor{
 	Name:    "custom-command",
 	Version: "1.0.0",
 
 	Cmds: []typgo.Cmd{
+
 		// compile
 		&typgo.CompileCmd{
 			Action: &typgo.StdCompile{},
