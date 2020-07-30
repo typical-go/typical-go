@@ -97,7 +97,7 @@ func (a *DtorAnnotation) getTemplate() string {
 
 func (a *DtorAnnotation) getTarget(c *typannot.Context) string {
 	if a.Target == "" {
-		a.Target = fmt.Sprintf("cmd/%s/dtor_annotated.go", c.BuildSys.Name)
+		a.Target = fmt.Sprintf("cmd/%s/dtor_annotated.go", c.BuildSys.ProjectName)
 	}
 	return a.Target
 }

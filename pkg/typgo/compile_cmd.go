@@ -79,14 +79,14 @@ func (s *StdCompile) Execute(c *Context) error {
 
 func (s *StdCompile) getMainPackage(c *Context) string {
 	if s.MainPackage == "" {
-		s.MainPackage = fmt.Sprintf("./cmd/%s", c.BuildSys.Name)
+		s.MainPackage = fmt.Sprintf("./cmd/%s", c.BuildSys.ProjectName)
 	}
 	return s.MainPackage
 }
 
 func (s *StdCompile) getOutput(c *Context) string {
 	if s.Output == "" {
-		s.Output = fmt.Sprintf("bin/%s", c.BuildSys.Name)
+		s.Output = fmt.Sprintf("bin/%s", c.BuildSys.ProjectName)
 	}
 	return s.Output
 }
@@ -94,8 +94,8 @@ func (s *StdCompile) getOutput(c *Context) string {
 func (s *StdCompile) getLdflags(c *Context) fmt.Stringer {
 	if s.Ldflags == nil {
 		s.Ldflags = execkit.BuildVars{
-			"github.com/typical-go/typical-go/pkg/typapp.Name":    c.BuildSys.Name,
-			"github.com/typical-go/typical-go/pkg/typapp.Version": c.BuildSys.Version,
+			"github.com/typical-go/typical-go/pkg/typapp.Name":    c.BuildSys.ProjectName,
+			"github.com/typical-go/typical-go/pkg/typapp.Version": c.BuildSys.ProjectVersion,
 		}
 	}
 	return s.Ldflags

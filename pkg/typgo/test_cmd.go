@@ -73,7 +73,7 @@ var _ Action = (*StdTest)(nil)
 
 // Execute standard test
 func (s *StdTest) Execute(c *Context) (err error) {
-	if len(c.BuildSys.Layouts) < 1 {
+	if len(c.BuildSys.ProjectLayouts) < 1 {
 		fmt.Println("Nothing to test")
 		return
 	}
@@ -88,7 +88,7 @@ func (s *StdTest) Execute(c *Context) (err error) {
 
 func (s *StdTest) getPackages(c *Context) []string {
 	if len(s.Packages) < 1 {
-		for _, layout := range c.BuildSys.Layouts {
+		for _, layout := range c.BuildSys.ProjectLayouts {
 			s.Packages = append(s.Packages, fmt.Sprintf("./%s/...", layout))
 		}
 	}

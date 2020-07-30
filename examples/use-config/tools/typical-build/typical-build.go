@@ -7,9 +7,9 @@ import (
 )
 
 var descriptor = typgo.Descriptor{
-	Name:    "use-config",
-	Version: "1.0.0",
-	Layouts: []string{"internal"},
+	ProjectName:    "use-config",
+	ProjectVersion: "1.0.0",
+	ProjectLayouts: []string{"internal"},
 
 	Cmds: []typgo.Cmd{
 		// annotate

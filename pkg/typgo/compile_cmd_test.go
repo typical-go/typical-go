@@ -40,7 +40,7 @@ func TestStdCompile(t *testing.T) {
 	cmpl := &typgo.StdCompile{}
 	c := &typgo.Context{
 		BuildSys: &typgo.BuildSys{
-			Descriptor: &typgo.Descriptor{Name: "some-name", Version: "0.0.1"},
+			Descriptor: &typgo.Descriptor{ProjectName: "some-name", ProjectVersion: "0.0.1"},
 		},
 		Context: &cli.Context{Context: context.Background()},
 	}
@@ -70,7 +70,7 @@ func TestStdCompile_Predefined(t *testing.T) {
 	}
 	c := &typgo.Context{
 		BuildSys: &typgo.BuildSys{
-			Descriptor: &typgo.Descriptor{Name: "some-name", Version: "0.0.1"},
+			Descriptor: &typgo.Descriptor{ProjectName: "some-name", ProjectVersion: "0.0.1"},
 		},
 		Context: &cli.Context{Context: context.Background()},
 	}

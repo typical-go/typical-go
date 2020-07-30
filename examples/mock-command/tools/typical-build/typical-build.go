@@ -8,9 +8,9 @@ import (
 )
 
 var descriptor = typgo.Descriptor{
-	Name:    "mock-command",
-	Version: "1.0.0",
-	Layouts: []string{"internal"},
+	ProjectName:    "mock-command",
+	ProjectVersion: "1.0.0",
+	ProjectLayouts: []string{"internal"},
 
 	Cmds: []typgo.Cmd{
 		// annotate

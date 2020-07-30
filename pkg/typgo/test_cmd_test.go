@@ -42,7 +42,7 @@ func TestStdTest(t *testing.T) {
 	c := &typgo.Context{
 		Context: &cli.Context{Context: context.Background()},
 		BuildSys: &typgo.BuildSys{
-			Descriptor: &typgo.Descriptor{Layouts: []string{"pkg3", "pkg4"}},
+			Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"pkg3", "pkg4"}},
 		},
 	}
 
@@ -64,7 +64,7 @@ func TestStdTest_Predefined(t *testing.T) {
 	c := &typgo.Context{
 		Context: &cli.Context{Context: context.Background()},
 		BuildSys: &typgo.BuildSys{
-			Descriptor: &typgo.Descriptor{Layouts: []string{"pkg3", "pkg4"}},
+			Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"pkg3", "pkg4"}},
 		},
 	}
 

@@ -15,12 +15,8 @@ import (
 func TestAnnotate(t *testing.T) {
 	c := &typannot.Context{
 		Context: &typgo.Context{
-			BuildSys: &typgo.BuildSys{
-				Descriptor: &typgo.Descriptor{
-					Layouts: []string{"."},
-				},
-			},
-			Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
+			BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"."}}},
+			Context:  cli.NewContext(nil, &flag.FlagSet{}, nil),
 		},
 		ASTStore: &typannot.ASTStore{
 			Annots: []*typannot.Annot{

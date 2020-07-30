@@ -6,9 +6,9 @@ import (
 )
 
 var descriptor = typgo.Descriptor{
-	Name:    "docker-command",
-	Version: "1.0.0",
-	Layouts: []string{"internal"},
+	ProjectName:    "docker-command",
+	ProjectVersion: "1.0.0",
+	ProjectLayouts: []string{"internal"},
 
 	Cmds: []typgo.Cmd{
 		// compile

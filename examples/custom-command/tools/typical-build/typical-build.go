@@ -7,8 +7,8 @@ import (
 )
 
 var descriptor = typgo.Descriptor{
-	Name:    "custom-command",
-	Version: "1.0.0",
+	ProjectName:    "custom-command",
+	ProjectVersion: "1.0.0",
 
 	Cmds: []typgo.Cmd{
 

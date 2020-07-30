@@ -24,7 +24,7 @@ type (
 
 // CreateContext return new instance of context
 func CreateContext(c *typgo.Context) (*Context, error) {
-	dirs, files := WalkLayout(c.BuildSys.Layouts)
+	dirs, files := WalkLayout(c.BuildSys.ProjectLayouts)
 	astStore, err := CreateASTStore(files...)
 	if err != nil {
 		return nil, err

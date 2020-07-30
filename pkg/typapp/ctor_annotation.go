@@ -85,7 +85,7 @@ func (a *CtorAnnotation) CreateCtors(c *typannot.Context) []*Ctor {
 
 func (a *CtorAnnotation) getTarget(c *typannot.Context) string {
 	if a.Target == "" {
-		a.Target = fmt.Sprintf("cmd/%s/ctor_annotated.go", c.BuildSys.Name)
+		a.Target = fmt.Sprintf("cmd/%s/ctor_annotated.go", c.BuildSys.ProjectName)
 	}
 	return a.Target
 }

@@ -24,7 +24,7 @@ func TestCfgAnnotation_Annotate(t *testing.T) {
 	c := &typannot.Context{
 		Context: &typgo.Context{
 			BuildSys: &typgo.BuildSys{
-				Descriptor: &typgo.Descriptor{Name: "some-project"},
+				Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
 			},
 		},
 		ASTStore: &typannot.ASTStore{
@@ -91,7 +91,7 @@ func TestCfgAnnotation_Annotate_DotEnvTRUE(t *testing.T) {
 	c := &typannot.Context{
 		Context: &typgo.Context{
 			BuildSys: &typgo.BuildSys{
-				Descriptor: &typgo.Descriptor{Name: "some-project"},
+				Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
 			},
 		},
 		ASTStore: &typannot.ASTStore{Annots: []*typannot.Annot{
@@ -138,7 +138,7 @@ func TestCfgAnnotation_Annotate_Predefined(t *testing.T) {
 	c := &typannot.Context{
 		Context: &typgo.Context{
 			BuildSys: &typgo.BuildSys{
-				Descriptor: &typgo.Descriptor{Name: "some-project"},
+				Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
 			},
 		},
 		ASTStore: &typannot.ASTStore{

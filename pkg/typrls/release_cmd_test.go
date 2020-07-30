@@ -106,7 +106,7 @@ func TestReleaseCmd_Execute(t *testing.T) {
 				Context: createContext(),
 				BuildSys: &typgo.BuildSys{
 					Descriptor: &typgo.Descriptor{
-						Version: "9.9.9",
+						ProjectVersion: "9.9.9",
 					},
 				},
 			},
@@ -133,7 +133,7 @@ func TestReleaseCmd_Execute(t *testing.T) {
 				Context: createContext("-tag=some-tag"),
 				BuildSys: &typgo.BuildSys{
 					Descriptor: &typgo.Descriptor{
-						Version: "9.9.9",
+						ProjectVersion: "9.9.9",
 					},
 				},
 			},

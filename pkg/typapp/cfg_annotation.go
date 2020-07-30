@@ -165,7 +165,7 @@ func (m *CfgAnnotation) getTemplate() string {
 
 func (m *CfgAnnotation) getTarget(c *typannot.Context) string {
 	if m.Target == "" {
-		m.Target = fmt.Sprintf("cmd/%s/config_annotated.go", c.BuildSys.Name)
+		m.Target = fmt.Sprintf("cmd/%s/config_annotated.go", c.BuildSys.ProjectName)
 	}
 	return m.Target
 }

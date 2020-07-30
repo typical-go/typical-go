@@ -23,7 +23,7 @@ func TestDtorAnnotation_Annotate(t *testing.T) {
 	ctx := &typannot.Context{
 		Context: &typgo.Context{
 			BuildSys: &typgo.BuildSys{
-				Descriptor: &typgo.Descriptor{Name: "some-project"},
+				Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
 			},
 		},
 		ASTStore: &typannot.ASTStore{
@@ -65,7 +65,7 @@ func TestDtorAnnotation_Annotate_Predefined(t *testing.T) {
 	ctx := &typannot.Context{
 		Context: &typgo.Context{
 			BuildSys: &typgo.BuildSys{
-				Descriptor: &typgo.Descriptor{Name: "some-project"},
+				Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
 			},
 		},
 		ASTStore: &typannot.ASTStore{

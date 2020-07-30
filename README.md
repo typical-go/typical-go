@@ -68,14 +68,14 @@ Typical Build is a golang program that manage builds and tasks for the project. 
 package main
 
 import (
-	"fmt"
+   "fmt"
 
-	"github.com/typical-go/typical-go/pkg/typgo"
+   "github.com/typical-go/typical-go/pkg/typgo"
 )
 
 var descriptor = typgo.Descriptor{
-   Name:    "custom-command",
-   Version: "1.0.0",
+   ProjectName:    "custom-command",
+   ProjectVersion: "1.0.0",
 
    Cmds: []typgo.Cmd{
 

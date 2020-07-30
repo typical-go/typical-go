@@ -8,13 +8,10 @@ import (
 type (
 	// Descriptor describe the project
 	Descriptor struct {
-		// Name of the project (OPTIONAL). It should be a characters with/without underscore or dash.
-		// By default, project name is same with project folder
-		Name string
-		// Version of the project (OPTIONAL). By default it is 0.0.1
-		Version string
-		Layouts []string
-		Cmds    []Cmd
+		ProjectName    string // By default is same with project folder. Only allowed characters(a-z,A-Z), underscore or dash.
+		ProjectVersion string // By default it is 0.0.1
+		ProjectLayouts []string
+		Cmds           []Cmd
 	}
 )
 
