@@ -8,8 +8,10 @@
 [![BCH compliance](https://bettercodehub.com/edge/badge/typical-go/typical-go?branch=master)](https://bettercodehub.com/)
 [![codecov](https://codecov.io/gh/typical-go/typical-go/branch/master/graph/badge.svg)](https://codecov.io/gh/typical-go/typical-go)
 
-A Build Tool (+ Framework) for Golang. <https://typical-go.github.io/>
-
+Build Automation For Golang
+- Alternative for [GNU Make](https://www.gnu.org/software/make/manual/make.html) (a.k.a makefile)
+- Framework-based Build Tool (No DSL)
+- Supporting Java-like annotation for code generation
 
 ## Install
 
@@ -52,12 +54,13 @@ $ typical-go help run
 
 The wrapper that invoke download typical-go and execute it. This is the recommendation way to use typical-go.
 ```
-$ typical-go -create:wrapper
+$ ./typicalw
+
 ```
 
-Run wrapper script
+To create new wrapper
 ```
-$ ./typicalw
+$ typical-go -create:wrapper
 ```
 
 ## Typical Build
@@ -155,7 +158,7 @@ type(
 
 ## Application Config
 
-Typical-go encourage [config with environment variables](https://12factor.net/config) using [envconfig](https://github.com/kelseyhightower/envconfig) and annotation (`@cfg`). See the [example](https://github.com/typical-go/typical-go/tree/master/examples/use-config).
+Typical-go encourage [application config with environment variables](https://12factor.net/config) using [envconfig](https://github.com/kelseyhightower/envconfig) and annotation (`@cfg`). See the [example](https://github.com/typical-go/typical-go/tree/master/examples/use-config).
 
 ```go
 type (
