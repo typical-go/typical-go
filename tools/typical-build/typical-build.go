@@ -9,7 +9,7 @@ import (
 var descriptor = typgo.Descriptor{
 	ProjectName:    "typical-go",
 	ProjectVersion: "0.10.2",
-	Layouts:        []string{"internal", "pkg"},
+	ProjectLayouts: []string{"internal", "pkg"},
 
 	Cmds: []typgo.Cmd{
 
