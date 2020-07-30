@@ -17,7 +17,7 @@ type (
 	CfgAnnotation struct {
 		TagName  string // By default is `@cfg`
 		Template string // By default defined in defaultCfgTemplate variable
-		Target   string // By default is `cmd/PROJECT_NAME`
+		Target   string // By default is `cmd/PROJECT_NAME/cfg_annotated.go`
 		DotEnv   bool   // If true then create and load ``.env`
 	}
 	// CfgTmplData template

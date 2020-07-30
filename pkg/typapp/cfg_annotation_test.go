@@ -76,15 +76,15 @@ func init() {
 }
 
 func TestCfgAnnotation_Annotate_DotEnvTRUE(t *testing.T) {
-	target := "some-target"
+
 	unpatch := execkit.Patch([]*execkit.RunExpectation{})
 	defer unpatch(t)
 	defer os.Clearenv()
-	defer os.Remove(target)
+	defer os.Remove("some-target")
 	defer os.Remove(".env")
 
 	cfgAnnotation := &typapp.CfgAnnotation{
-		Target:   target,
+		Target:   "some-target",
 		Template: "some-template",
 		DotEnv:   true,
 	}
@@ -114,7 +114,7 @@ func TestCfgAnnotation_Annotate_DotEnvTRUE(t *testing.T) {
 
 	require.NoError(t, cfgAnnotation.Annotate(c))
 
-	b, _ := ioutil.ReadFile(target)
+	b, _ := ioutil.ReadFile("some-target")
 	require.Equal(t, `some-template`, string(b))
 
 	b, _ = ioutil.ReadFile(".env")
