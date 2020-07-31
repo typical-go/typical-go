@@ -1,5 +1,3 @@
-# Typical Go
-
 [![Release](https://img.shields.io/github/release/typical-go/typical-go/all.svg)](https://github.com/typical-go/typical-go/releases/latest)
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 ![Go-Workflow](https://github.com/typical-go/typical-go/workflows/Go/badge.svg)
@@ -7,6 +5,8 @@
 [![codebeat badge](https://codebeat.co/badges/a8b3c7a6-c42a-480a-acb4-68ece12f36b8)](https://codebeat.co/projects/github-com-typical-go-typical-go-master)
 [![BCH compliance](https://bettercodehub.com/edge/badge/typical-go/typical-go?branch=master)](https://bettercodehub.com/)
 [![codecov](https://codecov.io/gh/typical-go/typical-go/branch/master/graph/badge.svg)](https://codecov.io/gh/typical-go/typical-go)
+
+# Typical Go
 
 Build Automation For Golang
 - Alternative for [GNU Make](https://www.gnu.org/software/make/manual/make.html) (a.k.a makefile)
@@ -180,6 +180,7 @@ Typical-Go using itself as build-tool which is an excellent example. For other e
 - [x] [Docker Command](https://github.com/typical-go/typical-go/tree/master/examples/docker-command)
 - [x] [Custom Build-Tool](https://github.com/typical-go/typical-go/tree/master/examples/custom-build-tool)
 - [x] [Custom Command](https://github.com/typical-go/typical-go/tree/master/examples/custom-command)
+- [x] [Typical-Rest](https://github.com/typical-go/typical-rest-server): Rest Server
 
 
 ## License
