@@ -1,1 +1,0 @@
-package typapp_test

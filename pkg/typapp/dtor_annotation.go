@@ -63,8 +63,7 @@ func (a *DtorAnnotation) Annotate(c *typannot.Context) error {
 	if err := common.ExecuteTmplToFile(target, a.getTemplate(), data); err != nil {
 		return err
 	}
-	goImports(target)
-
+	typgo.GoImports(target)
 	return nil
 }
 

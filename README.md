@@ -124,57 +124,10 @@ func myFunc(){
 }
 ```
 
-## Dependency Injection
-
-Typical-Go encourage dependency-injection using [dig](https://github.com/uber-go/dig) and annotations (`@ctor` for constructor and `@dtor` for destructor). See the [example](https://github.com/typical-go/typical-go/tree/master/examples/use-dependency-injection).
-
-```go
-// OpenConn open new database connection
-// @ctor
-func OpenConn() *sql.DB{
-}
-```
-
-```go
-// CloseConn close the database connection
-// @dtor
-func CloseConn(db *sql.DB){
-}
-```
-
-## Mocking
-
-Typical-Go encourage mocking using [gomock](https://github.com/golang/mock) and annotation(`@mock`). See the [example](https://github.com/typical-go/typical-go/tree/master/examples/mock-command).
-
-```go
-type(
-   // Reader responsible to read
-   // @mock
-   Reader interface{
-      Read() error
-   }
-)
-```
-
-## Application Config
-
-Typical-go encourage [application config with environment variables](https://12factor.net/config) using [envconfig](https://github.com/kelseyhightower/envconfig) and annotation (`@cfg`). See the [example](https://github.com/typical-go/typical-go/tree/master/examples/use-config).
-
-```go
-type (
-   // ServerCfg configuration
-   // @cfg (prefix:"SERVER")
-   ServerCfg struct {
-      Address string `envconfig:"ADDRESS" default:":8080" required:"true"`
-   }
-)
-```
-
 ## Examples
 
 Typical-Go using itself as build-tool which is an excellent example. For other examples:
 - [x] [Hello World](https://github.com/typical-go/typical-go/tree/master/examples/hello-world)
-- [x] [Use Config](https://github.com/typical-go/typical-go/tree/master/examples/use-config)
 - [x] [Use Dependency Injection](https://github.com/typical-go/typical-go/tree/master/examples/use-dependency-injection)
 - [x] [Mock Command](https://github.com/typical-go/typical-go/tree/master/examples/mock-command)
 - [x] [Custom Build-Tool](https://github.com/typical-go/typical-go/tree/master/examples/custom-build-tool)
