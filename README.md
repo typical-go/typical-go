@@ -132,7 +132,12 @@ Typical-Go using itself as build-tool which is an excellent example. For other e
 - [x] [Mock Command](https://github.com/typical-go/typical-go/tree/master/examples/mock-command)
 - [x] [Custom Build-Tool](https://github.com/typical-go/typical-go/tree/master/examples/custom-build-tool)
 - [x] [Custom Command](https://github.com/typical-go/typical-go/tree/master/examples/custom-command)
-- [x] [Typical-Rest](https://github.com/typical-go/typical-rest-server): Rest Server
+
+## See Also
+
+- [`pkg/typapp`](pkg/typapp): Typical Application Framework
+- [`pkg/typmock`](pkg/typmock): Mock using annotation
+- [Typical-Rest-Server](https://github.com/typical-go/typical-rest-server)
 
 
 ## License
