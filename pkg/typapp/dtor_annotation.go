@@ -70,12 +70,10 @@ func (a *DtorAnnotation) Annotate(c *typannot.Context) error {
 // CreateDtors get dtors
 func (a *DtorAnnotation) CreateDtors(c *typannot.Context) []*Dtor {
 	var dtors []*Dtor
-	for _, annot := range c.ASTStore.Annots {
-		if annot.CheckFunc(a.getTagName()) {
-			dtors = append(dtors, &Dtor{
-				Def: fmt.Sprintf("%s.%s", annot.Decl.Package, annot.Decl.Name),
-			})
-		}
+	for _, annot := range c.FindAnnotByFunc(a.getTagName()) {
+		dtors = append(dtors, &Dtor{
+			Def: fmt.Sprintf("%s.%s", annot.Decl.Package, annot.Decl.Name),
+		})
 	}
 	return dtors
 }

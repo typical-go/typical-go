@@ -18,10 +18,6 @@ type (
 	}
 )
 
-//
-// Context
-//
-
 // CreateContext return new instance of context
 func CreateContext(c *typgo.Context) (*Context, error) {
 	dirs, files := WalkLayout(c.BuildSys.ProjectLayouts)
@@ -71,4 +67,44 @@ func WalkLayout(layouts []string) (dirs, files []string) {
 func isGoSource(path string) bool {
 	return strings.HasSuffix(path, ".go") &&
 		!strings.HasSuffix(path, "_test.go")
+}
+
+//
+// Context
+//
+
+// FindAnnotByFunc find annotation by function
+func (c *Context) FindAnnotByFunc(tagName string) []*Annot {
+	var annots []*Annot
+	for _, annot := range c.ASTStore.Annots {
+		_, ok := annot.Type.(*FuncType)
+		if strings.EqualFold(tagName, annot.TagName) && ok {
+			annots = append(annots, annot)
+		}
+	}
+	return annots
+}
+
+// FindAnnotByStruct find annotation by struct
+func (c *Context) FindAnnotByStruct(tagName string) []*Annot {
+	var annots []*Annot
+	for _, annot := range c.ASTStore.Annots {
+		_, ok := annot.Type.(*StructType)
+		if strings.EqualFold(tagName, annot.TagName) && ok {
+			annots = append(annots, annot)
+		}
+	}
+	return annots
+}
+
+// FindAnnotByInterface find annotation by interface
+func (c *Context) FindAnnotByInterface(tagName string) []*Annot {
+	var annots []*Annot
+	for _, annot := range c.ASTStore.Annots {
+		_, ok := annot.Type.(*InterfaceType)
+		if strings.EqualFold(tagName, annot.TagName) && ok {
+			annots = append(annots, annot)
+		}
+	}
+	return annots
 }

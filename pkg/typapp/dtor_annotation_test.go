@@ -17,7 +17,7 @@ func TestDtorAnnotation_Annotate(t *testing.T) {
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{})
 	defer unpatch(t)
-	defer os.RemoveAll("cmd/some-project")
+	defer os.RemoveAll("cmd")
 
 	dtorAnnot := &typapp.DtorAnnotation{}
 	ctx := &typannot.Context{

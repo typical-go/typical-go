@@ -22,6 +22,12 @@ type (
 		Package string
 		Type    interface{}
 	}
+	// Annot that contain extra additional information
+	Annot struct {
+		TagName  string            `json:"tag_name"`
+		TagParam reflect.StructTag `json:"tag_param"`
+		*Decl    `json:"decl"`
+	}
 	// FuncType function type
 	FuncType struct{}
 	// InterfaceType interface type
@@ -97,6 +103,32 @@ func CreateASTStore(paths ...string) (*ASTStore, error) {
 	}
 
 	return &ASTStore{Paths: paths, Decls: decls, Annots: annots}, nil
+}
+
+// ParseAnnot parse raw string to annotation
+func ParseAnnot(raw string) (tagName, tagAttrs string) {
+	iOpen := strings.IndexRune(raw, '(')
+	iSpace := strings.IndexRune(raw, ' ')
+
+	if iOpen < 0 {
+		if iSpace < 0 {
+			tagName = strings.TrimSpace(raw)
+			return tagName, ""
+		}
+		tagName = raw[:iSpace]
+	} else {
+		if iSpace < 0 {
+			tagName = raw[:iOpen]
+		} else {
+			tagName = raw[:iSpace]
+		}
+
+		if iClose := strings.IndexRune(raw, ')'); iClose > 0 {
+			tagAttrs = raw[iOpen+1 : iClose]
+		}
+	}
+
+	return tagName, tagAttrs
 }
 
 func convertStructType(s *ast.StructType) *StructType {

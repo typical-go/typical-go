@@ -11,7 +11,6 @@ require (
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
-	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/mattn/go-colorable v0.1.6 // indirect
 	github.com/stretchr/testify v1.4.0
 	github.com/urfave/cli/v2 v2.2.0
@@ -22,5 +21,5 @@ require (
 	golang.org/x/sys v0.0.0-20200501145240-bc7a7d42d5c3 // indirect
 	golang.org/x/tools v0.0.0-20200504022951-6b6965ac5dd1 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
-	gopkg.in/yaml.v2 v2.2.8
+	gopkg.in/yaml.v2 v2.2.8 // indirect
 )

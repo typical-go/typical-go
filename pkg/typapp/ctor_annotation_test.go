@@ -17,7 +17,7 @@ func TestCtorAnnotation_Annotate(t *testing.T) {
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{})
 	defer unpatch(t)
-	defer os.RemoveAll("cmd/some-project")
+	defer os.RemoveAll("cmd")
 
 	ctorAnnot := &typapp.CtorAnnotation{}
 	ctx := &typannot.Context{

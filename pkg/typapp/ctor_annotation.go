@@ -72,13 +72,11 @@ func (a *CtorAnnotation) Annotate(c *typannot.Context) error {
 // CreateCtors get ctors
 func (a *CtorAnnotation) CreateCtors(c *typannot.Context) []*Ctor {
 	var ctors []*Ctor
-	for _, annot := range c.ASTStore.Annots {
-		if annot.CheckFunc(a.getTagName()) {
-			ctors = append(ctors, &Ctor{
-				Name: annot.TagParam.Get("name"),
-				Def:  fmt.Sprintf("%s.%s", annot.Decl.Package, annot.Decl.Name),
-			})
-		}
+	for _, annot := range c.FindAnnotByFunc(a.getTagName()) {
+		ctors = append(ctors, &Ctor{
+			Name: annot.TagParam.Get("name"),
+			Def:  fmt.Sprintf("%s.%s", annot.Decl.Package, annot.Decl.Name),
+		})
 	}
 	return ctors
 }

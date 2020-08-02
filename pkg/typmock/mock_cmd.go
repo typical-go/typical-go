@@ -52,10 +52,8 @@ func Annotate(c *typannot.Context) error {
 	}
 
 	mockery := NewMockery(typgo.ProjectPkg)
-	for _, annot := range c.ASTStore.Annots {
-		if annot.CheckInterface(MockTag) {
-			mockery.Put(CreateMock(annot))
-		}
+	for _, annot := range c.FindAnnotByInterface(MockTag) {
+		mockery.Put(CreateMock(annot))
 	}
 	targetMap := mockery.Map
 	args := c.Args()
