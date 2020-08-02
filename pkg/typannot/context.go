@@ -75,34 +75,32 @@ func isGoSource(path string) bool {
 
 // FindAnnotByFunc find annotation by function
 func (c *Context) FindAnnotByFunc(tagName string) []*Annot {
-	var annots []*Annot
-	for _, annot := range c.ASTStore.Annots {
-		_, ok := annot.Type.(*FuncType)
-		if strings.EqualFold(tagName, annot.TagName) && ok {
-			annots = append(annots, annot)
-		}
-	}
-	return annots
+	return c.findAnnot(func(a *Annot) bool {
+		_, ok := a.Type.(*FuncType)
+		return strings.EqualFold(tagName, a.TagName) && ok
+	})
 }
 
 // FindAnnotByStruct find annotation by struct
 func (c *Context) FindAnnotByStruct(tagName string) []*Annot {
-	var annots []*Annot
-	for _, annot := range c.ASTStore.Annots {
-		_, ok := annot.Type.(*StructType)
-		if strings.EqualFold(tagName, annot.TagName) && ok {
-			annots = append(annots, annot)
-		}
-	}
-	return annots
+	return c.findAnnot(func(a *Annot) bool {
+		_, ok := a.Type.(*StructType)
+		return strings.EqualFold(tagName, a.TagName) && ok
+	})
 }
 
 // FindAnnotByInterface find annotation by interface
 func (c *Context) FindAnnotByInterface(tagName string) []*Annot {
+	return c.findAnnot(func(a *Annot) bool {
+		_, ok := a.Type.(*InterfaceType)
+		return strings.EqualFold(tagName, a.TagName) && ok
+	})
+}
+
+func (c *Context) findAnnot(checkFn func(*Annot) bool) []*Annot {
 	var annots []*Annot
 	for _, annot := range c.ASTStore.Annots {
-		_, ok := annot.Type.(*InterfaceType)
-		if strings.EqualFold(tagName, annot.TagName) && ok {
+		if checkFn(annot) {
 			annots = append(annots, annot)
 		}
 	}
