@@ -3,6 +3,7 @@ package typapp
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typannot"
@@ -47,13 +48,14 @@ var _ typannot.Annotator = (*DtorAnnotation)(nil)
 // Annotate @dtor
 func (a *DtorAnnotation) Annotate(c *typannot.Context) error {
 	dtors := a.CreateDtors(c)
-	target := a.getTarget(c)
+	target := fmt.Sprintf("%s/%s", c.Destination, a.getTarget(c))
+	pkg := filepath.Base(c.Destination)
 	if len(dtors) < 1 {
 		os.Remove(target)
 		return nil
 	}
 	data := &DtorTmplData{
-		Package: "main",
+		Package: pkg,
 		Imports: c.CreateImports(typgo.ProjectPkg,
 			"github.com/typical-go/typical-go/pkg/typapp",
 		),
@@ -94,7 +96,7 @@ func (a *DtorAnnotation) getTemplate() string {
 
 func (a *DtorAnnotation) getTarget(c *typannot.Context) string {
 	if a.Target == "" {
-		a.Target = fmt.Sprintf("cmd/%s/dtor_annotated.go", c.BuildSys.ProjectName)
+		a.Target = "dtor_annotated.go"
 	}
 	return a.Target
 }

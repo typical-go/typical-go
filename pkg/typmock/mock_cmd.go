@@ -32,15 +32,16 @@ func (d *MockCmd) Command(c *typgo.BuildSys) *cli.Command {
 
 // Execute mock command
 func (d *MockCmd) Execute(c *typgo.Context) error {
-	ac, err := typannot.CreateContext(c)
+	_, files := typannot.Walk(c.BuildSys.ProjectLayouts)
+	summary, err := typannot.Compile(files...)
 	if err != nil {
 		return err
 	}
-	return Annotate(ac)
+	return Annotate(c, summary)
 }
 
 // Annotate mock
-func Annotate(c *typannot.Context) error {
+func Annotate(c *typgo.Context, summary *typannot.Summary) error {
 	mockgen := fmt.Sprintf("%s/bin/mockgen", typgo.TypicalTmp)
 	if _, err := os.Stat(mockgen); os.IsNotExist(err) {
 		if err := c.Execute(&execkit.GoBuild{
@@ -50,9 +51,8 @@ func Annotate(c *typannot.Context) error {
 			return err
 		}
 	}
-
 	mockery := NewMockery(typgo.ProjectPkg)
-	for _, annot := range c.FindAnnotByInterface(MockTag) {
+	for _, annot := range summary.FindAnnotByInterface(MockTag) {
 		mockery.Put(CreateMock(annot))
 	}
 	targetMap := mockery.Map

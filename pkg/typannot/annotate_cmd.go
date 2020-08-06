@@ -8,10 +8,11 @@ import (
 type (
 	// AnnotateCmd annotate cmd
 	AnnotateCmd struct {
-		Name       string   // By default is "annotate"
-		Aliases    []string // By default is "a"
-		Usage      string   // By default is "Annotate the project and generate code"
-		Annotators []Annotator
+		Name        string   // By default is "annotate"
+		Aliases     []string // By default is "a"
+		Usage       string   // By default is "Annotate the project and generate code"
+		Destination string   // By default is "internal/generated"
+		Annotators  []Annotator
 	}
 	// Annotator responsible to annotate
 	Annotator interface {
@@ -43,7 +44,7 @@ func (a *AnnotateCmd) Command(sys *typgo.BuildSys) *cli.Command {
 
 // Execute annotation
 func (a *AnnotateCmd) Execute(c *typgo.Context) error {
-	ac, err := CreateContext(c)
+	ac, err := a.CreateContext(c)
 	if err != nil {
 		return err
 	}
@@ -53,6 +54,28 @@ func (a *AnnotateCmd) Execute(c *typgo.Context) error {
 		}
 	}
 	return nil
+}
+
+// CreateContext create context
+func (a *AnnotateCmd) CreateContext(c *typgo.Context) (*Context, error) {
+	dirs, files := Walk(c.BuildSys.ProjectLayouts)
+	summary, err := Compile(files...)
+	if err != nil {
+		return nil, err
+	}
+	return &Context{
+		Context:     c,
+		Summary:     summary,
+		Dirs:        dirs,
+		Destination: a.getDestination(),
+	}, nil
+}
+
+func (a *AnnotateCmd) getDestination() string {
+	if a.Destination == "" {
+		a.Destination = "internal/generated"
+	}
+	return a.Destination
 }
 
 func (a *AnnotateCmd) getUsage() string {

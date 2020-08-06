@@ -13,22 +13,20 @@ import (
 )
 
 func TestAnnotate(t *testing.T) {
-	c := &typannot.Context{
-		Context: &typgo.Context{
-			BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"."}}},
-			Context:  cli.NewContext(nil, &flag.FlagSet{}, nil),
-		},
-		Summary: &typannot.Summary{
-			Annots: []*typannot.Annot{
-				{
-					TagName: "@mock",
-					Decl: &typannot.Decl{
-						Name:    "SomeInterface",
-						Package: "mypkg",
-						Path:    "parent/path/some_interface.go",
-						Type:    &typannot.InterfaceType{},
-					}},
-			},
+	c := &typgo.Context{
+		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"."}}},
+		Context:  cli.NewContext(nil, &flag.FlagSet{}, nil),
+	}
+	summary := &typannot.Summary{
+		Annots: []*typannot.Annot{
+			{
+				TagName: "@mock",
+				Decl: &typannot.Decl{
+					Name:    "SomeInterface",
+					Package: "mypkg",
+					Path:    "parent/path/some_interface.go",
+					Type:    &typannot.InterfaceType{},
+				}},
 		},
 	}
 
@@ -39,5 +37,5 @@ func TestAnnotate(t *testing.T) {
 	})
 	defer unpatch(t)
 
-	require.NoError(t, typmock.Annotate(c))
+	require.NoError(t, typmock.Annotate(c, summary))
 }

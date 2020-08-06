@@ -12,13 +12,19 @@ import (
 
 func TestAnnotateCmd(t *testing.T) {
 	annonateCmd := &typannot.AnnotateCmd{}
-	command := annonateCmd.Command(&typgo.BuildSys{
+
+	sys := &typgo.BuildSys{
 		Descriptor: &typgo.Descriptor{},
-	})
+	}
+	command := annonateCmd.Command(sys)
 	require.Equal(t, "annotate", command.Name)
 	require.Equal(t, []string{"a"}, command.Aliases)
 	require.Equal(t, "Annotate the project and generate code", command.Usage)
 	require.NoError(t, command.Action(&cli.Context{}))
+
+	ctx, err := annonateCmd.CreateContext(&typgo.Context{BuildSys: sys})
+	require.NoError(t, err)
+	require.Equal(t, "internal/generated", ctx.Destination)
 }
 
 func TestAnnotateCmd_Defined(t *testing.T) {
@@ -31,13 +37,20 @@ func TestAnnotateCmd_Defined(t *testing.T) {
 				return errors.New("some-error")
 			}),
 		},
+		Destination: "some-destination",
 	}
-	sys := &typgo.BuildSys{Descriptor: &typgo.Descriptor{}}
+	sys := &typgo.BuildSys{
+		Descriptor: &typgo.Descriptor{},
+	}
 	command := annonateCmd.Command(sys)
 	require.Equal(t, "some-name", command.Name)
 	require.Equal(t, []string{"x"}, command.Aliases)
 	require.Equal(t, "some-usage", command.Usage)
 	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
+
+	ctx, err := annonateCmd.CreateContext(&typgo.Context{BuildSys: sys})
+	require.NoError(t, err)
+	require.Equal(t, "some-destination", ctx.Destination)
 }
 
 func TestAnnotators_Execute(t *testing.T) {

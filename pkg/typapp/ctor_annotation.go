@@ -3,6 +3,7 @@ package typapp
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/typannot"
@@ -15,7 +16,7 @@ type (
 	CtorAnnotation struct {
 		TagName  string // By default is `@ctor`
 		Template string // By default defined in defaultCtorTemplate
-		Target   string // By default is `cmd/PROJECT_NAME/cfg_annotated.go`
+		Target   string // By default is `cfg_annotated.go`
 	}
 	// CtorTmplData template
 	CtorTmplData struct {
@@ -49,13 +50,16 @@ var _ typannot.Annotator = (*CtorAnnotation)(nil)
 // Annotate ctor
 func (a *CtorAnnotation) Annotate(c *typannot.Context) error {
 	ctors := a.CreateCtors(c)
-	target := a.getTarget(c)
+	target := fmt.Sprintf("%s/%s", c.Destination, a.getTarget(c))
+	pkg := filepath.Base(c.Destination)
+
 	if len(ctors) < 1 {
 		os.Remove(target)
 		return nil
 	}
+
 	data := &CtorTmplData{
-		Package: "main",
+		Package: pkg,
 		Imports: c.CreateImports(typgo.ProjectPkg,
 			"github.com/typical-go/typical-go/pkg/typapp",
 		),
@@ -83,7 +87,7 @@ func (a *CtorAnnotation) CreateCtors(c *typannot.Context) []*Ctor {
 
 func (a *CtorAnnotation) getTarget(c *typannot.Context) string {
 	if a.Target == "" {
-		a.Target = fmt.Sprintf("cmd/%s/ctor_annotated.go", c.BuildSys.ProjectName)
+		a.Target = "ctor_annotated.go"
 	}
 	return a.Target
 }
