@@ -68,8 +68,8 @@ var (
 	}
 )
 
-func TestCreateASTStore(t *testing.T) {
-	store, err := typannot.CreateASTStore("sample_test.go")
+func TestCompile(t *testing.T) {
+	store, err := typannot.Compile("sample_test.go")
 	require.NoError(t, err)
 
 	require.EqualValues(t, []*typannot.Decl{
@@ -107,8 +107,8 @@ func TestCreateASTStore(t *testing.T) {
 	}, store.Annots)
 }
 
-func TestCreateASTStore_FileNotFound(t *testing.T) {
-	_, err := typannot.CreateASTStore("not_found.go")
+func TestCompile_FileNotFound(t *testing.T) {
+	_, err := typannot.Compile("not_found.go")
 	require.EqualError(t, err, "open not_found.go: no such file or directory")
 }
 

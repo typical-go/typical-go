@@ -18,7 +18,7 @@ func TestAnnotate(t *testing.T) {
 			BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"."}}},
 			Context:  cli.NewContext(nil, &flag.FlagSet{}, nil),
 		},
-		ASTStore: &typannot.ASTStore{
+		Summary: &typannot.Summary{
 			Annots: []*typannot.Annot{
 				{
 					TagName: "@mock",

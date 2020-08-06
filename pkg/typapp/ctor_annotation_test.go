@@ -26,7 +26,7 @@ func TestCtorAnnotation_Annotate(t *testing.T) {
 				Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
 			},
 		},
-		ASTStore: &typannot.ASTStore{
+		Summary: &typannot.Summary{
 			Annots: []*typannot.Annot{
 				{
 					TagName: "@ctor",
@@ -77,7 +77,7 @@ func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
 				Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
 			},
 		},
-		ASTStore: &typannot.ASTStore{
+		Summary: &typannot.Summary{
 			Annots: []*typannot.Annot{
 				{
 					TagName: "@some-tag",
@@ -100,8 +100,8 @@ func TestCtorAnnotation_Annotate_RemoveTargetWhenNoAnnotation(t *testing.T) {
 	ioutil.WriteFile(target, []byte("some-content"), 0777)
 	ctorAnnot := &typapp.CtorAnnotation{Target: target}
 	ctx := &typannot.Context{
-		Context:  &typgo.Context{},
-		ASTStore: &typannot.ASTStore{},
+		Context: &typgo.Context{},
+		Summary: &typannot.Summary{},
 	}
 	require.NoError(t, ctorAnnot.Annotate(ctx))
 	_, err := os.Stat(target)

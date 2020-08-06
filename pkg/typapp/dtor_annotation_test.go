@@ -26,7 +26,7 @@ func TestDtorAnnotation_Annotate(t *testing.T) {
 				Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
 			},
 		},
-		ASTStore: &typannot.ASTStore{
+		Summary: &typannot.Summary{
 			Annots: []*typannot.Annot{
 				{TagName: "@dtor", Decl: &typannot.Decl{Name: "Clean", Package: "pkg", Type: &typannot.FuncType{}}},
 			},
@@ -68,7 +68,7 @@ func TestDtorAnnotation_Annotate_Predefined(t *testing.T) {
 				Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
 			},
 		},
-		ASTStore: &typannot.ASTStore{
+		Summary: &typannot.Summary{
 			Annots: []*typannot.Annot{
 				{TagName: "@some-tag", Decl: &typannot.Decl{Name: "Clean", Package: "pkg", Type: &typannot.FuncType{}}},
 			},
@@ -87,8 +87,8 @@ func TestDtorAnnotation_Annotate_RemoveTargetWhenNoAnnotation(t *testing.T) {
 	ioutil.WriteFile(target, []byte("some-content"), 0777)
 	dtorAnnot := &typapp.DtorAnnotation{Target: target}
 	ctx := &typannot.Context{
-		Context:  &typgo.Context{},
-		ASTStore: &typannot.ASTStore{},
+		Context: &typgo.Context{},
+		Summary: &typannot.Summary{},
 	}
 	require.NoError(t, dtorAnnot.Annotate(ctx))
 	_, err := os.Stat(target)

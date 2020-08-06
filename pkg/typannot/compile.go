@@ -8,44 +8,8 @@ import (
 	"strings"
 )
 
-type (
-	// ASTStore responsible to store filename, declaration and annotation
-	ASTStore struct {
-		Paths  []string
-		Decls  []*Decl
-		Annots []*Annot
-	}
-	// Decl stand of declaration
-	Decl struct {
-		Name    string
-		Path    string
-		Package string
-		Type    interface{}
-	}
-	// Annot that contain extra additional information
-	Annot struct {
-		TagName  string            `json:"tag_name"`
-		TagParam reflect.StructTag `json:"tag_param"`
-		*Decl    `json:"decl"`
-	}
-	// FuncType function type
-	FuncType struct{}
-	// InterfaceType interface type
-	InterfaceType struct{}
-	// StructType struct type
-	StructType struct {
-		Fields []*Field
-	}
-	// Field information
-	Field struct {
-		Name string
-		Type string
-		reflect.StructTag
-	}
-)
-
-// CreateASTStore to walk through the filenames and store declaration and annotations
-func CreateASTStore(paths ...string) (*ASTStore, error) {
+// Compile paths to ASTStore
+func Compile(paths ...string) (*Summary, error) {
 	var (
 		decls  []*Decl
 		annots []*Annot
@@ -102,7 +66,7 @@ func CreateASTStore(paths ...string) (*ASTStore, error) {
 		}
 	}
 
-	return &ASTStore{Paths: paths, Decls: decls, Annots: annots}, nil
+	return &Summary{Paths: paths, Decls: decls, Annots: annots}, nil
 }
 
 // ParseAnnot parse raw string to annotation
