@@ -2,7 +2,6 @@ package typgo_test
 
 import (
 	"context"
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -18,22 +17,6 @@ func TestCompileCmd(t *testing.T) {
 	require.Equal(t, []string{"c"}, command.Aliases)
 	require.Equal(t, "Compile the project", command.Usage)
 	require.NoError(t, command.Action(&cli.Context{}))
-}
-
-func TestCompileCmd_Define(t *testing.T) {
-	compileCmd := &typgo.CompileCmd{
-		Name:    "some-name",
-		Usage:   "some-usage",
-		Aliases: []string{"x"},
-		Action: typgo.NewAction(func(*typgo.Context) error {
-			return errors.New("action-error")
-		}),
-	}
-	command := compileCmd.Command(&typgo.BuildSys{})
-	require.Equal(t, "some-name", command.Name)
-	require.Equal(t, []string{"x"}, command.Aliases)
-	require.Equal(t, "some-usage", command.Usage)
-	require.EqualError(t, command.Action(&cli.Context{}), "action-error")
 }
 
 func TestStdCompile(t *testing.T) {

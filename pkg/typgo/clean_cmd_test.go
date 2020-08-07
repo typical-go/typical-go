@@ -2,6 +2,8 @@ package typgo_test
 
 import (
 	"errors"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -19,28 +21,39 @@ func TestCleanCmd(t *testing.T) {
 
 func TestCleanCmd_Predefined(t *testing.T) {
 	cleanCmd := &typgo.CleanCmd{
-		Name:  "some-name",
-		Usage: "some-usage",
 		Action: typgo.NewAction(func(*typgo.Context) error {
 			return errors.New("some-error")
 		}),
 	}
 	command := cleanCmd.Command(&typgo.BuildSys{})
-	require.Equal(t, "some-name", command.Name)
-	require.Equal(t, "some-usage", command.Usage)
 	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
 }
 
 func TestStdClean(t *testing.T) {
-	t.Run("default", func(t *testing.T) {
-		typgo.TypicalTmp = ".typical-tmp"
-		stdClean := &typgo.StdClean{}
-		require.Equal(t, []string{".typical-tmp"}, stdClean.GetPaths())
-	})
-	t.Run("predefined", func(t *testing.T) {
-		stdClean := &typgo.StdClean{
-			Paths: []string{"path1", "path2"},
-		}
-		require.Equal(t, []string{"path1", "path2"}, stdClean.GetPaths())
-	})
+	typgo.TypicalTmp = "some-tmp"
+	stdClean := &typgo.StdClean{}
+
+	var out strings.Builder
+	typgo.Stdout = &out
+	defer func() {
+		typgo.Stdout = os.Stdout
+	}()
+
+	require.NoError(t, stdClean.Execute(&typgo.Context{}))
+	require.Equal(t, "Removing some-tmp\n", out.String())
+
+}
+
+func TestStdClean_Predefined(t *testing.T) {
+	var out strings.Builder
+	typgo.Stdout = &out
+	defer func() {
+		typgo.Stdout = os.Stdout
+	}()
+
+	stdClean := &typgo.StdClean{
+		Paths: []string{"path1", "path2"},
+	}
+	require.NoError(t, stdClean.Execute(&typgo.Context{}))
+	require.Equal(t, "Removing path1\nRemoving path2\n", out.String())
 }

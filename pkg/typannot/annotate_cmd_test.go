@@ -29,23 +29,17 @@ func TestAnnotateCmd(t *testing.T) {
 
 func TestAnnotateCmd_Defined(t *testing.T) {
 	annonateCmd := &typannot.AnnotateCmd{
-		Name:    "some-name",
-		Aliases: []string{"x"},
-		Usage:   "some-usage",
+		Destination: "some-destination",
 		Annotators: []typannot.Annotator{
 			typannot.NewAnnotator(func(*typannot.Context) error {
 				return errors.New("some-error")
 			}),
 		},
-		Destination: "some-destination",
 	}
 	sys := &typgo.BuildSys{
 		Descriptor: &typgo.Descriptor{},
 	}
 	command := annonateCmd.Command(sys)
-	require.Equal(t, "some-name", command.Name)
-	require.Equal(t, []string{"x"}, command.Aliases)
-	require.Equal(t, "some-usage", command.Usage)
 	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
 
 	ctx, err := annonateCmd.CreateContext(&typgo.Context{BuildSys: sys})

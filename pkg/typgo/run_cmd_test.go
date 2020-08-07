@@ -22,11 +22,8 @@ func TestRunCmd(t *testing.T) {
 	require.NoError(t, command.Before(&cli.Context{}))
 }
 
-func TestRunCommand_(t *testing.T) {
+func TestRunCommand(t *testing.T) {
 	runCmd := &typgo.RunCmd{
-		Name:    "some-name",
-		Usage:   "some-usage",
-		Aliases: []string{"x"},
 		Before: typgo.NewAction(func(*typgo.Context) error {
 			return errors.New("before-error")
 		}),
@@ -35,9 +32,6 @@ func TestRunCommand_(t *testing.T) {
 		}),
 	}
 	command := runCmd.Command(&typgo.BuildSys{})
-	require.Equal(t, "some-name", command.Name)
-	require.Equal(t, "some-usage", command.Usage)
-	require.Equal(t, []string{"x"}, command.Aliases)
 	require.EqualError(t, command.Action(&cli.Context{}), "action-error")
 	require.EqualError(t, command.Before(&cli.Context{}), "before-error")
 }

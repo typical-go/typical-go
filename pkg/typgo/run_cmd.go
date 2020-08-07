@@ -32,34 +32,13 @@ var _ Cmd = (*RunCmd)(nil)
 // Command run
 func (r *RunCmd) Command(sys *BuildSys) *cli.Command {
 	return &cli.Command{
-		Name:            r.getName(),
-		Aliases:         r.getAliases(),
-		Usage:           r.getUsage(),
+		Name:            "run",
+		Aliases:         []string{"r"},
+		Usage:           "Run the project",
 		SkipFlagParsing: true,
 		Before:          sys.ActionFn(r.Before),
 		Action:          sys.ActionFn(r.Action),
 	}
-}
-
-func (r *RunCmd) getName() string {
-	if r.Name == "" {
-		r.Name = "run"
-	}
-	return r.Name
-}
-
-func (r *RunCmd) getAliases() []string {
-	if len(r.Aliases) < 1 {
-		r.Aliases = []string{"r"}
-	}
-	return r.Aliases
-}
-
-func (r *RunCmd) getUsage() string {
-	if r.Usage == "" {
-		r.Usage = "Run the project"
-	}
-	return r.Usage
 }
 
 //

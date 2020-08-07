@@ -10,9 +10,6 @@ import (
 type (
 	// CompileCmd compile command
 	CompileCmd struct {
-		Name    string   // By default is "compile"
-		Aliases []string // By default is "c"
-		Usage   string   // By default is "Compile the project"
 		Action
 	}
 	// StdCompile is standard compile
@@ -34,32 +31,11 @@ var _ Cmd = (*CompileCmd)(nil)
 // Command compile
 func (c *CompileCmd) Command(b *BuildSys) *cli.Command {
 	return &cli.Command{
-		Name:    c.getName(),
-		Aliases: c.getAliases(),
-		Usage:   c.getUsage(),
+		Name:    "compile",
+		Aliases: []string{"c"},
+		Usage:   "Compile the project",
 		Action:  b.ActionFn(c.Action),
 	}
-}
-
-func (c *CompileCmd) getName() string {
-	if c.Name == "" {
-		c.Name = "compile"
-	}
-	return c.Name
-}
-
-func (c *CompileCmd) getAliases() []string {
-	if len(c.Aliases) < 1 {
-		c.Aliases = []string{"c"}
-	}
-	return c.Aliases
-}
-
-func (c *CompileCmd) getUsage() string {
-	if c.Usage == "" {
-		c.Usage = "Compile the project"
-	}
-	return c.Usage
 }
 
 //

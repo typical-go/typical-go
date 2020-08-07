@@ -23,17 +23,11 @@ func TestTestCmd(t *testing.T) {
 
 func TestTestCmd_Predefined(t *testing.T) {
 	testCmd := &typgo.TestCmd{
-		Name:    "some-name",
-		Usage:   "some-usage",
-		Aliases: []string{"x"},
 		Action: typgo.NewAction(func(*typgo.Context) error {
 			return errors.New("some-error")
 		}),
 	}
 	command := testCmd.Command(&typgo.BuildSys{})
-	require.Equal(t, "some-name", command.Name)
-	require.Equal(t, "some-usage", command.Usage)
-	require.Equal(t, []string{"x"}, command.Aliases)
 	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
 }
 
@@ -49,6 +43,21 @@ func TestStdTest(t *testing.T) {
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
 		{CommandLine: []string{"go", "test", "-timeout=25s", "-coverprofile=cover.out", "./pkg3/...", "./pkg4/..."}},
 	})
+	defer unpatch(t)
+
+	require.NoError(t, stdtest.Execute(c))
+}
+
+func TestStdTest_NoProjectLayout(t *testing.T) {
+	stdtest := &typgo.StdTest{}
+	c := &typgo.Context{
+		Context: &cli.Context{Context: context.Background()},
+		BuildSys: &typgo.BuildSys{
+			Descriptor: &typgo.Descriptor{},
+		},
+	}
+
+	unpatch := execkit.Patch([]*execkit.RunExpectation{})
 	defer unpatch(t)
 
 	require.NoError(t, stdtest.Execute(c))

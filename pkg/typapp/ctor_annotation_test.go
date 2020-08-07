@@ -14,7 +14,7 @@ import (
 
 func TestCtorAnnotation_Annotate(t *testing.T) {
 	os.MkdirAll("folder1/dest1", 0777)
-	defer os.RemoveAll("folder1/dest1")
+	defer os.RemoveAll("folder1")
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{})
 	defer unpatch(t)
@@ -64,7 +64,7 @@ func init() {
 
 func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
 	os.MkdirAll("folder2/dest2", 0777)
-	defer os.RemoveAll("folder2/dest2")
+	defer os.RemoveAll("folder2")
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{})
 	defer unpatch(t)
@@ -100,7 +100,7 @@ func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
 
 func TestCtorAnnotation_Annotate_RemoveTargetWhenNoAnnotation(t *testing.T) {
 	os.MkdirAll("folder4/pkg4", 0777)
-	defer os.RemoveAll("folder4/pkg4")
+	defer os.RemoveAll("folder4")
 
 	ctorAnnot := &typapp.CtorAnnotation{Target: "some-target"}
 	ctx := &typannot.Context{
