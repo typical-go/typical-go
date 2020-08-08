@@ -31,7 +31,7 @@ if ! [ -s $TYPGO ]; then
 fi
 
 $TYPGO run \
-	-src=$BUILDTOOL_SRC \
+	-typical-build=$BUILDTOOL_SRC \
 	-project-pkg=$PROJECT_PKG \
 	-typical-tmp=$TYPTMP \
 	$@

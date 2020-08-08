@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/common"
@@ -29,8 +28,8 @@ if ! [ -s $TYPGO ]; then
 fi
 
 $TYPGO run \
-	-src="{{.Src}}" \
 	-project-pkg="{{.ProjectPkg}}" \
+	-typical-build="{{.TypicalBuild}}" \
 	-typical-tmp=$TYPTMP \
 	$@
 `
@@ -57,7 +56,7 @@ func setup(c *cli.Context) error {
 		}
 	}
 
-	p, err := getParam(c)
+	p, err := GetParam(c)
 	if err != nil {
 		return err
 	}
@@ -83,18 +82,23 @@ func initGoMod(ctx context.Context, pkg string) error {
 	return nil
 }
 
-func createWrapper(p *param) error {
+func createWrapper(p *Param) error {
 	fmt.Fprintf(Stdout, "\nCreate wrapper '%s'\n", typicalw)
 	return common.ExecuteTmplToFile(typicalw, typicalwTmpl, p)
 }
 
-func newProject(p *param) error {
-	_, b, _, _ := runtime.Caller(0)
-	projectName := filepath.Dir(b)
-	// os.MkdirAll("tools/typical-build", 0777)
-	// os.MkdirAll("cmd/"+projectName, 0777)
+func newProject(p *Param) error {
+	projectName := filepath.Base(p.ProjectPkg)
 
-	fmt.Println(projectName)
+	mkdirAll(p.TypicalTmp)
+	mkdirAll("cmd/" + projectName)
+	mkdirAll("internal/app")
+	mkdirAll("app")
 
 	return nil
+}
+
+func mkdirAll(path string) {
+	fmt.Fprintf(Stdout, "Mkdir %s\n", path)
+	os.MkdirAll(path, 0777)
 }

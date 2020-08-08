@@ -1,0 +1,68 @@
+package app_test
+
+import (
+	"errors"
+	"flag"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/internal/app"
+	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/urfave/cli/v2"
+)
+
+func TestGetParam(t *testing.T) {
+	param, err := app.GetParam(cliContext([]string{
+		"-typical-build=1",
+		"-typical-tmp=2",
+		"-project-pkg=3",
+	}))
+
+	require.NoError(t, err)
+	require.Equal(t, &app.Param{
+		TypicalBuild: "1",
+		TypicalTmp:   "2",
+		ProjectPkg:   "3",
+	}, param)
+}
+
+func TestGetParam_Default(t *testing.T) {
+	unpatch := execkit.Patch([]*execkit.RunExpectation{
+		{CommandLine: []string{"go", "list", "-m"}, OutputBytes: []byte("some-package")},
+	})
+	defer unpatch(t)
+
+	param, err := app.GetParam(cliContext([]string{}))
+
+	require.NoError(t, err)
+	require.Equal(t, &app.Param{
+		TypicalBuild: "tools/typical-build",
+		TypicalTmp:   ".typical-tmp",
+		ProjectPkg:   "some-package",
+	}, param)
+}
+
+func TestGetParam_Default_FailedRetrivePackage(t *testing.T) {
+	unpatch := execkit.Patch([]*execkit.RunExpectation{
+		{
+			CommandLine: []string{"go", "list", "-m"},
+			ErrorBytes:  []byte("error-message"),
+			ReturnError: errors.New("some-error"),
+		},
+	})
+	defer unpatch(t)
+
+	_, err := app.GetParam(cliContext([]string{}))
+	require.EqualError(t, err, "some-error: error-message")
+}
+
+func cliContext(args []string) *cli.Context {
+	flagSet := &flag.FlagSet{}
+	flagSet.String(app.TypicalTmpParam, app.DefaultTypicalTmp, "")
+	flagSet.String(app.TypicalBuildParam, app.DefaultTypicalBuild, "")
+	flagSet.String(app.ProjectPkgParam, "", "")
+
+	flagSet.Parse(args)
+
+	return cli.NewContext(nil, flagSet, nil)
+}

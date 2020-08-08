@@ -10,38 +10,44 @@ import (
 )
 
 type (
-	param struct {
-		Src        string
-		TypicalTmp string
-		ProjectPkg string
+	// Param for typical-go
+	Param struct {
+		TypicalBuild string
+		TypicalTmp   string
+		ProjectPkg   string
 	}
 )
 
 var (
-	typicalTmpParam = "typical-tmp"
-	projPkgParam    = "project-pkg"
-	srcParam        = "src"
-
-	typicalTmpFlag = &cli.StringFlag{
-		Name:  typicalTmpParam,
+	// TypicalTmpParam typical-tmp param
+	TypicalTmpParam = "typical-tmp"
+	// DefaultTypicalTmp typical-tmp default value
+	DefaultTypicalTmp = ".typical-tmp"
+	// TypicalBuildParam typical-build param
+	TypicalBuildParam = "typical-build"
+	// DefaultTypicalBuild typical-build default value
+	DefaultTypicalBuild = "tools/typical-build"
+	// ProjectPkgParam project-pkg param
+	ProjectPkgParam = "project-pkg"
+	typicalTmpFlag  = &cli.StringFlag{
+		Name:  TypicalTmpParam,
 		Usage: "Temporary directory location to save builds-related files",
-		Value: ".typical-tmp",
+		Value: DefaultTypicalTmp,
 	}
-
 	projPkgFlag = &cli.StringFlag{
-		Name:  projPkgParam,
+		Name:  ProjectPkgParam,
 		Usage: "Project package name. Same with module package in go.mod by default",
 	}
-
 	srcFlag = &cli.StringFlag{
-		Name:  srcParam,
-		Usage: "Build-tool source",
-		Value: "tools/typical-build",
+		Name:  TypicalBuildParam,
+		Usage: "Typical-Build source code location",
+		Value: DefaultTypicalBuild,
 	}
 )
 
-func getParam(c *cli.Context) (*param, error) {
-	projPkg := c.String(projPkgParam)
+// GetParam get param
+func GetParam(c *cli.Context) (*Param, error) {
+	projPkg := c.String(ProjectPkgParam)
 	if projPkg == "" {
 		var err error
 		projPkg, err = retrieveProjPkg(c.Context)
@@ -50,10 +56,10 @@ func getParam(c *cli.Context) (*param, error) {
 		}
 	}
 
-	return &param{
-		Src:        c.String(srcParam),
-		TypicalTmp: c.String(typicalTmpParam),
-		ProjectPkg: projPkg,
+	return &Param{
+		TypicalBuild: c.String(TypicalBuildParam),
+		TypicalTmp:   c.String(TypicalTmpParam),
+		ProjectPkg:   projPkg,
 	}, nil
 }
 
@@ -66,7 +72,7 @@ func retrieveProjPkg(ctx context.Context) (string, error) {
 		Stdout: &stdout,
 		Stderr: &stderr,
 	}); err != nil {
-		return "", errors.New(stderr.String())
+		return "", errors.New(err.Error() + ": " + stderr.String())
 	}
 
 	return strings.TrimSpace(stdout.String()), nil

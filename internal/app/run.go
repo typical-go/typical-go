@@ -22,15 +22,15 @@ func cmdRun() *cli.Command {
 }
 
 func run(c *cli.Context) error {
-	p, err := getParam(c)
+	p, err := GetParam(c)
 	if err != nil {
 		return err
 	}
 
 	chksumTarget := fmt.Sprintf("%s/checksum", p.TypicalTmp)
-	bin := fmt.Sprintf("%s/bin/%s", p.TypicalTmp, filepath.Base(p.Src))
+	bin := fmt.Sprintf("%s/bin/%s", p.TypicalTmp, filepath.Base(p.TypicalBuild))
 
-	chksum := generateChecksum(p.Src)
+	chksum := generateChecksum(p.TypicalBuild)
 	chksum0, _ := ioutil.ReadFile(chksumTarget)
 	_, err = os.Stat(chksumTarget)
 
@@ -39,10 +39,10 @@ func run(c *cli.Context) error {
 			return err
 		}
 
-		fmt.Printf("Build %s as %s\n", p.Src, bin)
+		fmt.Printf("Build %s as %s\n", p.TypicalBuild, bin)
 		if err := execkit.Run(c.Context, &execkit.GoBuild{
 			Output:      bin,
-			MainPackage: "./" + p.Src,
+			MainPackage: "./" + p.TypicalBuild,
 			Ldflags: execkit.BuildVars{
 				"github.com/typical-go/typical-go/pkg/typgo.ProjectPkg": p.ProjectPkg,
 				"github.com/typical-go/typical-go/pkg/typgo.TypicalTmp": p.TypicalTmp,
