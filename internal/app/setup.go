@@ -1,15 +1,18 @@
 package app
 
 import (
+	"errors"
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/urfave/cli/v2"
 )
 
 type (
-	// Typicalw writer
-	Typicalw struct {
+	typicalwTmplData struct {
 		Src        string
 		TypicalTmp string
 		ProjectPkg string
@@ -45,22 +48,34 @@ func cmdSetup() *cli.Command {
 			srcFlag,
 			projPkgFlag,
 			typicalTmpFlag,
+			&cli.StringFlag{Name: "gomod", Usage: "Iniate go.mod before setup if not empty"},
 		},
 		Action: wrapper,
 	}
 }
 
 func wrapper(c *cli.Context) error {
+	if gomod := c.String("gomod"); gomod != "" {
+		var stderr strings.Builder
+		fmt.Fprintf(os.Stdout, "\nInitiate go.mod\n")
+		if err := execkit.Run(c.Context, &execkit.Command{
+			Name:   "go",
+			Args:   []string{"mod", "init", gomod},
+			Stderr: &stderr,
+		}); err != nil {
+			return errors.New(stderr.String())
+		}
+	}
+
 	typicalTmp := getTypicalTmp(c)
 	src := getSrc(c)
-
 	projectPkg, err := getProjectPkg(c)
 	if err != nil {
 		return err
 	}
 
-	fmt.Fprintf(Stdout, "Create wrapper '%s'\n", typicalw)
-	return common.ExecuteTmplToFile(typicalw, typicalwTmpl, &Typicalw{
+	fmt.Fprintf(Stdout, "\nCreate wrapper '%s'\n", typicalw)
+	return common.ExecuteTmplToFile(typicalw, typicalwTmpl, &typicalwTmplData{
 		Src:        src,
 		TypicalTmp: typicalTmp,
 		ProjectPkg: projectPkg,

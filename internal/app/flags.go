@@ -51,16 +51,16 @@ func getProjectPkg(c *cli.Context) (s string, err error) {
 }
 
 func retrieveProjPkg(ctx context.Context) (string, error) {
-	var stderr strings.Builder
 	var stdout strings.Builder
-	cmd := execkit.Command{
+	var stderr strings.Builder
+	if err := execkit.Run(ctx, &execkit.Command{
 		Name:   "go",
 		Args:   []string{"list", "-m"},
 		Stdout: &stdout,
 		Stderr: &stderr,
-	}
-	if err := cmd.Run(ctx); err != nil {
+	}); err != nil {
 		return "", errors.New(stderr.String())
 	}
+
 	return strings.TrimSpace(stdout.String()), nil
 }
