@@ -9,6 +9,14 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+type (
+	param struct {
+		Src        string
+		TypicalTmp string
+		ProjectPkg string
+	}
+)
+
 var (
 	typicalTmpParam = "typical-tmp"
 	projPkgParam    = "project-pkg"
@@ -32,22 +40,21 @@ var (
 	}
 )
 
-func getSrc(c *cli.Context) string {
-	return c.String(srcParam)
-}
-
-func getTypicalTmp(c *cli.Context) string {
-	return c.String(typicalTmpParam)
-}
-
-func getProjectPkg(c *cli.Context) (s string, err error) {
+func getParam(c *cli.Context) (*param, error) {
 	projPkg := c.String(projPkgParam)
 	if projPkg == "" {
-		if projPkg, err = retrieveProjPkg(c.Context); err != nil {
-			return "", err
+		var err error
+		projPkg, err = retrieveProjPkg(c.Context)
+		if err != nil {
+			return nil, err
 		}
 	}
-	return projPkg, nil
+
+	return &param{
+		Src:        c.String(srcParam),
+		TypicalTmp: c.String(typicalTmpParam),
+		ProjectPkg: projPkg,
+	}, nil
 }
 
 func retrieveProjPkg(ctx context.Context) (string, error) {

@@ -1,22 +1,17 @@
 package app
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/urfave/cli/v2"
-)
-
-type (
-	typicalwTmplData struct {
-		Src        string
-		TypicalTmp string
-		ProjectPkg string
-	}
 )
 
 var typicalw = "typicalw"
@@ -49,35 +44,57 @@ func cmdSetup() *cli.Command {
 			projPkgFlag,
 			typicalTmpFlag,
 			&cli.StringFlag{Name: "gomod", Usage: "Iniate go.mod before setup if not empty"},
+			&cli.StringFlag{Name: "new", Usage: "Setup new project with standard layout and typical-build"},
 		},
-		Action: wrapper,
+		Action: setup,
 	}
 }
 
-func wrapper(c *cli.Context) error {
+func setup(c *cli.Context) error {
 	if gomod := c.String("gomod"); gomod != "" {
-		var stderr strings.Builder
-		fmt.Fprintf(os.Stdout, "\nInitiate go.mod\n")
-		if err := execkit.Run(c.Context, &execkit.Command{
-			Name:   "go",
-			Args:   []string{"mod", "init", gomod},
-			Stderr: &stderr,
-		}); err != nil {
-			return errors.New(stderr.String())
+		if err := initGoMod(c.Context, gomod); err != nil {
+			return err
 		}
 	}
 
-	typicalTmp := getTypicalTmp(c)
-	src := getSrc(c)
-	projectPkg, err := getProjectPkg(c)
+	p, err := getParam(c)
 	if err != nil {
 		return err
 	}
 
+	if c.Bool("new") {
+		if err := newProject(p); err != nil {
+			return err
+		}
+	}
+	return createWrapper(p)
+}
+
+func initGoMod(ctx context.Context, pkg string) error {
+	var stderr strings.Builder
+	fmt.Fprintf(os.Stdout, "\nInitiate go.mod\n")
+	if err := execkit.Run(ctx, &execkit.Command{
+		Name:   "go",
+		Args:   []string{"mod", "init", pkg},
+		Stderr: &stderr,
+	}); err != nil {
+		return errors.New(stderr.String())
+	}
+	return nil
+}
+
+func createWrapper(p *param) error {
 	fmt.Fprintf(Stdout, "\nCreate wrapper '%s'\n", typicalw)
-	return common.ExecuteTmplToFile(typicalw, typicalwTmpl, &typicalwTmplData{
-		Src:        src,
-		TypicalTmp: typicalTmp,
-		ProjectPkg: projectPkg,
-	})
+	return common.ExecuteTmplToFile(typicalw, typicalwTmpl, p)
+}
+
+func newProject(p *param) error {
+	_, b, _, _ := runtime.Caller(0)
+	projectName := filepath.Dir(b)
+	// os.MkdirAll("tools/typical-build", 0777)
+	// os.MkdirAll("cmd/"+projectName, 0777)
+
+	fmt.Println(projectName)
+
+	return nil
 }

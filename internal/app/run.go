@@ -22,18 +22,15 @@ func cmdRun() *cli.Command {
 }
 
 func run(c *cli.Context) error {
-	typicalTmp := getTypicalTmp(c)
-	src := getSrc(c)
-
-	projectPkg, err := getProjectPkg(c)
+	p, err := getParam(c)
 	if err != nil {
 		return err
 	}
 
-	chksumTarget := fmt.Sprintf("%s/checksum", typicalTmp)
-	bin := fmt.Sprintf("%s/bin/%s", typicalTmp, filepath.Base(src))
+	chksumTarget := fmt.Sprintf("%s/checksum", p.TypicalTmp)
+	bin := fmt.Sprintf("%s/bin/%s", p.TypicalTmp, filepath.Base(p.Src))
 
-	chksum := generateChecksum(src)
+	chksum := generateChecksum(p.Src)
 	chksum0, _ := ioutil.ReadFile(chksumTarget)
 	_, err = os.Stat(chksumTarget)
 
@@ -42,13 +39,13 @@ func run(c *cli.Context) error {
 			return err
 		}
 
-		fmt.Printf("Build %s as %s\n", src, bin)
+		fmt.Printf("Build %s as %s\n", p.Src, bin)
 		if err := execkit.Run(c.Context, &execkit.GoBuild{
 			Output:      bin,
-			MainPackage: "./" + src,
+			MainPackage: "./" + p.Src,
 			Ldflags: execkit.BuildVars{
-				"github.com/typical-go/typical-go/pkg/typgo.ProjectPkg": projectPkg,
-				"github.com/typical-go/typical-go/pkg/typgo.TypicalTmp": typicalTmp,
+				"github.com/typical-go/typical-go/pkg/typgo.ProjectPkg": p.ProjectPkg,
+				"github.com/typical-go/typical-go/pkg/typgo.TypicalTmp": p.TypicalTmp,
 			},
 		}); err != nil {
 			return err
