@@ -9,11 +9,27 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-const (
-	typicalTmpParam    = "typical-tmp"
-	projPkgParam       = "project-pkg"
-	srcParam           = "src"
-	createWrapperParam = "create:wrapper"
+var (
+	typicalTmpParam = "typical-tmp"
+	projPkgParam    = "project-pkg"
+	srcParam        = "src"
+
+	typicalTmpFlag = &cli.StringFlag{
+		Name:  typicalTmpParam,
+		Usage: "Temporary directory location to save builds-related files",
+		Value: ".typical-tmp",
+	}
+
+	projPkgFlag = &cli.StringFlag{
+		Name:  projPkgParam,
+		Usage: "Project package name. Same with module package in go.mod by default",
+	}
+
+	srcFlag = &cli.StringFlag{
+		Name:  srcParam,
+		Usage: "Build-tool source",
+		Value: "tools/typical-build",
+	}
 )
 
 func getSrc(c *cli.Context) string {

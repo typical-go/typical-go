@@ -58,14 +58,14 @@ $ ./typicalw
 
 ```
 
-To create new wrapper
+Create wrapper through setup command
 ```
-$ typical-go -create:wrapper
+$ typical-go setup
 ```
 
 ## Typical Build
 
-Typical Build is a golang program that manage builds and tasks for the project. By default , the source located in `tools/typical-build`
+Typical-build located in `tools/typical-build` contain the project descriptor
 
 ```go
 package main

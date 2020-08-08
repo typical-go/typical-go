@@ -12,22 +12,12 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func runCommand() *cli.Command {
+func cmdRun() *cli.Command {
 	return &cli.Command{
-		Name:  "run",
-		Usage: "Run build-tool for project in current working directory",
-		Flags: []cli.Flag{
-			&cli.StringFlag{Name: srcParam, Usage: "Build-tool source", Value: "tools/typical-build"},
-			&cli.StringFlag{Name: projPkgParam, Usage: "Project package name. Same with module package in go.mod by default"},
-			&cli.StringFlag{Name: typicalTmpParam, Usage: "Temporary directory location to save builds-related files", Value: ".typical-tmp"},
-			&cli.BoolFlag{Name: createWrapperParam, Usage: "Create wrapper script"},
-		},
-		Action: func(c *cli.Context) error {
-			if c.Bool(createWrapperParam) {
-				return wrapper(c)
-			}
-			return run(c)
-		},
+		Name:   "run",
+		Usage:  "Run build-tool for project in current working directory",
+		Flags:  []cli.Flag{srcFlag, projPkgFlag, typicalTmpFlag},
+		Action: run,
 	}
 }
 

@@ -15,7 +15,8 @@ func Start() (err error) {
 	app.Usage = ""       // NOTE: intentionally blank
 	app.Description = "" // NOTE: intentionally blank
 	app.Commands = []*cli.Command{
-		runCommand(),
+		cmdRun(),
+		cmdSetup(),
 	}
 	return app.Run(os.Args)
 }

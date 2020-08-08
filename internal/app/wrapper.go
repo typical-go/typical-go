@@ -1,6 +1,8 @@
 package app
 
 import (
+	"fmt"
+
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/urfave/cli/v2"
 )
@@ -16,8 +18,7 @@ type (
 
 var typicalw = "typicalw"
 
-// TypicalwTmpl typicalw template text
-var TypicalwTmpl = `#!/bin/bash
+var typicalwTmpl = `#!/bin/bash
 
 set -e
 
@@ -36,6 +37,19 @@ $TYPGO run \
 	$@
 `
 
+func cmdSetup() *cli.Command {
+	return &cli.Command{
+		Name:  "setup",
+		Usage: "Setup typical-go",
+		Flags: []cli.Flag{
+			srcFlag,
+			projPkgFlag,
+			typicalTmpFlag,
+		},
+		Action: wrapper,
+	}
+}
+
 func wrapper(c *cli.Context) error {
 	typicalTmp := getTypicalTmp(c)
 	src := getSrc(c)
@@ -45,7 +59,8 @@ func wrapper(c *cli.Context) error {
 		return err
 	}
 
-	return common.ExecuteTmplToFile(typicalw, TypicalwTmpl, &Typicalw{
+	fmt.Fprintf(Stdout, "Create wrapper '%s'\n", typicalw)
+	return common.ExecuteTmplToFile(typicalw, typicalwTmpl, &Typicalw{
 		Src:        src,
 		TypicalTmp: typicalTmp,
 		ProjectPkg: projectPkg,
