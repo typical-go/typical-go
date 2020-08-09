@@ -14,21 +14,27 @@ import (
 
 func cmdRun() *cli.Command {
 	return &cli.Command{
-		Name:   "run",
-		Usage:  "Run build-tool for project in current working directory",
-		Flags:  []cli.Flag{srcFlag, projPkgFlag, typicalTmpFlag},
-		Action: run,
+		Name:  "run",
+		Usage: "Run build-tool for project in current working directory",
+		Flags: []cli.Flag{
+			projectPkgFlag,
+			projectDirFlag,
+			typicalBuildFlag,
+			typicalTmpFlag,
+		},
+		Action: Run,
 	}
 }
 
-func run(c *cli.Context) error {
+// Run typical-go
+func Run(c *cli.Context) error {
 	p, err := GetParam(c)
 	if err != nil {
 		return err
 	}
 
-	chksumTarget := fmt.Sprintf("%s/checksum", p.TypicalTmp)
-	bin := fmt.Sprintf("%s/bin/%s", p.TypicalTmp, filepath.Base(p.TypicalBuild))
+	chksumTarget := fmt.Sprintf("%s/%s/checksum", p.ProjectDir, p.TypicalTmp)
+	bin := fmt.Sprintf("%s/%s/bin/%s", p.ProjectDir, p.TypicalTmp, filepath.Base(p.TypicalBuild))
 
 	chksum := generateChecksum(p.TypicalBuild)
 	chksum0, _ := ioutil.ReadFile(chksumTarget)
@@ -39,15 +45,18 @@ func run(c *cli.Context) error {
 			return err
 		}
 
-		fmt.Printf("Build %s as %s\n", p.TypicalBuild, bin)
-		if err := execkit.Run(c.Context, &execkit.GoBuild{
+		fmt.Fprintf(Stdout, "Build %s to %s\n", p.TypicalBuild, bin)
+		gobuild := &execkit.GoBuild{
 			Output:      bin,
 			MainPackage: "./" + p.TypicalBuild,
 			Ldflags: execkit.BuildVars{
 				"github.com/typical-go/typical-go/pkg/typgo.ProjectPkg": p.ProjectPkg,
 				"github.com/typical-go/typical-go/pkg/typgo.TypicalTmp": p.TypicalTmp,
 			},
-		}); err != nil {
+		}
+		command := gobuild.Command()
+		command.Dir = p.ProjectDir
+		if err := execkit.Run(c.Context, command); err != nil {
 			return err
 		}
 	}

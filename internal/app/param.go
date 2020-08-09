@@ -15,6 +15,7 @@ type (
 		TypicalBuild string
 		TypicalTmp   string
 		ProjectPkg   string
+		ProjectDir   string
 	}
 )
 
@@ -29,28 +30,38 @@ var (
 	DefaultTypicalBuild = "tools/typical-build"
 	// ProjectPkgParam project-pkg param
 	ProjectPkgParam = "project-pkg"
-	typicalTmpFlag  = &cli.StringFlag{
+	// ProjectDirParam project-dir param
+	ProjectDirParam = "project-dir"
+	// DefaultProjectDir project-dir default value
+	DefaultProjectDir = "."
+	typicalTmpFlag    = &cli.StringFlag{
 		Name:  TypicalTmpParam,
 		Usage: "Temporary directory location to save builds-related files",
 		Value: DefaultTypicalTmp,
 	}
-	projPkgFlag = &cli.StringFlag{
-		Name:  ProjectPkgParam,
-		Usage: "Project package name. Same with module package in go.mod by default",
-	}
-	srcFlag = &cli.StringFlag{
+	typicalBuildFlag = &cli.StringFlag{
 		Name:  TypicalBuildParam,
 		Usage: "Typical-Build source code location",
 		Value: DefaultTypicalBuild,
+	}
+	projectPkgFlag = &cli.StringFlag{
+		Name:  ProjectPkgParam,
+		Usage: "Project package name. Same with module package in go.mod by default",
+	}
+	projectDirFlag = &cli.StringFlag{
+		Name:  ProjectDirParam,
+		Usage: "Project directory location",
+		Value: ".",
 	}
 )
 
 // GetParam get param
 func GetParam(c *cli.Context) (*Param, error) {
-	projPkg := c.String(ProjectPkgParam)
-	if projPkg == "" {
+	projectDir := c.String(ProjectDirParam)
+	projectPkg := c.String(ProjectPkgParam)
+	if projectPkg == "" {
 		var err error
-		projPkg, err = retrieveProjPkg(c.Context)
+		projectPkg, err = retrieveProjPkg(c.Context, projectDir)
 		if err != nil {
 			return nil, err
 		}
@@ -59,11 +70,12 @@ func GetParam(c *cli.Context) (*Param, error) {
 	return &Param{
 		TypicalBuild: c.String(TypicalBuildParam),
 		TypicalTmp:   c.String(TypicalTmpParam),
-		ProjectPkg:   projPkg,
+		ProjectPkg:   projectPkg,
+		ProjectDir:   projectDir,
 	}, nil
 }
 
-func retrieveProjPkg(ctx context.Context) (string, error) {
+func retrieveProjPkg(ctx context.Context, projectDir string) (string, error) {
 	var stdout strings.Builder
 	var stderr strings.Builder
 	if err := execkit.Run(ctx, &execkit.Command{
@@ -71,6 +83,7 @@ func retrieveProjPkg(ctx context.Context) (string, error) {
 		Args:   []string{"list", "-m"},
 		Stdout: &stdout,
 		Stderr: &stderr,
+		Dir:    projectDir,
 	}); err != nil {
 		return "", errors.New(err.Error() + ": " + stderr.String())
 	}

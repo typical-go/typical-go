@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -12,8 +11,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/urfave/cli/v2"
 )
-
-var typicalw = "typicalw"
 
 var typicalwTmpl = `#!/bin/bash
 
@@ -39,17 +36,18 @@ func cmdSetup() *cli.Command {
 		Name:  "setup",
 		Usage: "Setup typical-go",
 		Flags: []cli.Flag{
-			srcFlag,
-			projPkgFlag,
+			projectPkgFlag,
+			typicalBuildFlag,
 			typicalTmpFlag,
 			&cli.StringFlag{Name: "gomod", Usage: "Iniate go.mod before setup if not empty"},
-			&cli.StringFlag{Name: "new", Usage: "Setup new project with standard layout and typical-build"},
+			&cli.BoolFlag{Name: "new", Usage: "Setup new project with standard layout and typical-build"},
 		},
-		Action: setup,
+		Action: Setup,
 	}
 }
 
-func setup(c *cli.Context) error {
+// Setup typical-go
+func Setup(c *cli.Context) error {
 	if gomod := c.String("gomod"); gomod != "" {
 		if err := initGoMod(c.Context, gomod); err != nil {
 			return err
@@ -71,20 +69,21 @@ func setup(c *cli.Context) error {
 
 func initGoMod(ctx context.Context, pkg string) error {
 	var stderr strings.Builder
-	fmt.Fprintf(os.Stdout, "\nInitiate go.mod\n")
+	fmt.Fprintf(Stdout, "Initiate go.mod\n")
 	if err := execkit.Run(ctx, &execkit.Command{
 		Name:   "go",
 		Args:   []string{"mod", "init", pkg},
 		Stderr: &stderr,
 	}); err != nil {
-		return errors.New(stderr.String())
+		return fmt.Errorf("%s: %s", err.Error(), stderr.String())
 	}
 	return nil
 }
 
 func createWrapper(p *Param) error {
-	fmt.Fprintf(Stdout, "\nCreate wrapper '%s'\n", typicalw)
-	return common.ExecuteTmplToFile(typicalw, typicalwTmpl, p)
+	path := fmt.Sprintf("%s/typicalw", p.ProjectDir)
+	fmt.Fprintf(Stdout, "Create wrapper '%s'\n", path)
+	return common.ExecuteTmplToFile(path, typicalwTmpl, p)
 }
 
 func newProject(p *Param) error {
@@ -94,6 +93,10 @@ func newProject(p *Param) error {
 	mkdirAll("cmd/" + projectName)
 	mkdirAll("internal/app")
 	mkdirAll("app")
+
+	// TODO: write main function
+	// TODO: write simple app
+	// TODO: write typical-build
 
 	return nil
 }
