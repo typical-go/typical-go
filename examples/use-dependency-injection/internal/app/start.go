@@ -1,4 +1,4 @@
-package helloworld
+package app
 
 import (
 	"fmt"
@@ -6,18 +6,18 @@ import (
 	"go.uber.org/dig"
 )
 
-// Main function to run hello-world
-func Main(text string) {
-	fmt.Println(text)
-}
-
 type greeter struct {
 	dig.In
 	Text string `name:"typical"`
 }
 
-// Main2 function to run hello-world with name-constructor
-func Main2(greeter greeter) {
+// Start app
+func Start(text string) {
+	fmt.Println(text)
+}
+
+// Start2 start app
+func Start2(greeter greeter) {
 	fmt.Println(greeter.Text)
 }
 
@@ -33,8 +33,8 @@ func HelloTypical() string {
 	return "Hello Typical"
 }
 
-// Close the application
+// Bye app
 // @dtor
-func Close() {
-	fmt.Println("close the app")
+func Bye() {
+	fmt.Println("Bye")
 }

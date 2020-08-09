@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"errors"
+	"path/filepath"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
@@ -16,6 +17,7 @@ type (
 		TypicalTmp   string
 		ProjectPkg   string
 		ProjectDir   string
+		ProjectName  string
 	}
 )
 
@@ -72,6 +74,7 @@ func GetParam(c *cli.Context) (*Param, error) {
 		TypicalTmp:   c.String(TypicalTmpParam),
 		ProjectPkg:   projectPkg,
 		ProjectDir:   projectDir,
+		ProjectName:  filepath.Base(projectPkg),
 	}, nil
 }
 

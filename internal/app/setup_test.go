@@ -117,7 +117,8 @@ func TestSetup_WithNewFlag(t *testing.T) {
 	require.Equal(t, `Mkdir .typical-tmp
 Mkdir cmd/somepkg
 Mkdir internal/app
-Mkdir app
+Mkdir internal/generated
+Mkdir tools/typical-build
 Create wrapper 'somedir4/typicalw'
 `, output.String())
 }

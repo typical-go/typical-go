@@ -15,7 +15,7 @@ func TestGetParam(t *testing.T) {
 	param, err := app.GetParam(cliContext([]string{
 		"-typical-build=1",
 		"-typical-tmp=2",
-		"-project-pkg=3",
+		"-project-pkg=github.com/user/project",
 		"-project-dir=4",
 	}))
 
@@ -23,8 +23,9 @@ func TestGetParam(t *testing.T) {
 	require.Equal(t, &app.Param{
 		TypicalBuild: "1",
 		TypicalTmp:   "2",
-		ProjectPkg:   "3",
+		ProjectPkg:   "github.com/user/project",
 		ProjectDir:   "4",
+		ProjectName:  "project",
 	}, param)
 }
 
@@ -42,6 +43,7 @@ func TestGetParam_Default(t *testing.T) {
 		TypicalTmp:   ".typical-tmp",
 		ProjectPkg:   "some-package",
 		ProjectDir:   ".",
+		ProjectName:  "some-package",
 	}, param)
 }
 

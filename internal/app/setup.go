@@ -12,25 +12,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var typicalwTmpl = `#!/bin/bash
-
-set -e
-
-TYPTMP={{.TypicalTmp}}
-TYPGO=$TYPTMP/bin/typical-go
-
-if ! [ -s $TYPGO ]; then
-	echo "Build typical-go"
-	go build -o $TYPGO github.com/typical-go/typical-go
-fi
-
-$TYPGO run \
-	-project-pkg="{{.ProjectPkg}}" \
-	-typical-build="{{.TypicalBuild}}" \
-	-typical-tmp=$TYPTMP \
-	$@
-`
-
 func cmdSetup() *cli.Command {
 	return &cli.Command{
 		Name:  "setup",
@@ -92,11 +73,13 @@ func newProject(p *Param) error {
 	mkdirAll(p.TypicalTmp)
 	mkdirAll("cmd/" + projectName)
 	mkdirAll("internal/app")
-	mkdirAll("app")
+	mkdirAll("internal/generated")
+	mkdirAll("tools/typical-build")
 
 	// TODO: write main function
 	// TODO: write simple app
 	// TODO: write typical-build
+	// TODO: write doc.go
 
 	return nil
 }
