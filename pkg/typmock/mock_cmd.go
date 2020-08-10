@@ -2,7 +2,6 @@ package typmock
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/iancoleman/strcase"
@@ -18,6 +17,7 @@ type (
 )
 
 var _ typgo.Cmd = (*MockCmd)(nil)
+var _ typgo.Action = (*MockCmd)(nil)
 
 // Command to utility
 func (d *MockCmd) Command(c *typgo.BuildSys) *cli.Command {
@@ -81,7 +81,7 @@ func Annotate(c *typgo.Context, summary *typannot.Summary) error {
 				},
 				Stderr: os.Stderr,
 			}); err != nil {
-				log.Printf("Fail to mock '%s': %s", name, err.Error())
+				fmt.Fprintf(Stdout, "Fail to mock '%s': %s\n", name, err.Error())
 			}
 		}
 	}

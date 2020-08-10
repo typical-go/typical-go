@@ -32,7 +32,7 @@ $ typical-go setup -new -go-mod -project-pkg=github.com/typical-go/typical-go/my
 
 ## Run 
 
-This is recommended to run via wrapper
+This is recommended to run via wrapper [`typicalw`](typicalw) 
 ```bash
 $ ./typicalw
 ```
@@ -44,7 +44,7 @@ $ typical-go setup
 
 ## Typical-Build
 
-Typical-Build contain project descriptor and the build logic. By default, it is located in `tools/typical-build` and can be changed in wrapper script.
+Typical-Build contain project descriptor and the build logic. By default, it is located in [`tools/typical-build`](tools/typical-build/typical-build) and can be changed in wrapper script.
 
 ```go
 package main

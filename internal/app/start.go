@@ -9,6 +9,11 @@ import (
 
 // Start the typical-go
 func Start() (err error) {
+	return App().Run(os.Args)
+}
+
+// App application
+func App() *cli.App {
 	app := cli.NewApp()
 	app.Name = typapp.Name
 	app.Version = typapp.Version
@@ -18,5 +23,5 @@ func Start() (err error) {
 		cmdRun(),
 		cmdSetup(),
 	}
-	return app.Run(os.Args)
+	return app
 }
