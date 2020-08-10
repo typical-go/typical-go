@@ -6,3 +6,5 @@
 .env
 *.test
 *.out
+
+/my-project

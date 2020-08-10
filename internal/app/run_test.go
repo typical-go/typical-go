@@ -1,6 +1,7 @@
 package app_test
 
 import (
+	"errors"
 	"os"
 	"strings"
 	"testing"
@@ -19,20 +20,32 @@ func TestRun(t *testing.T) {
 		{CommandLine: []string{
 			"go", "build",
 			"-ldflags", "-X github.com/typical-go/typical-go/pkg/typgo.ProjectPkg=some-pkg -X github.com/typical-go/typical-go/pkg/typgo.TypicalTmp=.typical-tmp",
-			"-o", "some-dir/.typical-tmp/bin/typical-build",
+			"-o", ".typical-tmp/bin/typical-build",
 			"./tools/typical-build",
 		}},
-		{CommandLine: []string{"some-dir/.typical-tmp/bin/typical-build"}},
+		{CommandLine: []string{".typical-tmp/bin/typical-build"}},
 	})
 	defer unpatch(t)
 
-	os.MkdirAll("some-dir/.typical-tmp", 0777)
-	defer os.RemoveAll("some-dir")
+	os.Mkdir(".typical-tmp", 0777)
+	defer os.RemoveAll(".typical-tmp")
 
 	err := app.Run(cliContext([]string{
-		"-project-dir=some-dir",
 		"-project-pkg=some-pkg",
 	}))
 	require.NoError(t, err)
-	require.Equal(t, "Build tools/typical-build to some-dir/.typical-tmp/bin/typical-build\n", output.String())
+	require.Equal(t, "Build tools/typical-build to .typical-tmp/bin/typical-build\n", output.String())
+}
+
+func TestRun_GetParamError(t *testing.T) {
+	unpatch := execkit.Patch([]*execkit.RunExpectation{
+		{CommandLine: []string{"go", "list", "-m"}, ReturnError: errors.New("some-error")},
+	})
+	defer unpatch(t)
+
+	os.Mkdir(".typical-tmp", 0777)
+	defer os.RemoveAll(".typical-tmp")
+
+	err := app.Run(cliContext([]string{}))
+	require.EqualError(t, err, "some-error: ")
 }

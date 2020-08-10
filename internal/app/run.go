@@ -18,7 +18,6 @@ func cmdRun() *cli.Command {
 		Usage: "Run build-tool for project in current working directory",
 		Flags: []cli.Flag{
 			projectPkgFlag,
-			projectDirFlag,
 			typicalBuildFlag,
 			typicalTmpFlag,
 		},
@@ -33,8 +32,8 @@ func Run(c *cli.Context) error {
 		return err
 	}
 
-	chksumTarget := fmt.Sprintf("%s/%s/checksum", p.ProjectDir, p.TypicalTmp)
-	bin := fmt.Sprintf("%s/%s/bin/%s", p.ProjectDir, p.TypicalTmp, filepath.Base(p.TypicalBuild))
+	chksumTarget := fmt.Sprintf("%s/checksum", p.TypicalTmp)
+	bin := fmt.Sprintf("%s/bin/%s", p.TypicalTmp, filepath.Base(p.TypicalBuild))
 
 	chksum := generateChecksum(p.TypicalBuild)
 	chksum0, _ := ioutil.ReadFile(chksumTarget)
@@ -54,9 +53,7 @@ func Run(c *cli.Context) error {
 				"github.com/typical-go/typical-go/pkg/typgo.TypicalTmp": p.TypicalTmp,
 			},
 		}
-		command := gobuild.Command()
-		command.Dir = p.ProjectDir
-		if err := execkit.Run(c.Context, command); err != nil {
+		if err := execkit.Run(c.Context, gobuild); err != nil {
 			return err
 		}
 	}

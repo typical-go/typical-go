@@ -16,7 +16,6 @@ func TestGetParam(t *testing.T) {
 		"-typical-build=1",
 		"-typical-tmp=2",
 		"-project-pkg=github.com/user/project",
-		"-project-dir=4",
 	}))
 
 	require.NoError(t, err)
@@ -24,8 +23,8 @@ func TestGetParam(t *testing.T) {
 		TypicalBuild: "1",
 		TypicalTmp:   "2",
 		ProjectPkg:   "github.com/user/project",
-		ProjectDir:   "4",
 		ProjectName:  "project",
+		SetupTarget:  "project",
 	}, param)
 }
 
@@ -42,8 +41,8 @@ func TestGetParam_Default(t *testing.T) {
 		TypicalBuild: "tools/typical-build",
 		TypicalTmp:   ".typical-tmp",
 		ProjectPkg:   "some-package",
-		ProjectDir:   ".",
 		ProjectName:  "some-package",
+		SetupTarget:  ".",
 	}, param)
 }
 
@@ -66,7 +65,6 @@ func cliContext(args []string) *cli.Context {
 	flagSet.String(app.TypicalTmpParam, app.DefaultTypicalTmp, "")
 	flagSet.String(app.TypicalBuildParam, app.DefaultTypicalBuild, "")
 	flagSet.String(app.ProjectPkgParam, "", "")
-	flagSet.String(app.ProjectDirParam, app.DefaultProjectDir, "")
 	flagSet.String("gomod", "", "")
 	flagSet.Bool("new", false, "")
 

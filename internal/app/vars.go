@@ -29,11 +29,11 @@ $TYPGO run \
 	$@
 `
 
-const generatedDoc = `// Package generated contain generated code from annotate
+const generatedDocSrc = `// Package generated contain generated code from annotate
 package generated
 `
 
-const appStart = `package helloworld
+const appStartSrc = `package app
 
 import (
 	"fmt"

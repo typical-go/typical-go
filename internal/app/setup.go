@@ -3,8 +3,8 @@ package app
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/common"
@@ -41,9 +41,7 @@ func Setup(c *cli.Context) error {
 	}
 
 	if c.Bool("new") {
-		if err := newProject(p); err != nil {
-			return err
-		}
+		newProject(p)
 	}
 	return createWrapper(p)
 }
@@ -62,29 +60,34 @@ func initGoMod(ctx context.Context, pkg string) error {
 }
 
 func createWrapper(p *Param) error {
-	path := fmt.Sprintf("%s/typicalw", p.ProjectDir)
-	fmt.Fprintf(Stdout, "Create wrapper '%s'\n", path)
+	path := fmt.Sprintf("%s/typicalw", p.SetupTarget)
+	fmt.Fprintf(Stdout, "Create '%s'\n", path)
 	return common.ExecuteTmplToFile(path, typicalwTmpl, p)
 }
 
-func newProject(p *Param) error {
-	projectName := filepath.Base(p.ProjectPkg)
+func newProject(p *Param) {
+	mainPkg := p.SetupTarget + "/cmd/" + p.ProjectName
+	main := mainPkg + "/main.go"
+	fmt.Fprintf(Stdout, "Create '%s'\n", main)
+	os.MkdirAll(mainPkg, 0777)
+	common.ExecuteTmplToFile(main, mainTmpl, p)
 
-	mkdirAll(p.TypicalTmp)
-	mkdirAll("cmd/" + projectName)
-	mkdirAll("internal/app")
-	mkdirAll("internal/generated")
-	mkdirAll("tools/typical-build")
+	appPkg := p.SetupTarget + "/internal/app"
+	appStart := appPkg + "/start.go"
+	fmt.Fprintf(Stdout, "Create '%s'\n", appStart)
+	os.MkdirAll(appPkg, 0777)
+	ioutil.WriteFile(appStart, []byte(appStartSrc), 0777)
 
-	// TODO: write main function
-	// TODO: write simple app
-	// TODO: write typical-build
-	// TODO: write doc.go
+	generatedPkg := p.SetupTarget + "/internal/generated"
+	generatedDoc := generatedPkg + "/doc.go"
+	fmt.Fprintf(Stdout, "Create '%s'\n", generatedDoc)
+	os.MkdirAll(generatedPkg, 0777)
+	ioutil.WriteFile(generatedDoc, []byte(generatedDocSrc), 0777)
 
-	return nil
-}
+	typicalBuildPkg := p.SetupTarget + "/tools/typical-build"
+	typicalBuild := typicalBuildPkg + "/typical-build.go"
+	fmt.Fprintf(Stdout, "Create '%s'\n", typicalBuild)
+	os.MkdirAll(typicalBuildPkg, 0777)
+	common.ExecuteTmplToFile(typicalBuild, typicalBuildTmpl, p)
 
-func mkdirAll(path string) {
-	fmt.Fprintf(Stdout, "Mkdir %s\n", path)
-	os.MkdirAll(path, 0777)
 }
