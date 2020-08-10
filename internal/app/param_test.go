@@ -65,7 +65,7 @@ func cliContext(args []string) *cli.Context {
 	flagSet.String(app.TypicalTmpParam, app.DefaultTypicalTmp, "")
 	flagSet.String(app.TypicalBuildParam, app.DefaultTypicalBuild, "")
 	flagSet.String(app.ProjectPkgParam, "", "")
-	flagSet.String("gomod", "", "")
+	flagSet.Bool("go-mod", false, "")
 	flagSet.Bool("new", false, "")
 
 	flagSet.Parse(args)

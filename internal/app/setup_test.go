@@ -79,7 +79,7 @@ func TestSetup_WithGomodFlag(t *testing.T) {
 
 	err := app.Setup(cliContext([]string{
 		"-project-pkg=somepkg",
-		"-gomod=somepkg",
+		"-go-mod",
 	}))
 	require.NoError(t, err)
 
@@ -105,9 +105,26 @@ func TestSetup_WithGomodFlag_Error(t *testing.T) {
 
 	err := app.Setup(cliContext([]string{
 		"-project-pkg=somepkg",
-		"-gomod=somepkg",
+		"-go-mod",
 	}))
 	require.EqualError(t, err, "some-error: error-message")
+
+	require.Equal(t, "Initiate go.mod\n", output.String())
+}
+
+func TestSetup_WithGomodFlag_MissingProjectPkg(t *testing.T) {
+	var output strings.Builder
+	app.Stdout = &output
+	defer func() { app.Stdout = os.Stdout }()
+
+	unpatch := execkit.Patch([]*execkit.RunExpectation{})
+	defer unpatch(t)
+
+	os.Mkdir("somepkg", 0777)
+	defer os.RemoveAll("somepkg")
+
+	err := app.Setup(cliContext([]string{"-go-mod"}))
+	require.EqualError(t, err, "project-pkg is empty")
 
 	require.Equal(t, "Initiate go.mod\n", output.String())
 }

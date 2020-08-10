@@ -1,10 +1,11 @@
 package app
 
 import (
-	"context"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/common"
@@ -20,7 +21,7 @@ func cmdSetup() *cli.Command {
 			projectPkgFlag,
 			typicalBuildFlag,
 			typicalTmpFlag,
-			&cli.StringFlag{Name: "gomod", Usage: "Iniate go.mod before setup if not empty"},
+			&cli.BoolFlag{Name: "go-mod", Usage: "Iniate go.mod before setup"},
 			&cli.BoolFlag{Name: "new", Usage: "Setup new project with standard layout and typical-build"},
 		},
 		Action: Setup,
@@ -29,8 +30,8 @@ func cmdSetup() *cli.Command {
 
 // Setup typical-go
 func Setup(c *cli.Context) error {
-	if gomod := c.String("gomod"); gomod != "" {
-		if err := initGoMod(c.Context, gomod); err != nil {
+	if c.Bool("go-mod") {
+		if err := initGoMod(c); err != nil {
 			return err
 		}
 	}
@@ -46,13 +47,21 @@ func Setup(c *cli.Context) error {
 	return createWrapper(p)
 }
 
-func initGoMod(ctx context.Context, pkg string) error {
-	var stderr strings.Builder
+// initGoMod initiate gomodob
+func initGoMod(c *cli.Context) error {
 	fmt.Fprintf(Stdout, "Initiate go.mod\n")
-	if err := execkit.Run(ctx, &execkit.Command{
+	pkg := c.String(ProjectPkgParam)
+	if pkg == "" {
+		return errors.New("project-pkg is empty")
+	}
+	dir := filepath.Base(pkg)
+	os.Mkdir(dir, 0777)
+	var stderr strings.Builder
+	if err := execkit.Run(c.Context, &execkit.Command{
 		Name:   "go",
 		Args:   []string{"mod", "init", pkg},
 		Stderr: &stderr,
+		Dir:    dir,
 	}); err != nil {
 		return fmt.Errorf("%s: %s", err.Error(), stderr.String())
 	}

@@ -8,7 +8,7 @@
 
 # Typical Go
 
-Build Automation For Golang
+Build Automation Tool For Golang
 - Alternative for [GNU Make](https://www.gnu.org/software/make/manual/make.html) (a.k.a makefile)
 - Framework-based Build Tool (No DSL)
 - Supporting Java-like annotation for code generation
@@ -19,53 +19,32 @@ Build Automation For Golang
 $ go install github.com/typical-go/typical-go
 ```
 
-## Usage
+## Setup
 
-Run build-tool for project in working directory
+Setup a new project
+```bash
+$ typical-go setup -new -go-mod -project-pkg=github.com/typical-go/typical-go/my-project
 ```
-$ typical-go run
-```
-```
-Typical Build
+- `-new` generate simple app and typical-build source
+- `-go-mod` initiate go.mod
+- `-project-pkg` name of project package
 
-Usage:
 
-  ./typicalw <command> [argument]
+## Run 
 
-The commands are:
-
-  test, t      Test the project
-  compile, c   Compile the project
-  run, r       Run the project in local environment
-  release      Release the project
-  clean        Clean the project
-  examples, e  Test all example
-  help, h      Shows a list of commands or help for one command
-
-Use "./typicalw help <topic>" for more information about that topic
-```
-
-Check help for argument documentation
-```
-$ typical-go help run
-```
-
-## Wrapper 
-
-The wrapper that invoke download typical-go and execute it. This is the recommendation way to use typical-go.
-```
+This is recommended to run via wrapper
+```bash
 $ ./typicalw
-
 ```
 
-Create wrapper through setup command
-```
+If the wrapper is missing, you can generate it using `setup` command
+```bash
 $ typical-go setup
 ```
 
-## Typical Build
+## Typical-Build
 
-Typical-build located in `tools/typical-build` contain the project descriptor
+Typical-Build contain project descriptor and the build logic. By default, it is located in `tools/typical-build` and can be changed in wrapper script.
 
 ```go
 package main
@@ -113,6 +92,10 @@ func main() {
    typgo.Start(&descriptor)
 }
 ```
+
+## Typical-Tmp
+
+Typical-Tmp is temporary folder that contain downloaded file and other build-mechanism. By default, it is located in `.typical-tmp` and can be changed in wrapper script.
 
 ## Annotation
 
