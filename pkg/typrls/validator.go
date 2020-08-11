@@ -72,8 +72,8 @@ func (*NoGitChangeValidation) Validate(c *Context) error {
 
 // Validate if already release
 func (*AlreadyReleasedValidation) Validate(c *Context) error {
-	if c.ReleaseTag == c.Git.CurrentTag {
-		return fmt.Errorf("%s already released", c.ReleaseTag)
+	if c.TagName == c.Git.CurrentTag {
+		return fmt.Errorf("%s already released", c.TagName)
 	}
 	return nil
 }

@@ -56,7 +56,7 @@ func TestValidator(t *testing.T) {
 			TestName:  "already release",
 			Validator: &typrls.AlreadyReleasedValidation{},
 			Context: &typrls.Context{
-				ReleaseTag: "some-tag",
+				TagName: "some-tag",
 				Git: &typrls.Git{
 					CurrentTag: "some-tag",
 				},
@@ -67,7 +67,7 @@ func TestValidator(t *testing.T) {
 			TestName:  "not release yet",
 			Validator: &typrls.AlreadyReleasedValidation{},
 			Context: &typrls.Context{
-				ReleaseTag: "different-tag",
+				TagName: "different-tag",
 				Git: &typrls.Git{
 					CurrentTag: "some-tag",
 				},

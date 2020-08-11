@@ -22,8 +22,6 @@ type (
 	ReleaseCmd struct {
 		Releaser
 		Before     typgo.Action
-		ReleaseTag string
-		Alpha      bool
 		Validation Validator
 		Summary    Summarizer
 	}
@@ -58,19 +56,23 @@ func (r *ReleaseCmd) Execute(c *typgo.Context) error {
 	gitFetch(ctx)
 	defer gitFetch(ctx)
 
-	r.ReleaseTag = c.String(TagFlag)
-	r.Alpha = r.Alpha || c.Bool(AlphaFlag)
+	alpha := c.Bool(AlphaFlag)
+	tagName := c.String(TagFlag)
+	if tagName == "" {
+		tagName = createTagName(c, alpha)
+	}
+
 	currentTag := gitTag(ctx)
 
 	rlsCtx := &Context{
 		Context: c,
-		Alpha:   r.Alpha,
+		Alpha:   alpha,
 		Git: &Git{
 			Status:     gitStatus(ctx),
 			CurrentTag: currentTag,
 			Logs:       gitLogs(ctx, currentTag),
 		},
-		ReleaseTag: r.GetReleaseTag(c),
+		TagName: tagName,
 	}
 
 	if r.Validation != nil && !c.Bool(ForceFlag) {
@@ -88,19 +90,15 @@ func (r *ReleaseCmd) Execute(c *typgo.Context) error {
 	return r.Release(rlsCtx)
 }
 
-// GetReleaseTag return release tag
-func (r *ReleaseCmd) GetReleaseTag(c *typgo.Context) string {
-	if r.ReleaseTag == "" {
-		if c.BuildSys.ProjectVersion != "" {
-			r.ReleaseTag = fmt.Sprintf("v%s", c.BuildSys.ProjectVersion)
-		} else {
-			r.ReleaseTag = "v0.0.1"
-		}
-
-		if r.Alpha {
-			r.ReleaseTag = r.ReleaseTag + "_alpha"
-		}
+func createTagName(c *typgo.Context, alpha bool) string {
+	tagName := "v0.0.1"
+	if c.BuildSys.ProjectVersion != "" {
+		tagName = fmt.Sprintf("v%s", c.BuildSys.ProjectVersion)
 	}
 
-	return r.ReleaseTag
+	if alpha {
+		tagName = tagName + "_alpha"
+	}
+
+	return tagName
 }

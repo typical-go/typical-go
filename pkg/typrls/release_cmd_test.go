@@ -83,9 +83,9 @@ func TestReleaseCmd_Execute(t *testing.T) {
 				{CommandLine: []string{"git", "--no-pager", "log", "some-tag..HEAD", "--oneline"}, OutputBytes: []byte("5378feb one\n")},
 			},
 			Expected: &typrls.Context{
-				ReleaseTag: "v0.0.1_alpha",
-				Alpha:      true,
-				Summary:    "some-summary",
+				TagName: "v0.0.1_alpha",
+				Alpha:   true,
+				Summary: "some-summary",
 				Git: &typrls.Git{
 					Status:     "some-status",
 					CurrentTag: "some-tag",
@@ -116,10 +116,10 @@ func TestReleaseCmd_Execute(t *testing.T) {
 				{CommandLine: []string{"git", "status", "--porcelain"}, OutputBytes: []byte("some-status-1")},
 			},
 			Expected: &typrls.Context{
-				ReleaseTag: "v9.9.9",
-				Alpha:      false,
-				Summary:    "some-summary",
-				Git:        &typrls.Git{Status: "some-status-1", CurrentTag: "some-tag-1"},
+				TagName: "v9.9.9",
+				Alpha:   false,
+				Summary: "some-summary",
+				Git:     &typrls.Git{Status: "some-status-1", CurrentTag: "some-tag-1"},
 			},
 		},
 		{
@@ -143,10 +143,10 @@ func TestReleaseCmd_Execute(t *testing.T) {
 				{CommandLine: []string{"git", "status", "--porcelain"}, OutputBytes: []byte("some-status-3")},
 			},
 			Expected: &typrls.Context{
-				ReleaseTag: "some-tag",
-				Alpha:      false,
-				Summary:    "some-summary",
-				Git:        &typrls.Git{Status: "some-status-3", CurrentTag: "some-tag-3"},
+				TagName: "some-tag",
+				Alpha:   false,
+				Summary: "some-summary",
+				Git:     &typrls.Git{Status: "some-status-3", CurrentTag: "some-tag-3"},
 			},
 		},
 	}
@@ -166,7 +166,7 @@ func TestReleaseCmd_Execute(t *testing.T) {
 				require.EqualError(t, err, tt.ExpectedErr)
 			} else {
 				require.NoError(t, err)
-				require.Equal(t, tt.Expected.ReleaseTag, rlsCtx.ReleaseTag)
+				require.Equal(t, tt.Expected.TagName, rlsCtx.TagName)
 				require.Equal(t, tt.Expected.Alpha, rlsCtx.Alpha)
 				require.Equal(t, tt.Expected.Summary, rlsCtx.Summary)
 				require.Equal(t, tt.Expected.Git, rlsCtx.Git)
