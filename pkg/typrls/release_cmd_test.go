@@ -93,6 +93,7 @@ func TestReleaseCmd_Execute(t *testing.T) {
 						{ShortCode: "5378feb", Message: "one"},
 					},
 				},
+				ReleaseFolder: "release",
 			},
 		},
 		{
@@ -116,10 +117,40 @@ func TestReleaseCmd_Execute(t *testing.T) {
 				{CommandLine: []string{"git", "status", "--porcelain"}, OutputBytes: []byte("some-status-1")},
 			},
 			Expected: &typrls.Context{
-				TagName: "v9.9.9",
-				Alpha:   false,
-				Summary: "some-summary",
-				Git:     &typrls.Git{Status: "some-status-1", CurrentTag: "some-tag-1"},
+				TagName:       "v9.9.9",
+				Alpha:         false,
+				Summary:       "some-summary",
+				Git:           &typrls.Git{Status: "some-status-1", CurrentTag: "some-tag-1"},
+				ReleaseFolder: "release",
+			},
+		},
+		{
+			TestName: "with custom release folder",
+			ReleaseCmd: &typrls.ReleaseCmd{
+				Summary: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
+					return "some-summary", nil
+				}),
+				ReleaseFolder: "some-release",
+			},
+			Ctx: &typgo.Context{
+				Context: createContext(),
+				BuildSys: &typgo.BuildSys{
+					Descriptor: &typgo.Descriptor{
+						ProjectVersion: "9.9.9",
+					},
+				},
+			},
+			RunExpectations: []*execkit.RunExpectation{
+				{CommandLine: []string{"git", "fetch"}},
+				{CommandLine: []string{"git", "describe", "--tags", "--abbrev=0"}, OutputBytes: []byte("some-tag-1")},
+				{CommandLine: []string{"git", "status", "--porcelain"}, OutputBytes: []byte("some-status-1")},
+			},
+			Expected: &typrls.Context{
+				TagName:       "v9.9.9",
+				Alpha:         false,
+				Summary:       "some-summary",
+				Git:           &typrls.Git{Status: "some-status-1", CurrentTag: "some-tag-1"},
+				ReleaseFolder: "some-release",
 			},
 		},
 		{
@@ -143,10 +174,11 @@ func TestReleaseCmd_Execute(t *testing.T) {
 				{CommandLine: []string{"git", "status", "--porcelain"}, OutputBytes: []byte("some-status-3")},
 			},
 			Expected: &typrls.Context{
-				TagName: "some-tag",
-				Alpha:   false,
-				Summary: "some-summary",
-				Git:     &typrls.Git{Status: "some-status-3", CurrentTag: "some-tag-3"},
+				TagName:       "some-tag",
+				Alpha:         false,
+				Summary:       "some-summary",
+				Git:           &typrls.Git{Status: "some-status-3", CurrentTag: "some-tag-3"},
+				ReleaseFolder: "release",
 			},
 		},
 	}
@@ -170,6 +202,7 @@ func TestReleaseCmd_Execute(t *testing.T) {
 				require.Equal(t, tt.Expected.Alpha, rlsCtx.Alpha)
 				require.Equal(t, tt.Expected.Summary, rlsCtx.Summary)
 				require.Equal(t, tt.Expected.Git, rlsCtx.Git)
+				require.Equal(t, tt.Expected.ReleaseFolder, rlsCtx.ReleaseFolder)
 			}
 		})
 	}

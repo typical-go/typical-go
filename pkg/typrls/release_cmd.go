@@ -21,9 +21,10 @@ type (
 	// ReleaseCmd release command
 	ReleaseCmd struct {
 		Releaser
-		Before     typgo.Action
-		Validation Validator
-		Summary    Summarizer
+		Before        typgo.Action
+		Validation    Validator
+		Summary       Summarizer
+		ReleaseFolder string
 	}
 )
 
@@ -56,13 +57,17 @@ func (r *ReleaseCmd) Execute(c *typgo.Context) error {
 	gitFetch(ctx)
 	defer gitFetch(ctx)
 
+	currentTag := gitTag(ctx)
 	alpha := c.Bool(AlphaFlag)
 	tagName := c.String(TagFlag)
+
 	if tagName == "" {
 		tagName = createTagName(c, alpha)
 	}
 
-	currentTag := gitTag(ctx)
+	if r.ReleaseFolder == "" {
+		r.ReleaseFolder = "release"
+	}
 
 	rlsCtx := &Context{
 		Context: c,
@@ -72,7 +77,8 @@ func (r *ReleaseCmd) Execute(c *typgo.Context) error {
 			CurrentTag: currentTag,
 			Logs:       gitLogs(ctx, currentTag),
 		},
-		TagName: tagName,
+		TagName:       tagName,
+		ReleaseFolder: r.ReleaseFolder,
 	}
 
 	if r.Validation != nil && !c.Bool(ForceFlag) {

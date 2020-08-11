@@ -17,10 +17,11 @@ type (
 	// Context contain data for release
 	Context struct {
 		*typgo.Context
-		Alpha   bool
-		TagName string
-		Summary string
-		Git     *Git
+		Alpha         bool
+		TagName       string
+		ReleaseFolder string
+		Summary       string
+		Git           *Git
 	}
 )
 
