@@ -1,5 +1,10 @@
 package typrls
 
+import (
+	"io"
+	"os"
+)
+
 var (
 	// DefaultValidation default validation
 	DefaultValidation = Validators{
@@ -11,4 +16,6 @@ var (
 	DefaultSummary = &ChangeSummary{
 		ExcludePrefix: []string{"merge", "bump", "revision", "generate", "wip"},
 	}
+	// Stdout standard output
+	Stdout io.Writer = os.Stdout
 )
