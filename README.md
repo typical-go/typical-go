@@ -32,7 +32,7 @@ $ typical-go setup -new -go-mod -project-pkg=github.com/typical-go/typical-go/my
 
 ## Run 
 
-This is recommended to run via wrapper [`typicalw`](typicalw) 
+It is recommended to run via wrapper [`typicalw`](typicalw) 
 ```bash
 $ ./typicalw
 ```
