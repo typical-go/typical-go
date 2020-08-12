@@ -6,6 +6,8 @@ import (
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
+var mainPackage = "."
+
 var descriptor = typgo.Descriptor{
 	ProjectName:    "typical-go",
 	ProjectVersion: "0.10.4",
@@ -15,7 +17,7 @@ var descriptor = typgo.Descriptor{
 
 		// compile
 		&typgo.CompileCmd{
-			Action: &typgo.StdCompile{MainPackage: "."},
+			Action: &typgo.StdCompile{MainPackage: mainPackage},
 		},
 
 		// run
@@ -44,10 +46,17 @@ var descriptor = typgo.Descriptor{
 
 		// release
 		&typrls.ReleaseCmd{
-			Before:     typgo.BuildSysRuns{"test", "examples", "compile"},
+			Before:     typgo.BuildSysRuns{"test", "examples"},
 			Validation: typrls.DefaultValidation,
 			Summary:    typrls.DefaultSummary,
-			Releaser:   &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
+
+			Releaser: typrls.Releasers{
+				&typrls.Compile{
+					MainPackage: mainPackage,
+					Targets:     []typrls.Target{"darwin/amd64", "linux/amd64"},
+				},
+				&typrls.Github{Owner: "typical-go", Repo: "typical-go"},
+			},
 		},
 	},
 }

@@ -3,6 +3,7 @@ package typrls
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
@@ -13,8 +14,8 @@ const (
 	ForceFlag = "force"
 	// AlphaFlag -alpha cli param
 	AlphaFlag = "alpha"
-	// TagFlag -tag cli param
-	TagFlag = "tag"
+	// TagNameFlag -tag cli param
+	TagNameFlag = "tag-name"
 )
 
 type (
@@ -39,7 +40,7 @@ func (r *ReleaseCmd) Command(sys *typgo.BuildSys) *cli.Command {
 		Flags: []cli.Flag{
 			&cli.BoolFlag{Name: ForceFlag, Usage: "Release by passed all validation"},
 			&cli.BoolFlag{Name: AlphaFlag, Usage: "Release for alpha version"},
-			&cli.StringFlag{Name: TagFlag, Usage: "Override the release-tag"},
+			&cli.StringFlag{Name: TagNameFlag, Usage: "Override the release-tag"},
 		},
 		Before: sys.ActionFn(r.Before),
 		Action: sys.ActionFn(r),
@@ -59,7 +60,7 @@ func (r *ReleaseCmd) Execute(c *typgo.Context) error {
 
 	currentTag := gitTag(ctx)
 	alpha := c.Bool(AlphaFlag)
-	tagName := c.String(TagFlag)
+	tagName := c.String(TagNameFlag)
 
 	if tagName == "" {
 		tagName = createTagName(c, alpha)
@@ -92,6 +93,9 @@ func (r *ReleaseCmd) Execute(c *typgo.Context) error {
 		return err
 	}
 	rlsCtx.Summary = summary
+
+	os.RemoveAll(r.ReleaseFolder)
+	os.MkdirAll(r.ReleaseFolder, 0777)
 
 	return r.Release(rlsCtx)
 }

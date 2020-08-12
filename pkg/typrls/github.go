@@ -49,7 +49,8 @@ func (g *Github) Release(c *Context) (err error) {
 
 	files, _ := ioutil.ReadDir(c.ReleaseFolder)
 	for _, fileInfo := range files {
-		path := fileInfo.Name()
+		path := c.ReleaseFolder + "/" + fileInfo.Name()
+		fmt.Fprintf(Stdout, "Upload '%s'\n", path)
 		var file *os.File
 		if file, err = os.Open(path); err != nil {
 			return

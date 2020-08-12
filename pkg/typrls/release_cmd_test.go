@@ -161,7 +161,7 @@ func TestReleaseCmd_Execute(t *testing.T) {
 				}),
 			},
 			Ctx: &typgo.Context{
-				Context: createContext("-tag=some-tag"),
+				Context: createContext("-tag-name=some-tag"),
 				BuildSys: &typgo.BuildSys{
 					Descriptor: &typgo.Descriptor{
 						ProjectVersion: "9.9.9",
@@ -212,7 +212,7 @@ func createContext(args ...string) *cli.Context {
 	flagSet := flag.NewFlagSet("test", 0)
 	flagSet.Bool(typrls.AlphaFlag, false, "")
 	flagSet.Bool(typrls.ForceFlag, false, "")
-	flagSet.String(typrls.TagFlag, "", "")
+	flagSet.String(typrls.TagNameFlag, "", "")
 	flagSet.Parse(args)
 	return cli.NewContext(nil, flagSet, nil)
 }
