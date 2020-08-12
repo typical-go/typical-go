@@ -41,9 +41,7 @@ func TestValidator(t *testing.T) {
 			TestName:  "uncommitted change",
 			Validator: &typrls.UncommittedValidation{},
 			Context: &typrls.Context{
-				Git: &typrls.Git{
-					Status: "some-status",
-				},
+				Git: &typrls.Git{Status: "some-status"},
 			},
 			ExpectedErr: "Please commit changes first:\nsome-status",
 		},
@@ -57,20 +55,24 @@ func TestValidator(t *testing.T) {
 			Validator: &typrls.AlreadyReleasedValidation{},
 			Context: &typrls.Context{
 				TagName: "some-tag",
-				Git: &typrls.Git{
-					CurrentTag: "some-tag",
-				},
+				Git:     &typrls.Git{CurrentTag: "some-tag"},
 			},
 			ExpectedErr: "some-tag already released",
+		},
+		{
+			TestName:  "current tag is empty",
+			Validator: &typrls.AlreadyReleasedValidation{},
+			Context: &typrls.Context{
+				TagName: "some-tag",
+				Git:     &typrls.Git{},
+			},
 		},
 		{
 			TestName:  "not release yet",
 			Validator: &typrls.AlreadyReleasedValidation{},
 			Context: &typrls.Context{
 				TagName: "different-tag",
-				Git: &typrls.Git{
-					CurrentTag: "some-tag",
-				},
+				Git:     &typrls.Git{CurrentTag: "some-tag"},
 			},
 		},
 		{
