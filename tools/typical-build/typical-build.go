@@ -50,14 +50,8 @@ var descriptor = typgo.Descriptor{
 			Summary:    typrls.DefaultSummary,
 			Tag:        typrls.DefaultTag,
 
-			Before: typgo.BuildSysRuns{"test", "examples"},
-			Releaser: typrls.Releasers{
-				&typrls.Compile{
-					MainPackage: mainPackage,
-					Targets:     []typrls.Target{"darwin/amd64", "linux/amd64"},
-				},
-				&typrls.Github{Owner: "typical-go", Repo: "typical-go"},
-			},
+			Before:   typgo.BuildSysRuns{"test", "examples"},
+			Releaser: &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
 		},
 	},
 }
