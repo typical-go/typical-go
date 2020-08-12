@@ -54,7 +54,19 @@ func gitStatus(ctx context.Context) string {
 		Args:   []string{"status", "--porcelain"},
 		Stdout: &out,
 	}); err != nil {
-		fmt.Printf("WARN: %s\n", err.Error())
+		fmt.Fprintf(Stdout, "WARN: %s\n", err.Error())
+	}
+	return out.String()
+}
+
+func latestGitID(ctx context.Context) string {
+	var out strings.Builder
+	if err := execkit.Run(ctx, &execkit.Command{
+		Name:   "git",
+		Args:   []string{"rev-parse", "HEAD"},
+		Stdout: &out,
+	}); err != nil {
+		fmt.Fprintf(Stdout, "WARN: %s\n", err.Error())
 	}
 	return out.String()
 }
@@ -73,7 +85,7 @@ func gitTag(ctx context.Context) string {
 		Args:   []string{"describe", "--tags", "--abbrev=0"},
 		Stdout: &out,
 	}); err != nil {
-		fmt.Printf("WARN: %s\n", err.Error())
+		fmt.Fprintf(Stdout, "WARN: %s\n", err.Error())
 	}
 	return strings.TrimSpace(out.String())
 }
@@ -93,7 +105,7 @@ func gitLogs(ctx context.Context, from string) (logs []*Log) {
 		Stdout: &out,
 	})
 	if err != nil {
-		fmt.Printf("WARN: %s\n", err.Error())
+		fmt.Fprintf(Stdout, "WARN: %s\n", err.Error())
 	}
 
 	for _, s := range strings.Split(out.String(), "\n") {

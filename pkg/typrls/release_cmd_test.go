@@ -12,6 +12,14 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+func TestReleaseCmd_Execute_NoReleaser(t *testing.T) {
+	releaseCmd := &typrls.ReleaseCmd{
+		Tag:     typrls.DefaultTag,
+		Summary: typrls.DefaultSummary,
+	}
+	require.EqualError(t, releaseCmd.Execute(nil), "typrls: missing releaser")
+}
+
 func TestReleaseCmd_Execute(t *testing.T) {
 	testcases := []struct {
 		TestName           string
@@ -33,8 +41,23 @@ func TestReleaseCmd_Execute(t *testing.T) {
 			ExpectedErr: "typrls: missing summary",
 		},
 		{
+			TestName: "missing tag",
+			ReleaseCmd: &typrls.ReleaseCmd{
+				Summary: typrls.DefaultSummary,
+			},
+			Ctx: &typgo.Context{
+				Context: createContext(),
+				BuildSys: &typgo.BuildSys{
+					Descriptor: &typgo.Descriptor{},
+				},
+			},
+			ExpectedErr: "typrls: missing tag",
+		},
+		{
 			TestName: "bad summary",
 			ReleaseCmd: &typrls.ReleaseCmd{
+				Releaser: &typrls.Compile{},
+				Tag:      typrls.DefaultTag,
 				Summary: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
 					return "", errors.New("bad-summary")
 				}),
@@ -50,6 +73,7 @@ func TestReleaseCmd_Execute(t *testing.T) {
 		{
 			TestName: "invalid",
 			ReleaseCmd: &typrls.ReleaseCmd{
+				Tag:     typrls.DefaultTag,
 				Summary: typrls.DefaultSummary,
 				Validation: typrls.NewValidator(func(*typrls.Context) error {
 					return errors.New("some-error")
@@ -66,6 +90,7 @@ func TestReleaseCmd_Execute(t *testing.T) {
 		{
 			TestName: "with alpha tag",
 			ReleaseCmd: &typrls.ReleaseCmd{
+				Tag: typrls.DefaultTag,
 				Summary: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
 					return "some-summary", nil
 				}),
@@ -99,6 +124,7 @@ func TestReleaseCmd_Execute(t *testing.T) {
 		{
 			TestName: "success",
 			ReleaseCmd: &typrls.ReleaseCmd{
+				Tag: typrls.DefaultTag,
 				Summary: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
 					return "some-summary", nil
 				}),
@@ -127,6 +153,7 @@ func TestReleaseCmd_Execute(t *testing.T) {
 		{
 			TestName: "with custom release folder",
 			ReleaseCmd: &typrls.ReleaseCmd{
+				Tag: typrls.DefaultTag,
 				Summary: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
 					return "some-summary", nil
 				}),
@@ -156,6 +183,7 @@ func TestReleaseCmd_Execute(t *testing.T) {
 		{
 			TestName: "override release-tag",
 			ReleaseCmd: &typrls.ReleaseCmd{
+				Tag: typrls.DefaultTag,
 				Summary: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
 					return "some-summary", nil
 				}),

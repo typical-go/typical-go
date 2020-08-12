@@ -46,10 +46,11 @@ var descriptor = typgo.Descriptor{
 
 		// release
 		&typrls.ReleaseCmd{
-			Before:     typgo.BuildSysRuns{"test", "examples"},
 			Validation: typrls.DefaultValidation,
 			Summary:    typrls.DefaultSummary,
+			Tag:        typrls.DefaultTag,
 
+			Before: typgo.BuildSysRuns{"test", "examples"},
 			Releaser: typrls.Releasers{
 				&typrls.Compile{
 					MainPackage: mainPackage,

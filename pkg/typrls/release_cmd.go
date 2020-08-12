@@ -2,7 +2,6 @@ package typrls
 
 import (
 	"errors"
-	"fmt"
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -21,9 +20,10 @@ const (
 type (
 	// ReleaseCmd release command
 	ReleaseCmd struct {
-		Releaser
+		Releaser      Releaser
 		Before        typgo.Action
 		Validation    Validator
+		Tag           Tagger
 		Summary       Summarizer
 		ReleaseFolder string
 	}
@@ -47,10 +47,23 @@ func (r *ReleaseCmd) Command(sys *typgo.BuildSys) *cli.Command {
 	}
 }
 
-// Execute release
-func (r *ReleaseCmd) Execute(c *typgo.Context) error {
+func (r *ReleaseCmd) validate() error {
 	if r.Summary == nil {
 		return errors.New("typrls: missing summary")
+	}
+	if r.Tag == nil {
+		return errors.New("typrls: missing tag")
+	}
+	if r.Releaser == nil {
+		return errors.New("typrls: missing releaser")
+	}
+	return nil
+}
+
+// Execute release
+func (r *ReleaseCmd) Execute(c *typgo.Context) error {
+	if err := r.validate(); err != nil {
+		return err
 	}
 
 	ctx := c.Ctx()
@@ -63,7 +76,7 @@ func (r *ReleaseCmd) Execute(c *typgo.Context) error {
 	tagName := c.String(TagNameFlag)
 
 	if tagName == "" {
-		tagName = createTagName(c, alpha)
+		tagName = r.Tag.CreateTag(c, alpha)
 	}
 
 	if r.ReleaseFolder == "" {
@@ -97,18 +110,5 @@ func (r *ReleaseCmd) Execute(c *typgo.Context) error {
 	os.RemoveAll(r.ReleaseFolder)
 	os.MkdirAll(r.ReleaseFolder, 0777)
 
-	return r.Release(rlsCtx)
-}
-
-func createTagName(c *typgo.Context, alpha bool) string {
-	tagName := "v0.0.1"
-	if c.BuildSys.ProjectVersion != "" {
-		tagName = fmt.Sprintf("v%s", c.BuildSys.ProjectVersion)
-	}
-
-	if alpha {
-		tagName = tagName + "_alpha"
-	}
-
-	return tagName
+	return r.Releaser.Release(rlsCtx)
 }
