@@ -10,7 +10,7 @@ var mainPackage = "."
 
 var descriptor = typgo.Descriptor{
 	ProjectName:    "typical-go",
-	ProjectVersion: "0.10.4",
+	ProjectVersion: "0.10.5",
 	ProjectLayouts: []string{"internal", "pkg"},
 
 	Cmds: []typgo.Cmd{
