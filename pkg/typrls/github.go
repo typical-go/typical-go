@@ -1,7 +1,6 @@
 package typrls
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -25,7 +24,8 @@ var _ Releaser = (*Github)(nil)
 func (g *Github) Release(c *Context) (err error) {
 	githubToken := os.Getenv("GITHUB_TOKEN")
 	if githubToken == "" {
-		return errors.New("Environment 'GITHUB_TOKEN' is missing")
+		fmt.Fprintln(Stdout, "Skip Github Release due to missing 'GITHUB_TOKEN'")
+		return
 	}
 
 	token := &oauth2.Token{AccessToken: githubToken}
