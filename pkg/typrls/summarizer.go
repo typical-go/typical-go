@@ -15,8 +15,8 @@ type (
 	summarizerImpl struct {
 		fn SummarizeFn
 	}
-	// ChangeSummary summary from git change log
-	ChangeSummary struct {
+	// ChangeSummarizer summary from git change log
+	ChangeSummarizer struct {
 		ExcludePrefix []string
 	}
 )
@@ -38,10 +38,10 @@ func (s *summarizerImpl) Summarize(c *Context) (string, error) {
 // ChangeSummary
 //
 
-var _ (Summarizer) = (*ChangeSummary)(nil)
+var _ (Summarizer) = (*ChangeSummarizer)(nil)
 
 // Summarize by git change logs
-func (s *ChangeSummary) Summarize(c *Context) (string, error) {
+func (s *ChangeSummarizer) Summarize(c *Context) (string, error) {
 	var changes []string
 	for _, log := range c.Git.Logs {
 		if !s.HasPrefix(log.Message) {
@@ -52,7 +52,7 @@ func (s *ChangeSummary) Summarize(c *Context) (string, error) {
 }
 
 // HasPrefix return true if eligible to excluded by prefix
-func (s *ChangeSummary) HasPrefix(msg string) bool {
+func (s *ChangeSummarizer) HasPrefix(msg string) bool {
 	msg = strings.ToLower(msg)
 	for _, prefix := range s.ExcludePrefix {
 		if strings.HasPrefix(msg, strings.ToLower(prefix)) {

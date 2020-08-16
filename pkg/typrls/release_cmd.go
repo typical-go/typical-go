@@ -8,6 +8,24 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+type (
+	// ReleaseCmd release command
+	ReleaseCmd struct {
+		Before typgo.Action
+		Action typgo.Action
+	}
+	// ReleaseProject action
+	ReleaseProject struct {
+		ReleaseFolder string
+		Validator     Validator
+		Tagger        Tagger
+		Summarizer    Summarizer
+		Releaser      Releaser
+	}
+)
+
+var _ typgo.Cmd = (*ReleaseCmd)(nil)
+
 const (
 	// ForceFlag -force cli param
 	ForceFlag = "force"
@@ -16,21 +34,6 @@ const (
 	// TagNameFlag -tag cli param
 	TagNameFlag = "tag-name"
 )
-
-type (
-	// ReleaseCmd release command
-	ReleaseCmd struct {
-		Releaser      Releaser
-		Before        typgo.Action
-		Validation    Validator
-		Tag           Tagger
-		Summary       Summarizer
-		ReleaseFolder string
-	}
-)
-
-var _ typgo.Cmd = (*ReleaseCmd)(nil)
-var _ typgo.Action = (*ReleaseCmd)(nil)
 
 // Command release
 func (r *ReleaseCmd) Command(sys *typgo.BuildSys) *cli.Command {
@@ -43,15 +46,21 @@ func (r *ReleaseCmd) Command(sys *typgo.BuildSys) *cli.Command {
 			&cli.StringFlag{Name: TagNameFlag, Usage: "Override the release-tag"},
 		},
 		Before: sys.Action(r.Before),
-		Action: sys.Action(r),
+		Action: sys.Action(r.Action),
 	}
 }
 
-func (r *ReleaseCmd) validate() error {
-	if r.Summary == nil {
+//
+// ReleaseProject
+//
+
+var _ typgo.Action = (*ReleaseProject)(nil)
+
+func (r *ReleaseProject) validate() error {
+	if r.Summarizer == nil {
 		return errors.New("typrls: missing summary")
 	}
-	if r.Tag == nil {
+	if r.Tagger == nil {
 		return errors.New("typrls: missing tag")
 	}
 	if r.Releaser == nil {
@@ -61,7 +70,7 @@ func (r *ReleaseCmd) validate() error {
 }
 
 // Execute release
-func (r *ReleaseCmd) Execute(c *typgo.Context) error {
+func (r *ReleaseProject) Execute(c *typgo.Context) error {
 	if err := r.validate(); err != nil {
 		return err
 	}
@@ -76,7 +85,7 @@ func (r *ReleaseCmd) Execute(c *typgo.Context) error {
 	tagName := c.String(TagNameFlag)
 
 	if tagName == "" {
-		tagName = r.Tag.CreateTag(c, alpha)
+		tagName = r.Tagger.CreateTag(c, alpha)
 	}
 
 	if r.ReleaseFolder == "" {
@@ -95,13 +104,13 @@ func (r *ReleaseCmd) Execute(c *typgo.Context) error {
 		ReleaseFolder: r.ReleaseFolder,
 	}
 
-	if r.Validation != nil && !c.Bool(ForceFlag) {
-		if err := r.Validation.Validate(rlsCtx); err != nil {
+	if r.Validator != nil && !c.Bool(ForceFlag) {
+		if err := r.Validator.Validate(rlsCtx); err != nil {
 			return err
 		}
 	}
 
-	summary, err := r.Summary.Summarize(rlsCtx)
+	summary, err := r.Summarizer.Summarize(rlsCtx)
 	if err != nil {
 		return err
 	}

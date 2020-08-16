@@ -25,7 +25,7 @@ func TestSummarizer(t *testing.T) {
 		},
 		{
 			TestName: "change summary",
-			Summarizer: &typrls.ChangeSummary{
+			Summarizer: &typrls.ChangeSummarizer{
 				ExcludePrefix: []string{"merge", "revision"},
 			},
 			Context: &typrls.Context{
@@ -54,7 +54,7 @@ func TestSummarizer(t *testing.T) {
 }
 
 func TestChangeSummarize_HasPrefix(t *testing.T) {
-	summarizer := &typrls.ChangeSummary{
+	summarizer := &typrls.ChangeSummarizer{
 		ExcludePrefix: []string{"merge", "revision"},
 	}
 

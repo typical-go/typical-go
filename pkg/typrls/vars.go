@@ -6,18 +6,18 @@ import (
 )
 
 var (
-	// DefaultValidation default validation
-	DefaultValidation = Validators{
+	// DefaultValidator default validation
+	DefaultValidator = Validators{
 		&NoGitChangeValidation{},
 		&AlreadyReleasedValidation{},
 		&UncommittedValidation{},
 	}
-	// DefaultSummary default summary
-	DefaultSummary = &ChangeSummary{
+	// DefaultSummarizer default summary
+	DefaultSummarizer = &ChangeSummarizer{
 		ExcludePrefix: []string{"merge", "bump", "revision", "generate", "wip"},
 	}
-	// DefaultTag default tag
-	DefaultTag = &StdTagger{}
+	// DefaultTagger default tag
+	DefaultTagger = &StdTagger{}
 	// Stdout standard output
 	Stdout io.Writer = os.Stdout
 )
