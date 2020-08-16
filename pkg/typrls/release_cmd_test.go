@@ -157,10 +157,9 @@ func TestReleaseCmd_Execute(t *testing.T) {
 				Summarizer: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
 					return "some-summary", nil
 				}),
-				ReleaseFolder: "some-release",
 			},
 			Ctx: &typgo.Context{
-				Context: createContext(),
+				Context: createContext("-release-folder=some-release"),
 				BuildSys: &typgo.BuildSys{
 					Descriptor: &typgo.Descriptor{
 						ProjectVersion: "9.9.9",
@@ -230,7 +229,6 @@ func TestReleaseCmd_Execute(t *testing.T) {
 				require.Equal(t, tt.Expected.Alpha, rlsCtx.Alpha)
 				require.Equal(t, tt.Expected.Summary, rlsCtx.Summary)
 				require.Equal(t, tt.Expected.Git, rlsCtx.Git)
-				require.Equal(t, tt.Expected.ReleaseFolder, rlsCtx.ReleaseFolder)
 			}
 		})
 	}

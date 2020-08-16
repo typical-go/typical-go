@@ -6,7 +6,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
-var mainPackage = "."
+var mainPkg = "."
 
 var descriptor = typgo.Descriptor{
 	ProjectName:    "typical-go",
@@ -17,7 +17,7 @@ var descriptor = typgo.Descriptor{
 
 		// compile
 		&typgo.CompileCmd{
-			Action: &typgo.StdCompile{MainPackage: mainPackage},
+			Action: &typgo.StdCompile{MainPackage: mainPkg},
 		},
 
 		// run

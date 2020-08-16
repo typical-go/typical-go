@@ -16,11 +16,10 @@ type (
 	}
 	// ReleaseProject action
 	ReleaseProject struct {
-		ReleaseFolder string
-		Validator     Validator
-		Tagger        Tagger
-		Summarizer    Summarizer
-		Releaser      Releaser
+		Validator  Validator
+		Tagger     Tagger
+		Summarizer Summarizer
+		Releaser   Releaser
 	}
 )
 
@@ -33,6 +32,9 @@ const (
 	AlphaFlag = "alpha"
 	// TagNameFlag -tag cli param
 	TagNameFlag = "tag-name"
+	// ReleaseFolderFlag -release-folder cli param
+	ReleaseFolderFlag    = "release-folder"
+	defaultReleaseFolder = "release"
 )
 
 // Command release
@@ -44,6 +46,7 @@ func (r *ReleaseCmd) Command(sys *typgo.BuildSys) *cli.Command {
 			&cli.BoolFlag{Name: ForceFlag, Usage: "Release by passed all validation"},
 			&cli.BoolFlag{Name: AlphaFlag, Usage: "Release for alpha version"},
 			&cli.StringFlag{Name: TagNameFlag, Usage: "Override the release-tag"},
+			&cli.StringFlag{Name: ReleaseFolderFlag, Usage: "release folder", Value: defaultReleaseFolder},
 		},
 		Before: sys.Action(r.Before),
 		Action: sys.Action(r.Action),
@@ -83,13 +86,10 @@ func (r *ReleaseProject) Execute(c *typgo.Context) error {
 	currentTag := gitTag(ctx)
 	alpha := c.Bool(AlphaFlag)
 	tagName := c.String(TagNameFlag)
+	releaseFolder := c.String(ReleaseFolderFlag)
 
 	if tagName == "" {
 		tagName = r.Tagger.CreateTag(c, alpha)
-	}
-
-	if r.ReleaseFolder == "" {
-		r.ReleaseFolder = "release"
 	}
 
 	rlsCtx := &Context{
@@ -101,7 +101,7 @@ func (r *ReleaseProject) Execute(c *typgo.Context) error {
 			Logs:       gitLogs(ctx, currentTag),
 		},
 		TagName:       tagName,
-		ReleaseFolder: r.ReleaseFolder,
+		ReleaseFolder: releaseFolder,
 	}
 
 	if r.Validator != nil && !c.Bool(ForceFlag) {
@@ -116,8 +116,8 @@ func (r *ReleaseProject) Execute(c *typgo.Context) error {
 	}
 	rlsCtx.Summary = summary
 
-	os.RemoveAll(r.ReleaseFolder)
-	os.MkdirAll(r.ReleaseFolder, 0777)
+	os.RemoveAll(releaseFolder)
+	os.MkdirAll(releaseFolder, 0777)
 
 	return r.Releaser.Release(rlsCtx)
 }
