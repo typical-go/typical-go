@@ -56,7 +56,7 @@ func TestReleaseCmd_Execute(t *testing.T) {
 		{
 			TestName: "bad summary",
 			ReleaseCmd: &typrls.ReleaseCmd{
-				Releaser: &typrls.Compile{},
+				Releaser: &typrls.CrossCompiler{},
 				Tag:      typrls.DefaultTag,
 				Summary: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
 					return "", errors.New("bad-summary")

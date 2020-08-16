@@ -9,8 +9,8 @@ import (
 )
 
 type (
-	// Compile the proejct for release
-	Compile struct {
+	// CrossCompiler compile project to various platform
+	CrossCompiler struct {
 		Targets     []Target
 		MainPackage string
 	}
@@ -22,10 +22,10 @@ type (
 // Compile
 //
 
-var _ Releaser = (*Compile)(nil)
+var _ Releaser = (*CrossCompiler)(nil)
 
 // Release for compile
-func (o *Compile) Release(c *Context) error {
+func (o *CrossCompiler) Release(c *Context) error {
 	defer os.Unsetenv("GOOS")
 	defer os.Unsetenv("GOARC")
 
@@ -53,7 +53,7 @@ func (o *Compile) Release(c *Context) error {
 	return nil
 }
 
-func (o *Compile) getMainPackage(c *Context) string {
+func (o *CrossCompiler) getMainPackage(c *Context) string {
 	if o.MainPackage == "" {
 		o.MainPackage = fmt.Sprintf("./cmd/%s", c.BuildSys.ProjectName)
 	}

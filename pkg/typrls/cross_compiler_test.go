@@ -11,16 +11,16 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func TestCompile(t *testing.T) {
+func TestCrossCompile(t *testing.T) {
 	testcases := []struct {
 		TestName string
-		typrls.Compile
+		typrls.CrossCompiler
 		Context         *typrls.Context
 		RunExpectations []*execkit.RunExpectation
 		ExpectedErr     string
 	}{
 		{
-			Compile: typrls.Compile{
+			CrossCompiler: typrls.CrossCompiler{
 				Targets: []typrls.Target{"darwin/amd64", "linux/amd64"},
 			},
 			Context: &typrls.Context{
@@ -53,7 +53,7 @@ func TestCompile(t *testing.T) {
 		},
 		{
 			TestName: "go build error",
-			Compile: typrls.Compile{
+			CrossCompiler: typrls.CrossCompiler{
 				Targets: []typrls.Target{"darwin/amd64"},
 			},
 			Context: &typrls.Context{
