@@ -42,8 +42,8 @@ func (r *ReleaseCmd) Command(sys *typgo.BuildSys) *cli.Command {
 			&cli.BoolFlag{Name: AlphaFlag, Usage: "Release for alpha version"},
 			&cli.StringFlag{Name: TagNameFlag, Usage: "Override the release-tag"},
 		},
-		Before: sys.ActionFn(r.Before),
-		Action: sys.ActionFn(r),
+		Before: sys.Action(r.Before),
+		Action: sys.Action(r),
 	}
 }
 

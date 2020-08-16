@@ -36,8 +36,8 @@ func (r *RunCmd) Command(sys *BuildSys) *cli.Command {
 		Aliases:         []string{"r"},
 		Usage:           "Run the project",
 		SkipFlagParsing: true,
-		Before:          sys.ActionFn(r.Before),
-		Action:          sys.ActionFn(r.Action),
+		Before:          sys.Action(r.Before),
+		Action:          sys.Action(r.Action),
 	}
 }
 

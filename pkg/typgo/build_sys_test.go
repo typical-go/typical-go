@@ -37,11 +37,21 @@ func TestBuildSys_Run(t *testing.T) {
 	require.Equal(t, []string{"1", "2"}, seq)
 }
 
-func TestBuildSys_ActionFn(t *testing.T) {
+func TestBuildSys_Action(t *testing.T) {
 	sys := &typgo.BuildSys{}
-	require.NoError(t, sys.ActionFn(nil)(&cli.Context{}))
 	action := typgo.NewAction(func(*typgo.Context) error {
 		return errors.New("some-error")
 	})
-	require.EqualError(t, sys.ActionFn(action)(&cli.Context{}), "some-error")
+
+	require.NoError(t, sys.Action(nil)(&cli.Context{}))
+	require.EqualError(t, sys.Action(action)(&cli.Context{}), "some-error")
+}
+
+func TestBuildSys_ExecuteFn(t *testing.T) {
+	sys := &typgo.BuildSys{}
+	fn := func(*typgo.Context) error {
+		return errors.New("some-error")
+	}
+
+	require.EqualError(t, sys.ExecuteFn(fn)(&cli.Context{}), "some-error")
 }

@@ -34,7 +34,7 @@ func (c *CompileCmd) Command(b *BuildSys) *cli.Command {
 		Name:    "compile",
 		Aliases: []string{"c"},
 		Usage:   "Compile the project",
-		Action:  b.ActionFn(c.Action),
+		Action:  b.Action(c.Action),
 	}
 }
 

@@ -26,7 +26,7 @@ func (d *MockCmd) Command(c *typgo.BuildSys) *cli.Command {
 		Usage:       "Generate mock class",
 		UsageText:   "mock [package_names]",
 		Description: "If package_names is missing then check every package",
-		Action:      c.ActionFn(d),
+		Action:      c.Action(d),
 	}
 }
 

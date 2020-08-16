@@ -35,7 +35,7 @@ func (a *AnnotateCmd) Command(sys *typgo.BuildSys) *cli.Command {
 		Name:    "annotate",
 		Aliases: []string{"a"},
 		Usage:   "Annotate the project and generate code",
-		Action:  sys.ActionFn(a),
+		Action:  sys.Action(a),
 	}
 }
 

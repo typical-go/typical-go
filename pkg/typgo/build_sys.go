@@ -50,8 +50,13 @@ func (b *BuildSys) Run(name string, c *cli.Context) error {
 	return fmt.Errorf("typgo: no command with name '%s'", name)
 }
 
-// ActionFn to return related action func
-func (b *BuildSys) ActionFn(action Action) func(*cli.Context) error {
+// ExecuteFn to return cli func from execute function
+func (b *BuildSys) ExecuteFn(fn ExecuteFn) func(*cli.Context) error {
+	return b.Action(NewAction(fn))
+}
+
+// Action to return cli func from action
+func (b *BuildSys) Action(action Action) func(*cli.Context) error {
 	return func(cliCtx *cli.Context) error {
 		if action == nil {
 			return nil
