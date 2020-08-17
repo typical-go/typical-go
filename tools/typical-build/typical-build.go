@@ -30,9 +30,7 @@ var descriptor = typgo.Descriptor{
 		},
 
 		// clean
-		&typgo.CleanCmd{
-			Action: &typgo.StdClean{},
-		},
+		&typgo.CleanProject{},
 
 		// examples
 		&typgo.Command{
