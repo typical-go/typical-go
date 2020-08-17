@@ -15,7 +15,7 @@ var descriptor = typgo.Descriptor{
 		&typgo.CleanProject{},
 		// run
 		&typgo.RunCmd{
-			Before: typgo.BuildSysRuns{"compile"},
+			Before: typgo.BuildCmdRuns{"compile"},
 			Action: &typgo.RunProject{},
 		},
 	},

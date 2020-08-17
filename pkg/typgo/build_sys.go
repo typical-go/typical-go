@@ -1,8 +1,6 @@
 package typgo
 
 import (
-	"fmt"
-
 	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/urfave/cli/v2"
 )
@@ -33,21 +31,6 @@ func (b *BuildSys) app() *cli.App {
 	}
 	app.Commands = b.Commands
 	return app
-}
-
-// Run command by name
-func (b *BuildSys) Run(name string, c *cli.Context) error {
-	for _, command := range b.Commands {
-		if command.Name == name {
-			if command.Before != nil {
-				if err := command.Before(c); err != nil {
-					return err
-				}
-			}
-			return command.Action(c)
-		}
-	}
-	return fmt.Errorf("typgo: no command with name '%s'", name)
 }
 
 // ExecuteFn to return cli func from execute function

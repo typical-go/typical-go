@@ -22,7 +22,7 @@ func TestRunCmd(t *testing.T) {
 	require.NoError(t, command.Before(&cli.Context{}))
 }
 
-func TestRunCommand(t *testing.T) {
+func TestRunCmd_1(t *testing.T) {
 	runCmd := &typgo.RunCmd{
 		Before: typgo.NewAction(func(*typgo.Context) error {
 			return errors.New("before-error")

@@ -22,7 +22,7 @@ var descriptor = typgo.Descriptor{
 		&typgo.CleanProject{},
 		// run
 		&typgo.RunCmd{
-			Before: typgo.BuildSysRuns{"compile"},
+			Before: typgo.BuildCmdRuns{"compile"},
 			Action: &typgo.RunProject{},
 		},
 		// examples
@@ -34,7 +34,7 @@ var descriptor = typgo.Descriptor{
 		},
 		// release
 		&typrls.ReleaseCmd{
-			Before: typgo.BuildSysRuns{"test", "examples"},
+			Before: typgo.BuildCmdRuns{"test", "examples"},
 			Action: &typrls.ReleaseProject{
 				Validator: typrls.DefaultValidator,
 				Releaser:  &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
