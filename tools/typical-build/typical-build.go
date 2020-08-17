@@ -36,10 +36,8 @@ var descriptor = typgo.Descriptor{
 		&typrls.ReleaseCmd{
 			Before: typgo.BuildSysRuns{"test", "examples"},
 			Action: &typrls.ReleaseProject{
-				Validator:  typrls.DefaultValidator,
-				Summarizer: typrls.DefaultSummarizer,
-				Tagger:     typrls.DefaultTagger,
-				Releaser:   &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
+				Validator: typrls.DefaultValidator,
+				Releaser:  &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
 			},
 		},
 	},

@@ -61,10 +61,10 @@ var _ typgo.Action = (*ReleaseProject)(nil)
 
 func (r *ReleaseProject) validate() error {
 	if r.Summarizer == nil {
-		return errors.New("typrls: missing summary")
+		r.Summarizer = DefaultSummarizer
 	}
 	if r.Tagger == nil {
-		return errors.New("typrls: missing tag")
+		r.Tagger = DefaultTagger
 	}
 	if r.Releaser == nil {
 		return errors.New("typrls: missing releaser")

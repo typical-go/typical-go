@@ -30,7 +30,6 @@ func TestReleaseCmd_Execute(t *testing.T) {
 		ExpectedErr     string
 	}{
 		{
-			TestName:       "missing summary",
 			ReleaseProject: &typrls.ReleaseProject{},
 			Ctx: &typgo.Context{
 				Context: createContext(),
@@ -38,20 +37,13 @@ func TestReleaseCmd_Execute(t *testing.T) {
 					Descriptor: &typgo.Descriptor{},
 				},
 			},
-			ExpectedErr: "typrls: missing summary",
-		},
-		{
-			TestName: "missing tag",
-			ReleaseProject: &typrls.ReleaseProject{
-				Summarizer: typrls.DefaultSummarizer,
+			Expected: &typrls.Context{
+				TagName:       "v0.0.1",
+				Alpha:         false,
+				Summary:       "",
+				Git:           &typrls.Git{},
+				ReleaseFolder: "release",
 			},
-			Ctx: &typgo.Context{
-				Context: createContext(),
-				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{},
-				},
-			},
-			ExpectedErr: "typrls: missing tag",
 		},
 		{
 			TestName: "bad summary",
@@ -239,6 +231,7 @@ func createContext(args ...string) *cli.Context {
 	flagSet.Bool(typrls.AlphaFlag, false, "")
 	flagSet.Bool(typrls.ForceFlag, false, "")
 	flagSet.String(typrls.TagNameFlag, "", "")
+	flagSet.String(typrls.ReleaseFolderFlag, "release", "")
 	flagSet.Parse(args)
 	return cli.NewContext(nil, flagSet, nil)
 }
