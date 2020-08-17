@@ -15,7 +15,7 @@ var descriptor = typgo.Descriptor{
 
 	Cmds: []typgo.Cmd{
 		// compile
-		&typgo.CompileProject{},
+		&typgo.CompileProject{MainPackage: mainPkg},
 		// test
 		&typgo.TestProject{},
 		// clean
