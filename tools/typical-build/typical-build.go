@@ -16,9 +16,7 @@ var descriptor = typgo.Descriptor{
 	Cmds: []typgo.Cmd{
 
 		// compile
-		&typgo.CompileCmd{
-			Action: &typgo.StdCompile{MainPackage: mainPkg},
-		},
+		&typgo.CompileProject{},
 
 		// run
 		&typgo.RunCmd{

@@ -2,6 +2,8 @@ package typgo_test
 
 import (
 	"context"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -10,24 +12,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func TestCompileCmd(t *testing.T) {
-	compileCmd := &typgo.CompileCmd{}
-	command := compileCmd.Command(&typgo.BuildSys{})
-	require.Equal(t, "compile", command.Name)
-	require.Equal(t, []string{"c"}, command.Aliases)
-	require.Equal(t, "Compile the project", command.Usage)
-	require.NoError(t, command.Action(&cli.Context{}))
-}
-
-func TestStdCompile(t *testing.T) {
-	cmpl := &typgo.StdCompile{}
-	c := &typgo.Context{
-		BuildSys: &typgo.BuildSys{
-			Descriptor: &typgo.Descriptor{ProjectName: "some-name", ProjectVersion: "0.0.1"},
-		},
-		Context: &cli.Context{Context: context.Background()},
-	}
-
+func TestCompileProject_Command(t *testing.T) {
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
 		{
 			CommandLine: []string{
@@ -40,11 +25,25 @@ func TestStdCompile(t *testing.T) {
 	})
 	defer unpatch(t)
 
-	require.NoError(t, cmpl.Execute(c))
+	var out strings.Builder
+	typgo.Stdout = &out
+	defer func() { typgo.Stdout = os.Stdout }()
+
+	cmpl := &typgo.CompileProject{}
+	s := &typgo.BuildSys{
+		Descriptor: &typgo.Descriptor{ProjectName: "some-name", ProjectVersion: "0.0.1"},
+	}
+	command := cmpl.Command(s)
+	require.Equal(t, "compile", command.Name)
+	require.Equal(t, []string{"c"}, command.Aliases)
+	require.Equal(t, "Compile the project", command.Usage)
+	require.NoError(t, command.Action(&cli.Context{Context: context.Background()}))
+
+	require.Equal(t, "\n$ go build -ldflags -X github.com/typical-go/typical-go/pkg/typapp.Name=some-name -X github.com/typical-go/typical-go/pkg/typapp.Version=0.0.1 -o bin/some-name ./cmd/some-name\n", out.String())
 }
 
 func TestStdCompile_Predefined(t *testing.T) {
-	cmpl := &typgo.StdCompile{
+	cmpl := &typgo.CompileProject{
 		MainPackage: "some-package",
 		Output:      "some-output",
 		Ldflags: execkit.BuildVars{
