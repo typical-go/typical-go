@@ -23,10 +23,12 @@ var descriptor = typgo.Descriptor{
 		// ping
 		&typgo.Command{
 			Name: "ping",
-			Action: typgo.NewAction(func(c *typgo.Context) error {
-				fmt.Println("pong")
-				return nil
-			}),
+			Action: typgo.NewAction(
+				func(c *typgo.Context) error {
+					fmt.Println("pong")
+					return nil
+				},
+			),
 		},
 	},
 }

@@ -44,7 +44,7 @@ $ typical-go setup
 
 ## Typical-Build
 
-Typical-Build contain project descriptor and the build logic. By default, it is located in [`tools/typical-build`](tools/typical-build/typical-build) and can be changed in wrapper script.
+Typical-Build contain project descriptor and the build logic. By default, it is located in [`tools/typical-build.go`](tools/typical-build/typical-build) and can be changed in wrapper script.
 
 ```go
 package main
@@ -76,7 +76,8 @@ var descriptor = typgo.Descriptor{
             func(c *typgo.Context) error {
                fmt.Println("pong")
                return nil
-            }),
+            },
+         ),
       },
    },
 }
