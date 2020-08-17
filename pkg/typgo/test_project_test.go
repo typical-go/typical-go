@@ -2,7 +2,6 @@ package typgo_test
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"time"
 
@@ -12,32 +11,12 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func TestTestCmd(t *testing.T) {
-	testCmd := &typgo.TestCmd{}
-	command := testCmd.Command(&typgo.BuildSys{})
-	require.Equal(t, "test", command.Name)
-	require.Equal(t, "Test the project", command.Usage)
-	require.Equal(t, []string{"t"}, command.Aliases)
-	require.NoError(t, command.Action(&cli.Context{}))
-}
+func TestTestProject(t *testing.T) {
+	testPrj := &typgo.TestProject{}
 
-func TestTestCmd_Predefined(t *testing.T) {
-	testCmd := &typgo.TestCmd{
-		Action: typgo.NewAction(func(*typgo.Context) error {
-			return errors.New("some-error")
-		}),
-	}
-	command := testCmd.Command(&typgo.BuildSys{})
-	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
-}
-
-func TestStdTest(t *testing.T) {
-	stdtest := &typgo.StdTest{}
-	c := &typgo.Context{
-		Context: &cli.Context{Context: context.Background()},
-		BuildSys: &typgo.BuildSys{
-			Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"pkg3", "pkg4"}},
-		},
+	c := &cli.Context{Context: context.Background()}
+	sys := &typgo.BuildSys{
+		Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"pkg3", "pkg4"}},
 	}
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
@@ -45,11 +24,15 @@ func TestStdTest(t *testing.T) {
 	})
 	defer unpatch(t)
 
-	require.NoError(t, stdtest.Execute(c))
+	command := testPrj.Command(sys)
+	require.Equal(t, "test", command.Name)
+	require.Equal(t, "Test the project", command.Usage)
+	require.Equal(t, []string{"t"}, command.Aliases)
+	require.NoError(t, command.Action(c))
 }
 
-func TestStdTest_NoProjectLayout(t *testing.T) {
-	stdtest := &typgo.StdTest{}
+func TestTestProject_NoProjectLayout(t *testing.T) {
+	testProj := &typgo.TestProject{}
 	c := &typgo.Context{
 		Context: &cli.Context{Context: context.Background()},
 		BuildSys: &typgo.BuildSys{
@@ -60,11 +43,11 @@ func TestStdTest_NoProjectLayout(t *testing.T) {
 	unpatch := execkit.Patch([]*execkit.RunExpectation{})
 	defer unpatch(t)
 
-	require.NoError(t, stdtest.Execute(c))
+	require.NoError(t, testProj.Execute(c))
 }
 
-func TestStdTest_Predefined(t *testing.T) {
-	stdtest := &typgo.StdTest{
+func TestTestProject_Predefined(t *testing.T) {
+	testProj := &typgo.TestProject{
 		Timeout:      123 * time.Second,
 		CoverProfile: "some-profile",
 		Packages:     []string{"pkg1", "pkg2"},
@@ -82,5 +65,5 @@ func TestStdTest_Predefined(t *testing.T) {
 	})
 	defer unpatch(t)
 
-	require.NoError(t, stdtest.Execute(c))
+	require.NoError(t, testProj.Execute(c))
 }

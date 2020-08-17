@@ -14,24 +14,17 @@ var descriptor = typgo.Descriptor{
 	ProjectLayouts: []string{"internal", "pkg"},
 
 	Cmds: []typgo.Cmd{
-
 		// compile
 		&typgo.CompileProject{},
-
+		// test
+		&typgo.TestProject{},
+		// clean
+		&typgo.CleanProject{},
 		// run
 		&typgo.RunCmd{
 			Before: typgo.BuildSysRuns{"compile"},
 			Action: &typgo.StdRun{},
 		},
-
-		// test
-		&typgo.TestCmd{
-			Action: &typgo.StdTest{},
-		},
-
-		// clean
-		&typgo.CleanProject{},
-
 		// examples
 		&typgo.Command{
 			Name:    "examples",
@@ -39,7 +32,6 @@ var descriptor = typgo.Descriptor{
 			Usage:   "Test all example",
 			Action:  typgo.NewAction(testExamples),
 		},
-
 		// release
 		&typrls.ReleaseCmd{
 			Before: typgo.BuildSysRuns{"test", "examples"},
