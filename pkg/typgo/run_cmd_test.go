@@ -36,8 +36,8 @@ func TestRunCommand(t *testing.T) {
 	require.EqualError(t, command.Before(&cli.Context{}), "before-error")
 }
 
-func TestStdRun_Execute(t *testing.T) {
-	stdRun := &typgo.StdRun{}
+func TestRunProject_Execute(t *testing.T) {
+	stdRun := &typgo.RunProject{}
 	c := &typgo.Context{
 		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
 		BuildSys: &typgo.BuildSys{
@@ -53,8 +53,8 @@ func TestStdRun_Execute(t *testing.T) {
 	require.NoError(t, stdRun.Execute(c))
 }
 
-func TestStdRun_Execute_Predefined(t *testing.T) {
-	stdRun := &typgo.StdRun{
+func TestRunProject_Execute_Predefined(t *testing.T) {
+	stdRun := &typgo.RunProject{
 		Binary: "some-binary",
 	}
 	c := &typgo.Context{

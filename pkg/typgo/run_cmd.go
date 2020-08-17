@@ -11,14 +11,11 @@ import (
 type (
 	// RunCmd run command
 	RunCmd struct {
-		Name    string   // By default is "run"
-		Aliases []string // By default is "r"
-		Usage   string   // By default is "Run the project"
-		Before  Action
+		Before Action
 		Action
 	}
-	// StdRun standard run
-	StdRun struct {
+	// RunProject standard run
+	RunProject struct {
 		Binary string
 	}
 )
@@ -45,10 +42,10 @@ func (r *RunCmd) Command(sys *BuildSys) *cli.Command {
 // StdRun
 //
 
-var _ Action = (*StdRun)(nil)
+var _ Action = (*RunProject)(nil)
 
 // Execute standard run
-func (s *StdRun) Execute(c *Context) error {
+func (s *RunProject) Execute(c *Context) error {
 	return c.Execute(&execkit.Command{
 		Name:   s.getBinary(c),
 		Args:   c.Args().Slice(),
@@ -58,7 +55,7 @@ func (s *StdRun) Execute(c *Context) error {
 	})
 }
 
-func (s *StdRun) getBinary(c *Context) string {
+func (s *RunProject) getBinary(c *Context) string {
 	if s.Binary == "" {
 		s.Binary = fmt.Sprintf("bin/%s", c.BuildSys.ProjectName)
 	}
