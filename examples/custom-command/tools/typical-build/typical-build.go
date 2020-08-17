@@ -11,23 +11,15 @@ var descriptor = typgo.Descriptor{
 	ProjectVersion: "1.0.0",
 
 	Cmds: []typgo.Cmd{
-
 		// compile
-		&typgo.CompileCmd{
-			Action: &typgo.StdCompile{},
-		},
-
+		&typgo.CompileProject{},
+		// clean
+		&typgo.CleanProject{},
 		// run
 		&typgo.RunCmd{
 			Before: typgo.BuildSysRuns{"compile"},
-			Action: &typgo.StdRun{},
+			Action: &typgo.RunProject{},
 		},
-
-		// clean
-		&typgo.CleanCmd{
-			Action: &typgo.StdClean{},
-		},
-
 		// ping
 		&typgo.Command{
 			Name: "ping",

@@ -19,28 +19,17 @@ var descriptor = typgo.Descriptor{
 				&typapp.CtorAnnotation{},
 			},
 		},
-
 		// compile
-		&typgo.CompileCmd{
-			Action: &typgo.StdCompile{},
-		},
-
+		&typgo.CompileProject{},
 		// run
 		&typgo.RunCmd{
 			Before: typgo.BuildSysRuns{"annotate", "compile"},
-			Action: &typgo.StdRun{},
+			Action: &typgo.RunProject{},
 		},
-
 		// test
-		&typgo.TestCmd{
-			Action: &typgo.StdTest{},
-		},
-
+		&typgo.TestProject{},
 		// clean
-		&typgo.CleanCmd{
-			Action: &typgo.StdClean{},
-		},
-
+		&typgo.CleanProject{},
 		// mock
 		&typmock.MockCmd{},
 	},

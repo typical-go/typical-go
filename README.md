@@ -60,30 +60,23 @@ var descriptor = typgo.Descriptor{
    ProjectVersion: "1.0.0",
 
    Cmds: []typgo.Cmd{
-
       // compile
-      &typgo.CompileCmd{
-         Action: &typgo.StdCompile{},
-      },
-
+      &typgo.CompileProject{},
       // run
       &typgo.RunCmd{
          Before: typgo.BuildSysRuns{"compile"},
-         Action: &typgo.StdRun{},
+         Action: &typgo.RunProject{},
       },
-
       // clean
-      &typgo.CleanCmd{
-         Action: &typgo.StdClean{},
-      },
-
+      &typgo.CleanProject{},
       // ping
       &typgo.Command{
          Name: "ping",
-         Action: typgo.NewAction(func(c *typgo.Context) error {
-            fmt.Println("pong")
-            return nil
-         }),
+         Action: typgo.NewAction(
+            func(c *typgo.Context) error {
+               fmt.Println("pong")
+               return nil
+            }),
       },
    },
 }
@@ -119,9 +112,10 @@ Typical-Go using itself as build-tool which is an excellent example. For other e
 ## See Also
 
 - [`pkg/typapp`](pkg/typapp): Typical Application Framework
-- [`pkg/typannot`](pkg/typannot): Annotation for code generation
-- [`pkg/typmock`](pkg/typmock): Mock using annotation
-- [Typical-Rest-Server](https://github.com/typical-go/typical-rest-server)
+- [`pkg/typannot`](pkg/typannot): Annotation for Code Generation
+- [`pkg/typmock`](pkg/typmock): Mock by Annotation
+- [`pkg/typrls`](pkg/typmock): Project Releaser
+- [Typical-Rest-Server](https://github.com/typical-go/typical-rest-server): Rest Server Implementation
 
 
 ## License
