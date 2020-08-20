@@ -1,7 +1,9 @@
 package typgo
 
 import (
-	"github.com/typical-go/typical-go/pkg/common"
+	"fmt"
+
+	"github.com/typical-go/typical-go/pkg/envkit"
 	"github.com/urfave/cli/v2"
 )
 
@@ -27,7 +29,10 @@ func (b *BuildSys) app() *cli.App {
 
 	app := cli.NewApp()
 	app.Before = func(*cli.Context) error {
-		return common.LoadEnv(".env")
+		dotenv := ".env"
+		m, _ := envkit.ReadFile(dotenv)
+		fmt.Fprintf(Stdout, "Load environment '%s' %s", dotenv, m.Keys())
+		return envkit.Setenv(m)
 	}
 	app.Commands = b.Commands
 	return app
