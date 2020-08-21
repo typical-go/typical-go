@@ -17,7 +17,8 @@ type (
 
 // Start typical build-tool
 func Start(d *Descriptor) {
-	if err := createBuildSys(d).app().Run(os.Args); err != nil {
+	buildSys := createBuildSys(d)
+	if err := Cli(buildSys).Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
 }

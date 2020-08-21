@@ -1,9 +1,6 @@
 package typgo
 
 import (
-	"fmt"
-
-	"github.com/typical-go/typical-go/pkg/envkit"
 	"github.com/urfave/cli/v2"
 )
 
@@ -21,21 +18,6 @@ func createBuildSys(d *Descriptor) *BuildSys {
 		sys.Commands = append(sys.Commands, cmd.Command(sys))
 	}
 	return sys
-}
-
-func (b *BuildSys) app() *cli.App {
-	cli.AppHelpTemplate = appHelpTemplate
-	cli.SubcommandHelpTemplate = subcommandHelpTemplate
-
-	app := cli.NewApp()
-	app.Before = func(*cli.Context) error {
-		dotenv := ".env"
-		m, _ := envkit.ReadFile(dotenv)
-		fmt.Fprintf(Stdout, "Load environment '%s' %s", dotenv, m.Keys())
-		return envkit.Setenv(m)
-	}
-	app.Commands = b.Commands
-	return app
 }
 
 // ExecuteFn to return cli func from execute function
