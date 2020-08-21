@@ -28,11 +28,6 @@ type (
 var _ Commander = (*Command)(nil)
 var _ fmt.Stringer = (*Command)(nil)
 
-// Run the comand
-func (c *Command) Run(ctx context.Context) (err error) {
-	return c.ExecCmd(ctx).Run()
-}
-
 // ExecCmd return exec.Cmd
 func (c *Command) ExecCmd(ctx context.Context) *exec.Cmd {
 	cmd := exec.CommandContext(ctx, c.Name, c.Args...)

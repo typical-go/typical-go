@@ -20,7 +20,7 @@ func TestTestProject(t *testing.T) {
 	}
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: []string{"go", "test", "-timeout=25s", "-coverprofile=cover.out", "./pkg3/...", "./pkg4/..."}},
+		{CommandLine: "go test -timeout=25s -coverprofile=cover.out ./pkg3/... ./pkg4/..."},
 	})
 	defer unpatch(t)
 
@@ -61,7 +61,7 @@ func TestTestProject_Predefined(t *testing.T) {
 	}
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: []string{"go", "test", "-timeout=2m3s", "-coverprofile=some-profile", "pkg1", "pkg2"}},
+		{CommandLine: "go test -timeout=2m3s -coverprofile=some-profile pkg1 pkg2"},
 	})
 	defer unpatch(t)
 

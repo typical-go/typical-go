@@ -17,13 +17,8 @@ func TestRun(t *testing.T) {
 	defer func() { app.Stdout = os.Stdout }()
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: []string{
-			"go", "build",
-			"-ldflags", "-X github.com/typical-go/typical-go/pkg/typgo.ProjectPkg=some-pkg -X github.com/typical-go/typical-go/pkg/typgo.TypicalTmp=.typical-tmp",
-			"-o", ".typical-tmp/bin/typical-build",
-			"./tools/typical-build",
-		}},
-		{CommandLine: []string{".typical-tmp/bin/typical-build"}},
+		{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectPkg=some-pkg -X github.com/typical-go/typical-go/pkg/typgo.TypicalTmp=.typical-tmp\" -o .typical-tmp/bin/typical-build ./tools/typical-build"},
+		{CommandLine: ".typical-tmp/bin/typical-build"},
 	})
 	defer unpatch(t)
 
@@ -39,7 +34,7 @@ func TestRun(t *testing.T) {
 
 func TestRun_GetParamError(t *testing.T) {
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: []string{"go", "list", "-m"}, ReturnError: errors.New("some-error")},
+		{CommandLine: "go list -m", ReturnError: errors.New("some-error")},
 	})
 	defer unpatch(t)
 

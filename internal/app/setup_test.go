@@ -53,7 +53,7 @@ $TYPGO run \
 
 func TestSetup_GetParamError(t *testing.T) {
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: []string{"go", "list", "-m"}, ReturnError: errors.New("some-error")},
+		{CommandLine: "go list -m", ReturnError: errors.New("some-error")},
 	})
 	defer unpatch(t)
 
@@ -70,7 +70,7 @@ func TestSetup_WithGomodFlag(t *testing.T) {
 	defer func() { app.Stdout = os.Stdout }()
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: []string{"go", "mod", "init", "somepkg"}},
+		{CommandLine: "go mod init somepkg"},
 	})
 	defer unpatch(t)
 
@@ -93,7 +93,7 @@ func TestSetup_WithGomodFlag_Error(t *testing.T) {
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
 		{
-			CommandLine: []string{"go", "mod", "init", "somepkg"},
+			CommandLine: "go mod init somepkg",
 			ErrorBytes:  []byte("error-message"),
 			ReturnError: errors.New("some-error"),
 		},

@@ -3,7 +3,6 @@ package execkit
 import (
 	"context"
 	"fmt"
-	"strings"
 	"testing"
 )
 
@@ -14,7 +13,7 @@ var (
 type (
 	// RunExpectation is test expectation for execkit.Run
 	RunExpectation struct {
-		CommandLine []string
+		CommandLine string
 		OutputBytes []byte
 		ErrorBytes  []byte
 		ReturnError error
@@ -28,10 +27,11 @@ type (
 
 // Run the runner
 func Run(ctx context.Context, cmder Commander) error {
+	cmd := cmder.Command()
 	if _mocker != nil {
-		return _mocker.run(ctx, cmder)
+		return _mocker.run(ctx, cmd)
 	}
-	return cmder.Command().Run(ctx)
+	return cmd.ExecCmd(ctx).Run()
 }
 
 //
@@ -64,17 +64,14 @@ func (r *runMocker) expectation() *RunExpectation {
 	return nil
 }
 
-func (r *runMocker) run(ctx context.Context, cmder Commander) error {
+func (r *runMocker) run(ctx context.Context, cmd *Command) error {
 	expc := r.expectation()
-	cmd := cmder.Command()
 	if expc == nil {
-		return fmt.Errorf("execkit-mock: no run expectation for [%s %s]",
-			cmd.Name, strings.Join(cmd.Args, " "))
+		return fmt.Errorf("execkit-mock: no run expectation for \"%s\"", cmd.String())
 	}
 
-	if !expc.match(cmd) {
-		return fmt.Errorf("execkit-mock: [%s %s] should be %v",
-			cmd.Name, strings.Join(cmd.Args, " "), expc.CommandLine)
+	if cmd.String() != expc.CommandLine {
+		return fmt.Errorf("execkit-mock: \"%s\" should be \"%s\"", cmd.String(), expc.CommandLine)
 	}
 
 	if expc.OutputBytes != nil && cmd.Stdout != nil {
@@ -89,22 +86,4 @@ func (r *runMocker) run(ctx context.Context, cmder Commander) error {
 	}
 
 	return expc.ReturnError
-}
-
-func (r *RunExpectation) match(c *Command) bool {
-	if len(c.Args)+1 != len(r.CommandLine) {
-		return false
-	}
-
-	if r.CommandLine[0] != c.Name {
-		return false
-	}
-
-	for i, arg := range c.Args {
-		if arg != r.CommandLine[i+1] {
-			return false
-		}
-	}
-
-	return true
 }

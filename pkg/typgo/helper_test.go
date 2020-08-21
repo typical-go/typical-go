@@ -14,8 +14,8 @@ func TestGoImport(t *testing.T) {
 	defer func() { typgo.TypicalTmp = "" }()
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: []string{"go", "build", "-o", ".typical-tmp/bin/goimports", "golang.org/x/tools/cmd/goimports"}},
-		{CommandLine: []string{".typical-tmp/bin/goimports", "-w", "some-target"}},
+		{CommandLine: "go build -o .typical-tmp/bin/goimports golang.org/x/tools/cmd/goimports"},
+		{CommandLine: ".typical-tmp/bin/goimports -w some-target"},
 	})
 	defer unpatch(t)
 
@@ -28,7 +28,7 @@ func TestGoImport_InstallToolError(t *testing.T) {
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
 		{
-			CommandLine: []string{"go", "build", "-o", ".typical-tmp/bin/goimports", "golang.org/x/tools/cmd/goimports"},
+			CommandLine: "go build -o .typical-tmp/bin/goimports golang.org/x/tools/cmd/goimports",
 			ReturnError: errors.New("some-error"),
 		},
 	})

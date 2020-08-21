@@ -41,9 +41,9 @@ func TestAnnotate(t *testing.T) {
 	}
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: []string{"go", "build", "-o", "/bin/mockgen", "github.com/golang/mock/mockgen"}},
-		{CommandLine: []string{"rm", "-rf", "parent/path_mock"}},
-		{CommandLine: []string{"/bin/mockgen", "-destination", "parentmypkg_mock/some_interface.go", "-package", "mypkg_mock", "/parent/path", "SomeInterface"}},
+		{CommandLine: "go build -o /bin/mockgen github.com/golang/mock/mockgen"},
+		{CommandLine: "rm -rf parent/path_mock"},
+		{CommandLine: "/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface"},
 	})
 	defer unpatch(t)
 
@@ -58,7 +58,7 @@ func TestAnnotate_InstallMockgenError(t *testing.T) {
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
 		{
-			CommandLine: []string{"go", "build", "-o", "/bin/mockgen", "github.com/golang/mock/mockgen"},
+			CommandLine: "go build -o /bin/mockgen github.com/golang/mock/mockgen",
 			ReturnError: errors.New("some-error"),
 		},
 	})
@@ -90,10 +90,10 @@ func TestAnnotate_MockgenError(t *testing.T) {
 	}
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: []string{"go", "build", "-o", "/bin/mockgen", "github.com/golang/mock/mockgen"}},
-		{CommandLine: []string{"rm", "-rf", "parent/path_mock"}},
+		{CommandLine: "go build -o /bin/mockgen github.com/golang/mock/mockgen"},
+		{CommandLine: "rm -rf parent/path_mock"},
 		{
-			CommandLine: []string{"/bin/mockgen", "-destination", "parentmypkg_mock/some_interface.go", "-package", "mypkg_mock", "/parent/path", "SomeInterface"},
+			CommandLine: "/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface",
 			ReturnError: errors.New("some-error"),
 		},
 	})

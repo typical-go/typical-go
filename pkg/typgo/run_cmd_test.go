@@ -46,7 +46,7 @@ func TestRunProject_Execute(t *testing.T) {
 	}
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: []string{"bin/some-name"}},
+		{CommandLine: "bin/some-name"},
 	})
 	defer unpatch(t)
 
@@ -65,7 +65,7 @@ func TestRunProject_Execute_Predefined(t *testing.T) {
 	}
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: []string{"some-binary"}},
+		{CommandLine: "some-binary"},
 	})
 	defer unpatch(t)
 

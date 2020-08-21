@@ -14,14 +14,7 @@ import (
 
 func TestCompileProject_Command(t *testing.T) {
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{
-			CommandLine: []string{
-				"go", "build",
-				"-ldflags", "-X github.com/typical-go/typical-go/pkg/typapp.Name=some-name -X github.com/typical-go/typical-go/pkg/typapp.Version=0.0.1",
-				"-o", "bin/some-name",
-				"./cmd/some-name",
-			},
-		},
+		{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typapp.Name=some-name -X github.com/typical-go/typical-go/pkg/typapp.Version=0.0.1\" -o bin/some-name ./cmd/some-name"},
 	})
 	defer unpatch(t)
 
@@ -39,7 +32,7 @@ func TestCompileProject_Command(t *testing.T) {
 	require.Equal(t, "Compile the project", command.Usage)
 	require.NoError(t, command.Action(&cli.Context{Context: context.Background()}))
 
-	require.Equal(t, "\n$ go build -ldflags -X github.com/typical-go/typical-go/pkg/typapp.Name=some-name -X github.com/typical-go/typical-go/pkg/typapp.Version=0.0.1 -o bin/some-name ./cmd/some-name\n", out.String())
+	require.Equal(t, "\n$ go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typapp.Name=some-name -X github.com/typical-go/typical-go/pkg/typapp.Version=0.0.1\" -o bin/some-name ./cmd/some-name\n", out.String())
 }
 
 func TestStdCompile_Predefined(t *testing.T) {
@@ -58,14 +51,7 @@ func TestStdCompile_Predefined(t *testing.T) {
 	}
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{
-			CommandLine: []string{
-				"go", "build",
-				"-ldflags", "-X some-var=some-value",
-				"-o", "some-output",
-				"some-package",
-			},
-		},
+		{CommandLine: "go build -ldflags \"-X some-var=some-value\" -o some-output some-package"},
 	})
 	defer unpatch(t)
 

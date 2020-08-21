@@ -94,10 +94,10 @@ func TestReleaseCmd_Execute(t *testing.T) {
 				},
 			},
 			RunExpectations: []*execkit.RunExpectation{
-				{CommandLine: []string{"git", "fetch"}},
-				{CommandLine: []string{"git", "describe", "--tags", "--abbrev=0"}, OutputBytes: []byte("some-tag")},
-				{CommandLine: []string{"git", "status", "--porcelain"}, OutputBytes: []byte("some-status")},
-				{CommandLine: []string{"git", "--no-pager", "log", "some-tag..HEAD", "--oneline"}, OutputBytes: []byte("5378feb one\n")},
+				{CommandLine: "git fetch"},
+				{CommandLine: "git describe --tags --abbrev=0", OutputBytes: []byte("some-tag")},
+				{CommandLine: "git status --porcelain", OutputBytes: []byte("some-status")},
+				{CommandLine: "git --no-pager log some-tag..HEAD --oneline", OutputBytes: []byte("5378feb one\n")},
 			},
 			Expected: &typrls.Context{
 				TagName: "v0.0.1_alpha",
@@ -130,9 +130,9 @@ func TestReleaseCmd_Execute(t *testing.T) {
 				},
 			},
 			RunExpectations: []*execkit.RunExpectation{
-				{CommandLine: []string{"git", "fetch"}},
-				{CommandLine: []string{"git", "describe", "--tags", "--abbrev=0"}, OutputBytes: []byte("some-tag-1")},
-				{CommandLine: []string{"git", "status", "--porcelain"}, OutputBytes: []byte("some-status-1")},
+				{CommandLine: "git fetch"},
+				{CommandLine: "git describe --tags --abbrev=0", OutputBytes: []byte("some-tag-1")},
+				{CommandLine: "git status --porcelain", OutputBytes: []byte("some-status-1")},
 			},
 			Expected: &typrls.Context{
 				TagName:       "v9.9.9",
@@ -159,9 +159,9 @@ func TestReleaseCmd_Execute(t *testing.T) {
 				},
 			},
 			RunExpectations: []*execkit.RunExpectation{
-				{CommandLine: []string{"git", "fetch"}},
-				{CommandLine: []string{"git", "describe", "--tags", "--abbrev=0"}, OutputBytes: []byte("some-tag-1")},
-				{CommandLine: []string{"git", "status", "--porcelain"}, OutputBytes: []byte("some-status-1")},
+				{CommandLine: "git fetch"},
+				{CommandLine: "git describe --tags --abbrev=0", OutputBytes: []byte("some-tag-1")},
+				{CommandLine: "git status --porcelain", OutputBytes: []byte("some-status-1")},
 			},
 			Expected: &typrls.Context{
 				TagName:       "v9.9.9",
@@ -188,9 +188,9 @@ func TestReleaseCmd_Execute(t *testing.T) {
 				},
 			},
 			RunExpectations: []*execkit.RunExpectation{
-				{CommandLine: []string{"git", "fetch"}},
-				{CommandLine: []string{"git", "describe", "--tags", "--abbrev=0"}, OutputBytes: []byte("some-tag-3")},
-				{CommandLine: []string{"git", "status", "--porcelain"}, OutputBytes: []byte("some-status-3")},
+				{CommandLine: "git fetch"},
+				{CommandLine: "git describe --tags --abbrev=0", OutputBytes: []byte("some-tag-3")},
+				{CommandLine: "git status --porcelain", OutputBytes: []byte("some-status-3")},
 			},
 			Expected: &typrls.Context{
 				TagName:       "some-tag",

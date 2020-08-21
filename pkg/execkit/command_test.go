@@ -11,22 +11,22 @@ import (
 )
 
 func TestCommand(t *testing.T) {
-	debugger := new(strings.Builder)
+	var out strings.Builder
 	input := strings.NewReader("hello world")
 	ctx := context.Background()
 
 	cmd := &execkit.Command{
 		Name:   "noname",
 		Args:   []string{"arg1", "arg2", "arg3"},
-		Stdout: debugger,
-		Stderr: debugger,
+		Stdout: &out,
+		Stderr: &out,
 		Stdin:  input,
 		Dir:    "some-dir",
 	}
 
 	expected := exec.CommandContext(ctx, "noname", []string{"arg1", "arg2", "arg3"}...)
-	expected.Stdout = debugger
-	expected.Stderr = debugger
+	expected.Stdout = &out
+	expected.Stderr = &out
 	expected.Stdin = input
 	expected.Dir = "some-dir"
 

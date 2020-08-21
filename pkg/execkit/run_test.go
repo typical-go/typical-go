@@ -13,7 +13,7 @@ import (
 func TestPatch(t *testing.T) {
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
 		{
-			CommandLine: []string{"name1", "arg1"},
+			CommandLine: "name1 arg1",
 			OutputBytes: []byte("some-output-bytes"),
 			ErrorBytes:  []byte("some-error-bytes"),
 			ReturnError: errors.New("some-error-1"),
@@ -40,8 +40,8 @@ func TestPatch(t *testing.T) {
 
 func TestPatch_MultipleExpectation(t *testing.T) {
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: []string{"name1", "arg1"}, ReturnError: errors.New("some-error-1")},
-		{CommandLine: []string{"name2", "arg2"}, ReturnError: errors.New("some-error-2")},
+		{CommandLine: "name1 arg1", ReturnError: errors.New("some-error-1")},
+		{CommandLine: "name2 arg2", ReturnError: errors.New("some-error-2")},
 	})
 	defer unpatch(t)
 
@@ -58,28 +58,32 @@ func TestPatch_MultipleExpectation(t *testing.T) {
 func TestPatch_CommandNoMatchedByName(t *testing.T) {
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
 		{
-			CommandLine: []string{"name1", "arg2"},
+			CommandLine: "name1 arg2",
 		},
 	})
 	defer unpatch(t)
 
 	require.EqualError(t,
-		execkit.Run(context.Background(), &execkit.Command{Name: "wrong", Args: []string{"arg2"}}),
-		"execkit-mock: [wrong arg2] should be [name1 arg2]",
+		execkit.Run(
+			context.Background(),
+			&execkit.Command{Name: "wrong", Args: []string{"arg2"}},
+		),
+		"execkit-mock: \"wrong arg2\" should be \"name1 arg2\"",
 	)
 }
 
 func TestPatch_CommandNoMatchedByArgs(t *testing.T) {
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{
-			CommandLine: []string{"name2", "arg1", "arg2"},
-		},
+		{CommandLine: "name2 arg1 arg2"},
 	})
 	defer unpatch(t)
 
 	require.EqualError(t,
-		execkit.Run(context.Background(), &execkit.Command{Name: "name2", Args: []string{"arg2"}}),
-		"execkit-mock: [name2 arg2] should be [name2 arg1 arg2]",
+		execkit.Run(
+			context.Background(),
+			&execkit.Command{Name: "name2", Args: []string{"arg2"}},
+		),
+		"execkit-mock: \"name2 arg2\" should be \"name2 arg1 arg2\"",
 	)
 }
 
@@ -88,7 +92,10 @@ func TestPatch_NoRunExpectation(t *testing.T) {
 	defer unpatch(t)
 
 	require.EqualError(t,
-		execkit.Run(context.Background(), &execkit.Command{Name: "name1", Args: []string{"arg1"}}),
-		"execkit-mock: no run expectation for [name1 arg1]",
+		execkit.Run(
+			context.Background(),
+			&execkit.Command{Name: "name1", Args: []string{"arg1"}},
+		),
+		"execkit-mock: no run expectation for \"name1 arg1\"",
 	)
 }

@@ -30,7 +30,7 @@ func TestGetParam(t *testing.T) {
 
 func TestGetParam_Default(t *testing.T) {
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: []string{"go", "list", "-m"}, OutputBytes: []byte("some-package")},
+		{CommandLine: "go list -m", OutputBytes: []byte("some-package")},
 	})
 	defer unpatch(t)
 
@@ -49,7 +49,7 @@ func TestGetParam_Default(t *testing.T) {
 func TestGetParam_Default_FailedRetrivePackage(t *testing.T) {
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
 		{
-			CommandLine: []string{"go", "list", "-m"},
+			CommandLine: "go list -m",
 			ErrorBytes:  []byte("error-message"),
 			ReturnError: errors.New("some-error"),
 		},

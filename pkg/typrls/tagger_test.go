@@ -63,7 +63,7 @@ func TestTagger(t *testing.T) {
 				Context: &cli.Context{},
 			},
 			Expectations: []*execkit.RunExpectation{
-				{CommandLine: []string{"git", "rev-parse", "HEAD"}, OutputBytes: []byte("1234567890")},
+				{CommandLine: "git rev-parse HEAD", OutputBytes: []byte("1234567890")},
 			},
 			Expected: "v0.0.1+123456",
 		},
