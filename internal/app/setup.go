@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/common"
 	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/tmplkit"
 	"github.com/urfave/cli/v2"
 )
 
@@ -71,7 +71,7 @@ func initGoMod(c *cli.Context) error {
 func createWrapper(p *Param) error {
 	path := fmt.Sprintf("%s/typicalw", p.SetupTarget)
 	fmt.Fprintf(Stdout, "Create '%s'\n", path)
-	return common.ExecuteTmplToFile(path, typicalwTmpl, p)
+	return tmplkit.WriteFile(path, typicalwTmpl, p)
 }
 
 func newProject(p *Param) {
@@ -79,7 +79,7 @@ func newProject(p *Param) {
 	main := mainPkg + "/main.go"
 	fmt.Fprintf(Stdout, "Create '%s'\n", main)
 	os.MkdirAll(mainPkg, 0777)
-	common.ExecuteTmplToFile(main, mainTmpl, p)
+	tmplkit.WriteFile(main, mainTmpl, p)
 
 	appPkg := p.SetupTarget + "/internal/app"
 	appStart := appPkg + "/start.go"
@@ -97,6 +97,6 @@ func newProject(p *Param) {
 	typicalBuild := typicalBuildPkg + "/typical-build.go"
 	fmt.Fprintf(Stdout, "Create '%s'\n", typicalBuild)
 	os.MkdirAll(typicalBuildPkg, 0777)
-	common.ExecuteTmplToFile(typicalBuild, typicalBuildTmpl, p)
+	tmplkit.WriteFile(typicalBuild, typicalBuildTmpl, p)
 
 }

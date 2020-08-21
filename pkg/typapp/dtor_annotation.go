@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/typical-go/typical-go/pkg/common"
+	"github.com/typical-go/typical-go/pkg/tmplkit"
 	"github.com/typical-go/typical-go/pkg/typannot"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
@@ -69,7 +69,7 @@ func (a *DtorAnnotation) Annotate(c *typannot.Context) error {
 		Dtors: dtors,
 	}
 	fmt.Fprintf(Stdout, "Generate @dtor to %s\n", target)
-	if err := common.ExecuteTmplToFile(target, a.getTemplate(), data); err != nil {
+	if err := tmplkit.WriteFile(target, a.getTemplate(), data); err != nil {
 		return err
 	}
 	typgo.GoImports(target)
