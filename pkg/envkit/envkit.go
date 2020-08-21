@@ -39,9 +39,7 @@ func ReadFile(source string) (Map, error) {
 
 // Save envmap to writer
 func Save(m Map, w io.Writer) error {
-	sortedKeys := m.Keys()
-	sort.Strings(sortedKeys)
-	for _, key := range sortedKeys {
+	for _, key := range m.SortedKeys() {
 		if _, err := fmt.Fprintf(w, "%s=%s\n", key, m[key]); err != nil {
 			return err
 		}
@@ -83,11 +81,12 @@ func Unsetenv(m Map) error {
 // EnvMap
 //
 
-// Keys of EnvMap
-func (m Map) Keys() []string {
+// SortedKeys of EnvMap
+func (m Map) SortedKeys() []string {
 	var keys []string
 	for k := range m {
 		keys = append(keys, k)
 	}
+	sort.Strings(keys)
 	return keys
 }

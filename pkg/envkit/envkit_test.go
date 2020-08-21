@@ -56,7 +56,7 @@ func TestNilSafe(t *testing.T) {
 	envkit.Unsetenv(nil)
 
 	var m envkit.Map = nil
-	require.Equal(t, []string(nil), m.Keys())
+	require.Equal(t, []string(nil), m.SortedKeys())
 }
 
 func TestWrite(t *testing.T) {

@@ -22,7 +22,7 @@ func beforeCliApp(*cli.Context) error {
 	dotenv := ".env"
 	m, _ := envkit.ReadFile(dotenv)
 	if len(m) > 0 {
-		fmt.Fprintf(Stdout, "Load environment '%s' %s\n", dotenv, m.Keys())
+		fmt.Fprintf(Stdout, "Load environment '%s' %s\n", dotenv, m.SortedKeys())
 		return envkit.Setenv(m)
 	}
 	return nil
