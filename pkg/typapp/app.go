@@ -1,11 +1,11 @@
 package typapp
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/typical-go/typical-go/pkg/common"
 	"go.uber.org/dig"
 )
 
@@ -31,20 +31,18 @@ func (a *App) Run() error {
 	signal.Notify(exitSig, syscall.SIGTERM)
 	signal.Notify(exitSig, syscall.SIGINT)
 
-	var errs common.Errors
+	var err error
 
 	go func() {
 		defer func() { exitSig <- syscall.SIGTERM }()
-		if err := di.Invoke(a.EntryPoint); err != nil {
-			errs.Append(err)
-		}
+		err = di.Invoke(a.EntryPoint)
 	}()
 	<-exitSig
 
 	for _, dtor := range a.Dtors {
 		if err := di.Invoke(dtor.Fn); err != nil {
-			errs.Append(err)
+			fmt.Fprintf(Stdout, "WARN: %s\n", err.Error())
 		}
 	}
-	return errs.Unwrap()
+	return err
 }
