@@ -34,13 +34,27 @@ func TestCommand(t *testing.T) {
 	require.Equal(t, cmd, cmd.Command())
 }
 
-func TestPrintCommand(t *testing.T) {
-	var debugger strings.Builder
-	cmd := &execkit.Command{
-		Name: "some-name",
-		Args: []string{"arg-1", "arg-2"},
+func TestCommand_String(t *testing.T) {
+	testcases := []struct {
+		TestName string
+		execkit.Command
+		Expected string
+	}{
+		{
+			Command:  execkit.Command{Name: "name", Args: []string{"arg1", "arg2"}},
+			Expected: "name arg1 arg2",
+		},
+		{
+			Command: execkit.Command{
+				Name: "go",
+				Args: []string{"build", "-ldflags", "-X github.com/typical-go/typical-go/pkg/typapp.Name=typical-go"},
+			},
+			Expected: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typapp.Name=typical-go\"",
+		},
 	}
-	cmd.Print(&debugger)
-
-	require.Equal(t, "\n$ some-name arg-1 arg-2\n", debugger.String())
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			require.Equal(t, tt.Expected, tt.String())
+		})
+	}
 }

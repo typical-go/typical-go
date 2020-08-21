@@ -2,9 +2,11 @@ package typgo
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"os"
 
+	"github.com/fatih/color"
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/urfave/cli/v2"
 )
@@ -56,7 +58,8 @@ func (a *actionImpl) Execute(c *Context) error {
 // Execute command
 func (c *Context) Execute(cmder execkit.Commander) error {
 	cmd := cmder.Command()
-	cmd.Print(Stdout)
+	color.New(color.FgMagenta).Fprint(Stdout, "\n$ ")
+	fmt.Fprintln(Stdout, cmd)
 	return execkit.Run(c.Ctx(), cmd)
 }
 

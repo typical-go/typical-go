@@ -6,8 +6,6 @@ import (
 	"io"
 	"os/exec"
 	"strings"
-
-	"github.com/fatih/color"
 )
 
 type (
@@ -28,6 +26,7 @@ type (
 )
 
 var _ Commander = (*Command)(nil)
+var _ fmt.Stringer = (*Command)(nil)
 
 // Run the comand
 func (c *Command) Run(ctx context.Context) (err error) {
@@ -50,8 +49,16 @@ func (c *Command) Command() *Command {
 	return c
 }
 
-// Print print command
-func (c *Command) Print(w io.Writer) {
-	color.New(color.FgMagenta).Fprint(w, "\n$ ")
-	fmt.Fprintln(w, fmt.Sprintf("%s %s", c.Name, strings.Join(c.Args, " ")))
+func (c Command) String() string {
+	var out strings.Builder
+	fmt.Fprint(&out, c.Name)
+	for _, arg := range c.Args {
+		if strings.ContainsAny(arg, " ") {
+			fmt.Fprintf(&out, " \"%s\"", arg)
+		} else {
+			fmt.Fprintf(&out, " %s", arg)
+		}
+
+	}
+	return out.String()
 }
