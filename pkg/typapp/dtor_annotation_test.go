@@ -34,7 +34,13 @@ func TestDtorAnnotation_Annotate(t *testing.T) {
 		},
 		Summary: &typannot.Summary{
 			Annots: []*typannot.Annot{
-				{TagName: "@dtor", Decl: &typannot.Decl{Name: "Clean", Package: "pkg", Type: &typannot.FuncType{}}},
+				{
+					TagName: "@dtor",
+					Decl: &typannot.Decl{
+						File:     typannot.File{Package: "pkg"},
+						DeclType: &typannot.FuncDecl{Name: "Clean"},
+					},
+				},
 			},
 		},
 	}
@@ -92,7 +98,13 @@ func TestDtorAnnotation_Annotate_Predefined(t *testing.T) {
 		},
 		Summary: &typannot.Summary{
 			Annots: []*typannot.Annot{
-				{TagName: "@some-tag", Decl: &typannot.Decl{Name: "Clean", Package: "pkg", Type: &typannot.FuncType{}}},
+				{
+					TagName: "@some-tag",
+					Decl: &typannot.Decl{
+						File:     typannot.File{Package: "pkg"},
+						DeclType: &typannot.FuncDecl{Name: "Clean"},
+					},
+				},
 			},
 		},
 	}

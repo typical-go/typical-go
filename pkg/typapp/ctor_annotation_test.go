@@ -36,12 +36,18 @@ func TestCtorAnnotation_Annotate(t *testing.T) {
 			Annots: []*typannot.Annot{
 				{
 					TagName: "@ctor",
-					Decl:    &typannot.Decl{Name: "NewObject", Package: "pkg", Type: &typannot.FuncType{}},
+					Decl: &typannot.Decl{
+						DeclType: &typannot.FuncDecl{Name: "NewObject"},
+						File:     typannot.File{Package: "pkg"},
+					},
 				},
 				{
 					TagName:  "@ctor",
 					TagParam: `name:"obj2"`,
-					Decl:     &typannot.Decl{Name: "NewObject2", Package: "pkg2", Type: &typannot.FuncType{}},
+					Decl: &typannot.Decl{
+						File:     typannot.File{Package: "pkg2"},
+						DeclType: &typannot.FuncDecl{Name: "NewObject2"},
+					},
 				},
 			},
 		},
@@ -103,7 +109,11 @@ func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
 			Annots: []*typannot.Annot{
 				{
 					TagName: "@some-tag",
-					Decl:    &typannot.Decl{Name: "NewObject", Package: "pkg", Type: &typannot.FuncType{}},
+					Decl: &typannot.Decl{
+
+						File:     typannot.File{Package: "pkg"},
+						DeclType: &typannot.FuncDecl{Name: "NewObject"},
+					},
 				},
 			},
 		},

@@ -72,7 +72,7 @@ func CreateMock(annot *typannot.Annot) *Mock {
 	return &Mock{
 		Dir:     dir,
 		Pkg:     pkg,
-		Source:  annot.Decl.Name,
+		Source:  annot.GetName(),
 		Parent:  parent,
 		MockPkg: fmt.Sprintf("%s_mock", pkg),
 	}

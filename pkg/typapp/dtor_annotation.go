@@ -81,7 +81,7 @@ func (a *DtorAnnotation) CreateDtors(c *typannot.Context) []*Dtor {
 	var dtors []*Dtor
 	for _, annot := range c.FindAnnotByFunc(a.getTagName()) {
 		dtors = append(dtors, &Dtor{
-			Def: fmt.Sprintf("%s.%s", annot.Decl.Package, annot.Decl.Name),
+			Def: fmt.Sprintf("%s.%s", annot.Package, annot.GetName()),
 		})
 	}
 	return dtors

@@ -58,10 +58,13 @@ func TestCreateMock(t *testing.T) {
 		{
 			annot: &typannot.Annot{
 				Decl: &typannot.Decl{
-					Package: "somePkg",
-					Path:    "/path/folder/source.go",
-					Type:    &typannot.InterfaceType{},
-					Name:    "SomeInterface",
+					File: typannot.File{
+						Package: "somePkg",
+						Path:    "/path/folder/source.go",
+					},
+					DeclType: &typannot.InterfaceDecl{
+						TypeDecl: typannot.TypeDecl{Name: "SomeInterface"},
+					},
 				},
 				TagName: "mock",
 			},

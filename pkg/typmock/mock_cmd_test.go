@@ -32,10 +32,13 @@ func TestAnnotate(t *testing.T) {
 			{
 				TagName: "@mock",
 				Decl: &typannot.Decl{
-					Name:    "SomeInterface",
-					Package: "mypkg",
-					Path:    "parent/path/some_interface.go",
-					Type:    &typannot.InterfaceType{},
+					File: typannot.File{
+						Package: "mypkg",
+						Path:    "parent/path/some_interface.go",
+					},
+					DeclType: &typannot.InterfaceDecl{
+						TypeDecl: typannot.TypeDecl{Name: "SomeInterface"},
+					},
 				}},
 		},
 	}
@@ -81,10 +84,13 @@ func TestAnnotate_MockgenError(t *testing.T) {
 			{
 				TagName: "@mock",
 				Decl: &typannot.Decl{
-					Name:    "SomeInterface",
-					Package: "mypkg",
-					Path:    "parent/path/some_interface.go",
-					Type:    &typannot.InterfaceType{},
+					File: typannot.File{
+						Package: "mypkg",
+						Path:    "parent/path/some_interface.go",
+					},
+					DeclType: &typannot.InterfaceDecl{
+						TypeDecl: typannot.TypeDecl{Name: "SomeInterface"},
+					},
 				}},
 		},
 	}

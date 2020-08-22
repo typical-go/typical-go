@@ -86,7 +86,7 @@ func (a *CtorAnnotation) CreateCtors(c *typannot.Context) []*Ctor {
 	for _, annot := range c.FindAnnotByFunc(a.getTagName()) {
 		ctors = append(ctors, &Ctor{
 			Name: annot.TagParam.Get("name"),
-			Def:  fmt.Sprintf("%s.%s", annot.Decl.Package, annot.Decl.Name),
+			Def:  fmt.Sprintf("%s.%s", annot.Package, annot.GetName()),
 		})
 	}
 	return ctors
