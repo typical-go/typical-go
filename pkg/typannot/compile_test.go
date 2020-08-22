@@ -37,8 +37,16 @@ var (
 				Name: "sampleStruct",
 			},
 			Fields: []*typannot.Field{
-				{Name: "sampleInt", Type: "int", StructTag: reflect.StructTag(`default:"value1"`)},
-				{Name: "sampleString", Type: "string", StructTag: reflect.StructTag(`default:"value2"`)},
+				{
+					Names:     []string{"sampleInt"},
+					Type:      "int",
+					StructTag: reflect.StructTag(`default:"value1"`),
+				},
+				{
+					Names:     []string{"sampleString"},
+					Type:      "string",
+					StructTag: reflect.StructTag(`default:"value2"`),
+				},
 			},
 		},
 	}
@@ -48,7 +56,15 @@ var (
 			Path:    "sample_test.go",
 			Package: "typannot_test",
 		},
-		DeclType: &typannot.FuncDecl{Name: "sampleFunction"},
+		DeclType: &typannot.FuncDecl{
+			Name: "sampleFunction",
+			Params: &typannot.FieldList{
+				List: []*typannot.Field{
+					{Names: []string{"param1"}, Type: "int"},
+					{Names: []string{"param2"}, Type: "int"},
+				},
+			},
+		},
 	}
 
 	someFunctionDecl2 = &typannot.Decl{
@@ -57,7 +73,8 @@ var (
 			Package: "typannot_test",
 		},
 		DeclType: &typannot.FuncDecl{
-			Name: "sampleFunction2",
+			Name:   "sampleFunction2",
+			Params: &typannot.FieldList{},
 			Docs: []string{
 				"// GetWriter to get writer to greet the world",
 				"// @ctor",
@@ -101,9 +118,25 @@ var (
 		DeclType: &typannot.StructDecl{
 			TypeDecl: typannot.TypeDecl{Name: "sampleStruct3"},
 			Fields: []*typannot.Field{
-				{Name: "Name", Type: "string"},
-				{Name: "Address", Type: "string"},
+				{Names: []string{"Name"}, Type: "string"},
+				{Names: []string{"Address"}, Type: "string"},
 			},
+		},
+	}
+
+	someMethod = &typannot.Decl{
+		File: typannot.File{
+			Path:    "sample_test.go",
+			Package: "typannot_test",
+		},
+		DeclType: &typannot.FuncDecl{
+			Name: "someMethod",
+			Recv: &typannot.FieldList{
+				List: []*typannot.Field{
+					{Names: []string{"s"}, Type: "*sampleStruct3"},
+				},
+			},
+			Params: &typannot.FieldList{},
 		},
 	}
 )
@@ -112,15 +145,14 @@ func TestCompile(t *testing.T) {
 	summary, err := typannot.Compile("sample_test.go")
 	require.NoError(t, err)
 
-	require.EqualValues(t, []*typannot.Decl{
-		someInterfaceDecl,
-		someStructDecl,
-		someFunctionDecl,
-		someFunctionDecl2,
-		someInterface2Decl,
-		someStruct2Decl,
-		someStruct3Decl,
-	}, summary.Decls)
+	require.EqualValues(t, someInterfaceDecl, summary.Decls[0])
+	require.EqualValues(t, someStructDecl, summary.Decls[1])
+	require.EqualValues(t, someFunctionDecl, summary.Decls[2])
+	require.EqualValues(t, someFunctionDecl2, summary.Decls[3])
+	require.EqualValues(t, someInterface2Decl, summary.Decls[4])
+	require.EqualValues(t, someStruct2Decl, summary.Decls[5])
+	require.EqualValues(t, someStruct3Decl, summary.Decls[6])
+	require.EqualValues(t, someMethod, summary.Decls[7])
 
 	// require.EqualValues(t, []*typannot.Annot{
 	// 	{

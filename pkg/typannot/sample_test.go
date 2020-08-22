@@ -12,7 +12,7 @@ type sampleStruct struct {
 	sampleString string `default:"value2"`
 }
 
-func sampleFunction() {
+func sampleFunction(param1 int, param2 int) {
 	// intentionally blank
 }
 
@@ -37,4 +37,7 @@ type (
 type sampleStruct3 struct {
 	Name    string
 	Address string
+}
+
+func (s *sampleStruct3) someMethod() {
 }

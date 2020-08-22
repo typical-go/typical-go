@@ -2,7 +2,6 @@ package typannot
 
 import (
 	"go/ast"
-	"reflect"
 )
 
 type (
@@ -24,12 +23,6 @@ type (
 	// GenDecl generic declaration
 	GenDecl struct {
 		Docs []string
-	}
-	// Field information
-	Field struct {
-		Name string
-		Type string
-		reflect.StructTag
 	}
 )
 
@@ -69,33 +62,21 @@ func createStructDecl(typeDecl TypeDecl, structType *ast.StructType) *StructDecl
 
 func structFields(s *ast.StructType) []*Field {
 	var fields []*Field
-	for _, field := range s.Fields.List {
-		switch field.Type.(type) {
-		case *ast.Ident:
-			i := field.Type.(*ast.Ident)
-			for _, name := range field.Names {
-				fields = append(fields, &Field{
-					Name:      name.Name,
-					Type:      i.Name,
-					StructTag: StructTag(field.Tag),
-				})
-			}
-		}
+	for _, f := range s.Fields.List {
+		fields = append(fields, createField(f))
 	}
 	return fields
 }
 
-// StructTag create struct tag
-func StructTag(tag *ast.BasicLit) reflect.StructTag {
-	if tag == nil {
-		return ""
+func docs(group *ast.CommentGroup) []string {
+	if group == nil {
+		return nil
 	}
-	s := tag.Value
-	n := len(s)
-	if n < 2 {
-		return ""
+	var docs []string
+	for _, comment := range group.List {
+		docs = append(docs, comment.Text)
 	}
-	return reflect.StructTag(s[1 : n-1])
+	return docs
 }
 
 //
@@ -115,15 +96,4 @@ func (t *TypeDecl) GetDocs() []string {
 		return t.Docs
 	}
 	return t.GenDecl.Docs
-}
-
-func docs(group *ast.CommentGroup) []string {
-	if group == nil {
-		return nil
-	}
-	var docs []string
-	for _, comment := range group.List {
-		docs = append(docs, comment.Text)
-	}
-	return docs
 }
