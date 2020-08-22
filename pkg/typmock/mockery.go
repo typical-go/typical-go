@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typast"
 )
 
 var (
@@ -60,7 +60,7 @@ func (m Mockery) Filter(pkgs ...string) Map {
 }
 
 // CreateMock to create mock
-func CreateMock(annot *typannot.Annot) *Mock {
+func CreateMock(annot *typast.Annot) *Mock {
 	pkg := annot.Decl.Package
 	dir := filepath.Dir(annot.Decl.Path)
 

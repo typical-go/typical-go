@@ -1,4 +1,4 @@
-package typannot
+package typast
 
 import (
 	"github.com/typical-go/typical-go/pkg/typgo"

@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/typical-go/typical-go/pkg/tmplkit"
-	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -19,7 +19,7 @@ type (
 	}
 	// DtorTmplData template
 	DtorTmplData struct {
-		Signature typannot.Signature
+		Signature typast.Signature
 		Package   string
 		Imports   []string
 		Dtors     []*Dtor
@@ -46,10 +46,10 @@ func init() { {{if .Dtors}}
 
 const dtorHelp = "https://pkg.go.dev/github.com/typical-go/typical-go/pkg/typapp?tab=doc#DtorAnnotation"
 
-var _ typannot.Annotator = (*DtorAnnotation)(nil)
+var _ typast.Annotator = (*DtorAnnotation)(nil)
 
 // Annotate @dtor
-func (a *DtorAnnotation) Annotate(c *typannot.Context) error {
+func (a *DtorAnnotation) Annotate(c *typast.Context) error {
 	dtors := a.CreateDtors(c)
 	target := fmt.Sprintf("%s/%s", c.Destination, a.getTarget(c))
 	pkg := filepath.Base(c.Destination)
@@ -58,7 +58,7 @@ func (a *DtorAnnotation) Annotate(c *typannot.Context) error {
 		return nil
 	}
 	data := &DtorTmplData{
-		Signature: typannot.Signature{
+		Signature: typast.Signature{
 			TagName: a.getTagName(),
 			Help:    dtorHelp,
 		},
@@ -77,7 +77,7 @@ func (a *DtorAnnotation) Annotate(c *typannot.Context) error {
 }
 
 // CreateDtors get dtors
-func (a *DtorAnnotation) CreateDtors(c *typannot.Context) []*Dtor {
+func (a *DtorAnnotation) CreateDtors(c *typast.Context) []*Dtor {
 	var dtors []*Dtor
 	for _, annot := range c.FindAnnotByFunc(a.getTagName()) {
 		dtors = append(dtors, &Dtor{
@@ -101,7 +101,7 @@ func (a *DtorAnnotation) getTemplate() string {
 	return a.Template
 }
 
-func (a *DtorAnnotation) getTarget(c *typannot.Context) string {
+func (a *DtorAnnotation) getTarget(c *typast.Context) string {
 	if a.Target == "" {
 		a.Target = "dtor_annotated.go"
 	}

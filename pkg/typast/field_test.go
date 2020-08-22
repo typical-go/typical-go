@@ -1,4 +1,4 @@
-package typannot_test
+package typast_test
 
 import (
 	"go/ast"
@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typast"
 )
 
 func TestStructTag(t *testing.T) {
@@ -34,7 +34,7 @@ func TestStructTag(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			require.Equal(t, tt.Expected, typannot.StructTag(tt.Tag))
+			require.Equal(t, tt.Expected, typast.StructTag(tt.Tag))
 		})
 	}
 }

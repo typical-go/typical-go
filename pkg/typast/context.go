@@ -1,4 +1,4 @@
-package typannot
+package typast
 
 import (
 	"fmt"

@@ -93,7 +93,7 @@ Typical-Tmp is temporary folder that contain downloaded file and other build-mec
 
 ## Annotation
 
-Typical-Go support java-like annotation (except the parameter in [StructTag](https://www.digitalocean.com/community/tutorials/how-to-use-struct-tags-in-go) format) for code-generation purpose. [Learn more](pkg/typannot)
+Typical-Go support java-like annotation (except the parameter in [StructTag](https://www.digitalocean.com/community/tutorials/how-to-use-struct-tags-in-go) format) for code-generation purpose. [Learn more](pkg/typast)
 
 ```go
 // @mytag (key1:"val1" key2:"val2")
@@ -113,7 +113,7 @@ Typical-Go using itself as build-tool which is an excellent example. For other e
 ## See Also
 
 - [`pkg/typapp`](pkg/typapp): Typical Application Framework
-- [`pkg/typannot`](pkg/typannot): Annotation for Code Generation
+- [`pkg/typast`](pkg/typast): Annotation for Code Generation
 - [`pkg/typmock`](pkg/typmock): Mock by Annotation
 - [`pkg/typrls`](pkg/typmock): Project Releaser
 - [Typical-Rest-Server](https://github.com/typical-go/typical-rest-server): Rest Server Implementation

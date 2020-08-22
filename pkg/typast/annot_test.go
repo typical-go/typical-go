@@ -1,10 +1,10 @@
-package typannot_test
+package typast_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typast"
 )
 
 func TestParseAnnot(t *testing.T) {
@@ -39,7 +39,7 @@ func TestParseAnnot(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			tagName, tagAttrs := typannot.ParseAnnot(tt.Raw)
+			tagName, tagAttrs := typast.ParseAnnot(tt.Raw)
 			require.Equal(t, tt.ExpectedTagName, tagName)
 			require.Equal(t, tt.ExpectedTagAttrs, tagAttrs)
 		})

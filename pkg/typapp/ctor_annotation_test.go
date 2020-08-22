@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/execkit"
-	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
@@ -25,28 +25,28 @@ func TestCtorAnnotation_Annotate(t *testing.T) {
 	defer func() { typapp.Stdout = os.Stdout }()
 
 	ctorAnnot := &typapp.CtorAnnotation{}
-	ctx := &typannot.Context{
+	ctx := &typast.Context{
 		Destination: "folder1/dest1",
 		Context: &typgo.Context{
 			BuildSys: &typgo.BuildSys{
 				Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
 			},
 		},
-		Summary: &typannot.Summary{
-			Annots: []*typannot.Annot{
+		Summary: &typast.Summary{
+			Annots: []*typast.Annot{
 				{
 					TagName: "@ctor",
-					Decl: &typannot.Decl{
-						DeclType: &typannot.FuncDecl{Name: "NewObject"},
-						File:     typannot.File{Package: "pkg"},
+					Decl: &typast.Decl{
+						DeclType: &typast.FuncDecl{Name: "NewObject"},
+						File:     typast.File{Package: "pkg"},
 					},
 				},
 				{
 					TagName:  "@ctor",
 					TagParam: `name:"obj2"`,
-					Decl: &typannot.Decl{
-						File:     typannot.File{Package: "pkg2"},
-						DeclType: &typannot.FuncDecl{Name: "NewObject2"},
+					Decl: &typast.Decl{
+						File:     typast.File{Package: "pkg2"},
+						DeclType: &typast.FuncDecl{Name: "NewObject2"},
 					},
 				},
 			},
@@ -98,21 +98,21 @@ func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
 		Target:   "some-target",
 		Template: "some-template",
 	}
-	ctx := &typannot.Context{
+	ctx := &typast.Context{
 		Destination: "folder2/dest2",
 		Context: &typgo.Context{
 			BuildSys: &typgo.BuildSys{
 				Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
 			},
 		},
-		Summary: &typannot.Summary{
-			Annots: []*typannot.Annot{
+		Summary: &typast.Summary{
+			Annots: []*typast.Annot{
 				{
 					TagName: "@some-tag",
-					Decl: &typannot.Decl{
+					Decl: &typast.Decl{
 
-						File:     typannot.File{Package: "pkg"},
-						DeclType: &typannot.FuncDecl{Name: "NewObject"},
+						File:     typast.File{Package: "pkg"},
+						DeclType: &typast.FuncDecl{Name: "NewObject"},
 					},
 				},
 			},
@@ -132,10 +132,10 @@ func TestCtorAnnotation_Annotate_RemoveTargetWhenNoAnnotation(t *testing.T) {
 	defer os.RemoveAll("folder4")
 
 	ctorAnnot := &typapp.CtorAnnotation{Target: "some-target"}
-	ctx := &typannot.Context{
+	ctx := &typast.Context{
 		Destination: "folder4/pkg4",
 		Context:     &typgo.Context{},
-		Summary:     &typannot.Summary{},
+		Summary:     &typast.Summary{},
 	}
 
 	ioutil.WriteFile("folder4/pkg4/some-target", []byte("some-content"), 0777)

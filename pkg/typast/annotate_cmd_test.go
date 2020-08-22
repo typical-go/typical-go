@@ -1,17 +1,17 @@
-package typannot_test
+package typast_test
 
 import (
 	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
 
 func TestAnnotateCmd(t *testing.T) {
-	annonateCmd := &typannot.AnnotateCmd{}
+	annonateCmd := &typast.AnnotateCmd{}
 
 	sys := &typgo.BuildSys{
 		Descriptor: &typgo.Descriptor{},
@@ -28,10 +28,10 @@ func TestAnnotateCmd(t *testing.T) {
 }
 
 func TestAnnotateCmd_Defined(t *testing.T) {
-	annonateCmd := &typannot.AnnotateCmd{
+	annonateCmd := &typast.AnnotateCmd{
 		Destination: "some-destination",
-		Annotators: []typannot.Annotator{
-			typannot.NewAnnotator(func(*typannot.Context) error {
+		Annotators: []typast.Annotator{
+			typast.NewAnnotator(func(*typast.Context) error {
 				return errors.New("some-error")
 			}),
 		},
@@ -50,7 +50,7 @@ func TestAnnotateCmd_Defined(t *testing.T) {
 func TestAnnotators_Execute(t *testing.T) {
 	testcases := []struct {
 		TestName string
-		typannot.AnnotateCmd
+		typast.AnnotateCmd
 		Context     *typgo.Context
 		ExpectedErr string
 	}{
@@ -58,10 +58,10 @@ func TestAnnotators_Execute(t *testing.T) {
 			Context: &typgo.Context{BuildSys: &typgo.BuildSys{
 				Descriptor: &typgo.Descriptor{},
 			}},
-			AnnotateCmd: typannot.AnnotateCmd{
-				Annotators: []typannot.Annotator{
-					typannot.NewAnnotator(func(c *typannot.Context) error { return errors.New("some-error-1") }),
-					typannot.NewAnnotator(func(c *typannot.Context) error { return errors.New("some-error-2") }),
+			AnnotateCmd: typast.AnnotateCmd{
+				Annotators: []typast.Annotator{
+					typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-1") }),
+					typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-2") }),
 				},
 			},
 			ExpectedErr: "some-error-1",
@@ -70,10 +70,10 @@ func TestAnnotators_Execute(t *testing.T) {
 			Context: &typgo.Context{BuildSys: &typgo.BuildSys{
 				Descriptor: &typgo.Descriptor{},
 			}},
-			AnnotateCmd: typannot.AnnotateCmd{
-				Annotators: []typannot.Annotator{
-					typannot.NewAnnotator(func(c *typannot.Context) error { return nil }),
-					typannot.NewAnnotator(func(c *typannot.Context) error { return errors.New("some-error-2") }),
+			AnnotateCmd: typast.AnnotateCmd{
+				Annotators: []typast.Annotator{
+					typast.NewAnnotator(func(c *typast.Context) error { return nil }),
+					typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-2") }),
 				},
 			},
 			ExpectedErr: "some-error-2",

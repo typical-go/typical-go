@@ -9,7 +9,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/execkit"
-	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typmock"
 	"github.com/urfave/cli/v2"
@@ -27,17 +27,17 @@ func TestAnnotate(t *testing.T) {
 		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"."}}},
 		Context:  cli.NewContext(nil, &flag.FlagSet{}, nil),
 	}
-	summary := &typannot.Summary{
-		Annots: []*typannot.Annot{
+	summary := &typast.Summary{
+		Annots: []*typast.Annot{
 			{
 				TagName: "@mock",
-				Decl: &typannot.Decl{
-					File: typannot.File{
+				Decl: &typast.Decl{
+					File: typast.File{
 						Package: "mypkg",
 						Path:    "parent/path/some_interface.go",
 					},
-					DeclType: &typannot.InterfaceDecl{
-						TypeDecl: typannot.TypeDecl{Name: "SomeInterface"},
+					DeclType: &typast.InterfaceDecl{
+						TypeDecl: typast.TypeDecl{Name: "SomeInterface"},
 					},
 				}},
 		},
@@ -67,7 +67,7 @@ func TestAnnotate_InstallMockgenError(t *testing.T) {
 	})
 	defer unpatch(t)
 
-	require.EqualError(t, typmock.Annotate(c, &typannot.Summary{}), "some-error")
+	require.EqualError(t, typmock.Annotate(c, &typast.Summary{}), "some-error")
 }
 
 func TestAnnotate_MockgenError(t *testing.T) {
@@ -79,17 +79,17 @@ func TestAnnotate_MockgenError(t *testing.T) {
 		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"."}}},
 		Context:  cli.NewContext(nil, &flag.FlagSet{}, nil),
 	}
-	summary := &typannot.Summary{
-		Annots: []*typannot.Annot{
+	summary := &typast.Summary{
+		Annots: []*typast.Annot{
 			{
 				TagName: "@mock",
-				Decl: &typannot.Decl{
-					File: typannot.File{
+				Decl: &typast.Decl{
+					File: typast.File{
 						Package: "mypkg",
 						Path:    "parent/path/some_interface.go",
 					},
-					DeclType: &typannot.InterfaceDecl{
-						TypeDecl: typannot.TypeDecl{Name: "SomeInterface"},
+					DeclType: &typast.InterfaceDecl{
+						TypeDecl: typast.TypeDecl{Name: "SomeInterface"},
 					},
 				}},
 		},

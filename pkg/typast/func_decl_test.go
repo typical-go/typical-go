@@ -1,14 +1,14 @@
-package typannot_test
+package typast_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typast"
 )
 
 func TestFuncDecl(t *testing.T) {
-	funcDecl := &typannot.FuncDecl{
+	funcDecl := &typast.FuncDecl{
 		Name: "some-name",
 		Docs: []string{"doc1", "doc2"},
 	}

@@ -1,22 +1,22 @@
-package typannot_test
+package typast_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typast"
 )
 
 func TestContext_CreateImports(t *testing.T) {
 	testcases := []struct {
 		TestName string
-		*typannot.Context
+		*typast.Context
 		ProjectPkg string
 		More       []string
 		Expected   []string
 	}{
 		{
-			Context: &typannot.Context{
+			Context: &typast.Context{
 				Dirs: []string{"dir1", "dir2"},
 			},
 			ProjectPkg: "myproject",

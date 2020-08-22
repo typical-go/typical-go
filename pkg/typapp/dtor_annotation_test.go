@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/execkit"
-	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
@@ -25,20 +25,20 @@ func TestDtorAnnotation_Annotate(t *testing.T) {
 	defer func() { typapp.Stdout = os.Stdout }()
 
 	dtorAnnot := &typapp.DtorAnnotation{}
-	ctx := &typannot.Context{
+	ctx := &typast.Context{
 		Destination: "folder3/pkg3",
 		Context: &typgo.Context{
 			BuildSys: &typgo.BuildSys{
 				Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
 			},
 		},
-		Summary: &typannot.Summary{
-			Annots: []*typannot.Annot{
+		Summary: &typast.Summary{
+			Annots: []*typast.Annot{
 				{
 					TagName: "@dtor",
-					Decl: &typannot.Decl{
-						File:     typannot.File{Package: "pkg"},
-						DeclType: &typannot.FuncDecl{Name: "Clean"},
+					Decl: &typast.Decl{
+						File:     typast.File{Package: "pkg"},
+						DeclType: &typast.FuncDecl{Name: "Clean"},
 					},
 				},
 			},
@@ -89,20 +89,20 @@ func TestDtorAnnotation_Annotate_Predefined(t *testing.T) {
 		TagName:  "@some-tag",
 		Template: "some-template",
 	}
-	ctx := &typannot.Context{
+	ctx := &typast.Context{
 		Destination: "folder4/pkg4",
 		Context: &typgo.Context{
 			BuildSys: &typgo.BuildSys{
 				Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
 			},
 		},
-		Summary: &typannot.Summary{
-			Annots: []*typannot.Annot{
+		Summary: &typast.Summary{
+			Annots: []*typast.Annot{
 				{
 					TagName: "@some-tag",
-					Decl: &typannot.Decl{
-						File:     typannot.File{Package: "pkg"},
-						DeclType: &typannot.FuncDecl{Name: "Clean"},
+					Decl: &typast.Decl{
+						File:     typast.File{Package: "pkg"},
+						DeclType: &typast.FuncDecl{Name: "Clean"},
 					},
 				},
 			},
@@ -126,10 +126,10 @@ func TestDtorAnnotation_Annotate_RemoveTargetWhenNoAnnotation(t *testing.T) {
 	defer func() { typapp.Stdout = os.Stdout }()
 
 	dtorAnnot := &typapp.DtorAnnotation{Target: "some-target"}
-	ctx := &typannot.Context{
+	ctx := &typast.Context{
 		Destination: "folder4/pkg4",
 		Context:     &typgo.Context{},
-		Summary:     &typannot.Summary{},
+		Summary:     &typast.Summary{},
 	}
 
 	ioutil.WriteFile("folder4/pkg4/some-target", []byte("some-content"), 0777)

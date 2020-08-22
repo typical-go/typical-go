@@ -1,4 +1,4 @@
-package typannot_test
+package typast_test
 
 import (
 	"os"
@@ -6,28 +6,28 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typast"
 )
 
 var (
-	someInterfaceDecl = &typannot.Decl{
-		File: typannot.File{
+	someInterfaceDecl = &typast.Decl{
+		File: typast.File{
 			Path:    "sample_test.go",
-			Package: "typannot_test",
+			Package: "typast_test",
 		},
-		DeclType: &typannot.InterfaceDecl{
-			TypeDecl: typannot.TypeDecl{Name: "sampleInterface"},
+		DeclType: &typast.InterfaceDecl{
+			TypeDecl: typast.TypeDecl{Name: "sampleInterface"},
 		},
 	}
 
-	someStructDecl = &typannot.Decl{
-		File: typannot.File{
+	someStructDecl = &typast.Decl{
+		File: typast.File{
 			Path:    "sample_test.go",
-			Package: "typannot_test",
+			Package: "typast_test",
 		},
-		DeclType: &typannot.StructDecl{
-			TypeDecl: typannot.TypeDecl{
-				GenDecl: typannot.GenDecl{
+		DeclType: &typast.StructDecl{
+			TypeDecl: typast.TypeDecl{
+				GenDecl: typast.GenDecl{
 					Docs: []string{
 						"// sampleStruct",
 						"// @tag1",
@@ -36,7 +36,7 @@ var (
 				},
 				Name: "sampleStruct",
 			},
-			Fields: []*typannot.Field{
+			Fields: []*typast.Field{
 				{
 					Names:     []string{"sampleInt"},
 					Type:      "int",
@@ -51,15 +51,15 @@ var (
 		},
 	}
 
-	someFunctionDecl = &typannot.Decl{
-		File: typannot.File{
+	someFunctionDecl = &typast.Decl{
+		File: typast.File{
 			Path:    "sample_test.go",
-			Package: "typannot_test",
+			Package: "typast_test",
 		},
-		DeclType: &typannot.FuncDecl{
+		DeclType: &typast.FuncDecl{
 			Name: "sampleFunction",
-			Params: &typannot.FieldList{
-				List: []*typannot.Field{
+			Params: &typast.FieldList{
+				List: []*typast.Field{
 					{Names: []string{"param1"}, Type: "int"},
 					{Names: []string{"param2"}, Type: "int"},
 				},
@@ -67,14 +67,14 @@ var (
 		},
 	}
 
-	someFunctionDecl2 = &typannot.Decl{
-		File: typannot.File{
+	someFunctionDecl2 = &typast.Decl{
+		File: typast.File{
 			Path:    "sample_test.go",
-			Package: "typannot_test",
+			Package: "typast_test",
 		},
-		DeclType: &typannot.FuncDecl{
+		DeclType: &typast.FuncDecl{
 			Name:   "sampleFunction2",
-			Params: &typannot.FieldList{},
+			Params: &typast.FieldList{},
 			Docs: []string{
 				"// GetWriter to get writer to greet the world",
 				"// @ctor",
@@ -82,26 +82,26 @@ var (
 		},
 	}
 
-	someInterface2Decl = &typannot.Decl{
-		File: typannot.File{
+	someInterface2Decl = &typast.Decl{
+		File: typast.File{
 			Path:    "sample_test.go",
-			Package: "typannot_test",
+			Package: "typast_test",
 		},
-		DeclType: &typannot.InterfaceDecl{
-			TypeDecl: typannot.TypeDecl{
+		DeclType: &typast.InterfaceDecl{
+			TypeDecl: typast.TypeDecl{
 				Name: "sampleInterface2",
 				Docs: []string{"// @tag3"},
 			},
 		},
 	}
 
-	someStruct2Decl = &typannot.Decl{
-		File: typannot.File{
+	someStruct2Decl = &typast.Decl{
+		File: typast.File{
 			Path:    "sample_test.go",
-			Package: "typannot_test",
+			Package: "typast_test",
 		},
-		DeclType: &typannot.StructDecl{
-			TypeDecl: typannot.TypeDecl{
+		DeclType: &typast.StructDecl{
+			TypeDecl: typast.TypeDecl{
 				Name: "sampleStruct2",
 				Docs: []string{
 					"// sampleStruct2 asdf",
@@ -110,39 +110,39 @@ var (
 			},
 		},
 	}
-	someStruct3Decl = &typannot.Decl{
-		File: typannot.File{
+	someStruct3Decl = &typast.Decl{
+		File: typast.File{
 			Path:    "sample_test.go",
-			Package: "typannot_test",
+			Package: "typast_test",
 		},
-		DeclType: &typannot.StructDecl{
-			TypeDecl: typannot.TypeDecl{Name: "sampleStruct3"},
-			Fields: []*typannot.Field{
+		DeclType: &typast.StructDecl{
+			TypeDecl: typast.TypeDecl{Name: "sampleStruct3"},
+			Fields: []*typast.Field{
 				{Names: []string{"Name"}, Type: "string"},
 				{Names: []string{"Address"}, Type: "string"},
 			},
 		},
 	}
 
-	someMethod = &typannot.Decl{
-		File: typannot.File{
+	someMethod = &typast.Decl{
+		File: typast.File{
 			Path:    "sample_test.go",
-			Package: "typannot_test",
+			Package: "typast_test",
 		},
-		DeclType: &typannot.FuncDecl{
+		DeclType: &typast.FuncDecl{
 			Name: "someMethod",
-			Recv: &typannot.FieldList{
-				List: []*typannot.Field{
+			Recv: &typast.FieldList{
+				List: []*typast.Field{
 					{Names: []string{"s"}, Type: "*sampleStruct3"},
 				},
 			},
-			Params: &typannot.FieldList{},
+			Params: &typast.FieldList{},
 		},
 	}
 )
 
 func TestCompile(t *testing.T) {
-	summary, err := typannot.Compile("sample_test.go")
+	summary, err := typast.Compile("sample_test.go")
 	require.NoError(t, err)
 
 	require.EqualValues(t, someInterfaceDecl, summary.Decls[0])
@@ -154,7 +154,7 @@ func TestCompile(t *testing.T) {
 	require.EqualValues(t, someStruct3Decl, summary.Decls[6])
 	require.EqualValues(t, someMethod, summary.Decls[7])
 
-	// require.EqualValues(t, []*typannot.Annot{
+	// require.EqualValues(t, []*typast.Annot{
 	// 	{
 	// 		Decl:    someStructDecl,
 	// 		TagName: "@tag1",
@@ -180,7 +180,7 @@ func TestCompile(t *testing.T) {
 }
 
 func TestCompile_FileNotFound(t *testing.T) {
-	_, err := typannot.Compile("not_found.go")
+	_, err := typast.Compile("not_found.go")
 	require.EqualError(t, err, "open not_found.go: no such file or directory")
 }
 
@@ -195,7 +195,7 @@ func TestWalk(t *testing.T) {
 		os.RemoveAll("pkg")
 	}()
 
-	dirs, files := typannot.Walk([]string{"pkg", "wrapper"})
+	dirs, files := typast.Walk([]string{"pkg", "wrapper"})
 	require.Equal(t, []string{"pkg", "pkg/some_lib", "wrapper", "wrapper/some_pkg"}, dirs)
 	require.Equal(t, []string{"pkg/some_lib/lib.go", "wrapper/some_pkg/some_file.go"}, files)
 }

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typmock"
 )
 
@@ -52,18 +52,18 @@ func TestTargetMap(t *testing.T) {
 func TestCreateMock(t *testing.T) {
 	testcases := []struct {
 		testName string
-		annot    *typannot.Annot
+		annot    *typast.Annot
 		expected *typmock.Mock
 	}{
 		{
-			annot: &typannot.Annot{
-				Decl: &typannot.Decl{
-					File: typannot.File{
+			annot: &typast.Annot{
+				Decl: &typast.Decl{
+					File: typast.File{
 						Package: "somePkg",
 						Path:    "/path/folder/source.go",
 					},
-					DeclType: &typannot.InterfaceDecl{
-						TypeDecl: typannot.TypeDecl{Name: "SomeInterface"},
+					DeclType: &typast.InterfaceDecl{
+						TypeDecl: typast.TypeDecl{Name: "SomeInterface"},
 					},
 				},
 				TagName: "mock",

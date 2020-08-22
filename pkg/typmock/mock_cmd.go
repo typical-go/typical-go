@@ -6,7 +6,7 @@ import (
 
 	"github.com/iancoleman/strcase"
 	"github.com/typical-go/typical-go/pkg/execkit"
-	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
@@ -32,8 +32,8 @@ func (d *MockCmd) Command(c *typgo.BuildSys) *cli.Command {
 
 // Execute mock command
 func (d *MockCmd) Execute(c *typgo.Context) error {
-	_, files := typannot.Walk(c.BuildSys.ProjectLayouts)
-	summary, err := typannot.Compile(files...)
+	_, files := typast.Walk(c.BuildSys.ProjectLayouts)
+	summary, err := typast.Compile(files...)
 	if err != nil {
 		return err
 	}
@@ -41,7 +41,7 @@ func (d *MockCmd) Execute(c *typgo.Context) error {
 }
 
 // Annotate mock
-func Annotate(c *typgo.Context, summary *typannot.Summary) error {
+func Annotate(c *typgo.Context, summary *typast.Summary) error {
 	mockgen := fmt.Sprintf("%s/bin/mockgen", typgo.TypicalTmp)
 	if _, err := os.Stat(mockgen); os.IsNotExist(err) {
 		if err := c.Execute(&execkit.GoBuild{

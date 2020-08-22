@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/typical-go/typical-go/pkg/typannot"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
@@ -13,8 +13,8 @@ var descriptor = typgo.Descriptor{
 
 	Cmds: []typgo.Cmd{
 		// annotate
-		&typannot.AnnotateCmd{
-			Annotators: []typannot.Annotator{
+		&typast.AnnotateCmd{
+			Annotators: []typast.Annotator{
 				&typapp.CtorAnnotation{},
 				&typapp.DtorAnnotation{},
 			},

@@ -1,4 +1,4 @@
-# typannot
+# typast
 
 Java-like annotation in golang for code generation purpose
 
@@ -13,8 +13,8 @@ var descriptor = typgo.Descriptor{
         // ...
 
 		// annotate
-		&typannot.AnnotateCmd{
-			Annotators: []typannot.Annotator{
+		&typast.AnnotateCmd{
+			Annotators: []typast.Annotator{
 				// TODO: add annotator
 			},
         },
