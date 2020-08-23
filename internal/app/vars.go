@@ -87,7 +87,7 @@ var descriptor = typgo.Descriptor{
 		},
 		// run
 		&typgo.RunCmd{
-			Before: typgo.BuildSysRuns{"annotate", "compile"},
+			Before: typgo.BuildCmdRuns{"annotate", "compile"},
 			Action: &typgo.StdRun{},
 		},
 		// clean

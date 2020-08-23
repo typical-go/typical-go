@@ -14,7 +14,7 @@ type (
 
 var _ Action = (BuildCmdRuns)(nil)
 
-// Execute BuildSysRuns
+// Execute BuildCmdRuns
 func (r BuildCmdRuns) Execute(c *Context) error {
 	for _, name := range r {
 		if err := RunCommand(c, name); err != nil {
