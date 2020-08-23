@@ -36,7 +36,7 @@ func TestAnnotate(t *testing.T) {
 						Package: "mypkg",
 						Path:    "parent/path/some_interface.go",
 					},
-					DeclType: &typast.InterfaceDecl{
+					Type: &typast.InterfaceDecl{
 						TypeDecl: typast.TypeDecl{Name: "SomeInterface"},
 					},
 				}},
@@ -88,7 +88,7 @@ func TestAnnotate_MockgenError(t *testing.T) {
 						Package: "mypkg",
 						Path:    "parent/path/some_interface.go",
 					},
-					DeclType: &typast.InterfaceDecl{
+					Type: &typast.InterfaceDecl{
 						TypeDecl: typast.TypeDecl{Name: "SomeInterface"},
 					},
 				}},

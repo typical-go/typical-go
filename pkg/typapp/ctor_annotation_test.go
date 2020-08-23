@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/execkit"
-	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typapp"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -37,16 +37,16 @@ func TestCtorAnnotation_Annotate(t *testing.T) {
 				{
 					TagName: "@ctor",
 					Decl: &typast.Decl{
-						DeclType: &typast.FuncDecl{Name: "NewObject"},
-						File:     typast.File{Package: "pkg"},
+						Type: &typast.FuncDecl{Name: "NewObject"},
+						File: typast.File{Package: "pkg"},
 					},
 				},
 				{
 					TagName:  "@ctor",
 					TagParam: `name:"obj2"`,
 					Decl: &typast.Decl{
-						File:     typast.File{Package: "pkg2"},
-						DeclType: &typast.FuncDecl{Name: "NewObject2"},
+						File: typast.File{Package: "pkg2"},
+						Type: &typast.FuncDecl{Name: "NewObject2"},
 					},
 				},
 			},
@@ -111,8 +111,8 @@ func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
 					TagName: "@some-tag",
 					Decl: &typast.Decl{
 
-						File:     typast.File{Package: "pkg"},
-						DeclType: &typast.FuncDecl{Name: "NewObject"},
+						File: typast.File{Package: "pkg"},
+						Type: &typast.FuncDecl{Name: "NewObject"},
 					},
 				},
 			},

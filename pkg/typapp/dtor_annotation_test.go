@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/execkit"
-	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typapp"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -38,7 +38,7 @@ func TestDtorAnnotation_Annotate(t *testing.T) {
 					TagName: "@dtor",
 					Decl: &typast.Decl{
 						File:     typast.File{Package: "pkg"},
-						DeclType: &typast.FuncDecl{Name: "Clean"},
+						Type: &typast.FuncDecl{Name: "Clean"},
 					},
 				},
 			},
@@ -101,8 +101,8 @@ func TestDtorAnnotation_Annotate_Predefined(t *testing.T) {
 				{
 					TagName: "@some-tag",
 					Decl: &typast.Decl{
-						File:     typast.File{Package: "pkg"},
-						DeclType: &typast.FuncDecl{Name: "Clean"},
+						File: typast.File{Package: "pkg"},
+						Type: &typast.FuncDecl{Name: "Clean"},
 					},
 				},
 			},

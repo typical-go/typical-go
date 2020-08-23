@@ -41,3 +41,6 @@ type sampleStruct3 struct {
 
 func (s *sampleStruct3) someMethod() {
 }
+
+func (s sampleStruct3) someMethod2() {
+}

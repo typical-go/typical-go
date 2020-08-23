@@ -14,10 +14,10 @@ type (
 	// Decl stand of declaration
 	Decl struct {
 		File
-		DeclType
+		Type
 	}
-	// DeclType declaratio type
-	DeclType interface {
+	// Type declaratio type
+	Type interface {
 		GetName() string
 		GetDocs() []string
 	}
@@ -29,10 +29,10 @@ type (
 )
 
 // AddDecl add declaration
-func (s *Summary) AddDecl(file File, declType DeclType) {
+func (s *Summary) AddDecl(file File, declType Type) {
 	decl := &Decl{
-		File:     file,
-		DeclType: declType,
+		File: file,
+		Type: declType,
 	}
 	s.Decls = append(s.Decls, decl)
 	s.Annots = append(s.Annots, retrieveAnnots(decl)...)
@@ -41,7 +41,7 @@ func (s *Summary) AddDecl(file File, declType DeclType) {
 // FindAnnotByFunc find annotation by function
 func (s *Summary) FindAnnotByFunc(tagName string) []*Annot {
 	return s.findAnnot(func(a *Annot) bool {
-		_, ok := a.DeclType.(*FuncDecl)
+		_, ok := a.Type.(*FuncDecl)
 		return strings.EqualFold(tagName, a.TagName) && ok
 	})
 }
@@ -49,7 +49,7 @@ func (s *Summary) FindAnnotByFunc(tagName string) []*Annot {
 // FindAnnotByStruct find annotation by struct
 func (s *Summary) FindAnnotByStruct(tagName string) []*Annot {
 	return s.findAnnot(func(a *Annot) bool {
-		_, ok := a.DeclType.(*StructDecl)
+		_, ok := a.Type.(*StructDecl)
 		return strings.EqualFold(tagName, a.TagName) && ok
 	})
 }
@@ -57,7 +57,7 @@ func (s *Summary) FindAnnotByStruct(tagName string) []*Annot {
 // FindAnnotByInterface find annotation by interface
 func (s *Summary) FindAnnotByInterface(tagName string) []*Annot {
 	return s.findAnnot(func(a *Annot) bool {
-		_, ok := a.DeclType.(*InterfaceDecl)
+		_, ok := a.Type.(*InterfaceDecl)
 		return strings.EqualFold(tagName, a.TagName) && ok
 	})
 }

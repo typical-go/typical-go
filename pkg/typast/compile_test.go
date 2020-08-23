@@ -15,7 +15,7 @@ var (
 			Path:    "sample_test.go",
 			Package: "typast_test",
 		},
-		DeclType: &typast.InterfaceDecl{
+		Type: &typast.InterfaceDecl{
 			TypeDecl: typast.TypeDecl{Name: "sampleInterface"},
 		},
 	}
@@ -25,7 +25,7 @@ var (
 			Path:    "sample_test.go",
 			Package: "typast_test",
 		},
-		DeclType: &typast.StructDecl{
+		Type: &typast.StructDecl{
 			TypeDecl: typast.TypeDecl{
 				GenDecl: typast.GenDecl{
 					Docs: []string{
@@ -56,7 +56,7 @@ var (
 			Path:    "sample_test.go",
 			Package: "typast_test",
 		},
-		DeclType: &typast.FuncDecl{
+		Type: &typast.FuncDecl{
 			Name: "sampleFunction",
 			Params: &typast.FieldList{
 				List: []*typast.Field{
@@ -72,7 +72,7 @@ var (
 			Path:    "sample_test.go",
 			Package: "typast_test",
 		},
-		DeclType: &typast.FuncDecl{
+		Type: &typast.FuncDecl{
 			Name:   "sampleFunction2",
 			Params: &typast.FieldList{},
 			Docs: []string{
@@ -87,7 +87,7 @@ var (
 			Path:    "sample_test.go",
 			Package: "typast_test",
 		},
-		DeclType: &typast.InterfaceDecl{
+		Type: &typast.InterfaceDecl{
 			TypeDecl: typast.TypeDecl{
 				Name: "sampleInterface2",
 				Docs: []string{"// @tag3"},
@@ -100,7 +100,7 @@ var (
 			Path:    "sample_test.go",
 			Package: "typast_test",
 		},
-		DeclType: &typast.StructDecl{
+		Type: &typast.StructDecl{
 			TypeDecl: typast.TypeDecl{
 				Name: "sampleStruct2",
 				Docs: []string{
@@ -115,7 +115,7 @@ var (
 			Path:    "sample_test.go",
 			Package: "typast_test",
 		},
-		DeclType: &typast.StructDecl{
+		Type: &typast.StructDecl{
 			TypeDecl: typast.TypeDecl{Name: "sampleStruct3"},
 			Fields: []*typast.Field{
 				{Names: []string{"Name"}, Type: "string"},
@@ -129,11 +129,26 @@ var (
 			Path:    "sample_test.go",
 			Package: "typast_test",
 		},
-		DeclType: &typast.FuncDecl{
+		Type: &typast.FuncDecl{
 			Name: "someMethod",
 			Recv: &typast.FieldList{
 				List: []*typast.Field{
 					{Names: []string{"s"}, Type: "*sampleStruct3"},
+				},
+			},
+			Params: &typast.FieldList{},
+		},
+	}
+	someMethod2 = &typast.Decl{
+		File: typast.File{
+			Path:    "sample_test.go",
+			Package: "typast_test",
+		},
+		Type: &typast.FuncDecl{
+			Name: "someMethod2",
+			Recv: &typast.FieldList{
+				List: []*typast.Field{
+					{Names: []string{"s"}, Type: "sampleStruct3"},
 				},
 			},
 			Params: &typast.FieldList{},
@@ -153,30 +168,31 @@ func TestCompile(t *testing.T) {
 	require.EqualValues(t, someStruct2Decl, summary.Decls[5])
 	require.EqualValues(t, someStruct3Decl, summary.Decls[6])
 	require.EqualValues(t, someMethod, summary.Decls[7])
+	require.EqualValues(t, someMethod2, summary.Decls[8])
 
-	// require.EqualValues(t, []*typast.Annot{
-	// 	{
-	// 		Decl:    someStructDecl,
-	// 		TagName: "@tag1",
-	// 	},
-	// 	{
-	// 		Decl:     someStructDecl,
-	// 		TagName:  "@tag2",
-	// 		TagParam: `key1:"", key2: "", key3:"value3"`,
-	// 	},
-	// 	{
-	// 		Decl:    someFunctionDecl2,
-	// 		TagName: "@ctor",
-	// 	},
-	// 	{
-	// 		Decl:    someInterface2Decl,
-	// 		TagName: "@tag3",
-	// 	},
-	// 	{
-	// 		Decl:    someStruct2Decl,
-	// 		TagName: "@tag4",
-	// 	},
-	// }, summary.Annots)
+	require.EqualValues(t, []*typast.Annot{
+		{
+			Decl:    someStructDecl,
+			TagName: "@tag1",
+		},
+		{
+			Decl:     someStructDecl,
+			TagName:  "@tag2",
+			TagParam: `key1:"", key2: "", key3:"value3"`,
+		},
+		{
+			Decl:    someFunctionDecl2,
+			TagName: "@ctor",
+		},
+		{
+			Decl:    someInterface2Decl,
+			TagName: "@tag3",
+		},
+		{
+			Decl:    someStruct2Decl,
+			TagName: "@tag4",
+		},
+	}, summary.Annots)
 }
 
 func TestCompile_FileNotFound(t *testing.T) {

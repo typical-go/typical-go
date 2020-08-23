@@ -18,9 +18,9 @@ type (
 	}
 )
 
-var _ DeclType = (*FuncDecl)(nil)
+var _ Type = (*FuncDecl)(nil)
 
-func createFuncDecl(funcDecl *ast.FuncDecl, file File) DeclType {
+func createFuncDecl(funcDecl *ast.FuncDecl, file File) Type {
 	var recv, params *FieldList
 	if funcDecl.Recv != nil {
 		recv = createFuncParam(funcDecl.Recv)

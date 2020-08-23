@@ -8,15 +8,15 @@ import (
 )
 
 func TestFindAnnot(t *testing.T) {
-	tag1 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{DeclType: &typast.FuncDecl{}}}
-	tag2 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{DeclType: &typast.FuncDecl{}}}
-	tag3 := &typast.Annot{TagName: "@other", Decl: &typast.Decl{DeclType: &typast.FuncDecl{}}}
-	tag4 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{DeclType: &typast.StructDecl{}}}
-	tag5 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{DeclType: &typast.StructDecl{}}}
-	tag6 := &typast.Annot{TagName: "@other", Decl: &typast.Decl{DeclType: &typast.StructDecl{}}}
-	tag7 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{DeclType: &typast.InterfaceDecl{}}}
-	tag8 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{DeclType: &typast.InterfaceDecl{}}}
-	tag9 := &typast.Annot{TagName: "@other", Decl: &typast.Decl{DeclType: &typast.InterfaceDecl{}}}
+	tag1 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{Type: &typast.FuncDecl{}}}
+	tag2 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{Type: &typast.FuncDecl{}}}
+	tag3 := &typast.Annot{TagName: "@other", Decl: &typast.Decl{Type: &typast.FuncDecl{}}}
+	tag4 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{Type: &typast.StructDecl{}}}
+	tag5 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{Type: &typast.StructDecl{}}}
+	tag6 := &typast.Annot{TagName: "@other", Decl: &typast.Decl{Type: &typast.StructDecl{}}}
+	tag7 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{Type: &typast.InterfaceDecl{}}}
+	tag8 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{Type: &typast.InterfaceDecl{}}}
+	tag9 := &typast.Annot{TagName: "@other", Decl: &typast.Decl{Type: &typast.InterfaceDecl{}}}
 
 	c := &typast.Summary{
 		Annots: []*typast.Annot{tag1, tag2, tag3, tag4, tag5, tag6, tag7, tag8, tag9},

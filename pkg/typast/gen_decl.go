@@ -26,8 +26,8 @@ type (
 	}
 )
 
-func createGenDecl(genDecl *ast.GenDecl, file File) []DeclType {
-	var declTypes []DeclType
+func createGenDecl(genDecl *ast.GenDecl, file File) []Type {
+	var types []Type
 	for _, spec := range genDecl.Specs {
 		switch spec.(type) {
 		case *ast.TypeSpec:
@@ -40,13 +40,13 @@ func createGenDecl(genDecl *ast.GenDecl, file File) []DeclType {
 
 			switch typeSpec.Type.(type) {
 			case *ast.InterfaceType:
-				declTypes = append(declTypes, createInterfaceDecl(typeDecl))
+				types = append(types, createInterfaceDecl(typeDecl))
 			case *ast.StructType:
-				declTypes = append(declTypes, createStructDecl(typeDecl, typeSpec.Type.(*ast.StructType)))
+				types = append(types, createStructDecl(typeDecl, typeSpec.Type.(*ast.StructType)))
 			}
 		}
 	}
-	return declTypes
+	return types
 }
 
 func createInterfaceDecl(typeDecl TypeDecl) *InterfaceDecl {
@@ -83,7 +83,7 @@ func docs(group *ast.CommentGroup) []string {
 // TypeDecl
 //
 
-var _ DeclType = (*TypeDecl)(nil)
+var _ Type = (*TypeDecl)(nil)
 
 // GetName get name
 func (t *TypeDecl) GetName() string {

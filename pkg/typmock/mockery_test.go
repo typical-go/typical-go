@@ -62,7 +62,7 @@ func TestCreateMock(t *testing.T) {
 						Package: "somePkg",
 						Path:    "/path/folder/source.go",
 					},
-					DeclType: &typast.InterfaceDecl{
+					Type: &typast.InterfaceDecl{
 						TypeDecl: typast.TypeDecl{Name: "SomeInterface"},
 					},
 				},
