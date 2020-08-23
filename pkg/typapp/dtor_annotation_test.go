@@ -37,7 +37,7 @@ func TestDtorAnnotation_Annotate(t *testing.T) {
 				{
 					TagName: "@dtor",
 					Decl: &typast.Decl{
-						File:     typast.File{Package: "pkg"},
+						File: typast.File{Package: "pkg"},
 						Type: &typast.FuncDecl{Name: "Clean"},
 					},
 				},
@@ -138,4 +138,65 @@ func TestDtorAnnotation_Annotate_RemoveTargetWhenNoAnnotation(t *testing.T) {
 	require.True(t, os.IsNotExist(err))
 
 	require.Equal(t, "", out.String())
+}
+
+func TestDtorAnnotation_IsDtor(t *testing.T) {
+	testcases := []struct {
+		TestName string
+		*typapp.DtorAnnotation
+		Annot    *typast.Annot
+		Expected bool
+	}{
+		{
+			TestName:       "private function",
+			DtorAnnotation: &typapp.DtorAnnotation{TagName: "@dtor"},
+			Annot: &typast.Annot{
+				TagName: "@dtor",
+				Decl: &typast.Decl{
+					Type: &typast.FuncDecl{Name: "someFunction"},
+				},
+			},
+			Expected: false,
+		},
+		{
+			TestName:       "public function",
+			DtorAnnotation: &typapp.DtorAnnotation{TagName: "@dtor"},
+			Annot: &typast.Annot{
+				TagName: "@dtor",
+				Decl: &typast.Decl{
+					Type: &typast.FuncDecl{Name: "SomeFunction"},
+				},
+			},
+			Expected: true,
+		},
+		{
+			TestName:       "not function",
+			DtorAnnotation: &typapp.DtorAnnotation{TagName: "@dtor"},
+			Annot: &typast.Annot{
+				TagName: "@dtor",
+				Decl: &typast.Decl{
+					Type: &typast.InterfaceDecl{
+						TypeDecl: typast.TypeDecl{Name: "SomeInterface"},
+					},
+				},
+			},
+			Expected: false,
+		},
+		{
+			TestName:       "method function",
+			DtorAnnotation: &typapp.DtorAnnotation{TagName: "@dtor"},
+			Annot: &typast.Annot{
+				TagName: "@dtor",
+				Decl: &typast.Decl{
+					Type: &typast.FuncDecl{Name: "SomeMethod", Recv: &typast.FieldList{}},
+				},
+			},
+			Expected: false,
+		},
+	}
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			require.Equal(t, tt.Expected, tt.IsDtor(tt.Annot))
+		})
+	}
 }

@@ -3,6 +3,7 @@ package typmock
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/iancoleman/strcase"
 	"github.com/typical-go/typical-go/pkg/execkit"
@@ -52,7 +53,7 @@ func Annotate(c *typgo.Context, summary *typast.Summary) error {
 		}
 	}
 	mockery := NewMockery(typgo.ProjectPkg)
-	for _, annot := range summary.FindAnnotByInterface(MockTag) {
+	for _, annot := range summary.FindAnnot(isMock) {
 		mockery.Put(CreateMock(annot))
 	}
 	targetMap := mockery.Map
@@ -86,4 +87,9 @@ func Annotate(c *typgo.Context, summary *typast.Summary) error {
 		}
 	}
 	return nil
+}
+
+func isMock(annot *typast.Annot) bool {
+	_, ok := annot.Type.(*typast.InterfaceDecl)
+	return strings.EqualFold(annot.TagName, MockTag) && ok
 }

@@ -22,8 +22,14 @@ func TestFindAnnot(t *testing.T) {
 		Annots: []*typast.Annot{tag1, tag2, tag3, tag4, tag5, tag6, tag7, tag8, tag9},
 	}
 
-	require.Equal(t, []*typast.Annot{tag1, tag2}, c.FindAnnotByFunc("@some-tag"))
-	require.Equal(t, []*typast.Annot{tag4, tag5}, c.FindAnnotByStruct("@some-tag"))
-	require.Equal(t, []*typast.Annot{tag7, tag8}, c.FindAnnotByInterface("@some-tag"))
+	require.Equal(t,
+		[]*typast.Annot{tag1, tag2},
+		c.FindAnnot(
+			func(a *typast.Annot) bool {
+				_, ok := a.Type.(*typast.FuncDecl)
+				return ok && a.TagName == "@some-tag"
+			},
+		),
+	)
 
 }

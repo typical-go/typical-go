@@ -59,3 +59,8 @@ func (f *FuncDecl) GetName() string {
 func (f *FuncDecl) GetDocs() []string {
 	return f.Docs
 }
+
+// IsMethod return true if function is method (has receiver argument)
+func (f *FuncDecl) IsMethod() bool {
+	return f.Recv != nil
+}
