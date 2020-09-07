@@ -16,7 +16,7 @@ Build Automation Tool For Golang
 ## Install
 
 ```
-$ go install github.com/typical-go/typical-go
+$ go get -u github.com/typical-go/typical-go
 ```
 
 ## Setup
