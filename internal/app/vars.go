@@ -51,7 +51,7 @@ const mainTmpl = `package main
 
 import (
 	"{{.ProjectPkg}}/internal/app"
-	_ "{{.ProjectPkg}}/internal/generated"
+	_ "{{.ProjectPkg}}/internal/generated/typical"
 	"github.com/typical-go/typical-go/pkg/typapp"
 )
 

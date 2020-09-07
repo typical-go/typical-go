@@ -1,6 +1,8 @@
 package typast
 
 import (
+	"os"
+
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
@@ -8,7 +10,7 @@ import (
 type (
 	// AnnotateCmd annotate cmd
 	AnnotateCmd struct {
-		Destination string // By default is "internal/generated"
+		Destination string // By default is "internal/generated/typical"
 		Annotators  []Annotator
 	}
 	// Annotator responsible to annotate
@@ -60,17 +62,19 @@ func (a *AnnotateCmd) CreateContext(c *typgo.Context) (*Context, error) {
 	if err != nil {
 		return nil, err
 	}
+	destination := a.getDestination()
+	os.MkdirAll(destination, 0777)
 	return &Context{
 		Context:     c,
 		Summary:     summary,
 		Dirs:        dirs,
-		Destination: a.getDestination(),
+		Destination: destination,
 	}, nil
 }
 
 func (a *AnnotateCmd) getDestination() string {
 	if a.Destination == "" {
-		a.Destination = "internal/generated"
+		a.Destination = "internal/generated/typical"
 	}
 	return a.Destination
 }

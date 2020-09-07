@@ -146,7 +146,7 @@ func TestSetup_WithNewFlag(t *testing.T) {
 
 	require.Equal(t, `Create 'somepkg1/cmd/somepkg1/main.go'
 Create 'somepkg1/internal/app/start.go'
-Create 'somepkg1/internal/generated/doc.go'
+Create 'somepkg1/internal/generated/typical/doc.go'
 Create 'somepkg1/tools/typical-build/typical-build.go'
 Create 'somepkg1/typicalw'
 `, output.String())
@@ -158,7 +158,7 @@ Create 'somepkg1/typicalw'
 
 import (
 	"somepkg1/internal/app"
-	_ "somepkg1/internal/generated"
+	_ "somepkg1/internal/generated/typical"
 	"github.com/typical-go/typical-go/pkg/typapp"
 )
 
@@ -181,7 +181,7 @@ func Start() {
 }
 `, string(b))
 
-	b, _ = ioutil.ReadFile("somepkg1/internal/generated/doc.go")
+	b, _ = ioutil.ReadFile("somepkg1/internal/generated/typical/doc.go")
 	require.Equal(t, `// Package generated contain generated code from annotate
 package generated
 `, string(b))

@@ -24,7 +24,7 @@ func TestAnnotateCmd(t *testing.T) {
 
 	ctx, err := annonateCmd.CreateContext(&typgo.Context{BuildSys: sys})
 	require.NoError(t, err)
-	require.Equal(t, "internal/generated", ctx.Destination)
+	require.Equal(t, "internal/generated/typical", ctx.Destination)
 }
 
 func TestAnnotateCmd_Defined(t *testing.T) {

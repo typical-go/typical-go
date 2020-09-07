@@ -87,7 +87,7 @@ func newProject(p *Param) {
 	os.MkdirAll(appPkg, 0777)
 	ioutil.WriteFile(appStart, []byte(appStartSrc), 0777)
 
-	generatedPkg := p.SetupTarget + "/internal/generated"
+	generatedPkg := p.SetupTarget + "/internal/generated/typical"
 	generatedDoc := generatedPkg + "/doc.go"
 	fmt.Fprintf(Stdout, "Create '%s'\n", generatedDoc)
 	os.MkdirAll(generatedPkg, 0777)

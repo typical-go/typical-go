@@ -4,7 +4,7 @@ package main
 
 import (
 	"github.com/typical-go/typical-go/examples/use-dependency-injection/internal/app"
-	_ "github.com/typical-go/typical-go/examples/use-dependency-injection/internal/generated"
+	_ "github.com/typical-go/typical-go/examples/use-dependency-injection/internal/generated/typical"
 	"github.com/typical-go/typical-go/pkg/typapp"
 )
 
