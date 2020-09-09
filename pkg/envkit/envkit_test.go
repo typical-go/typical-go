@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/kelseyhightower/envconfig"
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/envkit"
 )
@@ -99,6 +100,18 @@ func TestReadFile(t *testing.T) {
 func TestReadFile_Error(t *testing.T) {
 	_, err := envkit.ReadFile("not-exist")
 	require.EqualError(t, err, "open not-exist: no such file or directory")
+}
+
+func TestEnvconfig(t *testing.T) {
+	type Specification struct {
+		RequiredVar string `required:"true"`
+	}
+
+	envkit.Setenv(envkit.Map{
+		"MYAPP_REQUIREDVAR": "",
+	})
+	var s Specification
+	require.EqualError(t, envconfig.Process("myapp", &s), "required key MYAPP_REQUIREDVAR missing value")
 }
 
 type badWriter struct{}

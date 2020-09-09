@@ -60,8 +60,10 @@ func SaveFile(m Map, target string) error {
 // Setenv set environment variable based on map
 func Setenv(m Map) error {
 	for k, v := range m {
-		if err := os.Setenv(k, v); err != nil {
-			return err
+		if v != "" {
+			if err := os.Setenv(k, v); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
