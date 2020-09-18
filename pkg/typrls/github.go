@@ -1,6 +1,7 @@
 package typrls
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -18,14 +19,13 @@ type (
 	}
 )
 
-var _ Releaser = (*Github)(nil)
+var _ Publisher = (*Github)(nil)
 
-// Release to github
-func (g *Github) Release(c *Context) (err error) {
+// Publish to github
+func (g *Github) Publish(c *Context) (err error) {
 	githubToken := os.Getenv("GITHUB_TOKEN")
 	if githubToken == "" {
-		fmt.Fprintln(Stdout, "Skip Github Release due to missing 'GITHUB_TOKEN'")
-		return
+		return errors.New("github-release: missing $GITHUB_TOKEN")
 	}
 
 	token := &oauth2.Token{AccessToken: githubToken}
@@ -33,8 +33,9 @@ func (g *Github) Release(c *Context) (err error) {
 	repo := github.NewClient(oauth).Repositories
 
 	if _, _, err = g.getReleaseByTag(c, repo); err == nil {
-		return fmt.Errorf("Tag '%s' already published", c.TagName)
+		return fmt.Errorf("github-release: Can't publish to existing tag '%s'", c.TagName)
 	}
+
 	fmt.Printf("\nCreate github release for %s/%s\n", g.Owner, g.Repo)
 	rls := &github.RepositoryRelease{
 		Name:       github.String(fmt.Sprintf("%s - %s", c.BuildSys.ProjectName, c.TagName)),

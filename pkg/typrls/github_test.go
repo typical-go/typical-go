@@ -9,13 +9,12 @@ import (
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
-func TestGithub_Release(t *testing.T) {
+func TestGithub_Publish(t *testing.T) {
 	var out strings.Builder
 	typrls.Stdout = &out
 	defer func() { typrls.Stdout = os.Stdout }()
 
 	os.Unsetenv("GITHUB_TOKEN")
 	github := &typrls.Github{}
-	require.NoError(t, github.Release(nil))
-	require.Equal(t, "Skip Github Release due to missing 'GITHUB_TOKEN'\n", out.String())
+	require.EqualError(t, github.Publish(nil), "github-release: missing $GITHUB_TOKEN")
 }

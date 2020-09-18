@@ -3,6 +3,8 @@ package typrls_test
 import (
 	"errors"
 	"flag"
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -12,15 +14,154 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func TestReleaseCmd_Execute_NoReleaser(t *testing.T) {
-	rls := &typrls.ReleaseProject{
-		Tagger:     typrls.DefaultTagger,
-		Summarizer: typrls.DefaultSummarizer,
+func TestReleaseProject(t *testing.T) {
+	var debug strings.Builder
+	testcases := []struct {
+		TestName string
+		typrls.ReleaseProject
+		Context     *typgo.Context
+		Debug       string
+		ExpectedErr string
+	}{
+		{
+			ReleaseProject: typrls.ReleaseProject{
+				Tagger:     typrls.DefaultTagger,
+				Summarizer: typrls.DefaultSummarizer,
+				Releaser: typrls.NewReleaser(func(c *typrls.Context) error {
+					fmt.Fprintln(&debug, "1")
+					return nil
+				}),
+				Publisher: typrls.NewPublisher(func(c *typrls.Context) error {
+					fmt.Fprintln(&debug, "2")
+					return nil
+				}),
+			},
+			Context: &typgo.Context{
+				Context:  createContext(),
+				BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+			},
+			Debug: "1\n2\n",
+		},
+		{
+			TestName: "release error",
+			ReleaseProject: typrls.ReleaseProject{
+				Tagger:     typrls.DefaultTagger,
+				Summarizer: typrls.DefaultSummarizer,
+				Releaser: typrls.NewReleaser(func(c *typrls.Context) error {
+					return errors.New("release-error")
+				}),
+				Publisher: typrls.NewPublisher(func(c *typrls.Context) error {
+					return errors.New("publish-error")
+				}),
+			},
+			Context: &typgo.Context{
+				Context:  createContext(),
+				BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+			},
+			ExpectedErr: "release-error",
+		},
+		{
+			TestName: "publish error",
+			ReleaseProject: typrls.ReleaseProject{
+				Tagger:     typrls.DefaultTagger,
+				Summarizer: typrls.DefaultSummarizer,
+				Releaser: typrls.NewReleaser(func(c *typrls.Context) error {
+					return nil
+				}),
+				Publisher: typrls.NewPublisher(func(c *typrls.Context) error {
+					return errors.New("publish-error")
+				}),
+			},
+			Context: &typgo.Context{
+				Context:  createContext(),
+				BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+			},
+			ExpectedErr: "publish-error",
+		},
+		{
+			TestName: "empty publisher",
+			ReleaseProject: typrls.ReleaseProject{
+				Tagger:     typrls.DefaultTagger,
+				Summarizer: typrls.DefaultSummarizer,
+				Releaser: typrls.NewReleaser(func(c *typrls.Context) error {
+					return nil
+				}),
+			},
+			Context: &typgo.Context{
+				Context:  createContext(),
+				BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+			},
+		},
+		{
+			TestName: "skip publish",
+			ReleaseProject: typrls.ReleaseProject{
+				Tagger:     typrls.DefaultTagger,
+				Summarizer: typrls.DefaultSummarizer,
+				Releaser: typrls.NewReleaser(func(c *typrls.Context) error {
+					return nil
+				}),
+				Publisher: typrls.NewPublisher(func(c *typrls.Context) error {
+					return errors.New("publish-error")
+				}),
+			},
+			Context: &typgo.Context{
+				Context:  createContext("-skip-publish"),
+				BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+			},
+		},
+		{
+			TestName: "empty releaser",
+			ReleaseProject: typrls.ReleaseProject{
+				Tagger:     typrls.DefaultTagger,
+				Summarizer: typrls.DefaultSummarizer,
+				Publisher: typrls.NewPublisher(func(c *typrls.Context) error {
+					return errors.New("publish-error")
+				}),
+			},
+			Context: &typgo.Context{
+				Context:  createContext(),
+				BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+			},
+			ExpectedErr: "publish-error",
+		},
+		{
+			TestName: "skip release",
+			ReleaseProject: typrls.ReleaseProject{
+				Tagger:     typrls.DefaultTagger,
+				Summarizer: typrls.DefaultSummarizer,
+				Releaser: typrls.NewReleaser(func(c *typrls.Context) error {
+					return errors.New("release-error")
+				}),
+				Publisher: typrls.NewPublisher(func(c *typrls.Context) error {
+					return errors.New("publish-error")
+				}),
+			},
+			Context: &typgo.Context{
+				Context:  createContext("-skip-release"),
+				BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+			},
+			ExpectedErr: "publish-error",
+		},
 	}
-	require.EqualError(t, rls.Execute(nil), "typrls: missing releaser")
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			defer debug.Reset()
+			unpatch := execkit.Patch([]*execkit.RunExpectation{})
+			defer unpatch(t)
+
+			err := tt.Execute(tt.Context)
+			if tt.ExpectedErr != "" {
+				require.EqualError(t, err, tt.ExpectedErr)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, tt.Debug, debug.String())
+			}
+		})
+	}
+
 }
 
-func TestReleaseCmd_Execute(t *testing.T) {
+func TestReleaseProject_Execute_Context(t *testing.T) {
 	testcases := []struct {
 		TestName string
 		*typrls.ReleaseProject
@@ -230,6 +371,8 @@ func createContext(args ...string) *cli.Context {
 	flagSet := flag.NewFlagSet("test", 0)
 	flagSet.Bool(typrls.AlphaFlag, false, "")
 	flagSet.Bool(typrls.ForceFlag, false, "")
+	flagSet.Bool(typrls.SkipPublishFlag, false, "")
+	flagSet.Bool(typrls.SkipReleaseFlag, false, "")
 	flagSet.String(typrls.TagNameFlag, "", "")
 	flagSet.String(typrls.ReleaseFolderFlag, "release", "")
 	flagSet.Parse(args)

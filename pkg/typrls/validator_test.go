@@ -38,6 +38,13 @@ func TestValidator(t *testing.T) {
 			ExpectedErr: "some-error-1",
 		},
 		{
+			TestName: "composite validation: first error",
+			Validator: typrls.Validators{
+				typrls.NewValidator(func(*typrls.Context) error { return nil }),
+				typrls.NewValidator(func(*typrls.Context) error { return nil }),
+			},
+		},
+		{
 			TestName:  "uncommitted change",
 			Validator: &typrls.UncommittedValidation{},
 			Context: &typrls.Context{

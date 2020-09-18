@@ -3,7 +3,7 @@ package typrls
 import "github.com/typical-go/typical-go/pkg/typgo"
 
 type (
-	// Releaser responsible to release
+	// Releaser responsible to release (put file to release folder)
 	Releaser interface {
 		Release(*Context) error
 	}

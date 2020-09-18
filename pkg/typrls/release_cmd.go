@@ -1,7 +1,6 @@
 package typrls
 
 import (
-	"errors"
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -20,19 +19,24 @@ type (
 		Tagger     Tagger
 		Summarizer Summarizer
 		Releaser   Releaser
+		Publisher  Publisher
 	}
 )
 
 var _ typgo.Cmd = (*ReleaseCmd)(nil)
 
 const (
-	// ForceFlag -force cli param
+	// ForceFlag ..
 	ForceFlag = "force"
-	// AlphaFlag -alpha cli param
+	// AlphaFlag ...
 	AlphaFlag = "alpha"
-	// TagNameFlag -tag cli param
+	// TagNameFlag ...
 	TagNameFlag = "tag-name"
-	// ReleaseFolderFlag -release-folder cli param
+	// SkipPublishFlag ...
+	SkipPublishFlag = "skip-publish"
+	// SkipReleaseFlag ...
+	SkipReleaseFlag = "skip-release"
+	// ReleaseFolderFlag ...
 	ReleaseFolderFlag    = "release-folder"
 	defaultReleaseFolder = "release"
 )
@@ -46,6 +50,8 @@ func (r *ReleaseCmd) Command(sys *typgo.BuildSys) *cli.Command {
 			&cli.BoolFlag{Name: ForceFlag, Usage: "Release by passed all validation"},
 			&cli.BoolFlag{Name: AlphaFlag, Usage: "Release for alpha version"},
 			&cli.StringFlag{Name: TagNameFlag, Usage: "Override the release-tag"},
+			&cli.BoolFlag{Name: SkipPublishFlag, Usage: "Skip publish"},
+			&cli.BoolFlag{Name: SkipReleaseFlag, Usage: "Skip release"},
 			&cli.StringFlag{Name: ReleaseFolderFlag, Usage: "release folder", Value: defaultReleaseFolder},
 		},
 		Before: sys.Action(r.Before),
@@ -65,9 +71,6 @@ func (r *ReleaseProject) validate() error {
 	}
 	if r.Tagger == nil {
 		r.Tagger = DefaultTagger
-	}
-	if r.Releaser == nil {
-		return errors.New("typrls: missing releaser")
 	}
 	return nil
 }
@@ -92,7 +95,7 @@ func (r *ReleaseProject) Execute(c *typgo.Context) error {
 		tagName = r.Tagger.CreateTag(c, alpha)
 	}
 
-	rlsCtx := &Context{
+	context := &Context{
 		Context: c,
 		Alpha:   alpha,
 		Git: &Git{
@@ -105,19 +108,29 @@ func (r *ReleaseProject) Execute(c *typgo.Context) error {
 	}
 
 	if r.Validator != nil && !c.Bool(ForceFlag) {
-		if err := r.Validator.Validate(rlsCtx); err != nil {
+		if err := r.Validator.Validate(context); err != nil {
 			return err
 		}
 	}
 
-	summary, err := r.Summarizer.Summarize(rlsCtx)
+	summary, err := r.Summarizer.Summarize(context)
 	if err != nil {
 		return err
 	}
-	rlsCtx.Summary = summary
+	context.Summary = summary
 
-	os.RemoveAll(releaseFolder)
-	os.MkdirAll(releaseFolder, 0777)
+	if r.Releaser != nil && !c.Bool(SkipReleaseFlag) {
+		os.RemoveAll(releaseFolder)
+		os.MkdirAll(releaseFolder, 0777)
+		if err := r.Releaser.Release(context); err != nil {
+			return err
+		}
+	}
 
-	return r.Releaser.Release(rlsCtx)
+	if r.Publisher != nil && !c.Bool(SkipPublishFlag) {
+		if err := r.Publisher.Publish(context); err != nil {
+			return err
+		}
+	}
+	return nil
 }

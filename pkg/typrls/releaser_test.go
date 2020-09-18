@@ -36,6 +36,12 @@ func TestReleasers(t *testing.T) {
 			},
 			expectedErr: "some-error",
 		},
+		{
+			Releaser: typrls.Releasers{
+				typrls.NewReleaser(func(*typrls.Context) error { return nil }),
+				typrls.NewReleaser(func(*typrls.Context) error { return nil }),
+			},
+		},
 	}
 
 	for _, tt := range testcases {
