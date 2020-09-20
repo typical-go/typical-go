@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/typical-go/typical-go/pkg/tmplkit"
 	"github.com/typical-go/typical-go/pkg/typast"
@@ -47,7 +46,9 @@ func init() { {{if .Ctors}}
 	){{end}}
 }`
 
-const ctorHelp = "https://pkg.go.dev/github.com/typical-go/typical-go/pkg/typapp?tab=doc#CtorAnnotation"
+const (
+	ctorHelp = "https://pkg.go.dev/github.com/typical-go/typical-go/pkg/typapp?tab=doc#CtorAnnotation"
+)
 
 var _ typast.Annotator = (*CtorAnnotation)(nil)
 
@@ -84,20 +85,13 @@ func (a *CtorAnnotation) Annotate(c *typast.Context) error {
 // CreateCtors get ctors
 func (a *CtorAnnotation) CreateCtors(c *typast.Context) []*Ctor {
 	var ctors []*Ctor
-	for _, annot := range c.FindAnnot(a.IsCtor) {
+	for _, annot := range c.FindAnnot(a.getTagName(), typast.EqualFunc) {
 		ctors = append(ctors, &Ctor{
 			Name: annot.TagParam.Get("name"),
 			Def:  fmt.Sprintf("%s.%s", annot.Package, annot.GetName()),
 		})
 	}
 	return ctors
-}
-
-// IsCtor is ctor annotation
-func (a *CtorAnnotation) IsCtor(annot *typast.Annot) bool {
-	funcDecl, ok := annot.Type.(*typast.FuncDecl)
-	return ok && strings.EqualFold(annot.TagName, a.getTagName()) &&
-		typast.IsPublic(annot) && !funcDecl.IsMethod()
 }
 
 func (a *CtorAnnotation) getTarget(c *typast.Context) string {

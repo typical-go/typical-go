@@ -24,12 +24,10 @@ func TestFindAnnot(t *testing.T) {
 
 	require.Equal(t,
 		[]*typast.Annot{tag1, tag2},
-		c.FindAnnot(
-			func(a *typast.Annot) bool {
-				_, ok := a.Type.(*typast.FuncDecl)
-				return ok && a.TagName == "@some-tag"
-			},
-		),
+		c.FindAnnot("@some-tag", func(a *typast.Annot, tagName string) bool {
+			_, ok := a.Type.(*typast.FuncDecl)
+			return ok && a.TagName == tagName
+		}),
 	)
 
 }

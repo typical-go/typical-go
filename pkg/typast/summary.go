@@ -8,7 +8,7 @@ type (
 		Annots []*Annot
 	}
 	// CheckFn check function
-	CheckFn func(*Annot) bool
+	CheckFn func(a *Annot, tagName string) bool
 )
 
 // AddDecl add declaration
@@ -22,10 +22,10 @@ func (s *Summary) AddDecl(file File, declType Type) {
 }
 
 // FindAnnot find annot
-func (s *Summary) FindAnnot(checkFn CheckFn) []*Annot {
+func (s *Summary) FindAnnot(tagName string, checkFn CheckFn) []*Annot {
 	var annots []*Annot
 	for _, annot := range s.Annots {
-		if checkFn(annot) {
+		if checkFn(annot, tagName) {
 			annots = append(annots, annot)
 		}
 	}

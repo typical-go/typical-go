@@ -9,6 +9,24 @@ import (
 	"strings"
 )
 
+type (
+	// Decl stand of declaration
+	Decl struct {
+		File
+		Type
+	}
+	// Type declaratio type
+	Type interface {
+		GetName() string
+		GetDocs() []string
+	}
+	// File information
+	File struct {
+		Path    string
+		Package string
+	}
+)
+
 // Compile paths to ASTStore
 func Compile(paths ...string) (*Summary, error) {
 	summary := &Summary{Paths: paths}

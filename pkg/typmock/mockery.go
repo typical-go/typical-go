@@ -7,11 +7,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typast"
 )
 
-var (
-	// MockTag is tag for mock
-	MockTag = "@mock"
-)
-
 type (
 	// Mockery is art of mocking
 	Mockery struct {

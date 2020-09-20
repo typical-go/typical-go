@@ -3,13 +3,17 @@ package typmock
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/iancoleman/strcase"
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
+)
+
+var (
+	// MockTag is tag for mock
+	MockTag = "@mock"
 )
 
 type (
@@ -53,7 +57,7 @@ func Annotate(c *typgo.Context, summary *typast.Summary) error {
 		}
 	}
 	mockery := NewMockery(typgo.ProjectPkg)
-	for _, annot := range summary.FindAnnot(isMock) {
+	for _, annot := range summary.FindAnnot(MockTag, typast.EqualInterface) {
 		mockery.Put(CreateMock(annot))
 	}
 	targetMap := mockery.Map
@@ -87,9 +91,4 @@ func Annotate(c *typgo.Context, summary *typast.Summary) error {
 		}
 	}
 	return nil
-}
-
-func isMock(annot *typast.Annot) bool {
-	_, ok := annot.Type.(*typast.InterfaceDecl)
-	return strings.EqualFold(annot.TagName, MockTag) && ok
 }

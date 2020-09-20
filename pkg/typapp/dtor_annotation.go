@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/typical-go/typical-go/pkg/tmplkit"
 	"github.com/typical-go/typical-go/pkg/typast"
@@ -45,7 +44,9 @@ func init() { {{if .Dtors}}
 	){{end}}
 }`
 
-const dtorHelp = "https://pkg.go.dev/github.com/typical-go/typical-go/pkg/typapp?tab=doc#DtorAnnotation"
+const (
+	dtorHelp = "https://pkg.go.dev/github.com/typical-go/typical-go/pkg/typapp?tab=doc#DtorAnnotation"
+)
 
 var _ typast.Annotator = (*DtorAnnotation)(nil)
 
@@ -80,19 +81,12 @@ func (a *DtorAnnotation) Annotate(c *typast.Context) error {
 // CreateDtors get dtors
 func (a *DtorAnnotation) CreateDtors(c *typast.Context) []*Dtor {
 	var dtors []*Dtor
-	for _, annot := range c.FindAnnot(a.IsDtor) {
+	for _, annot := range c.FindAnnot(a.getTagName(), typast.EqualFunc) {
 		dtors = append(dtors, &Dtor{
 			Def: fmt.Sprintf("%s.%s", annot.Package, annot.GetName()),
 		})
 	}
 	return dtors
-}
-
-// IsDtor is dtor annotation
-func (a *DtorAnnotation) IsDtor(annot *typast.Annot) bool {
-	funcDecl, ok := annot.Type.(*typast.FuncDecl)
-	return ok && strings.EqualFold(annot.TagName, a.getTagName()) &&
-		typast.IsPublic(annot) && !funcDecl.IsMethod()
 }
 
 func (a *DtorAnnotation) getTagName() string {
