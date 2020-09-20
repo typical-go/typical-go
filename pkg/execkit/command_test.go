@@ -47,9 +47,9 @@ func TestCommand_String(t *testing.T) {
 		{
 			Command: execkit.Command{
 				Name: "go",
-				Args: []string{"build", "-ldflags", "-X github.com/typical-go/typical-go/pkg/typapp.Name=typical-go"},
+				Args: []string{"build", "-ldflags", "-X github.com/typical-go/typical-go/pkg/typgo.AppName=typical-go"},
 			},
-			Expected: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typapp.Name=typical-go\"",
+			Expected: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.AppName=typical-go\"",
 		},
 	}
 	for _, tt := range testcases {

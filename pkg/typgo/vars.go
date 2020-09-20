@@ -1,6 +1,12 @@
 package typgo
 
 var (
+	// AppName of application. Injected from gobuild ldflags
+	// `-X github.com/typical-go/typical-go/pkg/typgo.AppName=PROJECT-NAME`
+	AppName string
+	// AppVersion of applicatoin. Injected from gobuild ldflags
+	// `-X github.com/typical-go/typical-go/pkg/typgo.AppVersion=PROJECT-NAME`
+	AppVersion string
 	// ProjectPkg only available in BuildTool scope. The BuildTool must be compiled by wrapper.
 	ProjectPkg string
 	// TypicalTmp only available in BuildTool scope. The BuildTool must be compiled by wrapper.

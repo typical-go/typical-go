@@ -42,8 +42,8 @@ func (o *CrossCompiler) Release(c *Context) error {
 			Output:      output,
 			MainPackage: o.getMainPackage(c),
 			Ldflags: execkit.BuildVars{
-				"github.com/typical-go/typical-go/pkg/typapp.Name":    c.BuildSys.ProjectName,
-				"github.com/typical-go/typical-go/pkg/typapp.Version": c.TagName,
+				"github.com/typical-go/typical-go/pkg/typgo.AppName":    c.BuildSys.ProjectName,
+				"github.com/typical-go/typical-go/pkg/typgo.AppVersion": c.TagName,
 			},
 		})
 		if err != nil {

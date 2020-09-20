@@ -3,7 +3,7 @@ package app
 import (
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/typapp"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
 
@@ -15,8 +15,8 @@ func Start() (err error) {
 // App application
 func App() *cli.App {
 	app := cli.NewApp()
-	app.Name = typapp.Name
-	app.Version = typapp.Version
+	app.Name = typgo.AppName
+	app.Version = typgo.AppVersion
 	app.Usage = ""       // NOTE: intentionally blank
 	app.Description = "" // NOTE: intentionally blank
 	app.Commands = []*cli.Command{

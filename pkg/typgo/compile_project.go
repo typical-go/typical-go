@@ -12,8 +12,8 @@ type (
 	CompileProject struct {
 		MainPackage string // By default is "cmd/PROJECT_NAME"
 		Output      string // By default is "bin/PROJECT_NAME"
-		// By default is set variable typapp.Name to PROJECT_NAME
-		// and typapp.Version to PROJECT-VERSION
+		// By default is set variable typgo.AppName to PROJECT_NAME
+		// and typgo.AppVersion to PROJECT-VERSION
 		Ldflags fmt.Stringer
 	}
 )
@@ -57,8 +57,8 @@ func (p *CompileProject) getOutput(c *Context) string {
 func (p *CompileProject) getLdflags(c *Context) fmt.Stringer {
 	if p.Ldflags == nil {
 		p.Ldflags = execkit.BuildVars{
-			"github.com/typical-go/typical-go/pkg/typapp.Name":    c.BuildSys.ProjectName,
-			"github.com/typical-go/typical-go/pkg/typapp.Version": c.BuildSys.ProjectVersion,
+			"github.com/typical-go/typical-go/pkg/typgo.AppName":    c.BuildSys.ProjectName,
+			"github.com/typical-go/typical-go/pkg/typgo.AppVersion": c.BuildSys.ProjectVersion,
 		}
 	}
 	return p.Ldflags
