@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/internal/app"
-	"github.com/typical-go/typical-go/pkg/typapp"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 func TestApp(t *testing.T) {
