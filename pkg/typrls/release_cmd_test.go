@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 
@@ -161,6 +162,30 @@ func TestReleaseProject(t *testing.T) {
 
 }
 
+func TestReleaseProject_CustomReleaseFolder(t *testing.T) {
+	var rlsCtx *typrls.Context
+
+	rel := &typrls.ReleaseProject{
+		Tagger: typrls.DefaultTagger,
+		Summarizer: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
+			return "some-summary", nil
+		}),
+		Releaser: typrls.NewReleaser(func(r *typrls.Context) error {
+			rlsCtx = r
+			return nil
+		}),
+	}
+
+	rel.Execute(&typgo.Context{
+		Context: createContext("-release-folder=some-release"),
+		BuildSys: &typgo.BuildSys{
+			Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
+		},
+	})
+	defer os.RemoveAll("some-release")
+	require.Equal(t, "some-release", rlsCtx.ReleaseFolder)
+}
+
 func TestReleaseProject_Execute_Context(t *testing.T) {
 	testcases := []struct {
 		TestName string
@@ -281,35 +306,6 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 				Summary:       "some-summary",
 				Git:           &typrls.Git{Status: "some-status-1", CurrentTag: "some-tag-1"},
 				ReleaseFolder: "release",
-			},
-		},
-		{
-			TestName: "with custom release folder",
-			ReleaseProject: &typrls.ReleaseProject{
-				Tagger: typrls.DefaultTagger,
-				Summarizer: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
-					return "some-summary", nil
-				}),
-			},
-			Ctx: &typgo.Context{
-				Context: createContext("-release-folder=some-release"),
-				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{
-						ProjectVersion: "9.9.9",
-					},
-				},
-			},
-			RunExpectations: []*execkit.RunExpectation{
-				{CommandLine: "git fetch"},
-				{CommandLine: "git describe --tags --abbrev=0", OutputBytes: []byte("some-tag-1")},
-				{CommandLine: "git status --porcelain", OutputBytes: []byte("some-status-1")},
-			},
-			Expected: &typrls.Context{
-				TagName:       "v9.9.9",
-				Alpha:         false,
-				Summary:       "some-summary",
-				Git:           &typrls.Git{Status: "some-status-1", CurrentTag: "some-tag-1"},
-				ReleaseFolder: "some-release",
 			},
 		},
 		{
