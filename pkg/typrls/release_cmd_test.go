@@ -376,7 +376,7 @@ func createContext(args ...string) *cli.Context {
 }
 
 func TestReleaseCmd_Before(t *testing.T) {
-	cmd := &typrls.ReleaseCmd{
+	cmd := &typrls.ReleaseProject{
 		Before: typgo.NewAction(func(*typgo.Context) error {
 			return errors.New("some-error")
 		}),

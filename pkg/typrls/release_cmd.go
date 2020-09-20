@@ -7,24 +7,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-type (
-	// ReleaseCmd release command
-	ReleaseCmd struct {
-		Before typgo.Action
-		Action typgo.Action
-	}
-	// ReleaseProject action
-	ReleaseProject struct {
-		Validator  Validator
-		Tagger     Tagger
-		Summarizer Summarizer
-		Releaser   Releaser
-		Publisher  Publisher
-	}
-)
-
-var _ typgo.Cmd = (*ReleaseCmd)(nil)
-
 const (
 	// ForceFlag ..
 	ForceFlag = "force"
@@ -41,8 +23,22 @@ const (
 	defaultReleaseFolder = "release"
 )
 
+type (
+	// ReleaseProject release command
+	ReleaseProject struct {
+		Before     typgo.Action
+		Validator  Validator
+		Tagger     Tagger
+		Summarizer Summarizer
+		Releaser   Releaser
+		Publisher  Publisher
+	}
+)
+
+var _ typgo.Cmd = (*ReleaseProject)(nil)
+
 // Command release
-func (r *ReleaseCmd) Command(sys *typgo.BuildSys) *cli.Command {
+func (r *ReleaseProject) Command(sys *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:  "release",
 		Usage: "Release the project",
@@ -55,7 +51,7 @@ func (r *ReleaseCmd) Command(sys *typgo.BuildSys) *cli.Command {
 			&cli.StringFlag{Name: ReleaseFolderFlag, Usage: "release folder", Value: defaultReleaseFolder},
 		},
 		Before: sys.Action(r.Before),
-		Action: sys.Action(r.Action),
+		Action: sys.Action(r),
 	}
 }
 
