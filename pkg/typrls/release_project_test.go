@@ -163,6 +163,8 @@ func TestReleaseProject(t *testing.T) {
 }
 
 func TestReleaseProject_CustomReleaseFolder(t *testing.T) {
+	unpatch := execkit.Patch(nil)
+	defer unpatch(t)
 	var rlsCtx *typrls.Context
 
 	rel := &typrls.ReleaseProject{
