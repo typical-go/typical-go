@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typapp"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typmock"
 )
 
 var descriptor = typgo.Descriptor{
-	ProjectName:    "mock-command",
+	ProjectName:    "typmock-sample",
 	ProjectVersion: "1.0.0",
 	ProjectLayouts: []string{"internal"},
 

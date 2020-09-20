@@ -12,6 +12,6 @@ fi
 
 $TYPGO run \
 	-typical-build="tools/typical-build" \
-	-project-pkg="github.com/typical-go/typical-go/examples/use-dependency-injection" \
+	-project-pkg="github.com/typical-go/typical-go/examples/typmock-sample" \
 	-typical-tmp=$TYPTMP \
 	$@

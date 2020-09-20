@@ -7,7 +7,7 @@ import (
 )
 
 var descriptor = typgo.Descriptor{
-	ProjectName:    "use-dependency-injection",
+	ProjectName:    "typapp-sample",
 	ProjectVersion: "1.0.0",
 	ProjectLayouts: []string{"internal"},
 
