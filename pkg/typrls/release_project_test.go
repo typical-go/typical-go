@@ -106,7 +106,7 @@ func TestReleaseProject(t *testing.T) {
 				}),
 			},
 			Context: &typgo.Context{
-				Context:  createContext("-no-publish"),
+				Context:  createContext("-skip-publish"),
 				BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
 			},
 		},
@@ -138,7 +138,7 @@ func TestReleaseProject(t *testing.T) {
 				}),
 			},
 			Context: &typgo.Context{
-				Context:  createContext("-no-release"),
+				Context:  createContext("-skip-release"),
 				BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
 			},
 			ExpectedErr: "publish-error",
@@ -353,8 +353,8 @@ func createContext(args ...string) *cli.Context {
 	flagSet := flag.NewFlagSet("test", 0)
 	flagSet.Bool(typrls.AlphaFlag, false, "")
 	flagSet.Bool(typrls.ForceFlag, false, "")
-	flagSet.Bool(typrls.NoPublishFlag, false, "")
-	flagSet.Bool(typrls.NoReleaseFlag, false, "")
+	flagSet.Bool(typrls.SkipPublishFlag, false, "")
+	flagSet.Bool(typrls.SkipReleaseFlag, false, "")
 	flagSet.String(typrls.TagNameFlag, "", "")
 	flagSet.String(typrls.ReleaseFolderFlag, "release", "")
 	flagSet.Parse(args)

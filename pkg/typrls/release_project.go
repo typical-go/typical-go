@@ -14,10 +14,10 @@ const (
 	AlphaFlag = "alpha"
 	// TagNameFlag ...
 	TagNameFlag = "tag-name"
-	// NoPublishFlag ...
-	NoPublishFlag = "no-publish"
-	// NoReleaseFlag ...
-	NoReleaseFlag = "no-release"
+	// SkipPublishFlag ...
+	SkipPublishFlag = "skip-publish"
+	// SkipReleaseFlag ...
+	SkipReleaseFlag = "skip-release"
 	// ReleaseFolderFlag ...
 	ReleaseFolderFlag    = "release-folder"
 	defaultReleaseFolder = "release"
@@ -46,8 +46,8 @@ func (r *ReleaseProject) Command(sys *typgo.BuildSys) *cli.Command {
 			&cli.BoolFlag{Name: ForceFlag, Usage: "Release by passed all validation"},
 			&cli.BoolFlag{Name: AlphaFlag, Usage: "Release for alpha version"},
 			&cli.StringFlag{Name: TagNameFlag, Usage: "Override the release-tag"},
-			&cli.BoolFlag{Name: NoPublishFlag, Usage: "Skip publish"},
-			&cli.BoolFlag{Name: NoReleaseFlag, Usage: "Skip release"},
+			&cli.BoolFlag{Name: SkipPublishFlag, Usage: "Skip publish"},
+			&cli.BoolFlag{Name: SkipReleaseFlag, Usage: "Skip release"},
 			&cli.StringFlag{Name: ReleaseFolderFlag, Usage: "release folder", Value: defaultReleaseFolder},
 		},
 		Before: sys.Action(r.Before),
@@ -79,7 +79,7 @@ func (r *ReleaseProject) Execute(c *typgo.Context) error {
 		}
 	}
 
-	if r.Releaser != nil && !c.Bool(NoReleaseFlag) {
+	if r.Releaser != nil && !c.Bool(SkipReleaseFlag) {
 		os.RemoveAll(context.ReleaseFolder)
 		os.MkdirAll(context.ReleaseFolder, 0777)
 		if err := r.Releaser.Release(context); err != nil {
@@ -87,7 +87,7 @@ func (r *ReleaseProject) Execute(c *typgo.Context) error {
 		}
 	}
 
-	if r.Publisher != nil && !c.Bool(NoPublishFlag) {
+	if r.Publisher != nil && !c.Bool(SkipPublishFlag) {
 		if err := r.Publisher.Publish(context); err != nil {
 			return err
 		}
