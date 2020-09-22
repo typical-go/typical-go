@@ -61,27 +61,42 @@ func (r *ReleaseProject) Command(sys *typgo.BuildSys) *cli.Command {
 
 var _ typgo.Action = (*ReleaseProject)(nil)
 
-func (r *ReleaseProject) validate() error {
-	if r.Summarizer == nil {
-		r.Summarizer = DefaultSummarizer
+// Execute release
+func (r *ReleaseProject) Execute(c *typgo.Context) error {
+	r.setDefault()
+
+	gitFetch(c.Ctx())
+	defer gitFetch(c.Ctx())
+
+	context, err := r.context(c)
+	if err != nil {
+		return err
 	}
-	if r.Tagger == nil {
-		r.Tagger = DefaultTagger
+
+	if r.Validator != nil && !c.Bool(ForceFlag) {
+		if err := r.Validator.Validate(context); err != nil {
+			return err
+		}
+	}
+
+	if r.Releaser != nil && !c.Bool(NoReleaseFlag) {
+		os.RemoveAll(context.ReleaseFolder)
+		os.MkdirAll(context.ReleaseFolder, 0777)
+		if err := r.Releaser.Release(context); err != nil {
+			return err
+		}
+	}
+
+	if r.Publisher != nil && !c.Bool(NoPublishFlag) {
+		if err := r.Publisher.Publish(context); err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
-// Execute release
-func (r *ReleaseProject) Execute(c *typgo.Context) error {
-	if err := r.validate(); err != nil {
-		return err
-	}
-
+func (r *ReleaseProject) context(c *typgo.Context) (*Context, error) {
 	ctx := c.Ctx()
-
-	gitFetch(ctx)
-	defer gitFetch(ctx)
-
 	currentTag := gitTag(ctx)
 	alpha := c.Bool(AlphaFlag)
 	tagName := c.String(TagNameFlag)
@@ -103,30 +118,15 @@ func (r *ReleaseProject) Execute(c *typgo.Context) error {
 		ReleaseFolder: releaseFolder,
 	}
 
-	if r.Validator != nil && !c.Bool(ForceFlag) {
-		if err := r.Validator.Validate(context); err != nil {
-			return err
-		}
-	}
+	context.Summary = r.Summarizer.Summarize(context)
+	return context, nil
+}
 
-	summary, err := r.Summarizer.Summarize(context)
-	if err != nil {
-		return err
+func (r *ReleaseProject) setDefault() {
+	if r.Summarizer == nil {
+		r.Summarizer = DefaultSummarizer
 	}
-	context.Summary = summary
-
-	if r.Releaser != nil && !c.Bool(NoReleaseFlag) {
-		os.RemoveAll(releaseFolder)
-		os.MkdirAll(releaseFolder, 0777)
-		if err := r.Releaser.Release(context); err != nil {
-			return err
-		}
+	if r.Tagger == nil {
+		r.Tagger = DefaultTagger
 	}
-
-	if r.Publisher != nil && !c.Bool(NoPublishFlag) {
-		if err := r.Publisher.Publish(context); err != nil {
-			return err
-		}
-	}
-	return nil
 }

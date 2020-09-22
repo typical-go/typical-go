@@ -40,18 +40,6 @@ func TestTagger(t *testing.T) {
 			Expected: "v0.0.1_alpha",
 		},
 		{
-			TestName: "with extra",
-			Tagger: &typrls.StdTagger{
-				Extra: "extra",
-			},
-			Context: &typgo.Context{
-				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{ProjectVersion: "0.0.1"},
-				},
-			},
-			Expected: "v0.0.1+extra",
-		},
-		{
 			TestName: "with git id",
 			Tagger: &typrls.StdTagger{
 				GitID: true,
@@ -92,7 +80,6 @@ func TestTagger(t *testing.T) {
 
 func TestStdTagger(t *testing.T) {
 	tag := &typrls.StdTagger{}
-	tag.WithExtra("extra123").WithGitID()
-	require.Equal(t, "extra123", tag.Extra)
+	tag.WithGitID()
 	require.True(t, tag.GitID)
 }

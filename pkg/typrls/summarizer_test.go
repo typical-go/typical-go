@@ -1,7 +1,6 @@
 package typrls_test
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -13,19 +12,17 @@ func TestSummarizer(t *testing.T) {
 		TestName string
 		typrls.Summarizer
 		*typrls.Context
-		Expected    string
-		ExpectedErr string
+		Expected string
 	}{
 		{
-			Summarizer: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
-				return "some-text", errors.New("some-error")
+			Summarizer: typrls.NewSummarizer(func(*typrls.Context) string {
+				return "some-text"
 			}),
-			Expected:    "some-text",
-			ExpectedErr: "some-error",
+			Expected: "some-text",
 		},
 		{
 			TestName: "change summary",
-			Summarizer: &typrls.ChangeSummarizer{
+			Summarizer: &typrls.GitSummarizer{
 				ExcludePrefix: []string{"merge", "revision"},
 			},
 			Context: &typrls.Context{
@@ -42,19 +39,13 @@ func TestSummarizer(t *testing.T) {
 	}
 	for _, tt := range testCases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			s, err := tt.Summarize(tt.Context)
-			if tt.ExpectedErr != "" {
-				require.EqualError(t, err, tt.ExpectedErr)
-			} else {
-				require.NoError(t, err)
-				require.Equal(t, tt.Expected, s)
-			}
+			require.Equal(t, tt.Expected, tt.Summarize(tt.Context))
 		})
 	}
 }
 
 func TestChangeSummarize_HasPrefix(t *testing.T) {
-	summarizer := &typrls.ChangeSummarizer{
+	summarizer := &typrls.GitSummarizer{
 		ExcludePrefix: []string{"merge", "revision"},
 	}
 

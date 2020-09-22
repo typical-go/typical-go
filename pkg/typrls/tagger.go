@@ -13,8 +13,7 @@ type (
 	}
 	// StdTagger standard tagger
 	StdTagger struct {
-		Extra string // Add extra information after TagName e.g. v0.0.1+extra
-		GitID bool   // Add latest git id after TagName e.g. v0.0.1+5339d71
+		GitID bool // Add latest git id after TagName e.g. v0.0.1+5339d71
 	}
 )
 
@@ -23,12 +22,6 @@ type (
 //
 
 var _ Tagger = (*StdTagger)(nil)
-
-// WithExtra with extra information
-func (s *StdTagger) WithExtra(extra string) *StdTagger {
-	s.Extra = extra
-	return s
-}
 
 // WithGitID with latest git id as extra information
 func (s *StdTagger) WithGitID() *StdTagger {
@@ -41,9 +34,6 @@ func (s *StdTagger) CreateTag(c *typgo.Context, alpha bool) string {
 	tagName := "v0.0.1"
 	if c.BuildSys.ProjectVersion != "" {
 		tagName = fmt.Sprintf("v%s", c.BuildSys.ProjectVersion)
-	}
-	if s.Extra != "" {
-		tagName = tagName + "+" + s.Extra
 	}
 	if s.GitID {
 		latestGitID := latestGitID(c.Ctx())

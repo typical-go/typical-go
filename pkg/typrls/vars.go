@@ -13,7 +13,7 @@ var (
 		&UncommittedValidation{},
 	}
 	// DefaultSummarizer default summary
-	DefaultSummarizer = &ChangeSummarizer{
+	DefaultSummarizer = &GitSummarizer{
 		ExcludePrefix: []string{"merge", "bump", "revision", "generate", "wip"},
 	}
 	// DefaultTagger default tag

@@ -169,8 +169,8 @@ func TestReleaseProject_CustomReleaseFolder(t *testing.T) {
 
 	rel := &typrls.ReleaseProject{
 		Tagger: typrls.DefaultTagger,
-		Summarizer: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
-			return "some-summary", nil
+		Summarizer: typrls.NewSummarizer(func(*typrls.Context) string {
+			return "some-summary"
 		}),
 		Releaser: typrls.NewReleaser(func(r *typrls.Context) error {
 			rlsCtx = r
@@ -213,23 +213,7 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 				ReleaseFolder: "release",
 			},
 		},
-		{
-			TestName: "bad summary",
-			ReleaseProject: &typrls.ReleaseProject{
-				Tagger: typrls.DefaultTagger,
-				Summarizer: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
-					return "", errors.New("bad-summary")
-				}),
-				Releaser: &typrls.CrossCompiler{},
-			},
-			Ctx: &typgo.Context{
-				Context: createContext(),
-				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{},
-				},
-			},
-			ExpectedErr: "bad-summary",
-		},
+
 		{
 			TestName: "invalid",
 			ReleaseProject: &typrls.ReleaseProject{
@@ -251,8 +235,8 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 			TestName: "with alpha tag",
 			ReleaseProject: &typrls.ReleaseProject{
 				Tagger: typrls.DefaultTagger,
-				Summarizer: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
-					return "some-summary", nil
+				Summarizer: typrls.NewSummarizer(func(*typrls.Context) string {
+					return "some-summary"
 				}),
 			},
 			Ctx: &typgo.Context{
@@ -285,8 +269,8 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 			TestName: "success",
 			ReleaseProject: &typrls.ReleaseProject{
 				Tagger: typrls.DefaultTagger,
-				Summarizer: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
-					return "some-summary", nil
+				Summarizer: typrls.NewSummarizer(func(*typrls.Context) string {
+					return "some-summary"
 				}),
 			},
 			Ctx: &typgo.Context{
@@ -314,8 +298,8 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 			TestName: "override release-tag",
 			ReleaseProject: &typrls.ReleaseProject{
 				Tagger: typrls.DefaultTagger,
-				Summarizer: typrls.NewSummarizer(func(*typrls.Context) (string, error) {
-					return "some-summary", nil
+				Summarizer: typrls.NewSummarizer(func(*typrls.Context) string {
+					return "some-summary"
 				}),
 			},
 			Ctx: &typgo.Context{
