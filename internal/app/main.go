@@ -7,8 +7,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// Start the typical-go
-func Start() (err error) {
+// Main function the typical-go
+func Main() (err error) {
 	return App().Run(os.Args)
 }
 
