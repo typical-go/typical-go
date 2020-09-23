@@ -18,6 +18,20 @@ type (
 	}
 )
 
+// Run the entry points
+func Run(entryPoint interface{}) error {
+	app := &App{
+		EntryPoint: entryPoint,
+		Ctors:      GetCtors(),
+		Dtors:      GetDtors(),
+	}
+	return app.Run()
+}
+
+//
+// app
+//
+
 // Run application
 func (a *App) Run() error {
 	di := dig.New()
