@@ -79,9 +79,10 @@ func (r *ReleaseProject) Execute(c *typgo.Context) error {
 		}
 	}
 
+	os.RemoveAll(context.ReleaseFolder)
+	os.MkdirAll(context.ReleaseFolder, 0777)
+
 	if r.Releaser != nil && !c.Bool(SkipReleaseFlag) {
-		os.RemoveAll(context.ReleaseFolder)
-		os.MkdirAll(context.ReleaseFolder, 0777)
 		if err := r.Releaser.Release(context); err != nil {
 			return err
 		}
