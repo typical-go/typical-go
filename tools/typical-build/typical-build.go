@@ -9,9 +9,9 @@ import (
 var mainPkg = "."
 
 var descriptor = typgo.Descriptor{
-	ProjectName:    "typical-go",
-	ProjectVersion: "0.10.11",
-	ProjectLayouts: []string{"internal", "pkg"},
+	AppName:    "typical-go",
+	AppVersion: "0.10.11",
+	AppLayouts: []string{"internal", "pkg"},
 
 	Cmds: []typgo.Cmd{
 		// compile

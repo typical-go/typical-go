@@ -69,9 +69,9 @@ import (
 )
 
 var descriptor = typgo.Descriptor{
-	ProjectName:    "{{.ProjectName}}",
-	ProjectVersion: "0.0.1",
-	ProjectLayouts: []string{"internal", "pkg"},
+	AppName:    "{{.AppName}}",
+	AppVersion: "0.0.1",
+	AppLayouts: []string{"internal", "pkg"},
 
 	Cmds: []typgo.Cmd{
 		// annotate

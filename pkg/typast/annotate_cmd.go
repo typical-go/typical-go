@@ -57,7 +57,7 @@ func (a *AnnotateCmd) Execute(c *typgo.Context) error {
 
 // CreateContext create context
 func (a *AnnotateCmd) CreateContext(c *typgo.Context) (*Context, error) {
-	dirs, files := Walk(c.BuildSys.ProjectLayouts)
+	dirs, files := Walk(c.BuildSys.AppLayouts)
 	summary, err := Compile(files...)
 	if err != nil {
 		return nil, err

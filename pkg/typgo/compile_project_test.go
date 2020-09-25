@@ -24,7 +24,7 @@ func TestCompileProject_Command(t *testing.T) {
 
 	cmpl := &typgo.CompileProject{}
 	s := &typgo.BuildSys{
-		Descriptor: &typgo.Descriptor{ProjectName: "some-name", ProjectVersion: "0.0.1"},
+		Descriptor: &typgo.Descriptor{AppName: "some-name", AppVersion: "0.0.1"},
 	}
 	command := cmpl.Command(s)
 	require.Equal(t, "compile", command.Name)
@@ -45,7 +45,7 @@ func TestStdCompile_Predefined(t *testing.T) {
 	}
 	c := &typgo.Context{
 		BuildSys: &typgo.BuildSys{
-			Descriptor: &typgo.Descriptor{ProjectName: "some-name", ProjectVersion: "0.0.1"},
+			Descriptor: &typgo.Descriptor{AppName: "some-name", AppVersion: "0.0.1"},
 		},
 		Context: &cli.Context{Context: context.Background()},
 	}

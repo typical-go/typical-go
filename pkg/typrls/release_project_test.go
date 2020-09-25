@@ -181,7 +181,7 @@ func TestReleaseProject_CustomReleaseFolder(t *testing.T) {
 	rel.Execute(&typgo.Context{
 		Context: createContext("-release-folder=some-release"),
 		BuildSys: &typgo.BuildSys{
-			Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
+			Descriptor: &typgo.Descriptor{AppVersion: "9.9.9"},
 		},
 	})
 	defer os.RemoveAll("some-release")
@@ -277,7 +277,7 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 				Context: createContext(),
 				BuildSys: &typgo.BuildSys{
 					Descriptor: &typgo.Descriptor{
-						ProjectVersion: "9.9.9",
+						AppVersion: "9.9.9",
 					},
 				},
 			},
@@ -306,7 +306,7 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 				Context: createContext("-tag-name=some-tag"),
 				BuildSys: &typgo.BuildSys{
 					Descriptor: &typgo.Descriptor{
-						ProjectVersion: "9.9.9",
+						AppVersion: "9.9.9",
 					},
 				},
 			},

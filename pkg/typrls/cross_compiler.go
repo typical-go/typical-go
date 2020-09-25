@@ -33,7 +33,7 @@ func (o *CrossCompiler) Release(c *Context) error {
 		goos := target.OS()
 		goarch := target.Arch()
 		output := fmt.Sprintf("%s/%s_%s_%s_%s",
-			c.ReleaseFolder, c.BuildSys.ProjectName, c.TagName, goos, goarch)
+			c.ReleaseFolder, c.BuildSys.AppName, c.TagName, goos, goarch)
 
 		os.Setenv("GOOS", goos)
 		os.Setenv("GOARC", goarch)
@@ -42,7 +42,7 @@ func (o *CrossCompiler) Release(c *Context) error {
 			Output:      output,
 			MainPackage: o.getMainPackage(c),
 			Ldflags: execkit.BuildVars{
-				"github.com/typical-go/typical-go/pkg/typgo.AppName":    c.BuildSys.ProjectName,
+				"github.com/typical-go/typical-go/pkg/typgo.AppName":    c.BuildSys.AppName,
 				"github.com/typical-go/typical-go/pkg/typgo.AppVersion": c.TagName,
 			},
 		})
@@ -55,7 +55,7 @@ func (o *CrossCompiler) Release(c *Context) error {
 
 func (o *CrossCompiler) getMainPackage(c *Context) string {
 	if o.MainPackage == "" {
-		o.MainPackage = fmt.Sprintf("./cmd/%s", c.BuildSys.ProjectName)
+		o.MainPackage = fmt.Sprintf("./cmd/%s", c.BuildSys.AppName)
 	}
 	return o.MainPackage
 }

@@ -29,7 +29,7 @@ func TestCtorAnnotation_Annotate(t *testing.T) {
 		Destination: "folder1/dest1",
 		Context: &typgo.Context{
 			BuildSys: &typgo.BuildSys{
-				Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
+				Descriptor: &typgo.Descriptor{AppName: "some-project"},
 			},
 		},
 		Summary: &typast.Summary{
@@ -102,7 +102,7 @@ func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
 		Destination: "folder2/dest2",
 		Context: &typgo.Context{
 			BuildSys: &typgo.BuildSys{
-				Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
+				Descriptor: &typgo.Descriptor{AppName: "some-project"},
 			},
 		},
 		Summary: &typast.Summary{

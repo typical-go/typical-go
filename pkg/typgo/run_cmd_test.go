@@ -41,7 +41,7 @@ func TestRunProject_Execute(t *testing.T) {
 	c := &typgo.Context{
 		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
 		BuildSys: &typgo.BuildSys{
-			Descriptor: &typgo.Descriptor{ProjectName: "some-name"},
+			Descriptor: &typgo.Descriptor{AppName: "some-name"},
 		},
 	}
 
@@ -60,7 +60,7 @@ func TestRunProject_Execute_Predefined(t *testing.T) {
 	c := &typgo.Context{
 		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
 		BuildSys: &typgo.BuildSys{
-			Descriptor: &typgo.Descriptor{ProjectName: "some-name"},
+			Descriptor: &typgo.Descriptor{AppName: "some-name"},
 		},
 	}
 

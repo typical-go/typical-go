@@ -28,7 +28,7 @@ func TestCrossCompile(t *testing.T) {
 				Context: &typgo.Context{
 					BuildSys: &typgo.BuildSys{
 						Descriptor: &typgo.Descriptor{
-							ProjectName: "myproject",
+							AppName: "myproject",
 						},
 					},
 					Context: &cli.Context{},
@@ -49,7 +49,7 @@ func TestCrossCompile(t *testing.T) {
 				Context: &typgo.Context{
 					BuildSys: &typgo.BuildSys{
 						Descriptor: &typgo.Descriptor{
-							ProjectName: "myproject",
+							AppName: "myproject",
 						},
 					},
 					Context: &cli.Context{},

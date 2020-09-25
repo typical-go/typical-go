@@ -24,7 +24,7 @@ func TestCommand(t *testing.T) {
 
 func TestAnnotate(t *testing.T) {
 	c := &typgo.Context{
-		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"."}}},
+		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{AppLayouts: []string{"."}}},
 		Context:  cli.NewContext(nil, &flag.FlagSet{}, nil),
 	}
 	summary := &typast.Summary{
@@ -55,7 +55,7 @@ func TestAnnotate(t *testing.T) {
 
 func TestAnnotate_InstallMockgenError(t *testing.T) {
 	c := &typgo.Context{
-		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"."}}},
+		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{AppLayouts: []string{"."}}},
 		Context:  cli.NewContext(nil, &flag.FlagSet{}, nil),
 	}
 
@@ -76,7 +76,7 @@ func TestAnnotate_MockgenError(t *testing.T) {
 	defer func() { typmock.Stdout = os.Stdout }()
 
 	c := &typgo.Context{
-		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"."}}},
+		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{AppLayouts: []string{"."}}},
 		Context:  cli.NewContext(nil, &flag.FlagSet{}, nil),
 	}
 	summary := &typast.Summary{

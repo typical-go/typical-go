@@ -42,14 +42,14 @@ func (p *CompileProject) Execute(c *Context) error {
 
 func (p *CompileProject) getMainPackage(c *Context) string {
 	if p.MainPackage == "" {
-		p.MainPackage = fmt.Sprintf("./cmd/%s", c.BuildSys.ProjectName)
+		p.MainPackage = fmt.Sprintf("./cmd/%s", c.BuildSys.AppName)
 	}
 	return p.MainPackage
 }
 
 func (p *CompileProject) getOutput(c *Context) string {
 	if p.Output == "" {
-		p.Output = fmt.Sprintf("bin/%s", c.BuildSys.ProjectName)
+		p.Output = fmt.Sprintf("bin/%s", c.BuildSys.AppName)
 	}
 	return p.Output
 }
@@ -57,8 +57,8 @@ func (p *CompileProject) getOutput(c *Context) string {
 func (p *CompileProject) getLdflags(c *Context) fmt.Stringer {
 	if p.Ldflags == nil {
 		p.Ldflags = execkit.BuildVars{
-			"github.com/typical-go/typical-go/pkg/typgo.AppName":    c.BuildSys.ProjectName,
-			"github.com/typical-go/typical-go/pkg/typgo.AppVersion": c.BuildSys.ProjectVersion,
+			"github.com/typical-go/typical-go/pkg/typgo.AppName":    c.BuildSys.AppName,
+			"github.com/typical-go/typical-go/pkg/typgo.AppVersion": c.BuildSys.AppVersion,
 		}
 	}
 	return p.Ldflags
