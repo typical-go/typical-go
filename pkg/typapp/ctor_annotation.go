@@ -22,7 +22,7 @@ type (
 	CtorTmplData struct {
 		Signature typast.Signature
 		Package   string
-		Imports   []string
+		Imports   map[string]string
 		Ctors     []*Ctor
 	}
 	// Ctor is constructor model
@@ -36,8 +36,8 @@ const defaultCtorTemplate = `package {{.Package}}
 
 /* {{.Signature}}*/
 
-import ({{range $import := .Imports}}
-	"{{$import}}"{{end}}
+import ({{range $import, $name := .Imports}}
+	{{$name}} "{{$import}}"{{end}}
 )
 
 func init() { {{if .Ctors}}
@@ -50,17 +50,23 @@ const (
 	ctorHelp = "https://pkg.go.dev/github.com/typical-go/typical-go/pkg/typapp?tab=doc#CtorAnnotation"
 )
 
+//
+// CtorAnnotation
+//
+
 var _ typast.Annotator = (*CtorAnnotation)(nil)
 
 // Annotate ctor
 func (a *CtorAnnotation) Annotate(c *typast.Context) error {
-	ctors := a.CreateCtors(c)
-	target := fmt.Sprintf("%s/%s", c.Destination, a.getTarget(c))
-	pkg := filepath.Base(c.Destination)
+	annots, imports := FindAnnotFunc(c, a.getTagName())
+	imports["github.com/typical-go/typical-go/pkg/typapp"] = ""
 
-	if len(ctors) < 1 {
-		os.Remove(target)
-		return nil
+	var ctors []*Ctor
+	for _, annot := range annots {
+		ctors = append(ctors, &Ctor{
+			Name: annot.TagParam.Get("name"),
+			Def:  fmt.Sprintf("%s.%s", annot.ImportAlias, annot.GetName()),
+		})
 	}
 
 	data := &CtorTmplData{
@@ -68,30 +74,23 @@ func (a *CtorAnnotation) Annotate(c *typast.Context) error {
 			TagName: a.getTagName(),
 			Help:    ctorHelp,
 		},
-		Package: pkg,
-		Imports: c.CreateImports(typgo.ProjectPkg,
-			"github.com/typical-go/typical-go/pkg/typapp",
-		),
-		Ctors: ctors,
+		Package: filepath.Base(c.Destination),
+		Imports: imports,
+		Ctors:   ctors,
 	}
+
+	target := fmt.Sprintf("%s/%s", c.Destination, a.getTarget(c))
+	if len(ctors) < 1 {
+		os.Remove(target)
+		return nil
+	}
+
 	fmt.Fprintf(Stdout, "Generate @ctor to %s\n", target)
 	if err := tmplkit.WriteFile(target, a.getTemplate(), data); err != nil {
 		return err
 	}
 	typgo.GoImports(target)
 	return nil
-}
-
-// CreateCtors get ctors
-func (a *CtorAnnotation) CreateCtors(c *typast.Context) []*Ctor {
-	var ctors []*Ctor
-	for _, annot := range c.FindAnnot(a.getTagName(), typast.EqualFunc) {
-		ctors = append(ctors, &Ctor{
-			Name: annot.TagParam.Get("name"),
-			Def:  fmt.Sprintf("%s.%s", annot.Package, annot.GetName()),
-		})
-	}
-	return ctors
 }
 
 func (a *CtorAnnotation) getTarget(c *typast.Context) string {
@@ -113,4 +112,12 @@ func (a *CtorAnnotation) getTemplate() string {
 		a.Template = defaultCtorTemplate
 	}
 	return a.Template
+}
+
+//
+// Ctor
+//
+
+func (c Ctor) String() string {
+	return fmt.Sprintf("{Name=%s Def=%s}", c.Name, c.Def)
 }

@@ -14,6 +14,8 @@ import (
 )
 
 func TestCtorAnnotation_Annotate(t *testing.T) {
+	typgo.ProjectPkg = "github.com/user/project"
+
 	os.MkdirAll("folder1/dest1", 0777)
 	defer os.RemoveAll("folder1")
 
@@ -38,14 +40,14 @@ func TestCtorAnnotation_Annotate(t *testing.T) {
 					TagName: "@ctor",
 					Decl: &typast.Decl{
 						Type: &typast.FuncDecl{Name: "NewObject"},
-						File: typast.File{Package: "pkg"},
+						File: typast.File{Package: "pkg", Path: "project/pkg/file.go"},
 					},
 				},
 				{
 					TagName:  "@ctor",
 					TagParam: `name:"obj2"`,
 					Decl: &typast.Decl{
-						File: typast.File{Package: "pkg2"},
+						File: typast.File{Package: "pkg2", Path: "project/pkg2/file.go"},
 						Type: &typast.FuncDecl{Name: "NewObject2"},
 					},
 				},
@@ -68,13 +70,15 @@ Help:
 */
 
 import (
-	"github.com/typical-go/typical-go/pkg/typapp"
+	 "github.com/typical-go/typical-go/pkg/typapp"
+	a "github.com/user/project/project/pkg"
+	b "github.com/user/project/project/pkg2"
 )
 
 func init() { 
 	typapp.AppendCtor(
-		&typapp.Constructor{Name: "", Fn: pkg.NewObject},
-		&typapp.Constructor{Name: "obj2", Fn: pkg2.NewObject2},
+		&typapp.Constructor{Name: "", Fn: a.NewObject},
+		&typapp.Constructor{Name: "obj2", Fn: b.NewObject2},
 	)
 }`, string(b))
 

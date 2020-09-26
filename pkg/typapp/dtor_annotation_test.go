@@ -14,6 +14,8 @@ import (
 )
 
 func TestDtorAnnotation_Annotate(t *testing.T) {
+	typgo.ProjectPkg = "github.com/user/project"
+
 	os.MkdirAll("folder3/pkg3", 0777)
 	defer os.RemoveAll("folder3")
 
@@ -37,7 +39,7 @@ func TestDtorAnnotation_Annotate(t *testing.T) {
 				{
 					TagName: "@dtor",
 					Decl: &typast.Decl{
-						File: typast.File{Package: "pkg"},
+						File: typast.File{Package: "pkg", Path: "project/pkg/file.go"},
 						Type: &typast.FuncDecl{Name: "Clean"},
 					},
 				},
@@ -60,12 +62,13 @@ Help:
 */
 
 import (
-	"github.com/typical-go/typical-go/pkg/typapp"
+	 "github.com/typical-go/typical-go/pkg/typapp"
+	a "github.com/user/project/project/pkg"
 )
 
 func init() { 
 	typapp.AppendDtor(
-		&typapp.Destructor{Fn: pkg.Clean},
+		&typapp.Destructor{Fn: a.Clean},
 	)
 }`, string(b))
 

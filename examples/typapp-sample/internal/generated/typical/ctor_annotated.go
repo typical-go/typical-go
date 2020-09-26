@@ -10,13 +10,13 @@ Help:
 */
 
 import (
-	"github.com/typical-go/typical-go/examples/typapp-sample/internal/app"
+	a "github.com/typical-go/typical-go/examples/typapp-sample/internal/app"
 	"github.com/typical-go/typical-go/pkg/typapp"
 )
 
 func init() {
 	typapp.AppendCtor(
-		&typapp.Constructor{Name: "", Fn: app.HelloWorld},
-		&typapp.Constructor{Name: "typical", Fn: app.HelloTypical},
+		&typapp.Constructor{Name: "", Fn: a.HelloWorld},
+		&typapp.Constructor{Name: "typical", Fn: a.HelloTypical},
 	)
 }

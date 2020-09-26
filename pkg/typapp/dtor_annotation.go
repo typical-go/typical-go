@@ -21,7 +21,7 @@ type (
 	DtorTmplData struct {
 		Signature typast.Signature
 		Package   string
-		Imports   []string
+		Imports   map[string]string
 		Dtors     []*Dtor
 	}
 	// Dtor is destructor model
@@ -34,8 +34,8 @@ const defaultDtorTemplate = `package {{.Package}}
 
 /* {{.Signature}}*/
 
-import ({{range $import := .Imports}}
-	"{{$import}}"{{end}}
+import ({{range $import, $name := .Imports}}
+	{{$name}} "{{$import}}"{{end}}
 )
 
 func init() { {{if .Dtors}}
@@ -52,23 +52,30 @@ var _ typast.Annotator = (*DtorAnnotation)(nil)
 
 // Annotate @dtor
 func (a *DtorAnnotation) Annotate(c *typast.Context) error {
-	dtors := a.CreateDtors(c)
+	annots, imports := FindAnnotFunc(c, a.getTagName())
+	imports["github.com/typical-go/typical-go/pkg/typapp"] = ""
+
+	var dtors []*Dtor
+	for _, annot := range annots {
+		dtors = append(dtors, &Dtor{
+			Def: fmt.Sprintf("%s.%s", annot.ImportAlias, annot.GetName()),
+		})
+	}
+
 	target := fmt.Sprintf("%s/%s", c.Destination, a.getTarget(c))
-	pkg := filepath.Base(c.Destination)
 	if len(dtors) < 1 {
 		os.Remove(target)
 		return nil
 	}
+
 	data := &DtorTmplData{
 		Signature: typast.Signature{
 			TagName: a.getTagName(),
 			Help:    dtorHelp,
 		},
-		Package: pkg,
-		Imports: c.CreateImports(typgo.ProjectPkg,
-			"github.com/typical-go/typical-go/pkg/typapp",
-		),
-		Dtors: dtors,
+		Package: filepath.Base(c.Destination),
+		Imports: imports,
+		Dtors:   dtors,
 	}
 	fmt.Fprintf(Stdout, "Generate @dtor to %s\n", target)
 	if err := tmplkit.WriteFile(target, a.getTemplate(), data); err != nil {
@@ -76,17 +83,6 @@ func (a *DtorAnnotation) Annotate(c *typast.Context) error {
 	}
 	typgo.GoImports(target)
 	return nil
-}
-
-// CreateDtors get dtors
-func (a *DtorAnnotation) CreateDtors(c *typast.Context) []*Dtor {
-	var dtors []*Dtor
-	for _, annot := range c.FindAnnot(a.getTagName(), typast.EqualFunc) {
-		dtors = append(dtors, &Dtor{
-			Def: fmt.Sprintf("%s.%s", annot.Package, annot.GetName()),
-		})
-	}
-	return dtors
 }
 
 func (a *DtorAnnotation) getTagName() string {

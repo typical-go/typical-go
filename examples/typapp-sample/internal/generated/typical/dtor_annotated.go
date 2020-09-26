@@ -10,12 +10,12 @@ Help:
 */
 
 import (
-	"github.com/typical-go/typical-go/examples/typapp-sample/internal/app"
+	a "github.com/typical-go/typical-go/examples/typapp-sample/internal/app"
 	"github.com/typical-go/typical-go/pkg/typapp"
 )
 
 func init() {
 	typapp.AppendDtor(
-		&typapp.Destructor{Fn: app.Bye},
+		&typapp.Destructor{Fn: a.Bye},
 	)
 }

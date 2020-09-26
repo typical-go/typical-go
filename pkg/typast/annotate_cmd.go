@@ -22,6 +22,13 @@ type (
 	annotatorImpl struct {
 		fn AnnotateFn
 	}
+	// Context of annotation
+	Context struct {
+		*typgo.Context
+		*Summary
+		Dirs        []string
+		Destination string
+	}
 )
 
 //
