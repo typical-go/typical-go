@@ -75,7 +75,7 @@ var descriptor = typgo.Descriptor{
 
 	Cmds: []typgo.Cmd{
 		// annotate
-		&typast.AnnotateCmd{
+		&typast.AnnotateProject{
 			Annotators: []typast.Annotator{
 				&typapp.CtorAnnotation{},
 				&typapp.DtorAnnotation{},

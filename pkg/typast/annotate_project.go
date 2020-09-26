@@ -8,8 +8,8 @@ import (
 )
 
 type (
-	// AnnotateCmd annotate cmd
-	AnnotateCmd struct {
+	// AnnotateProject annotate cmd
+	AnnotateProject struct {
 		Destination string // By default is "internal/generated/typical"
 		Annotators  []Annotator
 	}
@@ -32,14 +32,14 @@ type (
 )
 
 //
-// AnnotateCmd
+// AnnotateProject
 //
 
-var _ typgo.Cmd = (*AnnotateCmd)(nil)
-var _ typgo.Action = (*AnnotateCmd)(nil)
+var _ typgo.Cmd = (*AnnotateProject)(nil)
+var _ typgo.Action = (*AnnotateProject)(nil)
 
 // Command annotate
-func (a *AnnotateCmd) Command(sys *typgo.BuildSys) *cli.Command {
+func (a *AnnotateProject) Command(sys *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:    "annotate",
 		Aliases: []string{"a"},
@@ -49,7 +49,7 @@ func (a *AnnotateCmd) Command(sys *typgo.BuildSys) *cli.Command {
 }
 
 // Execute annotation
-func (a *AnnotateCmd) Execute(c *typgo.Context) error {
+func (a *AnnotateProject) Execute(c *typgo.Context) error {
 	ac, err := a.CreateContext(c)
 	if err != nil {
 		return err
@@ -63,7 +63,7 @@ func (a *AnnotateCmd) Execute(c *typgo.Context) error {
 }
 
 // CreateContext create context
-func (a *AnnotateCmd) CreateContext(c *typgo.Context) (*Context, error) {
+func (a *AnnotateProject) CreateContext(c *typgo.Context) (*Context, error) {
 	dirs, files := Walk(c.BuildSys.ProjectLayouts)
 	summary, err := Compile(files...)
 	if err != nil {
@@ -79,7 +79,7 @@ func (a *AnnotateCmd) CreateContext(c *typgo.Context) (*Context, error) {
 	}, nil
 }
 
-func (a *AnnotateCmd) getDestination() string {
+func (a *AnnotateProject) getDestination() string {
 	if a.Destination == "" {
 		a.Destination = "internal/generated/typical"
 	}

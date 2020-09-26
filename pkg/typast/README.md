@@ -4,7 +4,7 @@ Java-like annotation in golang for code generation purpose
 
 ## Usage
 
-Add `AnnotateCmd` in project descriptor
+Add `AnnotateProject` in project descriptor
 ```go
 var descriptor = typgo.Descriptor{
     // ...
@@ -13,7 +13,7 @@ var descriptor = typgo.Descriptor{
         // ...
 
 		// annotate
-		&typast.AnnotateCmd{
+		&typast.AnnotateProject{
 			Annotators: []typast.Annotator{
 				// TODO: add annotator
 			},
