@@ -56,8 +56,8 @@ import (
 )
 
 var descriptor = typgo.Descriptor{
-   AppName:    "custom-command",
-   AppVersion: "1.0.0",
+   ProjectName:    "custom-command",
+   ProjectVersion: "1.0.0",
 
    Cmds: []typgo.Cmd{
       // compile

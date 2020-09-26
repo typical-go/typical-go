@@ -8,9 +8,9 @@ import (
 type (
 	// Descriptor describe the project
 	Descriptor struct {
-		AppName    string // By default is same with project folder. Only allowed characters(a-z,A-Z), underscore or dash.
-		AppVersion string // By default it is 0.0.1
-		AppLayouts []string
+		ProjectName    string // By default is same with project folder. Only allowed characters(a-z,A-Z), underscore or dash.
+		ProjectVersion string // By default it is 0.0.1
+		ProjectLayouts []string
 		Cmds       []Cmd
 	}
 )

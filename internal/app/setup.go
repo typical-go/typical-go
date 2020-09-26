@@ -75,7 +75,7 @@ func createWrapper(p *Param) error {
 }
 
 func newProject(p *Param) {
-	mainPkg := p.SetupTarget + "/cmd/" + p.AppName
+	mainPkg := p.SetupTarget + "/cmd/" + p.ProjectName
 	main := mainPkg + "/main.go"
 	fmt.Fprintf(Stdout, "Create '%s'\n", main)
 	os.MkdirAll(mainPkg, 0777)

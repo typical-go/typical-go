@@ -57,7 +57,7 @@ func (s *RunProject) Execute(c *Context) error {
 
 func (s *RunProject) getBinary(c *Context) string {
 	if s.Binary == "" {
-		s.Binary = fmt.Sprintf("bin/%s", c.BuildSys.AppName)
+		s.Binary = fmt.Sprintf("bin/%s", c.BuildSys.ProjectName)
 	}
 	return s.Binary
 }

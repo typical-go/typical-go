@@ -16,7 +16,7 @@ type (
 		TypicalBuild string
 		TypicalTmp   string
 		ProjectPkg   string
-		AppName  string
+		ProjectName  string
 		SetupTarget  string
 	}
 )
@@ -67,7 +67,7 @@ func GetParam(c *cli.Context) (*Param, error) {
 		TypicalBuild: c.String(TypicalBuildParam),
 		TypicalTmp:   c.String(TypicalTmpParam),
 		ProjectPkg:   projectPkg,
-		AppName:  filepath.Base(projectPkg),
+		ProjectName:  filepath.Base(projectPkg),
 		SetupTarget:  setupTarget,
 	}, nil
 }

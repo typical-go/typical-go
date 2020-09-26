@@ -9,11 +9,11 @@ import (
 )
 
 func TestApp(t *testing.T) {
-	typgo.AppName = "some-name"
-	typgo.AppVersion = "some-version"
+	typgo.ProjectName = "some-name"
+	typgo.ProjectVersion = "some-version"
 	defer func() {
-		typgo.AppName = ""
-		typgo.AppVersion = ""
+		typgo.ProjectName = ""
+		typgo.ProjectVersion = ""
 	}()
 	app := app.App()
 	require.Equal(t, "some-name", app.Name)

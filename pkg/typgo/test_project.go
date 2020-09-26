@@ -38,7 +38,7 @@ func (t *TestProject) Command(b *BuildSys) *cli.Command {
 
 // Execute standard test
 func (t *TestProject) Execute(c *Context) (err error) {
-	if len(c.BuildSys.AppLayouts) < 1 {
+	if len(c.BuildSys.ProjectLayouts) < 1 {
 		fmt.Println("Nothing to test")
 		return
 	}
@@ -53,7 +53,7 @@ func (t *TestProject) Execute(c *Context) (err error) {
 
 func (t *TestProject) getPackages(c *Context) []string {
 	if len(t.Packages) < 1 {
-		for _, layout := range c.BuildSys.AppLayouts {
+		for _, layout := range c.BuildSys.ProjectLayouts {
 			t.Packages = append(t.Packages, fmt.Sprintf("./%s/...", layout))
 		}
 	}

@@ -23,7 +23,7 @@ func TestGetParam(t *testing.T) {
 		TypicalBuild: "1",
 		TypicalTmp:   "2",
 		ProjectPkg:   "github.com/user/project",
-		AppName:  "project",
+		ProjectName:  "project",
 		SetupTarget:  "project",
 	}, param)
 }
@@ -41,7 +41,7 @@ func TestGetParam_Default(t *testing.T) {
 		TypicalBuild: "tools/typical-build",
 		TypicalTmp:   ".typical-tmp",
 		ProjectPkg:   "some-package",
-		AppName:  "some-package",
+		ProjectName:  "some-package",
 		SetupTarget:  ".",
 	}, param)
 }

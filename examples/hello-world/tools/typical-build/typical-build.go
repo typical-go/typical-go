@@ -5,8 +5,8 @@ import (
 )
 
 var descriptor = typgo.Descriptor{
-	AppName:    "hello-world",
-	AppVersion: "1.0.0",
+	ProjectName:    "hello-world",
+	ProjectVersion: "1.0.0",
 
 	Cmds: []typgo.Cmd{
 		// compile

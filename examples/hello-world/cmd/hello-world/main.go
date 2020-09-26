@@ -8,8 +8,8 @@ import (
 
 func main() {
 	fmt.Println("-------------------------------")
-	fmt.Println("typgo.AppName: " + typgo.AppName)
-	fmt.Println("typgo.AppVersion: " + typgo.AppVersion)
+	fmt.Println("typgo.ProjectName: " + typgo.ProjectName)
+	fmt.Println("typgo.ProjectVersion: " + typgo.ProjectVersion)
 	fmt.Println("-------------------------------")
 	fmt.Println()
 	fmt.Println("Hello, Typical")

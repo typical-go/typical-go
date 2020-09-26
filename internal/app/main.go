@@ -15,8 +15,8 @@ func Main() (err error) {
 // App application
 func App() *cli.App {
 	app := cli.NewApp()
-	app.Name = typgo.AppName
-	app.Version = typgo.AppVersion
+	app.Name = typgo.ProjectName
+	app.Version = typgo.ProjectVersion
 	app.Usage = ""       // NOTE: intentionally blank
 	app.Description = "" // NOTE: intentionally blank
 	app.Commands = []*cli.Command{

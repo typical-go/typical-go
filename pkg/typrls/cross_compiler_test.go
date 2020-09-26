@@ -28,15 +28,15 @@ func TestCrossCompile(t *testing.T) {
 				Context: &typgo.Context{
 					BuildSys: &typgo.BuildSys{
 						Descriptor: &typgo.Descriptor{
-							AppName: "myproject",
+							ProjectName: "myproject",
 						},
 					},
 					Context: &cli.Context{},
 				},
 			},
 			RunExpectations: []*execkit.RunExpectation{
-				{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.AppName=myproject -X github.com/typical-go/typical-go/pkg/typgo.AppVersion=v0.0.1\" -o /myproject_v0.0.1_darwin_amd64 ./cmd/myproject"},
-				{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.AppName=myproject -X github.com/typical-go/typical-go/pkg/typgo.AppVersion=v0.0.1\" -o /myproject_v0.0.1_linux_amd64 ./cmd/myproject"},
+				{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=myproject -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /myproject_v0.0.1_darwin_amd64 ./cmd/myproject"},
+				{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=myproject -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /myproject_v0.0.1_linux_amd64 ./cmd/myproject"},
 			},
 		},
 		{
@@ -49,7 +49,7 @@ func TestCrossCompile(t *testing.T) {
 				Context: &typgo.Context{
 					BuildSys: &typgo.BuildSys{
 						Descriptor: &typgo.Descriptor{
-							AppName: "myproject",
+							ProjectName: "myproject",
 						},
 					},
 					Context: &cli.Context{},
@@ -57,7 +57,7 @@ func TestCrossCompile(t *testing.T) {
 			},
 			RunExpectations: []*execkit.RunExpectation{
 				{
-					CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.AppName=myproject -X github.com/typical-go/typical-go/pkg/typgo.AppVersion=v0.0.1\" -o /myproject_v0.0.1_darwin_amd64 ./cmd/myproject",
+					CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=myproject -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /myproject_v0.0.1_darwin_amd64 ./cmd/myproject",
 					ReturnError: errors.New("some-error"),
 				},
 			},

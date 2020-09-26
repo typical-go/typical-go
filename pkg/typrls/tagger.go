@@ -32,8 +32,8 @@ func (s *StdTagger) WithGitID() *StdTagger {
 // CreateTag create tag
 func (s *StdTagger) CreateTag(c *typgo.Context, alpha bool) string {
 	tagName := "v0.0.1"
-	if c.BuildSys.AppVersion != "" {
-		tagName = fmt.Sprintf("v%s", c.BuildSys.AppVersion)
+	if c.BuildSys.ProjectVersion != "" {
+		tagName = fmt.Sprintf("v%s", c.BuildSys.ProjectVersion)
 	}
 	if s.GitID {
 		latestGitID := latestGitID(c.Ctx())

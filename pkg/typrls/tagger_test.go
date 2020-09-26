@@ -23,7 +23,7 @@ func TestTagger(t *testing.T) {
 			Tagger: &typrls.StdTagger{},
 			Context: &typgo.Context{
 				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{AppVersion: "0.0.1"},
+					Descriptor: &typgo.Descriptor{ProjectVersion: "0.0.1"},
 				},
 			},
 			Expected: "v0.0.1",
@@ -33,7 +33,7 @@ func TestTagger(t *testing.T) {
 			Tagger:   &typrls.StdTagger{},
 			Context: &typgo.Context{
 				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{AppVersion: "0.0.1"},
+					Descriptor: &typgo.Descriptor{ProjectVersion: "0.0.1"},
 				},
 			},
 			Alpha:    true,
@@ -46,7 +46,7 @@ func TestTagger(t *testing.T) {
 			},
 			Context: &typgo.Context{
 				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{AppVersion: "0.0.1"},
+					Descriptor: &typgo.Descriptor{ProjectVersion: "0.0.1"},
 				},
 				Context: &cli.Context{},
 			},
@@ -62,7 +62,7 @@ func TestTagger(t *testing.T) {
 			},
 			Context: &typgo.Context{
 				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{AppVersion: "0.0.1"},
+					Descriptor: &typgo.Descriptor{ProjectVersion: "0.0.1"},
 				},
 				Context: &cli.Context{},
 			},

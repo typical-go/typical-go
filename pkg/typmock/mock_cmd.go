@@ -37,7 +37,7 @@ func (d *MockCmd) Command(c *typgo.BuildSys) *cli.Command {
 
 // Execute mock command
 func (d *MockCmd) Execute(c *typgo.Context) error {
-	_, files := typast.Walk(c.BuildSys.AppLayouts)
+	_, files := typast.Walk(c.BuildSys.ProjectLayouts)
 	summary, err := typast.Compile(files...)
 	if err != nil {
 		return err
