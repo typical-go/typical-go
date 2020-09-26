@@ -12,9 +12,8 @@ var descriptor = typgo.Descriptor{
 		// compile
 		&typgo.CompileProject{},
 		// run
-		&typgo.RunCmd{
+		&typgo.RunProject{
 			Before: typgo.BuildCmdRuns{"compile"},
-			Action: &typgo.RunProject{},
 		},
 	},
 }

@@ -12,27 +12,26 @@ import (
 )
 
 func TestRunCmd(t *testing.T) {
-	runCmd := &typgo.RunCmd{}
-	command := runCmd.Command(&typgo.BuildSys{})
+	runCmd := &typgo.RunProject{}
+	command := runCmd.Command(&typgo.BuildSys{
+		Descriptor: &typgo.Descriptor{},
+	})
 	require.Equal(t, "run", command.Name)
 	require.Equal(t, []string{"r"}, command.Aliases)
 	require.Equal(t, "Run the project", command.Usage)
 	require.True(t, command.SkipFlagParsing)
-	require.NoError(t, command.Action(&cli.Context{}), "some-error")
-	require.NoError(t, command.Before(&cli.Context{}))
+
+	c := cli.NewContext(nil, &flag.FlagSet{}, nil)
+	require.NoError(t, command.Before(c))
 }
 
-func TestRunCmd_1(t *testing.T) {
-	runCmd := &typgo.RunCmd{
+func TestRunCmd_Before(t *testing.T) {
+	runCmd := &typgo.RunProject{
 		Before: typgo.NewAction(func(*typgo.Context) error {
 			return errors.New("before-error")
 		}),
-		Action: typgo.NewAction(func(*typgo.Context) error {
-			return errors.New("action-error")
-		}),
 	}
 	command := runCmd.Command(&typgo.BuildSys{})
-	require.EqualError(t, command.Action(&cli.Context{}), "action-error")
 	require.EqualError(t, command.Before(&cli.Context{}), "before-error")
 }
 

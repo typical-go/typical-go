@@ -22,9 +22,8 @@ var descriptor = typgo.Descriptor{
 		// compile
 		&typgo.CompileProject{},
 		// run
-		&typgo.RunCmd{
+		&typgo.RunProject{
 			Before: typgo.BuildCmdRuns{"annotate", "compile"},
-			Action: &typgo.RunProject{},
 		},
 	},
 }

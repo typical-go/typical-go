@@ -9,13 +9,9 @@ import (
 )
 
 type (
-	// RunCmd run command
-	RunCmd struct {
-		Before Action
-		Action
-	}
 	// RunProject standard run
 	RunProject struct {
+		Before Action
 		Binary string
 	}
 )
@@ -24,30 +20,25 @@ type (
 // RunCmd
 //
 
-var _ Cmd = (*RunCmd)(nil)
+var _ Cmd = (*RunProject)(nil)
+var _ Action = (*RunProject)(nil)
 
 // Command run
-func (r *RunCmd) Command(sys *BuildSys) *cli.Command {
+func (r *RunProject) Command(sys *BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:            "run",
 		Aliases:         []string{"r"},
 		Usage:           "Run the project",
 		SkipFlagParsing: true,
 		Before:          sys.Action(r.Before),
-		Action:          sys.Action(r.Action),
+		Action:          sys.Action(r),
 	}
 }
 
-//
-// StdRun
-//
-
-var _ Action = (*RunProject)(nil)
-
 // Execute standard run
-func (s *RunProject) Execute(c *Context) error {
+func (r *RunProject) Execute(c *Context) error {
 	return c.Execute(&execkit.Command{
-		Name:   s.getBinary(c),
+		Name:   r.getBinary(c),
 		Args:   c.Args().Slice(),
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,
@@ -55,9 +46,9 @@ func (s *RunProject) Execute(c *Context) error {
 	})
 }
 
-func (s *RunProject) getBinary(c *Context) string {
-	if s.Binary == "" {
-		s.Binary = fmt.Sprintf("bin/%s", c.BuildSys.ProjectName)
+func (r *RunProject) getBinary(c *Context) string {
+	if r.Binary == "" {
+		r.Binary = fmt.Sprintf("bin/%s", c.BuildSys.ProjectName)
 	}
-	return s.Binary
+	return r.Binary
 }
