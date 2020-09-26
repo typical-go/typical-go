@@ -28,8 +28,6 @@ var descriptor = typgo.Descriptor{
 		},
 		// test
 		&typgo.TestProject{},
-		// clean
-		&typgo.CleanProject{},
 		// mock
 		&typmock.MockCmd{},
 	},

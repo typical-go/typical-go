@@ -67,8 +67,6 @@ var descriptor = typgo.Descriptor{
          Before: typgo.BuildCmdRuns{"compile"},
          Action: &typgo.RunProject{},
       },
-      // clean
-      &typgo.CleanProject{},
       // ping
       &typgo.Command{
          Name: "ping",

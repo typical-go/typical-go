@@ -11,8 +11,6 @@ var descriptor = typgo.Descriptor{
 	Cmds: []typgo.Cmd{
 		// compile
 		&typgo.CompileProject{},
-		// clean
-		&typgo.CleanProject{},
 		// run
 		&typgo.RunCmd{
 			Before: typgo.BuildCmdRuns{"compile"},

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typapp"
+	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -26,8 +26,6 @@ var descriptor = typgo.Descriptor{
 			Before: typgo.BuildCmdRuns{"annotate", "compile"},
 			Action: &typgo.RunProject{},
 		},
-		// clean
-		&typgo.CleanProject{},
 	},
 }
 

@@ -18,8 +18,6 @@ var descriptor = typgo.Descriptor{
 		&typgo.CompileProject{MainPackage: mainPkg},
 		// test
 		&typgo.TestProject{},
-		// clean
-		&typgo.CleanProject{},
 		// run
 		&typgo.RunCmd{
 			Before: typgo.BuildCmdRuns{"compile"},
