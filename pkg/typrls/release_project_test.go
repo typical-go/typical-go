@@ -125,24 +125,6 @@ func TestReleaseProject(t *testing.T) {
 			},
 			ExpectedErr: "publish-error",
 		},
-		{
-			TestName: "skip release",
-			ReleaseProject: typrls.ReleaseProject{
-				Tagger:     typrls.DefaultTagger,
-				Summarizer: typrls.DefaultSummarizer,
-				Releaser: typrls.NewReleaser(func(c *typrls.Context) error {
-					return errors.New("release-error")
-				}),
-				Publisher: typrls.NewPublisher(func(c *typrls.Context) error {
-					return errors.New("publish-error")
-				}),
-			},
-			Context: &typgo.Context{
-				Context:  createContext("-skip-release"),
-				BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
-			},
-			ExpectedErr: "publish-error",
-		},
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
@@ -334,9 +316,7 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 func createContext(args ...string) *cli.Context {
 	flagSet := flag.NewFlagSet("test", 0)
 	flagSet.Bool(typrls.AlphaFlag, false, "")
-	flagSet.Bool(typrls.ForceFlag, false, "")
 	flagSet.Bool(typrls.SkipPublishFlag, false, "")
-	flagSet.Bool(typrls.SkipReleaseFlag, false, "")
 	flagSet.String(typrls.TagNameFlag, "", "")
 	flagSet.String(typrls.ReleaseFolderFlag, "release", "")
 	flagSet.Parse(args)

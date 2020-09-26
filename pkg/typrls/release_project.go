@@ -8,16 +8,12 @@ import (
 )
 
 const (
-	// ForceFlag ..
-	ForceFlag = "force"
 	// AlphaFlag ...
 	AlphaFlag = "alpha"
 	// TagNameFlag ...
 	TagNameFlag = "tag-name"
 	// SkipPublishFlag ...
 	SkipPublishFlag = "skip-publish"
-	// SkipReleaseFlag ...
-	SkipReleaseFlag = "skip-release"
 	// ReleaseFolderFlag ...
 	ReleaseFolderFlag    = "release-folder"
 	defaultReleaseFolder = "release"
@@ -42,11 +38,9 @@ func (r *ReleaseProject) Command(sys *typgo.BuildSys) *cli.Command {
 		Name:  "release",
 		Usage: "Release the project",
 		Flags: []cli.Flag{
-			&cli.BoolFlag{Name: ForceFlag, Usage: "Release by passed all validation"},
 			&cli.BoolFlag{Name: AlphaFlag, Usage: "Release for alpha version"},
 			&cli.StringFlag{Name: TagNameFlag, Usage: "Override the release-tag"},
 			&cli.BoolFlag{Name: SkipPublishFlag, Usage: "Skip publish"},
-			&cli.BoolFlag{Name: SkipReleaseFlag, Usage: "Skip release"},
 			&cli.StringFlag{Name: ReleaseFolderFlag, Usage: "release folder", Value: defaultReleaseFolder},
 		},
 		Before: sys.Action(r.Before),
@@ -75,7 +69,7 @@ func (r *ReleaseProject) Execute(c *typgo.Context) error {
 	os.RemoveAll(context.ReleaseFolder)
 	os.MkdirAll(context.ReleaseFolder, 0777)
 
-	if r.Releaser != nil && !c.Bool(SkipReleaseFlag) {
+	if r.Releaser != nil {
 		if err := r.Releaser.Release(context); err != nil {
 			return err
 		}
