@@ -6,12 +6,6 @@ import (
 )
 
 var (
-	// DefaultValidator default validation
-	DefaultValidator = Validators{
-		&NoGitChangeValidation{},
-		&AlreadyReleasedValidation{},
-		&UncommittedValidation{},
-	}
 	// DefaultSummarizer default summary
 	DefaultSummarizer = &GitSummarizer{
 		ExcludePrefix: []string{"merge", "bump", "revision", "generate", "wip"},

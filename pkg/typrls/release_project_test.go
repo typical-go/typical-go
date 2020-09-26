@@ -213,24 +213,6 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 				ReleaseFolder: "release",
 			},
 		},
-
-		{
-			TestName: "invalid",
-			ReleaseProject: &typrls.ReleaseProject{
-				Tagger:     typrls.DefaultTagger,
-				Summarizer: typrls.DefaultSummarizer,
-				Validator: typrls.NewValidator(func(*typrls.Context) error {
-					return errors.New("some-error")
-				}),
-			},
-			Ctx: &typgo.Context{
-				Context: createContext(),
-				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{},
-				},
-			},
-			ExpectedErr: "some-error",
-		},
 		{
 			TestName: "with alpha tag",
 			ReleaseProject: &typrls.ReleaseProject{

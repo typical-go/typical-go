@@ -27,7 +27,6 @@ type (
 	// ReleaseProject release command
 	ReleaseProject struct {
 		Before     typgo.Action
-		Validator  Validator
 		Tagger     Tagger
 		Summarizer Summarizer
 		Releaser   Releaser
@@ -71,12 +70,6 @@ func (r *ReleaseProject) Execute(c *typgo.Context) error {
 	context, err := r.context(c)
 	if err != nil {
 		return err
-	}
-
-	if r.Validator != nil && !c.Bool(ForceFlag) {
-		if err := r.Validator.Validate(context); err != nil {
-			return err
-		}
 	}
 
 	os.RemoveAll(context.ReleaseFolder)
