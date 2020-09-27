@@ -2,6 +2,8 @@ package typrls_test
 
 import (
 	"errors"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -66,6 +68,10 @@ func TestCrossCompile(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
+			var out strings.Builder
+			typgo.Stdout = &out
+			defer func() { typgo.Stdout = os.Stdout }()
+
 			unpatch := execkit.Patch(tt.RunExpectations)
 			defer unpatch(t)
 			err := tt.Release(tt.Context)

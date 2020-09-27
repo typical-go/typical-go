@@ -31,7 +31,11 @@ var descriptor = typgo.Descriptor{
 		},
 		// release
 		&typrls.ReleaseProject{
-			Before:    typgo.BuildCmdRuns{"test", "examples"},
+			Before: typgo.BuildCmdRuns{"test", "examples"},
+			Releaser: &typrls.CrossCompiler{
+				Targets:     []typrls.Target{"darwin/amd64", "linux/amd64"},
+				MainPackage: mainPkg,
+			},
 			Publisher: &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
 		},
 	},

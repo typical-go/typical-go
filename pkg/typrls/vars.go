@@ -2,7 +2,8 @@ package typrls
 
 import (
 	"io"
-	"os"
+
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 var (
@@ -13,5 +14,5 @@ var (
 	// DefaultTagger default tag
 	DefaultTagger = &StdTagger{}
 	// Stdout standard output
-	Stdout io.Writer = os.Stdout
+	Stdout io.Writer = typgo.Stdout
 )

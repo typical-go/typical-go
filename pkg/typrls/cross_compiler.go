@@ -35,6 +35,7 @@ func (o *CrossCompiler) Release(c *Context) error {
 		output := fmt.Sprintf("%s/%s_%s_%s_%s",
 			c.ReleaseFolder, c.BuildSys.ProjectName, c.TagName, goos, goarch)
 
+		fmt.Fprintf(Stdout, "\nGOOS=%s GOARC=%s", goos, goarch)
 		os.Setenv("GOOS", goos)
 		os.Setenv("GOARC", goarch)
 
