@@ -13,7 +13,8 @@ type (
 	}
 	// StdTagger standard tagger
 	StdTagger struct {
-		GitID bool // Add latest git id after TagName e.g. v0.0.1+5339d71
+		includeGitID bool // include git id in tagName e.g. v0.0.1+5339d71
+		includeDate  bool // include current date in tagName e.g. v0.0.1_20201023
 	}
 )
 
@@ -23,9 +24,15 @@ type (
 
 var _ Tagger = (*StdTagger)(nil)
 
-// WithGitID with latest git id as extra information
-func (s *StdTagger) WithGitID() *StdTagger {
-	s.GitID = true
+// IncludeGitID tag contain GitDI
+func (s *StdTagger) IncludeGitID() *StdTagger {
+	s.includeGitID = true
+	return s
+}
+
+// IncludeDate tag contain current date
+func (s *StdTagger) IncludeDate() *StdTagger {
+	s.includeDate = true
 	return s
 }
 
@@ -35,12 +42,15 @@ func (s *StdTagger) CreateTag(c *typgo.Context, alpha bool) string {
 	if c.BuildSys.ProjectVersion != "" {
 		tagName = fmt.Sprintf("v%s", c.BuildSys.ProjectVersion)
 	}
-	if s.GitID {
+	if s.includeGitID {
 		latestGitID := latestGitID(c)
 		if len(latestGitID) > 6 {
 			latestGitID = latestGitID[:6]
 		}
 		tagName = tagName + "+" + latestGitID
+	}
+	if s.includeDate {
+		tagName = tagName + "_" + Now().Format("20060102")
 	}
 	if alpha {
 		tagName = tagName + "_alpha"
