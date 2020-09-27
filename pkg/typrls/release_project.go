@@ -58,12 +58,21 @@ var _ typgo.Action = (*ReleaseProject)(nil)
 func (r *ReleaseProject) Execute(c *typgo.Context) error {
 	r.setDefault()
 
-	gitFetch(c.Ctx())
-	defer gitFetch(c.Ctx())
+	gitFetch(c)
+	defer gitFetch(c)
 
-	context, err := r.context(c)
-	if err != nil {
-		return err
+	alpha := c.Bool(AlphaFlag)
+	tagName := c.String(TagNameFlag)
+	if tagName == "" {
+		tagName = r.Tagger.CreateTag(c, alpha)
+	}
+
+	context := &Context{
+		Context:       c,
+		Alpha:         alpha,
+		TagName:       tagName,
+		ReleaseFolder: c.String(ReleaseFolderFlag),
+		Summary:       r.Summarizer.Summarize(c),
 	}
 
 	os.RemoveAll(context.ReleaseFolder)
@@ -81,33 +90,6 @@ func (r *ReleaseProject) Execute(c *typgo.Context) error {
 		}
 	}
 	return nil
-}
-
-func (r *ReleaseProject) context(c *typgo.Context) (*Context, error) {
-	ctx := c.Ctx()
-	currentTag := gitTag(ctx)
-	alpha := c.Bool(AlphaFlag)
-	tagName := c.String(TagNameFlag)
-	releaseFolder := c.String(ReleaseFolderFlag)
-
-	if tagName == "" {
-		tagName = r.Tagger.CreateTag(c, alpha)
-	}
-
-	context := &Context{
-		Context: c,
-		Alpha:   alpha,
-		Git: &Git{
-			Status:     gitStatus(ctx),
-			CurrentTag: currentTag,
-			Logs:       gitLogs(ctx, currentTag),
-		},
-		TagName:       tagName,
-		ReleaseFolder: releaseFolder,
-	}
-
-	context.Summary = r.Summarizer.Summarize(context)
-	return context, nil
 }
 
 func (r *ReleaseProject) setDefault() {

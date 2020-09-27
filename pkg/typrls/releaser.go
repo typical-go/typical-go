@@ -21,7 +21,6 @@ type (
 		TagName       string
 		ReleaseFolder string
 		Summary       string
-		Git           *Git
 	}
 )
 

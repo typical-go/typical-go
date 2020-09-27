@@ -36,7 +36,7 @@ func (s *StdTagger) CreateTag(c *typgo.Context, alpha bool) string {
 		tagName = fmt.Sprintf("v%s", c.BuildSys.ProjectVersion)
 	}
 	if s.GitID {
-		latestGitID := latestGitID(c.Ctx())
+		latestGitID := latestGitID(c)
 		if len(latestGitID) > 6 {
 			latestGitID = latestGitID[:6]
 		}

@@ -3,15 +3,17 @@ package typrls
 import (
 	"fmt"
 	"strings"
+
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 type (
 	// Summarizer responsible to create release summary
 	Summarizer interface {
-		Summarize(*Context) string
+		Summarize(*typgo.Context) string
 	}
 	// SummarizeFn summary function
-	SummarizeFn    func(*Context) string
+	SummarizeFn    func(*typgo.Context) string
 	summarizerImpl struct {
 		fn SummarizeFn
 	}
@@ -30,20 +32,21 @@ func NewSummarizer(fn SummarizeFn) Summarizer {
 	return &summarizerImpl{fn: fn}
 }
 
-func (s *summarizerImpl) Summarize(c *Context) string {
+func (s *summarizerImpl) Summarize(c *typgo.Context) string {
 	return s.fn(c)
 }
 
 //
-// ChangeSummary
+// GitSummary
 //
 
 var _ (Summarizer) = (*GitSummarizer)(nil)
 
 // Summarize by git change logs
-func (s *GitSummarizer) Summarize(c *Context) string {
+func (s *GitSummarizer) Summarize(c *typgo.Context) string {
 	var changes []string
-	for _, log := range c.Git.Logs {
+	currentTag := gitTag(c)
+	for _, log := range gitLogs(c, currentTag) {
 		if !s.HasPrefix(log.Message) {
 			changes = append(changes, fmt.Sprintf("%s %s", log.ShortCode, log.Message))
 		}

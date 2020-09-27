@@ -128,6 +128,10 @@ func TestReleaseProject(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
+			var out strings.Builder
+			typgo.Stdout = &out
+			defer func() { typgo.Stdout = os.Stdout }()
+
 			defer debug.Reset()
 			unpatch := execkit.Patch([]*execkit.RunExpectation{})
 			defer unpatch(t)
@@ -145,13 +149,17 @@ func TestReleaseProject(t *testing.T) {
 }
 
 func TestReleaseProject_CustomReleaseFolder(t *testing.T) {
+	var out strings.Builder
+	typgo.Stdout = &out
+	defer func() { typgo.Stdout = os.Stdout }()
+
 	unpatch := execkit.Patch(nil)
 	defer unpatch(t)
 	var rlsCtx *typrls.Context
 
 	rel := &typrls.ReleaseProject{
 		Tagger: typrls.DefaultTagger,
-		Summarizer: typrls.NewSummarizer(func(*typrls.Context) string {
+		Summarizer: typrls.NewSummarizer(func(*typgo.Context) string {
 			return "some-summary"
 		}),
 		Releaser: typrls.NewReleaser(func(r *typrls.Context) error {
@@ -187,11 +195,21 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 					Descriptor: &typgo.Descriptor{},
 				},
 			},
+			RunExpectations: []*execkit.RunExpectation{
+				{CommandLine: "git fetch"},
+				{
+					CommandLine: "git describe --tags --abbrev=0",
+					OutputBytes: []byte("v0.0.1"),
+				},
+				{
+					CommandLine: "git --no-pager log v0.0.1..HEAD --oneline",
+					OutputBytes: []byte("1234567 some-message-1\n1234568 some-message-3"),
+				},
+			},
 			Expected: &typrls.Context{
 				TagName:       "v0.0.1",
 				Alpha:         false,
-				Summary:       "",
-				Git:           &typrls.Git{},
+				Summary:       "1234567 some-message-1\n1234568 some-message-3",
 				ReleaseFolder: "release",
 			},
 		},
@@ -199,7 +217,7 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 			TestName: "with alpha tag",
 			ReleaseProject: &typrls.ReleaseProject{
 				Tagger: typrls.DefaultTagger,
-				Summarizer: typrls.NewSummarizer(func(*typrls.Context) string {
+				Summarizer: typrls.NewSummarizer(func(*typgo.Context) string {
 					return "some-summary"
 				}),
 			},
@@ -211,21 +229,11 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 			},
 			RunExpectations: []*execkit.RunExpectation{
 				{CommandLine: "git fetch"},
-				{CommandLine: "git describe --tags --abbrev=0", OutputBytes: []byte("some-tag")},
-				{CommandLine: "git status --porcelain", OutputBytes: []byte("some-status")},
-				{CommandLine: "git --no-pager log some-tag..HEAD --oneline", OutputBytes: []byte("5378feb one\n")},
 			},
 			Expected: &typrls.Context{
-				TagName: "v0.0.1_alpha",
-				Alpha:   true,
-				Summary: "some-summary",
-				Git: &typrls.Git{
-					Status:     "some-status",
-					CurrentTag: "some-tag",
-					Logs: []*typrls.Log{
-						{ShortCode: "5378feb", Message: "one"},
-					},
-				},
+				TagName:       "v0.0.1_alpha",
+				Alpha:         true,
+				Summary:       "some-summary",
 				ReleaseFolder: "release",
 			},
 		},
@@ -233,7 +241,7 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 			TestName: "success",
 			ReleaseProject: &typrls.ReleaseProject{
 				Tagger: typrls.DefaultTagger,
-				Summarizer: typrls.NewSummarizer(func(*typrls.Context) string {
+				Summarizer: typrls.NewSummarizer(func(*typgo.Context) string {
 					return "some-summary"
 				}),
 			},
@@ -247,14 +255,11 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 			},
 			RunExpectations: []*execkit.RunExpectation{
 				{CommandLine: "git fetch"},
-				{CommandLine: "git describe --tags --abbrev=0", OutputBytes: []byte("some-tag-1")},
-				{CommandLine: "git status --porcelain", OutputBytes: []byte("some-status-1")},
 			},
 			Expected: &typrls.Context{
 				TagName:       "v9.9.9",
 				Alpha:         false,
 				Summary:       "some-summary",
-				Git:           &typrls.Git{Status: "some-status-1", CurrentTag: "some-tag-1"},
 				ReleaseFolder: "release",
 			},
 		},
@@ -262,7 +267,7 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 			TestName: "override release-tag",
 			ReleaseProject: &typrls.ReleaseProject{
 				Tagger: typrls.DefaultTagger,
-				Summarizer: typrls.NewSummarizer(func(*typrls.Context) string {
+				Summarizer: typrls.NewSummarizer(func(*typgo.Context) string {
 					return "some-summary"
 				}),
 			},
@@ -276,20 +281,21 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 			},
 			RunExpectations: []*execkit.RunExpectation{
 				{CommandLine: "git fetch"},
-				{CommandLine: "git describe --tags --abbrev=0", OutputBytes: []byte("some-tag-3")},
-				{CommandLine: "git status --porcelain", OutputBytes: []byte("some-status-3")},
 			},
 			Expected: &typrls.Context{
 				TagName:       "some-tag",
 				Alpha:         false,
 				Summary:       "some-summary",
-				Git:           &typrls.Git{Status: "some-status-3", CurrentTag: "some-tag-3"},
 				ReleaseFolder: "release",
 			},
 		},
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
+			var out strings.Builder
+			typgo.Stdout = &out
+			defer func() { typgo.Stdout = os.Stdout }()
+
 			unpatch := execkit.Patch(tt.RunExpectations)
 			defer unpatch(t)
 
@@ -307,7 +313,6 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 				require.Equal(t, tt.Expected.TagName, rlsCtx.TagName)
 				require.Equal(t, tt.Expected.Alpha, rlsCtx.Alpha)
 				require.Equal(t, tt.Expected.Summary, rlsCtx.Summary)
-				require.Equal(t, tt.Expected.Git, rlsCtx.Git)
 			}
 		})
 	}

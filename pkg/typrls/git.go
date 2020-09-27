@@ -1,11 +1,11 @@
 package typrls
 
 import (
-	"context"
 	"fmt"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 type (
@@ -47,21 +47,9 @@ func CreateLog(raw string) *Log {
 	}
 }
 
-func gitStatus(ctx context.Context) string {
+func latestGitID(c *typgo.Context) string {
 	var out strings.Builder
-	if err := execkit.Run(ctx, &execkit.Command{
-		Name:   "git",
-		Args:   []string{"status", "--porcelain"},
-		Stdout: &out,
-	}); err != nil {
-		fmt.Fprintf(Stdout, "WARN: %s\n", err.Error())
-	}
-	return out.String()
-}
-
-func latestGitID(ctx context.Context) string {
-	var out strings.Builder
-	if err := execkit.Run(ctx, &execkit.Command{
+	if err := c.Execute(&execkit.Command{
 		Name:   "git",
 		Args:   []string{"rev-parse", "HEAD"},
 		Stdout: &out,
@@ -71,16 +59,16 @@ func latestGitID(ctx context.Context) string {
 	return out.String()
 }
 
-func gitFetch(ctx context.Context) error {
-	return execkit.Run(ctx, &execkit.Command{
+func gitFetch(c *typgo.Context) error {
+	return c.Execute(&execkit.Command{
 		Name: "git",
 		Args: []string{"fetch"},
 	})
 }
 
-func gitTag(ctx context.Context) string {
+func gitTag(c *typgo.Context) string {
 	var out strings.Builder
-	if err := execkit.Run(ctx, &execkit.Command{
+	if err := c.Execute(&execkit.Command{
 		Name:   "git",
 		Args:   []string{"describe", "--tags", "--abbrev=0"},
 		Stdout: &out,
@@ -90,7 +78,7 @@ func gitTag(ctx context.Context) string {
 	return strings.TrimSpace(out.String())
 }
 
-func gitLogs(ctx context.Context, from string) (logs []*Log) {
+func gitLogs(c *typgo.Context, from string) (logs []*Log) {
 	var args []string
 	args = append(args, "--no-pager", "log")
 	if from != "" {
@@ -99,7 +87,7 @@ func gitLogs(ctx context.Context, from string) (logs []*Log) {
 	args = append(args, "--oneline")
 
 	var out strings.Builder
-	err := execkit.Run(ctx, &execkit.Command{
+	err := c.Execute(&execkit.Command{
 		Name:   "git",
 		Args:   args,
 		Stdout: &out,
