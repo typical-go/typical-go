@@ -52,7 +52,7 @@ var _ typast.Annotator = (*DtorAnnotation)(nil)
 
 // Annotate @dtor
 func (a *DtorAnnotation) Annotate(c *typast.Context) error {
-	annots, imports := FindAnnotFunc(c, a.getTagName())
+	annots, imports := typast.FindAnnot(c, a.getTagName(), typast.EqualFunc)
 	imports["github.com/typical-go/typical-go/pkg/typapp"] = ""
 
 	var dtors []*Dtor

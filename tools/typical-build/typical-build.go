@@ -10,7 +10,7 @@ var mainPkg = "."
 
 var descriptor = typgo.Descriptor{
 	ProjectName:    "typical-go",
-	ProjectVersion: "0.10.12",
+	ProjectVersion: "0.10.13",
 	ProjectLayouts: []string{"internal", "pkg"},
 
 	Cmds: []typgo.Cmd{
@@ -32,10 +32,10 @@ var descriptor = typgo.Descriptor{
 		// release
 		&typrls.ReleaseProject{
 			Before: typgo.BuildCmdRuns{"test", "examples"},
-			Releaser: &typrls.CrossCompiler{
-				Targets:     []typrls.Target{"darwin/amd64", "linux/amd64"},
-				MainPackage: mainPkg,
-			},
+			// Releaser: &typrls.CrossCompiler{
+			// 	Targets:     []typrls.Target{"darwin/amd64", "linux/amd64"},
+			// 	MainPackage: mainPkg,
+			// },
 			Publisher: &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
 		},
 	},

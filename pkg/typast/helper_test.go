@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 func TestIsPublic(t *testing.T) {
@@ -207,4 +208,61 @@ func Test_EqualStruct(t *testing.T) {
 			require.Equal(t, tt.Expected, typast.EqualStruct(tt.Annot, tt.TagName))
 		})
 	}
+}
+
+func TestCtorAnnotation_CreateCtors(t *testing.T) {
+	ctx := &typast.Context{
+		Summary: &typast.Summary{
+			Annots: []*typast.Annot{
+				{
+					TagName: "@ctor",
+					Decl: &typast.Decl{
+						Type: &typast.FuncDecl{Name: "NewObject"},
+						File: typast.File{Package: "pkg", Path: "project/pkg/file.go"},
+					},
+				},
+				{
+					TagName:  "@ctor",
+					TagParam: `name:"obj2"`,
+					Decl: &typast.Decl{
+						File: typast.File{Package: "pkg2", Path: "project/pkg2/file.go"},
+						Type: &typast.FuncDecl{Name: "NewObject2"},
+					},
+				},
+			},
+		},
+	}
+
+	typgo.ProjectPkg = "github.com/typical-go/typical-go"
+
+	annots, imports := typast.FindAnnot(ctx, "@ctor", typast.EqualFunc)
+	require.Equal(t, map[string]string{
+		"github.com/typical-go/typical-go/project/pkg":  "a",
+		"github.com/typical-go/typical-go/project/pkg2": "b",
+	}, imports)
+	require.Equal(t, []*typast.Annot2{
+		{
+			Import:      "github.com/typical-go/typical-go/project/pkg",
+			ImportAlias: "a",
+			Annot: &typast.Annot{
+				TagName: "@ctor",
+				Decl: &typast.Decl{
+					Type: &typast.FuncDecl{Name: "NewObject"},
+					File: typast.File{Package: "pkg", Path: "project/pkg/file.go"},
+				},
+			},
+		},
+		{
+			Import:      "github.com/typical-go/typical-go/project/pkg2",
+			ImportAlias: "b",
+			Annot: &typast.Annot{
+				TagName:  "@ctor",
+				TagParam: `name:"obj2"`,
+				Decl: &typast.Decl{
+					File: typast.File{Package: "pkg2", Path: "project/pkg2/file.go"},
+					Type: &typast.FuncDecl{Name: "NewObject2"},
+				},
+			},
+		},
+	}, annots)
 }

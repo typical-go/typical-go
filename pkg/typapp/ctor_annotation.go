@@ -58,7 +58,7 @@ var _ typast.Annotator = (*CtorAnnotation)(nil)
 
 // Annotate ctor
 func (a *CtorAnnotation) Annotate(c *typast.Context) error {
-	annots, imports := FindAnnotFunc(c, a.getTagName())
+	annots, imports := typast.FindAnnot(c, a.getTagName(), typast.EqualFunc)
 	imports["github.com/typical-go/typical-go/pkg/typapp"] = ""
 
 	var ctors []*Ctor
