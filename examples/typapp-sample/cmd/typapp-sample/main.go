@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/typical-go/typical-go/examples/typapp-sample/internal/app"
-	_ "github.com/typical-go/typical-go/examples/typapp-sample/internal/generated/typical"
+	_ "github.com/typical-go/typical-go/examples/typapp-sample/internal/generated/constructor"
 	"github.com/typical-go/typical-go/pkg/typapp"
 )
 

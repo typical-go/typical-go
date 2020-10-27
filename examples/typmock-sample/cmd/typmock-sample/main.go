@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	_ "github.com/typical-go/typical-go/examples/typmock-sample/internal/generated/typical"
+	_ "github.com/typical-go/typical-go/examples/typmock-sample/internal/generated/constructor"
 	"github.com/typical-go/typical-go/examples/typmock-sample/internal/helloworld"
 	"github.com/typical-go/typical-go/pkg/typapp"
 )

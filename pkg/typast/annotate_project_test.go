@@ -22,9 +22,8 @@ func TestAnnotateCmd(t *testing.T) {
 	require.Equal(t, "Annotate the project and generate code", command.Usage)
 	require.NoError(t, command.Action(&cli.Context{}))
 
-	ctx, err := annonateCmd.CreateContext(&typgo.Context{BuildSys: sys})
+	_, err := annonateCmd.CreateContext(&typgo.Context{BuildSys: sys})
 	require.NoError(t, err)
-	require.Equal(t, "internal/generated/typical", ctx.Destination)
 }
 
 func TestAnnotateCmd_Defined(t *testing.T) {
@@ -42,9 +41,8 @@ func TestAnnotateCmd_Defined(t *testing.T) {
 	command := annonateCmd.Command(sys)
 	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
 
-	ctx, err := annonateCmd.CreateContext(&typgo.Context{BuildSys: sys})
+	_, err := annonateCmd.CreateContext(&typgo.Context{BuildSys: sys})
 	require.NoError(t, err)
-	require.Equal(t, "some-destination", ctx.Destination)
 }
 
 func TestAnnotators_Execute(t *testing.T) {

@@ -67,17 +67,20 @@ func (a *CtorAnnotation) Annotate(c *typast.Context) error {
 		})
 	}
 
+	target := a.getTarget(c)
+	dest := filepath.Dir(target)
+	os.MkdirAll(dest, 0777)
+
 	data := &CtorTmplData{
 		Signature: typast.Signature{
 			TagName: a.getTagName(),
 			Help:    ctorHelp,
 		},
-		Package: filepath.Base(c.Destination),
+		Package: filepath.Base(dest),
 		Imports: imports,
 		Ctors:   ctors,
 	}
 
-	target := fmt.Sprintf("%s/%s", c.Destination, a.getTarget(c))
 	if len(ctors) < 1 {
 		os.Remove(target)
 		return nil
@@ -93,7 +96,7 @@ func (a *CtorAnnotation) Annotate(c *typast.Context) error {
 
 func (a *CtorAnnotation) getTarget(c *typast.Context) string {
 	if a.Target == "" {
-		a.Target = "ctor_annotated.go"
+		a.Target = "internal/generated/constructor/constructor.go"
 	}
 	return a.Target
 }

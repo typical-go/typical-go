@@ -1,8 +1,6 @@
 package typast
 
 import (
-	"os"
-
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
@@ -26,8 +24,7 @@ type (
 	Context struct {
 		*typgo.Context
 		*Summary
-		Dirs        []string
-		Destination string
+		Dirs []string
 	}
 )
 
@@ -69,21 +66,11 @@ func (a *AnnotateProject) CreateContext(c *typgo.Context) (*Context, error) {
 	if err != nil {
 		return nil, err
 	}
-	destination := a.getDestination()
-	os.MkdirAll(destination, 0777)
 	return &Context{
-		Context:     c,
-		Summary:     summary,
-		Dirs:        dirs,
-		Destination: destination,
+		Context: c,
+		Summary: summary,
+		Dirs:    dirs,
 	}, nil
-}
-
-func (a *AnnotateProject) getDestination() string {
-	if a.Destination == "" {
-		a.Destination = "internal/generated/typical"
-	}
-	return a.Destination
 }
 
 //
