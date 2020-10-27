@@ -40,10 +40,8 @@ import ({{range $import, $name := .Imports}}
 	{{$name}} "{{$import}}"{{end}}
 )
 
-func init() { {{if .Ctors}}
-	typapp.AppendCtor({{range $c := .Ctors}}
-		&typapp.Constructor{Name: "{{$c.Name}}", Fn: {{$c.Def}}},{{end}}
-	){{end}}
+func init() { {{if .Ctors}}{{range $c := .Ctors}}
+	typapp.Provide("{{$c.Name}}", {{$c.Def}}){{end}}{{end}}
 }`
 
 const (

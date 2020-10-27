@@ -76,10 +76,8 @@ import (
 )
 
 func init() { 
-	typapp.AppendCtor(
-		&typapp.Constructor{Name: "", Fn: a.NewObject},
-		&typapp.Constructor{Name: "obj2", Fn: b.NewObject2},
-	)
+	typapp.Provide("", a.NewObject)
+	typapp.Provide("obj2", b.NewObject2)
 }`, string(b))
 
 	require.Equal(t, "Generate @ctor to folder1/dest1/ctor_annotated.go\n", out.String())

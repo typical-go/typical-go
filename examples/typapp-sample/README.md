@@ -36,17 +36,6 @@ func HelloTypical() string {
 }
 ```
 
-## Destructor
-
-Put `@dtor` annotation to function that called after application close
-```go
-// Close the application
-// @dtor
-func Close() {
-	fmt.Println("close the app")
-}
-```
-
 
 
 

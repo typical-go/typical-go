@@ -37,13 +37,8 @@ func GetName() string{
     return "World"
 }
 
-// CleanSomething clean something
-// @dtor
-func CleanSomething() {
-}
-
 func main(){
-    typapp.Start(func(name string){
+    typapp.Run(func(name string){
         fmt.Printf("Hello %s\n", name)
     })
 }

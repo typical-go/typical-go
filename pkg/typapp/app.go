@@ -10,32 +10,29 @@ import (
 )
 
 type (
-	// App of typical program
-	App struct {
-		EntryPoint interface{}
-		Ctors      []*Constructor
-		Dtors      []*Destructor
+	// Constructor details
+	Constructor struct {
+		Name string
+		Fn   interface{}
 	}
 )
 
-// Run the entry points
-func Run(entryPoint interface{}) error {
-	app := &App{
-		EntryPoint: entryPoint,
-		Ctors:      GetCtors(),
-		Dtors:      GetDtors(),
-	}
-	return app.Run()
+var _ctors []*Constructor
+
+// Provide constructor
+func Provide(name string, fn interface{}) {
+	_ctors = append(_ctors, &Constructor{Name: name, Fn: fn})
 }
 
-//
-// app
-//
+// Reset constructor
+func Reset() {
+	_ctors = make([]*Constructor, 0)
+}
 
-// Run application
-func (a *App) Run() error {
+// Run the entry points
+func Run(startFn interface{}, shutdownFns ...interface{}) error {
 	di := dig.New()
-	for _, c := range a.Ctors {
+	for _, c := range _ctors {
 		if err := di.Provide(c.Fn, dig.Name(c.Name)); err != nil {
 			return err
 		}
@@ -46,17 +43,17 @@ func (a *App) Run() error {
 	signal.Notify(exitSig, syscall.SIGINT)
 
 	var err error
-
 	go func() {
 		defer func() { exitSig <- syscall.SIGTERM }()
-		err = di.Invoke(a.EntryPoint)
+		err = di.Invoke(startFn)
 	}()
 	<-exitSig
 
-	for _, dtor := range a.Dtors {
-		if err := di.Invoke(dtor.Fn); err != nil {
-			fmt.Fprintf(Stdout, "WARN: %s\n", err.Error())
+	for _, shutdownFn := range shutdownFns {
+		if err1 := di.Invoke(shutdownFn); err1 != nil {
+			fmt.Printf("shutdown: %s", err1.Error())
 		}
 	}
+
 	return err
 }

@@ -16,7 +16,6 @@ var descriptor = typgo.Descriptor{
 		&typast.AnnotateProject{
 			Annotators: []typast.Annotator{
 				&typapp.CtorAnnotation{},
-				&typapp.DtorAnnotation{},
 			},
 		},
 		// compile

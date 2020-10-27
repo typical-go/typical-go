@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	if err := typapp.Run(app.Start2); err != nil {
+	if err := typapp.Run(app.Start2, app.Shutdown); err != nil {
 		log.Fatal(err)
 	}
 }

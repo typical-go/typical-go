@@ -6,10 +6,12 @@ import (
 	"go.uber.org/dig"
 )
 
-type greeter struct {
-	dig.In
-	Text string `name:"typical"`
-}
+type (
+	greeter struct {
+		dig.In
+		Text string `name:"typical"`
+	}
+)
 
 // Start app
 func Start(text string) {
@@ -21,20 +23,7 @@ func Start2(greeter greeter) {
 	fmt.Println(greeter.Text)
 }
 
-// HelloWorld text
-// @ctor
-func HelloWorld() string {
-	return "Hello World"
-}
-
-// HelloTypical text
-// @ctor (name:"typical")
-func HelloTypical() string {
-	return "Hello Typical"
-}
-
-// Bye app
-// @dtor
-func Bye() {
+// Shutdown app
+func Shutdown() {
 	fmt.Println("Bye")
 }

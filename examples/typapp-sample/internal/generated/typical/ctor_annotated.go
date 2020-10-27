@@ -15,8 +15,6 @@ import (
 )
 
 func init() {
-	typapp.AppendCtor(
-		&typapp.Constructor{Name: "", Fn: a.HelloWorld},
-		&typapp.Constructor{Name: "typical", Fn: a.HelloTypical},
-	)
+	typapp.Provide("", a.HelloWorld)
+	typapp.Provide("typical", a.HelloTypical)
 }
