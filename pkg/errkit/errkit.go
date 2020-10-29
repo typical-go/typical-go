@@ -12,30 +12,26 @@ type (
 
 // Append error
 func (e *Errors) Append(errs ...error) *Errors {
-	for _, err := range errs {
-		if err != nil {
-			*e = append(*e, err)
-		}
-	}
+	*e = append(*e, errs...)
 	return e
 }
 
 // Join list of item to string
 func (e *Errors) Join(sep string) string {
-	var b strings.Builder
-	for i, err := range *e {
-		if i > 0 {
-			b.WriteString(sep)
+	var msgs []string
+	for _, err := range *e {
+		if err != nil {
+			msgs = append(msgs, err.Error())
 		}
-		b.WriteString(err.Error())
 	}
-	return b.String()
+	return strings.Join(msgs, sep)
 }
 
 // Unwrap to error type https://blog.golang.org/go1.13-errors#TOC_3.1.
 func (e *Errors) Unwrap() error {
-	if len(*e) < 1 {
-		return nil
+	msg := e.Join("; ")
+	if msg != "" {
+		return errors.New(msg)
 	}
-	return errors.New(e.Join("; "))
+	return nil
 }

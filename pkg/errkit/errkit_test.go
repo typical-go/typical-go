@@ -35,12 +35,12 @@ func TestErrors(t *testing.T) {
 			error: errors.New("error1; error2"),
 		},
 		{
-			Errors: &errkit.Errors{},
+			Errors: &errkit.Errors{nil},
 			msg:    "",
 			error:  nil,
 		},
 		{
-			Errors: new(errkit.Errors).Append(nil),
+			Errors: &errkit.Errors{},
 			msg:    "",
 			error:  nil,
 		},
