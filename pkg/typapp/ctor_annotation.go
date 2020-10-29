@@ -72,13 +72,10 @@ func (a *CtorAnnotation) Annotate(c *typast.Context) error {
 	os.MkdirAll(dest, 0777)
 
 	data := &CtorTmplData{
-		Signature: typast.Signature{
-			TagName: a.getTagName(),
-			Help:    ctorHelp,
-		},
-		Package: filepath.Base(dest),
-		Imports: imports,
-		Ctors:   ctors,
+		Signature: typast.Signature{TagName: a.getTagName()},
+		Package:   filepath.Base(dest),
+		Imports:   imports,
+		Ctors:     ctors,
 	}
 
 	if len(ctors) < 1 {
