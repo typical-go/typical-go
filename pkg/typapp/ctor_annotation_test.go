@@ -132,3 +132,8 @@ func TestCtorAnnotation_Annotate_RemoveTargetWhenNoAnnotation(t *testing.T) {
 	_, err := os.Stat("folder4/pkg4/some-target")
 	require.True(t, os.IsNotExist(err))
 }
+
+func TestCtor_Stringer(t *testing.T) {
+	ctor := &typapp.Ctor{Name: "some-name", Def: "some-def"}
+	require.Equal(t, "{Name=some-name Def=some-def}", ctor.String())
+}

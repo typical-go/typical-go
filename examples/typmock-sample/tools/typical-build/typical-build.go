@@ -1,8 +1,6 @@
 package main
 
 import (
-	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typmock"
 )
@@ -13,17 +11,11 @@ var descriptor = typgo.Descriptor{
 	ProjectLayouts: []string{"internal"},
 
 	Cmds: []typgo.Cmd{
-		// annotate
-		&typast.AnnotateProject{
-			Annotators: []typast.Annotator{
-				&typapp.CtorAnnotation{},
-			},
-		},
 		// compile
 		&typgo.CompileProject{},
 		// run
 		&typgo.RunProject{
-			Before: typgo.BuildCmdRuns{"annotate", "compile"},
+			Before: typgo.BuildCmdRuns{"compile"},
 		},
 		// test
 		&typgo.TestProject{},

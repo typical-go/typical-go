@@ -1,15 +1,12 @@
 package main
 
 import (
-	"log"
+	"os"
 
-	_ "github.com/typical-go/typical-go/examples/typmock-sample/internal/generated/constructor"
-	"github.com/typical-go/typical-go/examples/typmock-sample/internal/helloworld"
-	"github.com/typical-go/typical-go/pkg/typapp"
+	"github.com/typical-go/typical-go/examples/typmock-sample/internal/app"
+	"github.com/typical-go/typical-go/examples/typmock-sample/internal/greeter"
 )
 
 func main() {
-	if err := typapp.Run(helloworld.Main); err != nil {
-		log.Fatal(err)
-	}
+	app.Start(os.Stdout, greeter.New())
 }
