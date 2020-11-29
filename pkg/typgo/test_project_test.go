@@ -2,9 +2,13 @@ package typgo_test
 
 import (
 	"context"
+	"path/filepath"
 	"testing"
 	"time"
 
+	"github.com/typical-go/typical-go/pkg/filekit"
+
+	"bou.ke/monkey"
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -12,19 +16,21 @@ import (
 )
 
 func TestTestProject(t *testing.T) {
-	testPrj := &typgo.TestProject{}
+	defer monkey.Patch(filepath.Walk,
+		func(root string, walkFn filepath.WalkFunc) error {
+			walkFn("pkg1", &filekit.FileInfo{IsDirField: true}, nil)
+			walkFn("pkg2", &filekit.FileInfo{IsDirField: true}, nil)
+			return nil
+		},
+	).Unpatch()
+	defer execkit.Patch(nil)(t)
 
 	c := &cli.Context{Context: context.Background()}
-	sys := &typgo.BuildSys{
-		Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"pkg3", "pkg4"}},
-	}
+	sys := &typgo.BuildSys{Descriptor: &typgo.Descriptor{}}
 
-	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: "go test -timeout=25s -coverprofile=cover.out ./pkg3/... ./pkg4/..."},
-	})
-	defer unpatch(t)
-
+	testPrj := &typgo.TestProject{}
 	command := testPrj.Command(sys)
+
 	require.Equal(t, "test", command.Name)
 	require.Equal(t, "Test the project", command.Usage)
 	require.Equal(t, []string{"t"}, command.Aliases)
@@ -34,10 +40,8 @@ func TestTestProject(t *testing.T) {
 func TestTestProject_NoProjectLayout(t *testing.T) {
 	testProj := &typgo.TestProject{}
 	c := &typgo.Context{
-		Context: &cli.Context{Context: context.Background()},
-		BuildSys: &typgo.BuildSys{
-			Descriptor: &typgo.Descriptor{},
-		},
+		Context:  &cli.Context{Context: context.Background()},
+		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
 	}
 
 	unpatch := execkit.Patch([]*execkit.RunExpectation{})
@@ -47,23 +51,26 @@ func TestTestProject_NoProjectLayout(t *testing.T) {
 }
 
 func TestTestProject_Predefined(t *testing.T) {
+	defer monkey.Patch(filepath.Walk,
+		func(root string, walkFn filepath.WalkFunc) error {
+			walkFn("pkg1", &filekit.FileInfo{IsDirField: true}, nil)
+			walkFn("pkg2", &filekit.FileInfo{IsDirField: true}, nil)
+			return nil
+		},
+	).Unpatch()
+	defer execkit.Patch([]*execkit.RunExpectation{
+		{CommandLine: "go test -timeout=2m3s -coverprofile=some-profile ./pkg1 ./pkg2"},
+	})(t)
+
+	c := &typgo.Context{
+		Context:  &cli.Context{Context: context.Background()},
+		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+	}
+
 	testProj := &typgo.TestProject{
 		Timeout:      123 * time.Second,
 		CoverProfile: "some-profile",
-		Packages:     []string{"pkg1", "pkg2"},
+		Patterns:     []string{"pkg*"},
 	}
-
-	c := &typgo.Context{
-		Context: &cli.Context{Context: context.Background()},
-		BuildSys: &typgo.BuildSys{
-			Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"pkg3", "pkg4"}},
-		},
-	}
-
-	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: "go test -timeout=2m3s -coverprofile=some-profile pkg1 pkg2"},
-	})
-	defer unpatch(t)
-
 	require.NoError(t, testProj.Execute(c))
 }

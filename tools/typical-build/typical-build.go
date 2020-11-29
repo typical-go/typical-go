@@ -17,7 +17,9 @@ var descriptor = typgo.Descriptor{
 		// compile
 		&typgo.CompileProject{MainPackage: mainPkg},
 		// test
-		&typgo.TestProject{},
+		&typgo.TestProject{
+			Patterns: []string{"internal/*", "pkg/*"},
+		},
 		// run
 		&typgo.RunProject{
 			Before: typgo.BuildCmdRuns{"compile"},

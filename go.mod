@@ -3,6 +3,7 @@ module github.com/typical-go/typical-go
 go 1.14
 
 require (
+	bou.ke/monkey v1.0.2
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/fatih/color v1.9.0
 	github.com/golang/mock v1.4.4

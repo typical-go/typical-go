@@ -2,9 +2,12 @@ package typgo
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/filekit"
 	"github.com/urfave/cli/v2"
 )
 
@@ -19,7 +22,7 @@ type (
 		Timeout      time.Duration
 		CoverProfile string
 		Race         bool
-		Packages     []string
+		Patterns     []string
 	}
 )
 
@@ -37,27 +40,33 @@ func (t *TestProject) Command(b *BuildSys) *cli.Command {
 }
 
 // Execute standard test
-func (t *TestProject) Execute(c *Context) (err error) {
-	if len(c.BuildSys.ProjectLayouts) < 1 {
-		fmt.Println("Nothing to test")
-		return
+func (t *TestProject) Execute(c *Context) error {
+	packages, err := t.walk()
+	if err != nil {
+		return err
+	}
+
+	if len(packages) < 1 {
+		fmt.Fprintln(Stdout, "Nothing to test")
+		return nil
 	}
 
 	return c.Execute(&execkit.GoTest{
-		Packages:     t.getPackages(c),
+		Packages:     packages,
 		Timeout:      t.getTimeout(),
 		CoverProfile: t.getCoverProfile(),
 		Race:         t.Race,
 	})
 }
 
-func (t *TestProject) getPackages(c *Context) []string {
-	if len(t.Packages) < 1 {
-		for _, layout := range c.BuildSys.ProjectLayouts {
-			t.Packages = append(t.Packages, fmt.Sprintf("./%s/...", layout))
+func (t *TestProject) walk() (packages []string, err error) {
+	err = filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
+		if filekit.MatchMulti(t.Patterns, path) && info.IsDir() {
+			packages = append(packages, "./"+path)
 		}
-	}
-	return t.Packages
+		return nil
+	})
+	return
 }
 
 func (t *TestProject) getTimeout() time.Duration {
