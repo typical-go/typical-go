@@ -14,7 +14,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func TestTestProject(t *testing.T) {
+func TestGoTest(t *testing.T) {
 	defer monkey.Patch(filepath.Walk,
 		func(root string, walkFn filepath.WalkFunc) error {
 			walkFn("pkg1", &filekit.FileInfo{IsDirField: true}, nil)
@@ -28,7 +28,7 @@ func TestTestProject(t *testing.T) {
 	sys := &typgo.BuildSys{Descriptor: &typgo.Descriptor{}}
 
 	testPrj := &typgo.GoTest{}
-	command := testPrj.Command(sys)
+	command := testPrj.Cli(sys)
 
 	require.Equal(t, "test", command.Name)
 	require.Equal(t, "Test the project", command.Usage)
@@ -36,7 +36,7 @@ func TestTestProject(t *testing.T) {
 	require.NoError(t, command.Action(c))
 }
 
-func TestTestProject_NoProjectLayout(t *testing.T) {
+func TestGoTest_NoPackages(t *testing.T) {
 	testProj := &typgo.GoTest{}
 	c := &typgo.Context{
 		Context:  &cli.Context{Context: context.Background()},
@@ -49,7 +49,7 @@ func TestTestProject_NoProjectLayout(t *testing.T) {
 	require.NoError(t, testProj.Execute(c))
 }
 
-func TestTestProject_Predefined(t *testing.T) {
+func TestGoTest_Predefined(t *testing.T) {
 	defer monkey.Patch(filepath.Walk,
 		func(root string, walkFn filepath.WalkFunc) error {
 			walkFn("pkg1", &filekit.FileInfo{IsDirField: true}, nil)

@@ -5,9 +5,9 @@ import (
 )
 
 type (
-	// Cmd interface return Command method
-	Cmd interface {
-		Command(*BuildSys) *cli.Command
+	// CliCommander interface return cli.Command method
+	CliCommander interface {
+		Cli(*BuildSys) *cli.Command
 	}
 	// Command to run action
 	Command struct {
@@ -24,17 +24,16 @@ type (
 // Command
 //
 
-var _ Cmd = (*Command)(nil)
+var _ CliCommander = (*Command)(nil)
 
-// Command of command
-func (c *Command) Command(b *BuildSys) *cli.Command {
+// Cli command
+func (c *Command) Cli(b *BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:            c.Name,
 		Aliases:         c.Aliases,
 		Usage:           c.Usage,
 		Flags:           c.Flags,
 		SkipFlagParsing: c.SkipFlagParsing,
-
 		Action: func(cliCtx *cli.Context) error {
 			return b.Execute(c.Action, cliCtx)
 		},

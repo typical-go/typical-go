@@ -12,7 +12,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func TestCompileProject_Command(t *testing.T) {
+func TestGoBuild_Command(t *testing.T) {
 	unpatch := execkit.Patch([]*execkit.RunExpectation{
 		{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-name -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=0.0.1\" -o bin/some-name ./cmd/some-name"},
 	})
@@ -22,11 +22,11 @@ func TestCompileProject_Command(t *testing.T) {
 	typgo.Stdout = &out
 	defer func() { typgo.Stdout = os.Stdout }()
 
-	cmpl := &typgo.CompileProject{}
+	cmpl := &typgo.GoBuild{}
 	s := &typgo.BuildSys{
 		Descriptor: &typgo.Descriptor{ProjectName: "some-name", ProjectVersion: "0.0.1"},
 	}
-	command := cmpl.Command(s)
+	command := cmpl.Cli(s)
 	require.Equal(t, "compile", command.Name)
 	require.Equal(t, []string{"c"}, command.Aliases)
 	require.Equal(t, "Compile the project", command.Usage)
@@ -35,11 +35,11 @@ func TestCompileProject_Command(t *testing.T) {
 	require.Equal(t, "\n$ go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-name -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=0.0.1\" -o bin/some-name ./cmd/some-name\n", out.String())
 }
 
-func TestStdCompile_Predefined(t *testing.T) {
-	cmpl := &typgo.CompileProject{
+func TestGoBuild_Predefined(t *testing.T) {
+	cmpl := &typgo.GoBuild{
 		MainPackage: "some-package",
 		Output:      "some-output",
-		Ldflags: execkit.BuildVars{
+		Ldflags: typgo.BuildVars{
 			"some-var": "some-value",
 		},
 	}

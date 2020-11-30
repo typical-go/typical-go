@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
 
@@ -45,15 +46,22 @@ func Run(c *cli.Context) error {
 		}
 
 		fmt.Fprintf(Stdout, "Build %s to %s\n", p.TypicalBuild, bin)
-		gobuild := &execkit.GoBuild{
-			Output:      bin,
-			MainPackage: "./" + p.TypicalBuild,
-			Ldflags: execkit.BuildVars{
-				"github.com/typical-go/typical-go/pkg/typgo.ProjectPkg": p.ProjectPkg,
-				"github.com/typical-go/typical-go/pkg/typgo.TypicalTmp": p.TypicalTmp,
-			},
+
+		buildVars := typgo.BuildVars{
+			"github.com/typical-go/typical-go/pkg/typgo.ProjectPkg": p.ProjectPkg,
+			"github.com/typical-go/typical-go/pkg/typgo.TypicalTmp": p.TypicalTmp,
 		}
-		if err := execkit.Run(c.Context, gobuild); err != nil {
+
+		args := []string{"build"}
+		args = append(args, "-ldflags", buildVars.String())
+		args = append(args, "-o", bin, "./"+p.TypicalBuild)
+
+		if err := execkit.Run(c.Context, &execkit.Command{
+			Name:   "go",
+			Args:   args,
+			Stdout: os.Stdout,
+			Stderr: os.Stderr,
+		}); err != nil {
 			return err
 		}
 	}

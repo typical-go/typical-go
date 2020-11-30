@@ -334,6 +334,6 @@ func TestReleaseCmd_Before(t *testing.T) {
 			return errors.New("some-error")
 		}),
 	}
-	command := cmd.Command(&typgo.BuildSys{})
+	command := cmd.Cli(&typgo.BuildSys{})
 	require.EqualError(t, command.Before(&cli.Context{}), "some-error")
 }

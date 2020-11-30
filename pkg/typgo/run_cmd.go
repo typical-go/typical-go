@@ -20,11 +20,11 @@ type (
 // RunCmd
 //
 
-var _ Cmd = (*RunProject)(nil)
+var _ CliCommander = (*RunProject)(nil)
 var _ Action = (*RunProject)(nil)
 
-// Command run
-func (r *RunProject) Command(sys *BuildSys) *cli.Command {
+// Cli command run
+func (r *RunProject) Cli(sys *BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:            "run",
 		Aliases:         []string{"r"},

@@ -13,11 +13,10 @@ func TestGoImport(t *testing.T) {
 	typgo.TypicalTmp = ".typical-tmp"
 	defer func() { typgo.TypicalTmp = "" }()
 
-	unpatch := execkit.Patch([]*execkit.RunExpectation{
+	defer execkit.Patch([]*execkit.RunExpectation{
 		{CommandLine: "go build -o .typical-tmp/bin/goimports golang.org/x/tools/cmd/goimports"},
 		{CommandLine: ".typical-tmp/bin/goimports -w some-target"},
-	})
-	defer unpatch(t)
+	})(t)
 
 	require.NoError(t, typgo.GoImports("some-target"))
 }
@@ -26,13 +25,12 @@ func TestGoImport_InstallToolError(t *testing.T) {
 	typgo.TypicalTmp = ".typical-tmp"
 	defer func() { typgo.TypicalTmp = "" }()
 
-	unpatch := execkit.Patch([]*execkit.RunExpectation{
+	defer execkit.Patch([]*execkit.RunExpectation{
 		{
 			CommandLine: "go build -o .typical-tmp/bin/goimports golang.org/x/tools/cmd/goimports",
 			ReturnError: errors.New("some-error"),
 		},
-	})
-	defer unpatch(t)
+	})(t)
 
 	require.EqualError(t, typgo.GoImports("some-target"), "some-error")
 }

@@ -16,7 +16,7 @@ func TestAnnotateCmd(t *testing.T) {
 	sys := &typgo.BuildSys{
 		Descriptor: &typgo.Descriptor{},
 	}
-	command := annonateCmd.Command(sys)
+	command := annonateCmd.Cli(sys)
 	require.Equal(t, "annotate", command.Name)
 	require.Equal(t, []string{"a"}, command.Aliases)
 	require.Equal(t, "Annotate the project and generate code", command.Usage)
@@ -38,7 +38,7 @@ func TestAnnotateCmd_Defined(t *testing.T) {
 	sys := &typgo.BuildSys{
 		Descriptor: &typgo.Descriptor{},
 	}
-	command := annonateCmd.Command(sys)
+	command := annonateCmd.Cli(sys)
 	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
 
 	_, err := annonateCmd.CreateContext(&typgo.Context{BuildSys: sys})

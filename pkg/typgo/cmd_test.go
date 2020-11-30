@@ -22,7 +22,7 @@ func TestCommand(t *testing.T) {
 			return errors.New("some-error")
 		}),
 	}
-	command := cmd.Command(&typgo.BuildSys{})
+	command := cmd.Cli(&typgo.BuildSys{})
 	require.Equal(t, "some-name", command.Name)
 	require.Equal(t, []string{"some-alias"}, command.Aliases)
 	require.Equal(t, "some-usage", command.Usage)

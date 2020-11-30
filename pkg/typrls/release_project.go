@@ -30,10 +30,10 @@ type (
 	}
 )
 
-var _ typgo.Cmd = (*ReleaseProject)(nil)
+var _ typgo.CliCommander = (*ReleaseProject)(nil)
 
-// Command release
-func (r *ReleaseProject) Command(sys *typgo.BuildSys) *cli.Command {
+// Cli release
+func (r *ReleaseProject) Cli(sys *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:  "release",
 		Usage: "Release the project",

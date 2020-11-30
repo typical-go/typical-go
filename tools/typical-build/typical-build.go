@@ -15,9 +15,9 @@ var descriptor = typgo.Descriptor{
 	ProjectVersion: "0.10.16",
 	ProjectLayouts: []string{"internal", "pkg"},
 
-	Cmds: []typgo.Cmd{
+	Cmds: []typgo.CliCommander{
 		// compile
-		&typgo.CompileProject{MainPackage: mainPkg},
+		&typgo.GoBuild{MainPackage: mainPkg},
 		// test
 		&typgo.GoTest{
 			Args:     []string{"-timeout=30s"},
@@ -44,11 +44,11 @@ var descriptor = typgo.Descriptor{
 		// release
 		&typrls.ReleaseProject{
 			Before: typgo.BuildCmdRuns{"test", "examples"},
-			// Releaser: &typrls.CrossCompiler{
-			// 	Targets:     []typrls.Target{"darwin/amd64", "linux/amd64"},
-			// 	MainPackage: mainPkg,
-			// },
-			Publisher: &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
+			Releaser: &typrls.CrossCompiler{
+				Targets:     []typrls.Target{"darwin/amd64", "linux/amd64"},
+				MainPackage: mainPkg,
+			},
+			// Publisher: &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
 		},
 	},
 }

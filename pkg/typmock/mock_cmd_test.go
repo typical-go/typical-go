@@ -17,7 +17,7 @@ import (
 
 func TestCommand(t *testing.T) {
 	mockCmd := &typmock.MockCmd{}
-	command := mockCmd.Command(&typgo.BuildSys{})
+	command := mockCmd.Cli(&typgo.BuildSys{})
 
 	require.Equal(t, "mock", command.Name)
 }

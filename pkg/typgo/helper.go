@@ -26,11 +26,10 @@ func GoImports(target string) error {
 func InstallTool(ctx context.Context, name, source string) (string, error) {
 	output := fmt.Sprintf("%s/bin/%s", TypicalTmp, name)
 	if _, err := os.Stat(output); os.IsNotExist(err) {
-		gobuild := &execkit.GoBuild{
+		if err := execkit.Run(ctx, &GoBuild{
 			Output:      output,
 			MainPackage: source,
-		}
-		if err := execkit.Run(ctx, gobuild); err != nil {
+		}); err != nil {
 			return "", err
 		}
 	}

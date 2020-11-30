@@ -13,7 +13,7 @@ import (
 
 func TestRunCmd(t *testing.T) {
 	runCmd := &typgo.RunProject{}
-	command := runCmd.Command(&typgo.BuildSys{
+	command := runCmd.Cli(&typgo.BuildSys{
 		Descriptor: &typgo.Descriptor{},
 	})
 	require.Equal(t, "run", command.Name)
@@ -31,7 +31,7 @@ func TestRunCmd_Before(t *testing.T) {
 			return errors.New("before-error")
 		}),
 	}
-	command := runCmd.Command(&typgo.BuildSys{})
+	command := runCmd.Cli(&typgo.BuildSys{})
 	require.EqualError(t, command.Before(&cli.Context{}), "before-error")
 }
 

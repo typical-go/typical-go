@@ -21,11 +21,11 @@ type (
 	MockCmd struct{}
 )
 
-var _ typgo.Cmd = (*MockCmd)(nil)
+var _ typgo.CliCommander = (*MockCmd)(nil)
 var _ typgo.Action = (*MockCmd)(nil)
 
-// Command to utility
-func (d *MockCmd) Command(c *typgo.BuildSys) *cli.Command {
+// Cli mock
+func (d *MockCmd) Cli(c *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:        "mock",
 		Usage:       "Generate mock class",
@@ -49,7 +49,7 @@ func (d *MockCmd) Execute(c *typgo.Context) error {
 func Annotate(c *typgo.Context, summary *typast.Summary) error {
 	mockgen := fmt.Sprintf("%s/bin/mockgen", typgo.TypicalTmp)
 	if _, err := os.Stat(mockgen); os.IsNotExist(err) {
-		if err := c.Execute(&execkit.GoBuild{
+		if err := c.Execute(&typgo.GoBuild{
 			Output:      mockgen,
 			MainPackage: "github.com/golang/mock/mockgen",
 		}); err != nil {

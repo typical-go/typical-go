@@ -15,7 +15,7 @@ type (
 func createBuildSys(d *Descriptor) *BuildSys {
 	sys := &BuildSys{Descriptor: d}
 	for _, cmd := range d.Cmds {
-		sys.Commands = append(sys.Commands, cmd.Command(sys))
+		sys.Commands = append(sys.Commands, cmd.Cli(sys))
 	}
 	return sys
 }

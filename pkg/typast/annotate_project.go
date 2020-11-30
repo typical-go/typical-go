@@ -32,11 +32,11 @@ type (
 // AnnotateProject
 //
 
-var _ typgo.Cmd = (*AnnotateProject)(nil)
+var _ typgo.CliCommander = (*AnnotateProject)(nil)
 var _ typgo.Action = (*AnnotateProject)(nil)
 
-// Command annotate
-func (a *AnnotateProject) Command(sys *typgo.BuildSys) *cli.Command {
+// Cli annotate
+func (a *AnnotateProject) Cli(sys *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:    "annotate",
 		Aliases: []string{"a"},

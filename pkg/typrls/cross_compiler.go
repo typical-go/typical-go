@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 type (
@@ -39,10 +39,10 @@ func (o *CrossCompiler) Release(c *Context) error {
 		os.Setenv("GOOS", goos)
 		os.Setenv("GOARC", goarch)
 
-		err := c.Execute(&execkit.GoBuild{
+		err := c.Execute(&typgo.GoBuild{
 			Output:      output,
 			MainPackage: o.getMainPackage(c),
-			Ldflags: execkit.BuildVars{
+			Ldflags: typgo.BuildVars{
 				"github.com/typical-go/typical-go/pkg/typgo.ProjectName":    c.BuildSys.ProjectName,
 				"github.com/typical-go/typical-go/pkg/typgo.ProjectVersion": c.TagName,
 			},
