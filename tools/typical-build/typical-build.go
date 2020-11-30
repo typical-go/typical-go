@@ -18,7 +18,7 @@ var descriptor = typgo.Descriptor{
 		&typgo.CompileProject{MainPackage: mainPkg},
 		// test
 		&typgo.TestProject{
-			Patterns: []string{"internal/*", "pkg/*"},
+			Includes: []string{"internal/*", "pkg/*"},
 		},
 		// run
 		&typgo.RunProject{
@@ -29,7 +29,11 @@ var descriptor = typgo.Descriptor{
 			Name:    "examples",
 			Aliases: []string{"e"},
 			Usage:   "Test all example",
-			Action:  typgo.NewAction(testExamples),
+			Action: typgo.NewAction(func(c *typgo.Context) error {
+				return c.Execute(&execkit.GoTest{
+					Packages: []string{"./examples/..."},
+				})
+			}),
 		},
 		// release
 		&typrls.ReleaseProject{
@@ -41,12 +45,6 @@ var descriptor = typgo.Descriptor{
 			Publisher: &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
 		},
 	},
-}
-
-func testExamples(c *typgo.Context) error {
-	return c.Execute(&execkit.GoTest{
-		Packages: []string{"./examples/..."},
-	})
 }
 
 func main() {

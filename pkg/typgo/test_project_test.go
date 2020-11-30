@@ -55,6 +55,7 @@ func TestTestProject_Predefined(t *testing.T) {
 		func(root string, walkFn filepath.WalkFunc) error {
 			walkFn("pkg1", &filekit.FileInfo{IsDirField: true}, nil)
 			walkFn("pkg2", &filekit.FileInfo{IsDirField: true}, nil)
+			walkFn("pkg/service_mock", &filekit.FileInfo{IsDirField: true}, nil)
 			return nil
 		},
 	).Unpatch()
@@ -70,7 +71,8 @@ func TestTestProject_Predefined(t *testing.T) {
 	testProj := &typgo.TestProject{
 		Timeout:      123 * time.Second,
 		CoverProfile: "some-profile",
-		Patterns:     []string{"pkg*"},
+		Includes:     []string{"pkg*"},
+		Excludes:     []string{"*_mock"},
 	}
 	require.NoError(t, testProj.Execute(c))
 }

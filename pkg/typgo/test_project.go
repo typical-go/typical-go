@@ -22,7 +22,8 @@ type (
 		Timeout      time.Duration
 		CoverProfile string
 		Race         bool
-		Patterns     []string
+		Includes     []string
+		Excludes     []string
 	}
 )
 
@@ -61,7 +62,7 @@ func (t *TestProject) Execute(c *Context) error {
 
 func (t *TestProject) walk() (packages []string, err error) {
 	err = filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
-		if filekit.MatchMulti(t.Patterns, path) && info.IsDir() {
+		if !filekit.MatchMulti(t.Excludes, path) && filekit.MatchMulti(t.Includes, path) && info.IsDir() {
 			packages = append(packages, "./"+path)
 		}
 		return nil

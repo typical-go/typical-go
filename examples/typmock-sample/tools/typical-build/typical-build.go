@@ -18,7 +18,10 @@ var descriptor = typgo.Descriptor{
 			Before: typgo.BuildCmdRuns{"compile"},
 		},
 		// test
-		&typgo.TestProject{},
+		&typgo.TestProject{
+			Includes: []string{"internal/*"},
+			Excludes: []string{"**/*_mock"},
+		},
 		// mock
 		&typmock.MockCmd{},
 	},
