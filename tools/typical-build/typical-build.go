@@ -42,13 +42,13 @@ var descriptor = typgo.Descriptor{
 			}),
 		},
 		// release
-		&typrls.ReleaseProject{
+		&typrls.ReleaseTool{
 			Before: typgo.BuildCmdRuns{"test", "examples"},
-			Releaser: &typrls.CrossCompiler{
-				Targets:     []typrls.Target{"darwin/amd64", "linux/amd64"},
-				MainPackage: mainPkg,
-			},
-			// Publisher: &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
+			// Releaser: &typrls.CrossCompiler{
+			// 	Targets:     []typrls.Target{"darwin/amd64", "linux/amd64"},
+			// 	MainPackage: mainPkg,
+			// },
+			Publisher: &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
 		},
 	},
 }

@@ -20,8 +20,8 @@ const (
 )
 
 type (
-	// ReleaseProject release command
-	ReleaseProject struct {
+	// ReleaseTool release command
+	ReleaseTool struct {
 		Before     typgo.Action
 		Tagger     Tagger
 		Summarizer Summarizer
@@ -30,10 +30,10 @@ type (
 	}
 )
 
-var _ typgo.Tasker = (*ReleaseProject)(nil)
+var _ typgo.Tasker = (*ReleaseTool)(nil)
 
 // Task to release
-func (r *ReleaseProject) Task(sys *typgo.BuildSys) *cli.Command {
+func (r *ReleaseTool) Task(sys *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:  "release",
 		Usage: "Release the project",
@@ -49,13 +49,13 @@ func (r *ReleaseProject) Task(sys *typgo.BuildSys) *cli.Command {
 }
 
 //
-// ReleaseProject
+// ReleaseTool
 //
 
-var _ typgo.Action = (*ReleaseProject)(nil)
+var _ typgo.Action = (*ReleaseTool)(nil)
 
 // Execute release
-func (r *ReleaseProject) Execute(c *typgo.Context) error {
+func (r *ReleaseTool) Execute(c *typgo.Context) error {
 	r.setDefault()
 
 	gitFetch(c)
@@ -92,7 +92,7 @@ func (r *ReleaseProject) Execute(c *typgo.Context) error {
 	return nil
 }
 
-func (r *ReleaseProject) setDefault() {
+func (r *ReleaseTool) setDefault() {
 	if r.Summarizer == nil {
 		r.Summarizer = DefaultSummarizer
 	}
