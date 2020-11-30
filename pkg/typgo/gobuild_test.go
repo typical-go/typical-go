@@ -26,7 +26,7 @@ func TestGoBuild_Command(t *testing.T) {
 	s := &typgo.BuildSys{
 		Descriptor: &typgo.Descriptor{ProjectName: "some-name", ProjectVersion: "0.0.1"},
 	}
-	command := cmpl.Cli(s)
+	command := cmpl.Task(s)
 	require.Equal(t, "compile", command.Name)
 	require.Equal(t, []string{"c"}, command.Aliases)
 	require.Equal(t, "Compile the project", command.Usage)

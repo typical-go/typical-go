@@ -7,10 +7,10 @@ import (
 )
 
 var descriptor = typgo.Descriptor{
-	ProjectName:    "custom-command",
+	ProjectName:    "custom-task",
 	ProjectVersion: "1.0.0",
 
-	Cmds: []typgo.CliCommander{
+	Tasks: []typgo.Tasker{
 		// compile
 		&typgo.GoBuild{},
 		// run
@@ -18,7 +18,7 @@ var descriptor = typgo.Descriptor{
 			Before: typgo.BuildCmdRuns{"compile"},
 		},
 		// ping
-		&typgo.Command{
+		&typgo.Task{
 			Name: "ping",
 			Action: typgo.NewAction(
 				func(c *typgo.Context) error {

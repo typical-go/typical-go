@@ -23,12 +23,12 @@ type (
 	BuildVars map[string]string
 )
 
-var _ CliCommander = (*GoBuild)(nil)
+var _ Tasker = (*GoBuild)(nil)
 var _ Action = (*GoBuild)(nil)
 var _ execkit.Commander = (*GoBuild)(nil)
 
-// Cli compile
-func (p *GoBuild) Cli(b *BuildSys) *cli.Command {
+// Task for gobuild
+func (p *GoBuild) Task(b *BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:    "compile",
 		Aliases: []string{"c"},

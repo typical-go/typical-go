@@ -11,7 +11,7 @@ import (
 
 func TestCommand(t *testing.T) {
 
-	cmd := &typgo.Command{
+	task := &typgo.Task{
 		Name:            "some-name",
 		Aliases:         []string{"some-alias"},
 		Usage:           "some-usage",
@@ -22,7 +22,7 @@ func TestCommand(t *testing.T) {
 			return errors.New("some-error")
 		}),
 	}
-	command := cmd.Cli(&typgo.BuildSys{})
+	command := task.Task(&typgo.BuildSys{})
 	require.Equal(t, "some-name", command.Name)
 	require.Equal(t, []string{"some-alias"}, command.Aliases)
 	require.Equal(t, "some-usage", command.Usage)

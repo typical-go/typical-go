@@ -27,9 +27,7 @@ func TestGoTest(t *testing.T) {
 	c := &cli.Context{Context: context.Background()}
 	sys := &typgo.BuildSys{Descriptor: &typgo.Descriptor{}}
 
-	testPrj := &typgo.GoTest{}
-	command := testPrj.Cli(sys)
-
+	command := new(typgo.GoTest).Task(sys)
 	require.Equal(t, "test", command.Name)
 	require.Equal(t, "Test the project", command.Usage)
 	require.Equal(t, []string{"t"}, command.Aliases)
@@ -43,8 +41,7 @@ func TestGoTest_NoPackages(t *testing.T) {
 		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
 	}
 
-	unpatch := execkit.Patch([]*execkit.RunExpectation{})
-	defer unpatch(t)
+	defer execkit.Patch([]*execkit.RunExpectation{})(t)
 
 	require.NoError(t, testProj.Execute(c))
 }

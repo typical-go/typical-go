@@ -5,12 +5,12 @@ import (
 )
 
 type (
-	// CliCommander interface return cli.Command method
-	CliCommander interface {
-		Cli(*BuildSys) *cli.Command
+	// Tasker interface return cli.Command method
+	Tasker interface {
+		Task(*BuildSys) *cli.Command
 	}
-	// Command to run action
-	Command struct {
+	// Task to run action
+	Task struct {
 		Name            string
 		Aliases         []string
 		Usage           string
@@ -24,10 +24,10 @@ type (
 // Command
 //
 
-var _ CliCommander = (*Command)(nil)
+var _ Tasker = (*Task)(nil)
 
-// Cli command
-func (c *Command) Cli(b *BuildSys) *cli.Command {
+// Task command
+func (c *Task) Task(b *BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:            c.Name,
 		Aliases:         c.Aliases,

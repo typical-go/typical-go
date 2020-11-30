@@ -12,6 +12,6 @@ fi
 
 $TYPGO run \
 	-typical-build="tools/typical-build" \
-	-project-pkg="github.com/typical-go/typical-go/examples/custom-command" \
+	-project-pkg="github.com/typical-go/typical-go/examples/custom-task" \
 	-typical-tmp=$TYPTMP \
 	$@

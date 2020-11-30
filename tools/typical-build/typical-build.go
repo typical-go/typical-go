@@ -15,7 +15,7 @@ var descriptor = typgo.Descriptor{
 	ProjectVersion: "0.10.16",
 	ProjectLayouts: []string{"internal", "pkg"},
 
-	Cmds: []typgo.CliCommander{
+	Tasks: []typgo.Tasker{
 		// compile
 		&typgo.GoBuild{MainPackage: mainPkg},
 		// test
@@ -28,7 +28,7 @@ var descriptor = typgo.Descriptor{
 			Before: typgo.BuildCmdRuns{"compile"},
 		},
 		// examples
-		&typgo.Command{
+		&typgo.Task{
 			Name:    "examples",
 			Aliases: []string{"e"},
 			Usage:   "Test all example",

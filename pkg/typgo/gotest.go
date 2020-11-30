@@ -19,11 +19,11 @@ type (
 	}
 )
 
-var _ CliCommander = (*GoTest)(nil)
+var _ Tasker = (*GoTest)(nil)
 var _ Action = (*GoTest)(nil)
 
-// Cli command test
-func (t *GoTest) Cli(b *BuildSys) *cli.Command {
+// Task for gotest
+func (t *GoTest) Task(b *BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:    "test",
 		Aliases: []string{"t"},

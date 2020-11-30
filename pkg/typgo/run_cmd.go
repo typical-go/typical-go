@@ -20,11 +20,11 @@ type (
 // RunCmd
 //
 
-var _ CliCommander = (*RunProject)(nil)
+var _ Tasker = (*RunProject)(nil)
 var _ Action = (*RunProject)(nil)
 
-// Cli command run
-func (r *RunProject) Cli(sys *BuildSys) *cli.Command {
+// Task to run binary
+func (r *RunProject) Task(sys *BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:            "run",
 		Aliases:         []string{"r"},

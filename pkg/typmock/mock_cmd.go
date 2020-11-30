@@ -21,11 +21,11 @@ type (
 	MockCmd struct{}
 )
 
-var _ typgo.CliCommander = (*MockCmd)(nil)
+var _ typgo.Tasker = (*MockCmd)(nil)
 var _ typgo.Action = (*MockCmd)(nil)
 
-// Cli mock
-func (d *MockCmd) Cli(c *typgo.BuildSys) *cli.Command {
+// Task to mock
+func (d *MockCmd) Task(c *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:        "mock",
 		Usage:       "Generate mock class",

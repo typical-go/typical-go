@@ -56,7 +56,7 @@ import (
 )
 
 var descriptor = typgo.Descriptor{
-   ProjectName:    "custom-command",
+   ProjectName:    "custom-task",
    ProjectVersion: "1.0.0",
 
    Cmds: []typgo.Cmd{
@@ -103,10 +103,10 @@ func myFunc(){
 
 Typical-Go using itself as build-tool which is an excellent example. For other examples:
 - [x] [hello-world](https://github.com/typical-go/typical-go/tree/master/examples/hello-world)
-- [x] [typapp sample](https://github.com/typical-go/typical-go/tree/master/examples/typapp-sample)
-- [x] [typmock sample](https://github.com/typical-go/typical-go/tree/master/examples/typmock-sample)
-- [x] [custom build-tool](https://github.com/typical-go/typical-go/tree/master/examples/custom-build-tool)
-- [x] [custom command](https://github.com/typical-go/typical-go/tree/master/examples/custom-command)
+- [x] [typapp-sample](https://github.com/typical-go/typical-go/tree/master/examples/typapp-sample)
+- [x] [typmock-sample](https://github.com/typical-go/typical-go/tree/master/examples/typmock-sample)
+- [x] [custom-build-tool](https://github.com/typical-go/typical-go/tree/master/examples/custom-build-tool)
+- [x] [custom-task](https://github.com/typical-go/typical-go/tree/master/examples/custom-task)
 
 ## See Also
 
