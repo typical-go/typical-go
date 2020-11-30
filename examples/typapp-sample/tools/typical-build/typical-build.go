@@ -13,10 +13,8 @@ var descriptor = typgo.Descriptor{
 
 	Tasks: []typgo.Tasker{
 		// annotate
-		&typast.AnnotateProject{
-			Annotators: []typast.Annotator{
-				&typapp.CtorAnnotation{},
-			},
+		&typast.Annotators{
+			&typapp.CtorAnnotation{},
 		},
 		// compile
 		&typgo.GoBuild{},

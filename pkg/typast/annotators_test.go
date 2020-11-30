@@ -11,7 +11,7 @@ import (
 )
 
 func TestAnnotateCmd(t *testing.T) {
-	annonateCmd := &typast.AnnotateProject{}
+	annonateCmd := &typast.Annotators{}
 	sys := &typgo.BuildSys{Descriptor: &typgo.Descriptor{}}
 
 	command := annonateCmd.Task(sys)
@@ -25,13 +25,10 @@ func TestAnnotateCmd(t *testing.T) {
 }
 
 func TestAnnotateCmd_Defined(t *testing.T) {
-	annonateCmd := &typast.AnnotateProject{
-		Destination: "some-destination",
-		Annotators: []typast.Annotator{
-			typast.NewAnnotator(func(*typast.Context) error {
-				return errors.New("some-error")
-			}),
-		},
+	annonateCmd := typast.Annotators{
+		typast.NewAnnotator(func(*typast.Context) error {
+			return errors.New("some-error")
+		}),
 	}
 	sys := &typgo.BuildSys{Descriptor: &typgo.Descriptor{}}
 
@@ -45,7 +42,7 @@ func TestAnnotateCmd_Defined(t *testing.T) {
 func TestAnnotators_Execute(t *testing.T) {
 	testcases := []struct {
 		TestName string
-		typast.AnnotateProject
+		typast.Annotators
 		Context     *typgo.Context
 		ExpectedErr string
 	}{
@@ -53,11 +50,9 @@ func TestAnnotators_Execute(t *testing.T) {
 			Context: &typgo.Context{BuildSys: &typgo.BuildSys{
 				Descriptor: &typgo.Descriptor{},
 			}},
-			AnnotateProject: typast.AnnotateProject{
-				Annotators: []typast.Annotator{
-					typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-1") }),
-					typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-2") }),
-				},
+			Annotators: typast.Annotators{
+				typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-1") }),
+				typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-2") }),
 			},
 			ExpectedErr: "some-error-1",
 		},
@@ -65,11 +60,9 @@ func TestAnnotators_Execute(t *testing.T) {
 			Context: &typgo.Context{BuildSys: &typgo.BuildSys{
 				Descriptor: &typgo.Descriptor{},
 			}},
-			AnnotateProject: typast.AnnotateProject{
-				Annotators: []typast.Annotator{
-					typast.NewAnnotator(func(c *typast.Context) error { return nil }),
-					typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-2") }),
-				},
+			Annotators: typast.Annotators{
+				typast.NewAnnotator(func(c *typast.Context) error { return nil }),
+				typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-2") }),
 			},
 			ExpectedErr: "some-error-2",
 		},

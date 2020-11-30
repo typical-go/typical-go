@@ -24,7 +24,7 @@ var descriptor = typgo.Descriptor{
 			Includes: []string{"internal/*", "pkg/*"},
 		},
 		// run
-		&typgo.RunProject{
+		&typgo.RunBinary{
 			Before: typgo.BuildCmdRuns{"compile"},
 		},
 		// examples
