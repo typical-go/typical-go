@@ -9,8 +9,8 @@ import (
 )
 
 type (
-	// RunProject standard run
-	RunProject struct {
+	// RunBinary standard run
+	RunBinary struct {
 		Before Action
 		Binary string
 	}
@@ -20,11 +20,11 @@ type (
 // RunCmd
 //
 
-var _ Tasker = (*RunProject)(nil)
-var _ Action = (*RunProject)(nil)
+var _ Tasker = (*RunBinary)(nil)
+var _ Action = (*RunBinary)(nil)
 
 // Task to run binary
-func (r *RunProject) Task(sys *BuildSys) *cli.Command {
+func (r *RunBinary) Task(sys *BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:            "run",
 		Aliases:         []string{"r"},
@@ -36,7 +36,7 @@ func (r *RunProject) Task(sys *BuildSys) *cli.Command {
 }
 
 // Execute standard run
-func (r *RunProject) Execute(c *Context) error {
+func (r *RunBinary) Execute(c *Context) error {
 	return c.Execute(&execkit.Command{
 		Name:   r.getBinary(c),
 		Args:   c.Args().Slice(),
@@ -46,7 +46,7 @@ func (r *RunProject) Execute(c *Context) error {
 	})
 }
 
-func (r *RunProject) getBinary(c *Context) string {
+func (r *RunBinary) getBinary(c *Context) string {
 	if r.Binary == "" {
 		r.Binary = fmt.Sprintf("bin/%s", c.BuildSys.ProjectName)
 	}

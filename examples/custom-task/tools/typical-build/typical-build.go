@@ -14,7 +14,7 @@ var descriptor = typgo.Descriptor{
 		// compile
 		&typgo.GoBuild{},
 		// run
-		&typgo.RunProject{
+		&typgo.RunBinary{
 			Before: typgo.BuildCmdRuns{"compile"},
 		},
 		// ping

@@ -12,7 +12,7 @@ import (
 )
 
 func TestRunCmd(t *testing.T) {
-	runCmd := &typgo.RunProject{}
+	runCmd := &typgo.RunBinary{}
 	command := runCmd.Task(&typgo.BuildSys{Descriptor: &typgo.Descriptor{}})
 	require.Equal(t, "run", command.Name)
 	require.Equal(t, []string{"r"}, command.Aliases)
@@ -24,7 +24,7 @@ func TestRunCmd(t *testing.T) {
 }
 
 func TestRunCmd_Before(t *testing.T) {
-	runCmd := &typgo.RunProject{
+	runCmd := &typgo.RunBinary{
 		Before: typgo.NewAction(func(*typgo.Context) error {
 			return errors.New("before-error")
 		}),
@@ -33,8 +33,8 @@ func TestRunCmd_Before(t *testing.T) {
 	require.EqualError(t, command.Before(&cli.Context{}), "before-error")
 }
 
-func TestRunProject_Execute(t *testing.T) {
-	stdRun := &typgo.RunProject{}
+func TestRunBinary_Execute(t *testing.T) {
+	stdRun := &typgo.RunBinary{}
 	c := &typgo.Context{
 		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
 		BuildSys: &typgo.BuildSys{
@@ -50,8 +50,8 @@ func TestRunProject_Execute(t *testing.T) {
 	require.NoError(t, stdRun.Execute(c))
 }
 
-func TestRunProject_Execute_Predefined(t *testing.T) {
-	stdRun := &typgo.RunProject{
+func TestRunBinary_Execute_Predefined(t *testing.T) {
+	stdRun := &typgo.RunBinary{
 		Binary: "some-binary",
 	}
 	c := &typgo.Context{

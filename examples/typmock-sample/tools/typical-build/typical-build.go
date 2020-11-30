@@ -10,11 +10,11 @@ var descriptor = typgo.Descriptor{
 	ProjectVersion: "1.0.0",
 	ProjectLayouts: []string{"internal"},
 
-	Cmds: []typgo.CliCommander{
+	Tasks: []typgo.Tasker{
 		// compile
 		&typgo.GoBuild{},
 		// run
-		&typgo.RunProject{
+		&typgo.RunBinary{
 			Before: typgo.BuildCmdRuns{"compile"},
 		},
 		// test
