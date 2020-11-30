@@ -4,7 +4,6 @@ import (
 	"context"
 	"path/filepath"
 	"testing"
-	"time"
 
 	"github.com/typical-go/typical-go/pkg/filekit"
 
@@ -28,7 +27,7 @@ func TestTestProject(t *testing.T) {
 	c := &cli.Context{Context: context.Background()}
 	sys := &typgo.BuildSys{Descriptor: &typgo.Descriptor{}}
 
-	testPrj := &typgo.TestProject{}
+	testPrj := &typgo.GoTest{}
 	command := testPrj.Command(sys)
 
 	require.Equal(t, "test", command.Name)
@@ -38,7 +37,7 @@ func TestTestProject(t *testing.T) {
 }
 
 func TestTestProject_NoProjectLayout(t *testing.T) {
-	testProj := &typgo.TestProject{}
+	testProj := &typgo.GoTest{}
 	c := &typgo.Context{
 		Context:  &cli.Context{Context: context.Background()},
 		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
@@ -60,7 +59,7 @@ func TestTestProject_Predefined(t *testing.T) {
 		},
 	).Unpatch()
 	defer execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: "go test -timeout=2m3s -coverprofile=some-profile ./pkg1 ./pkg2"},
+		{CommandLine: "go test -cover -timeout=25s ./pkg1 ./pkg2"},
 	})(t)
 
 	c := &typgo.Context{
@@ -68,11 +67,10 @@ func TestTestProject_Predefined(t *testing.T) {
 		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
 	}
 
-	testProj := &typgo.TestProject{
-		Timeout:      123 * time.Second,
-		CoverProfile: "some-profile",
-		Includes:     []string{"pkg*"},
-		Excludes:     []string{"*_mock"},
+	testProj := &typgo.GoTest{
+		Args:     []string{"-timeout=25s"},
+		Includes: []string{"pkg*"},
+		Excludes: []string{"*_mock"},
 	}
 	require.NoError(t, testProj.Execute(c))
 }

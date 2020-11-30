@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typrls"
@@ -17,7 +19,8 @@ var descriptor = typgo.Descriptor{
 		// compile
 		&typgo.CompileProject{MainPackage: mainPkg},
 		// test
-		&typgo.TestProject{
+		&typgo.GoTest{
+			Args:     []string{"-timeout=30s"},
 			Includes: []string{"internal/*", "pkg/*"},
 		},
 		// run
@@ -30,8 +33,11 @@ var descriptor = typgo.Descriptor{
 			Aliases: []string{"e"},
 			Usage:   "Test all example",
 			Action: typgo.NewAction(func(c *typgo.Context) error {
-				return c.Execute(&execkit.GoTest{
-					Packages: []string{"./examples/..."},
+				return c.Execute(&execkit.Command{
+					Name:   "go",
+					Args:   []string{"test", "./examples/..."},
+					Stdout: os.Stdout,
+					Stderr: os.Stderr,
 				})
 			}),
 		},

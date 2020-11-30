@@ -18,7 +18,8 @@ var descriptor = typgo.Descriptor{
 			Before: typgo.BuildCmdRuns{"compile"},
 		},
 		// test
-		&typgo.TestProject{
+		&typgo.GoTest{
+			Args:     []string{"-timeout=30s"},
 			Includes: []string{"internal/*"},
 			Excludes: []string{"**/*_mock"},
 		},
