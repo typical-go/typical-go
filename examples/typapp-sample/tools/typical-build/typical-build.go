@@ -20,7 +20,7 @@ var descriptor = typgo.Descriptor{
 		&typgo.GoBuild{},
 		// run
 		&typgo.RunBinary{
-			Before: typgo.BuildCmdRuns{"annotate", "compile"},
+			Before: typgo.BuildCmdRuns{"annotate", "build"},
 		},
 	},
 }

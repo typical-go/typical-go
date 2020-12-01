@@ -17,15 +17,15 @@ var (
 )
 
 type (
-	// MockCmd mock
-	MockCmd struct{}
+	// GenerateMock mock
+	GenerateMock struct{}
 )
 
-var _ typgo.Tasker = (*MockCmd)(nil)
-var _ typgo.Action = (*MockCmd)(nil)
+var _ typgo.Tasker = (*GenerateMock)(nil)
+var _ typgo.Action = (*GenerateMock)(nil)
 
 // Task to mock
-func (d *MockCmd) Task(c *typgo.BuildSys) *cli.Command {
+func (d *GenerateMock) Task(c *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:        "mock",
 		Usage:       "Generate mock class",
@@ -36,7 +36,7 @@ func (d *MockCmd) Task(c *typgo.BuildSys) *cli.Command {
 }
 
 // Execute mock command
-func (d *MockCmd) Execute(c *typgo.Context) error {
+func (d *GenerateMock) Execute(c *typgo.Context) error {
 	_, files := typast.Walk(c.BuildSys.ProjectLayouts)
 	summary, err := typast.Compile(files...)
 	if err != nil {

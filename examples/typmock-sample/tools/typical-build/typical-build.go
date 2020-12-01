@@ -11,20 +11,18 @@ var descriptor = typgo.Descriptor{
 	ProjectLayouts: []string{"internal"},
 
 	Tasks: []typgo.Tasker{
-		// compile
-		&typgo.GoBuild{},
-		// run
-		&typgo.RunBinary{
-			Before: typgo.BuildCmdRuns{"compile"},
-		},
+		// mock
+		&typmock.GenerateMock{},
 		// test
 		&typgo.GoTest{
 			Args:     []string{"-timeout=30s"},
 			Includes: []string{"internal/*"},
 			Excludes: []string{"**/*_mock"},
 		},
-		// mock
-		&typmock.MockCmd{},
+		// compile
+		&typgo.GoBuild{},
+		// run
+		&typgo.RunBinary{Before: typgo.BuildCmdRuns{"build"}},
 	},
 }
 

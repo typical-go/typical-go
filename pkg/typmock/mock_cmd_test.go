@@ -16,7 +16,7 @@ import (
 )
 
 func TestCommand(t *testing.T) {
-	mockCmd := &typmock.MockCmd{}
+	mockCmd := &typmock.GenerateMock{}
 	command := mockCmd.Task(&typgo.BuildSys{})
 
 	require.Equal(t, "mock", command.Name)
