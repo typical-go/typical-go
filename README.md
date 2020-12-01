@@ -33,7 +33,7 @@ Build Automation Tool For Golang
    $ typical-go setup
    ```
 
-## Run Build Tool in Current Project
+## Run in Current Project
 
 It is recommended to run via wrapper [`typicalw`](typicalw). Typical-Go is automatically downloaded when not exist.
 ```bash
@@ -102,7 +102,7 @@ func myFunc(){
 }
 ```
 
-## Learns from Examples
+## Learning from Examples
 
 Typical-Go using itself as build-tool which is an excellent example. For other examples:
 - [x] [hello-world](https://github.com/typical-go/typical-go/tree/master/examples/hello-world)
