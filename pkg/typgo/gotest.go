@@ -19,6 +19,10 @@ type (
 	}
 )
 
+const (
+	coverprofileFlag = "coverprofile"
+)
+
 var _ Tasker = (*GoTest)(nil)
 var _ Action = (*GoTest)(nil)
 
@@ -29,6 +33,9 @@ func (t *GoTest) Task(b *BuildSys) *cli.Command {
 		Aliases: []string{"t"},
 		Usage:   "Test the project",
 		Action:  b.Action(t),
+		Flags: []cli.Flag{
+			&cli.StringFlag{Name: coverprofileFlag, Usage: "override arguments"},
+		},
 	}
 }
 
@@ -44,7 +51,12 @@ func (t *GoTest) Execute(c *Context) error {
 		return nil
 	}
 
-	args := []string{"test", "-cover"}
+	args := []string{"test"}
+	if coverprofile := c.String(coverprofileFlag); coverprofile != "" {
+		args = append(args, "-coverprofile="+coverprofile)
+	} else {
+		args = append(args, "-cover")
+	}
 	args = append(args, t.Args...)
 	args = append(args, packages...)
 

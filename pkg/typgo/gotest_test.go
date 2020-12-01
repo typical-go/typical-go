@@ -2,6 +2,7 @@ package typgo_test
 
 import (
 	"context"
+	"flag"
 	"path/filepath"
 	"testing"
 
@@ -13,26 +14,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
-
-func TestGoTest(t *testing.T) {
-	defer monkey.Patch(filepath.Walk,
-		func(root string, walkFn filepath.WalkFunc) error {
-			walkFn("pkg1", &filekit.FileInfo{IsDirField: true}, nil)
-			walkFn("pkg2", &filekit.FileInfo{IsDirField: true}, nil)
-			return nil
-		},
-	).Unpatch()
-	defer execkit.Patch(nil)(t)
-
-	c := &cli.Context{Context: context.Background()}
-	sys := &typgo.BuildSys{Descriptor: &typgo.Descriptor{}}
-
-	command := new(typgo.GoTest).Task(sys)
-	require.Equal(t, "test", command.Name)
-	require.Equal(t, "Test the project", command.Usage)
-	require.Equal(t, []string{"t"}, command.Aliases)
-	require.NoError(t, command.Action(c))
-}
 
 func TestGoTest_NoPackages(t *testing.T) {
 	testProj := &typgo.GoTest{}
@@ -46,7 +27,7 @@ func TestGoTest_NoPackages(t *testing.T) {
 	require.NoError(t, testProj.Execute(c))
 }
 
-func TestGoTest_Predefined(t *testing.T) {
+func TestGoTest(t *testing.T) {
 	defer monkey.Patch(filepath.Walk,
 		func(root string, walkFn filepath.WalkFunc) error {
 			walkFn("pkg1", &filekit.FileInfo{IsDirField: true}, nil)
@@ -60,7 +41,7 @@ func TestGoTest_Predefined(t *testing.T) {
 	})(t)
 
 	c := &typgo.Context{
-		Context:  &cli.Context{Context: context.Background()},
+		Context:  gotestCliContext(nil),
 		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
 	}
 
@@ -70,4 +51,37 @@ func TestGoTest_Predefined(t *testing.T) {
 		Excludes: []string{"*_mock"},
 	}
 	require.NoError(t, testProj.Execute(c))
+}
+
+func TestGoTest_WithCoverProfile(t *testing.T) {
+	defer monkey.Patch(filepath.Walk,
+		func(root string, walkFn filepath.WalkFunc) error {
+			walkFn("pkg1", &filekit.FileInfo{IsDirField: true}, nil)
+			walkFn("pkg2", &filekit.FileInfo{IsDirField: true}, nil)
+			walkFn("pkg/service_mock", &filekit.FileInfo{IsDirField: true}, nil)
+			return nil
+		},
+	).Unpatch()
+	defer execkit.Patch([]*execkit.RunExpectation{
+		{CommandLine: "go test -coverprofile=cover.out -timeout=25s ./pkg1 ./pkg2"},
+	})(t)
+
+	c := &typgo.Context{
+		Context:  gotestCliContext([]string{"-coverprofile=cover.out"}),
+		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+	}
+
+	testProj := &typgo.GoTest{
+		Args:     []string{"-timeout=25s"},
+		Includes: []string{"pkg*"},
+		Excludes: []string{"*_mock"},
+	}
+	require.NoError(t, testProj.Execute(c))
+}
+
+func gotestCliContext(args []string) *cli.Context {
+	flagSet := &flag.FlagSet{}
+	flagSet.String("coverprofile", "", "")
+	flagSet.Parse(args)
+	return cli.NewContext(nil, flagSet, nil)
 }
