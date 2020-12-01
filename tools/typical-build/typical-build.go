@@ -25,7 +25,7 @@ var descriptor = typgo.Descriptor{
 		},
 		// run
 		&typgo.RunBinary{
-			Before: typgo.BuildCmdRuns{"compile"},
+			Before: typgo.BuildCmdRuns{"build"},
 		},
 		// examples
 		&typgo.Task{

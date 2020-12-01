@@ -59,16 +59,21 @@ var descriptor = typgo.Descriptor{
    ProjectName:    "custom-task",
    ProjectVersion: "1.0.0",
 
-   Cmds: []typgo.Cmd{
+   Tasks: []typgo.Tasker{
+      // test
+      &typgo.GoTest{
+         Args:     []string{"-timeout=30s"},
+         Includes: []string{"internal/*", "pkg/*"},
+      },
       // compile
-      &typgo.CompileProject{},
+      &typgo.GoBuild{},
       // run
-      &typgo.RunCmd{
-         Before: typgo.BuildCmdRuns{"compile"},
+      &typgo.RunBinary{
+         Before: typgo.BuildCmdRuns{"build"},
          Action: &typgo.RunProject{},
       },
       // ping
-      &typgo.Command{
+      &typgo.Task{
          Name: "ping",
          Action: typgo.NewAction(
             func(c *typgo.Context) error {
@@ -109,11 +114,6 @@ Typical-Go using itself as build-tool which is an excellent example. For other e
 - [x] [custom-task](https://github.com/typical-go/typical-go/tree/master/examples/custom-task)
 
 ## See Also
-
-- [`pkg/typapp`](pkg/typapp): Typical Application Framework
-- [`pkg/typast`](pkg/typast): Annotation for Code Generation
-- [`pkg/typmock`](pkg/typmock): Mock by Annotation
-- [`pkg/typrls`](pkg/typmock): Project Releaser
 - [Typical-Rest-Server](https://github.com/typical-go/typical-rest-server): Rest Server Implementation
 
 

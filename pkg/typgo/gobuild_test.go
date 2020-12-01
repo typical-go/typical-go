@@ -27,9 +27,9 @@ func TestGoBuild_Command(t *testing.T) {
 		Descriptor: &typgo.Descriptor{ProjectName: "some-name", ProjectVersion: "0.0.1"},
 	}
 	command := cmpl.Task(s)
-	require.Equal(t, "compile", command.Name)
-	require.Equal(t, []string{"c"}, command.Aliases)
-	require.Equal(t, "Compile the project", command.Usage)
+	require.Equal(t, "build", command.Name)
+	require.Equal(t, []string{"b"}, command.Aliases)
+	require.Equal(t, "build the project", command.Usage)
 	require.NoError(t, command.Action(&cli.Context{Context: context.Background()}))
 
 	require.Equal(t, "\n$ go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-name -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=0.0.1\" -o bin/some-name ./cmd/some-name\n", out.String())

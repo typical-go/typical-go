@@ -30,9 +30,9 @@ var _ execkit.Commander = (*GoBuild)(nil)
 // Task for gobuild
 func (p *GoBuild) Task(b *BuildSys) *cli.Command {
 	return &cli.Command{
-		Name:    "compile",
-		Aliases: []string{"c"},
-		Usage:   "Compile the project",
+		Name:    "build",
+		Aliases: []string{"b"},
+		Usage:   "build the project",
 		Action:  b.Action(p),
 	}
 }

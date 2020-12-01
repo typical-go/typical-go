@@ -171,27 +171,11 @@ func TestCompile(t *testing.T) {
 	require.EqualValues(t, someMethod2, summary.Decls[8])
 
 	require.EqualValues(t, []*typast.Annot{
-		{
-			Decl:    someStructDecl,
-			TagName: "@tag1",
-		},
-		{
-			Decl:     someStructDecl,
-			TagName:  "@tag2",
-			TagParam: `key1:"", key2: "", key3:"value3"`,
-		},
-		{
-			Decl:    someFunctionDecl2,
-			TagName: "@ctor",
-		},
-		{
-			Decl:    someInterface2Decl,
-			TagName: "@tag3",
-		},
-		{
-			Decl:    someStruct2Decl,
-			TagName: "@tag4",
-		},
+		{Decl: someStructDecl, TagName: "@tag1"},
+		{Decl: someStructDecl, TagName: "@tag2", TagParam: `key1:"", key2: "", key3:"value3"`},
+		{Decl: someFunctionDecl2, TagName: "@ctor"},
+		{Decl: someInterface2Decl, TagName: "@tag3"},
+		{Decl: someStruct2Decl, TagName: "@tag4"},
 	}, summary.Annots)
 }
 
@@ -214,4 +198,29 @@ func TestWalk(t *testing.T) {
 	dirs, files := typast.Walk([]string{"pkg", "wrapper"})
 	require.Equal(t, []string{"pkg", "pkg/some_lib", "wrapper", "wrapper/some_pkg"}, dirs)
 	require.Equal(t, []string{"pkg/some_lib/lib.go", "wrapper/some_pkg/some_file.go"}, files)
+}
+
+func TestFindAnnot(t *testing.T) {
+	tag1 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{Type: &typast.FuncDecl{}}}
+	tag2 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{Type: &typast.FuncDecl{}}}
+	tag3 := &typast.Annot{TagName: "@other", Decl: &typast.Decl{Type: &typast.FuncDecl{}}}
+	tag4 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{Type: &typast.StructDecl{}}}
+	tag5 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{Type: &typast.StructDecl{}}}
+	tag6 := &typast.Annot{TagName: "@other", Decl: &typast.Decl{Type: &typast.StructDecl{}}}
+	tag7 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{Type: &typast.InterfaceDecl{}}}
+	tag8 := &typast.Annot{TagName: "@some-tag", Decl: &typast.Decl{Type: &typast.InterfaceDecl{}}}
+	tag9 := &typast.Annot{TagName: "@other", Decl: &typast.Decl{Type: &typast.InterfaceDecl{}}}
+
+	c := &typast.Summary{
+		Annots: []*typast.Annot{tag1, tag2, tag3, tag4, tag5, tag6, tag7, tag8, tag9},
+	}
+
+	require.Equal(t,
+		[]*typast.Annot{tag1, tag2},
+		c.FindAnnot("@some-tag", func(a *typast.Annot, tagName string) bool {
+			_, ok := a.Type.(*typast.FuncDecl)
+			return ok && a.TagName == tagName
+		}),
+	)
+
 }
