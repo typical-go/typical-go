@@ -13,38 +13,36 @@ Build Automation Tool For Golang
 - Framework-based Build Tool (No DSL)
 - Supporting Java-like annotation for code generation
 
-## Install
+## Setup New Project
 
-```
-$ go get -u github.com/typical-go/typical-go
-```
+1. Install typical-go
+   ```
+   $ go get -u github.com/typical-go/typical-go
+   ```
 
-## Setup
+2. Setup new project
+   ```bash
+   $ typical-go setup -new -go-mod -project-pkg=github.com/typical-go/typical-go/my-project
+   ```
+   - `-new` generate simple app and typical-build source
+   - `-go-mod` initiate go.mod
+   - `-project-pkg` name of project package
 
-Setup a new project
-```bash
-$ typical-go setup -new -go-mod -project-pkg=github.com/typical-go/typical-go/my-project
-```
-- `-new` generate simple app and typical-build source
-- `-go-mod` initiate go.mod
-- `-project-pkg` name of project package
+3. Generate wrapper for existing project
+   ```bash
+   $ typical-go setup
+   ```
 
+## Run Build Tool in Current Project
 
-## Run 
-
-It is recommended to run via wrapper [`typicalw`](typicalw) 
+It is recommended to run via wrapper [`typicalw`](typicalw). Typical-Go is automatically downloaded when not exist.
 ```bash
 $ ./typicalw
 ```
 
-If the wrapper is missing, you can generate it using `setup` command
-```bash
-$ typical-go setup
-```
+## Project Descriptor
 
-## Typical-Build
-
-Typical-Build contain project descriptor and the build logic. By default, it is located in [`tools/typical-build`](tools/typical-build/typical-build.go) and can be changed in wrapper script.
+By default, project descriptor is located in [`tools/typical-build`](tools/typical-build/typical-build.go) which contain project detail and task list. It can be changed in wrapper script.
 
 ```go
 package main
@@ -90,11 +88,11 @@ func main() {
 }
 ```
 
-## Typical-Tmp
+## Temporary Folder
 
-Typical-Tmp is temporary folder that contain downloaded file and other build-mechanism. By default, it is located in `.typical-tmp` and can be changed in wrapper script.
+By default, temporary folder is located in `.typical-tmp` which contain downloaded file and other build-mechanism. It can be changed in wrapper script. Please remove temporary folder when update the typical-go version.
 
-## Annotation
+## Annotation Support
 
 Typical-Go support java-like annotation (except the parameter in [StructTag](https://www.digitalocean.com/community/tutorials/how-to-use-struct-tags-in-go) format) for code-generation purpose. [Learn more](pkg/typast)
 
@@ -104,7 +102,7 @@ func myFunc(){
 }
 ```
 
-## Examples
+## Learns from Examples
 
 Typical-Go using itself as build-tool which is an excellent example. For other examples:
 - [x] [hello-world](https://github.com/typical-go/typical-go/tree/master/examples/hello-world)
