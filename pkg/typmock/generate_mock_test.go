@@ -1,0 +1,105 @@
+package typmock_test
+
+import (
+	"errors"
+	"flag"
+	"os"
+	"strings"
+	"testing"
+
+	"bou.ke/monkey"
+	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/filekit"
+	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typgo"
+	"github.com/typical-go/typical-go/pkg/typmock"
+	"github.com/urfave/cli/v2"
+)
+
+func TestCommand(t *testing.T) {
+	mockCmd := &typmock.GenerateMock{}
+	command := mockCmd.Task(&typgo.BuildSys{})
+
+	require.Equal(t, "mock", command.Name)
+}
+
+func TestExecute(t *testing.T) {
+	defer monkey.Patch(filekit.FindDir, func(includes, excludes []string) ([]string, error) {
+		return nil, nil
+	}).Unpatch()
+
+	defer monkey.Patch(typast.Walk, func(layouts []string) (dirs, files []string) {
+		return
+	}).Unpatch()
+
+	defer monkey.Patch(typast.Compile, func(paths ...string) (*typast.Summary, error) {
+		return &typast.Summary{
+			Annots: []*typast.Annot{
+				{
+					TagName: "@mock",
+					Decl: &typast.Decl{
+						File: typast.File{Package: "mypkg", Path: "parent/path/some_interface.go"},
+						Type: &typast.InterfaceDecl{TypeDecl: typast.TypeDecl{Name: "SomeInterface"}},
+					},
+				},
+			},
+		}, nil
+	}).Unpatch()
+
+	defer execkit.Patch([]*execkit.RunExpectation{
+		{CommandLine: "go build -o /bin/mockgen github.com/golang/mock/mockgen"},
+		{CommandLine: "rm -rf parent/path_mock"},
+		{CommandLine: "/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface"},
+	})(t)
+
+	generateMock := &typmock.GenerateMock{}
+	require.NoError(t, generateMock.Execute(&typgo.Context{
+		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+		Context:  cli.NewContext(nil, &flag.FlagSet{}, nil),
+	}))
+}
+
+func TestAnnotate_InstallMockgenError(t *testing.T) {
+
+	defer execkit.Patch([]*execkit.RunExpectation{
+		{CommandLine: "go build -o /bin/mockgen github.com/golang/mock/mockgen", ReturnError: errors.New("some-error")},
+	})(t)
+
+	c := &typgo.Context{
+		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"."}}},
+		Context:  cli.NewContext(nil, &flag.FlagSet{}, nil),
+	}
+	err := typmock.Annotate(c, &typast.Summary{})
+	require.EqualError(t, err, "some-error")
+}
+
+func TestAnnotate_MockgenError(t *testing.T) {
+	var out strings.Builder
+	typmock.Stdout = &out
+	defer func() { typmock.Stdout = os.Stdout }()
+
+	summary := &typast.Summary{
+		Annots: []*typast.Annot{
+			{
+				TagName: "@mock",
+				Decl: &typast.Decl{
+					File: typast.File{Package: "mypkg", Path: "parent/path/some_interface.go"},
+					Type: &typast.InterfaceDecl{TypeDecl: typast.TypeDecl{Name: "SomeInterface"}},
+				}},
+		},
+	}
+
+	defer execkit.Patch([]*execkit.RunExpectation{
+		{CommandLine: "go build -o /bin/mockgen github.com/golang/mock/mockgen"},
+		{CommandLine: "rm -rf parent/path_mock"},
+		{CommandLine: "/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface", ReturnError: errors.New("some-error")},
+	})(t)
+
+	c := &typgo.Context{
+		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"."}}},
+		Context:  cli.NewContext(nil, &flag.FlagSet{}, nil),
+	}
+	require.NoError(t, typmock.Annotate(c, summary))
+	require.Equal(t, "Fail to mock '/parent/path.SomeInterface': some-error\n", out.String())
+}

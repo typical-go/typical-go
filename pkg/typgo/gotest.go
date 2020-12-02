@@ -3,7 +3,6 @@ package typgo
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/filekit"
@@ -41,7 +40,7 @@ func (t *GoTest) Task(b *BuildSys) *cli.Command {
 
 // Execute standard test
 func (t *GoTest) Execute(c *Context) error {
-	packages, err := t.walk()
+	packages, err := filekit.FindDir(t.Includes, t.Excludes)
 	if err != nil {
 		return err
 	}
@@ -66,14 +65,4 @@ func (t *GoTest) Execute(c *Context) error {
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,
 	})
-}
-
-func (t *GoTest) walk() (packages []string, err error) {
-	err = filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
-		if !filekit.MatchMulti(t.Excludes, path) && filekit.MatchMulti(t.Includes, path) && info.IsDir() {
-			packages = append(packages, "./"+path)
-		}
-		return nil
-	})
-	return
 }

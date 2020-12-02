@@ -2,7 +2,10 @@ package typmock
 
 import (
 	"fmt"
+	"io"
 	"os"
+
+	"github.com/typical-go/typical-go/pkg/filekit"
 
 	"github.com/iancoleman/strcase"
 	"github.com/typical-go/typical-go/pkg/execkit"
@@ -14,11 +17,16 @@ import (
 var (
 	// MockTag is tag for mock
 	MockTag = "@mock"
+	// Stdout standard output
+	Stdout io.Writer = os.Stdout
 )
 
 type (
 	// GenerateMock mock
-	GenerateMock struct{}
+	GenerateMock struct {
+		Includes []string
+		Excludes []string
+	}
 )
 
 var _ typgo.Tasker = (*GenerateMock)(nil)
@@ -37,7 +45,11 @@ func (d *GenerateMock) Task(c *typgo.BuildSys) *cli.Command {
 
 // Execute mock command
 func (d *GenerateMock) Execute(c *typgo.Context) error {
-	_, files := typast.Walk(c.BuildSys.ProjectLayouts)
+	dirs, err := filekit.FindDir(d.Includes, d.Excludes)
+	if err != nil {
+		return err
+	}
+	_, files := typast.Walk(dirs)
 	summary, err := typast.Compile(files...)
 	if err != nil {
 		return err
@@ -49,15 +61,15 @@ func (d *GenerateMock) Execute(c *typgo.Context) error {
 func Annotate(c *typgo.Context, summary *typast.Summary) error {
 	mockgen := fmt.Sprintf("%s/bin/mockgen", typgo.TypicalTmp)
 	if _, err := os.Stat(mockgen); os.IsNotExist(err) {
-		if err := c.Execute(&typgo.GoBuild{
-			Output:      mockgen,
-			MainPackage: "github.com/golang/mock/mockgen",
-		}); err != nil {
+		err := c.Execute(&typgo.GoBuild{Output: mockgen, MainPackage: "github.com/golang/mock/mockgen"})
+		if err != nil {
 			return err
 		}
 	}
 	mockery := NewMockery(typgo.ProjectPkg)
+
 	for _, annot := range summary.FindAnnot(MockTag, typast.EqualInterface) {
+
 		mockery.Put(CreateMock(annot))
 	}
 	targetMap := mockery.Map

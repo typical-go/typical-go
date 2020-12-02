@@ -8,11 +8,12 @@ import (
 var descriptor = typgo.Descriptor{
 	ProjectName:    "typmock-sample",
 	ProjectVersion: "1.0.0",
-	ProjectLayouts: []string{"internal"},
 
 	Tasks: []typgo.Tasker{
 		// mock
-		&typmock.GenerateMock{},
+		&typmock.GenerateMock{
+			Includes: []string{"internal/*"},
+		},
 		// test
 		&typgo.GoTest{
 			Args:     []string{"-timeout=30s"},
