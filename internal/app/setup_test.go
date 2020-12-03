@@ -18,7 +18,7 @@ func TestSetup(t *testing.T) {
 
 	defer oskit.PatchStdout(&output)()
 	defer execkit.Patch([]*execkit.RunExpectation{})(t)
-	defer oskit.MkdirAll("some-pkg")
+	defer oskit.MkdirAll("some-pkg")()
 
 	require.NoError(t, app.Setup(cliContext([]string{
 		"-project-pkg=some-pkg",
