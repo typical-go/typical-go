@@ -9,12 +9,14 @@ import (
 var descriptor = typgo.Descriptor{
 	ProjectName:    "typapp-sample",
 	ProjectVersion: "1.0.0",
-	ProjectLayouts: []string{"internal"},
 
 	Tasks: []typgo.Tasker{
 		// annotate
-		&typast.Annotators{
-			&typapp.CtorAnnotation{},
+		&typast.AnnotateMe{
+			Includes: []string{"internal/*"},
+			Annotators: []typast.Annotator{
+				&typapp.CtorAnnotation{},
+			},
 		},
 		// compile
 		&typgo.GoBuild{},

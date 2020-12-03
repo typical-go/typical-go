@@ -1,13 +1,18 @@
 package typast
 
 import (
+	"github.com/typical-go/typical-go/pkg/filekit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
 
 type (
-	// Annotators annotate cmd
-	Annotators []Annotator
+	// AnnotateMe task
+	AnnotateMe struct {
+		Includes   []string
+		Excludes   []string
+		Annotators []Annotator
+	}
 	// Annotator responsible to annotate
 	Annotator interface {
 		Annotate(*Context) error
@@ -29,11 +34,11 @@ type (
 // AnnotateProject
 //
 
-var _ typgo.Tasker = (*Annotators)(nil)
-var _ typgo.Action = (*Annotators)(nil)
+var _ typgo.Tasker = (*AnnotateMe)(nil)
+var _ typgo.Action = (*AnnotateMe)(nil)
 
 // Task to annotate
-func (a Annotators) Task(sys *typgo.BuildSys) *cli.Command {
+func (a AnnotateMe) Task(sys *typgo.BuildSys) *cli.Command {
 	return &cli.Command{
 		Name:    "annotate",
 		Aliases: []string{"a"},
@@ -43,12 +48,12 @@ func (a Annotators) Task(sys *typgo.BuildSys) *cli.Command {
 }
 
 // Execute annotation
-func (a Annotators) Execute(c *typgo.Context) error {
+func (a AnnotateMe) Execute(c *typgo.Context) error {
 	ac, err := a.CreateContext(c)
 	if err != nil {
 		return err
 	}
-	for _, annotator := range a {
+	for _, annotator := range a.Annotators {
 		if err := annotator.Annotate(ac); err != nil {
 			return err
 		}
@@ -57,8 +62,13 @@ func (a Annotators) Execute(c *typgo.Context) error {
 }
 
 // CreateContext create context
-func (a Annotators) CreateContext(c *typgo.Context) (*Context, error) {
-	dirs, files := Walk(c.BuildSys.ProjectLayouts)
+func (a AnnotateMe) CreateContext(c *typgo.Context) (*Context, error) {
+	packages, err := filekit.FindDir(a.Includes, a.Excludes)
+	if err != nil {
+		return nil, err
+	}
+
+	dirs, files := Walk(packages)
 	summary, err := Compile(files...)
 	if err != nil {
 		return nil, err

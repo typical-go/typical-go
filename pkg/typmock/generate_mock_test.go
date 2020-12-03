@@ -67,7 +67,7 @@ func TestAnnotate_InstallMockgenError(t *testing.T) {
 	})(t)
 
 	c := &typgo.Context{
-		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"."}}},
+		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
 		Context:  cli.NewContext(nil, &flag.FlagSet{}, nil),
 	}
 	err := typmock.Annotate(c, &typast.Summary{})
@@ -97,7 +97,7 @@ func TestAnnotate_MockgenError(t *testing.T) {
 	})(t)
 
 	c := &typgo.Context{
-		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{ProjectLayouts: []string{"."}}},
+		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
 		Context:  cli.NewContext(nil, &flag.FlagSet{}, nil),
 	}
 	require.NoError(t, typmock.Annotate(c, summary))

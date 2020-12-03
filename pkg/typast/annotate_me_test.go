@@ -11,7 +11,7 @@ import (
 )
 
 func TestAnnotateCmd(t *testing.T) {
-	annonateCmd := &typast.Annotators{}
+	annonateCmd := &typast.AnnotateMe{}
 	sys := &typgo.BuildSys{Descriptor: &typgo.Descriptor{}}
 
 	command := annonateCmd.Task(sys)
@@ -25,10 +25,12 @@ func TestAnnotateCmd(t *testing.T) {
 }
 
 func TestAnnotateCmd_Defined(t *testing.T) {
-	annonateCmd := typast.Annotators{
-		typast.NewAnnotator(func(*typast.Context) error {
-			return errors.New("some-error")
-		}),
+	annonateCmd := typast.AnnotateMe{
+		Annotators: []typast.Annotator{
+			typast.NewAnnotator(func(*typast.Context) error {
+				return errors.New("some-error")
+			}),
+		},
 	}
 	sys := &typgo.BuildSys{Descriptor: &typgo.Descriptor{}}
 
@@ -42,7 +44,7 @@ func TestAnnotateCmd_Defined(t *testing.T) {
 func TestAnnotators_Execute(t *testing.T) {
 	testcases := []struct {
 		TestName string
-		typast.Annotators
+		typast.AnnotateMe
 		Context     *typgo.Context
 		ExpectedErr string
 	}{
@@ -50,9 +52,11 @@ func TestAnnotators_Execute(t *testing.T) {
 			Context: &typgo.Context{BuildSys: &typgo.BuildSys{
 				Descriptor: &typgo.Descriptor{},
 			}},
-			Annotators: typast.Annotators{
-				typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-1") }),
-				typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-2") }),
+			AnnotateMe: typast.AnnotateMe{
+				Annotators: []typast.Annotator{
+					typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-1") }),
+					typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-2") }),
+				},
 			},
 			ExpectedErr: "some-error-1",
 		},
@@ -60,9 +64,11 @@ func TestAnnotators_Execute(t *testing.T) {
 			Context: &typgo.Context{BuildSys: &typgo.BuildSys{
 				Descriptor: &typgo.Descriptor{},
 			}},
-			Annotators: typast.Annotators{
-				typast.NewAnnotator(func(c *typast.Context) error { return nil }),
-				typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-2") }),
+			AnnotateMe: typast.AnnotateMe{
+				Annotators: []typast.Annotator{
+					typast.NewAnnotator(func(c *typast.Context) error { return nil }),
+					typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-2") }),
+				},
 			},
 			ExpectedErr: "some-error-2",
 		},
