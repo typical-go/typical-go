@@ -10,6 +10,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typrls"
 	"github.com/urfave/cli/v2"
@@ -129,8 +130,7 @@ func TestReleaseTool(t *testing.T) {
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
 			var out strings.Builder
-			typgo.Stdout = &out
-			defer func() { typgo.Stdout = os.Stdout }()
+			defer oskit.PatchStdout(&out)()
 
 			defer debug.Reset()
 			unpatch := execkit.Patch([]*execkit.RunExpectation{})
@@ -150,12 +150,10 @@ func TestReleaseTool(t *testing.T) {
 
 func TestReleaseTool_CustomReleaseFolder(t *testing.T) {
 	var out strings.Builder
-	typgo.Stdout = &out
-	defer func() { typgo.Stdout = os.Stdout }()
-
-	unpatch := execkit.Patch(nil)
-	defer unpatch(t)
 	var rlsCtx *typrls.Context
+
+	defer oskit.PatchStdout(&out)()
+	defer execkit.Patch(nil)(t)
 
 	rel := &typrls.ReleaseTool{
 		Tagger: typrls.DefaultTagger,
@@ -293,13 +291,11 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
 			var out strings.Builder
-			typgo.Stdout = &out
-			defer func() { typgo.Stdout = os.Stdout }()
-
-			unpatch := execkit.Patch(tt.RunExpectations)
-			defer unpatch(t)
-
 			var rlsCtx *typrls.Context
+
+			defer oskit.PatchStdout(&out)()
+			defer execkit.Patch(tt.RunExpectations)(t)
+
 			tt.Releaser = typrls.NewReleaser(func(r *typrls.Context) error {
 				rlsCtx = r
 				return nil

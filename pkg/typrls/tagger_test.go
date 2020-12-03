@@ -2,10 +2,11 @@ package typrls_test
 
 import (
 	"errors"
-	"os"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/typical-go/typical-go/pkg/oskit"
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/execkit"
@@ -79,10 +80,8 @@ func TestTagger(t *testing.T) {
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
 			var out strings.Builder
-			typgo.Stdout = &out
-			defer func() { typgo.Stdout = os.Stdout }()
-			unpatch := execkit.Patch(tt.RunExpectations)
-			defer unpatch(t)
+			defer oskit.PatchStdout(&out)()
+			defer execkit.Patch(tt.RunExpectations)(t)
 
 			require.Equal(t, tt.Expected, tt.CreateTag(tt.Context, tt.Alpha))
 		})

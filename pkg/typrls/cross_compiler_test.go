@@ -2,12 +2,12 @@ package typrls_test
 
 import (
 	"errors"
-	"os"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typrls"
 	"github.com/urfave/cli/v2"
@@ -69,8 +69,7 @@ func TestCrossCompile(t *testing.T) {
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
 			var out strings.Builder
-			typgo.Stdout = &out
-			defer func() { typgo.Stdout = os.Stdout }()
+			defer oskit.PatchStdout(&out)()
 
 			unpatch := execkit.Patch(tt.RunExpectations)
 			defer unpatch(t)

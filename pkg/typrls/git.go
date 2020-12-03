@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -54,7 +55,7 @@ func latestGitID(c *typgo.Context) string {
 		Args:   []string{"rev-parse", "HEAD"},
 		Stdout: &out,
 	}); err != nil {
-		fmt.Fprintf(Stdout, "WARN: %s\n", err.Error())
+		fmt.Fprintf(oskit.Stdout, "WARN: %s\n", err.Error())
 	}
 	return out.String()
 }
@@ -73,7 +74,7 @@ func gitTag(c *typgo.Context) string {
 		Args:   []string{"describe", "--tags", "--abbrev=0"},
 		Stdout: &out,
 	}); err != nil {
-		fmt.Fprintf(Stdout, "WARN: %s\n", err.Error())
+		fmt.Fprintf(oskit.Stdout, "WARN: %s\n", err.Error())
 	}
 	return strings.TrimSpace(out.String())
 }
@@ -93,7 +94,7 @@ func gitLogs(c *typgo.Context, from string) (logs []*Log) {
 		Stdout: &out,
 	})
 	if err != nil {
-		fmt.Fprintf(Stdout, "WARN: %s\n", err.Error())
+		fmt.Fprintf(oskit.Stdout, "WARN: %s\n", err.Error())
 	}
 
 	for _, s := range strings.Split(out.String(), "\n") {

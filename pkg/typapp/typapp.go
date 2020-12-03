@@ -1,9 +1,6 @@
 package typapp
 
 import (
-	"io"
-	"os"
-
 	"go.uber.org/dig"
 )
 
@@ -17,8 +14,6 @@ type (
 
 var (
 	glob []*Constructor
-	// Stdout standard output
-	Stdout io.Writer = os.Stdout
 )
 
 // Provide constructor

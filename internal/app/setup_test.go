@@ -10,23 +10,19 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/internal/app"
 	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/oskit"
 )
 
 func TestSetup(t *testing.T) {
 	var output strings.Builder
-	app.Stdout = &output
-	defer func() { app.Stdout = os.Stdout }()
 
-	unpatch := execkit.Patch([]*execkit.RunExpectation{})
-	defer unpatch(t)
+	defer oskit.PatchStdout(&output)()
+	defer execkit.Patch([]*execkit.RunExpectation{})(t)
+	defer oskit.MkdirAll("some-pkg")
 
-	os.Mkdir("some-pkg", 0777)
-	defer os.RemoveAll("some-pkg")
-
-	err := app.Setup(cliContext([]string{
+	require.NoError(t, app.Setup(cliContext([]string{
 		"-project-pkg=some-pkg",
-	}))
-	require.NoError(t, err)
+	})))
 
 	b, _ := ioutil.ReadFile("some-pkg/typicalw")
 	require.Equal(t, `#!/bin/bash
@@ -66,76 +62,54 @@ func TestSetup_GetParamError(t *testing.T) {
 
 func TestSetup_WithGomodFlag(t *testing.T) {
 	var output strings.Builder
-	app.Stdout = &output
-	defer func() { app.Stdout = os.Stdout }()
-
-	unpatch := execkit.Patch([]*execkit.RunExpectation{
+	defer oskit.PatchStdout(&output)()
+	defer execkit.Patch([]*execkit.RunExpectation{
 		{CommandLine: "go mod init somepkg"},
-	})
-	defer unpatch(t)
+	})(t)
+	defer oskit.MkdirAll("somepkg")()
 
-	os.Mkdir("somepkg", 0777)
-	defer os.RemoveAll("somepkg")
-
-	err := app.Setup(cliContext([]string{
+	require.NoError(t, app.Setup(cliContext([]string{
 		"-project-pkg=somepkg",
 		"-go-mod",
-	}))
-	require.NoError(t, err)
-
+	})))
 	require.Equal(t, "Initiate go.mod\nCreate 'somepkg/typicalw'\n", output.String())
 }
 
 func TestSetup_WithGomodFlag_Error(t *testing.T) {
 	var output strings.Builder
-	app.Stdout = &output
-	defer func() { app.Stdout = os.Stdout }()
-
-	unpatch := execkit.Patch([]*execkit.RunExpectation{
+	defer oskit.PatchStdout(&output)()
+	defer execkit.Patch([]*execkit.RunExpectation{
 		{
 			CommandLine: "go mod init somepkg",
 			ErrorBytes:  []byte("error-message"),
 			ReturnError: errors.New("some-error"),
 		},
-	})
-	defer unpatch(t)
-
-	os.Mkdir("somepkg", 0777)
-	defer os.RemoveAll("somepkg")
+	})(t)
+	defer oskit.MkdirAll("somepkg")()
 
 	err := app.Setup(cliContext([]string{
 		"-project-pkg=somepkg",
 		"-go-mod",
 	}))
 	require.EqualError(t, err, "some-error: error-message")
-
 	require.Equal(t, "Initiate go.mod\n", output.String())
 }
 
 func TestSetup_WithGomodFlag_MissingProjectPkg(t *testing.T) {
 	var output strings.Builder
-	app.Stdout = &output
-	defer func() { app.Stdout = os.Stdout }()
-
-	unpatch := execkit.Patch([]*execkit.RunExpectation{})
-	defer unpatch(t)
-
-	os.Mkdir("somepkg", 0777)
-	defer os.RemoveAll("somepkg")
+	defer oskit.PatchStdout(&output)()
+	defer execkit.Patch(nil)(t)
+	defer oskit.MkdirAll("somepkg")()
 
 	err := app.Setup(cliContext([]string{"-go-mod"}))
 	require.EqualError(t, err, "project-pkg is empty")
-
 	require.Equal(t, "Initiate go.mod\n", output.String())
 }
 
 func TestSetup_WithNewFlag(t *testing.T) {
 	var output strings.Builder
-	app.Stdout = &output
-	defer func() { app.Stdout = os.Stdout }()
-
-	unpatch := execkit.Patch([]*execkit.RunExpectation{})
-	defer unpatch(t)
+	defer oskit.PatchStdout(&output)()
+	defer execkit.Patch(nil)(t)
 
 	err := app.Setup(cliContext([]string{
 		"-project-pkg=somepkg1",

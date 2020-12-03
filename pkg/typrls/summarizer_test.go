@@ -2,9 +2,10 @@ package typrls_test
 
 import (
 	"flag"
-	"os"
 	"strings"
 	"testing"
+
+	"github.com/typical-go/typical-go/pkg/oskit"
 
 	"github.com/urfave/cli/v2"
 
@@ -54,11 +55,8 @@ func TestSummarizer(t *testing.T) {
 	for _, tt := range testCases {
 		t.Run(tt.TestName, func(t *testing.T) {
 			var out strings.Builder
-			typgo.Stdout = &out
-			defer func() { typgo.Stdout = os.Stdout }()
-
-			unpatch := execkit.Patch(tt.RunExpectations)
-			defer unpatch(t)
+			defer oskit.PatchStdout(&out)()
+			defer execkit.Patch(tt.RunExpectations)(t)
 			require.Equal(t, tt.Expected, tt.Summarize(tt.Context))
 			require.Equal(t, tt.ExpectedOut, out.String())
 		})

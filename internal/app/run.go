@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
@@ -45,7 +46,7 @@ func Run(c *cli.Context) error {
 			return err
 		}
 
-		fmt.Fprintf(Stdout, "Build %s to %s\n", p.TypicalBuild, bin)
+		fmt.Fprintf(oskit.Stdout, "Build %s to %s\n", p.TypicalBuild, bin)
 
 		buildVars := typgo.BuildVars{
 			"github.com/typical-go/typical-go/pkg/typgo.ProjectPkg": p.ProjectPkg,

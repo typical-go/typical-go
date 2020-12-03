@@ -3,9 +3,10 @@ package typmock_test
 import (
 	"errors"
 	"flag"
-	"os"
 	"strings"
 	"testing"
+
+	"github.com/typical-go/typical-go/pkg/oskit"
 
 	"bou.ke/monkey"
 	"github.com/stretchr/testify/require"
@@ -76,8 +77,7 @@ func TestAnnotate_InstallMockgenError(t *testing.T) {
 
 func TestAnnotate_MockgenError(t *testing.T) {
 	var out strings.Builder
-	typmock.Stdout = &out
-	defer func() { typmock.Stdout = os.Stdout }()
+	defer oskit.PatchStdout(&out)()
 
 	summary := &typast.Summary{
 		Annots: []*typast.Annot{
@@ -101,5 +101,5 @@ func TestAnnotate_MockgenError(t *testing.T) {
 		Context:  cli.NewContext(nil, &flag.FlagSet{}, nil),
 	}
 	require.NoError(t, typmock.Annotate(c, summary))
-	require.Equal(t, "Fail to mock '/parent/path.SomeInterface': some-error\n", out.String())
+	require.Equal(t, "\n$ go build -o /bin/mockgen github.com/golang/mock/mockgen\n\n$ rm -rf parent/path_mock\n\n$ /bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\nFail to mock '/parent/path.SomeInterface': some-error\n", out.String())
 }

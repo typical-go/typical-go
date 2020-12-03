@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/tmplkit"
 	"github.com/urfave/cli/v2"
 )
@@ -49,7 +50,7 @@ func Setup(c *cli.Context) error {
 
 // initGoMod initiate gomodob
 func initGoMod(c *cli.Context) error {
-	fmt.Fprintf(Stdout, "Initiate go.mod\n")
+	fmt.Fprintf(oskit.Stdout, "Initiate go.mod\n")
 	pkg := c.String(ProjectPkgParam)
 	if pkg == "" {
 		return errors.New("project-pkg is empty")
@@ -70,32 +71,32 @@ func initGoMod(c *cli.Context) error {
 
 func createWrapper(p *Param) error {
 	path := fmt.Sprintf("%s/typicalw", p.SetupTarget)
-	fmt.Fprintf(Stdout, "Create '%s'\n", path)
+	fmt.Fprintf(oskit.Stdout, "Create '%s'\n", path)
 	return tmplkit.WriteFile(path, typicalwTmpl, p)
 }
 
 func newProject(p *Param) {
 	mainPkg := p.SetupTarget + "/cmd/" + p.ProjectName
 	main := mainPkg + "/main.go"
-	fmt.Fprintf(Stdout, "Create '%s'\n", main)
+	fmt.Fprintf(oskit.Stdout, "Create '%s'\n", main)
 	os.MkdirAll(mainPkg, 0777)
 	tmplkit.WriteFile(main, mainTmpl, p)
 
 	appPkg := p.SetupTarget + "/internal/app"
 	appStart := appPkg + "/start.go"
-	fmt.Fprintf(Stdout, "Create '%s'\n", appStart)
+	fmt.Fprintf(oskit.Stdout, "Create '%s'\n", appStart)
 	os.MkdirAll(appPkg, 0777)
 	ioutil.WriteFile(appStart, []byte(appStartSrc), 0777)
 
 	generatedPkg := p.SetupTarget + "/internal/generated/typical"
 	generatedDoc := generatedPkg + "/doc.go"
-	fmt.Fprintf(Stdout, "Create '%s'\n", generatedDoc)
+	fmt.Fprintf(oskit.Stdout, "Create '%s'\n", generatedDoc)
 	os.MkdirAll(generatedPkg, 0777)
 	ioutil.WriteFile(generatedDoc, []byte(generatedDocSrc), 0777)
 
 	typicalBuildPkg := p.SetupTarget + "/tools/typical-build"
 	typicalBuild := typicalBuildPkg + "/typical-build.go"
-	fmt.Fprintf(Stdout, "Create '%s'\n", typicalBuild)
+	fmt.Fprintf(oskit.Stdout, "Create '%s'\n", typicalBuild)
 	os.MkdirAll(typicalBuildPkg, 0777)
 	tmplkit.WriteFile(typicalBuild, typicalBuildTmpl, p)
 

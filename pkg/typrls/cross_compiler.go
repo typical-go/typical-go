@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -35,7 +36,7 @@ func (o *CrossCompiler) Release(c *Context) error {
 		output := fmt.Sprintf("%s/%s_%s_%s_%s",
 			c.ReleaseFolder, c.BuildSys.ProjectName, c.TagName, goos, goarch)
 
-		fmt.Fprintf(Stdout, "\nGOOS=%s GOARC=%s", goos, goarch)
+		fmt.Fprintf(oskit.Stdout, "\nGOOS=%s GOARC=%s", goos, goarch)
 		os.Setenv("GOOS", goos)
 		os.Setenv("GOARC", goarch)
 

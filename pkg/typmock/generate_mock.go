@@ -2,10 +2,10 @@ package typmock
 
 import (
 	"fmt"
-	"io"
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/filekit"
+	"github.com/typical-go/typical-go/pkg/oskit"
 
 	"github.com/iancoleman/strcase"
 	"github.com/typical-go/typical-go/pkg/execkit"
@@ -17,8 +17,6 @@ import (
 var (
 	// MockTag is tag for mock
 	MockTag = "@mock"
-	// Stdout standard output
-	Stdout io.Writer = os.Stdout
 )
 
 type (
@@ -98,7 +96,7 @@ func Annotate(c *typgo.Context, summary *typast.Summary) error {
 				},
 				Stderr: os.Stderr,
 			}); err != nil {
-				fmt.Fprintf(Stdout, "Fail to mock '%s': %s\n", name, err.Error())
+				fmt.Fprintf(oskit.Stdout, "Fail to mock '%s': %s\n", name, err.Error())
 			}
 		}
 	}

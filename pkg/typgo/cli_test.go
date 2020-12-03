@@ -6,6 +6,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/typical-go/typical-go/pkg/oskit"
+
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
@@ -24,8 +26,7 @@ func TestCli_Before_Setenv(t *testing.T) {
 	defer os.Clearenv()
 
 	var out strings.Builder
-	typgo.Stdout = &out
-	defer func() { typgo.Stdout = os.Stdout }()
+	defer oskit.PatchStdout(&out)()
 
 	app := typgo.Cli(&typgo.BuildSys{})
 	require.NoError(t, app.Before(&cli.Context{}))

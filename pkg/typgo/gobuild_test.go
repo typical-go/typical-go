@@ -2,12 +2,12 @@ package typgo_test
 
 import (
 	"context"
-	"os"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
@@ -19,8 +19,7 @@ func TestGoBuild_Command(t *testing.T) {
 	defer unpatch(t)
 
 	var out strings.Builder
-	typgo.Stdout = &out
-	defer func() { typgo.Stdout = os.Stdout }()
+	defer oskit.PatchStdout(&out)()
 
 	cmpl := &typgo.GoBuild{}
 	s := &typgo.BuildSys{

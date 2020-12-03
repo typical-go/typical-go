@@ -1,15 +1,5 @@
 package app
 
-import (
-	"io"
-	"os"
-)
-
-var (
-	// Stdout standard output
-	Stdout io.Writer = os.Stdout
-)
-
 const typicalwTmpl = `#!/bin/bash
 
 set -e

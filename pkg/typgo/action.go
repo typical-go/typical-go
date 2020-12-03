@@ -3,17 +3,11 @@ package typgo
 import (
 	"context"
 	"fmt"
-	"io"
-	"os"
 
 	"github.com/fatih/color"
 	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/urfave/cli/v2"
-)
-
-var (
-	// Stdout standard output
-	Stdout io.Writer = os.Stdout
 )
 
 type (
@@ -58,8 +52,8 @@ func (a *actionImpl) Execute(c *Context) error {
 // Execute command
 func (c *Context) Execute(cmder execkit.Commander) error {
 	cmd := cmder.Command()
-	color.New(color.FgMagenta).Fprint(Stdout, "\n$ ")
-	fmt.Fprintln(Stdout, cmd)
+	color.New(color.FgMagenta).Fprint(oskit.Stdout, "\n$ ")
+	fmt.Fprintln(oskit.Stdout, cmd)
 	return execkit.Run(c.Ctx(), cmd)
 }
 

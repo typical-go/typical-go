@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/google/go-github/github"
+	"github.com/typical-go/typical-go/pkg/oskit"
 	"golang.org/x/oauth2"
 )
 
@@ -51,7 +52,7 @@ func (g *Github) Publish(c *Context) (err error) {
 	files, _ := ioutil.ReadDir(c.ReleaseFolder)
 	for _, fileInfo := range files {
 		path := c.ReleaseFolder + "/" + fileInfo.Name()
-		fmt.Fprintf(Stdout, "Upload '%s'\n", path)
+		fmt.Fprintf(oskit.Stdout, "Upload '%s'\n", path)
 		var file *os.File
 		if file, err = os.Open(path); err != nil {
 			return
@@ -60,7 +61,7 @@ func (g *Github) Publish(c *Context) (err error) {
 
 		opt := &github.UploadOptions{Name: filepath.Base(path)}
 		if _, _, err := g.uploadReleaseAsset(c, repo, *rls.ID, opt, file); err != nil {
-			fmt.Fprintf(Stdout, "WARN: %s\n", err.Error())
+			fmt.Fprintf(oskit.Stdout, "WARN: %s\n", err.Error())
 		}
 	}
 	return

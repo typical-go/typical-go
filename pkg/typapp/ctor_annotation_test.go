@@ -6,6 +6,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/typical-go/typical-go/pkg/oskit"
+
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typapp"
@@ -16,14 +18,10 @@ import (
 func TestCtorAnnotation_Annotate(t *testing.T) {
 	typgo.ProjectPkg = "github.com/user/project"
 
-	defer os.RemoveAll("internal")
-
-	unpatch := execkit.Patch([]*execkit.RunExpectation{})
-	defer unpatch(t)
-
 	var out strings.Builder
-	typapp.Stdout = &out
-	defer func() { typapp.Stdout = os.Stdout }()
+	defer oskit.PatchStdout(&out)()
+	defer os.RemoveAll("internal")
+	defer execkit.Patch([]*execkit.RunExpectation{})(t)
 
 	ctorAnnot := &typapp.CtorAnnotation{}
 	ctx := &typast.Context{
@@ -76,14 +74,10 @@ func init() {
 }
 
 func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
-	defer os.RemoveAll("folder2")
-
-	unpatch := execkit.Patch([]*execkit.RunExpectation{})
-	defer unpatch(t)
-
 	var out strings.Builder
-	typapp.Stdout = &out
-	defer func() { typapp.Stdout = os.Stdout }()
+	defer execkit.Patch([]*execkit.RunExpectation{})(t)
+	defer os.RemoveAll("folder2")
+	defer oskit.PatchStdout(&out)()
 
 	ctorAnnot := &typapp.CtorAnnotation{
 		TagName:  "@some-tag",
