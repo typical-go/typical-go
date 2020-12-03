@@ -17,6 +17,7 @@ import (
 )
 
 func TestReleaseTool(t *testing.T) {
+	defer os.Remove("release")
 	var debug strings.Builder
 	testcases := []struct {
 		TestName string
@@ -177,6 +178,7 @@ func TestReleaseTool_CustomReleaseFolder(t *testing.T) {
 }
 
 func TestReleaseTool_Execute_Context(t *testing.T) {
+	defer os.Remove("release")
 	testcases := []struct {
 		TestName string
 		*typrls.ReleaseTool
