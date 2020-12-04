@@ -28,8 +28,8 @@ func TestReleaseTool(t *testing.T) {
 	}{
 		{
 			ReleaseTool: typrls.ReleaseTool{
-				Tagger:     typrls.DefaultTagger,
-				Summarizer: typrls.DefaultSummarizer,
+				GenerateTagFn:     typrls.DefaultGenerateTag,
+				GenerateSummaryFn: typrls.DefaultGenerateSummary,
 				Releaser: typrls.NewReleaser(func(c *typrls.Context) error {
 					fmt.Fprintln(&debug, "1")
 					return nil
@@ -48,8 +48,8 @@ func TestReleaseTool(t *testing.T) {
 		{
 			TestName: "release error",
 			ReleaseTool: typrls.ReleaseTool{
-				Tagger:     typrls.DefaultTagger,
-				Summarizer: typrls.DefaultSummarizer,
+				GenerateTagFn:     typrls.DefaultGenerateTag,
+				GenerateSummaryFn: typrls.DefaultGenerateSummary,
 				Releaser: typrls.NewReleaser(func(c *typrls.Context) error {
 					return errors.New("release-error")
 				}),
@@ -66,8 +66,8 @@ func TestReleaseTool(t *testing.T) {
 		{
 			TestName: "publish error",
 			ReleaseTool: typrls.ReleaseTool{
-				Tagger:     typrls.DefaultTagger,
-				Summarizer: typrls.DefaultSummarizer,
+				GenerateTagFn:     typrls.DefaultGenerateTag,
+				GenerateSummaryFn: typrls.DefaultGenerateSummary,
 				Releaser: typrls.NewReleaser(func(c *typrls.Context) error {
 					return nil
 				}),
@@ -84,8 +84,8 @@ func TestReleaseTool(t *testing.T) {
 		{
 			TestName: "empty publisher",
 			ReleaseTool: typrls.ReleaseTool{
-				Tagger:     typrls.DefaultTagger,
-				Summarizer: typrls.DefaultSummarizer,
+				GenerateTagFn:     typrls.DefaultGenerateTag,
+				GenerateSummaryFn: typrls.DefaultGenerateSummary,
 				Releaser: typrls.NewReleaser(func(c *typrls.Context) error {
 					return nil
 				}),
@@ -98,8 +98,8 @@ func TestReleaseTool(t *testing.T) {
 		{
 			TestName: "skip publish",
 			ReleaseTool: typrls.ReleaseTool{
-				Tagger:     typrls.DefaultTagger,
-				Summarizer: typrls.DefaultSummarizer,
+				GenerateTagFn:     typrls.DefaultGenerateTag,
+				GenerateSummaryFn: typrls.DefaultGenerateSummary,
 				Releaser: typrls.NewReleaser(func(c *typrls.Context) error {
 					return nil
 				}),
@@ -115,8 +115,8 @@ func TestReleaseTool(t *testing.T) {
 		{
 			TestName: "empty releaser",
 			ReleaseTool: typrls.ReleaseTool{
-				Tagger:     typrls.DefaultTagger,
-				Summarizer: typrls.DefaultSummarizer,
+				GenerateTagFn:     typrls.DefaultGenerateTag,
+				GenerateSummaryFn: typrls.DefaultGenerateSummary,
 				Publisher: typrls.NewPublisher(func(c *typrls.Context) error {
 					return errors.New("publish-error")
 				}),
@@ -157,10 +157,8 @@ func TestReleaseTool_CustomReleaseFolder(t *testing.T) {
 	defer execkit.Patch(nil)(t)
 
 	rel := &typrls.ReleaseTool{
-		Tagger: typrls.DefaultTagger,
-		Summarizer: typrls.NewSummarizer(func(*typgo.Context) string {
-			return "some-summary"
-		}),
+		GenerateTagFn:     typrls.DefaultGenerateTag,
+		GenerateSummaryFn: func(*typgo.Context) string { return "some-summary" },
 		Releaser: typrls.NewReleaser(func(r *typrls.Context) error {
 			rlsCtx = r
 			return nil
@@ -216,10 +214,8 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 		{
 			TestName: "with alpha tag",
 			ReleaseTool: &typrls.ReleaseTool{
-				Tagger: typrls.DefaultTagger,
-				Summarizer: typrls.NewSummarizer(func(*typgo.Context) string {
-					return "some-summary"
-				}),
+				GenerateTagFn:     typrls.DefaultGenerateTag,
+				GenerateSummaryFn: func(*typgo.Context) string { return "some-summary" },
 			},
 			Ctx: &typgo.Context{
 				Context: createContext("-alpha"),
@@ -240,10 +236,8 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 		{
 			TestName: "success",
 			ReleaseTool: &typrls.ReleaseTool{
-				Tagger: typrls.DefaultTagger,
-				Summarizer: typrls.NewSummarizer(func(*typgo.Context) string {
-					return "some-summary"
-				}),
+				GenerateTagFn:     typrls.DefaultGenerateTag,
+				GenerateSummaryFn: func(*typgo.Context) string { return "some-summary" },
 			},
 			Ctx: &typgo.Context{
 				Context: createContext(),
@@ -266,10 +260,8 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 		{
 			TestName: "override release-tag",
 			ReleaseTool: &typrls.ReleaseTool{
-				Tagger: typrls.DefaultTagger,
-				Summarizer: typrls.NewSummarizer(func(*typgo.Context) string {
-					return "some-summary"
-				}),
+				GenerateTagFn:     typrls.DefaultGenerateTag,
+				GenerateSummaryFn: func(*typgo.Context) string { return "some-summary" },
 			},
 			Ctx: &typgo.Context{
 				Context: createContext("-tag-name=some-tag"),
@@ -334,4 +326,96 @@ func TestReleaseCmd_Before(t *testing.T) {
 	}
 	command := cmd.Task(&typgo.BuildSys{})
 	require.EqualError(t, command.Before(&cli.Context{}), "some-error")
+}
+
+func TestDefaultTagFn(t *testing.T) {
+	testcases := []struct {
+		TestName        string
+		Context         *typgo.Context
+		Alpha           bool
+		RunExpectations []*execkit.RunExpectation
+		Expected        string
+	}{
+		{
+			Context: &typgo.Context{
+				BuildSys: &typgo.BuildSys{
+					Descriptor: &typgo.Descriptor{ProjectVersion: "0.0.1"},
+				},
+			},
+			Expected: "v0.0.1",
+		},
+		{
+			TestName: "with alpha",
+			Context: &typgo.Context{
+				BuildSys: &typgo.BuildSys{
+					Descriptor: &typgo.Descriptor{ProjectVersion: "0.0.1"},
+				},
+			},
+			Alpha:    true,
+			Expected: "v0.0.1_alpha",
+		},
+	}
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			var out strings.Builder
+			defer oskit.PatchStdout(&out)()
+			defer execkit.Patch(tt.RunExpectations)(t)
+
+			require.Equal(t, tt.Expected, typrls.DefaultGenerateTag(tt.Context, tt.Alpha))
+		})
+	}
+}
+
+func TestSummarizer(t *testing.T) {
+	testCases := []struct {
+		TestName        string
+		Context         *typgo.Context
+		RunExpectations []*execkit.RunExpectation
+		Expected        string
+		ExpectedOut     string
+	}{
+		{
+			TestName: "change summary",
+			Context: &typgo.Context{
+				Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
+			},
+			RunExpectations: []*execkit.RunExpectation{
+				{CommandLine: "git describe --tags --abbrev=0", OutputBytes: []byte("v0.0.1")},
+				{CommandLine: "git --no-pager log v0.0.1..HEAD --oneline", OutputBytes: []byte("1234567 some-message-1\n1234568 some-message-3")},
+			},
+			Expected:    "1234567 some-message-1\n1234568 some-message-3",
+			ExpectedOut: "\n$ git describe --tags --abbrev=0\n\n$ git --no-pager log v0.0.1..HEAD --oneline\n",
+		},
+	}
+	for _, tt := range testCases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			var out strings.Builder
+			defer oskit.PatchStdout(&out)()
+			defer execkit.Patch(tt.RunExpectations)(t)
+			require.Equal(t, tt.Expected, typrls.DefaultGenerateSummary(tt.Context))
+			require.Equal(t, tt.ExpectedOut, out.String())
+		})
+	}
+}
+
+func TestChangeSummarize_HasPrefix(t *testing.T) {
+	prefixes := []string{"merge", "revision"}
+
+	testcases := []struct {
+		testName string
+		msg      string
+		expected bool
+	}{
+		{msg: "Merge something", expected: true},
+		{msg: "merge something", expected: true},
+		{msg: "MERGE something", expected: true},
+		{msg: "revision: something", expected: true},
+		{msg: "asdf", expected: false},
+	}
+
+	for _, tt := range testcases {
+		t.Run(tt.testName, func(t *testing.T) {
+			require.Equal(t, tt.expected, typrls.HasPrefix(tt.msg, prefixes))
+		})
+	}
 }

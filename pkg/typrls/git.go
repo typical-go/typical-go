@@ -2,6 +2,7 @@ package typrls
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/execkit"
@@ -48,26 +49,13 @@ func CreateLog(raw string) *Log {
 	}
 }
 
-func latestGitID(c *typgo.Context) string {
-	var out strings.Builder
-	if err := c.Execute(&execkit.Command{
-		Name:   "git",
-		Args:   []string{"rev-parse", "HEAD"},
-		Stdout: &out,
-	}); err != nil {
-		fmt.Fprintf(oskit.Stdout, "WARN: %s\n", err.Error())
-	}
-	return out.String()
+// GitFetch fetch latest update
+func GitFetch(c *typgo.Context) error {
+	return c.Execute(&execkit.Command{Name: "git", Args: []string{"fetch"}, Stderr: os.Stderr})
 }
 
-func gitFetch(c *typgo.Context) error {
-	return c.Execute(&execkit.Command{
-		Name: "git",
-		Args: []string{"fetch"},
-	})
-}
-
-func gitTag(c *typgo.Context) string {
+// GitCurrentTag return git current tag
+func GitCurrentTag(c *typgo.Context) string {
 	var out strings.Builder
 	if err := c.Execute(&execkit.Command{
 		Name:   "git",
@@ -79,7 +67,8 @@ func gitTag(c *typgo.Context) string {
 	return strings.TrimSpace(out.String())
 }
 
-func gitLogs(c *typgo.Context, from string) (logs []*Log) {
+// GitLogs return git logs
+func GitLogs(c *typgo.Context, from string) (logs []*Log) {
 	var args []string
 	args = append(args, "--no-pager", "log")
 	if from != "" {
@@ -88,11 +77,7 @@ func gitLogs(c *typgo.Context, from string) (logs []*Log) {
 	args = append(args, "--oneline")
 
 	var out strings.Builder
-	err := c.Execute(&execkit.Command{
-		Name:   "git",
-		Args:   args,
-		Stdout: &out,
-	})
+	err := c.Execute(&execkit.Command{Name: "git", Args: args, Stdout: &out})
 	if err != nil {
 		fmt.Fprintf(oskit.Stdout, "WARN: %s\n", err.Error())
 	}

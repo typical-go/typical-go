@@ -1,34 +1,39 @@
 package typrls
 
 import (
+	"fmt"
 	"os"
+	"strings"
 
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
 
+type (
+	// ReleaseTool release command
+	ReleaseTool struct {
+		Before            typgo.Action
+		GenerateTagFn     func(c *typgo.Context, alpha bool) string
+		GenerateSummaryFn func(c *typgo.Context) string
+		Releaser          Releaser
+		Publisher         Publisher
+	}
+)
+
 const (
-	// AlphaFlag ...
+	// AlphaFlag alpha flag
 	AlphaFlag = "alpha"
-	// TagNameFlag ...
+	// TagNameFlag tag name flag
 	TagNameFlag = "tag-name"
-	// SkipPublishFlag ...
+	// SkipPublishFlag skip publish flag
 	SkipPublishFlag = "skip-publish"
-	// ReleaseFolderFlag ...
+	// ReleaseFolderFlag release folder flag
 	ReleaseFolderFlag    = "release-folder"
 	defaultReleaseFolder = "release"
 )
 
-type (
-	// ReleaseTool release command
-	ReleaseTool struct {
-		Before     typgo.Action
-		Tagger     Tagger
-		Summarizer Summarizer
-		Releaser   Releaser
-		Publisher  Publisher
-	}
-)
+// DefaultPrefixes ...
+var DefaultPrefixes = []string{"merge", "bump", "revision", "generate", "wip"}
 
 var _ typgo.Tasker = (*ReleaseTool)(nil)
 
@@ -58,13 +63,13 @@ var _ typgo.Action = (*ReleaseTool)(nil)
 func (r *ReleaseTool) Execute(c *typgo.Context) error {
 	r.setDefault()
 
-	gitFetch(c)
-	defer gitFetch(c)
+	GitFetch(c)
+	defer GitFetch(c)
 
 	alpha := c.Bool(AlphaFlag)
 	tagName := c.String(TagNameFlag)
 	if tagName == "" {
-		tagName = r.Tagger.CreateTag(c, alpha)
+		tagName = r.GenerateTagFn(c, alpha)
 	}
 
 	context := &Context{
@@ -72,7 +77,7 @@ func (r *ReleaseTool) Execute(c *typgo.Context) error {
 		Alpha:         alpha,
 		TagName:       tagName,
 		ReleaseFolder: c.String(ReleaseFolderFlag),
-		Summary:       r.Summarizer.Summarize(c),
+		Summary:       r.GenerateSummaryFn(c),
 	}
 
 	os.RemoveAll(context.ReleaseFolder)
@@ -93,10 +98,45 @@ func (r *ReleaseTool) Execute(c *typgo.Context) error {
 }
 
 func (r *ReleaseTool) setDefault() {
-	if r.Summarizer == nil {
-		r.Summarizer = DefaultSummarizer
+	if r.GenerateSummaryFn == nil {
+		r.GenerateSummaryFn = DefaultGenerateSummary
 	}
-	if r.Tagger == nil {
-		r.Tagger = DefaultTagger
+	if r.GenerateTagFn == nil {
+		r.GenerateTagFn = DefaultGenerateTag
 	}
+}
+
+// DefaultGenerateTag create release tag
+func DefaultGenerateTag(c *typgo.Context, alpha bool) string {
+	tagName := "v0.0.1"
+	if c.BuildSys.ProjectVersion != "" {
+		tagName = fmt.Sprintf("v%s", c.BuildSys.ProjectVersion)
+	}
+	if alpha {
+		tagName = tagName + "_alpha"
+	}
+	return tagName
+}
+
+// DefaultGenerateSummary default generate summary
+func DefaultGenerateSummary(c *typgo.Context) string {
+	var changes []string
+	currentTag := GitCurrentTag(c)
+	for _, log := range GitLogs(c, currentTag) {
+		if !HasPrefix(log.Message, DefaultPrefixes) {
+			changes = append(changes, fmt.Sprintf("%s %s", log.ShortCode, log.Message))
+		}
+	}
+	return strings.Join(changes, "\n")
+}
+
+// HasPrefix return true if eligible to excluded by prefix
+func HasPrefix(msg string, prefixes []string) bool {
+	msg = strings.ToLower(msg)
+	for _, prefix := range prefixes {
+		if strings.HasPrefix(msg, strings.ToLower(prefix)) {
+			return true
+		}
+	}
+	return false
 }
