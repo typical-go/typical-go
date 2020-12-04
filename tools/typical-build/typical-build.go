@@ -12,7 +12,7 @@ var mainPkg = "."
 
 var descriptor = typgo.Descriptor{
 	ProjectName:    "typical-go",
-	ProjectVersion: "0.10.16",
+	ProjectVersion: "0.10.17",
 
 	Tasks: []typgo.Tasker{
 		// compile
