@@ -42,16 +42,44 @@ func TestMatchMulti(t *testing.T) {
 func TestFindDir(t *testing.T) {
 	defer monkey.Patch(filepath.Walk,
 		func(root string, walkFn filepath.WalkFunc) error {
-			walkFn("pkg1", &filekit.FileInfo{IsDirField: true}, nil)
-			walkFn("pkg2", &filekit.FileInfo{IsDirField: true}, nil)
-			walkFn("pkg/service_mock", &filekit.FileInfo{IsDirField: true}, nil)
-			walkFn("abc1", &filekit.FileInfo{IsDirField: true}, nil)
-			walkFn("abc2", &filekit.FileInfo{IsDirField: true}, nil)
+			dirs := []string{
+				"internal/app/infra",
+				"internal/app/domain",
+				"internal/app/domain/mylibrary",
+				"internal/app/domain/mylibrary/controller",
+				"internal/app/domain/mylibrary/service",
+				"internal/app/domain/mylibrary/repo",
+				"internal/app/domain/mybook/controller",
+				"internal/app/domain/mybook/service",
+				"internal/app/domain/mybook/repo",
+				"internal/app/generated",
+				"internal/app/generated/constructor",
+				"internal/app/generated/config",
+			}
+
+			for _, dir := range dirs {
+				walkFn(dir, &filekit.FileInfo{IsDirField: true}, nil)
+			}
+
 			return nil
 		},
 	).Unpatch()
 
-	dirs, err := filekit.FindDir([]string{"pkg*"}, []string{"**/*_mock"})
+	dirs, err := filekit.FindDir(
+		[]string{"internal/**/*"},
+		[]string{"internal/**/generated/**"},
+	)
 	require.NoError(t, err)
-	require.Equal(t, []string{"./pkg1", "./pkg2"}, dirs)
+	require.Equal(t, []string{
+		"./internal/app/infra",
+		"./internal/app/domain",
+		"./internal/app/domain/mylibrary",
+		"./internal/app/domain/mylibrary/controller",
+		"./internal/app/domain/mylibrary/service",
+		"./internal/app/domain/mylibrary/repo",
+		"./internal/app/domain/mybook/controller",
+		"./internal/app/domain/mybook/service",
+		"./internal/app/domain/mybook/repo",
+		"./internal/app/generated",
+	}, dirs)
 }

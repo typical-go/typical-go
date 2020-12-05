@@ -3,12 +3,14 @@ package filekit
 import (
 	"os"
 	"path/filepath"
+
+	"github.com/bmatcuk/doublestar/v2"
 )
 
 // MatchMulti similar with filepath.Match except accept multiple pattern
 func MatchMulti(patterns []string, name string) bool {
 	for _, pattern := range patterns {
-		if matched, _ := filepath.Match(pattern, name); matched {
+		if matched, _ := doublestar.Match(pattern, name); matched {
 			return true
 		}
 	}

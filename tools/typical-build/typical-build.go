@@ -1,14 +1,9 @@
 package main
 
 import (
-	"os"
-
-	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
-
-var mainPkg = "."
 
 var descriptor = typgo.Descriptor{
 	ProjectName:    "typical-go",
@@ -16,11 +11,11 @@ var descriptor = typgo.Descriptor{
 
 	Tasks: []typgo.Tasker{
 		// compile
-		&typgo.GoBuild{MainPackage: mainPkg},
+		&typgo.GoBuild{MainPackage: "."},
 		// test
 		&typgo.GoTest{
 			Args:     []string{"-timeout=30s"},
-			Includes: []string{"internal/*", "pkg/*"},
+			Includes: []string{"internal/**", "pkg/**"},
 		},
 		// run
 		&typgo.RunBinary{
@@ -31,22 +26,19 @@ var descriptor = typgo.Descriptor{
 			Name:    "examples",
 			Aliases: []string{"e"},
 			Usage:   "Test all example",
-			Action: typgo.NewAction(func(c *typgo.Context) error {
-				return c.Execute(&execkit.Command{
-					Name:   "go",
-					Args:   []string{"test", "./examples/..."},
-					Stdout: os.Stdout,
-					Stderr: os.Stderr,
-				})
-			}),
+			Action: &typgo.GoTest{
+				Args:     []string{"-timeout=30s"},
+				Includes: []string{"examples/**/tool/**"},
+				Excludes: []string{
+					"examples/**/generated",
+					"examples/**/generated/**",
+					"examples/**/*_mock",
+				},
+			},
 		},
 		// release
 		&typrls.ReleaseTool{
-			Before: typgo.BuildCmdRuns{"test", "examples"},
-			// Releaser: &typrls.CrossCompiler{
-			// 	Targets:     []typrls.Target{"darwin/amd64", "linux/amd64"},
-			// 	MainPackage: mainPkg,
-			// },
+			Before:    typgo.BuildCmdRuns{"test", "examples"},
 			Publisher: &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
 		},
 	},
