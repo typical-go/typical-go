@@ -19,7 +19,7 @@ var descriptor = typgo.Descriptor{
 		},
 		// run
 		&typgo.RunBinary{
-			Before: typgo.BuildCmdRuns{"build"},
+			Before: typgo.TaskNames{"build"},
 		},
 		// examples
 		&typgo.Task{
@@ -28,7 +28,7 @@ var descriptor = typgo.Descriptor{
 			Usage:   "Test all example",
 			Action: &typgo.GoTest{
 				Args:     []string{"-timeout=30s"},
-				Includes: []string{"examples/**/tool/**"},
+				Includes: []string{"examples/**/internal/**"},
 				Excludes: []string{
 					"examples/**/generated",
 					"examples/**/generated/**",
@@ -38,7 +38,7 @@ var descriptor = typgo.Descriptor{
 		},
 		// release
 		&typrls.ReleaseTool{
-			Before:    typgo.BuildCmdRuns{"test", "examples"},
+			Before:    typgo.TaskNames{"test", "examples"},
 			Publisher: &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
 		},
 	},

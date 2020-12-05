@@ -21,7 +21,7 @@ func TestBuildCmdRuns(t *testing.T) {
 		},
 	}
 
-	sr := typgo.BuildCmdRuns{"run-1", "run-2", "run-3"}
+	sr := typgo.TaskNames{"run-1", "run-2", "run-3"}
 	require.NoError(t, sr.Execute(c))
 	require.Equal(t, []string{"1", "2", "3"}, seq)
 }
@@ -38,7 +38,7 @@ func TestBuildCmdRuns_Error(t *testing.T) {
 		},
 	}
 
-	sr := typgo.BuildCmdRuns{"run-1", "run-2", "run-3"}
+	sr := typgo.TaskNames{"run-1", "run-2", "run-3"}
 	require.EqualError(t, sr.Execute(c), "some-error")
 	require.Equal(t, []string{"1"}, seq)
 }

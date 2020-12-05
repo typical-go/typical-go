@@ -8,14 +8,14 @@ import (
 )
 
 type (
-	// BuildCmdRuns run command in current BuildSys
-	BuildCmdRuns []string
+	// TaskNames run command in current BuildSys
+	TaskNames []string
 )
 
-var _ Action = (BuildCmdRuns)(nil)
+var _ Action = (TaskNames)(nil)
 
 // Execute BuildCmdRuns
-func (r BuildCmdRuns) Execute(c *Context) error {
+func (r TaskNames) Execute(c *Context) error {
 	for _, name := range r {
 		if err := RunCommand(c, name); err != nil {
 			return err
