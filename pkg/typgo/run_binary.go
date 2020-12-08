@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/urfave/cli/v2"
 )
 
@@ -37,7 +36,7 @@ func (r *RunBinary) Task(sys *BuildSys) *cli.Command {
 
 // Execute standard run
 func (r *RunBinary) Execute(c *Context) error {
-	return c.Execute(&execkit.Command{
+	return c.Execute(&Bash{
 		Name:   r.getBinary(c),
 		Args:   c.Args().Slice(),
 		Stdout: os.Stdout,

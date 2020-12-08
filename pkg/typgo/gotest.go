@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/filekit"
 	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/urfave/cli/v2"
@@ -60,7 +59,7 @@ func (t *GoTest) Execute(c *Context) error {
 	args = append(args, t.Args...)
 	args = append(args, packages...)
 
-	return c.Execute(&execkit.Command{
+	return c.Execute(&Bash{
 		Name:   "go",
 		Args:   args,
 		Stdout: os.Stdout,

@@ -7,7 +7,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/oskit"
 
 	"github.com/iancoleman/strcase"
-	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
@@ -73,14 +72,14 @@ func Annotate(c *typgo.Context, summary *typast.Summary) error {
 	for key, targets := range targetMap {
 		mockPkg := fmt.Sprintf("%s_mock", key)
 
-		c.Execute(&execkit.Command{Name: "rm", Args: []string{"-rf", mockPkg}})
+		c.Execute(&typgo.Bash{Name: "rm", Args: []string{"-rf", mockPkg}})
 
 		for _, t := range targets {
 			srcPkg := fmt.Sprintf("%s/%s", typgo.ProjectPkg, t.Dir)
 			dest := fmt.Sprintf("%s%s/%s.go", t.Parent, t.MockPkg, strcase.ToSnake(t.Source))
 			name := fmt.Sprintf("%s.%s", srcPkg, t.Source)
 
-			if err := c.Execute(&execkit.Command{
+			if err := c.Execute(&typgo.Bash{
 				Name: mockgen,
 				Args: []string{
 					"-destination", dest,

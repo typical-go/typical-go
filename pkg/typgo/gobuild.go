@@ -6,7 +6,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/urfave/cli/v2"
 )
 
@@ -25,7 +24,7 @@ type (
 
 var _ Tasker = (*GoBuild)(nil)
 var _ Action = (*GoBuild)(nil)
-var _ execkit.Commander = (*GoBuild)(nil)
+var _ Basher = (*GoBuild)(nil)
 
 // Task for gobuild
 func (p *GoBuild) Task(b *BuildSys) *cli.Command {
@@ -51,11 +50,11 @@ func (p *GoBuild) Execute(c *Context) error {
 			"github.com/typical-go/typical-go/pkg/typgo.ProjectVersion": c.BuildSys.ProjectVersion,
 		}
 	}
-	return c.Execute(p.Command())
+	return c.Execute(p.Bash())
 }
 
-// Command bash command
-func (p *GoBuild) Command() *execkit.Command {
+// Bash for go-build
+func (p *GoBuild) Bash() *Bash {
 	args := []string{"build"}
 	if p.Ldflags != nil {
 		args = append(args, "-ldflags", p.Ldflags.String())
@@ -63,7 +62,7 @@ func (p *GoBuild) Command() *execkit.Command {
 	if p.Output != "" {
 		args = append(args, "-o", p.Output, p.MainPackage)
 	}
-	return &execkit.Command{
+	return &Bash{
 		Name:   "go",
 		Args:   args,
 		Stdout: os.Stdout,

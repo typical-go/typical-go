@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typrls"
@@ -134,7 +133,7 @@ func TestReleaseTool(t *testing.T) {
 			defer oskit.PatchStdout(&out)()
 
 			defer debug.Reset()
-			unpatch := execkit.Patch([]*execkit.RunExpectation{})
+			unpatch := typgo.PatchBash([]*typgo.RunExpectation{})
 			defer unpatch(t)
 
 			err := tt.Execute(tt.Context)
@@ -154,7 +153,7 @@ func TestReleaseTool_CustomReleaseFolder(t *testing.T) {
 	var rlsCtx *typrls.Context
 
 	defer oskit.PatchStdout(&out)()
-	defer execkit.Patch(nil)(t)
+	defer typgo.PatchBash(nil)(t)
 
 	rel := &typrls.ReleaseTool{
 		GenerateTagFn:     typrls.DefaultGenerateTag,
@@ -181,7 +180,7 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 		TestName string
 		*typrls.ReleaseTool
 		Ctx             *typgo.Context
-		RunExpectations []*execkit.RunExpectation
+		RunExpectations []*typgo.RunExpectation
 		Expected        *typrls.Context
 		ExpectedErr     string
 	}{
@@ -193,7 +192,7 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 					Descriptor: &typgo.Descriptor{},
 				},
 			},
-			RunExpectations: []*execkit.RunExpectation{
+			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git fetch"},
 				{
 					CommandLine: "git describe --tags --abbrev=0",
@@ -223,7 +222,7 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 					Descriptor: &typgo.Descriptor{},
 				},
 			},
-			RunExpectations: []*execkit.RunExpectation{
+			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git fetch"},
 			},
 			Expected: &typrls.Context{
@@ -247,7 +246,7 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 					},
 				},
 			},
-			RunExpectations: []*execkit.RunExpectation{
+			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git fetch"},
 			},
 			Expected: &typrls.Context{
@@ -271,7 +270,7 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 					},
 				},
 			},
-			RunExpectations: []*execkit.RunExpectation{
+			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git fetch"},
 			},
 			Expected: &typrls.Context{
@@ -288,7 +287,7 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 			var rlsCtx *typrls.Context
 
 			defer oskit.PatchStdout(&out)()
-			defer execkit.Patch(tt.RunExpectations)(t)
+			defer typgo.PatchBash(tt.RunExpectations)(t)
 
 			tt.Releaser = typrls.NewReleaser(func(r *typrls.Context) error {
 				rlsCtx = r
@@ -333,7 +332,7 @@ func TestDefaultTagFn(t *testing.T) {
 		TestName        string
 		Context         *typgo.Context
 		Alpha           bool
-		RunExpectations []*execkit.RunExpectation
+		RunExpectations []*typgo.RunExpectation
 		Expected        string
 	}{
 		{
@@ -359,7 +358,7 @@ func TestDefaultTagFn(t *testing.T) {
 		t.Run(tt.TestName, func(t *testing.T) {
 			var out strings.Builder
 			defer oskit.PatchStdout(&out)()
-			defer execkit.Patch(tt.RunExpectations)(t)
+			defer typgo.PatchBash(tt.RunExpectations)(t)
 
 			require.Equal(t, tt.Expected, typrls.DefaultGenerateTag(tt.Context, tt.Alpha))
 		})
@@ -370,7 +369,7 @@ func TestSummarizer(t *testing.T) {
 	testCases := []struct {
 		TestName        string
 		Context         *typgo.Context
-		RunExpectations []*execkit.RunExpectation
+		RunExpectations []*typgo.RunExpectation
 		Expected        string
 		ExpectedOut     string
 	}{
@@ -379,7 +378,7 @@ func TestSummarizer(t *testing.T) {
 			Context: &typgo.Context{
 				Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
 			},
-			RunExpectations: []*execkit.RunExpectation{
+			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git describe --tags --abbrev=0", OutputBytes: []byte("v0.0.1")},
 				{CommandLine: "git --no-pager log v0.0.1..HEAD --oneline", OutputBytes: []byte("1234567 some-message-1\n1234568 some-message-3")},
 			},
@@ -391,7 +390,7 @@ func TestSummarizer(t *testing.T) {
 		t.Run(tt.TestName, func(t *testing.T) {
 			var out strings.Builder
 			defer oskit.PatchStdout(&out)()
-			defer execkit.Patch(tt.RunExpectations)(t)
+			defer typgo.PatchBash(tt.RunExpectations)(t)
 			require.Equal(t, tt.Expected, typrls.DefaultGenerateSummary(tt.Context))
 			require.Equal(t, tt.ExpectedOut, out.String())
 		})

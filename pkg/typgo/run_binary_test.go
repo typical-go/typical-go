@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
@@ -34,6 +33,10 @@ func TestRunCmd_Before(t *testing.T) {
 }
 
 func TestRunBinary_Execute(t *testing.T) {
+	defer typgo.PatchBash([]*typgo.RunExpectation{
+		{CommandLine: "bin/some-name"},
+	})(t)
+
 	stdRun := &typgo.RunBinary{}
 	c := &typgo.Context{
 		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
@@ -42,15 +45,14 @@ func TestRunBinary_Execute(t *testing.T) {
 		},
 	}
 
-	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: "bin/some-name"},
-	})
-	defer unpatch(t)
-
 	require.NoError(t, stdRun.Execute(c))
 }
 
 func TestRunBinary_Execute_Predefined(t *testing.T) {
+	defer typgo.PatchBash([]*typgo.RunExpectation{
+		{CommandLine: "some-binary"},
+	})(t)
+
 	stdRun := &typgo.RunBinary{
 		Binary: "some-binary",
 	}
@@ -60,11 +62,6 @@ func TestRunBinary_Execute_Predefined(t *testing.T) {
 			Descriptor: &typgo.Descriptor{ProjectName: "some-name"},
 		},
 	}
-
-	unpatch := execkit.Patch([]*execkit.RunExpectation{
-		{CommandLine: "some-binary"},
-	})
-	defer unpatch(t)
 
 	require.NoError(t, stdRun.Execute(c))
 }

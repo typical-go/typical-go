@@ -10,7 +10,6 @@ import (
 
 	"bou.ke/monkey"
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
@@ -22,7 +21,7 @@ func TestGoTest_NoPackages(t *testing.T) {
 		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
 	}
 
-	defer execkit.Patch([]*execkit.RunExpectation{})(t)
+	defer typgo.PatchBash([]*typgo.RunExpectation{})(t)
 
 	require.NoError(t, testProj.Execute(c))
 }
@@ -36,7 +35,7 @@ func TestGoTest(t *testing.T) {
 			return nil
 		},
 	).Unpatch()
-	defer execkit.Patch([]*execkit.RunExpectation{
+	defer typgo.PatchBash([]*typgo.RunExpectation{
 		{CommandLine: "go test -cover -timeout=25s ./pkg1 ./pkg2"},
 	})(t)
 
@@ -62,7 +61,7 @@ func TestGoTest_WithCoverProfile(t *testing.T) {
 			return nil
 		},
 	).Unpatch()
-	defer execkit.Patch([]*execkit.RunExpectation{
+	defer typgo.PatchBash([]*typgo.RunExpectation{
 		{CommandLine: "go test -coverprofile=cover.out -timeout=25s ./pkg1 ./pkg2"},
 	})(t)
 

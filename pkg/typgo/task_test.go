@@ -9,7 +9,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func TestCommand(t *testing.T) {
+func TestTask(t *testing.T) {
 
 	task := &typgo.Task{
 		Name:            "some-name",

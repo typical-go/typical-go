@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/fatih/color"
-	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/urfave/cli/v2"
 )
@@ -50,11 +49,11 @@ func (a *actionImpl) Execute(c *Context) error {
 //
 
 // Execute command
-func (c *Context) Execute(cmder execkit.Commander) error {
-	cmd := cmder.Command()
+func (c *Context) Execute(basher Basher) error {
+	bash := basher.Bash()
 	color.New(color.FgMagenta).Fprint(oskit.Stdout, "\n$ ")
-	fmt.Fprintln(oskit.Stdout, cmd)
-	return execkit.Run(c.Ctx(), cmd)
+	fmt.Fprintln(oskit.Stdout, bash)
+	return RunBash(c.Ctx(), bash)
 }
 
 // Ctx return golang context

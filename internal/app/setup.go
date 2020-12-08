@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/tmplkit"
 	"github.com/urfave/cli/v2"
@@ -58,7 +58,7 @@ func initGoMod(c *cli.Context) error {
 	dir := filepath.Base(pkg)
 	os.Mkdir(dir, 0777)
 	var stderr strings.Builder
-	if err := execkit.Run(c.Context, &execkit.Command{
+	if err := typgo.RunBash(c.Context, &typgo.Bash{
 		Name:   "go",
 		Args:   []string{"mod", "init", pkg},
 		Stderr: &stderr,

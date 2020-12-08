@@ -9,13 +9,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/internal/app"
-	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 func TestRun(t *testing.T) {
 	var out strings.Builder
 	defer oskit.PatchStdout(&out)()
-	defer execkit.Patch([]*execkit.RunExpectation{
+	defer typgo.PatchBash([]*typgo.RunExpectation{
 		{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectPkg=some-pkg -X github.com/typical-go/typical-go/pkg/typgo.TypicalTmp=.typical-tmp\" -o .typical-tmp/bin/typical-build ./tools/typical-build"},
 		{CommandLine: ".typical-tmp/bin/typical-build"},
 	})(t)
@@ -28,7 +28,7 @@ func TestRun(t *testing.T) {
 }
 
 func TestRun_GetParamError(t *testing.T) {
-	defer execkit.Patch([]*execkit.RunExpectation{
+	defer typgo.PatchBash([]*typgo.RunExpectation{
 		{CommandLine: "go list -m", ReturnError: errors.New("some-error")},
 	})(t)
 	defer oskit.MkdirAll(".typical-tmp")()

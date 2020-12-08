@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
@@ -30,7 +30,7 @@ var descriptor = typgo.Descriptor{
 			Aliases: []string{"e"},
 			Usage:   "Test all example",
 			Action: typgo.NewAction(func(c *typgo.Context) error {
-				c.Execute(&execkit.Command{
+				c.Execute(&typgo.Bash{
 					Name:   "go",
 					Args:   []string{"test", "./examples/..."},
 					Stdout: os.Stdout,

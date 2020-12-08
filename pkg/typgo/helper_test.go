@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -13,7 +12,7 @@ func TestGoImport(t *testing.T) {
 	typgo.TypicalTmp = ".typical-tmp"
 	defer func() { typgo.TypicalTmp = "" }()
 
-	defer execkit.Patch([]*execkit.RunExpectation{
+	defer typgo.PatchBash([]*typgo.RunExpectation{
 		{CommandLine: "go build -o .typical-tmp/bin/goimports golang.org/x/tools/cmd/goimports"},
 		{CommandLine: ".typical-tmp/bin/goimports -w some-target"},
 	})(t)
@@ -25,7 +24,7 @@ func TestGoImport_InstallToolError(t *testing.T) {
 	typgo.TypicalTmp = ".typical-tmp"
 	defer func() { typgo.TypicalTmp = "" }()
 
-	defer execkit.Patch([]*execkit.RunExpectation{
+	defer typgo.PatchBash([]*typgo.RunExpectation{
 		{
 			CommandLine: "go build -o .typical-tmp/bin/goimports golang.org/x/tools/cmd/goimports",
 			ReturnError: errors.New("some-error"),

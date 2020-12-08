@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typrls"
@@ -18,7 +17,7 @@ func TestCrossCompile(t *testing.T) {
 		TestName string
 		typrls.CrossCompiler
 		Context         *typrls.Context
-		RunExpectations []*execkit.RunExpectation
+		RunExpectations []*typgo.RunExpectation
 		ExpectedErr     string
 	}{
 		{
@@ -36,7 +35,7 @@ func TestCrossCompile(t *testing.T) {
 					Context: &cli.Context{},
 				},
 			},
-			RunExpectations: []*execkit.RunExpectation{
+			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=myproject -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /myproject_v0.0.1_darwin_amd64 ./cmd/myproject"},
 				{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=myproject -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /myproject_v0.0.1_linux_amd64 ./cmd/myproject"},
 			},
@@ -57,7 +56,7 @@ func TestCrossCompile(t *testing.T) {
 					Context: &cli.Context{},
 				},
 			},
-			RunExpectations: []*execkit.RunExpectation{
+			RunExpectations: []*typgo.RunExpectation{
 				{
 					CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=myproject -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /myproject_v0.0.1_darwin_amd64 ./cmd/myproject",
 					ReturnError: errors.New("some-error"),
@@ -71,7 +70,7 @@ func TestCrossCompile(t *testing.T) {
 			var out strings.Builder
 			defer oskit.PatchStdout(&out)()
 
-			unpatch := execkit.Patch(tt.RunExpectations)
+			unpatch := typgo.PatchBash(tt.RunExpectations)
 			defer unpatch(t)
 			err := tt.Release(tt.Context)
 			if tt.ExpectedErr != "" {

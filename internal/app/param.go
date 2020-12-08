@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
 
@@ -75,7 +75,7 @@ func GetParam(c *cli.Context) (*Param, error) {
 func retrieveProjPkg(ctx context.Context) (string, error) {
 	var stdout strings.Builder
 	var stderr strings.Builder
-	if err := execkit.Run(ctx, &execkit.Command{
+	if err := typgo.RunBash(ctx, &typgo.Bash{
 		Name:   "go",
 		Args:   []string{"list", "-m"},
 		Stdout: &stdout,

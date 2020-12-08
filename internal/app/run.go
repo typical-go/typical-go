@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
@@ -57,7 +56,7 @@ func Run(c *cli.Context) error {
 		args = append(args, "-ldflags", buildVars.String())
 		args = append(args, "-o", bin, "./"+p.TypicalBuild)
 
-		if err := execkit.Run(c.Context, &execkit.Command{
+		if err := typgo.RunBash(c.Context, &typgo.Bash{
 			Name:   "go",
 			Args:   args,
 			Stdout: os.Stdout,
@@ -67,7 +66,7 @@ func Run(c *cli.Context) error {
 		}
 	}
 
-	return execkit.Run(c.Context, &execkit.Command{
+	return typgo.RunBash(c.Context, &typgo.Bash{
 		Name:   bin,
 		Args:   c.Args().Slice(),
 		Stdout: os.Stdout,

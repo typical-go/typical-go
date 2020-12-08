@@ -9,7 +9,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/internal/app"
-	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/oskit"
 )
 
@@ -17,7 +17,7 @@ func TestSetup(t *testing.T) {
 	var output strings.Builder
 
 	defer oskit.PatchStdout(&output)()
-	defer execkit.Patch([]*execkit.RunExpectation{})(t)
+	defer typgo.PatchBash([]*typgo.RunExpectation{})(t)
 	defer oskit.MkdirAll("some-pkg")()
 
 	require.NoError(t, app.Setup(cliContext([]string{
@@ -48,7 +48,7 @@ $TYPGO run \
 }
 
 func TestSetup_GetParamError(t *testing.T) {
-	unpatch := execkit.Patch([]*execkit.RunExpectation{
+	unpatch := typgo.PatchBash([]*typgo.RunExpectation{
 		{CommandLine: "go list -m", ReturnError: errors.New("some-error")},
 	})
 	defer unpatch(t)
@@ -63,7 +63,7 @@ func TestSetup_GetParamError(t *testing.T) {
 func TestSetup_WithGomodFlag(t *testing.T) {
 	var output strings.Builder
 	defer oskit.PatchStdout(&output)()
-	defer execkit.Patch([]*execkit.RunExpectation{
+	defer typgo.PatchBash([]*typgo.RunExpectation{
 		{CommandLine: "go mod init somepkg"},
 	})(t)
 	defer oskit.MkdirAll("somepkg")()
@@ -78,7 +78,7 @@ func TestSetup_WithGomodFlag(t *testing.T) {
 func TestSetup_WithGomodFlag_Error(t *testing.T) {
 	var output strings.Builder
 	defer oskit.PatchStdout(&output)()
-	defer execkit.Patch([]*execkit.RunExpectation{
+	defer typgo.PatchBash([]*typgo.RunExpectation{
 		{
 			CommandLine: "go mod init somepkg",
 			ErrorBytes:  []byte("error-message"),
@@ -98,7 +98,7 @@ func TestSetup_WithGomodFlag_Error(t *testing.T) {
 func TestSetup_WithGomodFlag_MissingProjectPkg(t *testing.T) {
 	var output strings.Builder
 	defer oskit.PatchStdout(&output)()
-	defer execkit.Patch(nil)(t)
+	defer typgo.PatchBash(nil)(t)
 	defer oskit.MkdirAll("somepkg")()
 
 	err := app.Setup(cliContext([]string{"-go-mod"}))
@@ -109,7 +109,7 @@ func TestSetup_WithGomodFlag_MissingProjectPkg(t *testing.T) {
 func TestSetup_WithNewFlag(t *testing.T) {
 	var output strings.Builder
 	defer oskit.PatchStdout(&output)()
-	defer execkit.Patch(nil)(t)
+	defer typgo.PatchBash(nil)(t)
 
 	err := app.Setup(cliContext([]string{
 		"-project-pkg=somepkg1",

@@ -10,7 +10,6 @@ import (
 
 	"bou.ke/monkey"
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/filekit"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -48,7 +47,7 @@ func TestExecute(t *testing.T) {
 		}, nil
 	}).Unpatch()
 
-	defer execkit.Patch([]*execkit.RunExpectation{
+	defer typgo.PatchBash([]*typgo.RunExpectation{
 		{CommandLine: "go build -o /bin/mockgen github.com/golang/mock/mockgen"},
 		{CommandLine: "rm -rf parent/path_mock"},
 		{CommandLine: "/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface"},
@@ -63,7 +62,7 @@ func TestExecute(t *testing.T) {
 
 func TestAnnotate_InstallMockgenError(t *testing.T) {
 
-	defer execkit.Patch([]*execkit.RunExpectation{
+	defer typgo.PatchBash([]*typgo.RunExpectation{
 		{CommandLine: "go build -o /bin/mockgen github.com/golang/mock/mockgen", ReturnError: errors.New("some-error")},
 	})(t)
 
@@ -90,7 +89,7 @@ func TestAnnotate_MockgenError(t *testing.T) {
 		},
 	}
 
-	defer execkit.Patch([]*execkit.RunExpectation{
+	defer typgo.PatchBash([]*typgo.RunExpectation{
 		{CommandLine: "go build -o /bin/mockgen github.com/golang/mock/mockgen"},
 		{CommandLine: "rm -rf parent/path_mock"},
 		{CommandLine: "/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface", ReturnError: errors.New("some-error")},

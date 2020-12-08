@@ -9,7 +9,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/oskit"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -21,7 +20,7 @@ func TestCtorAnnotation_Annotate(t *testing.T) {
 	var out strings.Builder
 	defer oskit.PatchStdout(&out)()
 	defer os.RemoveAll("internal")
-	defer execkit.Patch([]*execkit.RunExpectation{})(t)
+	defer typgo.PatchBash([]*typgo.RunExpectation{})(t)
 
 	ctorAnnot := &typapp.CtorAnnotation{}
 	ctx := &typast.Context{
@@ -75,7 +74,7 @@ func init() {
 
 func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
 	var out strings.Builder
-	defer execkit.Patch([]*execkit.RunExpectation{})(t)
+	defer typgo.PatchBash([]*typgo.RunExpectation{})(t)
 	defer os.RemoveAll("folder2")
 	defer oskit.PatchStdout(&out)()
 

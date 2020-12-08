@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-
-	"github.com/typical-go/typical-go/pkg/execkit"
 )
 
 // GoImports run goimports
@@ -15,7 +13,7 @@ func GoImports(target string) error {
 	if err != nil {
 		return err
 	}
-	return execkit.Run(ctx, &execkit.Command{
+	return RunBash(ctx, &Bash{
 		Name:   goimports,
 		Args:   []string{"-w", target},
 		Stderr: os.Stderr,
@@ -26,7 +24,7 @@ func GoImports(target string) error {
 func InstallTool(ctx context.Context, name, source string) (string, error) {
 	output := fmt.Sprintf("%s/bin/%s", TypicalTmp, name)
 	if _, err := os.Stat(output); os.IsNotExist(err) {
-		if err := execkit.Run(ctx, &GoBuild{
+		if err := RunBash(ctx, &GoBuild{
 			Output:      output,
 			MainPackage: source,
 		}); err != nil {

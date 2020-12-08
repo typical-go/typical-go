@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/internal/app"
-	"github.com/typical-go/typical-go/pkg/execkit"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
 
@@ -29,7 +29,7 @@ func TestGetParam(t *testing.T) {
 }
 
 func TestGetParam_Default(t *testing.T) {
-	unpatch := execkit.Patch([]*execkit.RunExpectation{
+	unpatch := typgo.PatchBash([]*typgo.RunExpectation{
 		{CommandLine: "go list -m", OutputBytes: []byte("some-package")},
 	})
 	defer unpatch(t)
@@ -47,7 +47,7 @@ func TestGetParam_Default(t *testing.T) {
 }
 
 func TestGetParam_Default_FailedRetrivePackage(t *testing.T) {
-	unpatch := execkit.Patch([]*execkit.RunExpectation{
+	unpatch := typgo.PatchBash([]*typgo.RunExpectation{
 		{
 			CommandLine: "go list -m",
 			ErrorBytes:  []byte("error-message"),
