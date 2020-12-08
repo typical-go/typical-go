@@ -13,7 +13,7 @@ var descriptor = typgo.Descriptor{
 	Tasks: []typgo.Tasker{
 		// annotate
 		&typast.AnnotateMe{
-			Includes: []string{"internal/*"},
+			Sources: []string{"internal"},
 			Annotators: []typast.Annotator{
 				&typapp.CtorAnnotation{},
 			},
@@ -22,7 +22,7 @@ var descriptor = typgo.Descriptor{
 		&typgo.GoBuild{},
 		// run
 		&typgo.RunBinary{
-			Before: typgo.BuildCmdRuns{"annotate", "build"},
+			Before: typgo.TaskNames{"annotate", "build"},
 		},
 	},
 }

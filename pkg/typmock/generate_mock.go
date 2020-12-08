@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/typical-go/typical-go/pkg/filekit"
 	"github.com/typical-go/typical-go/pkg/oskit"
 
 	"github.com/iancoleman/strcase"
@@ -22,8 +21,7 @@ var (
 type (
 	// GenerateMock mock
 	GenerateMock struct {
-		Includes []string
-		Excludes []string
+		Sources []string
 	}
 )
 
@@ -43,11 +41,7 @@ func (d *GenerateMock) Task(c *typgo.BuildSys) *cli.Command {
 
 // Execute mock command
 func (d *GenerateMock) Execute(c *typgo.Context) error {
-	dirs, err := filekit.FindDir(d.Includes, d.Excludes)
-	if err != nil {
-		return err
-	}
-	_, files := typast.Walk(dirs)
+	_, files := typast.Walk(d.Sources)
 	summary, err := typast.Compile(files...)
 	if err != nil {
 		return err

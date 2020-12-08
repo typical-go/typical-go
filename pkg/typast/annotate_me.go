@@ -1,7 +1,6 @@
 package typast
 
 import (
-	"github.com/typical-go/typical-go/pkg/filekit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
@@ -9,8 +8,7 @@ import (
 type (
 	// AnnotateMe task
 	AnnotateMe struct {
-		Includes   []string
-		Excludes   []string
+		Sources    []string
 		Annotators []Annotator
 	}
 	// Annotator responsible to annotate
@@ -63,12 +61,7 @@ func (a AnnotateMe) Execute(c *typgo.Context) error {
 
 // CreateContext create context
 func (a AnnotateMe) CreateContext(c *typgo.Context) (*Context, error) {
-	packages, err := filekit.FindDir(a.Includes, a.Excludes)
-	if err != nil {
-		return nil, err
-	}
-
-	dirs, files := Walk(packages)
+	dirs, files := Walk(a.Sources)
 	summary, err := Compile(files...)
 	if err != nil {
 		return nil, err

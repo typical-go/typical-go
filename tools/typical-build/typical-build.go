@@ -1,6 +1,9 @@
 package main
 
 import (
+	"os"
+
+	"github.com/typical-go/typical-go/pkg/execkit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
@@ -26,15 +29,15 @@ var descriptor = typgo.Descriptor{
 			Name:    "examples",
 			Aliases: []string{"e"},
 			Usage:   "Test all example",
-			Action: &typgo.GoTest{
-				Args:     []string{"-timeout=30s"},
-				Includes: []string{"examples/**/internal/**"},
-				Excludes: []string{
-					"examples/**/generated",
-					"examples/**/generated/**",
-					"examples/**/*_mock",
-				},
-			},
+			Action: typgo.NewAction(func(c *typgo.Context) error {
+				c.Execute(&execkit.Command{
+					Name:   "go",
+					Args:   []string{"test", "./examples/..."},
+					Stdout: os.Stdout,
+					Stderr: os.Stderr,
+				})
+				return nil
+			}),
 		},
 		// release
 		&typrls.ReleaseTool{

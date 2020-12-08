@@ -12,7 +12,7 @@ var descriptor = typgo.Descriptor{
 	Tasks: []typgo.Tasker{
 		// mock
 		&typmock.GenerateMock{
-			Includes: []string{"internal/*"},
+			Sources: []string{"internal"},
 		},
 		// test
 		&typgo.GoTest{
@@ -23,7 +23,7 @@ var descriptor = typgo.Descriptor{
 		// compile
 		&typgo.GoBuild{},
 		// run
-		&typgo.RunBinary{Before: typgo.BuildCmdRuns{"build"}},
+		&typgo.RunBinary{Before: typgo.TaskNames{"build"}},
 	},
 }
 
