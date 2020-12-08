@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/google/go-github/github"
+	"github.com/google/go-github/v33/github"
 	"github.com/typical-go/typical-go/pkg/oskit"
 	"golang.org/x/oauth2"
 )
@@ -17,6 +17,7 @@ type (
 	Github struct {
 		Owner string
 		Repo  string
+		Draft bool
 	}
 )
 
@@ -42,7 +43,7 @@ func (g *Github) Publish(c *Context) (err error) {
 		Name:       github.String(fmt.Sprintf("%s - %s", c.BuildSys.ProjectName, c.TagName)),
 		TagName:    github.String(c.TagName),
 		Body:       github.String(c.Summary),
-		Draft:      github.Bool(false),
+		Draft:      github.Bool(g.Draft),
 		Prerelease: github.Bool(c.Alpha),
 	}
 	if rls, _, err = g.createRelease(c, repo, rls); err != nil {
@@ -64,6 +65,7 @@ func (g *Github) Publish(c *Context) (err error) {
 			fmt.Fprintf(oskit.Stdout, "WARN: %s\n", err.Error())
 		}
 	}
+
 	return
 }
 
