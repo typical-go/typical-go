@@ -38,7 +38,7 @@ var descriptor = typgo.Descriptor{
 		// release
 		&typrls.ReleaseTool{
 			Before:    typgo.TaskNames{"test", "examples"},
-			Publisher: &typrls.Github{Owner: "typical-go", Repo: "typical-go", Draft: true},
+			Publisher: &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
 		},
 	},
 }
