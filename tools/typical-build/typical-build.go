@@ -9,7 +9,7 @@ import (
 
 var descriptor = typgo.Descriptor{
 	ProjectName:    "typical-go",
-	ProjectVersion: "0.10.17",
+	ProjectVersion: "0.10.18",
 
 	Tasks: []typgo.Tasker{
 		// compile
@@ -38,7 +38,7 @@ var descriptor = typgo.Descriptor{
 		// release
 		&typrls.ReleaseTool{
 			Before:    typgo.TaskNames{"test", "examples"},
-			Publisher: &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
+			Publisher: &typrls.Github{Owner: "typical-go", Repo: "typical-go", Draft: true},
 		},
 	},
 }
