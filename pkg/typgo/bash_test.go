@@ -9,9 +9,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typgo"
+	"github.com/urfave/cli/v2"
 )
 
-func TestCommand(t *testing.T) {
+func TestBash(t *testing.T) {
 	var out strings.Builder
 	input := strings.NewReader("hello world")
 	ctx := context.Background()
@@ -35,7 +36,7 @@ func TestCommand(t *testing.T) {
 	require.Equal(t, cmd, cmd.Bash())
 }
 
-func TestCommand_String(t *testing.T) {
+func TestBash_String(t *testing.T) {
 	testcases := []struct {
 		TestName string
 		typgo.Bash
@@ -60,29 +61,44 @@ func TestCommand_String(t *testing.T) {
 	}
 }
 
+func TestBash_Execute(t *testing.T) {
+	defer typgo.PatchBash([]*typgo.RunExpectation{
+		{
+			CommandLine: "name1 arg1",
+			ReturnError: errors.New("some-error"),
+		},
+	})(t)
+
+	bash := &typgo.Bash{
+		Name: "name1",
+		Args: []string{"arg1"},
+	}
+	c := &typgo.Context{Context: &cli.Context{}}
+	err := bash.Execute(c)
+	require.EqualError(t, err, "some-error")
+}
+
 func TestPatch(t *testing.T) {
-	unpatch := typgo.PatchBash([]*typgo.RunExpectation{
+
+	defer typgo.PatchBash([]*typgo.RunExpectation{
 		{
 			CommandLine: "name1 arg1",
 			OutputBytes: []byte("some-output-bytes"),
 			ErrorBytes:  []byte("some-error-bytes"),
 			ReturnError: errors.New("some-error-1"),
 		},
-	})
-	defer unpatch(t)
+	})(t)
 
 	var stdout strings.Builder
 	var stderr strings.Builder
 
-	require.EqualError(t,
-		typgo.RunBash(nil, &typgo.Bash{
-			Name:   "name1",
-			Args:   []string{"arg1"},
-			Stdout: &stdout,
-			Stderr: &stderr,
-		}),
-		"some-error-1",
-	)
+	err := typgo.RunBash(nil, &typgo.Bash{
+		Name:   "name1",
+		Args:   []string{"arg1"},
+		Stdout: &stdout,
+		Stderr: &stderr,
+	})
+	require.EqualError(t, err, "some-error-1")
 
 	require.Equal(t, "some-output-bytes", stdout.String())
 	require.Equal(t, "some-error-bytes", stderr.String())

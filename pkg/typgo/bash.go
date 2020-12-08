@@ -43,28 +43,34 @@ type (
 //
 
 var _ Basher = (*Bash)(nil)
+var _ Action = (*Bash)(nil)
 var _ fmt.Stringer = (*Bash)(nil)
 
 // ExecCmd return exec.Cmd
-func (c *Bash) ExecCmd(ctx context.Context) *exec.Cmd {
-	cmd := exec.CommandContext(ctx, c.Name, c.Args...)
-	cmd.Stdout = c.Stdout
-	cmd.Stderr = c.Stderr
-	cmd.Stdin = c.Stdin
-	cmd.Dir = c.Dir
-	cmd.Env = c.Env
+func (b *Bash) ExecCmd(ctx context.Context) *exec.Cmd {
+	cmd := exec.CommandContext(ctx, b.Name, b.Args...)
+	cmd.Stdout = b.Stdout
+	cmd.Stderr = b.Stderr
+	cmd.Stdin = b.Stdin
+	cmd.Dir = b.Dir
+	cmd.Env = b.Env
 	return cmd
 }
 
 // Bash return Bash
-func (c *Bash) Bash() *Bash {
-	return c
+func (b *Bash) Bash() *Bash {
+	return b
 }
 
-func (c Bash) String() string {
+// Execute bash
+func (b *Bash) Execute(c *Context) error {
+	return c.Execute(b)
+}
+
+func (b Bash) String() string {
 	var out strings.Builder
-	fmt.Fprint(&out, c.Name)
-	for _, arg := range c.Args {
+	fmt.Fprint(&out, b.Name)
+	for _, arg := range b.Args {
 		if strings.ContainsAny(arg, " ") {
 			fmt.Fprintf(&out, " \"%s\"", arg)
 		} else {
