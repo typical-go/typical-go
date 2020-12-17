@@ -50,17 +50,10 @@ func (d *GenerateMock) Execute(c *typgo.Context) error {
 
 // Annotate mock
 func Annotate(c *typgo.Context, summary *typast.Summary) error {
-	mockgen := fmt.Sprintf("%s/bin/mockgen", typgo.TypicalTmp)
-	if _, err := os.Stat(mockgen); os.IsNotExist(err) {
-		err := c.Execute(&typgo.GoBuild{Output: mockgen, MainPackage: "github.com/golang/mock/mockgen"})
-		if err != nil {
-			return err
-		}
-	}
+
 	mockery := NewMockery(typgo.ProjectPkg)
 
 	for _, annot := range summary.FindAnnot(MockTag, typast.EqualInterface) {
-
 		mockery.Put(CreateMock(annot))
 	}
 	targetMap := mockery.Map
@@ -79,19 +72,36 @@ func Annotate(c *typgo.Context, summary *typast.Summary) error {
 			dest := fmt.Sprintf("%s%s/%s.go", t.Parent, t.MockPkg, strcase.ToSnake(t.Source))
 			name := fmt.Sprintf("%s.%s", srcPkg, t.Source)
 
-			if err := c.Execute(&typgo.Bash{
-				Name: mockgen,
-				Args: []string{
-					"-destination", dest,
-					"-package", t.MockPkg,
-					srcPkg,
-					t.Source,
-				},
-				Stderr: os.Stderr,
-			}); err != nil {
+			err := MockGen(c, t.MockPkg, dest, srcPkg, t.Source)
+			if err != nil {
 				fmt.Fprintf(oskit.Stdout, "Fail to mock '%s': %s\n", name, err.Error())
 			}
 		}
 	}
 	return nil
+}
+
+// MockGen execute mockgen bash
+func MockGen(c *typgo.Context, destPkg, dest, srcPkg, src string) error {
+	mockgen := fmt.Sprintf("%s/bin/mockgen", typgo.TypicalTmp)
+	if _, err := os.Stat(mockgen); os.IsNotExist(err) {
+		gobuild := &typgo.GoBuild{
+			Output:      mockgen,
+			MainPackage: "github.com/golang/mock/mockgen",
+		}
+		if err := c.Execute(gobuild); err != nil {
+			return err
+		}
+	}
+
+	return c.Execute(&typgo.Bash{
+		Name: mockgen,
+		Args: []string{
+			"-destination", dest,
+			"-package", destPkg,
+			srcPkg,
+			src,
+		},
+		Stderr: os.Stderr,
+	})
 }
