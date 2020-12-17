@@ -45,10 +45,6 @@ func init() { {{if .Ctors}}{{range $c := .Ctors}}
 	typapp.Provide("{{$c.Name}}", {{$c.Def}}){{end}}{{end}}
 }`
 
-const (
-	ctorHelp = "https://pkg.go.dev/github.com/typical-go/typical-go/pkg/typapp?tab=doc#CtorAnnotation"
-)
-
 //
 // CtorAnnotation
 //
@@ -94,7 +90,7 @@ func (a *CtorAnnotation) Annotate(c *typast.Context) error {
 
 func (a *CtorAnnotation) getTarget(c *typast.Context) string {
 	if a.Target == "" {
-		a.Target = "internal/generated/constructor/constructor.go"
+		a.Target = "internal/generated/ctor/ctor.go"
 	}
 	return a.Target
 }

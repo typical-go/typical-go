@@ -7,9 +7,10 @@ import (
 	"log"
 
 	"github.com/typical-go/typical-go/examples/typapp-sample/internal/app"
-	_ "github.com/typical-go/typical-go/examples/typapp-sample/internal/generated/constructor"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typgo"
+
+	_ "github.com/typical-go/typical-go/examples/typapp-sample/internal/generated/ctor"
 )
 
 func main() {

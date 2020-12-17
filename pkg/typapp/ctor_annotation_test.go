@@ -52,8 +52,8 @@ func TestCtorAnnotation_Annotate(t *testing.T) {
 
 	require.NoError(t, ctorAnnot.Annotate(ctx))
 
-	b, _ := ioutil.ReadFile("internal/generated/constructor/constructor.go")
-	require.Equal(t, `package constructor
+	b, _ := ioutil.ReadFile("internal/generated/ctor/ctor.go")
+	require.Equal(t, `package ctor
 
 /* DO NOT EDIT. This file generated due to '@ctor' annotation*/
 
@@ -68,7 +68,7 @@ func init() {
 	typapp.Provide("obj2", b.NewObject2)
 }`, string(b))
 
-	require.Equal(t, "Generate @ctor to internal/generated/constructor/constructor.go\n", out.String())
+	require.Equal(t, "Generate @ctor to internal/generated/ctor/ctor.go\n", out.String())
 
 }
 
