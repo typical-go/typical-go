@@ -75,11 +75,6 @@ func (a *CtorAnnotation) Annotate(c *typast.Context) error {
 		Ctors:     ctors,
 	}
 
-	if len(ctors) < 1 {
-		os.Remove(target)
-		return nil
-	}
-
 	fmt.Fprintf(oskit.Stdout, "Generate @ctor to %s\n", target)
 	if err := tmplkit.WriteFile(target, a.getTemplate(), data); err != nil {
 		return err

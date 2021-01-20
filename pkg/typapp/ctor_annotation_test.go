@@ -109,23 +109,6 @@ func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
 	require.Equal(t, "Generate @ctor to folder2/dest2/some-target\n", out.String())
 }
 
-func TestCtorAnnotation_Annotate_RemoveTargetWhenNoAnnotation(t *testing.T) {
-	defer os.RemoveAll("folder4")
-
-	ctorAnnot := &typapp.CtorAnnotation{
-		Target: "folder4/pkg4/some-target",
-	}
-	ctx := &typast.Context{
-		Context: &typgo.Context{},
-		Summary: &typast.Summary{},
-	}
-
-	ioutil.WriteFile("folder4/pkg4/some-target", []byte("some-content"), 0777)
-	require.NoError(t, ctorAnnot.Annotate(ctx))
-	_, err := os.Stat("folder4/pkg4/some-target")
-	require.True(t, os.IsNotExist(err))
-}
-
 func TestCtor_Stringer(t *testing.T) {
 	ctor := &typapp.Ctor{Name: "some-name", Def: "some-def"}
 	require.Equal(t, "{Name=some-name Def=some-def}", ctor.String())
