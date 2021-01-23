@@ -102,6 +102,46 @@ func myFunc(){
 }
 ```
 
+## Custom Task
+
+```go
+var descriptor = typgo.Descriptor{
+	ProjectName:    "custom-task",
+	ProjectVersion: "1.0.0",
+
+	Tasks: []typgo.Tasker{
+      // ...
+
+      // ping
+		&typgo.Task{
+			Name:  "ping",
+			Usage: `print "pong"`,
+			Action: typgo.NewAction(func(c *typgo.Context) error {
+				// new action with golang implementation
+				fmt.Println("pong")
+				return nil
+			}),
+      },
+      // gov
+		&typgo.Task{
+			Name:  "gov",
+			Usage: "print go version",
+			Action: typgo.NewAction(func(c *typgo.Context) error {
+				// you can also call bash command
+				return c.Execute(&typgo.Bash{
+					Name:   "go",
+					Args:   []string{"version"},
+					Stdout: os.Stdout,
+					Stderr: os.Stderr,
+					Stdin:  os.Stdin,
+				})
+			}),
+		},
+	},
+}
+
+```
+
 ## Learning from Examples
 
 Typical-Go using itself as build-tool which is an excellent example. For other examples:
