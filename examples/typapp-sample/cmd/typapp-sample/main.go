@@ -5,18 +5,28 @@ package main
 import (
 	"fmt"
 	"log"
+	"syscall"
 
-	"github.com/typical-go/typical-go/examples/typapp-sample/internal/app"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typgo"
 
+	"github.com/typical-go/typical-go/examples/typapp-sample/internal/app"
 	_ "github.com/typical-go/typical-go/examples/typapp-sample/internal/generated/ctor"
 )
 
 func main() {
+	// NOTE: ProjectName and ProjectVersion passed from descriptor in "tools/typical-build" when gobuild
 	fmt.Printf("%s %s\n", typgo.ProjectName, typgo.ProjectVersion)
-	err := typapp.Run(app.Start2, app.Shutdown)
-	if err != nil {
+
+	application := typapp.Application{
+		StartFn:    app.Start,    // What to do when start
+		ShutdownFn: app.Shutdown, // What to do when shutdown
+
+		// Exit Signals that trigger to close application
+		ExitSigs: []syscall.Signal{syscall.SIGTERM, syscall.SIGINT},
+	}
+
+	if err := application.Run(); err != nil {
 		log.Fatal(err)
 	}
 }
