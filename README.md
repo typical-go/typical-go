@@ -67,18 +67,7 @@ var descriptor = typgo.Descriptor{
       &typgo.GoBuild{},
       // run
       &typgo.RunBinary{
-         Before: typgo.BuildCmdRuns{"build"},
-         Action: &typgo.RunProject{},
-      },
-      // ping
-      &typgo.Task{
-         Name: "ping",
-         Action: typgo.NewAction(
-            func(c *typgo.Context) error {
-               fmt.Println("pong")
-               return nil
-            },
-         ),
+         Before: typgo.TaskNames{"build"},
       },
    },
 }
@@ -113,30 +102,30 @@ var descriptor = typgo.Descriptor{
       // ...
 
       // ping
-		&typgo.Task{
-			Name:  "ping",
-			Usage: `print "pong"`,
-			Action: typgo.NewAction(func(c *typgo.Context) error {
-				// new action with golang implementation
-				fmt.Println("pong")
-				return nil
-			}),
+      &typgo.Task{
+         Name:  "ping",
+         Usage: `print "pong"`,
+         Action: typgo.NewAction(func(c *typgo.Context) error {
+            // new action with golang implementation
+            fmt.Println("pong")
+            return nil
+         }),
       },
       // gov
-		&typgo.Task{
-			Name:  "gov",
-			Usage: "print go version",
-			Action: typgo.NewAction(func(c *typgo.Context) error {
-				// you can also call bash command
-				return c.Execute(&typgo.Bash{
-					Name:   "go",
-					Args:   []string{"version"},
-					Stdout: os.Stdout,
-					Stderr: os.Stderr,
-					Stdin:  os.Stdin,
-				})
-			}),
-		},
+      &typgo.Task{
+         Name:  "gov",
+         Usage: "print go version",
+         Action: typgo.NewAction(func(c *typgo.Context) error {
+            // you can also call bash command
+            return c.Execute(&typgo.Bash{
+               Name:   "go",
+               Args:   []string{"version"},
+               Stdout: os.Stdout,
+               Stderr: os.Stderr,
+               Stdin:  os.Stdin,
+            })
+         }),
+      },
 	},
 }
 
