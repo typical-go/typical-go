@@ -28,6 +28,9 @@ jobs:
     - name: Test Example
       run: ./typicalw test-examples
 
+    - name: Build project
+      run: ./typicalw build
+
     - name: Test Setup
       run: ./typicalw test-setup
     
