@@ -1,16 +1,29 @@
 package main
 
 import (
-	"context"
-	"os"
+	"fmt"
+	"log"
+	"os/exec"
+	"strings"
 
-	"github.com/typical-go/typical-go/pkg/typgo"
+	"os"
+)
+
+const (
+	output      = "bin/custom-build-tool"
+	mainPackage = "./cmd/custom-build-tool"
 )
 
 func main() {
-	ctx := context.Background()
-	output := "bin/custom-build-tool"
-	mainPackage := "./cmd/custom-build-tool"
-	typgo.RunBash(ctx, &typgo.GoBuild{MainPackage: mainPackage, Output: output})
-	typgo.RunBash(ctx, &typgo.Bash{Name: output, Stdout: os.Stdout, Stderr: os.Stderr})
+	bash(fmt.Sprintf("go build -o %s %s", output, mainPackage))
+	bash(fmt.Sprintf("./%s", output))
+}
+
+func bash(commandLine string) {
+	slices := strings.Split(commandLine, " ")
+	cmd := exec.Command(slices[0], slices[1:]...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	log.Fatal(cmd.Run())
 }

@@ -13,48 +13,54 @@ Build Automation Tool For Golang
 - Framework-based Build Tool (No DSL)
 - Supporting Java-like annotation for code generation
 
-## Setup New Project
+## Getting Started
 
-1. Install typical-go
+1. Install typical-go (Optional, only needed to setup new project)
    ```
    $ go get -u github.com/typical-go/typical-go
    ```
-
 2. Setup new project
-   ```bash
-   $ typical-go setup -new -go-mod -project-pkg=github.com/typical-go/typical-go/my-project
+   ```
+   $ typical-go setup -new -go-mod -project-pkg=[PACKAGE_NAME]
    ```
    - `-new` generate simple app and typical-build source
    - `-go-mod` initiate go.mod
    - `-project-pkg` name of project package
 
 3. Generate wrapper for existing project
-   ```bash
+   ```
    $ typical-go setup
    ```
 
-## Run in Current Project
+4. Run the wrapper [`typicalw`](typicalw). If typical-go not exist then it is automatically downloaded.
+   ```
+   $ ./typicalw
+   ```
 
-It is recommended to run via wrapper [`typicalw`](typicalw). Typical-Go is automatically downloaded when not exist.
+Check [examples/my-project](https://github.com/typical-go/typical-go/tree/master/examples/my-project) for what generated new project look like
+
+## Wrapper
+
+The wrapper is bash script to download, build and run the build-tool. 
+
+Any downloaded and required file will be store in temporary folder which is located in `.typical-tmp`. Temporary folder is recommended to be deleted after updating typical-go version.
+
+You can hack some parameter accordingly in wrapper script.
 ```bash
-$ ./typicalw
+PROJECT_PKG="github.com/typical-go/typical-go"
+BUILD_TOOL="tools/typical-build"
+TYPTMP=.typical-tmp
+TYPGO=$TYPTMP/bin/typical-go
+TYPGO_SRC=github.com/typical-go/typical-go
 ```
 
 ## Project Descriptor
 
-By default, project descriptor is located in [`tools/typical-build`](tools/typical-build/typical-build.go) which contain project detail and task list. It can be changed in wrapper script.
+By default, project descriptor is located in [`tools/typical-build/typical-build.go`](tools/typical-build/typical-build.go) which contain project detail and task list.
 
 ```go
-package main
-
-import (
-   "fmt"
-
-   "github.com/typical-go/typical-go/pkg/typgo"
-)
-
 var descriptor = typgo.Descriptor{
-   ProjectName:    "custom-task",
+   ProjectName:    "application-name",
    ProjectVersion: "1.0.0",
 
    Tasks: []typgo.Tasker{
@@ -71,17 +77,68 @@ var descriptor = typgo.Descriptor{
       },
    },
 }
+```
 
+The main function must call `typgo.Start()` to compile the descriptor struct to the actual build-tool.  
+```go
 func main() {
-   typgo.Start(&descriptor)
+	typgo.Start(&descriptor)
 }
 ```
 
-## Temporary Folder
+Check [examples/custom-build-tool](https://github.com/typical-go/typical-go/tree/master/examples/custom-build-tool) for example simple custom build-tool if you need to develop your own custom-build-tool without typical-go framework.
 
-By default, temporary folder is located in `.typical-tmp` which contain downloaded file and other build-mechanism. It can be changed in wrapper script. Please remove temporary folder when update the typical-go version.
+## Build Tasks
 
-## Annotation Support
+- Custom task with golang code
+   ```go
+   pingTask := &typgo.Task{
+      Name:  "ping",
+      Usage: "print pong",
+      Action: typgo.NewAction(func(c *typgo.Context) error {
+         fmt.Println("pong")
+         return nil
+      }),
+   }
+   ```
+
+- Custom task to call bash command
+   ```go
+   helpTask := &typgo.Task{
+      Name:  "help",
+      Usage: "print help",
+      Action: &typgo.Bash{
+         Name:   "go",
+         Args:   []string{"help"},
+         Stdout: os.Stdout,
+      },
+   },
+   ```
+
+- Custom task to call multiple bash command and golang code
+   ```go
+   infoTask := &typgo.Task{
+      Name:  "info",
+      Usage: "print info",
+      Action: typgo.NewAction(func(c *typgo.Context) error {
+         fmt.Println("print the info:")
+         c.ExecuteBash("go version")
+         c.ExecuteBash("git version")
+         return nil
+      }),
+   },
+   ```
+
+- Custom task to call other task
+   ```go
+   allTask := &typgo.Task{
+      Name:   "all",
+      Usage:  "run all custom task",
+      Action: typgo.TaskNames{"ping", "info", "help"},
+   },
+   ```
+
+## Annotation
 
 Typical-Go support java-like annotation (except the parameter in [StructTag](https://www.digitalocean.com/community/tutorials/how-to-use-struct-tags-in-go) format) for code-generation purpose. [Learn more](pkg/typast)
 
@@ -91,58 +148,17 @@ func myFunc(){
 }
 ```
 
-## Custom Task
-
-```go
-var descriptor = typgo.Descriptor{
-	ProjectName:    "custom-task",
-	ProjectVersion: "1.0.0",
-
-	Tasks: []typgo.Tasker{
-      // ...
-
-      // ping
-      &typgo.Task{
-         Name:  "ping",
-         Usage: `print "pong"`,
-         Action: typgo.NewAction(func(c *typgo.Context) error {
-            // new action with golang implementation
-            fmt.Println("pong")
-            return nil
-         }),
-      },
-      // gov
-      &typgo.Task{
-         Name:  "gov",
-         Usage: "print go version",
-         Action: typgo.NewAction(func(c *typgo.Context) error {
-            // you can also call bash command
-            return c.Execute(&typgo.Bash{
-               Name:   "go",
-               Args:   []string{"version"},
-               Stdout: os.Stdout,
-               Stderr: os.Stderr,
-               Stdin:  os.Stdin,
-            })
-         }),
-      },
-	},
-}
-
-```
 
 ## Learning from Examples
 
 Typical-Go using itself as build-tool which is an excellent example. For other examples:
-- [x] [hello-world](https://github.com/typical-go/typical-go/tree/master/examples/hello-world)
-- [x] [typapp-sample](https://github.com/typical-go/typical-go/tree/master/examples/typapp-sample)
-- [x] [typmock-sample](https://github.com/typical-go/typical-go/tree/master/examples/typmock-sample)
-- [x] [custom-build-tool](https://github.com/typical-go/typical-go/tree/master/examples/custom-build-tool)
-- [x] [custom-task](https://github.com/typical-go/typical-go/tree/master/examples/custom-task)
-
-## See Also
+- [hello-world](https://github.com/typical-go/typical-go/tree/master/examples/hello-world)
+- [typapp-sample](https://github.com/typical-go/typical-go/tree/master/examples/typapp-sample)
+- [typmock-sample](https://github.com/typical-go/typical-go/tree/master/examples/typmock-sample)
+- [custom-build-tool](https://github.com/typical-go/typical-go/tree/master/examples/custom-build-tool)
+- [custom-task](https://github.com/typical-go/typical-go/tree/master/examples/custom-task)
+- [my-project](https://github.com/typical-go/typical-go/tree/master/examples/my-project): generated from setup command
 - [Typical-Rest-Server](https://github.com/typical-go/typical-rest-server): Rest Server Implementation
-
 
 ## License
 

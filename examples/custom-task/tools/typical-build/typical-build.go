@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
@@ -20,19 +21,37 @@ var descriptor = typgo.Descriptor{
 		// ping
 		&typgo.Task{
 			Name:  "ping",
-			Usage: `print "pong"`,
+			Usage: "print pong",
 			Action: typgo.NewAction(func(c *typgo.Context) error {
 				fmt.Println("pong") // new action with golang implementation
 				return nil
 			}),
 		},
-		// gov
+		// info
 		&typgo.Task{
-			Name:  "gov",
-			Usage: "print go version",
+			Name:  "info",
+			Usage: "print info",
 			Action: typgo.NewAction(func(c *typgo.Context) error {
-				return c.ExecuteBash("go version") // you can also call bash command
+				fmt.Println("print the info:")
+				c.ExecuteBash("go version")
+				c.ExecuteBash("git version")
+				return nil
 			}),
+		},
+		// help
+		&typgo.Task{
+			Name:  "help",
+			Usage: "print help",
+			Action: &typgo.Bash{
+				Name:   "go",
+				Args:   []string{"help"},
+				Stdout: os.Stdout,
+			},
+		},
+		&typgo.Task{
+			Name:   "all",
+			Usage:  "run all custom task",
+			Action: typgo.TaskNames{"ping", "info", "help"},
 		},
 	},
 }
