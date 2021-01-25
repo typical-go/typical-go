@@ -32,16 +32,19 @@ Build Automation Tool For Golang
    $ typical-go setup
    ```
 
-4. Run the wrapper [`typicalw`](typicalw). If typical-go not exist then it is automatically downloaded.
+4. Run the project
    ```
-   $ ./typicalw
+   $ ./typicalw run
    ```
 
 Check [examples/my-project](https://github.com/typical-go/typical-go/tree/master/examples/my-project) for what generated new project look like
 
 ## Wrapper
 
-The wrapper is bash script to download, build and run the build-tool. 
+The wrapper ([`typicalw`](typicalw)) is bash script to download, build and run the build-tool. 
+```
+$ ./typicalw
+```
 
 Any downloaded and required file will be store in temporary folder which is located in `.typical-tmp`. Temporary folder is recommended to be deleted after updating typical-go version.
 
