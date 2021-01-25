@@ -14,18 +14,18 @@ var descriptor = typgo.Descriptor{
 	Tasks: []typgo.Tasker{
 		// compile
 		&typgo.GoBuild{MainPackage: "."},
+		// run
+		&typgo.RunBinary{
+			Before: typgo.TaskNames{"build"},
+		},
 		// test
 		&typgo.GoTest{
 			Args:     []string{"-timeout=30s"},
 			Includes: []string{"internal/**", "pkg/**"},
 		},
-		// run
-		&typgo.RunBinary{
-			Before: typgo.TaskNames{"build"},
-		},
-		// examples
+		// test-examples
 		&typgo.Task{
-			Name:    "examples",
+			Name:    "test-examples",
 			Aliases: []string{"e"},
 			Usage:   "Test all example",
 			Action: &typgo.Bash{
@@ -34,6 +34,30 @@ var descriptor = typgo.Descriptor{
 				Stdout: os.Stdout,
 				Stderr: os.Stderr,
 			},
+		},
+		// test-setup
+		&typgo.Task{
+			Name:  "test-setup",
+			Usage: "test setup command",
+			Action: typgo.NewAction(func(c *typgo.Context) error {
+				os.RemoveAll("my-project")
+				c.ExecuteBash("./typicalw run setup -new -go-mod -project-pkg=github.com/typical-go/typical-go/my-project")
+				os.RemoveAll("my-project/go.mod")
+				os.RemoveAll("my-project/go.sum")
+				return c.Execute(&typgo.Bash{
+					Name:   "./typicalw",
+					Args:   []string{"run"},
+					Dir:    "my-project",
+					Stdout: os.Stdout,
+					Stderr: os.Stderr,
+				})
+			}),
+		},
+		// test-setup
+		&typgo.Task{
+			Name:   "test-all",
+			Usage:  "test project, test examples and  test setup command",
+			Action: typgo.TaskNames{"test", "test-examples", "test-setup"},
 		},
 		// release
 		&typrls.ReleaseTool{

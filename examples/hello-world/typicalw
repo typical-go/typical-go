@@ -1,17 +1,20 @@
 #!/bin/bash
 
-set -e
+set -eu
 
+PROJECT_PKG="github.com/typical-go/typical-go/examples/hello-world"
+BUILD_TOOL="tools/typical-build"
 TYPTMP=.typical-tmp
 TYPGO=$TYPTMP/bin/typical-go
+TYPGO_SRC=github.com/typical-go/typical-go
 
 if ! [ -s $TYPGO ]; then
-	echo "Build typical-go"
-	go build -o $TYPGO github.com/typical-go/typical-go
+	echo "Build $TYPGO_SRC to $TYPGO"
+	go build -o $TYPGO $TYPGO_SRC
 fi
 
 $TYPGO run \
-	-typical-build="tools/typical-build" \
-	-project-pkg="github.com/typical-go/typical-go/examples/hello-world" \
+	-project-pkg=$PROJECT_PKG \
+	-typical-build=$BUILD_TOOL \
 	-typical-tmp=$TYPTMP \
 	$@

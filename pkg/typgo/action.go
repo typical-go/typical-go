@@ -2,7 +2,10 @@ package typgo
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/fatih/color"
 	"github.com/typical-go/typical-go/pkg/oskit"
@@ -34,9 +37,7 @@ type (
 
 // NewAction return new instance of Action
 func NewAction(fn ExecuteFn) Action {
-	return &actionImpl{
-		fn: fn,
-	}
+	return &actionImpl{fn: fn}
 }
 
 // Execute action
@@ -54,6 +55,21 @@ func (c *Context) Execute(basher Basher) error {
 	color.New(color.FgMagenta).Fprint(oskit.Stdout, "\n$ ")
 	fmt.Fprintln(oskit.Stdout, bash)
 	return RunBash(c.Ctx(), bash)
+}
+
+// ExecuteBash execute bash command
+func (c *Context) ExecuteBash(commandLine string) error {
+	if commandLine == "" {
+		return errors.New("command line can't be empty")
+	}
+	slices := strings.Split(commandLine, " ")
+	return c.Execute(&Bash{
+		Name:   slices[0],
+		Args:   slices[1:],
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+		Stdin:  os.Stdin,
+	})
 }
 
 // Ctx return golang context

@@ -26,7 +26,10 @@ jobs:
       run: ./typicalw test -coverprofile=cover.out
 
     - name: Test Example
-      run: ./typicalw examples
+      run: ./typicalw test-examples
+
+    - name: Test Setup
+      run: ./typicalw test-setup
     
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
