@@ -16,8 +16,6 @@ type (
 		Decls  []*Decl
 		Annots []*Annot
 	}
-	// CheckFn check function
-	CheckFn func(a *Annot, tagName string) bool
 	// Decl stand of declaration
 	Decl struct {
 		File
@@ -98,15 +96,4 @@ func (s *Summary) AddDecl(file File, declType Type) {
 	}
 	s.Decls = append(s.Decls, decl)
 	s.Annots = append(s.Annots, retrieveAnnots(decl)...)
-}
-
-// FindAnnot find annot
-func (s *Summary) FindAnnot(tagName string, checkFn CheckFn) []*Annot {
-	var annots []*Annot
-	for _, annot := range s.Annots {
-		if checkFn(annot, tagName) {
-			annots = append(annots, annot)
-		}
-	}
-	return annots
 }

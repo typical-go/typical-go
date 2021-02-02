@@ -1,6 +1,8 @@
 package typast
 
 import (
+	"errors"
+
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
@@ -47,6 +49,9 @@ func (a AnnotateMe) Task(sys *typgo.BuildSys) *cli.Command {
 
 // Execute annotation
 func (a AnnotateMe) Execute(c *typgo.Context) error {
+	if len(a.Sources) == 0 {
+		return errors.New("'Sources' is missing")
+	}
 	ac, err := a.CreateContext(c)
 	if err != nil {
 		return err

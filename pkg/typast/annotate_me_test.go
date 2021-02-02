@@ -11,7 +11,9 @@ import (
 )
 
 func TestAnnotateCmd(t *testing.T) {
-	annonateCmd := &typast.AnnotateMe{}
+	annonateCmd := &typast.AnnotateMe{
+		Sources: []string{"internal"},
+	}
 	sys := &typgo.BuildSys{Descriptor: &typgo.Descriptor{}}
 
 	command := annonateCmd.Task(sys)
@@ -26,6 +28,7 @@ func TestAnnotateCmd(t *testing.T) {
 
 func TestAnnotateCmd_Defined(t *testing.T) {
 	annonateCmd := typast.AnnotateMe{
+		Sources: []string{"internal"},
 		Annotators: []typast.Annotator{
 			typast.NewAnnotator(func(*typast.Context) error {
 				return errors.New("some-error")
@@ -41,6 +44,14 @@ func TestAnnotateCmd_Defined(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestAnnotateCmd_MissingSources(t *testing.T) {
+	annonateCmd := typast.AnnotateMe{}
+	sys := &typgo.BuildSys{Descriptor: &typgo.Descriptor{}}
+
+	command := annonateCmd.Task(sys)
+	require.EqualError(t, command.Action(&cli.Context{}), "'Sources' is missing")
+}
+
 func TestAnnotators_Execute(t *testing.T) {
 	testcases := []struct {
 		TestName string
@@ -53,6 +64,7 @@ func TestAnnotators_Execute(t *testing.T) {
 				Descriptor: &typgo.Descriptor{},
 			}},
 			AnnotateMe: typast.AnnotateMe{
+				Sources: []string{"internal"},
 				Annotators: []typast.Annotator{
 					typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-1") }),
 					typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-2") }),
@@ -65,6 +77,7 @@ func TestAnnotators_Execute(t *testing.T) {
 				Descriptor: &typgo.Descriptor{},
 			}},
 			AnnotateMe: typast.AnnotateMe{
+				Sources: []string{"internal"},
 				Annotators: []typast.Annotator{
 					typast.NewAnnotator(func(c *typast.Context) error { return nil }),
 					typast.NewAnnotator(func(c *typast.Context) error { return errors.New("some-error-2") }),

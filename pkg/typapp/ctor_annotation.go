@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/tmplkit"
@@ -53,55 +54,45 @@ var _ typast.Annotator = (*CtorAnnotation)(nil)
 
 // Annotate ctor
 func (a *CtorAnnotation) Annotate(c *typast.Context) error {
-	annots, imports := typast.FindAnnot(c, a.getTagName(), typast.EqualFunc)
-	imports["github.com/typical-go/typical-go/pkg/typapp"] = ""
-
-	var ctors []*Ctor
-	for _, annot := range annots {
-		ctors = append(ctors, &Ctor{
-			Name: annot.TagParam.Get("name"),
-			Def:  fmt.Sprintf("%s.%s", annot.ImportAlias, annot.GetName()),
-		})
-	}
-
-	target := a.getTarget(c)
-	dest := filepath.Dir(target)
-	os.MkdirAll(dest, 0777)
-
-	data := &CtorTmplData{
-		Signature: typast.Signature{TagName: a.getTagName()},
-		Package:   filepath.Base(dest),
-		Imports:   imports,
-		Ctors:     ctors,
-	}
-
-	fmt.Fprintf(oskit.Stdout, "Generate @ctor to %s\n", target)
-	if err := tmplkit.WriteFile(target, a.getTemplate(), data); err != nil {
-		return err
-	}
-	typgo.GoImports(target)
-	return nil
-}
-
-func (a *CtorAnnotation) getTarget(c *typast.Context) string {
-	if a.Target == "" {
-		a.Target = "internal/generated/ctor/ctor.go"
-	}
-	return a.Target
-}
-
-func (a *CtorAnnotation) getTagName() string {
 	if a.TagName == "" {
 		a.TagName = "@ctor"
 	}
-	return a.TagName
-}
-
-func (a *CtorAnnotation) getTemplate() string {
+	if a.Target == "" {
+		a.Target = "internal/generated/ctor/ctor.go"
+	}
 	if a.Template == "" {
 		a.Template = defaultCtorTemplate
 	}
-	return a.Template
+
+	var ctors []*Ctor
+	importAliases := typast.NewImportAliases()
+	for _, annot := range c.Annots {
+		if strings.EqualFold(annot.TagName, a.TagName) && typast.IsFunc(annot) && typast.IsPublic(annot) {
+			alias := importAliases.Append(typast.Package(annot))
+			ctors = append(ctors, &Ctor{
+				Name: annot.TagParam.Get("name"),
+				Def:  fmt.Sprintf("%s.%s", alias, annot.GetName()),
+			})
+		}
+	}
+	importAliases.Map["github.com/typical-go/typical-go/pkg/typapp"] = ""
+
+	dest := filepath.Dir(a.Target)
+	os.MkdirAll(dest, 0777)
+
+	fmt.Fprintf(oskit.Stdout, "Generate @ctor to %s\n", a.Target)
+	err := tmplkit.WriteFile(a.Target, a.Template, &CtorTmplData{
+		Signature: typast.Signature{TagName: a.TagName},
+		Package:   filepath.Base(dest),
+		Imports:   importAliases.Map,
+		Ctors:     ctors,
+	})
+
+	if err != nil {
+		return err
+	}
+	typgo.GoImports(a.Target)
+	return nil
 }
 
 //

@@ -3,6 +3,7 @@ package typmock
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/typical-go/typical-go/pkg/oskit"
 
@@ -53,8 +54,10 @@ func Annotate(c *typgo.Context, summary *typast.Summary) error {
 
 	mockery := NewMockery(typgo.ProjectPkg)
 
-	for _, annot := range summary.FindAnnot(MockTag, typast.EqualInterface) {
-		mockery.Put(CreateMock(annot))
+	for _, annot := range summary.Annots {
+		if strings.EqualFold(annot.TagName, MockTag) && typast.IsInterface(annot) {
+			mockery.Put(CreateMock(annot))
+		}
 	}
 	targetMap := mockery.Map
 	args := c.Args()
