@@ -383,7 +383,7 @@ func TestSummarizer(t *testing.T) {
 				{CommandLine: "git --no-pager log v0.0.1..HEAD --oneline", OutputBytes: []byte("1234567 some-message-1\n1234568 some-message-3")},
 			},
 			Expected:    "1234567 some-message-1\n1234568 some-message-3",
-			ExpectedOut: "\n$ git describe --tags --abbrev=0\n\n$ git --no-pager log v0.0.1..HEAD --oneline\n",
+			ExpectedOut: "$ git describe --tags --abbrev=0\n$ git --no-pager log v0.0.1..HEAD --oneline\n",
 		},
 	}
 	for _, tt := range testCases {

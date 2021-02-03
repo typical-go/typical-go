@@ -99,6 +99,8 @@ func newProject(p *Param) {
 	fmt.Fprintf(oskit.Stdout, "Create '%s'\n", typicalBuild)
 	os.MkdirAll(typicalBuildPkg, 0777)
 	tmplkit.WriteFile(typicalBuild, typicalBuildTmpl, p)
+
+	ioutil.WriteFile(p.SetupTarget+"/.gitignore", []byte(gitignore), 0777)
 }
 
 const typicalwTmpl = `#!/bin/bash
@@ -195,6 +197,7 @@ var descriptor = typgo.Descriptor{
 	Tasks: []typgo.Tasker{
 		// annotate
 		&typast.AnnotateMe{
+			Sources: []string{"internal"},
 			Annotators: []typast.Annotator{
 				&typapp.CtorAnnotation{},
 			},
@@ -214,3 +217,12 @@ func main() {
 	typgo.Start(&descriptor)
 }
 `
+
+const gitignore = `/bin
+/release
+/.typical-tmp
+/vendor 
+.envrc
+.env
+*.test
+*.out`

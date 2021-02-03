@@ -67,7 +67,7 @@ var descriptor = typgo.Descriptor{
 		&typgo.Task{
 			Name:   "test-all",
 			Usage:  "test project, test examples and  test setup command",
-			Action: typgo.TaskNames{"test", "test-examples", "test-setup"},
+			Action: typgo.TaskNames{"test", "build", "test-examples", "test-setup"},
 		},
 		// release
 		&typrls.ReleaseTool{

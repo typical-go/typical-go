@@ -14,6 +14,7 @@ var descriptor = typgo.Descriptor{
 	Tasks: []typgo.Tasker{
 		// annotate
 		&typast.AnnotateMe{
+			Sources: []string{"internal"},
 			Annotators: []typast.Annotator{
 				&typapp.CtorAnnotation{},
 			},

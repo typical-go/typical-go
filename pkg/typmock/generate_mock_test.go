@@ -99,5 +99,5 @@ func TestAnnotate_MockgenError(t *testing.T) {
 		Context:  cli.NewContext(nil, &flag.FlagSet{}, nil),
 	}
 	require.NoError(t, typmock.Annotate(c, summary))
-	require.Equal(t, "\n$ rm -rf parent/path_mock\n\n$ go build -o /bin/mockgen github.com/golang/mock/mockgen\n\n$ /bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\nFail to mock '/parent/path.SomeInterface': some-error\n", out.String())
+	require.Equal(t, "$ rm -rf parent/path_mock\n$ go build -o /bin/mockgen github.com/golang/mock/mockgen\n$ /bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\nFail to mock '/parent/path.SomeInterface': some-error\n", out.String())
 }

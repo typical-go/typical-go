@@ -2,9 +2,12 @@ package typgo
 
 import (
 	"fmt"
+	"io"
+	"os"
 	"strings"
 
-	"github.com/urfave/cli/v2"
+	"github.com/fatih/color"
+	"github.com/typical-go/typical-go/pkg/oskit"
 )
 
 type (
@@ -17,26 +20,22 @@ var _ Action = (TaskNames)(nil)
 // Execute BuildCmdRuns
 func (r TaskNames) Execute(c *Context) error {
 	for _, name := range r {
-		if err := RunCommand(c, name); err != nil {
+		taskSignature(oskit.Stdout, fmt.Sprintf("./typicalw %s", name))
+		if err := RunBash(c.Ctx(), &Bash{
+			Name:   "./typicalw",
+			Args:   strings.Split(name, " "),
+			Stdout: oskit.Stdout,
+			Stderr: os.Stderr,
+			Stdin:  os.Stdin,
+		}); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-// RunCommand run command by name
-func RunCommand(c *Context, name string) error {
-	return runCommand(c.Context, c.BuildSys.Commands, strings.Split(name, "."), 0)
-}
-
-func runCommand(c *cli.Context, commands []*cli.Command, names []string, i int) error {
-	for _, command := range commands {
-		if command.Name == names[i] {
-			if len(names) > i+1 {
-				return runCommand(c, command.Subcommands, names, i+1)
-			}
-			return command.Action(c)
-		}
-	}
-	return fmt.Errorf("typgo: %s not found", strings.Join(names, "."))
+func taskSignature(w io.Writer, task string) {
+	fmt.Fprintf(w, "\n----- %s: ", ProjectName)
+	color.New(color.FgCyan).Fprint(w, task)
+	fmt.Fprint(w, " -----\n\n")
 }

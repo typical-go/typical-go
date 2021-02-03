@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/urfave/cli/v2"
 )
 
@@ -14,10 +15,6 @@ type (
 		Binary string
 	}
 )
-
-//
-// RunCmd
-//
 
 var _ Tasker = (*RunBinary)(nil)
 var _ Action = (*RunBinary)(nil)
@@ -36,6 +33,7 @@ func (r *RunBinary) Task(sys *BuildSys) *cli.Command {
 
 // Execute standard run
 func (r *RunBinary) Execute(c *Context) error {
+	taskSignature(oskit.Stdout, "Run")
 	return c.Execute(&Bash{
 		Name:   r.getBinary(c),
 		Args:   c.Args().Slice(),

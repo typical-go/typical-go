@@ -52,7 +52,7 @@ func (a *actionImpl) Execute(c *Context) error {
 // Execute command
 func (c *Context) Execute(basher Basher) error {
 	bash := basher.Bash()
-	color.New(color.FgMagenta).Fprint(oskit.Stdout, "\n$ ")
+	color.New(color.FgMagenta).Fprint(oskit.Stdout, "$ ")
 	fmt.Fprintln(oskit.Stdout, bash)
 	return RunBash(c.Ctx(), bash)
 }

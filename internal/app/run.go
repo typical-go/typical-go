@@ -48,8 +48,9 @@ func Run(c *cli.Context) error {
 		fmt.Fprintf(oskit.Stdout, "Build %s to %s\n", p.TypicalBuild, bin)
 
 		buildVars := typgo.BuildVars{
-			"github.com/typical-go/typical-go/pkg/typgo.ProjectPkg": p.ProjectPkg,
-			"github.com/typical-go/typical-go/pkg/typgo.TypicalTmp": p.TypicalTmp,
+			"github.com/typical-go/typical-go/pkg/typgo.ProjectName": filepath.Base(p.ProjectPkg),
+			"github.com/typical-go/typical-go/pkg/typgo.ProjectPkg":  p.ProjectPkg,
+			"github.com/typical-go/typical-go/pkg/typgo.TypicalTmp":  p.TypicalTmp,
 		}
 
 		args := []string{"build"}
