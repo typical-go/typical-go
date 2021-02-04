@@ -50,6 +50,7 @@ func CliCommand(d *Descriptor, t *Task) *cli.Command {
 	return cmd
 }
 
+// CliFunc return urfave cli function from Action
 func CliFunc(d *Descriptor, a Action) func(*cli.Context) error {
 	return func(c *cli.Context) error {
 		if a == nil {
