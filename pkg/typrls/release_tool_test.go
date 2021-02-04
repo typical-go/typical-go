@@ -304,12 +304,13 @@ func createContext(args ...string) *cli.Context {
 }
 
 func TestReleaseCmd_Before(t *testing.T) {
-	cmd := &typrls.ReleaseTool{
+	releaseTool := &typrls.ReleaseTool{
 		Before: typgo.NewAction(func(*typgo.Context) error {
 			return errors.New("some-error")
 		}),
 	}
-	command := cmd.Task(&typgo.Descriptor{})
+
+	command := typgo.CliCommand(&typgo.Descriptor{}, releaseTool.Task())
 	require.EqualError(t, command.Before(&cli.Context{}), "some-error")
 }
 

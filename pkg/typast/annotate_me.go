@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/typical-go/typical-go/pkg/typgo"
-	"github.com/urfave/cli/v2"
 )
 
 type (
@@ -38,12 +37,12 @@ var _ typgo.Tasker = (*AnnotateMe)(nil)
 var _ typgo.Action = (*AnnotateMe)(nil)
 
 // Task to annotate
-func (a AnnotateMe) Task(d *typgo.Descriptor) *cli.Command {
-	return &cli.Command{
+func (a AnnotateMe) Task() *typgo.Task {
+	return &typgo.Task{
 		Name:    "annotate",
 		Aliases: []string{"a"},
 		Usage:   "Annotate the project and generate code",
-		Action:  d.Action(a),
+		Action:  a,
 	}
 }
 

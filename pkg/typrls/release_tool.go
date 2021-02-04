@@ -38,8 +38,8 @@ var DefaultPrefixes = []string{"merge", "bump", "revision", "generate", "wip"}
 var _ typgo.Tasker = (*ReleaseTool)(nil)
 
 // Task to release
-func (r *ReleaseTool) Task(sys *typgo.Descriptor) *cli.Command {
-	return &cli.Command{
+func (r *ReleaseTool) Task() *typgo.Task {
+	return &typgo.Task{
 		Name:  "release",
 		Usage: "Release the project",
 		Flags: []cli.Flag{
@@ -48,8 +48,8 @@ func (r *ReleaseTool) Task(sys *typgo.Descriptor) *cli.Command {
 			&cli.BoolFlag{Name: SkipPublishFlag, Usage: "Skip publish"},
 			&cli.StringFlag{Name: ReleaseFolderFlag, Usage: "release folder", Value: defaultReleaseFolder},
 		},
-		Before: sys.Action(r.Before),
-		Action: sys.Action(r),
+		Before: r.Before,
+		Action: r,
 	}
 }
 

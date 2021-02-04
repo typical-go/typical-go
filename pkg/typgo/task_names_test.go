@@ -13,7 +13,7 @@ import (
 func TestTaskNames(t *testing.T) {
 	var out strings.Builder
 
-	app := typgo.Cli(&typgo.Descriptor{
+	app := typgo.BuildTool(&typgo.Descriptor{
 		Tasks: []typgo.Tasker{
 			&typgo.Task{
 				Name: "task-1",
@@ -44,7 +44,7 @@ func TestTaskNames(t *testing.T) {
 func TestTaskNames_FistTaskError(t *testing.T) {
 	var out strings.Builder
 
-	app := typgo.Cli(&typgo.Descriptor{
+	app := typgo.BuildTool(&typgo.Descriptor{
 		Tasks: []typgo.Tasker{
 			&typgo.Task{
 				Name: "task-1",

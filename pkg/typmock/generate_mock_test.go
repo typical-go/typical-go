@@ -19,8 +19,8 @@ import (
 
 func TestCommand(t *testing.T) {
 	mockCmd := &typmock.GenerateMock{}
-	command := mockCmd.Task(&typgo.Descriptor{})
 
+	command := typgo.CliCommand(&typgo.Descriptor{}, mockCmd.Task())
 	require.Equal(t, "mock", command.Name)
 }
 

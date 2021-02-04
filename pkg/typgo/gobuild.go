@@ -5,8 +5,6 @@ import (
 	"os"
 	"sort"
 	"strings"
-
-	"github.com/urfave/cli/v2"
 )
 
 type (
@@ -27,12 +25,12 @@ var _ Action = (*GoBuild)(nil)
 var _ Basher = (*GoBuild)(nil)
 
 // Task for gobuild
-func (p *GoBuild) Task(b *Descriptor) *cli.Command {
-	return &cli.Command{
+func (p *GoBuild) Task() *Task {
+	return &Task{
 		Name:    "build",
 		Aliases: []string{"b"},
 		Usage:   "build the project",
-		Action:  b.Action(p),
+		Action:  p,
 	}
 }
 

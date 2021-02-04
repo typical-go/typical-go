@@ -12,14 +12,12 @@ import (
 
 func TestRunCmd(t *testing.T) {
 	runCmd := &typgo.RunBinary{}
-	command := runCmd.Task(&typgo.Descriptor{})
+	command := typgo.CliCommand(&typgo.Descriptor{}, runCmd.Task())
 	require.Equal(t, "run", command.Name)
 	require.Equal(t, []string{"r"}, command.Aliases)
 	require.Equal(t, "Run the project", command.Usage)
 	require.True(t, command.SkipFlagParsing)
 
-	c := cli.NewContext(nil, &flag.FlagSet{}, nil)
-	require.NoError(t, command.Before(c))
 }
 
 func TestRunCmd_Before(t *testing.T) {
@@ -28,7 +26,7 @@ func TestRunCmd_Before(t *testing.T) {
 			return errors.New("before-error")
 		}),
 	}
-	command := runCmd.Task(&typgo.Descriptor{})
+	command := typgo.CliCommand(&typgo.Descriptor{}, runCmd.Task())
 	require.EqualError(t, command.Before(&cli.Context{}), "before-error")
 }
 

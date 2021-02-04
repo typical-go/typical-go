@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/oskit"
-	"github.com/urfave/cli/v2"
 )
 
 type (
@@ -20,14 +19,14 @@ var _ Tasker = (*RunBinary)(nil)
 var _ Action = (*RunBinary)(nil)
 
 // Task to run binary
-func (r *RunBinary) Task(d *Descriptor) *cli.Command {
-	return &cli.Command{
+func (r *RunBinary) Task() *Task {
+	return &Task{
 		Name:            "run",
 		Aliases:         []string{"r"},
 		Usage:           "Run the project",
 		SkipFlagParsing: true,
-		Before:          d.Action(r.Before),
-		Action:          d.Action(r),
+		Before:          r.Before,
+		Action:          r,
 	}
 }
 

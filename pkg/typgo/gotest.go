@@ -26,12 +26,12 @@ var _ Tasker = (*GoTest)(nil)
 var _ Action = (*GoTest)(nil)
 
 // Task for gotest
-func (t *GoTest) Task(b *Descriptor) *cli.Command {
-	return &cli.Command{
+func (t *GoTest) Task() *Task {
+	return &Task{
 		Name:    "test",
 		Aliases: []string{"t"},
 		Usage:   "Test the project",
-		Action:  b.Action(t),
+		Action:  t,
 		Flags: []cli.Flag{
 			&cli.StringFlag{Name: coverprofileFlag, Usage: "override arguments"},
 		},

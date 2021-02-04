@@ -22,11 +22,15 @@ func TestTask(t *testing.T) {
 			return errors.New("some-error")
 		}),
 	}
-	command := task.Task(&typgo.Descriptor{})
-	require.Equal(t, "some-name", command.Name)
-	require.Equal(t, []string{"some-alias"}, command.Aliases)
-	require.Equal(t, "some-usage", command.Usage)
-	require.Equal(t, []cli.Flag{&cli.StringFlag{Name: "some-flag"}}, command.Flags)
-	require.Equal(t, true, command.SkipFlagParsing)
-	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
+
+	require.Equal(t, task, task.Task())
+
+	cmd := typgo.CliCommand(&typgo.Descriptor{}, task)
+
+	require.Equal(t, "some-name", cmd.Name)
+	require.Equal(t, []string{"some-alias"}, cmd.Aliases)
+	require.Equal(t, "some-usage", cmd.Usage)
+	require.Equal(t, []cli.Flag{&cli.StringFlag{Name: "some-flag"}}, cmd.Flags)
+	require.Equal(t, true, cmd.SkipFlagParsing)
+
 }

@@ -10,7 +10,6 @@ import (
 	"github.com/iancoleman/strcase"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
-	"github.com/urfave/cli/v2"
 )
 
 var (
@@ -29,13 +28,11 @@ var _ typgo.Tasker = (*GenerateMock)(nil)
 var _ typgo.Action = (*GenerateMock)(nil)
 
 // Task to mock
-func (d *GenerateMock) Task(c *typgo.Descriptor) *cli.Command {
-	return &cli.Command{
-		Name:        "mock",
-		Usage:       "Generate mock class",
-		UsageText:   "mock [package_names]",
-		Description: "If package_names is missing then check every package",
-		Action:      c.Action(d),
+func (d *GenerateMock) Task() *typgo.Task {
+	return &typgo.Task{
+		Name:   "mock",
+		Usage:  "Generate mock class",
+		Action: d,
 	}
 }
 
