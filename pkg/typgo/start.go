@@ -22,3 +22,9 @@ func Start(d *Descriptor) {
 		log.Fatal(err)
 	}
 }
+
+func createBuildSys(d *Descriptor) *BuildSys {
+	sys := &BuildSys{Descriptor: d}
+
+	return sys
+}

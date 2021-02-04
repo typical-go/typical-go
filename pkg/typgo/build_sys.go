@@ -12,14 +12,6 @@ type (
 	}
 )
 
-func createBuildSys(d *Descriptor) *BuildSys {
-	sys := &BuildSys{Descriptor: d}
-	for _, task := range d.Tasks {
-		sys.Commands = append(sys.Commands, task.Task(sys))
-	}
-	return sys
-}
-
 // ExecuteFn to return cli func from execute function
 func (b *BuildSys) ExecuteFn(fn ExecuteFn) func(*cli.Context) error {
 	return b.Action(NewAction(fn))

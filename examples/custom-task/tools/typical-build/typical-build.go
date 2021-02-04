@@ -11,6 +11,10 @@ var descriptor = typgo.Descriptor{
 	ProjectName:    "custom-task",
 	ProjectVersion: "1.0.0",
 
+	EnvLoader: typgo.EnvMap{
+		"key1": "value1",
+	},
+
 	Tasks: []typgo.Tasker{
 		// compile
 		&typgo.GoBuild{},
@@ -35,6 +39,7 @@ var descriptor = typgo.Descriptor{
 				fmt.Println("print the info:")
 				c.ExecuteBash("go version")
 				c.ExecuteBash("git version")
+				fmt.Printf("\nENV: key1=%s\n", os.Getenv("key1"))
 				return nil
 			}),
 		},
@@ -51,7 +56,7 @@ var descriptor = typgo.Descriptor{
 		&typgo.Task{
 			Name:   "all",
 			Usage:  "run all custom task",
-			Action: typgo.TaskNames{"ping", "info", "help"},
+			Action: typgo.TaskNames{"ping", "info"},
 		},
 	},
 }

@@ -3,7 +3,6 @@ package typgo
 import (
 	"fmt"
 	"io"
-	"os"
 	"strings"
 
 	"github.com/fatih/color"
@@ -21,13 +20,10 @@ var _ Action = (TaskNames)(nil)
 func (r TaskNames) Execute(c *Context) error {
 	for _, name := range r {
 		taskSignature(oskit.Stdout, fmt.Sprintf("./typicalw %s", name))
-		if err := RunBash(c.Ctx(), &Bash{
-			Name:   "./typicalw",
-			Args:   strings.Split(name, " "),
-			Stdout: oskit.Stdout,
-			Stderr: os.Stderr,
-			Stdin:  os.Stdin,
-		}); err != nil {
+		args := []string{c.App.Name}
+		args = append(args, strings.Split(name, " ")...)
+
+		if err := c.App.Run(args); err != nil {
 			return err
 		}
 	}

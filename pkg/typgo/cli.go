@@ -1,21 +1,28 @@
 package typgo
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/urfave/cli/v2"
 )
 
 // Cli app for typical-go
 func Cli(b *BuildSys) *cli.App {
+
+	if b.EnvLoader != nil {
+		if err := b.EnvLoader.EnvLoad(); err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+		}
+	}
+
 	cli.AppHelpTemplate = appHelpTemplate
 	cli.SubcommandHelpTemplate = subcommandHelpTemplate
 
 	app := cli.NewApp()
-	app.Before = func(*cli.Context) error {
-		if b.EnvLoader != nil {
-			return b.EnvLoader.EnvLoad()
-		}
-		return nil
+	for _, task := range b.Tasks {
+		app.Commands = append(app.Commands, task.Task(b))
 	}
-	app.Commands = b.Commands
+
 	return app
 }
