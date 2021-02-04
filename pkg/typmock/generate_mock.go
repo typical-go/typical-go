@@ -29,7 +29,7 @@ var _ typgo.Tasker = (*GenerateMock)(nil)
 var _ typgo.Action = (*GenerateMock)(nil)
 
 // Task to mock
-func (d *GenerateMock) Task(c *typgo.BuildSys) *cli.Command {
+func (d *GenerateMock) Task(c *typgo.Descriptor) *cli.Command {
 	return &cli.Command{
 		Name:        "mock",
 		Usage:       "Generate mock class",

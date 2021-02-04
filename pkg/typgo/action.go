@@ -27,7 +27,7 @@ type (
 	// Context of build tool
 	Context struct {
 		*cli.Context
-		BuildSys *BuildSys
+		Descriptor *Descriptor
 	}
 )
 

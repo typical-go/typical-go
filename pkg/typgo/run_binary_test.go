@@ -12,7 +12,7 @@ import (
 
 func TestRunCmd(t *testing.T) {
 	runCmd := &typgo.RunBinary{}
-	command := runCmd.Task(&typgo.BuildSys{Descriptor: &typgo.Descriptor{}})
+	command := runCmd.Task(&typgo.Descriptor{})
 	require.Equal(t, "run", command.Name)
 	require.Equal(t, []string{"r"}, command.Aliases)
 	require.Equal(t, "Run the project", command.Usage)
@@ -28,7 +28,7 @@ func TestRunCmd_Before(t *testing.T) {
 			return errors.New("before-error")
 		}),
 	}
-	command := runCmd.Task(&typgo.BuildSys{})
+	command := runCmd.Task(&typgo.Descriptor{})
 	require.EqualError(t, command.Before(&cli.Context{}), "before-error")
 }
 
@@ -39,10 +39,8 @@ func TestRunBinary_Execute(t *testing.T) {
 
 	stdRun := &typgo.RunBinary{}
 	c := &typgo.Context{
-		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
-		BuildSys: &typgo.BuildSys{
-			Descriptor: &typgo.Descriptor{ProjectName: "some-name"},
-		},
+		Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
+		Descriptor: &typgo.Descriptor{ProjectName: "some-name"},
 	}
 
 	require.NoError(t, stdRun.Execute(c))
@@ -57,10 +55,8 @@ func TestRunBinary_Execute_Predefined(t *testing.T) {
 		Binary: "some-binary",
 	}
 	c := &typgo.Context{
-		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
-		BuildSys: &typgo.BuildSys{
-			Descriptor: &typgo.Descriptor{ProjectName: "some-name"},
-		},
+		Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
+		Descriptor: &typgo.Descriptor{ProjectName: "some-name"},
 	}
 
 	require.NoError(t, stdRun.Execute(c))

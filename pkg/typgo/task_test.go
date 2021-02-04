@@ -22,7 +22,7 @@ func TestTask(t *testing.T) {
 			return errors.New("some-error")
 		}),
 	}
-	command := task.Task(&typgo.BuildSys{})
+	command := task.Task(&typgo.Descriptor{})
 	require.Equal(t, "some-name", command.Name)
 	require.Equal(t, []string{"some-alias"}, command.Aliases)
 	require.Equal(t, "some-usage", command.Usage)

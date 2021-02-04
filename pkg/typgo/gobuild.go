@@ -27,7 +27,7 @@ var _ Action = (*GoBuild)(nil)
 var _ Basher = (*GoBuild)(nil)
 
 // Task for gobuild
-func (p *GoBuild) Task(b *BuildSys) *cli.Command {
+func (p *GoBuild) Task(b *Descriptor) *cli.Command {
 	return &cli.Command{
 		Name:    "build",
 		Aliases: []string{"b"},
@@ -39,15 +39,15 @@ func (p *GoBuild) Task(b *BuildSys) *cli.Command {
 // Execute standard compile
 func (p *GoBuild) Execute(c *Context) error {
 	if p.MainPackage == "" {
-		p.MainPackage = fmt.Sprintf("./cmd/%s", c.BuildSys.ProjectName)
+		p.MainPackage = fmt.Sprintf("./cmd/%s", c.Descriptor.ProjectName)
 	}
 	if p.Output == "" {
-		p.Output = fmt.Sprintf("bin/%s", c.BuildSys.ProjectName)
+		p.Output = fmt.Sprintf("bin/%s", c.Descriptor.ProjectName)
 	}
 	if p.Ldflags == nil {
 		p.Ldflags = BuildVars{
-			"github.com/typical-go/typical-go/pkg/typgo.ProjectName":    c.BuildSys.ProjectName,
-			"github.com/typical-go/typical-go/pkg/typgo.ProjectVersion": c.BuildSys.ProjectVersion,
+			"github.com/typical-go/typical-go/pkg/typgo.ProjectName":    c.Descriptor.ProjectName,
+			"github.com/typical-go/typical-go/pkg/typgo.ProjectVersion": c.Descriptor.ProjectVersion,
 		}
 	}
 	return c.Execute(p.Bash())

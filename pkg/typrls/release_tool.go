@@ -38,7 +38,7 @@ var DefaultPrefixes = []string{"merge", "bump", "revision", "generate", "wip"}
 var _ typgo.Tasker = (*ReleaseTool)(nil)
 
 // Task to release
-func (r *ReleaseTool) Task(sys *typgo.BuildSys) *cli.Command {
+func (r *ReleaseTool) Task(sys *typgo.Descriptor) *cli.Command {
 	return &cli.Command{
 		Name:  "release",
 		Usage: "Release the project",
@@ -109,8 +109,8 @@ func (r *ReleaseTool) setDefault() {
 // DefaultGenerateTag create release tag
 func DefaultGenerateTag(c *typgo.Context, alpha bool) string {
 	tagName := "v0.0.1"
-	if c.BuildSys.ProjectVersion != "" {
-		tagName = fmt.Sprintf("v%s", c.BuildSys.ProjectVersion)
+	if c.Descriptor.ProjectVersion != "" {
+		tagName = fmt.Sprintf("v%s", c.Descriptor.ProjectVersion)
 	}
 	if alpha {
 		tagName = tagName + "_alpha"

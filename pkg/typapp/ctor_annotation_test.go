@@ -25,9 +25,7 @@ func TestCtorAnnotation_Annotate(t *testing.T) {
 	ctorAnnot := &typapp.CtorAnnotation{}
 	ctx := &typast.Context{
 		Context: &typgo.Context{
-			BuildSys: &typgo.BuildSys{
-				Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
-			},
+			Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
 		},
 		Summary: &typast.Summary{
 			Annots: []*typast.Annot{
@@ -85,9 +83,7 @@ func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
 	}
 	ctx := &typast.Context{
 		Context: &typgo.Context{
-			BuildSys: &typgo.BuildSys{
-				Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
-			},
+			Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
 		},
 		Summary: &typast.Summary{
 			Annots: []*typast.Annot{

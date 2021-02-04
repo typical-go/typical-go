@@ -26,7 +26,7 @@ var _ Tasker = (*GoTest)(nil)
 var _ Action = (*GoTest)(nil)
 
 // Task for gotest
-func (t *GoTest) Task(b *BuildSys) *cli.Command {
+func (t *GoTest) Task(b *Descriptor) *cli.Command {
 	return &cli.Command{
 		Name:    "test",
 		Aliases: []string{"t"},

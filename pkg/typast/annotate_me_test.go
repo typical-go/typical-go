@@ -14,15 +14,15 @@ func TestAnnotateCmd(t *testing.T) {
 	annonateCmd := &typast.AnnotateMe{
 		Sources: []string{"internal"},
 	}
-	sys := &typgo.BuildSys{Descriptor: &typgo.Descriptor{}}
+	d := &typgo.Descriptor{}
 
-	command := annonateCmd.Task(sys)
+	command := annonateCmd.Task(d)
 	require.Equal(t, "annotate", command.Name)
 	require.Equal(t, []string{"a"}, command.Aliases)
 	require.Equal(t, "Annotate the project and generate code", command.Usage)
 	require.NoError(t, command.Action(&cli.Context{}))
 
-	_, err := annonateCmd.CreateContext(&typgo.Context{BuildSys: sys})
+	_, err := annonateCmd.CreateContext(&typgo.Context{Descriptor: d})
 	require.NoError(t, err)
 }
 
@@ -35,20 +35,19 @@ func TestAnnotateCmd_Defined(t *testing.T) {
 			}),
 		},
 	}
-	sys := &typgo.BuildSys{Descriptor: &typgo.Descriptor{}}
+	d := &typgo.Descriptor{}
 
-	command := annonateCmd.Task(sys)
+	command := annonateCmd.Task(d)
 	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
 
-	_, err := annonateCmd.CreateContext(&typgo.Context{BuildSys: sys})
+	_, err := annonateCmd.CreateContext(&typgo.Context{Descriptor: d})
 	require.NoError(t, err)
 }
 
 func TestAnnotateCmd_MissingSources(t *testing.T) {
 	annonateCmd := typast.AnnotateMe{}
-	sys := &typgo.BuildSys{Descriptor: &typgo.Descriptor{}}
 
-	command := annonateCmd.Task(sys)
+	command := annonateCmd.Task(&typgo.Descriptor{})
 	require.EqualError(t, command.Action(&cli.Context{}), "'Sources' is missing")
 }
 
@@ -60,9 +59,9 @@ func TestAnnotators_Execute(t *testing.T) {
 		ExpectedErr string
 	}{
 		{
-			Context: &typgo.Context{BuildSys: &typgo.BuildSys{
+			Context: &typgo.Context{
 				Descriptor: &typgo.Descriptor{},
-			}},
+			},
 			AnnotateMe: typast.AnnotateMe{
 				Sources: []string{"internal"},
 				Annotators: []typast.Annotator{
@@ -73,9 +72,9 @@ func TestAnnotators_Execute(t *testing.T) {
 			ExpectedErr: "some-error-1",
 		},
 		{
-			Context: &typgo.Context{BuildSys: &typgo.BuildSys{
+			Context: &typgo.Context{
 				Descriptor: &typgo.Descriptor{},
-			}},
+			},
 			AnnotateMe: typast.AnnotateMe{
 				Sources: []string{"internal"},
 				Annotators: []typast.Annotator{

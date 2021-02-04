@@ -17,8 +17,8 @@ import (
 func TestGoTest_NoPackages(t *testing.T) {
 	testProj := &typgo.GoTest{}
 	c := &typgo.Context{
-		Context:  &cli.Context{Context: context.Background()},
-		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+		Context:    &cli.Context{Context: context.Background()},
+		Descriptor: &typgo.Descriptor{},
 	}
 
 	defer typgo.PatchBash([]*typgo.RunExpectation{})(t)
@@ -40,8 +40,8 @@ func TestGoTest(t *testing.T) {
 	})(t)
 
 	c := &typgo.Context{
-		Context:  gotestCliContext(nil),
-		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+		Context:    gotestCliContext(nil),
+		Descriptor: &typgo.Descriptor{},
 	}
 
 	testProj := &typgo.GoTest{
@@ -66,8 +66,8 @@ func TestGoTest_WithCoverProfile(t *testing.T) {
 	})(t)
 
 	c := &typgo.Context{
-		Context:  gotestCliContext([]string{"-coverprofile=cover.out"}),
-		BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+		Context:    gotestCliContext([]string{"-coverprofile=cover.out"}),
+		Descriptor: &typgo.Descriptor{},
 	}
 
 	testProj := &typgo.GoTest{

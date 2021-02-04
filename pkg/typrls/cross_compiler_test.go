@@ -27,12 +27,8 @@ func TestCrossCompile(t *testing.T) {
 			Context: &typrls.Context{
 				TagName: "v0.0.1",
 				Context: &typgo.Context{
-					BuildSys: &typgo.BuildSys{
-						Descriptor: &typgo.Descriptor{
-							ProjectName: "myproject",
-						},
-					},
-					Context: &cli.Context{},
+					Descriptor: &typgo.Descriptor{ProjectName: "myproject"},
+					Context:    &cli.Context{},
 				},
 			},
 			RunExpectations: []*typgo.RunExpectation{
@@ -48,12 +44,8 @@ func TestCrossCompile(t *testing.T) {
 			Context: &typrls.Context{
 				TagName: "v0.0.1",
 				Context: &typgo.Context{
-					BuildSys: &typgo.BuildSys{
-						Descriptor: &typgo.Descriptor{
-							ProjectName: "myproject",
-						},
-					},
-					Context: &cli.Context{},
+					Descriptor: &typgo.Descriptor{ProjectName: "myproject"},
+					Context:    &cli.Context{},
 				},
 			},
 			RunExpectations: []*typgo.RunExpectation{

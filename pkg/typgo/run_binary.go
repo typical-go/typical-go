@@ -20,14 +20,14 @@ var _ Tasker = (*RunBinary)(nil)
 var _ Action = (*RunBinary)(nil)
 
 // Task to run binary
-func (r *RunBinary) Task(sys *BuildSys) *cli.Command {
+func (r *RunBinary) Task(d *Descriptor) *cli.Command {
 	return &cli.Command{
 		Name:            "run",
 		Aliases:         []string{"r"},
 		Usage:           "Run the project",
 		SkipFlagParsing: true,
-		Before:          sys.Action(r.Before),
-		Action:          sys.Action(r),
+		Before:          d.Action(r.Before),
+		Action:          d.Action(r),
 	}
 }
 
@@ -45,7 +45,7 @@ func (r *RunBinary) Execute(c *Context) error {
 
 func (r *RunBinary) getBinary(c *Context) string {
 	if r.Binary == "" {
-		r.Binary = fmt.Sprintf("bin/%s", c.BuildSys.ProjectName)
+		r.Binary = fmt.Sprintf("bin/%s", c.Descriptor.ProjectName)
 	}
 	return r.Binary
 }

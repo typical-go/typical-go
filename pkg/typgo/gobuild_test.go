@@ -20,9 +20,7 @@ func TestGoBuild_Command(t *testing.T) {
 	defer oskit.PatchStdout(&out)()
 
 	cmpl := &typgo.GoBuild{}
-	s := &typgo.BuildSys{
-		Descriptor: &typgo.Descriptor{ProjectName: "some-name", ProjectVersion: "0.0.1"},
-	}
+	s := &typgo.Descriptor{ProjectName: "some-name", ProjectVersion: "0.0.1"}
 	command := cmpl.Task(s)
 	require.Equal(t, "build", command.Name)
 	require.Equal(t, []string{"b"}, command.Aliases)
@@ -40,10 +38,8 @@ func TestGoBuild_Predefined(t *testing.T) {
 		},
 	}
 	c := &typgo.Context{
-		BuildSys: &typgo.BuildSys{
-			Descriptor: &typgo.Descriptor{ProjectName: "some-name", ProjectVersion: "0.0.1"},
-		},
-		Context: &cli.Context{Context: context.Background()},
+		Descriptor: &typgo.Descriptor{ProjectName: "some-name", ProjectVersion: "0.0.1"},
+		Context:    &cli.Context{Context: context.Background()},
 	}
 
 	unpatch := typgo.PatchBash([]*typgo.RunExpectation{

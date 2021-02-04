@@ -8,10 +8,10 @@ import (
 )
 
 // Cli app for typical-go
-func Cli(b *BuildSys) *cli.App {
+func Cli(d *Descriptor) *cli.App {
 
-	if b.EnvLoader != nil {
-		if err := b.EnvLoader.EnvLoad(); err != nil {
+	if d.EnvLoader != nil {
+		if err := d.EnvLoader.EnvLoad(); err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 		}
 	}
@@ -20,8 +20,8 @@ func Cli(b *BuildSys) *cli.App {
 	cli.SubcommandHelpTemplate = subcommandHelpTemplate
 
 	app := cli.NewApp()
-	for _, task := range b.Tasks {
-		app.Commands = append(app.Commands, task.Task(b))
+	for _, task := range d.Tasks {
+		app.Commands = append(app.Commands, task.Task(d))
 	}
 
 	return app

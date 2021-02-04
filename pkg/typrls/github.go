@@ -40,7 +40,7 @@ func (g *Github) Publish(c *Context) (err error) {
 
 	fmt.Printf("\nCreate github release for %s/%s\n", g.Owner, g.Repo)
 	rls := &github.RepositoryRelease{
-		Name:       github.String(fmt.Sprintf("%s - %s", c.BuildSys.ProjectName, c.TagName)),
+		Name:       github.String(fmt.Sprintf("%s - %s", c.Descriptor.ProjectName, c.TagName)),
 		TagName:    github.String(c.TagName),
 		Body:       github.String(c.Summary),
 		Draft:      github.Bool(g.Draft),

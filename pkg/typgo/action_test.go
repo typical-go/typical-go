@@ -99,8 +99,8 @@ func TestContext_ExecuteBash(t *testing.T) {
 		t.Run(tt.TestName, func(t *testing.T) {
 			defer typgo.PatchBash(tt.RunExpectations)(t)
 			c := &typgo.Context{
-				Context:  cli.NewContext(nil, &flag.FlagSet{}, nil),
-				BuildSys: &typgo.BuildSys{},
+				Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
+				Descriptor: &typgo.Descriptor{},
 			}
 			err := c.ExecuteBash(tt.CommandLine)
 			if tt.ExpectedErr != "" {

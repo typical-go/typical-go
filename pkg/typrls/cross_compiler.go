@@ -34,7 +34,7 @@ func (o *CrossCompiler) Release(c *Context) error {
 		goos := target.OS()
 		goarch := target.Arch()
 		output := fmt.Sprintf("%s/%s_%s_%s_%s",
-			c.ReleaseFolder, c.BuildSys.ProjectName, c.TagName, goos, goarch)
+			c.ReleaseFolder, c.Descriptor.ProjectName, c.TagName, goos, goarch)
 
 		fmt.Fprintf(oskit.Stdout, "\nGOOS=%s GOARC=%s", goos, goarch)
 		os.Setenv("GOOS", goos)
@@ -44,7 +44,7 @@ func (o *CrossCompiler) Release(c *Context) error {
 			Output:      output,
 			MainPackage: o.getMainPackage(c),
 			Ldflags: typgo.BuildVars{
-				"github.com/typical-go/typical-go/pkg/typgo.ProjectName":    c.BuildSys.ProjectName,
+				"github.com/typical-go/typical-go/pkg/typgo.ProjectName":    c.Descriptor.ProjectName,
 				"github.com/typical-go/typical-go/pkg/typgo.ProjectVersion": c.TagName,
 			},
 		})
@@ -57,7 +57,7 @@ func (o *CrossCompiler) Release(c *Context) error {
 
 func (o *CrossCompiler) getMainPackage(c *Context) string {
 	if o.MainPackage == "" {
-		o.MainPackage = fmt.Sprintf("./cmd/%s", c.BuildSys.ProjectName)
+		o.MainPackage = fmt.Sprintf("./cmd/%s", c.Descriptor.ProjectName)
 	}
 	return o.MainPackage
 }

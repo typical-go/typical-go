@@ -13,7 +13,7 @@ import (
 func TestTaskNames(t *testing.T) {
 	var out strings.Builder
 
-	d := &typgo.Descriptor{
+	app := typgo.Cli(&typgo.Descriptor{
 		Tasks: []typgo.Tasker{
 			&typgo.Task{
 				Name: "task-1",
@@ -34,9 +34,7 @@ func TestTaskNames(t *testing.T) {
 				Action: typgo.TaskNames{"task-1", "task-2"},
 			},
 		},
-	}
-	buildSys := &typgo.BuildSys{Descriptor: d}
-	app := typgo.Cli(buildSys)
+	})
 
 	require.NoError(t, app.Run([]string{"typical-build", "all"}))
 	require.Equal(t, "a\nb\n", out.String())
@@ -46,7 +44,7 @@ func TestTaskNames(t *testing.T) {
 func TestTaskNames_FistTaskError(t *testing.T) {
 	var out strings.Builder
 
-	d := &typgo.Descriptor{
+	app := typgo.Cli(&typgo.Descriptor{
 		Tasks: []typgo.Tasker{
 			&typgo.Task{
 				Name: "task-1",
@@ -66,9 +64,7 @@ func TestTaskNames_FistTaskError(t *testing.T) {
 				Action: typgo.TaskNames{"task-1", "task-2"},
 			},
 		},
-	}
-	buildSys := &typgo.BuildSys{Descriptor: d}
-	app := typgo.Cli(buildSys)
+	})
 
 	require.EqualError(t, app.Run([]string{"typical-build", "all"}), "some-error")
 }

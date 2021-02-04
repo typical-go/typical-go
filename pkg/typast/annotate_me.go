@@ -38,12 +38,12 @@ var _ typgo.Tasker = (*AnnotateMe)(nil)
 var _ typgo.Action = (*AnnotateMe)(nil)
 
 // Task to annotate
-func (a AnnotateMe) Task(sys *typgo.BuildSys) *cli.Command {
+func (a AnnotateMe) Task(d *typgo.Descriptor) *cli.Command {
 	return &cli.Command{
 		Name:    "annotate",
 		Aliases: []string{"a"},
 		Usage:   "Annotate the project and generate code",
-		Action:  sys.Action(a),
+		Action:  d.Action(a),
 	}
 }
 

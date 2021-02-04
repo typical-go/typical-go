@@ -39,8 +39,8 @@ func TestReleaseTool(t *testing.T) {
 				}),
 			},
 			Context: &typgo.Context{
-				Context:  createContext(),
-				BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+				Context:    createContext(),
+				Descriptor: &typgo.Descriptor{},
 			},
 			Debug: "1\n2\n",
 		},
@@ -57,8 +57,8 @@ func TestReleaseTool(t *testing.T) {
 				}),
 			},
 			Context: &typgo.Context{
-				Context:  createContext(),
-				BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+				Context:    createContext(),
+				Descriptor: &typgo.Descriptor{},
 			},
 			ExpectedErr: "release-error",
 		},
@@ -75,8 +75,8 @@ func TestReleaseTool(t *testing.T) {
 				}),
 			},
 			Context: &typgo.Context{
-				Context:  createContext(),
-				BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+				Context:    createContext(),
+				Descriptor: &typgo.Descriptor{},
 			},
 			ExpectedErr: "publish-error",
 		},
@@ -90,8 +90,8 @@ func TestReleaseTool(t *testing.T) {
 				}),
 			},
 			Context: &typgo.Context{
-				Context:  createContext(),
-				BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+				Context:    createContext(),
+				Descriptor: &typgo.Descriptor{},
 			},
 		},
 		{
@@ -107,8 +107,8 @@ func TestReleaseTool(t *testing.T) {
 				}),
 			},
 			Context: &typgo.Context{
-				Context:  createContext("-skip-publish"),
-				BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+				Context:    createContext("-skip-publish"),
+				Descriptor: &typgo.Descriptor{},
 			},
 		},
 		{
@@ -121,8 +121,8 @@ func TestReleaseTool(t *testing.T) {
 				}),
 			},
 			Context: &typgo.Context{
-				Context:  createContext(),
-				BuildSys: &typgo.BuildSys{Descriptor: &typgo.Descriptor{}},
+				Context:    createContext(),
+				Descriptor: &typgo.Descriptor{},
 			},
 			ExpectedErr: "publish-error",
 		},
@@ -165,10 +165,8 @@ func TestReleaseTool_CustomReleaseFolder(t *testing.T) {
 	}
 
 	rel.Execute(&typgo.Context{
-		Context: createContext("-release-folder=some-release"),
-		BuildSys: &typgo.BuildSys{
-			Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
-		},
+		Context:    createContext("-release-folder=some-release"),
+		Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
 	})
 	defer os.RemoveAll("some-release")
 	require.Equal(t, "some-release", rlsCtx.ReleaseFolder)
@@ -187,10 +185,8 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 		{
 			ReleaseTool: &typrls.ReleaseTool{},
 			Ctx: &typgo.Context{
-				Context: createContext(),
-				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{},
-				},
+				Context:    createContext(),
+				Descriptor: &typgo.Descriptor{},
 			},
 			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git fetch"},
@@ -217,10 +213,8 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 				GenerateSummaryFn: func(*typgo.Context) string { return "some-summary" },
 			},
 			Ctx: &typgo.Context{
-				Context: createContext("-alpha"),
-				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{},
-				},
+				Context:    createContext("-alpha"),
+				Descriptor: &typgo.Descriptor{},
 			},
 			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git fetch"},
@@ -239,12 +233,8 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 				GenerateSummaryFn: func(*typgo.Context) string { return "some-summary" },
 			},
 			Ctx: &typgo.Context{
-				Context: createContext(),
-				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{
-						ProjectVersion: "9.9.9",
-					},
-				},
+				Context:    createContext(),
+				Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
 			},
 			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git fetch"},
@@ -263,12 +253,8 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 				GenerateSummaryFn: func(*typgo.Context) string { return "some-summary" },
 			},
 			Ctx: &typgo.Context{
-				Context: createContext("-tag-name=some-tag"),
-				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{
-						ProjectVersion: "9.9.9",
-					},
-				},
+				Context:    createContext("-tag-name=some-tag"),
+				Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
 			},
 			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git fetch"},
@@ -323,7 +309,7 @@ func TestReleaseCmd_Before(t *testing.T) {
 			return errors.New("some-error")
 		}),
 	}
-	command := cmd.Task(&typgo.BuildSys{})
+	command := cmd.Task(&typgo.Descriptor{})
 	require.EqualError(t, command.Before(&cli.Context{}), "some-error")
 }
 
@@ -337,18 +323,14 @@ func TestDefaultTagFn(t *testing.T) {
 	}{
 		{
 			Context: &typgo.Context{
-				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{ProjectVersion: "0.0.1"},
-				},
+				Descriptor: &typgo.Descriptor{ProjectVersion: "0.0.1"},
 			},
 			Expected: "v0.0.1",
 		},
 		{
 			TestName: "with alpha",
 			Context: &typgo.Context{
-				BuildSys: &typgo.BuildSys{
-					Descriptor: &typgo.Descriptor{ProjectVersion: "0.0.1"},
-				},
+				Descriptor: &typgo.Descriptor{ProjectVersion: "0.0.1"},
 			},
 			Alpha:    true,
 			Expected: "v0.0.1_alpha",
