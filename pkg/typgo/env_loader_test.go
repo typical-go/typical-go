@@ -6,37 +6,33 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/typical-go/typical-go/pkg/oskit"
-
 	"github.com/stretchr/testify/require"
+	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/typgo"
-	"github.com/urfave/cli/v2"
 )
 
-func TestCli_Before(t *testing.T) {
-	app := typgo.Cli(&typgo.BuildSys{Descriptor: &typgo.Descriptor{}})
-	require.NoError(t, app.Before(nil))
-}
-
-func TestCli_Before_Setenv(t *testing.T) {
+func TestDotEnv(t *testing.T) {
 	ioutil.WriteFile(".env", []byte("key1=value1\nkey2=value2\n"), 0777)
 	defer os.Remove(".env")
-
-	os.Clearenv()
-	defer os.Clearenv()
 
 	var out strings.Builder
 	defer oskit.PatchStdout(&out)()
 
-	app := typgo.Cli(&typgo.BuildSys{
-		Descriptor: &typgo.Descriptor{
-			EnvLoader: typgo.DotEnv(".env"),
-		},
-	})
-	require.NoError(t, app.Before(&cli.Context{}))
-
+	require.NoError(t, typgo.DotEnv(".env").EnvLoad())
 	require.Equal(t, "value1", os.Getenv("key1"))
 	require.Equal(t, "value2", os.Getenv("key2"))
-
 	require.Equal(t, "Load environment from '.env': [key1 key2]\n\n", out.String())
+}
+
+func TestEnvMap(t *testing.T) {
+	var out strings.Builder
+	defer oskit.PatchStdout(&out)()
+
+	require.NoError(t, typgo.EnvMap{
+		"key1": "value1",
+		"key2": "value2",
+	}.EnvLoad())
+	require.Equal(t, "value1", os.Getenv("key1"))
+	require.Equal(t, "value2", os.Getenv("key2"))
+	require.Equal(t, "Load environment: [key1 key2]\n\n", out.String())
 }
