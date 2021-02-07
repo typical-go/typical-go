@@ -89,65 +89,204 @@ func main() {
 }
 ```
 
-Check [examples/custom-build-tool](https://github.com/typical-go/typical-go/tree/master/examples/custom-build-tool) for example simple custom build-tool if you need to develop your own custom-build-tool without typical-go framework.
+Check [examples/custom-build-tool](https://github.com/typical-go/typical-go/tree/master/examples/custom-build-tool) for example simple custom build-tool if you need to develop your own custom-build-tool without typical-go framework.\
 
 ## Build Tasks
 
-- Custom task with golang code
-   ```go
-   pingTask := &typgo.Task{
-      Name:  "ping",
-      Usage: "print pong",
-      Action: typgo.NewAction(func(c *typgo.Context) error {
-         fmt.Println("pong")
-         return nil
-      }),
-   }
-   ```
+Software development contain many build tasks like compile, test, run (locally), create the release, generate code, database migration, etc. You can add go-based task in descriptor
 
-- Custom task to call bash command
-   ```go
-   helpTask := &typgo.Task{
-      Name:  "help",
-      Usage: "print help",
-      Action: &typgo.Bash{
-         Name:   "go",
-         Args:   []string{"help"},
-         Stdout: os.Stdout,
-      },
+```go
+var descriptor = typgo.Descriptor{
+   Tasks: []typgo.Tasker{
+      // add task
    },
-   ```
+}
+```
 
-- Custom task to call multiple bash command and golang code
-   ```go
-   infoTask := &typgo.Task{
-      Name:  "info",
-      Usage: "print info",
-      Action: typgo.NewAction(func(c *typgo.Context) error {
-         fmt.Println("print the info:")
-         c.ExecuteBash("go version")
-         c.ExecuteBash("git version")
-         return nil
-      }),
-   },
-   ```
+Compile project (go-build)
+```go
+gobuild := &typgo.GoBuild{}
+```
 
-- Custom task to call other task
-   ```go
-   allTask := &typgo.Task{
-      Name:   "all",
-      Usage:  "run all custom task",
-      Action: typgo.TaskNames{"ping", "info", "help"},
+Test project (go-test) with [glob pattern](https://en.wikipedia.org/wiki/Glob_(programming)) support
+```go
+gotest := &typgo.GoTest{
+   Includes: []string{"internal/app/**", "pkg/**"},
+   Excludes: []string{"internal/app/model"},
+}
+```
+
+Run the project (locally)
+```go
+run := &typgo.RunBinary{
+   Before: typgo.TaskNames{"annotate", "build"},
+}
+```
+
+## Custom Build Tasks
+
+With golang code
+```go
+pingTask := &typgo.Task{
+   Name:  "ping",
+   Usage: "print pong",
+   Action: typgo.NewAction(func(c *typgo.Context) error {
+      fmt.Println("pong")
+      return nil
+   }),
+}
+```
+
+Call bash command
+```go
+helpTask := &typgo.Task{
+   Name:  "help",
+   Usage: "print help",
+   Action: &typgo.Bash{
+      Name:   "go",
+      Args:   []string{"help"},
+      Stdout: os.Stdout,
    },
-   ```
+},
+```
+
+With golang code to call bash command
+```go
+infoTask := &typgo.Task{
+   Name:  "info",
+   Usage: "print info",
+   Action: typgo.NewAction(func(c *typgo.Context) error {
+      fmt.Println("print the info:")
+      c.ExecuteBash("go version")
+      c.ExecuteBash("git version")
+      return nil
+   }),
+},
+```
+
+Call other tasks
+```go
+allTask := &typgo.Task{
+   Name:   "all",
+   Usage:  "run all custom task",
+   Action: typgo.TaskNames{"ping", "info", "help"},
+},
+```
 
 ## Annotation
 
-Typical-Go support java-like annotation (except the parameter in [StructTag](https://www.digitalocean.com/community/tutorials/how-to-use-struct-tags-in-go) format) for code-generation purpose. [Learn more](pkg/typast)
+Typical-Go support java-like annotation (except the parameter in [StructTag](https://www.digitalocean.com/community/tutorials/how-to-use-struct-tags-in-go) format) for code-generation purpose. It is similar with [`go generate`](https://blog.golang.org/generate) except it provide in-code implementation
 
+Add annotation to the code
 ```go
 // @mytag (key1:"val1" key2:"val2")
 func myFunc(){
+}
+```
+
+Add annotate task
+```go
+annotateMe := &typast.AnnotateMe{
+   Sources: []string{"internal"},
+   Annotators: []typast.Annotator{
+      typast.NewAnnotator(func(c *typast.Context) error {
+         for _, a := range c.Annots {
+            fmt.Printf("TagName=%s\tName=%s\tType=%T\tParam=%s\tField1=%s\n",
+               a.TagName, a.GetName(), a.Decl.Type, a.TagParam, a.TagParam.Get("field1"))
+         }
+         return nil
+      }),
+   },
+},
+```
+
+Trigger annotate task
+```bash
+./typicalw annotate
+```
+
+
+## Generate mock
+
+Generate mock using [gomock](https://github.com/golang/mock) with annotation
+
+Add `@mock` annotation to the interface
+```go
+// Reader responsible to read
+// @mock
+type Reader interface{
+    Read()
+}
+```
+
+Add generate mock task
+```go
+genMock := &typmock.GenerateMock{
+   Sources: []string{"internal"},
+}
+```
+
+Generate gomock
+```bash
+./typicalw mock
+```
+
+## Application Framework
+
+Typical-Go provide [application framework](pkg/typapp) to support dependency injection and graceful shutdown. It using reflection-based dependency injection ([dig](https://github.com/uber-go/dig)). It is similar with [fx](https://github.com/uber-go/fx) except encourage global state. 
+
+Start the application
+```go
+typapp.Provide("", func() string { return "world" })
+
+application := &typapp.Application{
+    StartFn: func(text string) {
+        fmt.Printf("hello %s\n", text)
+    },
+    ShutdownFn: func() {
+        fmt.Println("bye2")
+    },
+    ExitSigs: []syscall.Signal{syscall.SIGTERM, syscall.SIGINT},
+}
+
+if err := application.Run(); err != nil {
+    log.Fatal(err.Error())
+}
+
+// Output: hello world
+// bye2
+```
+
+Use `@ctor` to add constructor
+```go
+// GetName return name value
+// @ctor
+func GetName() string{ return "World" }
+
+// GetName return name value
+// @ctor (name:"other")
+func GetOtherName() string{ return "World" }
+
+func main(){
+    typapp.Run(func(name string){
+        fmt.Printf("Hello %s\n", name)
+    })
+}
+```
+
+Using `dig.In` for tagged constructor (https://godoc.org/go.uber.org/dig#hdr-Named_Values)
+```go
+func Start(di *dig.Container, text string) {
+	fmt.Println(text)
+
+	type parameter struct {
+		dig.In
+		Text string `name:"typical"`
+	}
+
+	di.Invoke(func(p parameter) {
+		fmt.Println(p.Text)
+	})
 }
 ```
 

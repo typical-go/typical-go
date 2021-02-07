@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/typical-go/typical-go/examples/custom-annotation/internal/app"
+	"fmt"
+
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
@@ -14,7 +15,13 @@ var descriptor = typgo.Descriptor{
 		&typast.AnnotateMe{
 			Sources: []string{"internal"},
 			Annotators: []typast.Annotator{
-				&app.MyAnnotation{},
+				typast.NewAnnotator(func(c *typast.Context) error {
+					for _, a := range c.Annots {
+						fmt.Printf("TagName=%s\tName=%s\tType=%T\tParam=%s\tField1=%s\n",
+							a.TagName, a.GetName(), a.Decl.Type, a.TagParam, a.TagParam.Get("field1"))
+					}
+					return nil
+				}),
 			},
 		},
 		// test
