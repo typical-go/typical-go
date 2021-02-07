@@ -58,7 +58,28 @@ var descriptor = typgo.Descriptor{
 			Usage:  "run all custom task",
 			Action: typgo.TaskNames{"ping", "info"},
 		},
+		&greetTask{person: "john doe"},
 	},
+}
+
+type greetTask struct {
+	person string
+}
+
+var _ typgo.Tasker = (*greetTask)(nil)
+var _ typgo.Action = (*greetTask)(nil)
+
+func (g *greetTask) Task() *typgo.Task {
+	return &typgo.Task{
+		Name:   "greet",
+		Usage:  "greet person",
+		Action: g,
+	}
+}
+
+func (g *greetTask) Execute(c *typgo.Context) error {
+	fmt.Println("Hello " + g.person)
+	return nil
 }
 
 func main() {

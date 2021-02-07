@@ -5,13 +5,25 @@
 [![codebeat badge](https://codebeat.co/badges/a8b3c7a6-c42a-480a-acb4-68ece12f36b8)](https://codebeat.co/projects/github-com-typical-go-typical-go-master)
 [![BCH compliance](https://bettercodehub.com/edge/badge/typical-go/typical-go?branch=master)](https://bettercodehub.com/)
 [![codecov](https://codecov.io/gh/typical-go/typical-go/branch/master/graph/badge.svg)](https://codecov.io/gh/typical-go/typical-go)
-
 # Typical Go
 
 Build Automation Tool For Golang
 - Alternative for [GNU Make](https://www.gnu.org/software/make/manual/make.html) (a.k.a makefile)
 - Framework-based Build Tool (No DSL)
 - Supporting Java-like annotation for code generation
+
+Table of Content:
+- [Typical Go](#typical-go)
+  - [Getting Started](#getting-started)
+  - [Wrapper](#wrapper)
+  - [Project Descriptor](#project-descriptor)
+  - [Build Tasks](#build-tasks)
+  - [Custom Build Tasks](#custom-build-tasks)
+  - [Annotation](#annotation)
+  - [Dependency Injection](#dependency-injection)
+  - [Generate mock](#generate-mock)
+  - [Learning from Examples](#learning-from-examples)
+  - [License](#license)
 
 ## Getting Started
 
@@ -173,6 +185,29 @@ allTask := &typgo.Task{
 },
 ```
 
+Parameterize task by implement `typgo.Tasker` 
+```go
+type greetTask struct {
+	person string
+}
+
+var _ typgo.Tasker = (*greetTask)(nil)
+var _ typgo.Action = (*greetTask)(nil)
+
+func (g *greetTask) Task() *typgo.Task {
+	return &typgo.Task{
+		Name:   "greet",
+		Usage:  "greet person",
+		Action: g,
+	}
+}
+
+func (g *greetTask) Execute(c *typgo.Context) error {
+	fmt.Println("Hello " + g.person)
+	return nil
+}
+```
+
 ## Annotation
 
 Typical-Go support java-like annotation (except the parameter in [StructTag](https://www.digitalocean.com/community/tutorials/how-to-use-struct-tags-in-go) format) for code-generation purpose. It is similar with [`go generate`](https://blog.golang.org/generate) except it provide in-code implementation
@@ -201,37 +236,13 @@ annotateMe := &typast.AnnotateMe{
 ```
 
 Trigger annotate task
-```bash
-./typicalw annotate
+```
+$ ./typicalw annotate
 ```
 
+Typical-Go provide annotation implementation for [dependency injection](#dependency-injection) and [generate mock](#generate-mock) 
 
-## Generate mock
-
-Generate mock using [gomock](https://github.com/golang/mock) with annotation
-
-Add `@mock` annotation to the interface
-```go
-// Reader responsible to read
-// @mock
-type Reader interface{
-    Read()
-}
-```
-
-Add generate mock task
-```go
-genMock := &typmock.GenerateMock{
-   Sources: []string{"internal"},
-}
-```
-
-Generate gomock
-```bash
-./typicalw mock
-```
-
-## Application Framework
+## Dependency Injection
 
 Typical-Go provide [application framework](pkg/typapp) to support dependency injection and graceful shutdown. It using reflection-based dependency injection ([dig](https://github.com/uber-go/dig)). It is similar with [fx](https://github.com/uber-go/fx) except encourage global state. 
 
@@ -290,6 +301,30 @@ func Start(di *dig.Container, text string) {
 }
 ```
 
+## Generate mock
+
+Generate mock using [gomock](https://github.com/golang/mock) with annotation
+
+Add `@mock` annotation to the interface
+```go
+// Reader responsible to read
+// @mock
+type Reader interface{
+    Read()
+}
+```
+
+Add generate mock task
+```go
+genMock := &typmock.GenerateMock{
+   Sources: []string{"internal"},
+}
+```
+
+Generate gomock
+```
+$ ./typicalw mock
+```
 
 ## Learning from Examples
 
