@@ -8,22 +8,9 @@
 # Typical Go
 
 Build Automation Tool For Golang
-- Alternative for [GNU Make](https://www.gnu.org/software/make/manual/make.html) (a.k.a makefile)
-- Framework-based Build Tool (No DSL)
-- Supporting Java-like annotation for code generation
-
-Table of Content:
-- [Typical Go](#typical-go)
-  - [Getting Started](#getting-started)
-  - [Wrapper](#wrapper)
-  - [Project Descriptor](#project-descriptor)
-  - [Build Tasks](#build-tasks)
-  - [Custom Build Tasks](#custom-build-tasks)
-  - [Annotation](#annotation)
-  - [Dependency Injection](#dependency-injection)
-  - [Generate mock](#generate-mock)
-  - [Learning from Examples](#learning-from-examples)
-  - [License](#license)
+- Alternative for [Makefile](https://www.gnu.org/software/make/manual/make.html) to manage build tasks.
+- Framework-based Build Tool (no DSL to be learned, write everything in Go)
+- Supporting Java-like annotation as alternative for [go-generate](https://blog.golang.org/generate)
 
 ## Getting Started
 
