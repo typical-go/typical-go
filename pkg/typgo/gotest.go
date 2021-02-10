@@ -3,6 +3,7 @@ package typgo
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/typical-go/typical-go/pkg/filekit"
 	"github.com/typical-go/typical-go/pkg/oskit"
@@ -12,7 +13,9 @@ import (
 type (
 	// GoTest command test
 	GoTest struct {
-		Args     []string
+		Timeout  time.Duration
+		NoCover  bool
+		Verbose  bool
 		Includes []string
 		Excludes []string
 	}
@@ -28,10 +31,11 @@ var _ Action = (*GoTest)(nil)
 // Task for gotest
 func (t *GoTest) Task() *Task {
 	return &Task{
-		Name:    "test",
-		Aliases: []string{"t"},
-		Usage:   "Test the project",
-		Action:  t,
+		Name:            "test",
+		Aliases:         []string{"t"},
+		Usage:           "Test the project",
+		SkipFlagParsing: true,
+		Action:          t,
 		Flags: []cli.Flag{
 			&cli.StringFlag{Name: coverprofileFlag, Usage: "override arguments"},
 		},
@@ -40,6 +44,9 @@ func (t *GoTest) Task() *Task {
 
 // Execute standard test
 func (t *GoTest) Execute(c *Context) error {
+	if t.Timeout == 0 {
+		t.Timeout = 30 * time.Second
+	}
 	packages, err := filekit.FindDir(t.Includes, t.Excludes)
 	if err != nil {
 		return err
@@ -51,12 +58,14 @@ func (t *GoTest) Execute(c *Context) error {
 	}
 
 	args := []string{"test"}
-	if coverprofile := c.String(coverprofileFlag); coverprofile != "" {
-		args = append(args, "-coverprofile="+coverprofile)
-	} else {
+	if !t.NoCover {
 		args = append(args, "-cover")
 	}
-	args = append(args, t.Args...)
+	if t.Verbose {
+		args = append(args, "-v")
+	}
+	args = append(args, "-timeout="+t.Timeout.String())
+	args = append(args, c.Args().Slice()...)
 	args = append(args, packages...)
 
 	return c.Execute(&Bash{

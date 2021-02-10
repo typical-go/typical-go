@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -26,7 +27,7 @@ var descriptor = typgo.Descriptor{
 		},
 		// test
 		&typgo.GoTest{
-			Args:     []string{"-timeout=30s"},
+			Timeout:  30 * time.Second,
 			Includes: []string{"internal/*"},
 		},
 		// compile

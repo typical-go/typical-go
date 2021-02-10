@@ -20,7 +20,6 @@ var descriptor = typgo.Descriptor{
 		},
 		// test
 		&typgo.GoTest{
-			Args:     []string{"-timeout=30s"},
 			Includes: []string{"internal/**", "pkg/**"},
 		},
 		// test-examples

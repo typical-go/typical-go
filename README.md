@@ -33,21 +33,25 @@ Build Automation Tool For Golang
 
 4. Run the project
    ```
-   $ ./typicalw run
+   $ typical-go run
+   ```
+   Or via wrapper (recommendation)
+   ```
+   $ ./typicalw 
    ```
 
 Check [examples/my-project](https://github.com/typical-go/typical-go/tree/master/examples/my-project) for what generated new project look like
 
-## Wrapper
+## Build-Tool Wrapper
 
-The wrapper ([`typicalw`](typicalw)) is bash script to download, build and run the build-tool. 
+[`typicalw`](typicalw) is a bash script to prepare and run the build-tool. 
 ```
 $ ./typicalw
 ```
 
-Any downloaded and required file will be store in temporary folder which is located in `.typical-tmp`. Temporary folder is recommended to be deleted after updating typical-go version.
+Any downloaded and required file will be store in temporary folder which is located in `.typical-tmp`. Temporary folder is safe to be deleted.
 
-You can hack some parameter accordingly in wrapper script.
+You can hack some parameter accordingly in the script.
 ```bash
 PROJECT_PKG="github.com/typical-go/typical-go"
 BUILD_TOOL="tools/typical-build"
@@ -55,6 +59,7 @@ TYPTMP=.typical-tmp
 TYPGO=$TYPTMP/bin/typical-go
 TYPGO_SRC=github.com/typical-go/typical-go
 ```
+
 
 ## Project Descriptor
 
@@ -102,12 +107,44 @@ var descriptor = typgo.Descriptor{
 }
 ```
 
-Compile project (go-build)
+### Compile Project
+
+Compile the project using [go build](https://golang.org/cmd/go/#hdr-Compile_packages_and_dependencies).
+```
+$ ./typicalw build
+$ ./typicalw build 
+$ ./typicalw b [extraArguments...]
+```
+
+The default compilation is main package in `cmd/PROJECT_NAME` and output in `bin/PROJECT_NAME`
 ```go
 gobuild := &typgo.GoBuild{}
 ```
 
-Test project (go-test) with [glob pattern](https://en.wikipedia.org/wiki/Glob_(programming)) support
+With custom parameter
+```go
+gobuild := &typgo.GoBuild{
+   MainPackage: "cmd/PROJECT_NAME",
+   Output:      "bin/PROJECT_NAME",
+   Ldflags: typgo.BuildVars{
+      "github.com/typical-go/typical-go/pkg/typgo.ProjectName":    "PROJECT_NAME",
+      "github.com/typical-go/typical-go/pkg/typgo.ProjectVersion": "v0.0.1",
+   },
+},
+```
+
+
+### Test Project
+
+Test the project using [go-test](https://golang.org/cmd/go/#hdr-Test_packages) 
+```
+$ ./typicalw test
+$ ./typicalw test 
+$ ./typicalw test -coverprofile=cover.out
+$ ./typicalw test [extraArguments...]
+```
+
+It support [glob pattern](https://en.wikipedia.org/wiki/Glob_(programming)) to include/exclude target package
 ```go
 gotest := &typgo.GoTest{
    Includes: []string{"internal/app/**", "pkg/**"},
@@ -115,14 +152,43 @@ gotest := &typgo.GoTest{
 }
 ```
 
-Run the project (locally)
+With arguments
+```go
+gotest := &typgo.GoTest{
+   Timeout:  60 * time.Second,
+   NoCover:  false,
+   Verbose:  false,
+   Includes: []string{"internal/app/**", "pkg/**"},
+   Excludes: []string{"internal/app/model"},
+}
+```
+
+### Run Project
+
+Run the project 
+```
+$ ./typicalw run
+$ ./typicalw r
+$ ./typicalw r [extraArguments...]
+```
+
+Execute annotate and compile before run
 ```go
 run := &typgo.RunBinary{
    Before: typgo.TaskNames{"annotate", "build"},
 }
 ```
 
-## Custom Build Tasks
+### Call Other Tasks
+```go
+callOtherTask := &typgo.Task{
+   Name:   "all",
+   Usage:  "run all custom task",
+   Action: typgo.TaskNames{"ping", "info", "help"},
+},
+```
+
+### Create Custom Build Tasks
 
 With golang code
 ```go
@@ -160,15 +226,6 @@ infoTask := &typgo.Task{
       c.ExecuteBash("git version")
       return nil
    }),
-},
-```
-
-Call other tasks
-```go
-allTask := &typgo.Task{
-   Name:   "all",
-   Usage:  "run all custom task",
-   Action: typgo.TaskNames{"ping", "info", "help"},
 },
 ```
 

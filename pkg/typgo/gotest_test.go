@@ -5,6 +5,7 @@ import (
 	"flag"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/typical-go/typical-go/pkg/filekit"
 
@@ -45,33 +46,7 @@ func TestGoTest(t *testing.T) {
 	}
 
 	testProj := &typgo.GoTest{
-		Args:     []string{"-timeout=25s"},
-		Includes: []string{"pkg*"},
-		Excludes: []string{"*_mock"},
-	}
-	require.NoError(t, testProj.Execute(c))
-}
-
-func TestGoTest_WithCoverProfile(t *testing.T) {
-	defer monkey.Patch(filepath.Walk,
-		func(root string, walkFn filepath.WalkFunc) error {
-			walkFn("pkg1", &filekit.FileInfo{IsDirField: true}, nil)
-			walkFn("pkg2", &filekit.FileInfo{IsDirField: true}, nil)
-			walkFn("pkg/service_mock", &filekit.FileInfo{IsDirField: true}, nil)
-			return nil
-		},
-	).Unpatch()
-	defer typgo.PatchBash([]*typgo.RunExpectation{
-		{CommandLine: "go test -coverprofile=cover.out -timeout=25s ./pkg1 ./pkg2"},
-	})(t)
-
-	c := &typgo.Context{
-		Context:    gotestCliContext([]string{"-coverprofile=cover.out"}),
-		Descriptor: &typgo.Descriptor{},
-	}
-
-	testProj := &typgo.GoTest{
-		Args:     []string{"-timeout=25s"},
+		Timeout:  25 * time.Second,
 		Includes: []string{"pkg*"},
 		Excludes: []string{"*_mock"},
 	}
