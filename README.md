@@ -255,6 +255,9 @@ func (g *greetTask) Execute(c *typgo.Context) error {
 ## Annotation
 
 Typical-Go support java-like annotation (except the parameter in [StructTag](https://www.digitalocean.com/community/tutorials/how-to-use-struct-tags-in-go) format) for code-generation purpose. It is similar with [`go generate`](https://blog.golang.org/generate) except it provide in-code implementation
+```
+$ ./typicalw annotate
+```
 
 Add annotation to the code
 ```go
@@ -277,11 +280,6 @@ annotateMe := &typast.AnnotateMe{
       }),
    },
 },
-```
-
-Trigger annotate task
-```
-$ ./typicalw annotate
 ```
 
 Typical-Go provide annotation implementation for [dependency injection](#dependency-injection) and [generate mock](#generate-mock) 
@@ -348,6 +346,9 @@ func Start(di *dig.Container, text string) {
 ## Generate mock
 
 Generate mock using [gomock](https://github.com/golang/mock) with annotation
+```
+$ ./typicalw mock
+```
 
 Add `@mock` annotation to the interface
 ```go
@@ -365,10 +366,6 @@ genMock := &typmock.GenerateMock{
 }
 ```
 
-Generate gomock
-```
-$ ./typicalw mock
-```
 
 ## Learning from Examples
 
