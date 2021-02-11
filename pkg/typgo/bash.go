@@ -22,7 +22,7 @@ type (
 	}
 	// Basher responsible to Bash
 	Basher interface {
-		Bash() *Bash
+		Bash(extras ...string) *Bash
 	}
 	// RunExpectation is test expectation for typgo.RunBash
 	RunExpectation struct {
@@ -58,7 +58,7 @@ func (b *Bash) ExecCmd(ctx context.Context) *exec.Cmd {
 }
 
 // Bash return Bash
-func (b *Bash) Bash() *Bash {
+func (b *Bash) Bash(extras ...string) *Bash {
 	return b
 }
 

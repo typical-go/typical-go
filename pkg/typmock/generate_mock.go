@@ -83,15 +83,9 @@ func Annotate(c *typgo.Context, summary *typast.Summary) error {
 
 // MockGen execute mockgen bash
 func MockGen(c *typgo.Context, destPkg, dest, srcPkg, src string) error {
-	mockgen := fmt.Sprintf("%s/bin/mockgen", typgo.TypicalTmp)
-	if _, err := os.Stat(mockgen); os.IsNotExist(err) {
-		gobuild := &typgo.GoBuild{
-			Output:      mockgen,
-			MainPackage: "github.com/golang/mock/mockgen",
-		}
-		if err := c.Execute(gobuild); err != nil {
-			return err
-		}
+	mockgen, err := typgo.InstallTool(c.Ctx(), "mockgen", "github.com/golang/mock/mockgen")
+	if err != nil {
+		return err
 	}
 
 	return c.Execute(&typgo.Bash{

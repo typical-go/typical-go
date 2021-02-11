@@ -23,6 +23,7 @@ func GoImports(target string) error {
 // InstallTool install tool to typical-tmp folder
 func InstallTool(ctx context.Context, name, source string) (string, error) {
 	output := fmt.Sprintf("%s/bin/%s", TypicalTmp, name)
+
 	if _, err := os.Stat(output); os.IsNotExist(err) {
 		if err := RunBash(ctx, &GoBuild{
 			Output:      output,

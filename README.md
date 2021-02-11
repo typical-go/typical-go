@@ -91,7 +91,7 @@ var descriptor = typgo.Descriptor{
 }
 ```
 
-The descriptor file is regular golang file which will compile by typical-go, so main function should be defined.
+The descriptor file is regular golang file that will be compiled by typical-go, so main function should be defined.
 ```go
 func main() {
 	typgo.Start(&descriptor)
@@ -117,8 +117,8 @@ var descriptor = typgo.Descriptor{
 Compile the project using [go build](https://golang.org/cmd/go/#hdr-Compile_packages_and_dependencies).
 ```
 $ ./typicalw build
-$ ./typicalw build 
-$ ./typicalw b [extraArguments...]
+$ ./typicalw b 
+$ ./typicalw build [extraArguments...]
 ```
 
 The default compilation is main package in `cmd/PROJECT_NAME` and output in `bin/PROJECT_NAME`
@@ -144,8 +144,8 @@ gobuild := &typgo.GoBuild{
 Test the project using [go-test](https://golang.org/cmd/go/#hdr-Test_packages) 
 ```
 $ ./typicalw test
-$ ./typicalw test 
-$ ./typicalw test -coverprofile=cover.out
+$ ./typicalw t 
+$ ./typicalw t -coverprofile=cover.out
 $ ./typicalw test [extraArguments...]
 ```
 

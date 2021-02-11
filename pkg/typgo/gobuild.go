@@ -52,8 +52,9 @@ func (p *GoBuild) Execute(c *Context) error {
 }
 
 // Bash for go-build
-func (p *GoBuild) Bash() *Bash {
+func (p *GoBuild) Bash(extras ...string) *Bash {
 	args := []string{"build"}
+	args = append(args, extras...)
 	if p.Ldflags != nil {
 		args = append(args, "-ldflags", p.Ldflags.String())
 	}
