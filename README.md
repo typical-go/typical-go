@@ -8,9 +8,10 @@
 # Typical Go
 
 Build Automation Tool For Golang
-- Alternative for [Makefile](https://www.gnu.org/software/make/manual/make.html) to manage build tasks.
-- Framework-based Build Tool (no DSL to be learned, write everything in Go)
-- Supporting Java-like annotation as alternative for [go-generate](https://blog.golang.org/generate)
+- Manage build tasks &mdash; *alternative for [makefile](https://www.gnu.org/software/make/manual/make.html)*
+- Supporting Java-like annotation for code generation purpose &mdash; *alternative for [go-generate](https://blog.golang.org/generate)*
+- Framework-based Build Tool &mdash; *no DSL to be learned, write task in Go*
+- Build-Tool Wrapper  &mdash; *single script to prepare and run the build-tool*
 
 ## Getting Started
 
@@ -49,9 +50,7 @@ Check [examples/my-project](https://github.com/typical-go/typical-go/tree/master
 $ ./typicalw
 ```
 
-Any downloaded and required file will be store in temporary folder which is located in `.typical-tmp`. Temporary folder is safe to be deleted.
-
-You can hack some parameter accordingly in the script.
+You can hack the parameters accordingly
 ```bash
 PROJECT_PKG="github.com/typical-go/typical-go"
 BUILD_TOOL="tools/typical-build"
@@ -60,6 +59,13 @@ TYPGO=$TYPTMP/bin/typical-go
 TYPGO_SRC=github.com/typical-go/typical-go
 ```
 
+Any downloaded or required file will be saved in temporary folder which is located in `.typical-tmp` in project directory including typical-go itself. Its mean you don't need to install typical-go manually and the project always use designed version. 
+
+To update typical-go to new version
+```
+$ go get -u go get -u github.com/typical-go/typical-go
+$ rm -rf .typical-tmp
+```
 
 ## Project Descriptor
 
@@ -73,10 +79,9 @@ var descriptor = typgo.Descriptor{
    Tasks: []typgo.Tasker{
       // test
       &typgo.GoTest{
-         Args:     []string{"-timeout=30s"},
          Includes: []string{"internal/*", "pkg/*"},
       },
-      // compile
+      // build
       &typgo.GoBuild{},
       // run
       &typgo.RunBinary{
@@ -86,14 +91,14 @@ var descriptor = typgo.Descriptor{
 }
 ```
 
-The main function must call `typgo.Start()` to compile the descriptor struct to the actual build-tool.  
+The descriptor file is regular golang file which will compile by typical-go, so main function should be defined.
 ```go
 func main() {
 	typgo.Start(&descriptor)
 }
 ```
 
-Check [examples/custom-build-tool](https://github.com/typical-go/typical-go/tree/master/examples/custom-build-tool) for example simple custom build-tool if you need to develop your own custom-build-tool without typical-go framework.\
+It is possible to use other custom build-tool framework, check [examples/custom-build-tool](https://github.com/typical-go/typical-go/tree/master/examples/custom-build-tool) for example.
 
 ## Build Tasks
 
@@ -102,7 +107,7 @@ Software development contain many build tasks like compile, test, run (locally),
 ```go
 var descriptor = typgo.Descriptor{
    Tasks: []typgo.Tasker{
-      // add task
+      // add tasks
    },
 }
 ```
@@ -144,7 +149,7 @@ $ ./typicalw test -coverprofile=cover.out
 $ ./typicalw test [extraArguments...]
 ```
 
-It support [glob pattern](https://en.wikipedia.org/wiki/Glob_(programming)) to include/exclude target package
+It support [glob pattern](https://en.wikipedia.org/wiki/Glob_(programming)) to include/exclude target package. 
 ```go
 gotest := &typgo.GoTest{
    Includes: []string{"internal/app/**", "pkg/**"},
@@ -182,8 +187,8 @@ run := &typgo.RunBinary{
 ### Call Other Tasks
 ```go
 callOtherTask := &typgo.Task{
-   Name:   "all",
-   Usage:  "run all custom task",
+   Name:   "other-tasks",
+   Usage:  "run other-tasks",
    Action: typgo.TaskNames{"ping", "info", "help"},
 },
 ```
@@ -254,7 +259,7 @@ func (g *greetTask) Execute(c *typgo.Context) error {
 
 ## Annotation
 
-Typical-Go support java-like annotation (except the parameter in [StructTag](https://www.digitalocean.com/community/tutorials/how-to-use-struct-tags-in-go) format) for code-generation purpose. It is similar with [`go generate`](https://blog.golang.org/generate) except it provide in-code implementation
+Typical-Go support java-like annotation (except the parameter in [StructTag](https://www.digitalocean.com/community/tutorials/how-to-use-struct-tags-in-go) format) for code-generation purpose. It is similar with [`go generate`](https://blog.golang.org/generate) except it provide in-code implementation with declaration detail
 ```
 $ ./typicalw annotate
 ```
@@ -286,7 +291,7 @@ Typical-Go provide annotation implementation for [dependency injection](#depende
 
 ## Dependency Injection
 
-Typical-Go provide [application framework](pkg/typapp) to support dependency injection and graceful shutdown. It using reflection-based dependency injection ([dig](https://github.com/uber-go/dig)). It is similar with [fx](https://github.com/uber-go/fx) except encourage global state. 
+[typapp](pkg/typapp) package is application framework with dependency injection and graceful shutdown. It using reflection-based dependency injection ([dig](https://github.com/uber-go/dig)). It is similar with [fx](https://github.com/uber-go/fx) except encourage global state. 
 
 Start the application
 ```go
@@ -350,19 +355,19 @@ Generate mock using [gomock](https://github.com/golang/mock) with annotation
 $ ./typicalw mock
 ```
 
+Add generate mock task
+```go
+genMock := &typmock.GenerateMock{
+   Sources: []string{"internal"},
+}
+```
+
 Add `@mock` annotation to the interface
 ```go
 // Reader responsible to read
 // @mock
 type Reader interface{
     Read()
-}
-```
-
-Add generate mock task
-```go
-genMock := &typmock.GenerateMock{
-   Sources: []string{"internal"},
 }
 ```
 
