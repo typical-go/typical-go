@@ -2,10 +2,7 @@ package typmock_test
 
 import (
 	"errors"
-	"strings"
 	"testing"
-
-	"github.com/typical-go/typical-go/pkg/oskit"
 
 	"bou.ke/monkey"
 	"github.com/stretchr/testify/require"
@@ -45,7 +42,8 @@ func TestExecute(t *testing.T) {
 	})(t)
 
 	generateMock := &typmock.GenerateMock{}
-	require.NoError(t, generateMock.Execute(typgo.DummyContext()))
+	c, _ := typgo.DummyContext()
+	require.NoError(t, generateMock.Execute(c))
 }
 
 func TestMockGen_InstallMockgenError(t *testing.T) {
@@ -56,7 +54,7 @@ func TestMockGen_InstallMockgenError(t *testing.T) {
 		{CommandLine: "go build -o .typical-tmp2/bin/mockgen github.com/golang/mock/mockgen", ReturnError: errors.New("some-error")},
 	})(t)
 
-	c := typgo.DummyContext()
+	c, _ := typgo.DummyContext()
 	err := typmock.MockGen(c, "", "", "", "")
 	require.EqualError(t, err, "some-error")
 }
@@ -64,9 +62,6 @@ func TestMockGen_InstallMockgenError(t *testing.T) {
 func TestAnnotate_MockgenError(t *testing.T) {
 	typgo.TypicalTmp = ".typical-tmp"
 	defer func() { typgo.TypicalTmp = "" }()
-
-	var out strings.Builder
-	defer oskit.PatchStdout(&out)()
 
 	summary := &typast.Summary{
 		Annots: []*typast.Annot{
@@ -85,7 +80,7 @@ func TestAnnotate_MockgenError(t *testing.T) {
 		{CommandLine: ".typical-tmp/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface", ReturnError: errors.New("some-error")},
 	})(t)
 
-	c := typgo.DummyContext()
+	c, out := typgo.DummyContext()
 	require.NoError(t, typmock.Annotate(c, summary))
-	require.Equal(t, "some-project:dummy> $ rm -rf parent/path_mock\nsome-project:dummy> $ .typical-tmp/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\nFail to mock '/parent/path.SomeInterface': some-error\n", out.String())
+	require.Equal(t, "some-project:dummy> $ rm -rf parent/path_mock\nsome-project:dummy> $ .typical-tmp/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\nsome-project:dummy> Fail to mock '/parent/path.SomeInterface': some-error\n", out.String())
 }

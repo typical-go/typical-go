@@ -2,20 +2,19 @@ package typrls_test
 
 import (
 	"errors"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typrls"
 )
 
 func TestCrossCompile(t *testing.T) {
+
 	testcases := []struct {
 		TestName string
 		typrls.CrossCompiler
-		Context         *typrls.Context
+		TagName         string
 		RunExpectations []*typgo.RunExpectation
 		ExpectedErr     string
 	}{
@@ -23,10 +22,7 @@ func TestCrossCompile(t *testing.T) {
 			CrossCompiler: typrls.CrossCompiler{
 				Targets: []typrls.Target{"darwin/amd64", "linux/amd64"},
 			},
-			Context: &typrls.Context{
-				TagName: "v0.0.1",
-				Context: typgo.DummyContext(),
-			},
+			TagName: "v0.0.1",
 			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /some-project_v0.0.1_darwin_amd64 ./cmd/some-project"},
 				{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /some-project_v0.0.1_linux_amd64 ./cmd/some-project"},
@@ -37,10 +33,7 @@ func TestCrossCompile(t *testing.T) {
 			CrossCompiler: typrls.CrossCompiler{
 				Targets: []typrls.Target{"darwin/amd64"},
 			},
-			Context: &typrls.Context{
-				TagName: "v0.0.1",
-				Context: typgo.DummyContext(),
-			},
+			TagName: "v0.0.1",
 			RunExpectations: []*typgo.RunExpectation{
 				{
 					CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /some-project_v0.0.1_darwin_amd64 ./cmd/some-project",
@@ -52,12 +45,13 @@ func TestCrossCompile(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			var out strings.Builder
-			defer oskit.PatchStdout(&out)()
-
 			unpatch := typgo.PatchBash(tt.RunExpectations)
 			defer unpatch(t)
-			err := tt.Release(tt.Context)
+			c, _ := typgo.DummyContext()
+			err := tt.Release(&typrls.Context{
+				TagName: tt.TagName,
+				Context: c,
+			})
 			if tt.ExpectedErr != "" {
 				require.EqualError(t, err, tt.ExpectedErr)
 			} else {

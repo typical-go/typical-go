@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/tmplkit"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -79,8 +78,7 @@ func (a *CtorAnnotation) Annotate(c *typast.Context) error {
 
 	dest := filepath.Dir(a.Target)
 	os.MkdirAll(dest, 0777)
-
-	fmt.Fprintf(oskit.Stdout, "Generate @ctor to %s\n", a.Target)
+	c.Infof("Generate @ctor to %s\n", a.Target)
 	err := tmplkit.WriteFile(a.Target, a.Template, &CtorTmplData{
 		Signature: typast.Signature{TagName: a.TagName},
 		Package:   filepath.Base(dest),
@@ -92,6 +90,7 @@ func (a *CtorAnnotation) Annotate(c *typast.Context) error {
 		return err
 	}
 	typgo.GoImports(a.Target)
+
 	return nil
 }
 

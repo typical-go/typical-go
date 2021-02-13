@@ -14,9 +14,10 @@ import (
 )
 
 func TestSetup(t *testing.T) {
-	var output strings.Builder
+	var out strings.Builder
+	app.Stdout = &out
+	defer func() { app.Stdout = &out }()
 
-	defer oskit.PatchStdout(&output)()
 	defer typgo.PatchBash([]*typgo.RunExpectation{})(t)
 	defer oskit.MkdirAll("some-pkg")()
 
@@ -47,7 +48,7 @@ $TYPGO run \
 	$@
 `, string(b))
 
-	require.Equal(t, "Create 'some-pkg/typicalw'\n", output.String())
+	require.Equal(t, "Create 'some-pkg/typicalw'\n", out.String())
 }
 
 func TestSetup_GetParamError(t *testing.T) {
@@ -64,8 +65,9 @@ func TestSetup_GetParamError(t *testing.T) {
 }
 
 func TestSetup_WithGomodFlag(t *testing.T) {
-	var output strings.Builder
-	defer oskit.PatchStdout(&output)()
+	var out strings.Builder
+	app.Stdout = &out
+	defer func() { app.Stdout = &out }()
 	defer typgo.PatchBash([]*typgo.RunExpectation{
 		{CommandLine: "go mod init somepkg"},
 	})(t)
@@ -75,12 +77,13 @@ func TestSetup_WithGomodFlag(t *testing.T) {
 		"-project-pkg=somepkg",
 		"-go-mod",
 	})))
-	require.Equal(t, "Initiate go.mod\nCreate 'somepkg/typicalw'\n", output.String())
+	require.Equal(t, "Initiate go.mod\nCreate 'somepkg/typicalw'\n", out.String())
 }
 
 func TestSetup_WithGomodFlag_Error(t *testing.T) {
-	var output strings.Builder
-	defer oskit.PatchStdout(&output)()
+	var out strings.Builder
+	app.Stdout = &out
+	defer func() { app.Stdout = &out }()
 	defer typgo.PatchBash([]*typgo.RunExpectation{
 		{
 			CommandLine: "go mod init somepkg",
@@ -95,23 +98,25 @@ func TestSetup_WithGomodFlag_Error(t *testing.T) {
 		"-go-mod",
 	}))
 	require.EqualError(t, err, "some-error: error-message")
-	require.Equal(t, "Initiate go.mod\n", output.String())
+	require.Equal(t, "Initiate go.mod\n", out.String())
 }
 
 func TestSetup_WithGomodFlag_MissingProjectPkg(t *testing.T) {
-	var output strings.Builder
-	defer oskit.PatchStdout(&output)()
+	var out strings.Builder
+	app.Stdout = &out
+	defer func() { app.Stdout = &out }()
 	defer typgo.PatchBash(nil)(t)
 	defer oskit.MkdirAll("somepkg")()
 
 	err := app.Setup(cliContext([]string{"-go-mod"}))
 	require.EqualError(t, err, "project-pkg is empty")
-	require.Equal(t, "Initiate go.mod\n", output.String())
+	require.Equal(t, "Initiate go.mod\n", out.String())
 }
 
 func TestSetup_WithNewFlag(t *testing.T) {
-	var output strings.Builder
-	defer oskit.PatchStdout(&output)()
+	var out strings.Builder
+	app.Stdout = &out
+	defer func() { app.Stdout = &out }()
 	defer typgo.PatchBash(nil)(t)
 
 	err := app.Setup(cliContext([]string{
@@ -126,7 +131,7 @@ Create 'somepkg1/internal/app/start.go'
 Create 'somepkg1/internal/generated/ctor/ctor.go'
 Create 'somepkg1/tools/typical-build/typical-build.go'
 Create 'somepkg1/typicalw'
-`, output.String())
+`, out.String())
 
 	b, _ := ioutil.ReadFile("somepkg1/cmd/somepkg1/main.go")
 	require.Equal(t, `package main

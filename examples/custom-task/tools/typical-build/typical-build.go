@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -27,7 +26,7 @@ var descriptor = typgo.Descriptor{
 			Name:  "ping",
 			Usage: "print pong",
 			Action: typgo.NewAction(func(c *typgo.Context) error {
-				fmt.Println("pong") // new action with golang implementation
+				c.Info("pong") // new action with golang implementation
 				return nil
 			}),
 		},
@@ -36,10 +35,10 @@ var descriptor = typgo.Descriptor{
 			Name:  "info",
 			Usage: "print info",
 			Action: typgo.NewAction(func(c *typgo.Context) error {
-				fmt.Println("print the info:")
+				c.Info("print the info:")
 				c.ExecuteBash("go version")
 				c.ExecuteBash("git version")
-				fmt.Printf("\nENV: key1=%s\n", os.Getenv("key1"))
+				c.Infof("\nENV: key1=%s\n", os.Getenv("key1"))
 				return nil
 			}),
 		},
@@ -78,7 +77,7 @@ func (g *greetTask) Task() *typgo.Task {
 }
 
 func (g *greetTask) Execute(c *typgo.Context) error {
-	fmt.Println("Hello " + g.person)
+	c.Infof("Hello %s\n", g.person)
 	return nil
 }
 

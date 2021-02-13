@@ -5,8 +5,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/oskit"
-
 	"github.com/iancoleman/strcase"
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -74,7 +72,7 @@ func Annotate(c *typgo.Context, summary *typast.Summary) error {
 
 			err := MockGen(c, t.MockPkg, dest, srcPkg, t.Source)
 			if err != nil {
-				fmt.Fprintf(oskit.Stdout, "Fail to mock '%s': %s\n", name, err.Error())
+				c.Infof("Fail to mock '%s': %s\n", name, err.Error())
 			}
 		}
 	}

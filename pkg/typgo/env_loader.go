@@ -1,16 +1,13 @@
 package typgo
 
 import (
-	"fmt"
-
 	"github.com/typical-go/typical-go/pkg/envkit"
-	"github.com/typical-go/typical-go/pkg/oskit"
 )
 
 type (
 	// EnvLoader responsible to load env
 	EnvLoader interface {
-		EnvLoad() error
+		EnvLoad(*BuildToolContext) error
 	}
 	// DotEnv file
 	DotEnv string
@@ -23,10 +20,10 @@ type (
 var _ EnvLoader = (DotEnv)("")
 
 // EnvLoad load environment from dotenv file
-func (d DotEnv) EnvLoad() error {
+func (d DotEnv) EnvLoad(c *BuildToolContext) error {
 	m, _ := envkit.ReadFile(string(d))
 	if len(m) > 0 {
-		fmt.Fprintf(oskit.Stdout, "Load environment from '%s': %s\n\n", d, m.SortedKeys())
+		c.Infof("Read from DotEnv '%s': %s\n", d, m.SortedKeys())
 		return envkit.Setenv(m)
 	}
 	return nil
@@ -37,8 +34,8 @@ func (d DotEnv) EnvLoad() error {
 var _ EnvLoader = (EnvMap)(nil)
 
 // EnvLoad load environment from dotenv file
-func (e EnvMap) EnvLoad() error {
+func (e EnvMap) EnvLoad(c *BuildToolContext) error {
 	m := envkit.Map(e)
-	fmt.Fprintf(oskit.Stdout, "Load environment: %s\n\n", m.SortedKeys())
+	c.Infof("Read from EnvMap: %s\n", m.SortedKeys())
 	return envkit.Setenv(m)
 }

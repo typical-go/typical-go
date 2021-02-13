@@ -35,8 +35,9 @@ func TestRunBinary_Execute(t *testing.T) {
 	})(t)
 
 	stdRun := &typgo.RunBinary{}
+	c, _ := typgo.DummyContext()
 
-	require.NoError(t, stdRun.Execute(typgo.DummyContext()))
+	require.NoError(t, stdRun.Execute(c))
 }
 
 func TestRunBinary_Execute_Predefined(t *testing.T) {
@@ -47,7 +48,7 @@ func TestRunBinary_Execute_Predefined(t *testing.T) {
 	stdRun := &typgo.RunBinary{
 		Binary: "some-binary",
 	}
-	c := typgo.DummyContext()
+	c, _ := typgo.DummyContext()
 
 	require.NoError(t, stdRun.Execute(c))
 }

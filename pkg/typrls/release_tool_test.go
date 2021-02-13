@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typrls"
 	"github.com/urfave/cli/v2"
@@ -41,7 +40,7 @@ func TestReleaseTool(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
-				Stdout:     oskit.Stdout,
+				Stdout:     &strings.Builder{},
 			},
 			Debug: "1\n2\n",
 		},
@@ -60,7 +59,7 @@ func TestReleaseTool(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
-				Stdout:     oskit.Stdout,
+				Stdout:     &strings.Builder{},
 			},
 			ExpectedErr: "release-error",
 		},
@@ -79,7 +78,7 @@ func TestReleaseTool(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
-				Stdout:     oskit.Stdout,
+				Stdout:     &strings.Builder{},
 			},
 			ExpectedErr: "publish-error",
 		},
@@ -95,7 +94,7 @@ func TestReleaseTool(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
-				Stdout:     oskit.Stdout,
+				Stdout:     &strings.Builder{},
 			},
 		},
 		{
@@ -113,7 +112,7 @@ func TestReleaseTool(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext("-skip-publish"),
 				Descriptor: &typgo.Descriptor{},
-				Stdout:     oskit.Stdout,
+				Stdout:     &strings.Builder{},
 			},
 		},
 		{
@@ -128,16 +127,13 @@ func TestReleaseTool(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
-				Stdout:     oskit.Stdout,
+				Stdout:     &strings.Builder{},
 			},
 			ExpectedErr: "publish-error",
 		},
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			var out strings.Builder
-			defer oskit.PatchStdout(&out)()
-
 			defer debug.Reset()
 			defer typgo.PatchBash([]*typgo.RunExpectation{})(t)
 
@@ -154,10 +150,8 @@ func TestReleaseTool(t *testing.T) {
 }
 
 func TestReleaseTool_CustomReleaseFolder(t *testing.T) {
-	var out strings.Builder
 	var rlsCtx *typrls.Context
 
-	defer oskit.PatchStdout(&out)()
 	defer typgo.PatchBash(nil)(t)
 
 	rel := &typrls.ReleaseTool{
@@ -172,7 +166,7 @@ func TestReleaseTool_CustomReleaseFolder(t *testing.T) {
 	rel.Execute(&typgo.Context{
 		Context:    createContext("-release-folder=some-release"),
 		Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
-		Stdout:     oskit.Stdout,
+		Stdout:     &strings.Builder{},
 	})
 	defer os.RemoveAll("some-release")
 	require.Equal(t, "some-release", rlsCtx.ReleaseFolder)
@@ -193,7 +187,7 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 			Ctx: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
-				Stdout:     oskit.Stdout,
+				Stdout:     &strings.Builder{},
 			},
 			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git fetch"},
@@ -222,7 +216,7 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 			Ctx: &typgo.Context{
 				Context:    createContext("-alpha"),
 				Descriptor: &typgo.Descriptor{},
-				Stdout:     oskit.Stdout,
+				Stdout:     &strings.Builder{},
 			},
 			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git fetch"},
@@ -243,7 +237,7 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 			Ctx: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
-				Stdout:     oskit.Stdout,
+				Stdout:     &strings.Builder{},
 			},
 			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git fetch"},
@@ -264,7 +258,7 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 			Ctx: &typgo.Context{
 				Context:    createContext("-tag-name=some-tag"),
 				Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
-				Stdout:     oskit.Stdout,
+				Stdout:     &strings.Builder{},
 			},
 			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git fetch"},
@@ -279,10 +273,8 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			var out strings.Builder
 			var rlsCtx *typrls.Context
 
-			defer oskit.PatchStdout(&out)()
 			defer typgo.PatchBash(tt.RunExpectations)(t)
 
 			tt.Releaser = typrls.NewReleaser(func(r *typrls.Context) error {
@@ -327,35 +319,28 @@ func TestReleaseCmd_Before(t *testing.T) {
 func TestDefaultTagFn(t *testing.T) {
 	testcases := []struct {
 		TestName        string
-		Context         *typgo.Context
+		ProjectVersion  string
 		Alpha           bool
 		RunExpectations []*typgo.RunExpectation
 		Expected        string
 	}{
 		{
-			Context: &typgo.Context{
-				Descriptor: &typgo.Descriptor{ProjectVersion: "0.0.1"},
-				Stdout:     oskit.Stdout,
-			},
-			Expected: "v0.0.1",
+			ProjectVersion: "0.0.1",
+			Expected:       "v0.0.1",
 		},
 		{
-			TestName: "with alpha",
-			Context: &typgo.Context{
-				Descriptor: &typgo.Descriptor{ProjectVersion: "0.0.1"},
-				Stdout:     oskit.Stdout,
-			},
-			Alpha:    true,
-			Expected: "v0.0.1_alpha",
+			TestName:       "with alpha",
+			ProjectVersion: "0.0.1",
+			Alpha:          true,
+			Expected:       "v0.0.1_alpha",
 		},
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			var out strings.Builder
-			defer oskit.PatchStdout(&out)()
 			defer typgo.PatchBash(tt.RunExpectations)(t)
-
-			require.Equal(t, tt.Expected, typrls.DefaultGenerateTag(tt.Context, tt.Alpha))
+			c, _ := typgo.DummyContext()
+			c.Descriptor.ProjectVersion = "0.0.1"
+			require.Equal(t, tt.Expected, typrls.DefaultGenerateTag(c, tt.Alpha))
 		})
 	}
 }
@@ -379,10 +364,8 @@ func TestSummarizer(t *testing.T) {
 	}
 	for _, tt := range testCases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			var out strings.Builder
-			defer oskit.PatchStdout(&out)()
 			defer typgo.PatchBash(tt.RunExpectations)(t)
-			c := typgo.DummyContext()
+			c, out := typgo.DummyContext()
 			require.Equal(t, tt.Expected, typrls.DefaultGenerateSummary(c))
 			require.Equal(t, tt.ExpectedOut, out.String())
 		})

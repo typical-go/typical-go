@@ -3,10 +3,7 @@ package typapp_test
 import (
 	"io/ioutil"
 	"os"
-	"strings"
 	"testing"
-
-	"github.com/typical-go/typical-go/pkg/oskit"
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typapp"
@@ -17,16 +14,13 @@ import (
 func TestCtorAnnotation_Annotate(t *testing.T) {
 	typgo.ProjectPkg = "github.com/user/project"
 
-	var out strings.Builder
-	defer oskit.PatchStdout(&out)()
 	defer os.RemoveAll("internal")
 	defer typgo.PatchBash([]*typgo.RunExpectation{})(t)
 
 	ctorAnnot := &typapp.CtorAnnotation{}
+	c, out := typgo.DummyContext()
 	ctx := &typast.Context{
-		Context: &typgo.Context{
-			Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
-		},
+		Context: c,
 		Summary: &typast.Summary{
 			Annots: []*typast.Annot{
 				{
@@ -66,25 +60,23 @@ func init() {
 	typapp.Provide("obj2", b.NewObject2)
 }`, string(b))
 
-	require.Equal(t, "Generate @ctor to internal/generated/ctor/ctor.go\n", out.String())
+	require.Equal(t, "some-project:dummy> Generate @ctor to internal/generated/ctor/ctor.go\n", out.String())
 
 }
 
 func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
-	var out strings.Builder
+
 	defer typgo.PatchBash([]*typgo.RunExpectation{})(t)
 	defer os.RemoveAll("folder2")
-	defer oskit.PatchStdout(&out)()
 
 	ctorAnnot := &typapp.CtorAnnotation{
 		TagName:  "@some-tag",
 		Target:   "folder2/dest2/some-target",
 		Template: "some-template",
 	}
+	c, out := typgo.DummyContext()
 	ctx := &typast.Context{
-		Context: &typgo.Context{
-			Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
-		},
+		Context: c,
 		Summary: &typast.Summary{
 			Annots: []*typast.Annot{
 				{
@@ -102,7 +94,7 @@ func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
 
 	b, _ := ioutil.ReadFile("folder2/dest2/some-target")
 	require.Equal(t, `some-template`, string(b))
-	require.Equal(t, "Generate @ctor to folder2/dest2/some-target\n", out.String())
+	require.Equal(t, "some-project:dummy> Generate @ctor to folder2/dest2/some-target\n", out.String())
 }
 
 func TestCtor_Stringer(t *testing.T) {

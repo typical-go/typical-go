@@ -66,7 +66,7 @@ func TestBash_Execute(t *testing.T) {
 	})(t)
 
 	bash := &typgo.Bash{Name: "name1", Args: []string{"arg1"}}
-	c := typgo.DummyContext()
+	c, _ := typgo.DummyContext()
 	require.EqualError(t, bash.Execute(c), "some-error")
 }
 

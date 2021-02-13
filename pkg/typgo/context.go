@@ -10,12 +10,11 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
-	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/urfave/cli/v2"
 )
 
 type (
-	// Context of build tool
+	// Context related with build task
 	Context struct {
 		*cli.Context
 		Descriptor *Descriptor
@@ -28,22 +27,24 @@ func NewContext(c *cli.Context, d *Descriptor) *Context {
 	return &Context{
 		Context:    c,
 		Descriptor: d,
-		Stdout:     oskit.Stdout,
+		Stdout:     os.Stdout,
 	}
 }
 
 // DummyContext return dummy context
-func DummyContext() *Context {
+func DummyContext() (*Context, *strings.Builder) {
+	var out strings.Builder
 	c := cli.NewContext(nil, &flag.FlagSet{}, nil)
 	c.Command = &cli.Command{Name: "dummy"}
-	return &Context{
+	context := &Context{
 		Context: c,
 		Descriptor: &Descriptor{
 			ProjectName:    "some-project",
 			ProjectVersion: "0.0.1",
 		},
-		Stdout: oskit.Stdout,
+		Stdout: &out,
 	}
+	return context, &out
 }
 
 // Execute command

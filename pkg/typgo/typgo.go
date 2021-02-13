@@ -10,8 +10,10 @@ import (
 
 // BuildTool app
 func BuildTool(d *Descriptor) *cli.App {
+
 	if d.EnvLoader != nil {
-		if err := d.EnvLoader.EnvLoad(); err != nil {
+		envContext := NewBuildToolContext(d, "load-env")
+		if err := d.EnvLoader.EnvLoad(envContext); err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 		}
 	}

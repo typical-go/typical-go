@@ -4,14 +4,17 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
-	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
 )
+
+// Stdout standard output
+var Stdout io.Writer = os.Stdout
 
 func cmdRun() *cli.Command {
 	return &cli.Command{
@@ -45,7 +48,7 @@ func Run(c *cli.Context) error {
 			return err
 		}
 
-		fmt.Fprintf(oskit.Stdout, "Build %s to %s\n", p.TypicalBuild, bin)
+		fmt.Fprintf(Stdout, "Build %s to %s\n", p.TypicalBuild, bin)
 
 		buildVars := typgo.BuildVars{
 			"github.com/typical-go/typical-go/pkg/typgo.ProjectName": filepath.Base(p.ProjectPkg),

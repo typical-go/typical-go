@@ -1,11 +1,9 @@
 package typgo_test
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -14,9 +12,6 @@ func TestGoBuild_Command(t *testing.T) {
 		{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=0.0.1\" -o bin/some-project ./cmd/some-project"},
 	})(t)
 
-	var out strings.Builder
-	defer oskit.PatchStdout(&out)()
-
 	cmpl := &typgo.GoBuild{}
 
 	command := cmpl.Task().CliCommand(&typgo.Descriptor{})
@@ -24,7 +19,8 @@ func TestGoBuild_Command(t *testing.T) {
 	require.Equal(t, []string{"b"}, command.Aliases)
 	require.Equal(t, "build the project", command.Usage)
 
-	require.NoError(t, cmpl.Execute(typgo.DummyContext()))
+	c, out := typgo.DummyContext()
+	require.NoError(t, cmpl.Execute(c))
 	require.Equal(t, "some-project:dummy> $ go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=0.0.1\" -o bin/some-project ./cmd/some-project\n", out.String())
 }
 
@@ -40,7 +36,7 @@ func TestGoBuild_Predefined(t *testing.T) {
 			"some-var": "some-value",
 		},
 	}
-	c := typgo.DummyContext()
+	c, _ := typgo.DummyContext()
 
 	require.NoError(t, cmpl.Execute(c))
 }

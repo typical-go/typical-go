@@ -1,11 +1,9 @@
 package typrls
 
 import (
-	"fmt"
 	"os"
 	"strings"
 
-	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -61,7 +59,7 @@ func GitCurrentTag(c *typgo.Context) string {
 		Args:   []string{"describe", "--tags", "--abbrev=0"},
 		Stdout: &out,
 	}); err != nil {
-		fmt.Fprintf(oskit.Stdout, "WARN: %s\n", err.Error())
+		c.Infof("WARN: %s\n", err.Error())
 	}
 	return strings.TrimSpace(out.String())
 }
@@ -78,7 +76,7 @@ func GitLogs(c *typgo.Context, from string) (logs []*Log) {
 	var out strings.Builder
 	err := c.Execute(&typgo.Bash{Name: "git", Args: args, Stdout: &out})
 	if err != nil {
-		fmt.Fprintf(oskit.Stdout, "WARN: %s\n", err.Error())
+		c.Infof("WARN: %s\n", err.Error())
 	}
 
 	for _, s := range strings.Split(out.String(), "\n") {

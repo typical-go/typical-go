@@ -201,7 +201,7 @@ pingTask := &typgo.Task{
    Name:  "ping",
    Usage: "print pong",
    Action: typgo.NewAction(func(c *typgo.Context) error {
-      fmt.Println("pong")
+      c.Info("pong")
       return nil
    }),
 }
@@ -226,7 +226,7 @@ infoTask := &typgo.Task{
    Name:  "info",
    Usage: "print info",
    Action: typgo.NewAction(func(c *typgo.Context) error {
-      fmt.Println("print the info:")
+      c.Info("print the info:")
       c.ExecuteBash("go version")
       c.ExecuteBash("git version")
       return nil
@@ -252,7 +252,7 @@ func (g *greetTask) Task() *typgo.Task {
 }
 
 func (g *greetTask) Execute(c *typgo.Context) error {
-	fmt.Println("Hello " + g.person)
+	info.Infof("Hello %s\n", g.person)
 	return nil
 }
 ```

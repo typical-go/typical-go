@@ -14,7 +14,8 @@ import (
 
 func TestRun(t *testing.T) {
 	var out strings.Builder
-	defer oskit.PatchStdout(&out)()
+	app.Stdout = &out
+	defer func() { app.Stdout = &out }()
 	defer typgo.PatchBash([]*typgo.RunExpectation{
 		{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-pkg -X github.com/typical-go/typical-go/pkg/typgo.ProjectPkg=some-pkg -X github.com/typical-go/typical-go/pkg/typgo.TypicalTmp=.typical-tmp\" -o .typical-tmp/bin/typical-build ./tools/typical-build"},
 		{CommandLine: ".typical-tmp/bin/typical-build"},

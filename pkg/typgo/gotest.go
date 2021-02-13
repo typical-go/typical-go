@@ -1,12 +1,10 @@
 package typgo
 
 import (
-	"fmt"
 	"os"
 	"time"
 
 	"github.com/typical-go/typical-go/pkg/filekit"
-	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/urfave/cli/v2"
 )
 
@@ -53,7 +51,7 @@ func (t *GoTest) Execute(c *Context) error {
 	}
 
 	if len(packages) < 1 {
-		fmt.Fprintln(oskit.Stdout, "Nothing to test")
+		c.Info("Nothing to test")
 		return nil
 	}
 
