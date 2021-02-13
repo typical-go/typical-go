@@ -34,7 +34,7 @@ func (t *Task) Task() *Task {
 }
 
 // CliCommand return cli command from task
-func CliCommand(d *Descriptor, t *Task) *cli.Command {
+func (t *Task) CliCommand(d *Descriptor) *cli.Command {
 	cmd := &cli.Command{
 		Name:            t.Name,
 		Aliases:         t.Aliases,
@@ -45,7 +45,7 @@ func CliCommand(d *Descriptor, t *Task) *cli.Command {
 		Before:          CliFunc(d, t.Before),
 	}
 	for _, subTask := range t.SubTasks {
-		cmd.Subcommands = append(cmd.Subcommands, CliCommand(d, subTask))
+		cmd.Subcommands = append(cmd.Subcommands, subTask.CliCommand(d))
 	}
 	return cmd
 }
@@ -57,9 +57,6 @@ func CliFunc(d *Descriptor, a Action) func(*cli.Context) error {
 			return nil
 		}
 
-		return a.Execute(&Context{
-			Context:    c,
-			Descriptor: d,
-		})
+		return a.Execute(NewContext(c, d))
 	}
 }

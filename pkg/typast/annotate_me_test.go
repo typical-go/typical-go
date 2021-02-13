@@ -16,7 +16,7 @@ func TestAnnotateCmd(t *testing.T) {
 	}
 	d := &typgo.Descriptor{}
 
-	command := typgo.CliCommand(&typgo.Descriptor{}, annonateCmd.Task())
+	command := annonateCmd.Task().CliCommand(&typgo.Descriptor{})
 	require.Equal(t, "annotate", command.Name)
 	require.Equal(t, []string{"a"}, command.Aliases)
 	require.Equal(t, "Annotate the project and generate code", command.Usage)
@@ -37,7 +37,7 @@ func TestAnnotateCmd_Defined(t *testing.T) {
 	}
 	d := &typgo.Descriptor{}
 
-	command := typgo.CliCommand(&typgo.Descriptor{}, annonateCmd.Task())
+	command := annonateCmd.Task().CliCommand(&typgo.Descriptor{})
 	require.EqualError(t, command.Action(&cli.Context{}), "some-error")
 
 	_, err := annonateCmd.CreateContext(&typgo.Context{Descriptor: d})
@@ -47,7 +47,7 @@ func TestAnnotateCmd_Defined(t *testing.T) {
 func TestAnnotateCmd_MissingSources(t *testing.T) {
 	annonateCmd := typast.AnnotateMe{}
 
-	command := typgo.CliCommand(&typgo.Descriptor{}, annonateCmd.Task())
+	command := annonateCmd.Task().CliCommand(&typgo.Descriptor{})
 	require.EqualError(t, command.Action(&cli.Context{}), "'Sources' is missing")
 }
 

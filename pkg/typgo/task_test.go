@@ -25,7 +25,7 @@ func TestTask(t *testing.T) {
 
 	require.Equal(t, task, task.Task())
 
-	cmd := typgo.CliCommand(&typgo.Descriptor{}, task)
+	cmd := task.CliCommand(&typgo.Descriptor{})
 
 	require.Equal(t, "some-name", cmd.Name)
 	require.Equal(t, []string{"some-alias"}, cmd.Aliases)

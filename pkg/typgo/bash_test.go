@@ -9,7 +9,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typgo"
-	"github.com/urfave/cli/v2"
 )
 
 func TestBash(t *testing.T) {
@@ -63,19 +62,12 @@ func TestBash_String(t *testing.T) {
 
 func TestBash_Execute(t *testing.T) {
 	defer typgo.PatchBash([]*typgo.RunExpectation{
-		{
-			CommandLine: "name1 arg1",
-			ReturnError: errors.New("some-error"),
-		},
+		{CommandLine: "name1 arg1", ReturnError: errors.New("some-error")},
 	})(t)
 
-	bash := &typgo.Bash{
-		Name: "name1",
-		Args: []string{"arg1"},
-	}
-	c := &typgo.Context{Context: &cli.Context{}}
-	err := bash.Execute(c)
-	require.EqualError(t, err, "some-error")
+	bash := &typgo.Bash{Name: "name1", Args: []string{"arg1"}}
+	c := typgo.DummyContext()
+	require.EqualError(t, bash.Execute(c), "some-error")
 }
 
 func TestPatch(t *testing.T) {

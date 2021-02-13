@@ -9,7 +9,6 @@ import (
 	"github.com/typical-go/typical-go/pkg/oskit"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typrls"
-	"github.com/urfave/cli/v2"
 )
 
 func TestCrossCompile(t *testing.T) {
@@ -26,14 +25,11 @@ func TestCrossCompile(t *testing.T) {
 			},
 			Context: &typrls.Context{
 				TagName: "v0.0.1",
-				Context: &typgo.Context{
-					Descriptor: &typgo.Descriptor{ProjectName: "myproject"},
-					Context:    &cli.Context{},
-				},
+				Context: typgo.DummyContext(),
 			},
 			RunExpectations: []*typgo.RunExpectation{
-				{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=myproject -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /myproject_v0.0.1_darwin_amd64 ./cmd/myproject"},
-				{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=myproject -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /myproject_v0.0.1_linux_amd64 ./cmd/myproject"},
+				{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /some-project_v0.0.1_darwin_amd64 ./cmd/some-project"},
+				{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /some-project_v0.0.1_linux_amd64 ./cmd/some-project"},
 			},
 		},
 		{
@@ -43,14 +39,11 @@ func TestCrossCompile(t *testing.T) {
 			},
 			Context: &typrls.Context{
 				TagName: "v0.0.1",
-				Context: &typgo.Context{
-					Descriptor: &typgo.Descriptor{ProjectName: "myproject"},
-					Context:    &cli.Context{},
-				},
+				Context: typgo.DummyContext(),
 			},
 			RunExpectations: []*typgo.RunExpectation{
 				{
-					CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=myproject -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /myproject_v0.0.1_darwin_amd64 ./cmd/myproject",
+					CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /some-project_v0.0.1_darwin_amd64 ./cmd/some-project",
 					ReturnError: errors.New("some-error"),
 				},
 			},

@@ -12,18 +12,8 @@ var (
 	// TypicalTmp only available in BuildTool scope. The BuildTool must be compiled by wrapper.
 	TypicalTmp string
 
-	appHelpTemplate = `Typical Build
-
-Usage:
-
-{{"\t"}}./typicalw <command> [argument]
-
-The commands are:
-{{range .Commands}}
-{{if not .HideHelp}}{{ "\t"}}{{join .Names ", "}}{{ "\t"}}{{.Usage}}{{end}}{{end}}
-
-Use "./typicalw help <topic>" for more information about that topic
-`
+	appHelpTemplate = `{{range .Commands}}{{if not .HideHelp}}{{ "\t"}}{{join .Names ", "}}{{ "\t"}}{{.Usage}}
+{{end}}{{end}}`
 	subcommandHelpTemplate = `{{.Usage}}
 
 Usage:

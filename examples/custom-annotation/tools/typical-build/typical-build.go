@@ -16,13 +16,7 @@ var descriptor = typgo.Descriptor{
 		&typast.AnnotateMe{
 			Sources: []string{"internal"},
 			Annotators: []typast.Annotator{
-				typast.NewAnnotator(func(c *typast.Context) error {
-					for _, a := range c.Annots {
-						fmt.Printf("TagName=%s\tName=%s\tType=%T\tParam=%s\tField1=%s\n",
-							a.TagName, a.GetName(), a.Decl.Type, a.TagParam, a.TagParam.Get("field1"))
-					}
-					return nil
-				}),
+				typast.NewAnnotator(printAllAnnotation),
 			},
 		},
 		// test
@@ -35,6 +29,16 @@ var descriptor = typgo.Descriptor{
 		// run
 		&typgo.RunBinary{Before: typgo.TaskNames{"annotate", "build"}},
 	},
+}
+
+func printAllAnnotation(c *typast.Context) error {
+	fmt.Println("Print all annotation: ")
+	for _, a := range c.Annots {
+		fmt.Printf("TagName=%s\tName=%s\tType=%T\tParam=%s\tField1=%s\n",
+			a.TagName, a.GetName(), a.Decl.Type, a.TagParam, a.TagParam.Get("field1"))
+	}
+	fmt.Println()
+	return nil
 }
 
 func main() {

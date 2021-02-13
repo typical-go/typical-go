@@ -41,6 +41,7 @@ func TestReleaseTool(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
+				Stdout:     oskit.Stdout,
 			},
 			Debug: "1\n2\n",
 		},
@@ -59,6 +60,7 @@ func TestReleaseTool(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
+				Stdout:     oskit.Stdout,
 			},
 			ExpectedErr: "release-error",
 		},
@@ -77,6 +79,7 @@ func TestReleaseTool(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
+				Stdout:     oskit.Stdout,
 			},
 			ExpectedErr: "publish-error",
 		},
@@ -92,6 +95,7 @@ func TestReleaseTool(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
+				Stdout:     oskit.Stdout,
 			},
 		},
 		{
@@ -109,6 +113,7 @@ func TestReleaseTool(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext("-skip-publish"),
 				Descriptor: &typgo.Descriptor{},
+				Stdout:     oskit.Stdout,
 			},
 		},
 		{
@@ -123,6 +128,7 @@ func TestReleaseTool(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
+				Stdout:     oskit.Stdout,
 			},
 			ExpectedErr: "publish-error",
 		},
@@ -133,8 +139,7 @@ func TestReleaseTool(t *testing.T) {
 			defer oskit.PatchStdout(&out)()
 
 			defer debug.Reset()
-			unpatch := typgo.PatchBash([]*typgo.RunExpectation{})
-			defer unpatch(t)
+			defer typgo.PatchBash([]*typgo.RunExpectation{})(t)
 
 			err := tt.Execute(tt.Context)
 			if tt.ExpectedErr != "" {
@@ -167,6 +172,7 @@ func TestReleaseTool_CustomReleaseFolder(t *testing.T) {
 	rel.Execute(&typgo.Context{
 		Context:    createContext("-release-folder=some-release"),
 		Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
+		Stdout:     oskit.Stdout,
 	})
 	defer os.RemoveAll("some-release")
 	require.Equal(t, "some-release", rlsCtx.ReleaseFolder)
@@ -187,6 +193,7 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 			Ctx: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
+				Stdout:     oskit.Stdout,
 			},
 			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git fetch"},
@@ -215,6 +222,7 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 			Ctx: &typgo.Context{
 				Context:    createContext("-alpha"),
 				Descriptor: &typgo.Descriptor{},
+				Stdout:     oskit.Stdout,
 			},
 			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git fetch"},
@@ -235,6 +243,7 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 			Ctx: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
+				Stdout:     oskit.Stdout,
 			},
 			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git fetch"},
@@ -255,6 +264,7 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 			Ctx: &typgo.Context{
 				Context:    createContext("-tag-name=some-tag"),
 				Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
+				Stdout:     oskit.Stdout,
 			},
 			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git fetch"},
@@ -310,7 +320,7 @@ func TestReleaseCmd_Before(t *testing.T) {
 		}),
 	}
 
-	command := typgo.CliCommand(&typgo.Descriptor{}, releaseTool.Task())
+	command := releaseTool.Task().CliCommand(&typgo.Descriptor{})
 	require.EqualError(t, command.Before(&cli.Context{}), "some-error")
 }
 
@@ -325,6 +335,7 @@ func TestDefaultTagFn(t *testing.T) {
 		{
 			Context: &typgo.Context{
 				Descriptor: &typgo.Descriptor{ProjectVersion: "0.0.1"},
+				Stdout:     oskit.Stdout,
 			},
 			Expected: "v0.0.1",
 		},
@@ -332,6 +343,7 @@ func TestDefaultTagFn(t *testing.T) {
 			TestName: "with alpha",
 			Context: &typgo.Context{
 				Descriptor: &typgo.Descriptor{ProjectVersion: "0.0.1"},
+				Stdout:     oskit.Stdout,
 			},
 			Alpha:    true,
 			Expected: "v0.0.1_alpha",
@@ -351,22 +363,18 @@ func TestDefaultTagFn(t *testing.T) {
 func TestSummarizer(t *testing.T) {
 	testCases := []struct {
 		TestName        string
-		Context         *typgo.Context
 		RunExpectations []*typgo.RunExpectation
 		Expected        string
 		ExpectedOut     string
 	}{
 		{
 			TestName: "change summary",
-			Context: &typgo.Context{
-				Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
-			},
 			RunExpectations: []*typgo.RunExpectation{
 				{CommandLine: "git describe --tags --abbrev=0", OutputBytes: []byte("v0.0.1")},
 				{CommandLine: "git --no-pager log v0.0.1..HEAD --oneline", OutputBytes: []byte("1234567 some-message-1\n1234568 some-message-3")},
 			},
 			Expected:    "1234567 some-message-1\n1234568 some-message-3",
-			ExpectedOut: "$ git describe --tags --abbrev=0\n$ git --no-pager log v0.0.1..HEAD --oneline\n",
+			ExpectedOut: "some-project:dummy> $ git describe --tags --abbrev=0\nsome-project:dummy> $ git --no-pager log v0.0.1..HEAD --oneline\n",
 		},
 	}
 	for _, tt := range testCases {
@@ -374,7 +382,8 @@ func TestSummarizer(t *testing.T) {
 			var out strings.Builder
 			defer oskit.PatchStdout(&out)()
 			defer typgo.PatchBash(tt.RunExpectations)(t)
-			require.Equal(t, tt.Expected, typrls.DefaultGenerateSummary(tt.Context))
+			c := typgo.DummyContext()
+			require.Equal(t, tt.Expected, typrls.DefaultGenerateSummary(c))
 			require.Equal(t, tt.ExpectedOut, out.String())
 		})
 	}

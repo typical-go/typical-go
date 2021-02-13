@@ -1,17 +1,5 @@
 package typgo
 
-import (
-	"context"
-	"errors"
-	"fmt"
-	"os"
-	"strings"
-
-	"github.com/fatih/color"
-	"github.com/typical-go/typical-go/pkg/oskit"
-	"github.com/urfave/cli/v2"
-)
-
 type (
 	// Action responsible to execute process
 	Action interface {
@@ -23,11 +11,6 @@ type (
 	ExecuteFn  func(*Context) error
 	actionImpl struct {
 		fn ExecuteFn
-	}
-	// Context of build tool
-	Context struct {
-		*cli.Context
-		Descriptor *Descriptor
 	}
 )
 
@@ -43,38 +26,6 @@ func NewAction(fn ExecuteFn) Action {
 // Execute action
 func (a *actionImpl) Execute(c *Context) error {
 	return a.fn(c)
-}
-
-//
-// Context
-//
-
-// Execute command
-func (c *Context) Execute(basher Basher) error {
-	bash := basher.Bash()
-	color.New(color.FgMagenta).Fprint(oskit.Stdout, "$ ")
-	fmt.Fprintln(oskit.Stdout, bash)
-	return RunBash(c.Ctx(), bash)
-}
-
-// ExecuteBash execute bash command
-func (c *Context) ExecuteBash(commandLine string) error {
-	if commandLine == "" {
-		return errors.New("command line can't be empty")
-	}
-	slices := strings.Split(commandLine, " ")
-	return c.Execute(&Bash{
-		Name:   slices[0],
-		Args:   slices[1:],
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
-		Stdin:  os.Stdin,
-	})
-}
-
-// Ctx return golang context
-func (c *Context) Ctx() context.Context {
-	return c.Context.Context
 }
 
 //

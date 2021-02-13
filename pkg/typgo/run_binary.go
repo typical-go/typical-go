@@ -3,8 +3,6 @@ package typgo
 import (
 	"fmt"
 	"os"
-
-	"github.com/typical-go/typical-go/pkg/oskit"
 )
 
 type (
@@ -32,7 +30,6 @@ func (r *RunBinary) Task() *Task {
 
 // Execute standard run
 func (r *RunBinary) Execute(c *Context) error {
-	taskSignature(oskit.Stdout, "Run")
 	return c.Execute(&Bash{
 		Name:   r.getBinary(c),
 		Args:   c.Args().Slice(),

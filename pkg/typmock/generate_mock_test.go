@@ -2,7 +2,6 @@ package typmock_test
 
 import (
 	"errors"
-	"flag"
 	"strings"
 	"testing"
 
@@ -14,15 +13,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typmock"
-	"github.com/urfave/cli/v2"
 )
-
-func TestCommand(t *testing.T) {
-	mockCmd := &typmock.GenerateMock{}
-
-	command := typgo.CliCommand(&typgo.Descriptor{}, mockCmd.Task())
-	require.Equal(t, "mock", command.Name)
-}
 
 func TestExecute(t *testing.T) {
 	defer monkey.Patch(filekit.FindDir, func(includes, excludes []string) ([]string, error) {
@@ -54,10 +45,7 @@ func TestExecute(t *testing.T) {
 	})(t)
 
 	generateMock := &typmock.GenerateMock{}
-	require.NoError(t, generateMock.Execute(&typgo.Context{
-		Descriptor: &typgo.Descriptor{},
-		Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
-	}))
+	require.NoError(t, generateMock.Execute(typgo.DummyContext()))
 }
 
 func TestMockGen_InstallMockgenError(t *testing.T) {
@@ -68,10 +56,7 @@ func TestMockGen_InstallMockgenError(t *testing.T) {
 		{CommandLine: "go build -o .typical-tmp2/bin/mockgen github.com/golang/mock/mockgen", ReturnError: errors.New("some-error")},
 	})(t)
 
-	c := &typgo.Context{
-		Descriptor: &typgo.Descriptor{},
-		Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
-	}
+	c := typgo.DummyContext()
 	err := typmock.MockGen(c, "", "", "", "")
 	require.EqualError(t, err, "some-error")
 }
@@ -100,10 +85,7 @@ func TestAnnotate_MockgenError(t *testing.T) {
 		{CommandLine: ".typical-tmp/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface", ReturnError: errors.New("some-error")},
 	})(t)
 
-	c := &typgo.Context{
-		Descriptor: &typgo.Descriptor{},
-		Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
-	}
+	c := typgo.DummyContext()
 	require.NoError(t, typmock.Annotate(c, summary))
-	require.Equal(t, "$ rm -rf parent/path_mock\n$ .typical-tmp/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\nFail to mock '/parent/path.SomeInterface': some-error\n", out.String())
+	require.Equal(t, "some-project:dummy> $ rm -rf parent/path_mock\nsome-project:dummy> $ .typical-tmp/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\nFail to mock '/parent/path.SomeInterface': some-error\n", out.String())
 }

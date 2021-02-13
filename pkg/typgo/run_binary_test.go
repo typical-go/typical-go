@@ -2,7 +2,6 @@ package typgo_test
 
 import (
 	"errors"
-	"flag"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -12,7 +11,7 @@ import (
 
 func TestRunCmd(t *testing.T) {
 	runCmd := &typgo.RunBinary{}
-	command := typgo.CliCommand(&typgo.Descriptor{}, runCmd.Task())
+	command := runCmd.Task().CliCommand(&typgo.Descriptor{})
 	require.Equal(t, "run", command.Name)
 	require.Equal(t, []string{"r"}, command.Aliases)
 	require.Equal(t, "Run the project", command.Usage)
@@ -26,22 +25,18 @@ func TestRunCmd_Before(t *testing.T) {
 			return errors.New("before-error")
 		}),
 	}
-	command := typgo.CliCommand(&typgo.Descriptor{}, runCmd.Task())
+	command := runCmd.Task().CliCommand(&typgo.Descriptor{})
 	require.EqualError(t, command.Before(&cli.Context{}), "before-error")
 }
 
 func TestRunBinary_Execute(t *testing.T) {
 	defer typgo.PatchBash([]*typgo.RunExpectation{
-		{CommandLine: "bin/some-name"},
+		{CommandLine: "bin/some-project"},
 	})(t)
 
 	stdRun := &typgo.RunBinary{}
-	c := &typgo.Context{
-		Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
-		Descriptor: &typgo.Descriptor{ProjectName: "some-name"},
-	}
 
-	require.NoError(t, stdRun.Execute(c))
+	require.NoError(t, stdRun.Execute(typgo.DummyContext()))
 }
 
 func TestRunBinary_Execute_Predefined(t *testing.T) {
@@ -52,10 +47,7 @@ func TestRunBinary_Execute_Predefined(t *testing.T) {
 	stdRun := &typgo.RunBinary{
 		Binary: "some-binary",
 	}
-	c := &typgo.Context{
-		Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
-		Descriptor: &typgo.Descriptor{ProjectName: "some-name"},
-	}
+	c := typgo.DummyContext()
 
 	require.NoError(t, stdRun.Execute(c))
 }
