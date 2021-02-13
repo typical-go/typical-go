@@ -273,7 +273,7 @@ func myFunc(){
 
 Add annotate task
 ```go
-annotateMe := &typast.AnnotateMe{
+AnnotateProject := &typast.AnnotateProject{
    Sources: []string{"internal"},
    Annotators: []typast.Annotator{
       typast.NewAnnotator(func(c *typast.Context) error {
@@ -357,7 +357,7 @@ $ ./typicalw mock
 
 Add generate mock task
 ```go
-genMock := &typmock.GenerateMock{
+genMock := &typmock.GoMock{
    Sources: []string{"internal"},
 }
 ```

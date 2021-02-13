@@ -14,18 +14,18 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func TestReleaseTool(t *testing.T) {
+func TestReleaseProject(t *testing.T) {
 	defer os.Remove("release")
 	var debug strings.Builder
 	testcases := []struct {
 		TestName string
-		typrls.ReleaseTool
+		typrls.ReleaseProject
 		Context     *typgo.Context
 		Debug       string
 		ExpectedErr string
 	}{
 		{
-			ReleaseTool: typrls.ReleaseTool{
+			ReleaseProject: typrls.ReleaseProject{
 				GenerateTagFn:     typrls.DefaultGenerateTag,
 				GenerateSummaryFn: typrls.DefaultGenerateSummary,
 				Releaser: typrls.NewReleaser(func(c *typrls.Context) error {
@@ -46,7 +46,7 @@ func TestReleaseTool(t *testing.T) {
 		},
 		{
 			TestName: "release error",
-			ReleaseTool: typrls.ReleaseTool{
+			ReleaseProject: typrls.ReleaseProject{
 				GenerateTagFn:     typrls.DefaultGenerateTag,
 				GenerateSummaryFn: typrls.DefaultGenerateSummary,
 				Releaser: typrls.NewReleaser(func(c *typrls.Context) error {
@@ -65,7 +65,7 @@ func TestReleaseTool(t *testing.T) {
 		},
 		{
 			TestName: "publish error",
-			ReleaseTool: typrls.ReleaseTool{
+			ReleaseProject: typrls.ReleaseProject{
 				GenerateTagFn:     typrls.DefaultGenerateTag,
 				GenerateSummaryFn: typrls.DefaultGenerateSummary,
 				Releaser: typrls.NewReleaser(func(c *typrls.Context) error {
@@ -84,7 +84,7 @@ func TestReleaseTool(t *testing.T) {
 		},
 		{
 			TestName: "empty publisher",
-			ReleaseTool: typrls.ReleaseTool{
+			ReleaseProject: typrls.ReleaseProject{
 				GenerateTagFn:     typrls.DefaultGenerateTag,
 				GenerateSummaryFn: typrls.DefaultGenerateSummary,
 				Releaser: typrls.NewReleaser(func(c *typrls.Context) error {
@@ -99,7 +99,7 @@ func TestReleaseTool(t *testing.T) {
 		},
 		{
 			TestName: "skip publish",
-			ReleaseTool: typrls.ReleaseTool{
+			ReleaseProject: typrls.ReleaseProject{
 				GenerateTagFn:     typrls.DefaultGenerateTag,
 				GenerateSummaryFn: typrls.DefaultGenerateSummary,
 				Releaser: typrls.NewReleaser(func(c *typrls.Context) error {
@@ -117,7 +117,7 @@ func TestReleaseTool(t *testing.T) {
 		},
 		{
 			TestName: "empty releaser",
-			ReleaseTool: typrls.ReleaseTool{
+			ReleaseProject: typrls.ReleaseProject{
 				GenerateTagFn:     typrls.DefaultGenerateTag,
 				GenerateSummaryFn: typrls.DefaultGenerateSummary,
 				Publisher: typrls.NewPublisher(func(c *typrls.Context) error {
@@ -149,12 +149,12 @@ func TestReleaseTool(t *testing.T) {
 
 }
 
-func TestReleaseTool_CustomReleaseFolder(t *testing.T) {
+func TestReleaseProject_CustomReleaseFolder(t *testing.T) {
 	var rlsCtx *typrls.Context
 
 	defer typgo.PatchBash(nil)(t)
 
-	rel := &typrls.ReleaseTool{
+	rel := &typrls.ReleaseProject{
 		GenerateTagFn:     typrls.DefaultGenerateTag,
 		GenerateSummaryFn: func(*typgo.Context) string { return "some-summary" },
 		Releaser: typrls.NewReleaser(func(r *typrls.Context) error {
@@ -172,18 +172,18 @@ func TestReleaseTool_CustomReleaseFolder(t *testing.T) {
 	require.Equal(t, "some-release", rlsCtx.ReleaseFolder)
 }
 
-func TestReleaseTool_Execute_Context(t *testing.T) {
+func TestReleaseProject_Execute_Context(t *testing.T) {
 	defer os.Remove("release")
 	testcases := []struct {
 		TestName string
-		*typrls.ReleaseTool
+		*typrls.ReleaseProject
 		Ctx             *typgo.Context
 		RunExpectations []*typgo.RunExpectation
 		Expected        *typrls.Context
 		ExpectedErr     string
 	}{
 		{
-			ReleaseTool: &typrls.ReleaseTool{},
+			ReleaseProject: &typrls.ReleaseProject{},
 			Ctx: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
@@ -209,7 +209,7 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 		},
 		{
 			TestName: "with alpha tag",
-			ReleaseTool: &typrls.ReleaseTool{
+			ReleaseProject: &typrls.ReleaseProject{
 				GenerateTagFn:     typrls.DefaultGenerateTag,
 				GenerateSummaryFn: func(*typgo.Context) string { return "some-summary" },
 			},
@@ -230,7 +230,7 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 		},
 		{
 			TestName: "success",
-			ReleaseTool: &typrls.ReleaseTool{
+			ReleaseProject: &typrls.ReleaseProject{
 				GenerateTagFn:     typrls.DefaultGenerateTag,
 				GenerateSummaryFn: func(*typgo.Context) string { return "some-summary" },
 			},
@@ -251,7 +251,7 @@ func TestReleaseTool_Execute_Context(t *testing.T) {
 		},
 		{
 			TestName: "override release-tag",
-			ReleaseTool: &typrls.ReleaseTool{
+			ReleaseProject: &typrls.ReleaseProject{
 				GenerateTagFn:     typrls.DefaultGenerateTag,
 				GenerateSummaryFn: func(*typgo.Context) string { return "some-summary" },
 			},
@@ -306,13 +306,13 @@ func createContext(args ...string) *cli.Context {
 }
 
 func TestReleaseCmd_Before(t *testing.T) {
-	releaseTool := &typrls.ReleaseTool{
+	ReleaseProject := &typrls.ReleaseProject{
 		Before: typgo.NewAction(func(*typgo.Context) error {
 			return errors.New("some-error")
 		}),
 	}
 
-	command := releaseTool.Task().CliCommand(&typgo.Descriptor{})
+	command := ReleaseProject.Task().CliCommand(&typgo.Descriptor{})
 	require.EqualError(t, command.Before(&cli.Context{}), "some-error")
 }
 

@@ -16,17 +16,17 @@ var (
 )
 
 type (
-	// GenerateMock mock
-	GenerateMock struct {
+	// GoMock mock
+	GoMock struct {
 		Sources []string
 	}
 )
 
-var _ typgo.Tasker = (*GenerateMock)(nil)
-var _ typgo.Action = (*GenerateMock)(nil)
+var _ typgo.Tasker = (*GoMock)(nil)
+var _ typgo.Action = (*GoMock)(nil)
 
 // Task to mock
-func (d *GenerateMock) Task() *typgo.Task {
+func (d *GoMock) Task() *typgo.Task {
 	return &typgo.Task{
 		Name:   "mock",
 		Usage:  "Generate mock class",
@@ -35,7 +35,7 @@ func (d *GenerateMock) Task() *typgo.Task {
 }
 
 // Execute mock command
-func (d *GenerateMock) Execute(c *typgo.Context) error {
+func (d *GoMock) Execute(c *typgo.Context) error {
 	_, files := typast.Walk(d.Sources)
 	summary, err := typast.Compile(files...)
 	if err != nil {

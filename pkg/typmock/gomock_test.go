@@ -41,9 +41,9 @@ func TestExecute(t *testing.T) {
 		{CommandLine: "/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface"},
 	})(t)
 
-	generateMock := &typmock.GenerateMock{}
+	GoMock := &typmock.GoMock{}
 	c, _ := typgo.DummyContext()
-	require.NoError(t, generateMock.Execute(c))
+	require.NoError(t, GoMock.Execute(c))
 }
 
 func TestMockGen_InstallMockgenError(t *testing.T) {

@@ -13,7 +13,7 @@ var descriptor = typgo.Descriptor{
 
 	Tasks: []typgo.Tasker{
 		// mock
-		&typmock.GenerateMock{
+		&typmock.GoMock{
 			Sources: []string{"internal"},
 		},
 		// test

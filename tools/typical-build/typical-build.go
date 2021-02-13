@@ -69,7 +69,7 @@ var descriptor = typgo.Descriptor{
 			Action: typgo.TaskNames{"test", "build", "test-examples", "test-setup"},
 		},
 		// release
-		&typrls.ReleaseTool{
+		&typrls.ReleaseProject{
 			Before:    typgo.TaskNames{"test-all"},
 			Publisher: &typrls.Github{Owner: "typical-go", Repo: "typical-go"},
 		},

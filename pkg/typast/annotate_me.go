@@ -7,8 +7,8 @@ import (
 )
 
 type (
-	// AnnotateMe task
-	AnnotateMe struct {
+	// AnnotateProject task
+	AnnotateProject struct {
 		Sources    []string
 		Annotators []Annotator
 	}
@@ -33,11 +33,11 @@ type (
 // AnnotateProject
 //
 
-var _ typgo.Tasker = (*AnnotateMe)(nil)
-var _ typgo.Action = (*AnnotateMe)(nil)
+var _ typgo.Tasker = (*AnnotateProject)(nil)
+var _ typgo.Action = (*AnnotateProject)(nil)
 
 // Task to annotate
-func (a AnnotateMe) Task() *typgo.Task {
+func (a AnnotateProject) Task() *typgo.Task {
 	return &typgo.Task{
 		Name:    "annotate",
 		Aliases: []string{"a"},
@@ -47,7 +47,7 @@ func (a AnnotateMe) Task() *typgo.Task {
 }
 
 // Execute annotation
-func (a AnnotateMe) Execute(c *typgo.Context) error {
+func (a AnnotateProject) Execute(c *typgo.Context) error {
 	if len(a.Sources) == 0 {
 		return errors.New("'Sources' is missing")
 	}
@@ -64,7 +64,7 @@ func (a AnnotateMe) Execute(c *typgo.Context) error {
 }
 
 // CreateContext create context
-func (a AnnotateMe) CreateContext(c *typgo.Context) (*Context, error) {
+func (a AnnotateProject) CreateContext(c *typgo.Context) (*Context, error) {
 	dirs, files := Walk(a.Sources)
 	summary, err := Compile(files...)
 	if err != nil {

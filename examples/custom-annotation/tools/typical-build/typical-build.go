@@ -13,7 +13,7 @@ var descriptor = typgo.Descriptor{
 	ProjectVersion: "1.0.0",
 
 	Tasks: []typgo.Tasker{
-		&typast.AnnotateMe{
+		&typast.AnnotateProject{
 			Sources: []string{"internal"},
 			Annotators: []typast.Annotator{
 				typast.NewAnnotator(printAllAnnotation),

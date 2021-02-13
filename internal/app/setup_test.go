@@ -205,7 +205,7 @@ var descriptor = typgo.Descriptor{
 
 	Tasks: []typgo.Tasker{
 		// annotate
-		&typast.AnnotateMe{
+		&typast.AnnotateProject{
 			Sources: []string{"internal"},
 			Annotators: []typast.Annotator{
 				&typapp.CtorAnnotation{},
@@ -216,7 +216,7 @@ var descriptor = typgo.Descriptor{
 		// run
 		&typgo.RunBinary{Before: typgo.TaskNames{"annotate", "build"}},
 		// mock
-		&typmock.GenerateMock{
+		&typmock.GoMock{
 			Sources: []string{"internal"},
 		},
 	},

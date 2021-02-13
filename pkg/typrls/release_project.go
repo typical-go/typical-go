@@ -10,8 +10,8 @@ import (
 )
 
 type (
-	// ReleaseTool release command
-	ReleaseTool struct {
+	// ReleaseProject release command
+	ReleaseProject struct {
 		Before            typgo.Action
 		GenerateTagFn     func(c *typgo.Context, alpha bool) string
 		GenerateSummaryFn func(c *typgo.Context) string
@@ -35,10 +35,10 @@ const (
 // DefaultPrefixes ...
 var DefaultPrefixes = []string{"merge", "bump", "revision", "generate", "wip"}
 
-var _ typgo.Tasker = (*ReleaseTool)(nil)
+var _ typgo.Tasker = (*ReleaseProject)(nil)
 
 // Task to release
-func (r *ReleaseTool) Task() *typgo.Task {
+func (r *ReleaseProject) Task() *typgo.Task {
 	return &typgo.Task{
 		Name:  "release",
 		Usage: "Release the project",
@@ -57,10 +57,10 @@ func (r *ReleaseTool) Task() *typgo.Task {
 // ReleaseTool
 //
 
-var _ typgo.Action = (*ReleaseTool)(nil)
+var _ typgo.Action = (*ReleaseProject)(nil)
 
 // Execute release
-func (r *ReleaseTool) Execute(c *typgo.Context) error {
+func (r *ReleaseProject) Execute(c *typgo.Context) error {
 	r.setDefault()
 
 	GitFetch(c)
@@ -97,7 +97,7 @@ func (r *ReleaseTool) Execute(c *typgo.Context) error {
 	return nil
 }
 
-func (r *ReleaseTool) setDefault() {
+func (r *ReleaseProject) setDefault() {
 	if r.GenerateSummaryFn == nil {
 		r.GenerateSummaryFn = DefaultGenerateSummary
 	}
