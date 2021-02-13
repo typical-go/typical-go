@@ -36,8 +36,7 @@ func (g *Github) Publish(c *Context) (err error) {
 	if _, _, err = g.getReleaseByTag(c, repo); err == nil {
 		return fmt.Errorf("github-release: Can't publish to existing tag '%s'", c.TagName)
 	}
-
-	fmt.Printf("\nCreate github release for %s/%s\n", g.Owner, g.Repo)
+	c.Infof("Create github release for %s/%s\n", g.Owner, g.Repo)
 	rls := &github.RepositoryRelease{
 		Name:       github.String(fmt.Sprintf("%s - %s", c.Descriptor.ProjectName, c.TagName)),
 		TagName:    github.String(c.TagName),
