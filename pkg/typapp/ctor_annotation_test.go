@@ -16,11 +16,11 @@ func TestCtorAnnotation_Annotate(t *testing.T) {
 	typgo.ProjectPkg = "github.com/user/project"
 
 	defer os.RemoveAll("internal")
-	defer typgo.PatchBash([]*typgo.RunExpectation{})(t)
 
 	ctorAnnot := &typapp.CtorAnnotation{}
 	var out strings.Builder
 	c := &typgo.Context{Stdout: &out}
+	defer c.PatchBash([]*typgo.MockBash{})(t)
 	ctx := &typast.Context{
 		Context: c,
 		Summary: &typast.Summary{
@@ -62,13 +62,12 @@ func init() {
 	typapp.Provide("obj2", b.NewObject2)
 }`, string(b))
 
-	require.Equal(t, "> Generate @ctor to internal/generated/ctor/ctor.go\n", out.String())
+	require.Equal(t, "> Generate @ctor to internal/generated/ctor/ctor.go\n> go build -o /bin/goimports golang.org/x/tools/cmd/goimports\n", out.String())
 
 }
 
 func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
 
-	defer typgo.PatchBash([]*typgo.RunExpectation{})(t)
 	defer os.RemoveAll("folder2")
 
 	ctorAnnot := &typapp.CtorAnnotation{
@@ -78,6 +77,7 @@ func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
 	}
 	var out strings.Builder
 	c := &typgo.Context{Stdout: &out}
+	defer c.PatchBash([]*typgo.MockBash{})(t)
 	ctx := &typast.Context{
 		Context: c,
 		Summary: &typast.Summary{
@@ -97,7 +97,7 @@ func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
 
 	b, _ := ioutil.ReadFile("folder2/dest2/some-target")
 	require.Equal(t, `some-template`, string(b))
-	require.Equal(t, "> Generate @ctor to folder2/dest2/some-target\n", out.String())
+	require.Equal(t, "> Generate @ctor to folder2/dest2/some-target\n> go build -o /bin/goimports golang.org/x/tools/cmd/goimports\n", out.String())
 }
 
 func TestCtor_Stringer(t *testing.T) {

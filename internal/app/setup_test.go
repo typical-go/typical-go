@@ -18,12 +18,16 @@ func TestSetup(t *testing.T) {
 	app.Stdout = &out
 	defer func() { app.Stdout = &out }()
 
-	defer typgo.PatchBash([]*typgo.RunExpectation{})(t)
 	defer oskit.MkdirAll("some-pkg")()
 
-	require.NoError(t, app.Setup(cliContext([]string{
-		"-project-pkg=some-pkg",
-	})))
+	c := &typgo.Context{
+		Context: cliContext([]string{
+			"-project-pkg=some-pkg",
+		}),
+	}
+	defer c.PatchBash([]*typgo.MockBash{})(t)
+
+	require.NoError(t, app.Setup(c))
 
 	b, _ := ioutil.ReadFile("some-pkg/typicalw")
 	require.Equal(t, `#!/bin/bash
@@ -52,15 +56,18 @@ $TYPGO run \
 }
 
 func TestSetup_GetParamError(t *testing.T) {
-	unpatch := typgo.PatchBash([]*typgo.RunExpectation{
-		{CommandLine: "go list -m", ReturnError: errors.New("some-error")},
-	})
-	defer unpatch(t)
 
 	os.Mkdir(".typical-tmp", 0777)
 	defer os.RemoveAll(".typical-tmp")
 
-	err := app.Setup(cliContext([]string{}))
+	c := &typgo.Context{
+		Context: cliContext([]string{}),
+	}
+	defer c.PatchBash([]*typgo.MockBash{
+		{CommandLine: "go list -m", ReturnError: errors.New("some-error")},
+	})(t)
+
+	err := app.Setup(c)
 	require.EqualError(t, err, "some-error: ")
 }
 
@@ -68,15 +75,20 @@ func TestSetup_WithGomodFlag(t *testing.T) {
 	var out strings.Builder
 	app.Stdout = &out
 	defer func() { app.Stdout = &out }()
-	defer typgo.PatchBash([]*typgo.RunExpectation{
-		{CommandLine: "go mod init somepkg"},
-	})(t)
+
 	defer oskit.MkdirAll("somepkg")()
 
-	require.NoError(t, app.Setup(cliContext([]string{
-		"-project-pkg=somepkg",
-		"-go-mod",
-	})))
+	c := &typgo.Context{
+		Context: cliContext([]string{
+			"-project-pkg=somepkg",
+			"-go-mod",
+		}),
+	}
+	defer c.PatchBash([]*typgo.MockBash{
+		{CommandLine: "go mod init somepkg"},
+	})(t)
+
+	require.NoError(t, app.Setup(c))
 	require.Equal(t, "Initiate go.mod\nCreate 'somepkg/typicalw'\n", out.String())
 }
 
@@ -84,19 +96,18 @@ func TestSetup_WithGomodFlag_Error(t *testing.T) {
 	var out strings.Builder
 	app.Stdout = &out
 	defer func() { app.Stdout = &out }()
-	defer typgo.PatchBash([]*typgo.RunExpectation{
-		{
-			CommandLine: "go mod init somepkg",
-			ErrorBytes:  []byte("error-message"),
-			ReturnError: errors.New("some-error"),
-		},
-	})(t)
 	defer oskit.MkdirAll("somepkg")()
 
-	err := app.Setup(cliContext([]string{
-		"-project-pkg=somepkg",
-		"-go-mod",
-	}))
+	c := &typgo.Context{
+		Context: cliContext([]string{
+			"-project-pkg=somepkg",
+			"-go-mod",
+		}),
+	}
+	defer c.PatchBash([]*typgo.MockBash{
+		{CommandLine: "go mod init somepkg", ErrorBytes: []byte("error-message"), ReturnError: errors.New("some-error")},
+	})(t)
+	err := app.Setup(c)
 	require.EqualError(t, err, "some-error: error-message")
 	require.Equal(t, "Initiate go.mod\n", out.String())
 }
@@ -105,10 +116,15 @@ func TestSetup_WithGomodFlag_MissingProjectPkg(t *testing.T) {
 	var out strings.Builder
 	app.Stdout = &out
 	defer func() { app.Stdout = &out }()
-	defer typgo.PatchBash(nil)(t)
+
 	defer oskit.MkdirAll("somepkg")()
 
-	err := app.Setup(cliContext([]string{"-go-mod"}))
+	c := &typgo.Context{
+		Context: cliContext([]string{"-go-mod"}),
+	}
+	defer c.PatchBash(nil)(t)
+
+	err := app.Setup(c)
 	require.EqualError(t, err, "project-pkg is empty")
 	require.Equal(t, "Initiate go.mod\n", out.String())
 }
@@ -117,12 +133,16 @@ func TestSetup_WithNewFlag(t *testing.T) {
 	var out strings.Builder
 	app.Stdout = &out
 	defer func() { app.Stdout = &out }()
-	defer typgo.PatchBash(nil)(t)
 
-	err := app.Setup(cliContext([]string{
-		"-project-pkg=somepkg1",
-		"-new",
-	}))
+	c := &typgo.Context{
+		Context: cliContext([]string{
+			"-project-pkg=somepkg1",
+			"-new",
+		}),
+	}
+	defer c.PatchBash(nil)(t)
+
+	err := app.Setup(c)
 	require.NoError(t, err)
 	defer os.RemoveAll("somepkg1")
 

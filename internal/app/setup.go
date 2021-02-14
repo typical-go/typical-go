@@ -24,12 +24,14 @@ func cmdSetup() *cli.Command {
 			&cli.BoolFlag{Name: "go-mod", Usage: "Initiate go.mod before setup"},
 			&cli.BoolFlag{Name: "new", Usage: "Setup new project with standard layout and typical-build"},
 		},
-		Action: Setup,
+		Action: func(c *cli.Context) error {
+			return Setup(&typgo.Context{Context: c})
+		},
 	}
 }
 
 // Setup typical-go
-func Setup(c *cli.Context) error {
+func Setup(c *typgo.Context) error {
 	if c.Bool("go-mod") {
 		if err := initGoMod(c); err != nil {
 			return err
@@ -48,7 +50,7 @@ func Setup(c *cli.Context) error {
 }
 
 // initGoMod initiate gomodob
-func initGoMod(c *cli.Context) error {
+func initGoMod(c *typgo.Context) error {
 	fmt.Fprintf(Stdout, "Initiate go.mod\n")
 	pkg := c.String(ProjectPkgParam)
 	if pkg == "" {
@@ -57,7 +59,7 @@ func initGoMod(c *cli.Context) error {
 	dir := filepath.Base(pkg)
 	os.Mkdir(dir, 0777)
 	var stderr strings.Builder
-	if err := typgo.RunBash(c.Context, &typgo.Bash{
+	if err := c.Execute(&typgo.Bash{
 		Name:   "go",
 		Args:   []string{"mod", "init", pkg},
 		Stderr: &stderr,

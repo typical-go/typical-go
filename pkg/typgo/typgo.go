@@ -12,7 +12,7 @@ import (
 func BuildTool(d *Descriptor) *cli.App {
 
 	if d.EnvLoader != nil {
-		envContext := NewBuildToolContext(d, "load-env")
+		envContext := NewPrepareContext(d, "load-env")
 		if err := d.EnvLoader.EnvLoad(envContext); err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 		}

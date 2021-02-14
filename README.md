@@ -273,7 +273,7 @@ func myFunc(){
 
 Add annotate task
 ```go
-AnnotateProject := &typast.AnnotateProject{
+annotateProject := &typast.AnnotateProject{
    Sources: []string{"internal"},
    Annotators: []typast.Annotator{
       typast.NewAnnotator(func(c *typast.Context) error {

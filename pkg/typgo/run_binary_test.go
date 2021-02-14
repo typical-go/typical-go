@@ -31,22 +31,18 @@ func TestRunCmd_Before(t *testing.T) {
 }
 
 func TestRunBinary_Execute(t *testing.T) {
-	defer typgo.PatchBash([]*typgo.RunExpectation{
-		{CommandLine: "bin/some-project"},
-	})(t)
-
 	stdRun := &typgo.RunBinary{}
 	c := &typgo.Context{
 		Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
 		Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
 	}
+	defer c.PatchBash([]*typgo.MockBash{
+		{CommandLine: "bin/some-project"},
+	})(t)
 	require.NoError(t, stdRun.Execute(c))
 }
 
 func TestRunBinary_Execute_Predefined(t *testing.T) {
-	defer typgo.PatchBash([]*typgo.RunExpectation{
-		{CommandLine: "some-binary"},
-	})(t)
 
 	stdRun := &typgo.RunBinary{
 		Binary: "some-binary",
@@ -54,5 +50,8 @@ func TestRunBinary_Execute_Predefined(t *testing.T) {
 	c := &typgo.Context{
 		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
 	}
+	defer c.PatchBash([]*typgo.MockBash{
+		{CommandLine: "some-binary"},
+	})(t)
 	require.NoError(t, stdRun.Execute(c))
 }

@@ -3,13 +3,14 @@ package typgo
 import (
 	"context"
 	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"os"
 	"strings"
+	"testing"
 
 	"github.com/fatih/color"
+	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 )
 
@@ -19,11 +20,7 @@ type (
 		*cli.Context
 		Descriptor *Descriptor
 		Stdout     io.Writer
-	}
-	// DummyContextSetting option for dummy option
-	DummyContextSetting struct {
-		Output  *strings.Builder
-		FlagSet *flag.FlagSet
+		mocker     *BashMocker
 	}
 )
 
@@ -43,7 +40,11 @@ func (c *Context) Execute(basher Basher) error {
 		c.printHeader()
 		color.New(BashColor).Fprintln(c.Stdout, bash)
 	}
-	return RunBash(c.Ctx(), bash)
+	ctx := c.Ctx()
+	if c.mocker != nil {
+		return c.mocker.Run(bash)
+	}
+	return bash.ExecCmd(ctx).Run()
 }
 
 // ExecuteBash execute bash command
@@ -100,10 +101,12 @@ func (c *Context) printHeader() {
 	fmt.Fprint(c.Stdout, "> ")
 }
 
-//
-// DummyContextSetting
-//
-
-func (c *DummyContextSetting) String() string {
-	return c.Output.String()
+// PatchBash typgo.RunBash for testing purpose
+func (c *Context) PatchBash(mocks []*MockBash) func(t *testing.T) {
+	if c.mocker == nil {
+		c.mocker = &BashMocker{Mocks: mocks}
+	}
+	return func(t *testing.T) {
+		require.NoError(t, c.mocker.Close())
+	}
 }

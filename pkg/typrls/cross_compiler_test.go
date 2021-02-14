@@ -17,7 +17,7 @@ func TestCrossCompile(t *testing.T) {
 		TestName string
 		typrls.CrossCompiler
 		TagName         string
-		RunExpectations []*typgo.RunExpectation
+		RunExpectations []*typgo.MockBash
 		ExpectedErr     string
 	}{
 		{
@@ -25,7 +25,7 @@ func TestCrossCompile(t *testing.T) {
 				Targets: []typrls.Target{"darwin/amd64", "linux/amd64"},
 			},
 			TagName: "v0.0.1",
-			RunExpectations: []*typgo.RunExpectation{
+			RunExpectations: []*typgo.MockBash{
 				{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /some-project_v0.0.1_darwin_amd64 ./cmd/some-project"},
 				{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /some-project_v0.0.1_linux_amd64 ./cmd/some-project"},
 			},
@@ -36,7 +36,7 @@ func TestCrossCompile(t *testing.T) {
 				Targets: []typrls.Target{"darwin/amd64"},
 			},
 			TagName: "v0.0.1",
-			RunExpectations: []*typgo.RunExpectation{
+			RunExpectations: []*typgo.MockBash{
 				{
 					CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /some-project_v0.0.1_darwin_amd64 ./cmd/some-project",
 					ReturnError: errors.New("some-error"),
@@ -47,10 +47,7 @@ func TestCrossCompile(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			unpatch := typgo.PatchBash(tt.RunExpectations)
-			defer unpatch(t)
-
-			err := tt.Release(&typrls.Context{
+			c := &typrls.Context{
 				TagName: tt.TagName,
 				Context: &typgo.Context{
 					Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
@@ -59,7 +56,10 @@ func TestCrossCompile(t *testing.T) {
 						ProjectVersion: "0.0.1",
 					},
 				},
-			})
+			}
+			defer c.PatchBash(tt.RunExpectations)(t)
+
+			err := tt.Release(c)
 			if tt.ExpectedErr != "" {
 				require.EqualError(t, err, tt.ExpectedErr)
 			} else {

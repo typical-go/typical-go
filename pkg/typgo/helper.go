@@ -1,19 +1,18 @@
 package typgo
 
 import (
-	"context"
 	"fmt"
 	"os"
 )
 
 // GoImports run goimports
-func GoImports(target string) error {
-	ctx := context.Background()
-	goimports, err := InstallTool(ctx, "goimports", "golang.org/x/tools/cmd/goimports")
+func GoImports(c *Context, target string) error {
+
+	goimports, err := InstallTool(c, "goimports", "golang.org/x/tools/cmd/goimports")
 	if err != nil {
 		return err
 	}
-	return RunBash(ctx, &Bash{
+	return c.Execute(&Bash{
 		Name:   goimports,
 		Args:   []string{"-w", target},
 		Stderr: os.Stderr,
@@ -21,11 +20,11 @@ func GoImports(target string) error {
 }
 
 // InstallTool install tool to typical-tmp folder
-func InstallTool(ctx context.Context, name, source string) (string, error) {
+func InstallTool(c *Context, name, source string) (string, error) {
 	output := fmt.Sprintf("%s/bin/%s", TypicalTmp, name)
 
 	if _, err := os.Stat(output); os.IsNotExist(err) {
-		if err := RunBash(ctx, &GoBuild{
+		if err := c.Execute(&GoBuild{
 			Output:      output,
 			MainPackage: source,
 		}); err != nil {

@@ -25,12 +25,14 @@ func cmdRun() *cli.Command {
 			typicalBuildFlag,
 			typicalTmpFlag,
 		},
-		Action: Run,
+		Action: func(c *cli.Context) error {
+			return Run(&typgo.Context{Context: c})
+		},
 	}
 }
 
 // Run typical-go
-func Run(c *cli.Context) error {
+func Run(c *typgo.Context) error {
 	p, err := GetParam(c)
 	if err != nil {
 		return err
@@ -60,7 +62,7 @@ func Run(c *cli.Context) error {
 		args = append(args, "-ldflags", buildVars.String())
 		args = append(args, "-o", bin, "./"+p.TypicalBuild)
 
-		if err := typgo.RunBash(c.Context, &typgo.Bash{
+		if err := c.Execute(&typgo.Bash{
 			Name:   "go",
 			Args:   args,
 			Stdout: os.Stdout,
@@ -70,7 +72,7 @@ func Run(c *cli.Context) error {
 		}
 	}
 
-	return typgo.RunBash(c.Context, &typgo.Bash{
+	return c.Execute(&typgo.Bash{
 		Name:   bin,
 		Args:   c.Args().Slice(),
 		Stdout: os.Stdout,

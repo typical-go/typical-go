@@ -6,7 +6,6 @@ import (
 	"io"
 	"os/exec"
 	"strings"
-	"testing"
 )
 
 type (
@@ -24,23 +23,7 @@ type (
 	Basher interface {
 		Bash(extras ...string) *Bash
 	}
-	// RunExpectation is test expectation for typgo.RunBash
-	RunExpectation struct {
-		CommandLine string
-		OutputBytes []byte
-		ErrorBytes  []byte
-		ReturnError error
-	}
-	runMocker struct {
-		expectations []*RunExpectation
-		ptr          int
-		length       int
-	}
 )
-
-//
-// Bash
-//
 
 var _ Basher = (*Bash)(nil)
 var _ Action = (*Bash)(nil)
@@ -79,69 +62,4 @@ func (b Bash) String() string {
 
 	}
 	return out.String()
-}
-
-//
-// Run
-//
-
-var _mocker *runMocker
-
-// RunBash the runner
-func RunBash(ctx context.Context, cmder Basher) error {
-	cmd := cmder.Bash()
-	if _mocker != nil {
-		return _mocker.run(ctx, cmd)
-	}
-	return cmd.ExecCmd(ctx).Run()
-}
-
-// PatchBash typgo.RunBash for testing purpose
-func PatchBash(expectations []*RunExpectation) func(t *testing.T) {
-	_mocker = &runMocker{
-		expectations: expectations,
-		ptr:          0,
-		length:       len(expectations),
-	}
-
-	return func(t *testing.T) {
-		if expectation := _mocker.expectation(); expectation != nil {
-			t.Errorf("typgo-mock: missing call: %v", expectation)
-			t.FailNow()
-		}
-		_mocker = nil
-	}
-}
-
-func (r *runMocker) expectation() *RunExpectation {
-	if r.ptr < r.length {
-		expect := r.expectations[r.ptr]
-		r.ptr++
-		return expect
-	}
-	return nil
-}
-
-func (r *runMocker) run(ctx context.Context, cmd *Bash) error {
-	expc := r.expectation()
-	if expc == nil {
-		return fmt.Errorf("typgo-mock: no run expectation for \"%s\"", cmd.String())
-	}
-
-	if cmd.String() != expc.CommandLine {
-		return fmt.Errorf("typgo-mock: \"%s\" should be \"%s\"", cmd.String(), expc.CommandLine)
-	}
-
-	if expc.OutputBytes != nil && cmd.Stdout != nil {
-		if _, err := cmd.Stdout.Write(expc.OutputBytes); err != nil {
-			return err
-		}
-	}
-	if expc.ErrorBytes != nil && cmd.Stderr != nil {
-		if _, err := cmd.Stderr.Write(expc.ErrorBytes); err != nil {
-			return err
-		}
-	}
-
-	return expc.ReturnError
 }

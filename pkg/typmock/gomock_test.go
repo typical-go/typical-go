@@ -38,16 +38,15 @@ func TestExecute(t *testing.T) {
 		}, nil
 	}).Unpatch()
 
-	defer typgo.PatchBash([]*typgo.RunExpectation{
-		{CommandLine: "rm -rf parent/path_mock"},
-		{CommandLine: "go build -o /bin/mockgen github.com/golang/mock/mockgen"},
-		{CommandLine: "/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface"},
-	})(t)
-
 	GoMock := &typmock.GoMock{}
 	c := &typgo.Context{
 		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
 	}
+	defer c.PatchBash([]*typgo.MockBash{
+		{CommandLine: "rm -rf parent/path_mock"},
+		{CommandLine: "go build -o /bin/mockgen github.com/golang/mock/mockgen"},
+		{CommandLine: "/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface"},
+	})(t)
 	require.NoError(t, GoMock.Execute(c))
 }
 
@@ -55,11 +54,11 @@ func TestMockGen_InstallMockgenError(t *testing.T) {
 	typgo.TypicalTmp = ".typical-tmp2"
 	defer func() { typgo.TypicalTmp = "" }()
 
-	defer typgo.PatchBash([]*typgo.RunExpectation{
+	c := &typgo.Context{}
+	defer c.PatchBash([]*typgo.MockBash{
 		{CommandLine: "go build -o .typical-tmp2/bin/mockgen github.com/golang/mock/mockgen", ReturnError: errors.New("some-error")},
 	})(t)
 
-	c := &typgo.Context{}
 	err := typmock.MockGen(c, "", "", "", "")
 	require.EqualError(t, err, "some-error")
 }
@@ -79,18 +78,18 @@ func TestAnnotate_MockgenError(t *testing.T) {
 		},
 	}
 
-	defer typgo.PatchBash([]*typgo.RunExpectation{
-		{CommandLine: "rm -rf parent/path_mock"},
-		{CommandLine: "go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen"},
-		{CommandLine: ".typical-tmp/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface", ReturnError: errors.New("some-error")},
-	})(t)
-
 	var out strings.Builder
 	c := &typgo.Context{
 		Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
 		Descriptor: &typgo.Descriptor{},
 		Stdout:     &out,
 	}
+	defer c.PatchBash([]*typgo.MockBash{
+		{CommandLine: "rm -rf parent/path_mock"},
+		{CommandLine: "go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen"},
+		{CommandLine: ".typical-tmp/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface", ReturnError: errors.New("some-error")},
+	})(t)
+
 	require.NoError(t, typmock.Annotate(c, summary))
-	require.Equal(t, ":> rm -rf parent/path_mock\n:> .typical-tmp/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\n:> Fail to mock '/parent/path.SomeInterface': some-error\n", out.String())
+	require.Equal(t, ":> rm -rf parent/path_mock\n:> go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen\n:> .typical-tmp/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\n:> Fail to mock '/parent/path.SomeInterface': some-error\n", out.String())
 }

@@ -12,11 +12,14 @@ import (
 )
 
 func TestGetParam(t *testing.T) {
-	param, err := app.GetParam(cliContext([]string{
-		"-typical-build=1",
-		"-typical-tmp=2",
-		"-project-pkg=github.com/user/project",
-	}))
+	c := &typgo.Context{
+		Context: cliContext([]string{
+			"-typical-build=1",
+			"-typical-tmp=2",
+			"-project-pkg=github.com/user/project",
+		}),
+	}
+	param, err := app.GetParam(c)
 
 	require.NoError(t, err)
 	require.Equal(t, &app.Param{
@@ -29,12 +32,14 @@ func TestGetParam(t *testing.T) {
 }
 
 func TestGetParam_Default(t *testing.T) {
-	unpatch := typgo.PatchBash([]*typgo.RunExpectation{
+	c := &typgo.Context{
+		Context: cliContext([]string{}),
+	}
+	defer c.PatchBash([]*typgo.MockBash{
 		{CommandLine: "go list -m", OutputBytes: []byte("some-package")},
-	})
-	defer unpatch(t)
+	})(t)
 
-	param, err := app.GetParam(cliContext([]string{}))
+	param, err := app.GetParam(c)
 
 	require.NoError(t, err)
 	require.Equal(t, &app.Param{
@@ -47,16 +52,17 @@ func TestGetParam_Default(t *testing.T) {
 }
 
 func TestGetParam_Default_FailedRetrivePackage(t *testing.T) {
-	unpatch := typgo.PatchBash([]*typgo.RunExpectation{
+	c := &typgo.Context{
+		Context: cliContext([]string{}),
+	}
+	defer c.PatchBash([]*typgo.MockBash{
 		{
 			CommandLine: "go list -m",
 			ErrorBytes:  []byte("error-message"),
 			ReturnError: errors.New("some-error"),
 		},
-	})
-	defer unpatch(t)
-
-	_, err := app.GetParam(cliContext([]string{}))
+	})(t)
+	_, err := app.GetParam(c)
 	require.EqualError(t, err, "some-error: error-message")
 }
 

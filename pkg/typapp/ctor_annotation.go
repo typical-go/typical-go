@@ -89,7 +89,7 @@ func (a *CtorAnnotation) Annotate(c *typast.Context) error {
 	if err != nil {
 		return err
 	}
-	typgo.GoImports(a.Target)
+	typgo.GoImports(c.Context, a.Target)
 
 	return nil
 }

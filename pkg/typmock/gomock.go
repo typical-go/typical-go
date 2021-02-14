@@ -80,7 +80,7 @@ func Annotate(c *typgo.Context, summary *typast.Summary) error {
 
 // MockGen execute mockgen bash
 func MockGen(c *typgo.Context, destPkg, dest, srcPkg, src string) error {
-	mockgen, err := typgo.InstallTool(c.Ctx(), "mockgen", "github.com/golang/mock/mockgen")
+	mockgen, err := typgo.InstallTool(c, "mockgen", "github.com/golang/mock/mockgen")
 	if err != nil {
 		return err
 	}

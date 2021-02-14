@@ -1,7 +1,6 @@
 package app
 
 import (
-	"context"
 	"errors"
 	"path/filepath"
 	"strings"
@@ -49,12 +48,12 @@ var (
 )
 
 // GetParam get param
-func GetParam(c *cli.Context) (*Param, error) {
+func GetParam(c *typgo.Context) (*Param, error) {
 	projectPkg := c.String(ProjectPkgParam)
 	setupTarget := ""
 	if projectPkg == "" {
 		var err error
-		projectPkg, err = retrieveProjPkg(c.Context)
+		projectPkg, err = retrieveProjPkg(c)
 		if err != nil {
 			return nil, err
 		}
@@ -72,10 +71,10 @@ func GetParam(c *cli.Context) (*Param, error) {
 	}, nil
 }
 
-func retrieveProjPkg(ctx context.Context) (string, error) {
+func retrieveProjPkg(c *typgo.Context) (string, error) {
 	var stdout strings.Builder
 	var stderr strings.Builder
-	if err := typgo.RunBash(ctx, &typgo.Bash{
+	if err := c.Execute(&typgo.Bash{
 		Name:   "go",
 		Args:   []string{"list", "-m"},
 		Stdout: &stdout,

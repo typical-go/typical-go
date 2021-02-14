@@ -11,9 +11,6 @@ import (
 )
 
 func TestGoBuild_Command(t *testing.T) {
-	defer typgo.PatchBash([]*typgo.RunExpectation{
-		{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=0.0.1\" -o bin/some-project ./cmd/some-project"},
-	})(t)
 
 	cmpl := &typgo.GoBuild{}
 
@@ -31,14 +28,15 @@ func TestGoBuild_Command(t *testing.T) {
 			ProjectVersion: "0.0.1",
 		},
 	}
+	defer c.PatchBash([]*typgo.MockBash{
+		{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=0.0.1\" -o bin/some-project ./cmd/some-project"},
+	})(t)
+
 	require.NoError(t, cmpl.Execute(c))
 	require.Equal(t, "some-project:> go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=0.0.1\" -o bin/some-project ./cmd/some-project\n", out.String())
 }
 
 func TestGoBuild_Predefined(t *testing.T) {
-	defer typgo.PatchBash([]*typgo.RunExpectation{
-		{CommandLine: "go build -ldflags \"-X some-var=some-value\" -o some-output some-package"},
-	})(t)
 
 	cmpl := &typgo.GoBuild{
 		MainPackage: "some-package",
@@ -51,5 +49,9 @@ func TestGoBuild_Predefined(t *testing.T) {
 	c := &typgo.Context{
 		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
 	}
+	defer c.PatchBash([]*typgo.MockBash{
+		{CommandLine: "go build -ldflags \"-X some-var=some-value\" -o some-output some-package"},
+	})(t)
+
 	require.NoError(t, cmpl.Execute(c))
 }

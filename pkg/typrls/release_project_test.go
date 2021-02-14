@@ -135,7 +135,7 @@ func TestReleaseProject(t *testing.T) {
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
 			defer debug.Reset()
-			defer typgo.PatchBash([]*typgo.RunExpectation{})(t)
+			defer tt.Context.PatchBash([]*typgo.MockBash{})(t)
 
 			err := tt.Execute(tt.Context)
 			if tt.ExpectedErr != "" {
@@ -152,8 +152,6 @@ func TestReleaseProject(t *testing.T) {
 func TestReleaseProject_CustomReleaseFolder(t *testing.T) {
 	var rlsCtx *typrls.Context
 
-	defer typgo.PatchBash(nil)(t)
-
 	rel := &typrls.ReleaseProject{
 		GenerateTagFn:     typrls.DefaultGenerateTag,
 		GenerateSummaryFn: func(*typgo.Context) string { return "some-summary" },
@@ -163,11 +161,13 @@ func TestReleaseProject_CustomReleaseFolder(t *testing.T) {
 		}),
 	}
 
-	rel.Execute(&typgo.Context{
+	c := &typgo.Context{
 		Context:    createContext("-release-folder=some-release"),
 		Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
 		Stdout:     &strings.Builder{},
-	})
+	}
+	defer c.PatchBash(nil)(t)
+	rel.Execute(c)
 	defer os.RemoveAll("some-release")
 	require.Equal(t, "some-release", rlsCtx.ReleaseFolder)
 }
@@ -178,7 +178,7 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 		TestName string
 		*typrls.ReleaseProject
 		Ctx             *typgo.Context
-		RunExpectations []*typgo.RunExpectation
+		RunExpectations []*typgo.MockBash
 		Expected        *typrls.Context
 		ExpectedErr     string
 	}{
@@ -189,7 +189,7 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 				Descriptor: &typgo.Descriptor{},
 				Stdout:     &strings.Builder{},
 			},
-			RunExpectations: []*typgo.RunExpectation{
+			RunExpectations: []*typgo.MockBash{
 				{CommandLine: "git fetch"},
 				{
 					CommandLine: "git describe --tags --abbrev=0",
@@ -218,7 +218,7 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 				Descriptor: &typgo.Descriptor{},
 				Stdout:     &strings.Builder{},
 			},
-			RunExpectations: []*typgo.RunExpectation{
+			RunExpectations: []*typgo.MockBash{
 				{CommandLine: "git fetch"},
 			},
 			Expected: &typrls.Context{
@@ -239,7 +239,7 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 				Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
 				Stdout:     &strings.Builder{},
 			},
-			RunExpectations: []*typgo.RunExpectation{
+			RunExpectations: []*typgo.MockBash{
 				{CommandLine: "git fetch"},
 			},
 			Expected: &typrls.Context{
@@ -260,7 +260,7 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 				Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
 				Stdout:     &strings.Builder{},
 			},
-			RunExpectations: []*typgo.RunExpectation{
+			RunExpectations: []*typgo.MockBash{
 				{CommandLine: "git fetch"},
 			},
 			Expected: &typrls.Context{
@@ -273,9 +273,8 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
+			defer tt.Ctx.PatchBash(tt.RunExpectations)(t)
 			var rlsCtx *typrls.Context
-
-			defer typgo.PatchBash(tt.RunExpectations)(t)
 
 			tt.Releaser = typrls.NewReleaser(func(r *typrls.Context) error {
 				rlsCtx = r
@@ -321,7 +320,7 @@ func TestDefaultTagFn(t *testing.T) {
 		TestName        string
 		ProjectVersion  string
 		Alpha           bool
-		RunExpectations []*typgo.RunExpectation
+		RunExpectations []*typgo.MockBash
 		Expected        string
 	}{
 		{
@@ -337,12 +336,12 @@ func TestDefaultTagFn(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			defer typgo.PatchBash(tt.RunExpectations)(t)
 			c := &typgo.Context{
 				Descriptor: &typgo.Descriptor{
 					ProjectVersion: "0.0.1",
 				},
 			}
+			defer c.PatchBash(tt.RunExpectations)(t)
 			require.Equal(t, tt.Expected, typrls.DefaultGenerateTag(c, tt.Alpha))
 		})
 	}
@@ -351,13 +350,13 @@ func TestDefaultTagFn(t *testing.T) {
 func TestSummarizer(t *testing.T) {
 	testCases := []struct {
 		TestName        string
-		RunExpectations []*typgo.RunExpectation
+		RunExpectations []*typgo.MockBash
 		Expected        string
 		ExpectedOut     string
 	}{
 		{
 			TestName: "change summary",
-			RunExpectations: []*typgo.RunExpectation{
+			RunExpectations: []*typgo.MockBash{
 				{CommandLine: "git describe --tags --abbrev=0", OutputBytes: []byte("v0.0.1")},
 				{CommandLine: "git --no-pager log v0.0.1..HEAD --oneline", OutputBytes: []byte("1234567 some-message-1\n1234568 some-message-3")},
 			},
@@ -367,9 +366,9 @@ func TestSummarizer(t *testing.T) {
 	}
 	for _, tt := range testCases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			defer typgo.PatchBash(tt.RunExpectations)(t)
 			var out strings.Builder
 			c := &typgo.Context{Stdout: &out}
+			defer c.PatchBash(tt.RunExpectations)(t)
 			require.Equal(t, tt.Expected, typrls.DefaultGenerateSummary(c))
 			require.Equal(t, tt.ExpectedOut, out.String())
 		})

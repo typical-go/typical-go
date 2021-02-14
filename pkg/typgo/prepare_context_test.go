@@ -8,9 +8,9 @@ import (
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
-func TestBuildToolContext(t *testing.T) {
+func TestPrepareContext(t *testing.T) {
 	var out strings.Builder
-	c := typgo.NewBuildToolContext(&typgo.Descriptor{ProjectName: "some-project"}, "some-state")
+	c := typgo.NewPrepareContext(&typgo.Descriptor{ProjectName: "some-project"}, "some-state")
 	c.Stdout = &out
 	c.Info("some-information")
 	c.Infof("I love you %d\n", 3000)

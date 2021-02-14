@@ -7,7 +7,7 @@ import (
 type (
 	// EnvLoader responsible to load env
 	EnvLoader interface {
-		EnvLoad(*BuildToolContext) error
+		EnvLoad(*PrepareContext) error
 	}
 	// DotEnv file
 	DotEnv string
@@ -20,7 +20,7 @@ type (
 var _ EnvLoader = (DotEnv)("")
 
 // EnvLoad load environment from dotenv file
-func (d DotEnv) EnvLoad(c *BuildToolContext) error {
+func (d DotEnv) EnvLoad(c *PrepareContext) error {
 	m, _ := envkit.ReadFile(string(d))
 	if len(m) > 0 {
 		c.Infof("Read from DotEnv '%s': %s\n", d, m.SortedKeys())
@@ -34,7 +34,7 @@ func (d DotEnv) EnvLoad(c *BuildToolContext) error {
 var _ EnvLoader = (EnvMap)(nil)
 
 // EnvLoad load environment from dotenv file
-func (e EnvMap) EnvLoad(c *BuildToolContext) error {
+func (e EnvMap) EnvLoad(c *PrepareContext) error {
 	m := envkit.Map(e)
 	c.Infof("Read from EnvMap: %s\n", m.SortedKeys())
 	return envkit.Setenv(m)
