@@ -52,11 +52,10 @@ func (t *Task) CliCommand(d *Descriptor) *cli.Command {
 
 // CliFunc return urfave cli function from Action
 func CliFunc(d *Descriptor, a Action) func(*cli.Context) error {
+	if a == nil {
+		return nil
+	}
 	return func(c *cli.Context) error {
-		if a == nil {
-			return nil
-		}
-
 		return a.Execute(NewContext(c, d))
 	}
 }

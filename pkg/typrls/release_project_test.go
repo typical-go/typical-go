@@ -338,8 +338,11 @@ func TestDefaultTagFn(t *testing.T) {
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
 			defer typgo.PatchBash(tt.RunExpectations)(t)
-			c, _ := typgo.DummyContext()
-			c.Descriptor.ProjectVersion = "0.0.1"
+			c := &typgo.Context{
+				Descriptor: &typgo.Descriptor{
+					ProjectVersion: "0.0.1",
+				},
+			}
 			require.Equal(t, tt.Expected, typrls.DefaultGenerateTag(c, tt.Alpha))
 		})
 	}
@@ -359,13 +362,14 @@ func TestSummarizer(t *testing.T) {
 				{CommandLine: "git --no-pager log v0.0.1..HEAD --oneline", OutputBytes: []byte("1234567 some-message-1\n1234568 some-message-3")},
 			},
 			Expected:    "1234567 some-message-1\n1234568 some-message-3",
-			ExpectedOut: "some-project:dummy> $ git describe --tags --abbrev=0\nsome-project:dummy> $ git --no-pager log v0.0.1..HEAD --oneline\n",
+			ExpectedOut: "> git describe --tags --abbrev=0\n> git --no-pager log v0.0.1..HEAD --oneline\n",
 		},
 	}
 	for _, tt := range testCases {
 		t.Run(tt.TestName, func(t *testing.T) {
 			defer typgo.PatchBash(tt.RunExpectations)(t)
-			c, out := typgo.DummyContext()
+			var out strings.Builder
+			c := &typgo.Context{Stdout: &out}
 			require.Equal(t, tt.Expected, typrls.DefaultGenerateSummary(c))
 			require.Equal(t, tt.ExpectedOut, out.String())
 		})

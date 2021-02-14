@@ -16,7 +16,7 @@ import (
 
 func TestGoTest_NoPackages(t *testing.T) {
 	testProj := &typgo.GoTest{}
-	c, _ := typgo.DummyContext()
+	c := &typgo.Context{}
 	defer typgo.PatchBash([]*typgo.RunExpectation{})(t)
 
 	require.NoError(t, testProj.Execute(c))
@@ -35,8 +35,9 @@ func TestGoTest(t *testing.T) {
 		{CommandLine: "go test -cover -timeout=25s ./pkg1 ./pkg2"},
 	})(t)
 
-	c, _ := typgo.DummyContext()
-
+	c := &typgo.Context{
+		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
+	}
 	testProj := &typgo.GoTest{
 		Timeout:  25 * time.Second,
 		Includes: []string{"pkg*"},

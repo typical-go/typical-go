@@ -20,6 +20,11 @@ type (
 		Descriptor *Descriptor
 		Stdout     io.Writer
 	}
+	// DummyContextSetting option for dummy option
+	DummyContextSetting struct {
+		Output  *strings.Builder
+		FlagSet *flag.FlagSet
+	}
 )
 
 // NewContext return instance of context
@@ -31,28 +36,13 @@ func NewContext(c *cli.Context, d *Descriptor) *Context {
 	}
 }
 
-// DummyContext return dummy context
-func DummyContext() (*Context, *strings.Builder) {
-	var out strings.Builder
-	c := cli.NewContext(nil, &flag.FlagSet{}, nil)
-	c.Command = &cli.Command{Name: "dummy"}
-	context := &Context{
-		Context: c,
-		Descriptor: &Descriptor{
-			ProjectName:    "some-project",
-			ProjectVersion: "0.0.1",
-		},
-		Stdout: &out,
-	}
-	return context, &out
-}
-
 // Execute command
 func (c *Context) Execute(basher Basher) error {
 	bash := basher.Bash()
-	c.printHeader()
-	color.New(color.FgMagenta).Fprint(c.Stdout, "$ ")
-	fmt.Fprintln(c.Stdout, bash)
+	if c.Stdout != nil {
+		c.printHeader()
+		color.New(BashColor).Fprintln(c.Stdout, bash)
+	}
 	return RunBash(c.Ctx(), bash)
 }
 
@@ -73,24 +63,47 @@ func (c *Context) ExecuteBash(commandLine string) error {
 
 // Ctx return golang context
 func (c *Context) Ctx() context.Context {
+	if c.Context == nil {
+		return context.Background()
+	}
 	return c.Context.Context
 }
 
 // Info log text
 func (c *Context) Info(text string) {
+	if c.Stdout == nil {
+		return
+	}
 	c.printHeader()
 	fmt.Fprintln(c.Stdout, text)
 }
 
 // Infof formatted text
 func (c *Context) Infof(format string, a ...interface{}) {
+	if c.Stdout == nil {
+		return
+	}
 	c.printHeader()
 	fmt.Fprintf(c.Stdout, format, a...)
 }
 
 func (c *Context) printHeader() {
-	color.New(color.FgYellow).Fprint(c.Stdout, c.Descriptor.ProjectName)
-	fmt.Fprint(c.Stdout, ":")
-	color.New(color.FgBlue).Fprint(c.Stdout, c.Command.Name)
+	if c.Descriptor != nil {
+		color.New(ProjectNameColor).Fprint(c.Stdout, c.Descriptor.ProjectName)
+	}
+	if c.Context != nil && c.Command != nil {
+		for _, name := range strings.Split(c.Command.FullName(), " ") {
+			fmt.Fprint(c.Stdout, ":")
+			color.New(TaskNameColor).Fprint(c.Stdout, name)
+		}
+	}
 	fmt.Fprint(c.Stdout, "> ")
+}
+
+//
+// DummyContextSetting
+//
+
+func (c *DummyContextSetting) String() string {
+	return c.Output.String()
 }

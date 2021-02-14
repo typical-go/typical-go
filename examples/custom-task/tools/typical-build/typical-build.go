@@ -44,8 +44,8 @@ var descriptor = typgo.Descriptor{
 		},
 		// help
 		&typgo.Task{
-			Name:  "help",
-			Usage: "print help",
+			Name:  "go-help",
+			Usage: "print go help",
 			Action: &typgo.Bash{
 				Name:   "go",
 				Args:   []string{"help"},
@@ -53,9 +53,29 @@ var descriptor = typgo.Descriptor{
 			},
 		},
 		&typgo.Task{
-			Name:   "all",
-			Usage:  "run all custom task",
+			Name:   "multi-task",
+			Usage:  "run multi-task",
 			Action: typgo.TaskNames{"ping", "info"},
+		},
+		&typgo.Task{
+			Name:  "parent",
+			Usage: "subtask sample",
+			SubTasks: []*typgo.Task{
+				{
+					Name: "child1",
+					Action: typgo.NewAction(func(c *typgo.Context) error {
+						c.Info("child1")
+						return nil
+					}),
+				},
+				{
+					Name: "child2",
+					Action: typgo.NewAction(func(c *typgo.Context) error {
+						c.Info("child2")
+						return nil
+					}),
+				},
+			},
 		},
 		&greetTask{person: "john doe"},
 	},

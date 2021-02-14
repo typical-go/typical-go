@@ -3,6 +3,7 @@ package typapp_test
 import (
 	"io/ioutil"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -18,7 +19,8 @@ func TestCtorAnnotation_Annotate(t *testing.T) {
 	defer typgo.PatchBash([]*typgo.RunExpectation{})(t)
 
 	ctorAnnot := &typapp.CtorAnnotation{}
-	c, out := typgo.DummyContext()
+	var out strings.Builder
+	c := &typgo.Context{Stdout: &out}
 	ctx := &typast.Context{
 		Context: c,
 		Summary: &typast.Summary{
@@ -60,7 +62,7 @@ func init() {
 	typapp.Provide("obj2", b.NewObject2)
 }`, string(b))
 
-	require.Equal(t, "some-project:dummy> Generate @ctor to internal/generated/ctor/ctor.go\n", out.String())
+	require.Equal(t, "> Generate @ctor to internal/generated/ctor/ctor.go\n", out.String())
 
 }
 
@@ -74,7 +76,8 @@ func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
 		Target:   "folder2/dest2/some-target",
 		Template: "some-template",
 	}
-	c, out := typgo.DummyContext()
+	var out strings.Builder
+	c := &typgo.Context{Stdout: &out}
 	ctx := &typast.Context{
 		Context: c,
 		Summary: &typast.Summary{
@@ -94,7 +97,7 @@ func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
 
 	b, _ := ioutil.ReadFile("folder2/dest2/some-target")
 	require.Equal(t, `some-template`, string(b))
-	require.Equal(t, "some-project:dummy> Generate @ctor to folder2/dest2/some-target\n", out.String())
+	require.Equal(t, "> Generate @ctor to folder2/dest2/some-target\n", out.String())
 }
 
 func TestCtor_Stringer(t *testing.T) {

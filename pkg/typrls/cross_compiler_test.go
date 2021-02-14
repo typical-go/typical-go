@@ -2,11 +2,13 @@ package typrls_test
 
 import (
 	"errors"
+	"flag"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typrls"
+	"github.com/urfave/cli/v2"
 )
 
 func TestCrossCompile(t *testing.T) {
@@ -47,10 +49,16 @@ func TestCrossCompile(t *testing.T) {
 		t.Run(tt.TestName, func(t *testing.T) {
 			unpatch := typgo.PatchBash(tt.RunExpectations)
 			defer unpatch(t)
-			c, _ := typgo.DummyContext()
+
 			err := tt.Release(&typrls.Context{
 				TagName: tt.TagName,
-				Context: c,
+				Context: &typgo.Context{
+					Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
+					Descriptor: &typgo.Descriptor{
+						ProjectName:    "some-project",
+						ProjectVersion: "0.0.1",
+					},
+				},
 			})
 			if tt.ExpectedErr != "" {
 				require.EqualError(t, err, tt.ExpectedErr)

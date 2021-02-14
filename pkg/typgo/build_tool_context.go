@@ -53,8 +53,8 @@ func (c *BuildToolContext) Infof(format string, a ...interface{}) {
 }
 
 func (c *BuildToolContext) printHeader() {
-	color.New(color.FgYellow).Fprint(c.Stdout, c.Descriptor.ProjectName)
+	color.New(ProjectNameColor).Fprint(c.Stdout, c.Descriptor.ProjectName)
 	fmt.Fprint(c.Stdout, ":")
-	color.New(color.FgGreen).Fprint(c.Stdout, c.Name)
+	color.New(PrepareColor).Fprint(c.Stdout, c.Name)
 	fmt.Fprint(c.Stdout, "> ")
 }

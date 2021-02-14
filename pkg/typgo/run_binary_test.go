@@ -2,6 +2,7 @@ package typgo_test
 
 import (
 	"errors"
+	"flag"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -35,8 +36,10 @@ func TestRunBinary_Execute(t *testing.T) {
 	})(t)
 
 	stdRun := &typgo.RunBinary{}
-	c, _ := typgo.DummyContext()
-
+	c := &typgo.Context{
+		Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
+		Descriptor: &typgo.Descriptor{ProjectName: "some-project"},
+	}
 	require.NoError(t, stdRun.Execute(c))
 }
 
@@ -48,7 +51,8 @@ func TestRunBinary_Execute_Predefined(t *testing.T) {
 	stdRun := &typgo.RunBinary{
 		Binary: "some-binary",
 	}
-	c, _ := typgo.DummyContext()
-
+	c := &typgo.Context{
+		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
+	}
 	require.NoError(t, stdRun.Execute(c))
 }

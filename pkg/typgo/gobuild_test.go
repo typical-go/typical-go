@@ -1,10 +1,13 @@
 package typgo_test
 
 import (
+	"flag"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typgo"
+	"github.com/urfave/cli/v2"
 )
 
 func TestGoBuild_Command(t *testing.T) {
@@ -19,9 +22,17 @@ func TestGoBuild_Command(t *testing.T) {
 	require.Equal(t, []string{"b"}, command.Aliases)
 	require.Equal(t, "build the project", command.Usage)
 
-	c, out := typgo.DummyContext()
+	var out strings.Builder
+	c := &typgo.Context{
+		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
+		Stdout:  &out,
+		Descriptor: &typgo.Descriptor{
+			ProjectName:    "some-project",
+			ProjectVersion: "0.0.1",
+		},
+	}
 	require.NoError(t, cmpl.Execute(c))
-	require.Equal(t, "some-project:dummy> $ go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=0.0.1\" -o bin/some-project ./cmd/some-project\n", out.String())
+	require.Equal(t, "some-project:> go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=0.0.1\" -o bin/some-project ./cmd/some-project\n", out.String())
 }
 
 func TestGoBuild_Predefined(t *testing.T) {
@@ -36,7 +47,9 @@ func TestGoBuild_Predefined(t *testing.T) {
 			"some-var": "some-value",
 		},
 	}
-	c, _ := typgo.DummyContext()
 
+	c := &typgo.Context{
+		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
+	}
 	require.NoError(t, cmpl.Execute(c))
 }

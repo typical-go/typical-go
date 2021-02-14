@@ -2,6 +2,8 @@ package typmock_test
 
 import (
 	"errors"
+	"flag"
+	"strings"
 	"testing"
 
 	"bou.ke/monkey"
@@ -10,6 +12,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typast"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typmock"
+	"github.com/urfave/cli/v2"
 )
 
 func TestExecute(t *testing.T) {
@@ -42,7 +45,9 @@ func TestExecute(t *testing.T) {
 	})(t)
 
 	GoMock := &typmock.GoMock{}
-	c, _ := typgo.DummyContext()
+	c := &typgo.Context{
+		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
+	}
 	require.NoError(t, GoMock.Execute(c))
 }
 
@@ -54,7 +59,7 @@ func TestMockGen_InstallMockgenError(t *testing.T) {
 		{CommandLine: "go build -o .typical-tmp2/bin/mockgen github.com/golang/mock/mockgen", ReturnError: errors.New("some-error")},
 	})(t)
 
-	c, _ := typgo.DummyContext()
+	c := &typgo.Context{}
 	err := typmock.MockGen(c, "", "", "", "")
 	require.EqualError(t, err, "some-error")
 }
@@ -80,7 +85,12 @@ func TestAnnotate_MockgenError(t *testing.T) {
 		{CommandLine: ".typical-tmp/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface", ReturnError: errors.New("some-error")},
 	})(t)
 
-	c, out := typgo.DummyContext()
+	var out strings.Builder
+	c := &typgo.Context{
+		Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
+		Descriptor: &typgo.Descriptor{},
+		Stdout:     &out,
+	}
 	require.NoError(t, typmock.Annotate(c, summary))
-	require.Equal(t, "some-project:dummy> $ rm -rf parent/path_mock\nsome-project:dummy> $ .typical-tmp/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\nsome-project:dummy> Fail to mock '/parent/path.SomeInterface': some-error\n", out.String())
+	require.Equal(t, ":> rm -rf parent/path_mock\n:> .typical-tmp/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\n:> Fail to mock '/parent/path.SomeInterface': some-error\n", out.String())
 }

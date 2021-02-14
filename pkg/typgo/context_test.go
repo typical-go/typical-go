@@ -35,7 +35,7 @@ func TestContext_ExecuteBash(t *testing.T) {
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
 			defer typgo.PatchBash(tt.RunExpectations)(t)
-			c, _ := typgo.DummyContext()
+			c := &typgo.Context{}
 			err := c.ExecuteBash(tt.CommandLine)
 			if tt.ExpectedErr != "" {
 				require.EqualError(t, err, tt.ExpectedErr)

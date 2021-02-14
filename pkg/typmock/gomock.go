@@ -46,7 +46,6 @@ func (d *GoMock) Execute(c *typgo.Context) error {
 
 // Annotate mock
 func Annotate(c *typgo.Context, summary *typast.Summary) error {
-
 	mockery := NewMockery(typgo.ProjectPkg)
 
 	for _, annot := range summary.Annots {
