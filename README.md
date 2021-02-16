@@ -11,7 +11,7 @@ Build Automation Tool For Golang
 - Manage build tasks &mdash; *alternative for [makefile](https://www.gnu.org/software/make/manual/make.html)*
 - Supporting Java-like annotation for code generation purpose &mdash; *alternative for [go-generate](https://blog.golang.org/generate)*
 - Framework-based Build Tool &mdash; *no DSL to be learned, write task in Go*
-- Build-Tool Wrapper  &mdash; *single script to prepare and run the build-tool*
+- Wrapper Script  &mdash; *single script to prepare and run the build-tool*
 
 ## Getting Started
 
@@ -184,18 +184,37 @@ run := &typgo.RunBinary{
 }
 ```
 
-### Call Other Tasks
+
+## Custom Build Tasks
+
+
+### Calling Other Tasks
+
 ```go
 callOtherTask := &typgo.Task{
    Name:   "other-tasks",
-   Usage:  "run other-tasks",
+   Usage:  "call other-tasks",
    Action: typgo.TaskNames{"ping", "info", "help"},
 },
 ```
 
-### Create Custom Build Tasks
+### Calling Bash Command
 
-With golang code
+```go
+helpTask := &typgo.Task{
+   Name:  "help",
+   Usage: "print help",
+   Action: &typgo.Bash{
+      Name:   "go",
+      Args:   []string{"help"},
+      Stdout: os.Stdout,
+   },
+},
+```
+
+### In-code Implemention
+
+Simple example
 ```go
 pingTask := &typgo.Task{
    Name:  "ping",
@@ -209,19 +228,6 @@ pingTask := &typgo.Task{
 
 Call bash command
 ```go
-helpTask := &typgo.Task{
-   Name:  "help",
-   Usage: "print help",
-   Action: &typgo.Bash{
-      Name:   "go",
-      Args:   []string{"help"},
-      Stdout: os.Stdout,
-   },
-},
-```
-
-With golang code to call bash command
-```go
 infoTask := &typgo.Task{
    Name:  "info",
    Usage: "print info",
@@ -234,7 +240,8 @@ infoTask := &typgo.Task{
 },
 ```
 
-Task with subtasks
+### Subtasks
+
 ```go
 databaseTool := &typgo.Task{
    Name:    "database",
@@ -265,7 +272,9 @@ databaseTool := &typgo.Task{
 },
 ```
 
-Parameterized task by implement `typgo.Tasker` 
+### Tasker Interface
+
+Parameterized task by implemented `typgo.Tasker` 
 ```go
 type greetTask struct {
 	person string
