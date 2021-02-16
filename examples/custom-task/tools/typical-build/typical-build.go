@@ -52,31 +52,53 @@ var descriptor = typgo.Descriptor{
 				Stdout: os.Stdout,
 			},
 		},
+		// multi-task
 		&typgo.Task{
 			Name:   "multi-task",
 			Usage:  "run multi-task",
 			Action: typgo.TaskNames{"ping", "info"},
 		},
+		// database
 		&typgo.Task{
-			Name:  "parent",
-			Usage: "subtask sample",
+			Name:    "database",
+			Aliases: []string{"db"},
+			Usage:   "database tool",
 			SubTasks: []*typgo.Task{
 				{
-					Name: "child1",
+					Name:  "create",
+					Usage: "create database",
 					Action: typgo.NewAction(func(c *typgo.Context) error {
-						c.Info("child1")
+						c.Info("create database")
 						return nil
 					}),
 				},
 				{
-					Name: "child2",
+					Name:  "drop",
+					Usage: "drop database",
 					Action: typgo.NewAction(func(c *typgo.Context) error {
-						c.Info("child2")
+						c.Info("drop databse")
+						return nil
+					}),
+				},
+				{
+					Name:  "migrate",
+					Usage: "migrate database",
+					Action: typgo.NewAction(func(c *typgo.Context) error {
+						c.Info("migrate databse")
+						return nil
+					}),
+				},
+				{
+					Name:  "seed",
+					Usage: "seed database",
+					Action: typgo.NewAction(func(c *typgo.Context) error {
+						c.Info("seed databse")
 						return nil
 					}),
 				},
 			},
 		},
+		// greet
 		&greetTask{person: "john doe"},
 	},
 }

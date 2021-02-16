@@ -234,7 +234,38 @@ infoTask := &typgo.Task{
 },
 ```
 
-Parameterize task by implement `typgo.Tasker` 
+Task with subtasks
+```go
+databaseTool := &typgo.Task{
+   Name:    "database",
+   Aliases: []string{"db"},
+   Usage:   "database tool",
+   SubTasks: []*typgo.Task{
+      {
+         Name:  "create",
+         Usage: "create database",
+         Action: typgo.NewAction(...),
+      },
+      {
+         Name:  "drop",
+         Usage: "drop database",
+         Action: typgo.NewAction(...),
+      },
+      {
+         Name:  "migrate",
+         Usage: "migrate database",
+         Action: typgo.NewAction(...),
+      },
+      {
+         Name:  "seed",
+         Usage: "seed database",
+         Action: typgo.NewAction(...),
+      },
+   },
+},
+```
+
+Parameterized task by implement `typgo.Tasker` 
 ```go
 type greetTask struct {
 	person string
@@ -276,18 +307,27 @@ Add annotate task
 annotateProject := &typast.AnnotateProject{
    Sources: []string{"internal"},
    Annotators: []typast.Annotator{
-      typast.NewAnnotator(func(c *typast.Context) error {
-         for _, a := range c.Annots {
-            fmt.Printf("TagName=%s\tName=%s\tType=%T\tParam=%s\tField1=%s\n",
-               a.TagName, a.GetName(), a.Decl.Type, a.TagParam, a.TagParam.Get("field1"))
-         }
-         return nil
-      }),
+      // TODO: add annotators
    },
 },
 ```
 
 Typical-Go provide annotation implementation for [dependency injection](#dependency-injection) and [generate mock](#generate-mock) 
+
+### Create Custom Annotator
+
+Using `typgo.NewAnnotator()` 
+```go
+customAnnotator := typast.NewAnnotator(printALlAnnotation)
+
+printAllAnnotation := func(c *typast.Context) error {
+   for _, a := range c.Annots {
+      fmt.Printf("TagName=%s\tName=%s\tType=%T\tParam=%s\tField1=%s\n",
+         a.TagName, a.GetName(), a.Decl.Type, a.TagParam, a.TagParam.Get("field1"))
+   }
+   return nil
+}
+```
 
 ## Dependency Injection
 
