@@ -5,13 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"sort"
 	"strings"
-)
-
-type (
-	// Map contain environment variable
-	Map map[string]string
 )
 
 // Read to get environment map
@@ -77,18 +71,4 @@ func Unsetenv(m Map) error {
 		}
 	}
 	return nil
-}
-
-//
-// EnvMap
-//
-
-// SortedKeys of EnvMap
-func (m Map) SortedKeys() []string {
-	var keys []string
-	for k := range m {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-	return keys
 }

@@ -11,9 +11,9 @@ import (
 // BuildTool app
 func BuildTool(d *Descriptor) *cli.App {
 
-	if d.EnvLoader != nil {
+	if d.Environment != nil {
 		envContext := NewPrepareContext(d, "load-env")
-		if err := d.EnvLoader.EnvLoad(envContext); err != nil {
+		if err := d.Environment.EnvLoad(envContext); err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 		}
 	}
