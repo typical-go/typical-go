@@ -21,7 +21,7 @@ func TestBuildTool_Environment(t *testing.T) {
 
 	defer os.Clearenv()
 
-	require.Equal(t, "> load environment\nkey1, key2\n", out.String())
+	require.Equal(t, "> load environment: key1, key2\n", out.String())
 	require.Equal(t, "value1", os.Getenv("key1"))
 	require.Equal(t, "value2", os.Getenv("key2"))
 }
