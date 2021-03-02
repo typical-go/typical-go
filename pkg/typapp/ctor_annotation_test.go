@@ -19,7 +19,7 @@ func TestCtorAnnotation_Annotate(t *testing.T) {
 
 	ctorAnnot := &typapp.CtorAnnotation{}
 	var out strings.Builder
-	c := &typgo.Context{Stdout: &out}
+	c := &typgo.Context{Logger: typgo.Logger{Stdout: &out}}
 	defer c.PatchBash([]*typgo.MockBash{})(t)
 	ctx := &typast.Context{
 		Context: c,
@@ -76,7 +76,7 @@ func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
 		Template: "some-template",
 	}
 	var out strings.Builder
-	c := &typgo.Context{Stdout: &out}
+	c := &typgo.Context{Logger: typgo.Logger{Stdout: &out}}
 	defer c.PatchBash([]*typgo.MockBash{})(t)
 	ctx := &typast.Context{
 		Context: c,

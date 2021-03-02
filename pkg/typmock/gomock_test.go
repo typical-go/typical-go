@@ -82,7 +82,7 @@ func TestAnnotate_MockgenError(t *testing.T) {
 	c := &typgo.Context{
 		Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
 		Descriptor: &typgo.Descriptor{},
-		Stdout:     &out,
+		Logger:     typgo.Logger{Stdout: &out},
 	}
 	defer c.PatchBash([]*typgo.MockBash{
 		{CommandLine: "rm -rf parent/path_mock"},
@@ -91,5 +91,5 @@ func TestAnnotate_MockgenError(t *testing.T) {
 	})(t)
 
 	require.NoError(t, typmock.Annotate(c, summary))
-	require.Equal(t, ":> rm -rf parent/path_mock\n:> go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen\n:> .typical-tmp/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\n:> Fail to mock '/parent/path.SomeInterface': some-error\n", out.String())
+	require.Equal(t, "> rm -rf parent/path_mock\n> go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen\n> .typical-tmp/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\n> Fail to mock '/parent/path.SomeInterface': some-error\n", out.String())
 }

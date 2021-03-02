@@ -2,20 +2,46 @@ package typgo
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
+	"strings"
 
+	"github.com/typical-go/typical-go/pkg/envkit"
 	"github.com/urfave/cli/v2"
 )
 
+type (
+	// Descriptor describe the project
+	Descriptor struct {
+		ProjectName    string // By default is same with project folder. Only allowed characters(a-z,A-Z), underscore or dash.
+		ProjectVersion string // By default it is 0.0.1
+		Environment    EnvLoader
+		Tasks          []Tasker
+		Stdout         io.Writer
+	}
+)
+
+// Start typical build-tool
+func Start(d *Descriptor) {
+	if err := BuildTool(d).Run(os.Args); err != nil {
+		log.Fatal(err)
+	}
+}
+
 // BuildTool app
 func BuildTool(d *Descriptor) *cli.App {
+	if d.Stdout == nil {
+		d.Stdout = os.Stdout
+	}
 
-	if d.Environment != nil {
-		envContext := NewPrepareContext(d, "load-env")
-		if err := d.Environment.EnvLoad(envContext); err != nil {
-			fmt.Fprintln(os.Stderr, err.Error())
-		}
+	logger := Logger{
+		Stdout:      d.Stdout,
+		ProjectName: d.ProjectName,
+	}
+
+	if err := setEnv(d.Environment, logger); err != nil {
+		logger.Warn("load environment: " + err.Error())
 	}
 
 	cli.AppHelpTemplate = appHelpTemplate
@@ -29,9 +55,19 @@ func BuildTool(d *Descriptor) *cli.App {
 	return app
 }
 
-// Start typical build-tool
-func Start(d *Descriptor) {
-	if err := BuildTool(d).Run(os.Args); err != nil {
-		log.Fatal(err)
+func setEnv(envLoad EnvLoader, logger Logger) error {
+	if envLoad == nil {
+		return nil
 	}
+	env, err := envLoad.EnvLoad()
+	if err != nil {
+		return err
+	}
+	if err := envkit.Setenv(env); err != nil {
+		return err
+	}
+	logger.Info("load environment")
+	keys := envkit.SortedKeys(env)
+	fmt.Fprintln(logger.Stdout, strings.Join(keys, ", "))
+	return nil
 }

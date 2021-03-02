@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sort"
 	"strings"
 )
 
 // Read to get environment map
-func Read(r io.Reader) (m Map) {
-	m = make(map[string]string)
+func Read(r io.Reader) map[string]string {
+	m := make(map[string]string)
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
 		line := sc.Text()
@@ -18,11 +19,11 @@ func Read(r io.Reader) (m Map) {
 			m[line[:i]] = line[i+1:]
 		}
 	}
-	return
+	return m
 }
 
 // ReadFile read file to get environment map
-func ReadFile(source string) (Map, error) {
+func ReadFile(source string) (map[string]string, error) {
 	f, err := os.Open(source)
 	if err != nil {
 		return nil, err
@@ -32,8 +33,8 @@ func ReadFile(source string) (Map, error) {
 }
 
 // Save envmap to writer
-func Save(m Map, w io.Writer) error {
-	for _, key := range m.SortedKeys() {
+func Save(m map[string]string, w io.Writer) error {
+	for _, key := range SortedKeys(m) {
 		if _, err := fmt.Fprintf(w, "%s=%s\n", key, m[key]); err != nil {
 			return err
 		}
@@ -42,7 +43,7 @@ func Save(m Map, w io.Writer) error {
 }
 
 // SaveFile save envmap to file
-func SaveFile(m Map, target string) error {
+func SaveFile(m map[string]string, target string) error {
 	f, err := os.OpenFile(target, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		return err
@@ -52,7 +53,7 @@ func SaveFile(m Map, target string) error {
 }
 
 // Setenv set environment variable based on map
-func Setenv(m Map) error {
+func Setenv(m map[string]string) error {
 	for k, v := range m {
 		if v != "" {
 			if err := os.Setenv(k, v); err != nil {
@@ -64,11 +65,21 @@ func Setenv(m Map) error {
 }
 
 // Unsetenv unset environment variable
-func Unsetenv(m Map) error {
+func Unsetenv(m map[string]string) error {
 	for k := range m {
 		if err := os.Unsetenv(k); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+// SortedKeys of EnvMap
+func SortedKeys(m map[string]string) []string {
+	var keys []string
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
 }

@@ -44,6 +44,11 @@ func TestGoTest(t *testing.T) {
 		Includes: []string{"pkg*"},
 		Excludes: []string{"*_mock"},
 	}
+
+	task := testProj.Task()
+	require.Equal(t, "test", task.Name)
+	require.Equal(t, []string{"t"}, task.Aliases)
+	require.Equal(t, true, task.SkipFlagParsing)
 	require.NoError(t, testProj.Execute(c))
 }
 

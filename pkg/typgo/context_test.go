@@ -2,12 +2,10 @@ package typgo_test
 
 import (
 	"errors"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typgo"
-	"github.com/urfave/cli/v2"
 )
 
 func TestContext_ExecuteBash(t *testing.T) {
@@ -47,31 +45,6 @@ func TestContext_ExecuteBash(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestContext_PrintInfo(t *testing.T) {
-	var out strings.Builder
-	c := &typgo.Context{
-		Context: &cli.Context{
-			Command: &cli.Command{
-				Name: "some-command",
-			},
-		},
-		Descriptor: &typgo.Descriptor{
-			ProjectName: "some-project",
-		},
-		Stdout: &out,
-	}
-	c.Info("some-info")
-	c.Infof("some-info %d\n", 9999)
-
-	require.Equal(t, "some-project:some-command> some-info\nsome-project:some-command> some-info 9999\n", out.String())
-}
-
-func TestContext_PrintInfo_NoPanic(t *testing.T) {
-	c := &typgo.Context{}
-	c.Info("some-info")
-	c.Infof("some-info %d\n", 9999)
 }
 
 func TestContext_PatchContext(t *testing.T) {

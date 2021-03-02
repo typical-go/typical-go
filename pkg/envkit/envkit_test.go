@@ -12,8 +12,37 @@ import (
 	"github.com/typical-go/typical-go/pkg/envkit"
 )
 
+func TestSortedKey(t *testing.T) {
+	testcases := []struct {
+		TestName string
+		Raw      string
+		Expected map[string]string
+	}{
+		{
+			Raw: "key1=value1",
+			Expected: map[string]string{
+				"key1": "value1",
+			},
+		},
+		{
+			Raw: "key1=value1\n\nkey2=value2\nkey3=value3\n\n",
+			Expected: map[string]string{
+				"key1": "value1",
+				"key2": "value2",
+				"key3": "value3",
+			},
+		},
+	}
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			r := strings.NewReader(tt.Raw)
+			require.Equal(t, tt.Expected, envkit.Read(r))
+		})
+	}
+}
+
 func TestSetenv(t *testing.T) {
-	m := envkit.Map{
+	m := map[string]string{
 		"key1": "value1",
 		"key2": "value2",
 	}
@@ -27,12 +56,12 @@ func TestNilSafe(t *testing.T) {
 	envkit.Setenv(nil)
 	envkit.Unsetenv(nil)
 
-	var m envkit.Map = nil
-	require.Equal(t, []string(nil), m.SortedKeys())
+	var m map[string]string
+	require.Equal(t, []string(nil), envkit.SortedKeys(m))
 }
 
 func TestWrite(t *testing.T) {
-	m := envkit.Map{
+	m := map[string]string{
 		"key1": "value1",
 		"key2": "value2",
 	}
@@ -47,7 +76,7 @@ func TestWrite(t *testing.T) {
 }
 
 func TestSaveFile(t *testing.T) {
-	require.NoError(t, envkit.SaveFile(envkit.Map{
+	require.NoError(t, envkit.SaveFile(map[string]string{
 		"key1": "value1",
 		"key2": "value2",
 	}, "some-target"))
@@ -62,7 +91,7 @@ func TestReadFile(t *testing.T) {
 	defer os.Remove("some-dotenv")
 	m, err := envkit.ReadFile("some-dotenv")
 	require.NoError(t, err)
-	require.Equal(t, envkit.Map{
+	require.Equal(t, map[string]string{
 		"key1": "value1",
 		"key2": "value2",
 	}, m)
@@ -78,7 +107,7 @@ func TestEnvconfig(t *testing.T) {
 		RequiredVar string `required:"true"`
 	}
 
-	envkit.Setenv(envkit.Map{
+	envkit.Setenv(map[string]string{
 		"MYAPP_REQUIREDVAR": "",
 	})
 	var s Specification

@@ -10,7 +10,7 @@ var descriptor = typgo.Descriptor{
 	ProjectName:    "custom-task",
 	ProjectVersion: "1.0.0",
 
-	Environment: typgo.EnvMap{
+	Environment: typgo.Environment{
 		"key1": "value1",
 	},
 

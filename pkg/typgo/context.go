@@ -3,13 +3,10 @@ package typgo
 import (
 	"context"
 	"errors"
-	"fmt"
-	"io"
 	"os"
 	"strings"
 	"testing"
 
-	"github.com/fatih/color"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 )
@@ -18,28 +15,33 @@ type (
 	// Context related with build task
 	Context struct {
 		*cli.Context
+		Logger
 		Descriptor *Descriptor
-		Stdout     io.Writer
 		mocker     *BashMocker
 	}
 )
 
 // NewContext return instance of context
 func NewContext(c *cli.Context, d *Descriptor) *Context {
+	var taskNames []string
+	if c.Command != nil {
+		taskNames = strings.Split(c.Command.FullName(), " ")
+	}
 	return &Context{
 		Context:    c,
 		Descriptor: d,
-		Stdout:     os.Stdout,
+		Logger: Logger{
+			Stdout:      d.Stdout,
+			ProjectName: d.ProjectName,
+			TaskNames:   taskNames,
+		},
 	}
 }
 
 // Execute command
 func (c *Context) Execute(basher Basher) error {
 	bash := basher.Bash()
-	if c.Stdout != nil {
-		c.printHeader()
-		color.New(BashColor).Fprintln(c.Stdout, bash)
-	}
+	c.Logger.Bash(bash)
 	ctx := c.Ctx()
 	if c.mocker != nil {
 		return c.mocker.Run(bash)
@@ -68,37 +70,6 @@ func (c *Context) Ctx() context.Context {
 		return context.Background()
 	}
 	return c.Context.Context
-}
-
-// Info log text
-func (c *Context) Info(text string) {
-	if c.Stdout == nil {
-		return
-	}
-	c.printHeader()
-	fmt.Fprintln(c.Stdout, text)
-}
-
-// Infof formatted text
-func (c *Context) Infof(format string, a ...interface{}) {
-	if c.Stdout == nil {
-		return
-	}
-	c.printHeader()
-	fmt.Fprintf(c.Stdout, format, a...)
-}
-
-func (c *Context) printHeader() {
-	if c.Descriptor != nil {
-		color.New(ProjectNameColor).Fprint(c.Stdout, c.Descriptor.ProjectName)
-	}
-	if c.Context != nil && c.Command != nil {
-		for _, name := range strings.Split(c.Command.FullName(), " ") {
-			fmt.Fprint(c.Stdout, ":")
-			color.New(TaskNameColor).Fprint(c.Stdout, name)
-		}
-	}
-	fmt.Fprint(c.Stdout, "> ")
 }
 
 // PatchBash typgo.RunBash for testing purpose

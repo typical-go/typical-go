@@ -40,7 +40,6 @@ func TestReleaseProject(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
-				Stdout:     &strings.Builder{},
 			},
 			Debug: "1\n2\n",
 		},
@@ -59,7 +58,6 @@ func TestReleaseProject(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
-				Stdout:     &strings.Builder{},
 			},
 			ExpectedErr: "release-error",
 		},
@@ -78,7 +76,6 @@ func TestReleaseProject(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
-				Stdout:     &strings.Builder{},
 			},
 			ExpectedErr: "publish-error",
 		},
@@ -94,7 +91,6 @@ func TestReleaseProject(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
-				Stdout:     &strings.Builder{},
 			},
 		},
 		{
@@ -112,7 +108,6 @@ func TestReleaseProject(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext("-skip-publish"),
 				Descriptor: &typgo.Descriptor{},
-				Stdout:     &strings.Builder{},
 			},
 		},
 		{
@@ -127,7 +122,6 @@ func TestReleaseProject(t *testing.T) {
 			Context: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
-				Stdout:     &strings.Builder{},
 			},
 			ExpectedErr: "publish-error",
 		},
@@ -164,7 +158,6 @@ func TestReleaseProject_CustomReleaseFolder(t *testing.T) {
 	c := &typgo.Context{
 		Context:    createContext("-release-folder=some-release"),
 		Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
-		Stdout:     &strings.Builder{},
 	}
 	defer c.PatchBash(nil)(t)
 	rel.Execute(c)
@@ -187,7 +180,6 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 			Ctx: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
-				Stdout:     &strings.Builder{},
 			},
 			RunExpectations: []*typgo.MockBash{
 				{CommandLine: "git fetch"},
@@ -216,7 +208,6 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 			Ctx: &typgo.Context{
 				Context:    createContext("-alpha"),
 				Descriptor: &typgo.Descriptor{},
-				Stdout:     &strings.Builder{},
 			},
 			RunExpectations: []*typgo.MockBash{
 				{CommandLine: "git fetch"},
@@ -237,7 +228,6 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 			Ctx: &typgo.Context{
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
-				Stdout:     &strings.Builder{},
 			},
 			RunExpectations: []*typgo.MockBash{
 				{CommandLine: "git fetch"},
@@ -258,7 +248,6 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 			Ctx: &typgo.Context{
 				Context:    createContext("-tag-name=some-tag"),
 				Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
-				Stdout:     &strings.Builder{},
 			},
 			RunExpectations: []*typgo.MockBash{
 				{CommandLine: "git fetch"},
@@ -367,7 +356,7 @@ func TestSummarizer(t *testing.T) {
 	for _, tt := range testCases {
 		t.Run(tt.TestName, func(t *testing.T) {
 			var out strings.Builder
-			c := &typgo.Context{Stdout: &out}
+			c := &typgo.Context{Logger: typgo.Logger{Stdout: &out}}
 			defer c.PatchBash(tt.RunExpectations)(t)
 			require.Equal(t, tt.Expected, typrls.DefaultGenerateSummary(c))
 			require.Equal(t, tt.ExpectedOut, out.String())
