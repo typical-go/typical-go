@@ -20,8 +20,7 @@ var (
 
 // template
 const (
-	appHelpTemplate = `Tasks:
-{{range .VisibleCommands}}{{if not .HideHelp}}{{ "\t"}}{{join .Names ", "}}{{ "\t"}}{{.Usage}}
+	appHelpTemplate = `{{range .VisibleCommands}}{{if not .HideHelp}}{{ "\t"}}{{join .Names ", "}}{{ "\t"}}{{.Usage}}
 {{end}}{{end}}`
 	subcommandHelpTemplate = `{{.Usage}}
 
@@ -31,6 +30,7 @@ Subtasks:{{range .VisibleCategories}}{{if .Name}}{{.Name}}:{{range .VisibleComma
 `
 )
 
+// ColorSet color set
 var ColorSet = struct {
 	Project color.Attribute
 	Task    color.Attribute
@@ -42,10 +42,3 @@ var ColorSet = struct {
 	Bash:    color.FgGreen,
 	Warn:    color.FgYellow,
 }
-
-const (
-	ProjectNameColor = color.FgHiCyan
-	PrepareColor     = color.FgHiYellow
-	TaskNameColor    = color.FgCyan
-	BashColor        = color.FgGreen
-)

@@ -22,7 +22,7 @@ func (c Logger) Warn(a ...interface{}) {
 		return
 	}
 	c.printHeader()
-	color.New(color.FgYellow).Fprintln(c.Stdout, a...)
+	color.New(ColorSet.Warn).Fprintln(c.Stdout, a...)
 }
 
 // Warnf formatted text
@@ -31,7 +31,7 @@ func (c Logger) Warnf(format string, a ...interface{}) {
 		return
 	}
 	c.printHeader()
-	color.New(color.FgYellow).Fprintf(c.Stdout, format, a...)
+	color.New(ColorSet.Warn).Fprintf(c.Stdout, format, a...)
 }
 
 // Info log text
@@ -58,16 +58,16 @@ func (c Logger) Bash(bash *Bash) {
 		return
 	}
 	c.printHeader()
-	fmt.Fprintln(c.Stdout, bash)
+	color.New(ColorSet.Bash).Fprintln(c.Stdout, bash)
 }
 
 func (c Logger) printHeader() {
 	if c.ProjectName != "" {
-		color.New(ProjectNameColor).Fprint(c.Stdout, c.ProjectName)
+		color.New(ColorSet.Project).Fprint(c.Stdout, c.ProjectName)
 	}
 	for _, name := range c.TaskNames {
 		fmt.Fprint(c.Stdout, ":")
-		color.New(TaskNameColor).Fprint(c.Stdout, name)
+		color.New(ColorSet.Task).Fprint(c.Stdout, name)
 	}
 	fmt.Fprint(c.Stdout, "> ")
 }

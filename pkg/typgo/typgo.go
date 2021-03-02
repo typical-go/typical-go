@@ -1,7 +1,6 @@
 package typgo
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -44,12 +43,16 @@ func BuildTool(d *Descriptor) *cli.App {
 		logger.Warn("load environment: " + err.Error())
 	}
 
-	cli.AppHelpTemplate = appHelpTemplate
 	cli.SubcommandHelpTemplate = subcommandHelpTemplate
 
 	app := cli.NewApp()
+	app.CustomAppHelpTemplate = appHelpTemplate
 	for _, task := range d.Tasks {
 		app.Commands = append(app.Commands, task.Task().CliCommand(d))
+	}
+	app.Action = func(c *cli.Context) error {
+		logger.Info("start the build-tool")
+		return cli.ShowAppHelp(c)
 	}
 
 	return app
@@ -66,8 +69,7 @@ func setEnv(envLoad EnvLoader, logger Logger) error {
 	if err := envkit.Setenv(env); err != nil {
 		return err
 	}
-	logger.Info("load environment")
 	keys := envkit.SortedKeys(env)
-	fmt.Fprintln(logger.Stdout, strings.Join(keys, ", "))
+	logger.Infof("load environment: %s\n", strings.Join(keys, ", "))
 	return nil
 }

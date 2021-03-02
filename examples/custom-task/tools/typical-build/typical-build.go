@@ -12,6 +12,7 @@ var descriptor = typgo.Descriptor{
 
 	Environment: typgo.Environment{
 		"key1": "value1",
+		"key2": "value2",
 	},
 
 	Tasks: []typgo.Tasker{
@@ -38,7 +39,7 @@ var descriptor = typgo.Descriptor{
 				c.Info("print the info:")
 				c.ExecuteBash("go version")
 				c.ExecuteBash("git version")
-				c.Infof("\nENV: key1=%s\n", os.Getenv("key1"))
+				c.Infof("ENV: key1=%s\n", os.Getenv("key1"))
 				return nil
 			}),
 		},
