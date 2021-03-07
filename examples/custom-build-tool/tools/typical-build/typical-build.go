@@ -20,7 +20,7 @@ func main() {
 }
 
 func bash(commandLine string) {
-	slices := strings.Split(commandLine, " ")
+	slices := strings.Fields(commandLine)
 	cmd := exec.Command(slices[0], slices[1:]...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

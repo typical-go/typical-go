@@ -25,7 +25,7 @@ type (
 func NewContext(c *cli.Context, d *Descriptor) *Context {
 	var taskNames []string
 	if c.Command != nil {
-		taskNames = strings.Split(c.Command.FullName(), " ")
+		taskNames = strings.Fields(c.Command.FullName())
 	}
 	return &Context{
 		Context:    c,
@@ -54,7 +54,7 @@ func (c *Context) ExecuteBash(commandLine string) error {
 	if commandLine == "" {
 		return errors.New("command line can't be empty")
 	}
-	slices := strings.Split(commandLine, " ")
+	slices := strings.Fields(commandLine)
 	return c.Execute(&Bash{
 		Name:   slices[0],
 		Args:   slices[1:],

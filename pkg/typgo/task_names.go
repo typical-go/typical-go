@@ -15,7 +15,7 @@ var _ Action = (TaskNames)(nil)
 func (r TaskNames) Execute(c *Context) error {
 	for _, name := range r {
 		args := []string{c.App.Name}
-		args = append(args, strings.Split(name, " ")...)
+		args = append(args, strings.Fields(name)...)
 		if err := c.App.Run(args); err != nil {
 			return err
 		}
