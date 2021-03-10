@@ -9,9 +9,9 @@
 
 Build Automation Tool For Golang
 - Manage build tasks &mdash; *alternative for [makefile](https://www.gnu.org/software/make/manual/make.html)*
-- Supporting Java-like annotation for code generation purpose &mdash; *alternative for [go-generate](https://blog.golang.org/generate)*
 - Framework-based Build Tool &mdash; *no DSL to be learned, write task in Go*
 - Wrapper Script  &mdash; *single script to prepare and run the build-tool*
+- Supporting Java-like annotation for code generation purpose &mdash; *alternative for [go-generate](https://blog.golang.org/generate)*
 
 ## Getting Started
 
@@ -43,7 +43,7 @@ Build Automation Tool For Golang
 
 Check [examples/my-project](https://github.com/typical-go/typical-go/tree/master/examples/my-project) for what generated new project look like
 
-## Build-Tool Wrapper
+## Wrapper Script
 
 [`typicalw`](typicalw) is a bash script to prepare and run the build-tool. 
 ```
@@ -76,6 +76,8 @@ var descriptor = typgo.Descriptor{
    ProjectName:    "application-name",
    ProjectVersion: "1.0.0",
 
+   Environment: typgo.DotEnv(".env"),
+
    Tasks: []typgo.Tasker{
       // test
       &typgo.GoTest{
@@ -99,6 +101,8 @@ func main() {
 ```
 
 It is possible to use other custom build-tool framework, check [examples/custom-build-tool](https://github.com/typical-go/typical-go/tree/master/examples/custom-build-tool) for example.
+
+
 
 ## Build Tasks
 
