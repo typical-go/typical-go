@@ -12,12 +12,12 @@ import (
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
-func TestCtorAnnotation_Annotate(t *testing.T) {
+func TestCtorAnnot_Annotate(t *testing.T) {
 	typgo.ProjectPkg = "github.com/user/project"
 
 	defer os.RemoveAll("internal")
 
-	ctorAnnot := &typapp.CtorAnnotation{}
+	ctorAnnot := &typapp.CtorAnnot{}
 	var out strings.Builder
 	c := &typgo.Context{Logger: typgo.Logger{Stdout: &out}}
 	defer c.PatchBash([]*typgo.MockBash{})(t)
@@ -66,11 +66,11 @@ func init() {
 
 }
 
-func TestCtorAnnotation_Annotate_Predefined(t *testing.T) {
+func TestCtorAnnot_Annotate_Predefined(t *testing.T) {
 
 	defer os.RemoveAll("folder2")
 
-	ctorAnnot := &typapp.CtorAnnotation{
+	ctorAnnot := &typapp.CtorAnnot{
 		TagName:  "@some-tag",
 		Target:   "folder2/dest2/some-target",
 		Template: "some-template",

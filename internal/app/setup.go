@@ -200,7 +200,7 @@ var descriptor = typgo.Descriptor{
 		&typast.AnnotateProject{
 			Sources: []string{"internal"},
 			Annotators: []typast.Annotator{
-				&typapp.CtorAnnotation{},
+				&typapp.CtorAnnot{},
 			},
 		},
 		// build

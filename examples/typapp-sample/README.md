@@ -2,14 +2,14 @@
 
 Example typical-go project to demonstrate how to provide constructor to dependency injection
 
-Add `CtorAnnotation` and `DtorAnnotation` in annotators
+Add `CtorAnnot` and `DtorAnnotation` in annotators
 ```go
 var descriptor = typgo.Descriptor{
 	Cmds: []typgo.Cmd{
 		// annotate
 		&typast.AnnotateProject{
 			Annotators: []typast.Annotator{
-				&typapp.CtorAnnotation{}, // constructor
+				&typapp.CtorAnnot{}, // constructor
 				&typapp.DtorAnnotation{}, // destructor
 			},
 		},

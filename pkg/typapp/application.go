@@ -10,13 +10,13 @@ import (
 )
 
 // defaultExitSigs exit signals
-var defaultExitSigs = []syscall.Signal{syscall.SIGTERM, syscall.SIGINT}
+var defaultExitSigs = []os.Signal{syscall.SIGTERM, syscall.SIGINT}
 
 // Application application
 type Application struct {
 	StartFn    interface{}
 	ShutdownFn interface{}
-	ExitSigs   []syscall.Signal
+	ExitSigs   []os.Signal
 }
 
 // Run the application
@@ -35,9 +35,7 @@ func (a Application) Run() error {
 	}
 
 	exitCh := make(chan os.Signal)
-	for _, s := range exitSigs {
-		signal.Notify(exitCh, s)
-	}
+	signal.Notify(exitCh, exitSigs...)
 
 	var errs errkit.Errors
 	go func() {

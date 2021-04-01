@@ -12,9 +12,9 @@ import (
 )
 
 type (
-	// CtorAnnotation handle @ctor annotation
+	// CtorAnnot handle @ctor annotation
 	// e.g. `@ctor (name:"NAME")`
-	CtorAnnotation struct {
+	CtorAnnot struct {
 		TagName  string // By default is `@ctor`
 		Template string // By default defined in defaultCtorTemplate
 		Target   string // By default is `cfg_annotated.go`
@@ -46,13 +46,13 @@ func init() { {{if .Ctors}}{{range $c := .Ctors}}
 }`
 
 //
-// CtorAnnotation
+// CtorAnnot
 //
 
-var _ typast.Annotator = (*CtorAnnotation)(nil)
+var _ typast.Annotator = (*CtorAnnot)(nil)
 
 // Annotate ctor
-func (a *CtorAnnotation) Annotate(c *typast.Context) error {
+func (a *CtorAnnot) Annotate(c *typast.Context) error {
 	if a.TagName == "" {
 		a.TagName = "@ctor"
 	}

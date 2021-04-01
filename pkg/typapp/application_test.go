@@ -3,6 +3,7 @@ package typapp_test
 import (
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"syscall"
 	"testing"
@@ -22,7 +23,7 @@ func ExampleApplication() {
 		ShutdownFn: func() {
 			fmt.Println("bye2")
 		},
-		ExitSigs: []syscall.Signal{syscall.SIGTERM, syscall.SIGINT},
+		ExitSigs: []os.Signal{syscall.SIGTERM, syscall.SIGINT},
 	}
 
 	if err := application.Run(); err != nil {
