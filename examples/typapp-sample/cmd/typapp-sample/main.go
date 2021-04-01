@@ -5,6 +5,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"syscall"
 
 	"github.com/typical-go/typical-go/pkg/typapp"
@@ -23,7 +24,7 @@ func main() {
 		ShutdownFn: app.Shutdown, // What to do when shutdown
 
 		// Exit Signals that trigger to close application
-		ExitSigs: []syscall.Signal{syscall.SIGTERM, syscall.SIGINT},
+		ExitSigs: []os.Signal{syscall.SIGTERM, syscall.SIGINT},
 	}
 
 	if err := application.Run(); err != nil {

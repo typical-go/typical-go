@@ -5,6 +5,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"syscall"
 
 	"github.com/typical-go/typical-go/examples/my-project/internal/app"
@@ -19,7 +20,7 @@ func main() {
 	application := typapp.Application{
 		StartFn:    app.Start,
 		ShutdownFn: app.Shutdown,
-		ExitSigs:   []syscall.Signal{syscall.SIGTERM, syscall.SIGINT},
+		ExitSigs:   []os.Signal{syscall.SIGTERM, syscall.SIGINT},
 	}
 
 	if err := application.Run(); err != nil {
