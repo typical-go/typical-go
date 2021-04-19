@@ -9,9 +9,9 @@
 
 Build Automation Tool For Golang
 - Manage build tasks &mdash; *alternative for [makefile](https://www.gnu.org/software/make/manual/make.html)*
-- Framework-based Build Tool &mdash; *no DSL to be learned, write task in Go*
+- Framework-based Build Tool &mdash; *no DSL to be learned, write build task in Go*
 - Wrapper Script  &mdash; *single script to prepare and run the build-tool*
-- Supporting Java-like annotation for code generation purpose &mdash; *alternative for [go-generate](https://blog.golang.org/generate)*
+- Supporting java-like annotation for code generation purpose &mdash; *alternative for [go-generate](https://blog.golang.org/generate)*
 
 ## Getting Started
 
@@ -383,6 +383,11 @@ func main(){
         fmt.Printf("Hello %s\n", name)
     })
 }
+```
+
+Import side-effect to initiate provide constructor
+```go
+import _ "PROJECT_PACKAGE/internal/generated/ctor"
 ```
 
 Using `dig.In` for tagged constructor (https://godoc.org/go.uber.org/dig#hdr-Named_Values)
