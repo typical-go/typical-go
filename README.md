@@ -244,7 +244,7 @@ infoTask := &typgo.Task{
 },
 ```
 
-### Subtasks
+### Sub Task
 
 ```go
 databaseTool := &typgo.Task{
@@ -361,6 +361,8 @@ if err != nil {
 // Output: hello world
 ```
 
+### Start Service
+
 Use `StartService()` to support gracefully stop
 ```go
 typapp.Provide("", func() string { return "world" })
@@ -375,6 +377,8 @@ if err := typapp.StartService(startFn, stopFn); err != nil {
 // Output: hello world
 // bye2
 ```
+
+### Ctor Annotation
 
 Use `@ctor` to add constructor and import the side-effect to initiate provide constructor
 ```go
@@ -393,28 +397,28 @@ func main(){
 }
 ```
 
-Using `dig.In` for tagged constructor (https://godoc.org/go.uber.org/dig#hdr-Named_Values)
+### Named Values
+
+Using `dig.In` for named values (https://godoc.org/go.uber.org/dig#hdr-Named_Values)
 ```go
-typapp.Provide("", func() string { return "world" })
-typapp.Provide("t1", func() string { return "golang" })  // provide same type
-typapp.Provide("t2", func() string { return "typical" }) // provide same type
+typapp.Provide("t1", func() string { return "hello" }) // provide same type
+typapp.Provide("t2", func() string { return "world" }) // provide same type
 
 type param struct {
    dig.In
-   Text  string
    Text1 string `name:"t1"`
    Text2 string `name:"t2"`
 }
 
 printHello := func(p param) {
-   fmt.Printf("hello %s %s %s\n", p.Text, p.Text1, p.Text2)
+   fmt.Printf("%s %s\n", p.Text1, p.Text2)
 }
 
 if err := typapp.Invoke(printHello); err != nil {
    log.Fatal(err)
 }
 
-// Output: hello world golang typical
+// Output: hello world
 ```
 
 ## Generate mock
