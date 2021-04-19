@@ -24,7 +24,7 @@ func TestCtorAnnot_Annotate(t *testing.T) {
 	ctx := &typast.Context{
 		Context: c,
 		Summary: &typast.Summary{
-			Annots: []*typast.Annot{
+			Annots: []*typast.Directive{
 				{
 					TagName: "@ctor",
 					Decl: &typast.Decl{
@@ -81,7 +81,7 @@ func TestCtorAnnot_Annotate_Predefined(t *testing.T) {
 	ctx := &typast.Context{
 		Context: c,
 		Summary: &typast.Summary{
-			Annots: []*typast.Annot{
+			Annots: []*typast.Directive{
 				{
 					TagName: "@some-tag",
 					Decl: &typast.Decl{

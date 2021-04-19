@@ -70,6 +70,7 @@ func (a AnnotateProject) CreateContext(c *typgo.Context) (*Context, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &Context{
 		Context: c,
 		Summary: summary,

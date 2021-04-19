@@ -26,7 +26,7 @@ func TestExecute(t *testing.T) {
 
 	defer monkey.Patch(typast.Compile, func(paths ...string) (*typast.Summary, error) {
 		return &typast.Summary{
-			Annots: []*typast.Annot{
+			Annots: []*typast.Directive{
 				{
 					TagName: "@mock",
 					Decl: &typast.Decl{
@@ -68,7 +68,7 @@ func TestAnnotate_MockgenError(t *testing.T) {
 	defer func() { typgo.TypicalTmp = "" }()
 
 	summary := &typast.Summary{
-		Annots: []*typast.Annot{
+		Annots: []*typast.Directive{
 			{
 				TagName: "@mock",
 				Decl: &typast.Decl{

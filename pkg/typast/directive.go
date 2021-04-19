@@ -6,23 +6,23 @@ import (
 )
 
 type (
-	// Annot that contain extra additional information
-	Annot struct {
+	// Directive that contain extra additional information
+	Directive struct {
 		TagName  string            `json:"tag_name"`
 		TagParam reflect.StructTag `json:"tag_param"`
 		*Decl    `json:"decl"`
 	}
 )
 
-func retrieveAnnots(decl *Decl) []*Annot {
-	var annots []*Annot
+func retrieveAnnots(decl *Decl) []*Directive {
+	var annots []*Directive
 	for _, raw := range decl.GetDocs() {
 		if strings.HasPrefix(raw, "//") {
 			raw = strings.TrimSpace(raw[2:])
 		}
 		if strings.HasPrefix(raw, "@") {
 			tagName, tagAttrs := ParseAnnot(raw)
-			annots = append(annots, &Annot{
+			annots = append(annots, &Directive{
 				TagName:  tagName,
 				TagParam: reflect.StructTag(tagAttrs),
 				Decl:     decl,

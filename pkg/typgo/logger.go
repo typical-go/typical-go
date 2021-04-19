@@ -10,11 +10,25 @@ import (
 type (
 	// Logger logger
 	Logger struct {
-		ProjectName string
-		TaskNames   []string
-		Stdout      io.Writer
+		Headers []LogHeader
+		Stdout  io.Writer
+	}
+	LogHeader struct {
+		Text  string
+		Color color.Attribute
 	}
 )
+
+func LogHeaders(taskNames ...string) []LogHeader {
+	var headers []LogHeader
+	for _, taskName := range taskNames {
+		headers = append(headers, LogHeader{
+			Text:  taskName,
+			Color: ColorSet.Task,
+		})
+	}
+	return headers
+}
 
 // Warn log text
 func (c Logger) Warn(a ...interface{}) {
@@ -62,12 +76,11 @@ func (c Logger) Bash(bash *Bash) {
 }
 
 func (c Logger) printHeader() {
-	if c.ProjectName != "" {
-		color.New(ColorSet.Project).Fprint(c.Stdout, c.ProjectName)
-	}
-	for _, name := range c.TaskNames {
-		fmt.Fprint(c.Stdout, ":")
-		color.New(ColorSet.Task).Fprint(c.Stdout, name)
+	for i, header := range c.Headers {
+		if i > 0 {
+			fmt.Fprint(c.Stdout, ":")
+		}
+		color.New(header.Color).Fprint(c.Stdout, header.Text)
 	}
 	fmt.Fprint(c.Stdout, "> ")
 }

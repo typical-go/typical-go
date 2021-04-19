@@ -52,11 +52,11 @@ func TestTargetMap(t *testing.T) {
 func TestCreateMock(t *testing.T) {
 	testcases := []struct {
 		testName string
-		annot    *typast.Annot
+		annot    *typast.Directive
 		expected *typmock.Mock
 	}{
 		{
-			annot: &typast.Annot{
+			annot: &typast.Directive{
 				Decl: &typast.Decl{
 					File: typast.File{
 						Package: "somePkg",

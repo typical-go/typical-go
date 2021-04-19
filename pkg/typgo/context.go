@@ -31,9 +31,8 @@ func NewContext(c *cli.Context, d *Descriptor) *Context {
 		Context:    c,
 		Descriptor: d,
 		Logger: Logger{
-			Stdout:      d.Stdout,
-			ProjectName: d.ProjectName,
-			TaskNames:   taskNames,
+			Stdout:  d.Stdout,
+			Headers: LogHeaders(taskNames...),
 		},
 	}
 }

@@ -14,7 +14,7 @@ type (
 	Summary struct {
 		Paths  []string
 		Decls  []*Decl
-		Annots []*Annot
+		Annots []*Directive
 	}
 	// Decl stand of declaration
 	Decl struct {

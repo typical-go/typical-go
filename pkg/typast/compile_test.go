@@ -170,7 +170,7 @@ func TestCompile(t *testing.T) {
 	require.EqualValues(t, someMethod, summary.Decls[7])
 	require.EqualValues(t, someMethod2, summary.Decls[8])
 
-	require.EqualValues(t, []*typast.Annot{
+	require.EqualValues(t, []*typast.Directive{
 		{Decl: someStructDecl, TagName: "@tag1"},
 		{Decl: someStructDecl, TagName: "@tag2", TagParam: `key1:"", key2: "", key3:"value3"`},
 		{Decl: someFunctionDecl2, TagName: "@ctor"},

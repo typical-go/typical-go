@@ -55,7 +55,7 @@ func (m Mockery) Filter(pkgs ...string) Map {
 }
 
 // CreateMock to create mock
-func CreateMock(annot *typast.Annot) *Mock {
+func CreateMock(annot *typast.Directive) *Mock {
 	pkg := annot.Decl.Package
 	dir := filepath.Dir(annot.Decl.Path)
 

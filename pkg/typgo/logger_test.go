@@ -11,15 +11,14 @@ import (
 func TestLogger(t *testing.T) {
 	var out strings.Builder
 	c := typgo.Logger{
-		Stdout:      &out,
-		ProjectName: "some-project",
-		TaskNames:   []string{"some-command"},
+		Stdout:  &out,
+		Headers: typgo.LogHeaders("cmd-1", "sub-1"),
 	}
 	c.Info("some-info")
 	c.Infof("some-info %d\n", 9999)
 	c.Warn("some-warning")
 	c.Warnf("some-warning %d\n", 9999)
-	require.Equal(t, "some-project:some-command> some-info\nsome-project:some-command> some-info 9999\nsome-project:some-command> some-warning\nsome-project:some-command> some-warning 9999\n", out.String())
+	require.Equal(t, "cmd-1:sub-1> some-info\ncmd-1:sub-1> some-info 9999\ncmd-1:sub-1> some-warning\ncmd-1:sub-1> some-warning 9999\n", out.String())
 }
 
 func TestLogger_NoPanic(t *testing.T) {

@@ -35,8 +35,7 @@ func BuildTool(d *Descriptor) *cli.App {
 	}
 
 	logger := Logger{
-		Stdout:      d.Stdout,
-		ProjectName: d.ProjectName,
+		Stdout: d.Stdout,
 	}
 
 	if err := setEnv(d.Environment, logger); err != nil {
