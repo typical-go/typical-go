@@ -3,9 +3,7 @@ package typapp_test
 import (
 	"fmt"
 	"log"
-	"os"
 	"strings"
-	"syscall"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -13,25 +11,57 @@ import (
 	"go.uber.org/dig"
 )
 
-func ExampleApplication() {
+func ExampleStartService() {
+	typapp.Reset() // make sure constructor and container is empty (optional)
 	typapp.Provide("", func() string { return "world" })
 
-	application := &typapp.Application{
-		StartFn: func(text string) {
-			fmt.Printf("hello %s\n", text)
-		},
-		ShutdownFn: func() {
-			fmt.Println("bye2")
-		},
-		ExitSigs: []os.Signal{syscall.SIGTERM, syscall.SIGINT},
-	}
+	startFn := func(text string) { fmt.Printf("hello %s\n", text) }
+	stopFn := func() { fmt.Println("bye2") }
 
-	if err := application.Run(); err != nil {
-		log.Fatal(err.Error())
+	if err := typapp.StartService(startFn, stopFn); err != nil {
+		log.Fatal(err)
 	}
 
 	// Output: hello world
 	// bye2
+}
+
+func ExampleInvoke() {
+	typapp.Reset()
+
+	typapp.Provide("", func() string { return "world" })
+
+	err := typapp.Invoke(func(text string) {
+		fmt.Printf("hello %s\n", text)
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Output: hello world
+}
+
+func ExampleInvoke_second() {
+	typapp.Reset()
+
+	typapp.Provide("t1", func() string { return "hello" }) // provide same type
+	typapp.Provide("t2", func() string { return "world" }) // provide same type
+
+	type param struct {
+		dig.In
+		Text1 string `name:"t1"`
+		Text2 string `name:"t2"`
+	}
+
+	printHello := func(p param) {
+		fmt.Printf("%s %s\n", p.Text1, p.Text2)
+	}
+
+	if err := typapp.Invoke(printHello); err != nil {
+		log.Fatal(err)
+	}
+
+	// Output: hello world
 }
 
 func TestRun(t *testing.T) {
@@ -40,36 +70,39 @@ func TestRun(t *testing.T) {
 	var out strings.Builder
 	typapp.Provide("", func() string { return "success" })
 
-	application := typapp.Application{
-		StartFn: func(s string) {
-			fmt.Fprintln(&out, s)
-		},
-		ShutdownFn: func() {
-			fmt.Fprintln(&out, "clean")
-		},
-	}
-	require.NoError(t, application.Run())
+	startFn := func(s string) { fmt.Fprintln(&out, s) }
+	stopFn := func() { fmt.Fprintln(&out, "clean") }
+
+	require.NoError(t, typapp.StartService(startFn, stopFn))
 	require.Equal(t, "success\nclean\n", out.String())
+}
+
+func TestSet(t *testing.T) {
+	expectedConstructors := []*typapp.Constructor{}
+	expectedContainer := dig.New()
+	typapp.SetConstructors(expectedConstructors)
+	typapp.SetContainer(expectedContainer)
+
+	require.Equal(t, expectedConstructors, typapp.Constructors())
+
+	container, err := typapp.Container()
+	require.NoError(t, err)
+	require.Equal(t, expectedContainer, container)
 }
 
 func TestRun_BadStartFn(t *testing.T) {
 	defer typapp.Reset()
-
-	application := typapp.Application{
-		StartFn:    "bad-start-fn",
-		ShutdownFn: "bad-shutdown-fn",
-	}
-	require.EqualError(t, application.Run(), "can't invoke non-function bad-start-fn (type string); can't invoke non-function bad-shutdown-fn (type string)")
+	startFn := "bad-start-fn"
+	stopFn := "bad-shutdown-fn"
+	require.EqualError(t, typapp.StartService(startFn, stopFn),
+		"can't invoke non-function bad-start-fn (type string); can't invoke non-function bad-shutdown-fn (type string)")
 }
 
 func TestRun_BadConstructor(t *testing.T) {
 	defer typapp.Reset()
 	typapp.Provide("", "bad-constructor")
 
-	application := typapp.Application{
-		StartFn: func() {},
-	}
-	require.EqualError(t, application.Run(), "must provide constructor function, got bad-constructor (type string)")
+	require.EqualError(t, typapp.StartService(func() {}, nil), "must provide constructor function, got bad-constructor (type string)")
 }
 
 func TestRun_ProvideDigContainer(t *testing.T) {
@@ -78,16 +111,12 @@ func TestRun_ProvideDigContainer(t *testing.T) {
 	var out strings.Builder
 	typapp.Provide("", func() string { return "success" })
 
-	application := typapp.Application{
-		StartFn: func(di *dig.Container) error {
-			return di.Invoke(func(s string) {
-				fmt.Fprintln(&out, s)
-			})
-		},
-		ShutdownFn: func() {
-			fmt.Fprintln(&out, "clean")
-		},
+	invokeFn := func(di *dig.Container) error {
+		return di.Invoke(func(s string) {
+			fmt.Fprintln(&out, s)
+		})
 	}
-	require.NoError(t, application.Run())
-	require.Equal(t, "success\nclean\n", out.String())
+
+	require.NoError(t, typapp.Invoke(invokeFn))
+	require.Equal(t, "success\n", out.String())
 }

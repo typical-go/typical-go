@@ -161,8 +161,6 @@ Create 'somepkg1/typicalw'
 import (
 	"fmt"
 	"log"
-	"os"
-	"syscall"
 
 	"somepkg1/internal/app"
 	_ "somepkg1/internal/generated/ctor"
@@ -172,14 +170,7 @@ import (
 
 func main() {
 	fmt.Printf("%s %s\n", typgo.ProjectName, typgo.ProjectVersion)
-
-	application := typapp.Application{
-		StartFn:    app.Start,
-		ShutdownFn: app.Shutdown,
-		ExitSigs:   []os.Signal{syscall.SIGTERM, syscall.SIGINT},
-	}
-
-	if err := application.Run(); err != nil {
+	if err := typapp.StartService(app.Start, app.Stop); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -203,10 +194,10 @@ func Start() {
 	bufio.NewReader(os.Stdin).ReadBytes('\n')
 }
 
-// Shutdown app
-func Shutdown() {
+// Stop app
+func Stop() {
 	// TODO: change graceful shutdown implementation
-	fmt.Printf("Shutdown app at %s", time.Now())
+	fmt.Printf("Stop app at %s", time.Now())
 }
 `, string(b))
 

@@ -15,8 +15,8 @@ func Start() {
 	bufio.NewReader(os.Stdin).ReadBytes('\n')
 }
 
-// Shutdown app
-func Shutdown() {
+// Stop app
+func Stop() {
 	// TODO: change graceful shutdown implementation
-	fmt.Printf("Shutdown app at %s", time.Now())
+	fmt.Printf("Stop app at %s", time.Now())
 }

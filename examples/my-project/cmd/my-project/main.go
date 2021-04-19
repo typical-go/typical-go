@@ -5,8 +5,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
-	"syscall"
 
 	"github.com/typical-go/typical-go/examples/my-project/internal/app"
 	_ "github.com/typical-go/typical-go/examples/my-project/internal/generated/ctor"
@@ -16,14 +14,7 @@ import (
 
 func main() {
 	fmt.Printf("%s %s\n", typgo.ProjectName, typgo.ProjectVersion)
-
-	application := typapp.Application{
-		StartFn:    app.Start,
-		ShutdownFn: app.Shutdown,
-		ExitSigs:   []os.Signal{syscall.SIGTERM, syscall.SIGINT},
-	}
-
-	if err := application.Run(); err != nil {
+	if err := typapp.StartService(app.Start, app.Stop); err != nil {
 		log.Fatal(err)
 	}
 }

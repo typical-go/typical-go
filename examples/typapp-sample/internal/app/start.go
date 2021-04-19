@@ -23,8 +23,8 @@ func Start(di *dig.Container, text string) {
 	})
 }
 
-// Shutdown the application which invoked gracefull when the application stop or received exit signal
-func Shutdown() { fmt.Println("Bye") }
+// Stop the application which invoked gracefull when the application stop or received exit signal
+func Stop() { fmt.Println("Bye") }
 
 // HelloWorld text
 // @ctor

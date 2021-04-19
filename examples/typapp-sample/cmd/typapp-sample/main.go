@@ -19,15 +19,14 @@ func main() {
 	// NOTE: ProjectName and ProjectVersion passed from descriptor in "tools/typical-build" when gobuild
 	fmt.Printf("%s %s\n", typgo.ProjectName, typgo.ProjectVersion)
 
-	application := typapp.Application{
-		StartFn:    app.Start,    // What to do when start
-		ShutdownFn: app.Shutdown, // What to do when shutdown
-
-		// Exit Signals that trigger to close application
-		ExitSigs: []os.Signal{syscall.SIGTERM, syscall.SIGINT},
+	startFn := app.Start     // What to do when start
+	shutdownFn := app.Stop   // What to do when shutdown
+	exitSigs := []os.Signal{ // Exit Signals that trigger to close application
+		syscall.SIGTERM,
+		syscall.SIGINT,
 	}
 
-	if err := application.Run(); err != nil {
+	if err := typapp.StartService(startFn, shutdownFn, exitSigs...); err != nil {
 		log.Fatal(err)
 	}
 }

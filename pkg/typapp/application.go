@@ -6,7 +6,6 @@ import (
 	"syscall"
 
 	"github.com/typical-go/typical-go/pkg/errkit"
-	"go.uber.org/dig"
 )
 
 // defaultExitSigs exit signals
@@ -14,22 +13,14 @@ var defaultExitSigs = []os.Signal{syscall.SIGTERM, syscall.SIGINT}
 
 // Application application
 type Application struct {
-	StartFn    interface{}
-	ShutdownFn interface{}
-	ExitSigs   []os.Signal
+	StartFn  interface{}
+	StopFn   interface{}
+	ExitSigs []os.Signal
 }
 
-// Run the application
-func (a Application) Run() error {
-	di := dig.New()
-	di.Provide(func() *dig.Container { return di })
-	for _, c := range glob {
-		if err := di.Provide(c.Fn, dig.Name(c.Name)); err != nil {
-			return err
-		}
-	}
+// StartService start the service with gracefully stop
+func StartService(startFn, stopFn interface{}, exitSigs ...os.Signal) error {
 
-	exitSigs := a.ExitSigs
 	if len(exitSigs) < 1 {
 		exitSigs = defaultExitSigs
 	}
@@ -40,12 +31,12 @@ func (a Application) Run() error {
 	var errs errkit.Errors
 	go func() {
 		defer func() { exitCh <- syscall.SIGTERM }()
-		errs.Append(di.Invoke(a.StartFn))
+		errs.Append(Invoke(startFn))
 	}()
 	<-exitCh
 
-	if a.ShutdownFn != nil {
-		errs.Append(di.Invoke(a.ShutdownFn))
+	if stopFn != nil {
+		errs.Append(Invoke(stopFn))
 	}
 
 	return errs.Unwrap()

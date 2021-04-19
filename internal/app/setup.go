@@ -146,10 +146,10 @@ func Start() {
 	bufio.NewReader(os.Stdin).ReadBytes('\n')
 }
 
-// Shutdown app
-func Shutdown() {
+// Stop app
+func Stop() {
 	// TODO: change graceful shutdown implementation
-	fmt.Printf("Shutdown app at %s", time.Now())
+	fmt.Printf("Stop app at %s", time.Now())
 }
 `
 const mainTmpl = `package main
@@ -159,8 +159,6 @@ const mainTmpl = `package main
 import (
 	"fmt"
 	"log"
-	"os"
-	"syscall"
 
 	"{{.ProjectPkg}}/internal/app"
 	_ "{{.ProjectPkg}}/internal/generated/ctor"
@@ -170,14 +168,7 @@ import (
 
 func main() {
 	fmt.Printf("%s %s\n", typgo.ProjectName, typgo.ProjectVersion)
-
-	application := typapp.Application{
-		StartFn:    app.Start,
-		ShutdownFn: app.Shutdown,
-		ExitSigs:   []os.Signal{syscall.SIGTERM, syscall.SIGINT},
-	}
-
-	if err := application.Run(); err != nil {
+	if err := typapp.StartService(app.Start, app.Stop); err != nil {
 		log.Fatal(err)
 	}
 }

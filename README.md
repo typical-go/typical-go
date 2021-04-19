@@ -344,66 +344,77 @@ printAllAnnotation := func(c *typast.Context) error {
 
 ## Dependency Injection
 
-[typapp](pkg/typapp) package is application framework with dependency injection and graceful shutdown. It using reflection-based dependency injection ([dig](https://github.com/uber-go/dig)). It is similar with [fx](https://github.com/uber-go/fx) except encourage global state. 
+[typapp](pkg/typapp) package is application framework with dependency injection and graceful shutdown. It using reflection-based dependency injection ([dig](https://github.com/uber-go/dig)). 
 
-Start the application
+It is similar with [fx](https://github.com/uber-go/fx) except encourage global state. 
+```go
+typapp.Reset() // make sure constructor and container is empty (optional)
+typapp.Provide("", func() string { return "world" })
+
+err := typapp.Invoke(func(text string) {
+   fmt.Printf("hello %s\n", text)
+})
+if err != nil {
+   log.Fatal(err)
+}
+
+// Output: hello world
+```
+
+Use `StartService()` to support gracefully stop
 ```go
 typapp.Provide("", func() string { return "world" })
 
-application := &typapp.Application{
-    StartFn: func(text string) {
-        fmt.Printf("hello %s\n", text)
-    },
-    ShutdownFn: func() {
-        fmt.Println("bye2")
-    },
-    ExitSigs: []syscall.Signal{syscall.SIGTERM, syscall.SIGINT},
-}
+startFn := func(text string) { fmt.Printf("hello %s\n", text) }
+stopFn := func() { fmt.Println("bye2") }
 
-if err := application.Run(); err != nil {
-    log.Fatal(err.Error())
+if err := typapp.StartService(startFn, stopFn); err != nil {
+   log.Fatal(err)
 }
 
 // Output: hello world
 // bye2
 ```
 
-Use `@ctor` to add constructor
+Use `@ctor` to add constructor and import the side-effect to initiate provide constructor
 ```go
-// GetName return name value
+import _ "PROJECT_PACKAGE/internal/generated/ctor" // import the side-effect
+
 // @ctor
 func GetName() string{ return "World" }
 
-// GetName return name value
 // @ctor (name:"other")
-func GetOtherName() string{ return "World" }
+func GetOtherName() string{ return "Other" }
 
 func main(){
-    typapp.Run(func(name string){
+    typapp.Invoke(func(name string){
         fmt.Printf("Hello %s\n", name)
     })
 }
 ```
 
-Import side-effect to initiate provide constructor
-```go
-import _ "PROJECT_PACKAGE/internal/generated/ctor"
-```
-
 Using `dig.In` for tagged constructor (https://godoc.org/go.uber.org/dig#hdr-Named_Values)
 ```go
-func Start(di *dig.Container, text string) {
-	fmt.Println(text)
+typapp.Provide("", func() string { return "world" })
+typapp.Provide("t1", func() string { return "golang" })  // provide same type
+typapp.Provide("t2", func() string { return "typical" }) // provide same type
 
-	type parameter struct {
-		dig.In
-		Text string `name:"typical"`
-	}
-
-	di.Invoke(func(p parameter) {
-		fmt.Println(p.Text)
-	})
+type param struct {
+   dig.In
+   Text  string
+   Text1 string `name:"t1"`
+   Text2 string `name:"t2"`
 }
+
+printHello := func(p param) {
+   fmt.Printf("hello %s %s %s\n", p.Text, p.Text1, p.Text2)
+}
+
+if err := typapp.Invoke(printHello); err != nil {
+   log.Fatal(err)
+}
+
+// Output: hello world golang typical
 ```
 
 ## Generate mock
