@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/typical-go/typical-go/pkg/tmplkit"
 	"github.com/typical-go/typical-go/pkg/typast"
@@ -50,9 +49,9 @@ func init() { {{if .Ctors}}{{range $c := .Ctors}}
 //
 
 var _ typast.Annotator = (*CtorAnnot)(nil)
+var _ typast.Processor = (*CtorAnnot)(nil)
 
-// Annotate ctor
-func (a *CtorAnnot) Annotate(c *typast.Context) error {
+func (a *CtorAnnot) Annotate() typast.Processor {
 	if a.TagName == "" {
 		a.TagName = "@ctor"
 	}
@@ -63,16 +62,27 @@ func (a *CtorAnnot) Annotate(c *typast.Context) error {
 		a.Template = defaultCtorTemplate
 	}
 
+	return &typast.Annotation{
+		Filter: typast.Filters{
+			&typast.TagNameFilter{a.TagName},
+			&typast.PublicFilter{},
+			&typast.FuncFilter{},
+		},
+		Processor: a,
+	}
+}
+
+func (a *CtorAnnot) Process(c *typgo.Context, directives typast.Directives) error {
+
 	var ctors []*Ctor
 	importAliases := typast.NewImportAliases()
-	for _, annot := range c.Annots {
-		if strings.EqualFold(annot.TagName, a.TagName) && typast.IsFunc(annot) && typast.IsPublic(annot) {
-			alias := importAliases.Append(typast.Package(annot))
-			ctors = append(ctors, &Ctor{
-				Name: annot.TagParam.Get("name"),
-				Def:  fmt.Sprintf("%s.%s", alias, annot.GetName()),
-			})
-		}
+	for _, directive := range directives {
+		alias := importAliases.Append(directive.Package())
+		ctors = append(ctors, &Ctor{
+			Name: directive.TagParam.Get("name"),
+			Def:  fmt.Sprintf("%s.%s", alias, directive.GetName()),
+		})
+
 	}
 	importAliases.Map["github.com/typical-go/typical-go/pkg/typapp"] = ""
 
@@ -89,10 +99,52 @@ func (a *CtorAnnot) Annotate(c *typast.Context) error {
 	if err != nil {
 		return err
 	}
-	typgo.GoImports(c.Context, a.Target)
-
+	typgo.GoImports(c, a.Target)
 	return nil
 }
+
+// Annotate ctor
+// func (a *CtorAnnot) Annotate(c *typast.Context) error {
+// 	if a.TagName == "" {
+// 		a.TagName = "@ctor"
+// 	}
+// 	if a.Target == "" {
+// 		a.Target = "internal/generated/ctor/ctor.go"
+// 	}
+// 	if a.Template == "" {
+// 		a.Template = defaultCtorTemplate
+// 	}
+
+// 	var ctors []*Ctor
+// 	importAliases := typast.NewImportAliases()
+// 	for _, annot := range c.Annots {
+// 		if strings.EqualFold(annot.TagName, a.TagName) && typast.IsFunc(annot) && typast.IsPublic(annot) {
+// 			alias := importAliases.Append(typast.Package(annot))
+// 			ctors = append(ctors, &Ctor{
+// 				Name: annot.TagParam.Get("name"),
+// 				Def:  fmt.Sprintf("%s.%s", alias, annot.GetName()),
+// 			})
+// 		}
+// 	}
+// 	importAliases.Map["github.com/typical-go/typical-go/pkg/typapp"] = ""
+
+// 	dest := filepath.Dir(a.Target)
+// 	os.MkdirAll(dest, 0777)
+// 	c.Infof("Generate @ctor to %s\n", a.Target)
+// 	err := tmplkit.WriteFile(a.Target, a.Template, &CtorTmplData{
+// 		Signature: typast.Signature{TagName: a.TagName},
+// 		Package:   filepath.Base(dest),
+// 		Imports:   importAliases.Map,
+// 		Ctors:     ctors,
+// 	})
+
+// 	if err != nil {
+// 		return err
+// 	}
+// 	typgo.GoImports(c.Context, a.Target)
+
+// 	return nil
+// }
 
 //
 // Ctor

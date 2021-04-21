@@ -8,23 +8,17 @@ type (
 	// Publishers for composite publish
 	Publishers []Publisher
 	// PublishFn release function
-	PublishFn     func(*Context) error
-	publisherImpl struct {
-		fn PublishFn
-	}
+	NewPublisher func(*Context) error
 )
 
 //
-// publisherImpl
+// NewPublisher
 //
 
-// NewPublisher return new instance of Releaser
-func NewPublisher(fn PublishFn) Publisher {
-	return &publisherImpl{fn: fn}
-}
+var _ Publisher = (NewPublisher)(nil)
 
-func (r *publisherImpl) Publish(c *Context) error {
-	return r.fn(c)
+func (n NewPublisher) Publish(c *Context) error {
+	return n(c)
 }
 
 //

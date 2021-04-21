@@ -13,7 +13,6 @@ var descriptor = typgo.Descriptor{
 	Tasks: []typgo.Tasker{
 		// annotate
 		&typast.AnnotateProject{
-			Sources: []string{"internal"},
 			Annotators: []typast.Annotator{
 				&typapp.CtorAnnot{},
 			},

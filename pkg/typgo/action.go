@@ -8,24 +8,18 @@ type (
 	// Actions for composite execution
 	Actions []Action
 	// ExecuteFn is execution function
-	ExecuteFn  func(*Context) error
-	actionImpl struct {
-		fn ExecuteFn
-	}
+	NewAction func(*Context) error
 )
 
 //
-// actionImpl
+// NewAction
 //
 
-// NewAction return new instance of Action
-func NewAction(fn ExecuteFn) Action {
-	return &actionImpl{fn: fn}
-}
+var _ Action = (NewAction)(nil)
 
 // Execute action
-func (a *actionImpl) Execute(c *Context) error {
-	return a.fn(c)
+func (a NewAction) Execute(c *Context) error {
+	return a(c)
 }
 
 //

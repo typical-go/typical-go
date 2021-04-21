@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/typical-go/typical-go/pkg/typast"
+
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -14,9 +15,10 @@ var descriptor = typgo.Descriptor{
 
 	Tasks: []typgo.Tasker{
 		&typast.AnnotateProject{
-			Sources: []string{"internal"},
 			Annotators: []typast.Annotator{
-				typast.NewAnnotator(printAllAnnotation),
+				&typast.Annotation{
+					Processor: typast.NewProcessor(printAllAnnotation),
+				},
 			},
 		},
 		// test
@@ -31,9 +33,9 @@ var descriptor = typgo.Descriptor{
 	},
 }
 
-func printAllAnnotation(c *typast.Context) error {
+func printAllAnnotation(c *typgo.Context, directives typast.Directives) error {
 	fmt.Println("Print all annotation: ")
-	for _, a := range c.Annots {
+	for _, a := range directives {
 		fmt.Printf("TagName=%s\tName=%s\tType=%T\tParam=%s\tField1=%s\n",
 			a.TagName, a.GetName(), a.Decl.Type, a.TagParam, a.TagParam.Get("field1"))
 	}

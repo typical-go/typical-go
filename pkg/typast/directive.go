@@ -1,8 +1,12 @@
 package typast
 
 import (
+	"fmt"
+	"path/filepath"
 	"reflect"
 	"strings"
+
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 type (
@@ -12,7 +16,46 @@ type (
 		TagParam reflect.StructTag `json:"tag_param"`
 		*Decl    `json:"decl"`
 	}
+	Directives []*Directive
+	// Decl stand of declaration
+	Decl struct {
+		File
+		Type
+	}
+	// Type declaratio type
+	Type interface {
+		GetName() string
+		GetDocs() []string
+	}
+	// File information
+	File struct {
+		Path    string
+		Package string
+	}
 )
+
+//
+// Directives
+//
+
+// Package of annotation
+func (d *Directive) Package() string {
+	return fmt.Sprintf("%s/%s", typgo.ProjectPkg, filepath.Dir(d.Path))
+}
+
+//
+// Directives
+//
+
+// AddDecl add declaration
+func (s *Directives) AddDecl(file File, declType Type) {
+	decl := &Decl{
+		File: file,
+		Type: declType,
+	}
+	// s.Decls = append(s.Decls, decl)
+	*s = append(*s, retrieveAnnots(decl)...)
+}
 
 func retrieveAnnots(decl *Decl) []*Directive {
 	var annots []*Directive
@@ -21,7 +64,7 @@ func retrieveAnnots(decl *Decl) []*Directive {
 			raw = strings.TrimSpace(raw[2:])
 		}
 		if strings.HasPrefix(raw, "@") {
-			tagName, tagAttrs := ParseAnnot(raw)
+			tagName, tagAttrs := ParseRawAnnot(raw)
 			annots = append(annots, &Directive{
 				TagName:  tagName,
 				TagParam: reflect.StructTag(tagAttrs),
@@ -31,30 +74,4 @@ func retrieveAnnots(decl *Decl) []*Directive {
 	}
 
 	return annots
-}
-
-// ParseAnnot parse raw string to annotation
-func ParseAnnot(raw string) (tagName, tagAttrs string) {
-	iOpen := strings.IndexRune(raw, '(')
-	iSpace := strings.IndexRune(raw, ' ')
-
-	if iOpen < 0 {
-		if iSpace < 0 {
-			tagName = strings.TrimSpace(raw)
-			return tagName, ""
-		}
-		tagName = raw[:iSpace]
-	} else {
-		if iSpace < 0 {
-			tagName = raw[:iOpen]
-		} else {
-			tagName = raw[:iSpace]
-		}
-
-		if iClose := strings.IndexRune(raw, ')'); iClose > 0 {
-			tagAttrs = raw[iOpen+1 : iClose]
-		}
-	}
-
-	return tagName, tagAttrs
 }

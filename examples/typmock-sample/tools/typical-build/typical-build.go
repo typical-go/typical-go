@@ -13,9 +13,7 @@ var descriptor = typgo.Descriptor{
 
 	Tasks: []typgo.Tasker{
 		// mock
-		&typmock.GoMock{
-			Sources: []string{"internal"},
-		},
+		&typmock.GoMock{},
 		// test
 		&typgo.GoTest{
 			Timeout:  30 * time.Second,

@@ -10,10 +10,8 @@ type (
 	// Releasers for composite release
 	Releasers []Releaser
 	// ReleaseFn release function
-	ReleaseFn    func(*Context) error
-	releaserImpl struct {
-		fn ReleaseFn
-	}
+	NewReleaser func(*Context) error
+
 	// Context contain data for release
 	Context struct {
 		*typgo.Context
@@ -25,16 +23,13 @@ type (
 )
 
 //
-// releaserImpl
+// NewReleaser
 //
 
-// NewReleaser return new instance of Releaser
-func NewReleaser(fn ReleaseFn) Releaser {
-	return &releaserImpl{fn: fn}
-}
+var _ Releaser = (NewReleaser)(nil)
 
-func (r *releaserImpl) Release(c *Context) error {
-	return r.fn(c)
+func (r NewReleaser) Release(c *Context) error {
+	return r(c)
 }
 
 //

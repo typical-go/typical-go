@@ -2,6 +2,10 @@ package typast
 
 import (
 	"errors"
+	"go/ast"
+	"go/parser"
+	"go/token"
+	"strings"
 
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
@@ -9,23 +13,12 @@ import (
 type (
 	// AnnotateProject task
 	AnnotateProject struct {
-		Sources    []string
+		Walker     Walker
 		Annotators []Annotator
 	}
-	// Annotator responsible to annotate
+
 	Annotator interface {
-		Annotate(*Context) error
-	}
-	// AnnotateFn annotate function
-	AnnotateFn    func(*Context) error
-	annotatorImpl struct {
-		fn AnnotateFn
-	}
-	// Context of annotation
-	Context struct {
-		*typgo.Context
-		*Summary
-		Dirs []string
+		Annotate() Processor
 	}
 )
 
@@ -37,7 +30,7 @@ var _ typgo.Tasker = (*AnnotateProject)(nil)
 var _ typgo.Action = (*AnnotateProject)(nil)
 
 // Task to annotate
-func (a AnnotateProject) Task() *typgo.Task {
+func (a *AnnotateProject) Task() *typgo.Task {
 	return &typgo.Task{
 		Name:    "annotate",
 		Aliases: []string{"a"},
@@ -47,46 +40,81 @@ func (a AnnotateProject) Task() *typgo.Task {
 }
 
 // Execute annotation
-func (a AnnotateProject) Execute(c *typgo.Context) error {
-	if len(a.Sources) == 0 {
-		return errors.New("'Sources' is missing")
+func (a *AnnotateProject) Execute(c *typgo.Context) error {
+	filePaths := a.walk()
+	if len(filePaths) < 1 {
+		return errors.New("walker couldn't find any filepath")
 	}
-	ac, err := a.CreateContext(c)
+	directives, err := compile(filePaths...)
 	if err != nil {
 		return err
 	}
 	for _, annotator := range a.Annotators {
-		if err := annotator.Annotate(ac); err != nil {
+		processor := annotator.Annotate()
+		if err := processor.Process(c, directives); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-// CreateContext create context
-func (a AnnotateProject) CreateContext(c *typgo.Context) (*Context, error) {
-	dirs, files := Walk(a.Sources)
-	summary, err := Compile(files...)
-	if err != nil {
-		return nil, err
+func (a *AnnotateProject) walk() []string {
+	if a.Walker == nil {
+		return Layouts{"internal"}.Walk()
+	}
+	return a.Walker.Walk()
+}
+
+func compile(paths ...string) (Directives, error) {
+	var directives Directives
+	fset := token.NewFileSet() // positions are relative to fset
+
+	for _, path := range paths {
+		f, err := parser.ParseFile(fset, path, nil, parser.ParseComments)
+		if err != nil {
+			return nil, err
+		}
+
+		file := File{Path: path, Package: f.Name.Name}
+		for _, decl := range f.Decls {
+			switch decl.(type) {
+			case *ast.FuncDecl:
+				declType := createFuncDecl(decl.(*ast.FuncDecl), file)
+				directives.AddDecl(file, declType)
+			case *ast.GenDecl:
+				declTypes := createGenDecl(decl.(*ast.GenDecl), file)
+				for _, declType := range declTypes {
+					directives.AddDecl(file, declType)
+				}
+			}
+		}
 	}
 
-	return &Context{
-		Context: c,
-		Summary: summary,
-		Dirs:    dirs,
-	}, nil
+	return directives, nil
 }
 
-//
-// annotatorImpl
-//
+// ParseRawAnnot parse raw string to annotation
+func ParseRawAnnot(raw string) (tagName, tagAttrs string) {
+	iOpen := strings.IndexRune(raw, '(')
+	iSpace := strings.IndexRune(raw, ' ')
 
-// NewAnnotator return new instance of annotator
-func NewAnnotator(fn AnnotateFn) Annotator {
-	return &annotatorImpl{fn: fn}
-}
+	if iOpen < 0 {
+		if iSpace < 0 {
+			tagName = strings.TrimSpace(raw)
+			return tagName, ""
+		}
+		tagName = raw[:iSpace]
+	} else {
+		if iSpace < 0 {
+			tagName = raw[:iOpen]
+		} else {
+			tagName = raw[:iSpace]
+		}
 
-func (a *annotatorImpl) Annotate(c *Context) (err error) {
-	return a.fn(c)
+		if iClose := strings.IndexRune(raw, ')'); iClose > 0 {
+			tagAttrs = raw[iOpen+1 : iClose]
+		}
+	}
+
+	return tagName, tagAttrs
 }
