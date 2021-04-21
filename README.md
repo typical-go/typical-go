@@ -318,28 +318,10 @@ func myFunc(){
 Add annotate task
 ```go
 annotateProject := &typast.AnnotateProject{
-   Sources: []string{"internal"},
    Annotators: []typast.Annotator{
-      // TODO: add annotators
+      // TODO: add annotator or annotation
    },
 },
-```
-
-Typical-Go provide annotation implementation for [dependency injection](#dependency-injection) and [generate mock](#generate-mock) 
-
-### Create Custom Annotator
-
-Using `typgo.NewAnnotator()` 
-```go
-customAnnotator := typast.NewAnnotator(printALlAnnotation)
-
-printAllAnnotation := func(c *typast.Context) error {
-   for _, a := range c.Annots {
-      fmt.Printf("TagName=%s\tName=%s\tType=%T\tParam=%s\tField1=%s\n",
-         a.TagName, a.GetName(), a.Decl.Type, a.TagParam, a.TagParam.Get("field1"))
-   }
-   return nil
-}
 ```
 
 ## Dependency Injection
