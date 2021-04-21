@@ -9,7 +9,7 @@ import (
 
 var descriptor = typgo.Descriptor{
 	ProjectName:    "typical-go",
-	ProjectVersion: "0.11.3",
+	ProjectVersion: "0.11.4",
 
 	Tasks: []typgo.Tasker{
 		// compile
