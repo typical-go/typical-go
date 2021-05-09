@@ -11,14 +11,14 @@ import (
 	"go.uber.org/dig"
 )
 
-func ExampleStartService() {
+func ExampleStartApp() {
 	typapp.Reset() // make sure constructor and container is empty (optional)
 	typapp.Provide("", func() string { return "world" })
 
 	startFn := func(text string) { fmt.Printf("hello %s\n", text) }
 	stopFn := func() { fmt.Println("bye2") }
 
-	if err := typapp.StartService(startFn, stopFn); err != nil {
+	if err := typapp.StartApp(startFn, stopFn); err != nil {
 		log.Fatal(err)
 	}
 
@@ -73,7 +73,7 @@ func TestRun(t *testing.T) {
 	startFn := func(s string) { fmt.Fprintln(&out, s) }
 	stopFn := func() { fmt.Fprintln(&out, "clean") }
 
-	require.NoError(t, typapp.StartService(startFn, stopFn))
+	require.NoError(t, typapp.StartApp(startFn, stopFn))
 	require.Equal(t, "success\nclean\n", out.String())
 }
 
@@ -94,7 +94,7 @@ func TestRun_BadStartFn(t *testing.T) {
 	defer typapp.Reset()
 	startFn := "bad-start-fn"
 	stopFn := "bad-shutdown-fn"
-	require.EqualError(t, typapp.StartService(startFn, stopFn),
+	require.EqualError(t, typapp.StartApp(startFn, stopFn),
 		"can't invoke non-function bad-start-fn (type string); can't invoke non-function bad-shutdown-fn (type string)")
 }
 
@@ -102,7 +102,7 @@ func TestRun_BadConstructor(t *testing.T) {
 	defer typapp.Reset()
 	typapp.Provide("", "bad-constructor")
 
-	require.EqualError(t, typapp.StartService(func() {}, nil), "must provide constructor function, got bad-constructor (type string)")
+	require.EqualError(t, typapp.StartApp(func() {}, nil), "must provide constructor function, got bad-constructor (type string)")
 }
 
 func TestRun_ProvideDigContainer(t *testing.T) {

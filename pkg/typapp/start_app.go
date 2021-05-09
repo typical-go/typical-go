@@ -11,15 +11,8 @@ import (
 // defaultExitSigs exit signals
 var defaultExitSigs = []os.Signal{syscall.SIGTERM, syscall.SIGINT}
 
-// Application application
-type Application struct {
-	StartFn  interface{}
-	StopFn   interface{}
-	ExitSigs []os.Signal
-}
-
-// StartService start the service with gracefully stop
-func StartService(startFn, stopFn interface{}, exitSigs ...os.Signal) error {
+// StartApp start the service with gracefully stop
+func StartApp(startFn, stopFn interface{}, exitSigs ...os.Signal) error {
 
 	if len(exitSigs) < 1 {
 		exitSigs = defaultExitSigs

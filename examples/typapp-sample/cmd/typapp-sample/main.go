@@ -26,7 +26,7 @@ func main() {
 		syscall.SIGINT,
 	}
 
-	if err := typapp.StartService(startFn, shutdownFn, exitSigs...); err != nil {
+	if err := typapp.StartApp(startFn, shutdownFn, exitSigs...); err != nil {
 		log.Fatal(err)
 	}
 }

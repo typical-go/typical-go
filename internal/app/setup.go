@@ -168,7 +168,7 @@ import (
 
 func main() {
 	fmt.Printf("%s %s\n", typgo.ProjectName, typgo.ProjectVersion)
-	if err := typapp.StartService(app.Start, app.Stop); err != nil {
+	if err := typapp.StartApp(app.Start, app.Stop); err != nil {
 		log.Fatal(err)
 	}
 }

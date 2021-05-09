@@ -367,25 +367,7 @@ if err != nil {
 // Output: hello world
 ```
 
-### Start Service
-
-Use `StartService()` to support gracefully stop
-```go
-typapp.Provide("", func() string { return "world" })
-
-startFn := func(text string) { fmt.Printf("hello %s\n", text) }
-stopFn := func() { fmt.Println("bye2") }
-
-if err := typapp.StartService(startFn, stopFn); err != nil {
-   log.Fatal(err)
-}
-
-// Output: hello world
-// bye2
-```
-
-
-## Ctor Annotation
+### Ctor Annotation
 
 Use `@ctor` to add constructor and import the side-effect to initiate provide constructor
 ```go
@@ -436,6 +418,26 @@ if err := typapp.Invoke(printHello); err != nil {
 
 // Output: hello world
 ```
+
+
+### Gracefully Stop
+
+Use `StartApp()` to support gracefully stop
+```go
+typapp.Provide("", func() string { return "world" })
+
+startFn := func(text string) { fmt.Printf("hello %s\n", text) }
+stopFn := func() { fmt.Println("bye2") }
+
+if err := typapp.StartApp(startFn, stopFn); err != nil {
+   log.Fatal(err)
+}
+
+// Output: hello world
+// bye2
+```
+
+
 
 ## Generate mock
 
