@@ -1,4 +1,4 @@
-package typast
+package typgen
 
 type (
 	// ImportAliases ...

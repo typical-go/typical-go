@@ -1,4 +1,4 @@
-package typast_test
+package typgen_test
 
 import (
 	"errors"
@@ -6,19 +6,19 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typgen"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 var (
-	someStructDecl = &typast.Decl{
-		File: typast.File{
+	someStructDecl = &typgen.Decl{
+		File: typgen.File{
 			Path:    "sample_test.go",
-			Package: "typast_test",
+			Package: "typgen_test",
 		},
-		Type: &typast.StructDecl{
-			TypeDecl: typast.TypeDecl{
-				GenDecl: typast.GenDecl{
+		Type: &typgen.StructDecl{
+			TypeDecl: typgen.TypeDecl{
+				GenDecl: typgen.GenDecl{
 					Docs: []string{
 						"// sampleStruct",
 						"// @tag1",
@@ -27,7 +27,7 @@ var (
 				},
 				Name: "sampleStruct",
 			},
-			Fields: []*typast.Field{
+			Fields: []*typgen.Field{
 				{
 					Names:     []string{"sampleInt"},
 					Type:      "int",
@@ -42,14 +42,14 @@ var (
 		},
 	}
 
-	someFunctionDecl2 = &typast.Decl{
-		File: typast.File{
+	someFunctionDecl2 = &typgen.Decl{
+		File: typgen.File{
 			Path:    "sample_test.go",
-			Package: "typast_test",
+			Package: "typgen_test",
 		},
-		Type: &typast.FuncDecl{
+		Type: &typgen.FuncDecl{
 			Name:   "sampleFunction2",
-			Params: &typast.FieldList{},
+			Params: &typgen.FieldList{},
 			Docs: []string{
 				"// GetWriter to get writer to greet the world",
 				"// @ctor",
@@ -57,26 +57,26 @@ var (
 		},
 	}
 
-	someInterface2Decl = &typast.Decl{
-		File: typast.File{
+	someInterface2Decl = &typgen.Decl{
+		File: typgen.File{
 			Path:    "sample_test.go",
-			Package: "typast_test",
+			Package: "typgen_test",
 		},
-		Type: &typast.InterfaceDecl{
-			TypeDecl: typast.TypeDecl{
+		Type: &typgen.InterfaceDecl{
+			TypeDecl: typgen.TypeDecl{
 				Name: "sampleInterface2",
 				Docs: []string{"// @tag3"},
 			},
 		},
 	}
 
-	someStruct2Decl = &typast.Decl{
-		File: typast.File{
+	someStruct2Decl = &typgen.Decl{
+		File: typgen.File{
 			Path:    "sample_test.go",
-			Package: "typast_test",
+			Package: "typgen_test",
 		},
-		Type: &typast.StructDecl{
-			TypeDecl: typast.TypeDecl{
+		Type: &typgen.StructDecl{
+			TypeDecl: typgen.TypeDecl{
 				Name: "sampleStruct2",
 				Docs: []string{
 					"// sampleStruct2 asdf",
@@ -87,31 +87,29 @@ var (
 	}
 )
 
-func TestAnnotateProject(t *testing.T) {
-	annotateProject := &typast.AnnotateProject{}
+func TestGenerator(t *testing.T) {
+	Generator := &typgen.Generator{}
 	require.Equal(t, &typgo.Task{
-		Name:    "annotate",
-		Aliases: []string{"a"},
-		Usage:   "Annotate the project and generate code",
-		Action:  annotateProject,
-	}, annotateProject.Task())
+		Name:    "generate",
+		Aliases: []string{"g"},
+		Usage:   "Generate code based on annotation directive ('@')",
+		Action:  Generator,
+	}, Generator.Task())
 }
 
-func TestAnnotateProject_Execute(t *testing.T) {
-	var directives typast.Directives
-	action := &typast.AnnotateProject{
-		Walker: typast.FilePaths{"sample_test.go"},
-		Annotators: []typast.Annotator{
-			&typast.Annotation{
-				Processor: typast.NewProcessor(func(c *typgo.Context, d typast.Directives) error {
-					directives = d
-					return nil
-				}),
+func TestGenerator_Execute(t *testing.T) {
+	var directives typgen.Directives
+	action := &typgen.Generator{
+		Walker: typgen.FilePaths{"sample_test.go"},
+		Processor: &typgen.Annotation{
+			ProcessFn: func(c *typgo.Context, d typgen.Directives) error {
+				directives = d
+				return nil
 			},
 		},
 	}
 	require.NoError(t, action.Execute(&typgo.Context{}))
-	require.EqualValues(t, typast.Directives{
+	require.EqualValues(t, typgen.Directives{
 		{Decl: someStructDecl, TagName: "@tag1"},
 		{Decl: someStructDecl, TagName: "@tag2", TagParam: `key1:"", key2: "", key3:"value3"`},
 		{Decl: someFunctionDecl2, TagName: "@ctor"},
@@ -120,39 +118,37 @@ func TestAnnotateProject_Execute(t *testing.T) {
 	}, directives)
 }
 
-func TestAnnotateProject_Error(t *testing.T) {
+func TestGenerator_Error(t *testing.T) {
 	testcases := []struct {
-		TestName        string
-		AnnotateProject *typast.AnnotateProject
-		ExpectedErr     string
+		TestName    string
+		Generator   *typgen.Generator
+		ExpectedErr string
 	}{
 		{
-			AnnotateProject: &typast.AnnotateProject{
-				Walker: typast.FilePaths{"bad_file.go"},
+			Generator: &typgen.Generator{
+				Walker: typgen.FilePaths{"bad_file.go"},
 			},
 			ExpectedErr: "open bad_file.go: no such file or directory",
 		},
 		{
-			AnnotateProject: &typast.AnnotateProject{
-				Walker: typast.FilePaths{"sample_test.go"},
-				Annotators: []typast.Annotator{
-					&typast.Annotation{
-						Processor: typast.NewProcessor(func(c *typgo.Context, d typast.Directives) error {
-							return errors.New("some-error")
-						}),
+			Generator: &typgen.Generator{
+				Walker: typgen.FilePaths{"sample_test.go"},
+				Processor: &typgen.Annotation{
+					ProcessFn: func(c *typgo.Context, d typgen.Directives) error {
+						return errors.New("some-error")
 					},
 				},
 			},
 			ExpectedErr: "some-error",
 		},
 		{
-			AnnotateProject: &typast.AnnotateProject{},
-			ExpectedErr:     "walker couldn't find any filepath",
+			Generator:   &typgen.Generator{},
+			ExpectedErr: "walker couldn't find any filepath",
 		},
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			err := tt.AnnotateProject.Execute(&typgo.Context{})
+			err := tt.Generator.Execute(&typgo.Context{})
 			if tt.ExpectedErr != "" {
 				require.EqualError(t, err, tt.ExpectedErr)
 			} else {
@@ -194,7 +190,7 @@ func TestParseRawAnnot(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			tagName, tagAttrs := typast.ParseRawAnnot(tt.Raw)
+			tagName, tagAttrs := typgen.ParseRawAnnot(tt.Raw)
 			require.Equal(t, tt.ExpectedTagName, tagName)
 			require.Equal(t, tt.ExpectedTagAttrs, tagAttrs)
 		})

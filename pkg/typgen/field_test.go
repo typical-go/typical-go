@@ -1,4 +1,4 @@
-package typast_test
+package typgen_test
 
 import (
 	"go/ast"
@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typgen"
 )
 
 func TestStructTag(t *testing.T) {
@@ -34,7 +34,7 @@ func TestStructTag(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			require.Equal(t, tt.Expected, typast.StructTag(tt.Tag))
+			require.Equal(t, tt.Expected, typgen.StructTag(tt.Tag))
 		})
 	}
 }

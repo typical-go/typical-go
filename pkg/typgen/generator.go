@@ -1,4 +1,4 @@
-package typast
+package typgen
 
 import (
 	"errors"
@@ -11,36 +11,31 @@ import (
 )
 
 type (
-	// AnnotateProject task
-	AnnotateProject struct {
-		Walker     Walker
-		Annotators []Annotator
-	}
-
-	Annotator interface {
-		Annotate() Processor
+	Generator struct {
+		Walker    Walker
+		Processor Processor
 	}
 )
 
 //
-// AnnotateProject
+// Generator
 //
 
-var _ typgo.Tasker = (*AnnotateProject)(nil)
-var _ typgo.Action = (*AnnotateProject)(nil)
+var _ typgo.Tasker = (*Generator)(nil)
+var _ typgo.Action = (*Generator)(nil)
 
 // Task to annotate
-func (a *AnnotateProject) Task() *typgo.Task {
+func (a *Generator) Task() *typgo.Task {
 	return &typgo.Task{
-		Name:    "annotate",
-		Aliases: []string{"a"},
-		Usage:   "Annotate the project and generate code",
+		Name:    "generate",
+		Aliases: []string{"g"},
+		Usage:   "Generate code based on annotation directive ('@')",
 		Action:  a,
 	}
 }
 
 // Execute annotation
-func (a *AnnotateProject) Execute(c *typgo.Context) error {
+func (a *Generator) Execute(c *typgo.Context) error {
 	filePaths := a.walk()
 	if len(filePaths) < 1 {
 		return errors.New("walker couldn't find any filepath")
@@ -49,16 +44,10 @@ func (a *AnnotateProject) Execute(c *typgo.Context) error {
 	if err != nil {
 		return err
 	}
-	for _, annotator := range a.Annotators {
-		processor := annotator.Annotate()
-		if err := processor.Process(c, directives); err != nil {
-			return err
-		}
-	}
-	return nil
+	return a.Processor.Process(c, directives)
 }
 
-func (a *AnnotateProject) walk() []string {
+func (a *Generator) walk() []string {
 	if a.Walker == nil {
 		return Layouts{"internal"}.Walk()
 	}

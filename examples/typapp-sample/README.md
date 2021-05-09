@@ -6,9 +6,9 @@ Add `CtorAnnot` and `DtorAnnotation` in annotators
 ```go
 var descriptor = typgo.Descriptor{
 	Cmds: []typgo.Cmd{
-		// annotate
-		&typast.AnnotateProject{
-			Annotators: []typast.Annotator{
+		// generate
+		&typgen.Generator{
+			Annotators: []typgen.Annotator{
 				&typapp.CtorAnnot{}, // constructor
 				&typapp.DtorAnnotation{}, // destructor
 			},

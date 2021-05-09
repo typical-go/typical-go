@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typgen"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typmock"
 	"github.com/urfave/cli/v2"
@@ -30,12 +30,12 @@ func TestAnnotate_MockgenError(t *testing.T) {
 	typgo.TypicalTmp = ".typical-tmp"
 	defer func() { typgo.TypicalTmp = "" }()
 
-	directives := []*typast.Directive{
+	directives := []*typgen.Directive{
 		{
 			TagName: "@mock",
-			Decl: &typast.Decl{
-				File: typast.File{Package: "mypkg", Path: "parent/path/some_interface.go"},
-				Type: &typast.InterfaceDecl{TypeDecl: typast.TypeDecl{Name: "SomeInterface"}},
+			Decl: &typgen.Decl{
+				File: typgen.File{Package: "mypkg", Path: "parent/path/some_interface.go"},
+				Type: &typgen.InterfaceDecl{TypeDecl: typgen.TypeDecl{Name: "SomeInterface"}},
 			}},
 	}
 

@@ -1,4 +1,4 @@
-package typast_test
+package typgen_test
 
 type sampleInterface interface {
 	sampleMethod()

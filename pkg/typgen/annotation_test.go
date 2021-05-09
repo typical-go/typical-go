@@ -1,11 +1,11 @@
-package typast_test
+package typgen_test
 
 import (
 	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typgen"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -13,32 +13,32 @@ func TestAnnotation_Process(t *testing.T) {
 	testcases := []struct {
 		TestName    string
 		Context     *typgo.Context
-		Directives  typast.Directives
-		Annotation  *typast.Annotation
+		Directives  typgen.Directives
+		Annotation  *typgen.Annotation
 		ExpectedErr string
 	}{
 		{
-			Annotation:  &typast.Annotation{},
+			Annotation:  &typgen.Annotation{},
 			ExpectedErr: "mising annotation processor",
 		},
 		{
-			Directives: typast.Directives{{}, {}},
-			Annotation: &typast.Annotation{
-				Processor: typast.NewProcessor(func(c *typgo.Context, d typast.Directives) error {
+			Directives: typgen.Directives{{}, {}},
+			Annotation: &typgen.Annotation{
+				ProcessFn: func(c *typgo.Context, d typgen.Directives) error {
 					return fmt.Errorf("some-error: %d", len(d))
-				}),
+				},
 			},
 			ExpectedErr: "some-error: 2",
 		},
 		{
-			Directives: typast.Directives{{}, {}},
-			Annotation: &typast.Annotation{
-				Filter: typast.NewFilter(func(d *typast.Directive) bool {
+			Directives: typgen.Directives{{}, {}},
+			Annotation: &typgen.Annotation{
+				Filter: typgen.NewFilter(func(d *typgen.Directive) bool {
 					return false
 				}),
-				Processor: typast.NewProcessor(func(c *typgo.Context, d typast.Directives) error {
+				ProcessFn: func(c *typgo.Context, d typgen.Directives) error {
 					return fmt.Errorf("some-error: %d", len(d))
-				}),
+				},
 			},
 			ExpectedErr: "some-error: 0",
 		},
@@ -53,9 +53,4 @@ func TestAnnotation_Process(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestAnnotation_ImplementAnnotator(t *testing.T) {
-	a := &typast.Annotation{}
-	require.Equal(t, a, a.Annotate())
 }

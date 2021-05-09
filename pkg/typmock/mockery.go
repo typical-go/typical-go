@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typgen"
 )
 
 type (
@@ -55,7 +55,7 @@ func (m Mockery) Filter(pkgs ...string) Map {
 }
 
 // CreateMock to create mock
-func CreateMock(annot *typast.Directive) *Mock {
+func CreateMock(annot *typgen.Directive) *Mock {
 	pkg := annot.Decl.Package
 	dir := filepath.Dir(annot.Decl.Path)
 

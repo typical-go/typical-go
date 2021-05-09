@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/iancoleman/strcase"
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typgen"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -17,38 +17,40 @@ var (
 type (
 	// GoMock mock
 	GoMock struct {
-		Walker typast.Walker
+		Walker typgen.Walker
 	}
 )
 
 var _ typgo.Tasker = (*GoMock)(nil)
-var _ typast.Annotator = (*GoMock)(nil)
-var _ typast.Processor = (*GoMock)(nil)
+var _ typgen.Processor = (*GoMock)(nil)
 
 // Task to mock
 func (d *GoMock) Task() *typgo.Task {
 	return &typgo.Task{
 		Name:  "mock",
 		Usage: "Generate mock class",
-		Action: &typast.AnnotateProject{
-			Walker:     d.Walker,
-			Annotators: []typast.Annotator{d},
+		Action: &typgen.Generator{
+			Walker:    d.Walker,
+			Processor: d,
 		},
 	}
 }
+func (d *GoMock) Process(c *typgo.Context, directives typgen.Directives) error {
+	return d.Annotation().Process(c, directives)
+}
 
-func (d *GoMock) Annotate() typast.Processor {
-	return &typast.Annotation{
-		Filter: typast.Filters{
-			&typast.TagNameFilter{MockTag},
-			&typast.PublicFilter{},
-			&typast.InterfaceFilter{},
+func (d *GoMock) Annotation() *typgen.Annotation {
+	return &typgen.Annotation{
+		Filter: typgen.Filters{
+			&typgen.TagNameFilter{MockTag},
+			&typgen.PublicFilter{},
+			&typgen.InterfaceFilter{},
 		},
-		Processor: d,
+		ProcessFn: d.process,
 	}
 }
 
-func (d *GoMock) Process(c *typgo.Context, directives typast.Directives) error {
+func (d *GoMock) process(c *typgo.Context, directives typgen.Directives) error {
 	mockery := NewMockery(typgo.ProjectPkg)
 
 	for _, annot := range directives {

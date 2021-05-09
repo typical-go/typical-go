@@ -1,11 +1,11 @@
-package typast_test
+package typgen_test
 
 import (
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typgen"
 )
 
 func TestLayouts(t *testing.T) {
@@ -19,7 +19,7 @@ func TestLayouts(t *testing.T) {
 		os.RemoveAll("pkg")
 	}()
 
-	walker := typast.Layouts{"pkg", "wrapper"}
+	walker := typgen.Layouts{"pkg", "wrapper"}
 
 	require.Equal(t, []string{
 		"pkg/some_lib/lib.go",
@@ -28,6 +28,6 @@ func TestLayouts(t *testing.T) {
 }
 
 func TestFilePaths(t *testing.T) {
-	walker := typast.FilePaths{"1", "2"}
+	walker := typgen.FilePaths{"1", "2"}
 	require.Equal(t, []string{"1", "2"}, walker.Walk())
 }

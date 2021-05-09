@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typgen"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -22,25 +22,25 @@ func TestCtorAnnot_Annotate(t *testing.T) {
 	c := &typgo.Context{Logger: typgo.Logger{Stdout: &out}}
 	defer c.PatchBash([]*typgo.MockBash{})(t)
 
-	directives := []*typast.Directive{
+	directives := []*typgen.Directive{
 		{
 			TagName: "@ctor",
-			Decl: &typast.Decl{
-				Type: &typast.FuncDecl{Name: "NewObject"},
-				File: typast.File{Package: "pkg", Path: "project/pkg/file.go"},
+			Decl: &typgen.Decl{
+				Type: &typgen.FuncDecl{Name: "NewObject"},
+				File: typgen.File{Package: "pkg", Path: "project/pkg/file.go"},
 			},
 		},
 		{
 			TagName:  "@ctor",
 			TagParam: `name:"obj2"`,
-			Decl: &typast.Decl{
-				File: typast.File{Package: "pkg2", Path: "project/pkg2/file.go"},
-				Type: &typast.FuncDecl{Name: "NewObject2"},
+			Decl: &typgen.Decl{
+				File: typgen.File{Package: "pkg2", Path: "project/pkg2/file.go"},
+				Type: &typgen.FuncDecl{Name: "NewObject2"},
 			},
 		},
 	}
 
-	require.NoError(t, ctorAnnot.Annotate().Process(c, directives))
+	require.NoError(t, ctorAnnot.Process(c, directives))
 
 	b, _ := ioutil.ReadFile("internal/generated/ctor/ctor.go")
 	require.Equal(t, `package ctor
@@ -75,17 +75,17 @@ func TestCtorAnnot_Annotate_Predefined(t *testing.T) {
 	c := &typgo.Context{Logger: typgo.Logger{Stdout: &out}}
 	defer c.PatchBash([]*typgo.MockBash{})(t)
 
-	directives := []*typast.Directive{
+	directives := []*typgen.Directive{
 		{
 			TagName: "@some-tag",
-			Decl: &typast.Decl{
-				File: typast.File{Package: "pkg"},
-				Type: &typast.FuncDecl{Name: "NewObject"},
+			Decl: &typgen.Decl{
+				File: typgen.File{Package: "pkg"},
+				Type: &typgen.FuncDecl{Name: "NewObject"},
 			},
 		},
 	}
 
-	require.NoError(t, ctorAnnot.Annotate().Process(c, directives))
+	require.NoError(t, ctorAnnot.Process(c, directives))
 
 	b, _ := ioutil.ReadFile("folder2/dest2/some-target")
 	require.Equal(t, `some-template`, string(b))

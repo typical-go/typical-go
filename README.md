@@ -115,6 +115,19 @@ var descriptor = typgo.Descriptor{
    },
 }
 ```
+## Standard Build Tasks
+
+Standard build task for golang project
+
+```go
+var descriptor = typgo.Descriptor{
+   Tasks: []typgo.Tasker{
+      gobuild,
+      gotest,
+      gorun,
+   },
+}
+```
 
 ### Compile Project
 
@@ -184,7 +197,7 @@ $ ./typicalw r [extraArguments...]
 Execute annotate and compile before run
 ```go
 run := &typgo.RunBinary{
-   Before: typgo.TaskNames{"annotate", "build"},
+   Before: typgo.TaskNames{"generate", "build"},
 }
 ```
 
@@ -301,28 +314,39 @@ func (g *greetTask) Execute(c *typgo.Context) error {
 }
 ```
 
-## Annotation
+## Generate Code
 
-Typical-Go support java-like annotation (except the parameter in [StructTag](https://www.digitalocean.com/community/tutorials/how-to-use-struct-tags-in-go) format) for code-generation purpose. It is similar with [`go generate`](https://blog.golang.org/generate) except it provide in-code implementation with declaration detail
-```
-$ ./typicalw annotate
+`typgen` is similar with [`go generate`](https://blog.golang.org/generate) except it provide in-code implementation with java-like annotation support
+
+Add generate task in [project-descriptor](#project-descriptor)
+```go
+var descriptor = typgo.Descriptor{
+	
+	Tasks: []typgo.Tasker{
+		&typgen.Generator{
+			Processor: typgen.Processors{
+				// add annotation director
+			},
+		},
+	
+	},
+}
+
 ```
 
-Add annotation to the code
+The directive is similar with java except the parameter in [StructTag](https://www.digitalocean.com/community/tutorials/how-to-use-struct-tags-in-go) format
 ```go
 // @mytag (key1:"val1" key2:"val2")
 func myFunc(){
 }
 ```
 
-Add annotate task
-```go
-annotateProject := &typast.AnnotateProject{
-   Annotators: []typast.Annotator{
-      // TODO: add annotator or annotation
-   },
-},
+Trigger generate task
 ```
+$ ./typicalw generate
+```
+
+
 
 ## Dependency Injection
 
@@ -360,7 +384,8 @@ if err := typapp.StartService(startFn, stopFn); err != nil {
 // bye2
 ```
 
-### Ctor Annotation
+
+## Ctor Annotation
 
 Use `@ctor` to add constructor and import the side-effect to initiate provide constructor
 ```go
@@ -376,6 +401,15 @@ func main(){
     typapp.Invoke(func(name string){
         fmt.Printf("Hello %s\n", name)
     })
+}
+```
+
+Add annotation processor in [generator](#generate-code) and trigger generate
+```go
+generator := &typgen.Generator{
+   Processor: typgen.Processors{
+      &typapp.CtorAnnot{}, // add CtorAnnot
+   },
 }
 ```
 

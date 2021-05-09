@@ -1,14 +1,14 @@
-package typast_test
+package typgen_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typgen"
 )
 
 func TestFuncDecl(t *testing.T) {
-	funcDecl := &typast.FuncDecl{
+	funcDecl := &typgen.FuncDecl{
 		Name: "some-name",
 		Docs: []string{"doc1", "doc2"},
 	}
@@ -19,15 +19,15 @@ func TestFuncDecl(t *testing.T) {
 func TestFuncDecl_IsMethod(t *testing.T) {
 	testnames := []struct {
 		TestName string
-		*typast.FuncDecl
+		*typgen.FuncDecl
 		Expected bool
 	}{
 		{
-			FuncDecl: &typast.FuncDecl{Recv: &typast.FieldList{}},
+			FuncDecl: &typgen.FuncDecl{Recv: &typgen.FieldList{}},
 			Expected: true,
 		},
 		{
-			FuncDecl: &typast.FuncDecl{},
+			FuncDecl: &typgen.FuncDecl{},
 			Expected: false,
 		},
 	}

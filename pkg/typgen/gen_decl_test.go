@@ -1,14 +1,14 @@
-package typast_test
+package typgen_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typgen"
 )
 
 func TestTypeDecl(t *testing.T) {
-	typeDecl := &typast.TypeDecl{
+	typeDecl := &typgen.TypeDecl{
 		Name: "some-name",
 		Docs: []string{"doc1", "doc2"},
 	}

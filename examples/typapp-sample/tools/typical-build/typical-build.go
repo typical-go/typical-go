@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/typical-go/typical-go/pkg/typapp"
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typgen"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
@@ -11,9 +11,9 @@ var descriptor = typgo.Descriptor{
 	ProjectVersion: "1.0.0",
 
 	Tasks: []typgo.Tasker{
-		// annotate
-		&typast.AnnotateProject{
-			Annotators: []typast.Annotator{
+		// generate
+		&typgen.Generator{
+			Processor: typgen.Processors{
 				&typapp.CtorAnnot{},
 			},
 		},
@@ -21,7 +21,7 @@ var descriptor = typgo.Descriptor{
 		&typgo.GoBuild{},
 		// run
 		&typgo.RunBinary{
-			Before: typgo.TaskNames{"annotate", "build"},
+			Before: typgo.TaskNames{"generate", "build"},
 		},
 	},
 }

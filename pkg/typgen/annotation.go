@@ -1,4 +1,4 @@
-package typast
+package typgen
 
 import (
 	"errors"
@@ -9,12 +9,13 @@ import (
 type (
 	Annotation struct {
 		Filter    Filter
-		Processor Processor
+		ProcessFn ProcessFn
 	}
 	Processor interface {
 		Process(*typgo.Context, Directives) error
 	}
-	NewProcessor func(*typgo.Context, Directives) error
+	ProcessFn  func(*typgo.Context, Directives) error
+	Processors []Processor
 )
 
 //
@@ -22,10 +23,9 @@ type (
 //
 
 var _ Processor = (*Annotation)(nil)
-var _ Annotator = (*Annotation)(nil)
 
 func (a *Annotation) Process(c *typgo.Context, directives Directives) error {
-	if a.Processor == nil {
+	if a.ProcessFn == nil {
 		return errors.New("mising annotation processor")
 	}
 	var filtered []*Directive
@@ -34,11 +34,7 @@ func (a *Annotation) Process(c *typgo.Context, directives Directives) error {
 			filtered = append(filtered, dir)
 		}
 	}
-	return a.Processor.Process(c, filtered)
-}
-
-func (a *Annotation) Annotate() Processor {
-	return a
+	return a.ProcessFn(c, filtered)
 }
 
 func (a *Annotation) isAllowed(d *Directive) bool {
@@ -49,11 +45,26 @@ func (a *Annotation) isAllowed(d *Directive) bool {
 }
 
 //
-// NewProcessor
+// ProcessFn
 //
 
-var _ Processor = (NewProcessor)(nil)
+var _ Processor = (ProcessFn)(nil)
 
-func (p NewProcessor) Process(c *typgo.Context, d Directives) error {
+func (p ProcessFn) Process(c *typgo.Context, d Directives) error {
 	return p(c, d)
+}
+
+//
+// Processor
+//
+
+var _ Processor = (Processors)(nil)
+
+func (p Processors) Process(c *typgo.Context, d Directives) error {
+	for _, processor := range p {
+		if err := processor.Process(c, d); err != nil {
+			return err
+		}
+	}
+	return nil
 }

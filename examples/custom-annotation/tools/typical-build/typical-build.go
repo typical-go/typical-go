@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/typical-go/typical-go/pkg/typast"
+	"github.com/typical-go/typical-go/pkg/typgen"
 
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
@@ -14,10 +14,10 @@ var descriptor = typgo.Descriptor{
 	ProjectVersion: "1.0.0",
 
 	Tasks: []typgo.Tasker{
-		&typast.AnnotateProject{
-			Annotators: []typast.Annotator{
-				&typast.Annotation{
-					Processor: typast.NewProcessor(printAllAnnotation),
+		&typgen.Generator{
+			Processor: typgen.Processors{
+				&typgen.Annotation{
+					ProcessFn: printAllAnnotation,
 				},
 			},
 		},
@@ -29,11 +29,11 @@ var descriptor = typgo.Descriptor{
 		// compile
 		&typgo.GoBuild{},
 		// run
-		&typgo.RunBinary{Before: typgo.TaskNames{"annotate", "build"}},
+		&typgo.RunBinary{Before: typgo.TaskNames{"generate", "build"}},
 	},
 }
 
-func printAllAnnotation(c *typgo.Context, directives typast.Directives) error {
+func printAllAnnotation(c *typgo.Context, directives typgen.Directives) error {
 	fmt.Println("Print all annotation: ")
 	for _, a := range directives {
 		fmt.Printf("TagName=%s\tName=%s\tType=%T\tParam=%s\tField1=%s\n",
