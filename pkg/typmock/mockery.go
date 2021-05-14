@@ -3,9 +3,12 @@ package typmock
 import (
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	"github.com/typical-go/typical-go/pkg/typgen"
 )
+
+const DefaultParent = "internal/generated/mock"
 
 type (
 	// Mockery is art of mocking
@@ -17,11 +20,11 @@ type (
 	Map map[string][]*Mock
 	// Mock annotation data
 	Mock struct {
-		Dir     string `json:"-"`
-		Pkg     string `json:"-"`
-		Source  string `json:"-"`
-		Parent  string `json:"-"`
-		MockPkg string `json:"-"`
+		Dir          string `json:"-"`
+		Pkg          string `json:"-"`
+		Source       string `json:"-"`
+		TargetParent string `json:"-"`
+		MockPkg      string `json:"-"`
 	}
 )
 
@@ -36,7 +39,8 @@ func NewMockery(projectPkg string) *Mockery {
 // Put target to mockery
 func (m Mockery) Put(target *Mock) {
 	key := target.Dir
-	if _, ok := m.Map[key]; ok {
+	curr := m.Map[key]
+	if curr != nil {
 		m.Map[key] = append(m.Map[key], target)
 	} else {
 		m.Map[key] = []*Mock{target}
@@ -58,17 +62,27 @@ func (m Mockery) Filter(pkgs ...string) Map {
 func CreateMock(annot *typgen.Directive) *Mock {
 	pkg := annot.Decl.Package
 	dir := filepath.Dir(annot.Decl.Path)
-
-	parent := ""
-	if dir != "." {
-		parent = dir[:len(dir)-len(pkg)]
-	}
-
+	target := GenTarget(dir)
 	return &Mock{
-		Dir:     dir,
-		Pkg:     pkg,
-		Source:  annot.GetName(),
-		Parent:  parent,
-		MockPkg: fmt.Sprintf("%s_mock", pkg),
+		Dir:          dir,
+		Pkg:          pkg,
+		Source:       annot.GetName(),
+		TargetParent: target,
+		MockPkg:      fmt.Sprintf("%s_mock", pkg),
 	}
+}
+
+func GenTarget(dir string) string {
+	if dir == "." {
+		return DefaultParent
+	}
+	target := filepath.Dir(dir)
+	var words []string
+	for _, word := range strings.Split(target, "/") {
+		if word != "internal" {
+			words = append(words, word)
+		}
+	}
+	words = append(strings.Split(DefaultParent, "/"), words...)
+	return strings.Join(words, "/")
 }

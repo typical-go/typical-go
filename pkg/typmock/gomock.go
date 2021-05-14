@@ -64,12 +64,10 @@ func (d *GoMock) process(c *typgo.Context, directives typgen.Directives) error {
 
 	for key, targets := range targetMap {
 		mockPkg := fmt.Sprintf("%s_mock", key)
-
 		c.Execute(&typgo.Bash{Name: "rm", Args: []string{"-rf", mockPkg}})
-
 		for _, t := range targets {
 			srcPkg := fmt.Sprintf("%s/%s", typgo.ProjectPkg, t.Dir)
-			dest := fmt.Sprintf("%s%s/%s.go", t.Parent, t.MockPkg, strcase.ToSnake(t.Source))
+			dest := fmt.Sprintf("%s/%s/%s.go", t.TargetParent, t.MockPkg, strcase.ToSnake(t.Source))
 			name := fmt.Sprintf("%s.%s", srcPkg, t.Source)
 
 			err := MockGen(c, t.MockPkg, dest, srcPkg, t.Source)

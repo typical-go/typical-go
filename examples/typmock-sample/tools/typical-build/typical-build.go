@@ -18,7 +18,7 @@ var descriptor = typgo.Descriptor{
 		&typgo.GoTest{
 			Timeout:  30 * time.Second,
 			Includes: []string{"internal/*"},
-			Excludes: []string{"**/*_mock"},
+			Excludes: []string{"internal/generated"},
 		},
 		// compile
 		&typgo.GoBuild{},

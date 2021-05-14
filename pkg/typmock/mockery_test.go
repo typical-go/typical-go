@@ -69,11 +69,11 @@ func TestCreateMock(t *testing.T) {
 				TagName: "mock",
 			},
 			expected: &typmock.Mock{
-				Dir:     "/path/folder",
-				Pkg:     "somePkg",
-				Source:  "SomeInterface",
-				Parent:  "/path",
-				MockPkg: "somePkg_mock",
+				Dir:          "/path/folder",
+				Pkg:          "somePkg",
+				Source:       "SomeInterface",
+				TargetParent: "internal/generated/mock//path",
+				MockPkg:      "somePkg_mock",
 			},
 		},
 	}
@@ -81,6 +81,32 @@ func TestCreateMock(t *testing.T) {
 	for _, tt := range testcases {
 		t.Run(tt.testName, func(t *testing.T) {
 			require.Equal(t, tt.expected, typmock.CreateMock(tt.annot))
+		})
+	}
+}
+
+func TestGenTarget(t *testing.T) {
+	testcases := []struct {
+		TestName string
+		Dir      string
+		Expected string
+	}{
+		{
+			Dir:      "internal/app/service",
+			Expected: "internal/generated/mock/app",
+		},
+		{
+			Dir:      "internal/service",
+			Expected: "internal/generated/mock",
+		},
+		{
+			Dir:      ".",
+			Expected: "internal/generated/mock",
+		},
+	}
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			require.Equal(t, tt.Expected, typmock.GenTarget(tt.Dir))
 		})
 	}
 }

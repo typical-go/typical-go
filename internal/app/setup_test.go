@@ -205,6 +205,8 @@ func Stop() {
 	require.Equal(t, `package main
 
 import (
+	"time"
+	
 	"github.com/typical-go/typical-go/pkg/typgen"
 	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -224,6 +226,12 @@ var descriptor = typgo.Descriptor{
 		},
 		// build
 		&typgo.GoBuild{},
+		// test
+		&typgo.GoTest{
+			Timeout:  30 * time.Second,
+			Includes: []string{"internal/*"},
+			Excludes: []string{"internal/generated"},
+		},
 		// run
 		&typgo.RunBinary{Before: typgo.TaskNames{"generate", "build"}},
 		// mock

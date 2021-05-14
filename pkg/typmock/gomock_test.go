@@ -48,10 +48,10 @@ func TestAnnotate_MockgenError(t *testing.T) {
 	defer c.PatchBash([]*typgo.MockBash{
 		{CommandLine: "rm -rf parent/path_mock"},
 		{CommandLine: "go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen"},
-		{CommandLine: ".typical-tmp/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface", ReturnError: errors.New("some-error")},
+		{CommandLine: ".typical-tmp/bin/mockgen -destination internal/generated/mock/parent/mypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface", ReturnError: errors.New("some-error")},
 	})(t)
 
 	gomock := &typmock.GoMock{}
 	require.NoError(t, gomock.Process(c, directives))
-	require.Equal(t, "> rm -rf parent/path_mock\n> go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen\n> .typical-tmp/bin/mockgen -destination parentmypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\n> Fail to mock '/parent/path.SomeInterface': some-error\n", out.String())
+	require.Equal(t, "> rm -rf parent/path_mock\n> go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen\n> .typical-tmp/bin/mockgen -destination internal/generated/mock/parent/mypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\n> Fail to mock '/parent/path.SomeInterface': some-error\n", out.String())
 }

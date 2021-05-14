@@ -45,7 +45,7 @@ func Run(c *typgo.Context) error {
 	chksum0, _ := ioutil.ReadFile(chksumTarget)
 	_, err = os.Stat(chksumTarget)
 
-	if os.IsNotExist(err) || bytes.Compare(chksum, chksum0) != 0 {
+	if os.IsNotExist(err) || !bytes.Equal(chksum, chksum0) {
 		if err = ioutil.WriteFile(chksumTarget, chksum, 0777); err != nil {
 			return err
 		}
