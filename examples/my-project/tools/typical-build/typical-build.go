@@ -2,9 +2,9 @@ package main
 
 import (
 	"time"
-
-	"github.com/typical-go/typical-go/pkg/typapp"
+	
 	"github.com/typical-go/typical-go/pkg/typgen"
+	"github.com/typical-go/typical-go/pkg/typapp"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typmock"
 )
