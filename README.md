@@ -11,7 +11,7 @@ Build Automation Tool For Golang
 - Manage build tasks &mdash; *alternative for [makefile](https://www.gnu.org/software/make/manual/make.html)*
 - Framework-based Build Tool &mdash; *no DSL to be learned, write build task in Go*
 - Wrapper Script  &mdash; *single script to prepare and run the build-tool*
-- Supporting java-like annotation for code generation purpose &mdash; *alternative for [go-generate](https://blog.golang.org/generate)*
+- Supporting java-like annotation for code generation &mdash; *alternative for [go-generate](https://blog.golang.org/generate)*
 
 ## Getting Started
 

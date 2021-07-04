@@ -1,10 +1,6 @@
 package typmock
 
 import (
-	"fmt"
-	"os"
-
-	"github.com/iancoleman/strcase"
 	"github.com/typical-go/typical-go/pkg/typgen"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
@@ -51,49 +47,18 @@ func (d *GoMock) Annotation() *typgen.Annotation {
 }
 
 func (d *GoMock) process(c *typgo.Context, directives typgen.Directives) error {
-	mockery := NewMockery(typgo.ProjectPkg)
+	var mocks Mocks
 
 	for _, annot := range directives {
-		mockery.Put(CreateMock(annot))
-	}
-	targetMap := mockery.Map
-	args := c.Args()
-	if args.Len() > 0 {
-		targetMap = mockery.Filter(args.Slice()...)
+		mocks = append(mocks, CreateMock(annot))
 	}
 
-	for key, targets := range targetMap {
-		mockPkg := fmt.Sprintf("%s_mock", key)
-		c.Execute(&typgo.Bash{Name: "rm", Args: []string{"-rf", mockPkg}})
-		for _, t := range targets {
-			srcPkg := fmt.Sprintf("%s/%s", typgo.ProjectPkg, t.Dir)
-			dest := fmt.Sprintf("%s/%s/%s.go", t.TargetParent, t.MockPkg, strcase.ToSnake(t.Source))
-			name := fmt.Sprintf("%s.%s", srcPkg, t.Source)
-
-			err := MockGen(c, t.MockPkg, dest, srcPkg, t.Source)
-			if err != nil {
-				c.Infof("Fail to mock '%s': %s\n", name, err.Error())
-			}
+	for _, t := range mocks {
+		err := MockGen(c, t.MockPkg, t.Dest, t.Pkg, t.Source)
+		if err != nil {
+			c.Infof("Fail to mock '%s': %s\n", t.Pkg, err.Error())
 		}
 	}
+
 	return nil
-}
-
-// MockGen execute mockgen bash
-func MockGen(c *typgo.Context, destPkg, dest, srcPkg, src string) error {
-	mockgen, err := typgo.InstallTool(c, "mockgen", "github.com/golang/mock/mockgen")
-	if err != nil {
-		return err
-	}
-
-	return c.Execute(&typgo.Bash{
-		Name: mockgen,
-		Args: []string{
-			"-destination", dest,
-			"-package", destPkg,
-			srcPkg,
-			src,
-		},
-		Stderr: os.Stderr,
-	})
 }

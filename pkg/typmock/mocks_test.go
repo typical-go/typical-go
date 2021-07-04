@@ -5,51 +5,14 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typgen"
+	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/typical-go/typical-go/pkg/typmock"
 )
 
-var (
-	target1 = &typmock.Mock{Pkg: "pkg1", Dir: "dir1", Source: "target1"}
-	target2 = &typmock.Mock{Pkg: "pkg1", Dir: "dir1", Source: "target2"}
-	target3 = &typmock.Mock{Pkg: "pkg2", Dir: "dir2", Source: "target3"}
-	target4 = &typmock.Mock{Pkg: "pkg1", Dir: "dir1", Source: "target4"}
-	target5 = &typmock.Mock{Pkg: "pkg1", Dir: "dir1", Source: "target5"}
-	target6 = &typmock.Mock{Pkg: "pkg2", Dir: "dir2", Source: "target6"}
-
-	targets = []*typmock.Mock{
-		target1,
-		target2,
-		target3,
-		target4,
-		target5,
-		target6,
-	}
-
-	dir1 = []*typmock.Mock{
-		target1,
-		target2,
-		target4,
-		target5,
-	}
-
-	dir2 = []*typmock.Mock{
-		target3,
-		target6,
-	}
-)
-
-func TestTargetMap(t *testing.T) {
-	m := typmock.NewMockery("")
-	for _, mock := range targets {
-		m.Put(mock)
-	}
-
-	require.Equal(t, typmock.Map{"dir1": dir1, "dir2": dir2}, m.Filter("dir1", "dir2"))
-	require.Equal(t, typmock.Map{"dir1": dir1}, m.Filter("dir1"))
-	require.Equal(t, typmock.Map{}, m.Filter("not-found"))
-}
-
 func TestCreateMock(t *testing.T) {
+	typgo.ProjectPkg = "some-proj"
+	defer func() { typgo.ProjectPkg = "" }()
+
 	testcases := []struct {
 		testName string
 		annot    *typgen.Directive
@@ -60,7 +23,7 @@ func TestCreateMock(t *testing.T) {
 				Decl: &typgen.Decl{
 					File: typgen.File{
 						Package: "somePkg",
-						Path:    "/path/folder/source.go",
+						Path:    "path/folder/source.go",
 					},
 					Type: &typgen.InterfaceDecl{
 						TypeDecl: typgen.TypeDecl{Name: "SomeInterface"},
@@ -69,11 +32,10 @@ func TestCreateMock(t *testing.T) {
 				TagName: "mock",
 			},
 			expected: &typmock.Mock{
-				Dir:          "/path/folder",
-				Pkg:          "somePkg",
-				Source:       "SomeInterface",
-				TargetParent: "internal/generated/mock//path",
-				MockPkg:      "somePkg_mock",
+				Pkg:     "some-proj/path/folder",
+				Source:  "SomeInterface",
+				MockPkg: "somePkg_mock",
+				Dest:    "internal/generated/mock/path/somePkg_mock/some_interface.go",
 			},
 		},
 	}
@@ -86,6 +48,9 @@ func TestCreateMock(t *testing.T) {
 }
 
 func TestGenTarget(t *testing.T) {
+	typgo.TypicalTmp = ".typical-tmp"
+	defer func() { typgo.TypicalTmp = "" }()
+
 	testcases := []struct {
 		TestName string
 		Dir      string

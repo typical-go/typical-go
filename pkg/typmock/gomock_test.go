@@ -36,7 +36,8 @@ func TestAnnotate_MockgenError(t *testing.T) {
 			Decl: &typgen.Decl{
 				File: typgen.File{Package: "mypkg", Path: "parent/path/some_interface.go"},
 				Type: &typgen.InterfaceDecl{TypeDecl: typgen.TypeDecl{Name: "SomeInterface"}},
-			}},
+			},
+		},
 	}
 
 	var out strings.Builder
@@ -46,12 +47,11 @@ func TestAnnotate_MockgenError(t *testing.T) {
 		Logger:     typgo.Logger{Stdout: &out},
 	}
 	defer c.PatchBash([]*typgo.MockBash{
-		{CommandLine: "rm -rf parent/path_mock"},
 		{CommandLine: "go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen"},
 		{CommandLine: ".typical-tmp/bin/mockgen -destination internal/generated/mock/parent/mypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface", ReturnError: errors.New("some-error")},
 	})(t)
 
 	gomock := &typmock.GoMock{}
 	require.NoError(t, gomock.Process(c, directives))
-	require.Equal(t, "> rm -rf parent/path_mock\n> go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen\n> .typical-tmp/bin/mockgen -destination internal/generated/mock/parent/mypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\n> Fail to mock '/parent/path.SomeInterface': some-error\n", out.String())
+	require.Equal(t, "> go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen\n> .typical-tmp/bin/mockgen -destination internal/generated/mock/parent/mypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\n> Fail to mock '/parent/path': some-error\n", out.String())
 }
