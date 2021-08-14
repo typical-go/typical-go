@@ -2,6 +2,7 @@ package typgo_test
 
 import (
 	"context"
+	"os"
 	"os/exec"
 	"strings"
 	"testing"
@@ -57,4 +58,39 @@ func TestBash_String(t *testing.T) {
 			require.Equal(t, tt.Expected, tt.String())
 		})
 	}
+}
+
+func TestBashCommand(t *testing.T) {
+	testcases := []struct {
+		TestName     string
+		Line         string
+		ExpectedBash *typgo.Bash
+	}{
+		{
+			Line: "go build -o output",
+			ExpectedBash: &typgo.Bash{
+				Name:   "go",
+				Args:   []string{"build", "-o", "output"},
+				Stdout: os.Stdout,
+				Stderr: os.Stderr,
+				Stdin:  os.Stdin,
+			},
+		},
+		{
+			Line: "dir",
+			ExpectedBash: &typgo.Bash{
+				Name:   "dir",
+				Args:   []string{},
+				Stdout: os.Stdout,
+				Stderr: os.Stderr,
+				Stdin:  os.Stdin,
+			},
+		},
+	}
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			require.Equal(t, tt.ExpectedBash, typgo.BashCommand(tt.Line))
+		})
+	}
+
 }

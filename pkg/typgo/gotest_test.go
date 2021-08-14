@@ -51,10 +51,3 @@ func TestGoTest(t *testing.T) {
 	require.Equal(t, true, task.SkipFlagParsing)
 	require.NoError(t, testProj.Execute(c))
 }
-
-func gotestCliContext(args []string) *cli.Context {
-	flagSet := &flag.FlagSet{}
-	flagSet.String("coverprofile", "", "")
-	flagSet.Parse(args)
-	return cli.NewContext(nil, flagSet, nil)
-}

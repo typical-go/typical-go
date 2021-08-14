@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -28,6 +29,18 @@ type (
 var _ Basher = (*Bash)(nil)
 var _ Action = (*Bash)(nil)
 var _ fmt.Stringer = (*Bash)(nil)
+
+// BashCommand create bash command line
+func BashCommand(line string) *Bash {
+	slices := strings.Split(line, " ")
+	return &Bash{
+		Name:   slices[0],
+		Args:   slices[1:],
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+		Stdin:  os.Stdin,
+	}
+}
 
 // ExecCmd return exec.Cmd
 func (b *Bash) ExecCmd(ctx context.Context) *exec.Cmd {
