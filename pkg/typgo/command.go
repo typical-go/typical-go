@@ -10,8 +10,8 @@ import (
 )
 
 type (
-	// Bash is wrapper to exec.Bash
-	Bash struct {
+	// Command is wrapper to exec.Command
+	Command struct {
 		Name   string
 		Args   []string
 		Stdout io.Writer
@@ -20,20 +20,20 @@ type (
 		Dir    string
 		Env    []string
 	}
-	// Basher responsible to Bash
-	Basher interface {
-		Bash(extras ...string) *Bash
+	// Commander responsible to Command
+	Commander interface {
+		Command(extras ...string) *Command
 	}
 )
 
-var _ Basher = (*Bash)(nil)
-var _ Action = (*Bash)(nil)
-var _ fmt.Stringer = (*Bash)(nil)
+var _ Commander = (*Command)(nil)
+var _ Action = (*Command)(nil)
+var _ fmt.Stringer = (*Command)(nil)
 
-// BashCommand create bash command line
-func BashCommand(line string) *Bash {
-	slices := strings.Split(line, " ")
-	return &Bash{
+// CommandLine create bash command line
+func CommandLine(line string) *Command {
+	slices := strings.Fields(line)
+	return &Command{
 		Name:   slices[0],
 		Args:   slices[1:],
 		Stdout: os.Stdout,
@@ -43,7 +43,7 @@ func BashCommand(line string) *Bash {
 }
 
 // ExecCmd return exec.Cmd
-func (b *Bash) ExecCmd(ctx context.Context) *exec.Cmd {
+func (b *Command) ExecCmd(ctx context.Context) *exec.Cmd {
 	cmd := exec.CommandContext(ctx, b.Name, b.Args...)
 	cmd.Stdout = b.Stdout
 	cmd.Stderr = b.Stderr
@@ -53,17 +53,17 @@ func (b *Bash) ExecCmd(ctx context.Context) *exec.Cmd {
 	return cmd
 }
 
-// Bash return Bash
-func (b *Bash) Bash(extras ...string) *Bash {
+// Command return Command
+func (b *Command) Command(extras ...string) *Command {
 	return b
 }
 
 // Execute bash
-func (b *Bash) Execute(c *Context) error {
-	return c.Execute(b)
+func (b *Command) Execute(c *Context) error {
+	return c.ExecuteCommand(b)
 }
 
-func (b Bash) String() string {
+func (b Command) String() string {
 	var out strings.Builder
 	fmt.Fprint(&out, b.Name)
 	for _, arg := range b.Args {

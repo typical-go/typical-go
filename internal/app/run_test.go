@@ -23,7 +23,7 @@ func TestRun(t *testing.T) {
 			"-project-pkg=some-pkg",
 		}),
 	}
-	defer c.PatchBash([]*typgo.MockBash{
+	defer c.PatchBash([]*typgo.MockCommand{
 		{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-pkg -X github.com/typical-go/typical-go/pkg/typgo.ProjectPkg=some-pkg -X github.com/typical-go/typical-go/pkg/typgo.TypicalTmp=.typical-tmp\" -o .typical-tmp/bin/typical-build ./tools/typical-build"},
 		{CommandLine: ".typical-tmp/bin/typical-build"},
 	})(t)
@@ -37,7 +37,7 @@ func TestRun_GetParamError(t *testing.T) {
 	c := &typgo.Context{
 		Context: cliContext([]string{}),
 	}
-	defer c.PatchBash([]*typgo.MockBash{
+	defer c.PatchBash([]*typgo.MockCommand{
 		{CommandLine: "go list -m", ReturnError: errors.New("some-error")},
 	})(t)
 

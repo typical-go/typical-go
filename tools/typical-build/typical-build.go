@@ -27,7 +27,7 @@ var descriptor = typgo.Descriptor{
 			Name:    "test-examples",
 			Aliases: []string{"e"},
 			Usage:   "Test all example",
-			Action: &typgo.Bash{
+			Action: &typgo.Command{
 				Name:   "go",
 				Args:   []string{"test", "./examples/..."},
 				Stdout: os.Stdout,
@@ -40,7 +40,7 @@ var descriptor = typgo.Descriptor{
 			Usage: "test setup command",
 			Action: typgo.NewAction(func(c *typgo.Context) error {
 				os.RemoveAll("examples/my-project")
-				err := c.Execute(&typgo.Bash{
+				err := c.ExecuteCommand(&typgo.Command{
 					Name:   "../bin/typical-go",
 					Args:   []string{"setup", "-new", "-go-mod", "-project-pkg=github.com/typical-go/typical-go/examples/my-project"},
 					Dir:    "examples",
@@ -53,7 +53,7 @@ var descriptor = typgo.Descriptor{
 
 				os.RemoveAll("examples/my-project/go.mod")
 				os.RemoveAll("examples/my-project/go.sum")
-				return c.Execute(&typgo.Bash{
+				return c.ExecuteCommand(&typgo.Command{
 					Name:   "./typicalw",
 					Args:   []string{"run"},
 					Dir:    "examples/my-project",

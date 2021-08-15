@@ -5,13 +5,13 @@ import (
 )
 
 type (
-	// BashMocker mocking bash
-	BashMocker struct {
-		Mocks []*MockBash
+	// MockCommandRunner mocking bash
+	MockCommandRunner struct {
+		Mocks []*MockCommand
 		Ptr   int
 	}
-	// MockBash is test expectation
-	MockBash struct {
+	// MockCommand is test expectation
+	MockCommand struct {
 		CommandLine string
 		OutputBytes []byte
 		ErrorBytes  []byte
@@ -20,7 +20,7 @@ type (
 )
 
 // Close mocker
-func (r *BashMocker) Close() error {
+func (r *MockCommandRunner) Close() error {
 	if expectation := r.Expectation(); expectation != nil {
 		return fmt.Errorf("missing bash call: \"%s\"", expectation.CommandLine)
 	}
@@ -29,7 +29,7 @@ func (r *BashMocker) Close() error {
 }
 
 // Expectation for bash
-func (r *BashMocker) Expectation() *MockBash {
+func (r *MockCommandRunner) Expectation() *MockCommand {
 	if r.Ptr < len(r.Mocks) {
 		expect := r.Mocks[r.Ptr]
 		r.Ptr++
@@ -39,7 +39,7 @@ func (r *BashMocker) Expectation() *MockBash {
 }
 
 // Run bash
-func (r *BashMocker) Run(bash *Bash) error {
+func (r *MockCommandRunner) Run(bash *Command) error {
 	expc := r.Expectation()
 	if expc == nil {
 		return fmt.Errorf("typgo-mock: no run expectation for \"%s\"", bash.String())

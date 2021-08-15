@@ -129,7 +129,7 @@ func TestReleaseProject(t *testing.T) {
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
 			defer debug.Reset()
-			defer tt.Context.PatchBash([]*typgo.MockBash{})(t)
+			defer tt.Context.PatchBash([]*typgo.MockCommand{})(t)
 
 			err := tt.Execute(tt.Context)
 			if tt.ExpectedErr != "" {
@@ -171,7 +171,7 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 		TestName string
 		*typrls.ReleaseProject
 		Ctx             *typgo.Context
-		RunExpectations []*typgo.MockBash
+		RunExpectations []*typgo.MockCommand
 		Expected        *typrls.Context
 		ExpectedErr     string
 	}{
@@ -181,7 +181,7 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{},
 			},
-			RunExpectations: []*typgo.MockBash{
+			RunExpectations: []*typgo.MockCommand{
 				{CommandLine: "git fetch"},
 				{
 					CommandLine: "git describe --tags --abbrev=0",
@@ -209,7 +209,7 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 				Context:    createContext("-alpha"),
 				Descriptor: &typgo.Descriptor{},
 			},
-			RunExpectations: []*typgo.MockBash{
+			RunExpectations: []*typgo.MockCommand{
 				{CommandLine: "git fetch"},
 			},
 			Expected: &typrls.Context{
@@ -229,7 +229,7 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 				Context:    createContext(),
 				Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
 			},
-			RunExpectations: []*typgo.MockBash{
+			RunExpectations: []*typgo.MockCommand{
 				{CommandLine: "git fetch"},
 			},
 			Expected: &typrls.Context{
@@ -249,7 +249,7 @@ func TestReleaseProject_Execute_Context(t *testing.T) {
 				Context:    createContext("-tag-name=some-tag"),
 				Descriptor: &typgo.Descriptor{ProjectVersion: "9.9.9"},
 			},
-			RunExpectations: []*typgo.MockBash{
+			RunExpectations: []*typgo.MockCommand{
 				{CommandLine: "git fetch"},
 			},
 			Expected: &typrls.Context{
@@ -309,7 +309,7 @@ func TestDefaultTagFn(t *testing.T) {
 		TestName        string
 		ProjectVersion  string
 		Alpha           bool
-		RunExpectations []*typgo.MockBash
+		RunExpectations []*typgo.MockCommand
 		Expected        string
 	}{
 		{
@@ -339,13 +339,13 @@ func TestDefaultTagFn(t *testing.T) {
 func TestSummarizer(t *testing.T) {
 	testCases := []struct {
 		TestName        string
-		RunExpectations []*typgo.MockBash
+		RunExpectations []*typgo.MockCommand
 		Expected        string
 		ExpectedOut     string
 	}{
 		{
 			TestName: "change summary",
-			RunExpectations: []*typgo.MockBash{
+			RunExpectations: []*typgo.MockCommand{
 				{CommandLine: "git describe --tags --abbrev=0", OutputBytes: []byte("v0.0.1")},
 				{CommandLine: "git --no-pager log v0.0.1..HEAD --oneline", OutputBytes: []byte("1234567 some-message-1\n1234568 some-message-3")},
 			},

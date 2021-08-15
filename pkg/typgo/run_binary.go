@@ -30,7 +30,7 @@ func (r *RunBinary) Task() *Task {
 
 // Execute standard run
 func (r *RunBinary) Execute(c *Context) error {
-	return c.Execute(&Bash{
+	return c.ExecuteCommand(&Command{
 		Name:   r.getBinary(c),
 		Args:   c.Args().Slice(),
 		Stdout: os.Stdout,

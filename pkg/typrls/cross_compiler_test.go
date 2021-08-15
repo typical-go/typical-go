@@ -17,7 +17,7 @@ func TestCrossCompile(t *testing.T) {
 		TestName string
 		typrls.CrossCompiler
 		TagName         string
-		RunExpectations []*typgo.MockBash
+		RunExpectations []*typgo.MockCommand
 		ExpectedErr     string
 	}{
 		{
@@ -25,7 +25,7 @@ func TestCrossCompile(t *testing.T) {
 				Targets: []typrls.Target{"darwin/amd64", "linux/amd64"},
 			},
 			TagName: "v0.0.1",
-			RunExpectations: []*typgo.MockBash{
+			RunExpectations: []*typgo.MockCommand{
 				{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /some-project_v0.0.1_darwin_amd64 ./cmd/some-project"},
 				{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /some-project_v0.0.1_linux_amd64 ./cmd/some-project"},
 			},
@@ -36,7 +36,7 @@ func TestCrossCompile(t *testing.T) {
 				Targets: []typrls.Target{"darwin/amd64"},
 			},
 			TagName: "v0.0.1",
-			RunExpectations: []*typgo.MockBash{
+			RunExpectations: []*typgo.MockCommand{
 				{
 					CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=v0.0.1\" -o /some-project_v0.0.1_darwin_amd64 ./cmd/some-project",
 					ReturnError: errors.New("some-error"),

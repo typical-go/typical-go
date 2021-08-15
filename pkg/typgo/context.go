@@ -3,7 +3,6 @@ package typgo
 import (
 	"context"
 	"errors"
-	"os"
 	"strings"
 	"testing"
 
@@ -17,7 +16,7 @@ type (
 		*cli.Context
 		Logger
 		Descriptor *Descriptor
-		mocker     *BashMocker
+		mocker     *MockCommandRunner
 	}
 )
 
@@ -38,9 +37,9 @@ func NewContext(c *cli.Context, d *Descriptor) *Context {
 }
 
 // Execute command
-func (c *Context) Execute(basher Basher) error {
-	bash := basher.Bash()
-	c.Logger.Bash(bash)
+func (c *Context) ExecuteCommand(basher Commander) error {
+	bash := basher.Command()
+	c.Logger.Command(bash)
 	ctx := c.Ctx()
 	if c.mocker != nil {
 		return c.mocker.Run(bash)
@@ -48,19 +47,12 @@ func (c *Context) Execute(basher Basher) error {
 	return bash.ExecCmd(ctx).Run()
 }
 
-// ExecuteBash execute bash command
-func (c *Context) ExecuteBash(commandLine string) error {
+// ExecuteCommandLine execute bash command
+func (c *Context) ExecuteCommandLine(commandLine string) error {
 	if commandLine == "" {
 		return errors.New("command line can't be empty")
 	}
-	slices := strings.Fields(commandLine)
-	return c.Execute(&Bash{
-		Name:   slices[0],
-		Args:   slices[1:],
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
-		Stdin:  os.Stdin,
-	})
+	return c.ExecuteCommand(CommandLine(commandLine))
 }
 
 // Ctx return golang context
@@ -72,9 +64,9 @@ func (c *Context) Ctx() context.Context {
 }
 
 // PatchBash typgo.RunBash for testing purpose
-func (c *Context) PatchBash(mocks []*MockBash) func(t *testing.T) {
+func (c *Context) PatchBash(mocks []*MockCommand) func(t *testing.T) {
 	if c.mocker == nil {
-		c.mocker = &BashMocker{Mocks: mocks}
+		c.mocker = &MockCommandRunner{Mocks: mocks}
 	}
 	return func(t *testing.T) {
 		require.NoError(t, c.mocker.Close())

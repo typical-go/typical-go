@@ -66,7 +66,7 @@ func (t *GoTest) Execute(c *Context) error {
 	args = append(args, c.Args().Slice()...)
 	args = append(args, packages...)
 
-	return c.Execute(&Bash{
+	return c.ExecuteCommand(&Command{
 		Name:   "go",
 		Args:   args,
 		Stdout: os.Stdout,

@@ -22,7 +22,7 @@ type (
 
 var _ Tasker = (*GoBuild)(nil)
 var _ Action = (*GoBuild)(nil)
-var _ Basher = (*GoBuild)(nil)
+var _ Commander = (*GoBuild)(nil)
 
 // Task for gobuild
 func (p *GoBuild) Task() *Task {
@@ -48,11 +48,11 @@ func (p *GoBuild) Execute(c *Context) error {
 			"github.com/typical-go/typical-go/pkg/typgo.ProjectVersion": c.Descriptor.ProjectVersion,
 		}
 	}
-	return c.Execute(p.Bash())
+	return c.ExecuteCommand(p)
 }
 
-// Bash for go-build
-func (p *GoBuild) Bash(extras ...string) *Bash {
+// Command for go-build
+func (p *GoBuild) Command(extras ...string) *Command {
 	args := []string{"build"}
 	args = append(args, extras...)
 	if p.Ldflags != nil {
@@ -61,7 +61,7 @@ func (p *GoBuild) Bash(extras ...string) *Bash {
 	if p.Output != "" {
 		args = append(args, "-o", p.Output, p.MainPackage)
 	}
-	return &Bash{
+	return &Command{
 		Name:   "go",
 		Args:   args,
 		Stdout: os.Stdout,

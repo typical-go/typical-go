@@ -34,11 +34,11 @@ Subtasks:{{range .VisibleCategories}}{{if .Name}}{{.Name}}:{{range .VisibleComma
 var ColorSet = struct {
 	Project color.Attribute
 	Task    color.Attribute
-	Bash    color.Attribute
+	Command color.Attribute
 	Warn    color.Attribute
 }{
 	Project: color.FgHiCyan,
 	Task:    color.FgCyan,
-	Bash:    color.FgGreen,
+	Command: color.FgGreen,
 	Warn:    color.FgYellow,
 }

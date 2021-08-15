@@ -74,12 +74,13 @@ func GetParam(c *typgo.Context) (*Param, error) {
 func retrieveProjPkg(c *typgo.Context) (string, error) {
 	var stdout strings.Builder
 	var stderr strings.Builder
-	if err := c.Execute(&typgo.Bash{
+	cmd := &typgo.Command{
 		Name:   "go",
 		Args:   []string{"list", "-m"},
 		Stdout: &stdout,
 		Stderr: &stderr,
-	}); err != nil {
+	}
+	if err := c.ExecuteCommand(cmd); err != nil {
 		return "", errors.New(err.Error() + ": " + stderr.String())
 	}
 

@@ -25,7 +25,7 @@ func TestSetup(t *testing.T) {
 			"-project-pkg=some-pkg",
 		}),
 	}
-	defer c.PatchBash([]*typgo.MockBash{})(t)
+	defer c.PatchBash([]*typgo.MockCommand{})(t)
 
 	require.NoError(t, app.Setup(c))
 
@@ -63,7 +63,7 @@ func TestSetup_GetParamError(t *testing.T) {
 	c := &typgo.Context{
 		Context: cliContext([]string{}),
 	}
-	defer c.PatchBash([]*typgo.MockBash{
+	defer c.PatchBash([]*typgo.MockCommand{
 		{CommandLine: "go list -m", ReturnError: errors.New("some-error")},
 	})(t)
 
@@ -84,7 +84,7 @@ func TestSetup_WithGomodFlag(t *testing.T) {
 			"-go-mod",
 		}),
 	}
-	defer c.PatchBash([]*typgo.MockBash{
+	defer c.PatchBash([]*typgo.MockCommand{
 		{CommandLine: "go mod init somepkg"},
 	})(t)
 
@@ -104,7 +104,7 @@ func TestSetup_WithGomodFlag_Error(t *testing.T) {
 			"-go-mod",
 		}),
 	}
-	defer c.PatchBash([]*typgo.MockBash{
+	defer c.PatchBash([]*typgo.MockCommand{
 		{CommandLine: "go mod init somepkg", ErrorBytes: []byte("error-message"), ReturnError: errors.New("some-error")},
 	})(t)
 	err := app.Setup(c)

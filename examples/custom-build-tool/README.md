@@ -7,7 +7,7 @@ func main() {
 	output := "bin/custom-build-tool"
 	mainPackage := "./cmd/custom-build-tool"
 	typgo.RunBash(ctx, &typgo.GoBuild{MainPackage: mainPackage, Output: output})
-	typgo.RunBash(ctx, &typgo.Bash{Name: output, Stdout: os.Stdout, Stderr: os.Stderr})
+	typgo.RunBash(ctx, &typgo.Command{Name: output, Stdout: os.Stdout, Stderr: os.Stderr})
 }
 ```
 

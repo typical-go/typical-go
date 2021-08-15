@@ -37,8 +37,8 @@ var descriptor = typgo.Descriptor{
 			Usage: "print info",
 			Action: typgo.NewAction(func(c *typgo.Context) error {
 				c.Info("print the info:")
-				c.ExecuteBash("go version")
-				c.ExecuteBash("git version")
+				c.ExecuteCommandLine("go version")
+				c.ExecuteCommandLine("git version")
 				c.Infof("ENV: key1=%s\n", os.Getenv("key1"))
 				return nil
 			}),
@@ -47,7 +47,7 @@ var descriptor = typgo.Descriptor{
 		&typgo.Task{
 			Name:  "go-help",
 			Usage: "print go help",
-			Action: &typgo.Bash{
+			Action: &typgo.Command{
 				Name:   "go",
 				Args:   []string{"help"},
 				Stdout: os.Stdout,

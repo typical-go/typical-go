@@ -66,13 +66,13 @@ func (c Logger) Infof(format string, a ...interface{}) {
 	fmt.Fprintf(c.Stdout, format, a...)
 }
 
-// Bash information
-func (c Logger) Bash(bash *Bash) {
+// Command information
+func (c Logger) Command(bash *Command) {
 	if c.Stdout == nil {
 		return
 	}
 	c.printHeader()
-	color.New(ColorSet.Bash).Fprintln(c.Stdout, bash)
+	color.New(ColorSet.Command).Fprintln(c.Stdout, bash)
 }
 
 func (c Logger) printHeader() {

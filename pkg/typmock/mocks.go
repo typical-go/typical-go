@@ -32,7 +32,7 @@ func MockGen(c *typgo.Context, destPkg, dest, srcPkg, src string) error {
 		return err
 	}
 
-	return c.Execute(&typgo.Bash{
+	return c.ExecuteCommand(&typgo.Command{
 		Name: mockgen,
 		Args: []string{
 			"-destination", dest,

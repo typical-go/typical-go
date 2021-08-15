@@ -62,23 +62,25 @@ func Run(c *typgo.Context) error {
 		args = append(args, "-ldflags", buildVars.String())
 		args = append(args, "-o", bin, "./"+p.TypicalBuild)
 
-		if err := c.Execute(&typgo.Bash{
+		cmd := &typgo.Command{
 			Name:   "go",
 			Args:   args,
 			Stdout: os.Stdout,
 			Stderr: os.Stderr,
-		}); err != nil {
+		}
+		if err := c.ExecuteCommand(cmd); err != nil {
 			return err
 		}
 	}
 
-	return c.Execute(&typgo.Bash{
+	cmd := &typgo.Command{
 		Name:   bin,
 		Args:   c.Args().Slice(),
 		Stdout: os.Stdout,
 		Stdin:  os.Stdin,
 		Stderr: os.Stderr,
-	})
+	}
+	return c.ExecuteCommand(cmd)
 }
 
 func generateChecksum(source string) []byte {

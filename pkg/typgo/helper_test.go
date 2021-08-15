@@ -12,7 +12,7 @@ func TestGoImport(t *testing.T) {
 	typgo.TypicalTmp = ".typical-tmp"
 	defer func() { typgo.TypicalTmp = "" }()
 	c := &typgo.Context{}
-	defer c.PatchBash([]*typgo.MockBash{
+	defer c.PatchBash([]*typgo.MockCommand{
 		{CommandLine: "go build -o .typical-tmp/bin/goimports golang.org/x/tools/cmd/goimports"},
 		{CommandLine: ".typical-tmp/bin/goimports -w some-target"},
 	})(t)
@@ -24,7 +24,7 @@ func TestGoImport_InstallToolError(t *testing.T) {
 	typgo.TypicalTmp = ".typical-tmp"
 	defer func() { typgo.TypicalTmp = "" }()
 	c := &typgo.Context{}
-	defer c.PatchBash([]*typgo.MockBash{
+	defer c.PatchBash([]*typgo.MockCommand{
 		{
 			CommandLine: "go build -o .typical-tmp/bin/goimports golang.org/x/tools/cmd/goimports",
 			ReturnError: errors.New("some-error"),

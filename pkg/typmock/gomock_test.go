@@ -18,7 +18,7 @@ func TestMockGen_InstallMockgenError(t *testing.T) {
 	defer func() { typgo.TypicalTmp = "" }()
 
 	c := &typgo.Context{}
-	defer c.PatchBash([]*typgo.MockBash{
+	defer c.PatchBash([]*typgo.MockCommand{
 		{CommandLine: "go build -o .typical-tmp2/bin/mockgen github.com/golang/mock/mockgen", ReturnError: errors.New("some-error")},
 	})(t)
 
@@ -46,7 +46,7 @@ func TestAnnotate_MockgenError(t *testing.T) {
 		Descriptor: &typgo.Descriptor{},
 		Logger:     typgo.Logger{Stdout: &out},
 	}
-	defer c.PatchBash([]*typgo.MockBash{
+	defer c.PatchBash([]*typgo.MockCommand{
 		{CommandLine: "go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen"},
 		{CommandLine: ".typical-tmp/bin/mockgen -destination internal/generated/mock/parent/mypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface", ReturnError: errors.New("some-error")},
 	})(t)

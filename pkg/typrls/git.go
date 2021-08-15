@@ -48,13 +48,13 @@ func CreateLog(raw string) *Log {
 
 // GitFetch fetch latest update
 func GitFetch(c *typgo.Context) error {
-	return c.Execute(&typgo.Bash{Name: "git", Args: []string{"fetch"}, Stderr: os.Stderr})
+	return c.ExecuteCommand(&typgo.Command{Name: "git", Args: []string{"fetch"}, Stderr: os.Stderr})
 }
 
 // GitCurrentTag return git current tag
 func GitCurrentTag(c *typgo.Context) string {
 	var out strings.Builder
-	if err := c.Execute(&typgo.Bash{
+	if err := c.ExecuteCommand(&typgo.Command{
 		Name:   "git",
 		Args:   []string{"describe", "--tags", "--abbrev=0"},
 		Stdout: &out,
@@ -74,7 +74,7 @@ func GitLogs(c *typgo.Context, from string) (logs []*Log) {
 	args = append(args, "--oneline")
 
 	var out strings.Builder
-	err := c.Execute(&typgo.Bash{Name: "git", Args: args, Stdout: &out})
+	err := c.ExecuteCommand(&typgo.Command{Name: "git", Args: args, Stdout: &out})
 	if err != nil {
 		c.Infof("WARN: %s\n", err.Error())
 	}

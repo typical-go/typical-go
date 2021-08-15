@@ -20,7 +20,7 @@ func TestCtorAnnot_Annotate(t *testing.T) {
 	ctorAnnot := &typapp.CtorAnnot{}
 	var out strings.Builder
 	c := &typgo.Context{Logger: typgo.Logger{Stdout: &out}}
-	defer c.PatchBash([]*typgo.MockBash{})(t)
+	defer c.PatchBash([]*typgo.MockCommand{})(t)
 
 	directives := []*typgen.Directive{
 		{
@@ -73,7 +73,7 @@ func TestCtorAnnot_Annotate_Predefined(t *testing.T) {
 	}
 	var out strings.Builder
 	c := &typgo.Context{Logger: typgo.Logger{Stdout: &out}}
-	defer c.PatchBash([]*typgo.MockBash{})(t)
+	defer c.PatchBash([]*typgo.MockCommand{})(t)
 
 	directives := []*typgen.Directive{
 		{

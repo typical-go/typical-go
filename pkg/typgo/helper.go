@@ -12,7 +12,7 @@ func GoImports(c *Context, target string) error {
 	if err != nil {
 		return err
 	}
-	return c.Execute(&Bash{
+	return c.ExecuteCommand(&Command{
 		Name:   goimports,
 		Args:   []string{"-w", target},
 		Stderr: os.Stderr,
@@ -24,10 +24,11 @@ func InstallTool(c *Context, name, source string) (string, error) {
 	output := fmt.Sprintf("%s/bin/%s", TypicalTmp, name)
 
 	if _, err := os.Stat(output); os.IsNotExist(err) {
-		if err := c.Execute(&GoBuild{
+		cmd := &GoBuild{
 			Output:      output,
 			MainPackage: source,
-		}); err != nil {
+		}
+		if err := c.ExecuteCommand(cmd); err != nil {
 			return "", err
 		}
 	}

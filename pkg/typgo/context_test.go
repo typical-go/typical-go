@@ -13,17 +13,17 @@ func TestContext_ExecuteBash(t *testing.T) {
 		TestName    string
 		CommandLine string
 		ExpectedErr string
-		MockBashs   []*typgo.MockBash
+		MockBashs   []*typgo.MockCommand
 	}{
 		{
 			CommandLine: "some-command",
-			MockBashs: []*typgo.MockBash{
+			MockBashs: []*typgo.MockCommand{
 				{CommandLine: "some-command"},
 			},
 		},
 		{
 			CommandLine: "some-command arg1 arg2",
-			MockBashs: []*typgo.MockBash{
+			MockBashs: []*typgo.MockCommand{
 				{CommandLine: "some-command arg1 arg2"},
 			},
 		},
@@ -37,7 +37,7 @@ func TestContext_ExecuteBash(t *testing.T) {
 		t.Run(tt.TestName, func(t *testing.T) {
 			c := &typgo.Context{}
 			defer c.PatchBash(tt.MockBashs)(t)
-			err := c.ExecuteBash(tt.CommandLine)
+			err := c.ExecuteCommandLine(tt.CommandLine)
 			if tt.ExpectedErr != "" {
 				require.EqualError(t, err, tt.ExpectedErr)
 			} else {
@@ -49,10 +49,10 @@ func TestContext_ExecuteBash(t *testing.T) {
 
 func TestContext_PatchContext(t *testing.T) {
 	c := &typgo.Context{}
-	defer c.PatchBash([]*typgo.MockBash{
+	defer c.PatchBash([]*typgo.MockCommand{
 		{CommandLine: "name1 arg1", ReturnError: errors.New("some-error")},
 	})(t)
 
-	bash := &typgo.Bash{Name: "name1", Args: []string{"arg1"}}
-	require.EqualError(t, c.Execute(bash), "some-error")
+	bash := &typgo.Command{Name: "name1", Args: []string{"arg1"}}
+	require.EqualError(t, c.ExecuteCommand(bash), "some-error")
 }

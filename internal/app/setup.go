@@ -59,7 +59,7 @@ func initGoMod(c *typgo.Context) error {
 	dir := filepath.Base(pkg)
 	os.Mkdir(dir, 0777)
 	var stderr strings.Builder
-	if err := c.Execute(&typgo.Bash{
+	if err := c.ExecuteCommand(&typgo.Command{
 		Name:   "go",
 		Args:   []string{"mod", "init", pkg},
 		Stderr: &stderr,

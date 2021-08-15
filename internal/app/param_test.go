@@ -35,7 +35,7 @@ func TestGetParam_Default(t *testing.T) {
 	c := &typgo.Context{
 		Context: cliContext([]string{}),
 	}
-	defer c.PatchBash([]*typgo.MockBash{
+	defer c.PatchBash([]*typgo.MockCommand{
 		{CommandLine: "go list -m", OutputBytes: []byte("some-package")},
 	})(t)
 
@@ -55,7 +55,7 @@ func TestGetParam_Default_FailedRetrivePackage(t *testing.T) {
 	c := &typgo.Context{
 		Context: cliContext([]string{}),
 	}
-	defer c.PatchBash([]*typgo.MockBash{
+	defer c.PatchBash([]*typgo.MockCommand{
 		{
 			CommandLine: "go list -m",
 			ErrorBytes:  []byte("error-message"),

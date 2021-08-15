@@ -39,7 +39,7 @@ func (o *CrossCompiler) Release(c *Context) error {
 		os.Setenv("GOOS", goos)
 		os.Setenv("GOARC", goarch)
 
-		err := c.Execute(&typgo.GoBuild{
+		err := c.ExecuteCommand(&typgo.GoBuild{
 			Output:      output,
 			MainPackage: o.getMainPackage(c),
 			Ldflags: typgo.BuildVars{

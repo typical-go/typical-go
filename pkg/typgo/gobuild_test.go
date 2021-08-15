@@ -28,7 +28,7 @@ func TestGoBuild_Command(t *testing.T) {
 			ProjectVersion: "0.0.1",
 		},
 	}
-	defer c.PatchBash([]*typgo.MockBash{
+	defer c.PatchBash([]*typgo.MockCommand{
 		{CommandLine: "go build -ldflags \"-X github.com/typical-go/typical-go/pkg/typgo.ProjectName=some-project -X github.com/typical-go/typical-go/pkg/typgo.ProjectVersion=0.0.1\" -o bin/some-project ./cmd/some-project"},
 	})(t)
 
@@ -49,7 +49,7 @@ func TestGoBuild_Predefined(t *testing.T) {
 	c := &typgo.Context{
 		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
 	}
-	defer c.PatchBash([]*typgo.MockBash{
+	defer c.PatchBash([]*typgo.MockCommand{
 		{CommandLine: "go build -ldflags \"-X some-var=some-value\" -o some-output some-package"},
 	})(t)
 
