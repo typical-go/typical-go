@@ -5,6 +5,7 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"reflect"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -54,8 +55,8 @@ func (a *Generator) walk() []string {
 	return a.Walker.Walk()
 }
 
-func compile(paths ...string) (Directives, error) {
-	var directives Directives
+func compile(paths ...string) ([]*Directive, error) {
+	var directives []*Directive
 	fset := token.NewFileSet() // positions are relative to fset
 
 	for _, path := range paths {
@@ -69,17 +70,45 @@ func compile(paths ...string) (Directives, error) {
 			switch decl.(type) {
 			case *ast.FuncDecl:
 				declType := createFuncDecl(decl.(*ast.FuncDecl), file)
-				directives.AddDecl(file, declType)
+				directives = appendDecl(directives, file, declType)
 			case *ast.GenDecl:
 				declTypes := createGenDecl(decl.(*ast.GenDecl), file)
 				for _, declType := range declTypes {
-					directives.AddDecl(file, declType)
+					directives = appendDecl(directives, file, declType)
 				}
 			}
 		}
 	}
 
 	return directives, nil
+}
+
+func appendDecl(d []*Directive, file File, declType Type) []*Directive {
+	decl := &Decl{
+		File: file,
+		Type: declType,
+	}
+	// s.Decls = append(s.Decls, decl)
+	return append(d, retrieveAnnots(decl)...)
+}
+
+func retrieveAnnots(decl *Decl) []*Directive {
+	var annots []*Directive
+	for _, raw := range decl.GetDocs() {
+		if strings.HasPrefix(raw, "//") {
+			raw = strings.TrimSpace(raw[2:])
+		}
+		if strings.HasPrefix(raw, "@") {
+			tagName, tagAttrs := ParseRawAnnot(raw)
+			annots = append(annots, &Directive{
+				TagName:  tagName,
+				TagParam: reflect.StructTag(tagAttrs),
+				Decl:     decl,
+			})
+		}
+	}
+
+	return annots
 }
 
 // ParseRawAnnot parse raw string to annotation

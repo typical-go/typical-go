@@ -31,7 +31,7 @@ func (d *GoMock) Task() *typgo.Task {
 		},
 	}
 }
-func (d *GoMock) Process(c *typgo.Context, directives typgen.Directives) error {
+func (d *GoMock) Process(c *typgo.Context, directives []*typgen.Directive) error {
 	return d.Annotation().Process(c, directives)
 }
 
@@ -46,7 +46,7 @@ func (d *GoMock) Annotation() *typgen.Annotation {
 	}
 }
 
-func (d *GoMock) process(c *typgo.Context, directives typgen.Directives) error {
+func (d *GoMock) process(c *typgo.Context, directives []*typgen.Directive) error {
 	var mocks Mocks
 
 	for _, annot := range directives {

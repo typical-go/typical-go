@@ -12,9 +12,9 @@ type (
 		ProcessFn ProcessFn
 	}
 	Processor interface {
-		Process(*typgo.Context, Directives) error
+		Process(*typgo.Context, []*Directive) error
 	}
-	ProcessFn  func(*typgo.Context, Directives) error
+	ProcessFn  func(*typgo.Context, []*Directive) error
 	Processors []Processor
 )
 
@@ -24,7 +24,7 @@ type (
 
 var _ Processor = (*Annotation)(nil)
 
-func (a *Annotation) Process(c *typgo.Context, directives Directives) error {
+func (a *Annotation) Process(c *typgo.Context, directives []*Directive) error {
 	if a.ProcessFn == nil {
 		return errors.New("mising annotation processor")
 	}
@@ -50,7 +50,7 @@ func (a *Annotation) isAllowed(d *Directive) bool {
 
 var _ Processor = (ProcessFn)(nil)
 
-func (p ProcessFn) Process(c *typgo.Context, d Directives) error {
+func (p ProcessFn) Process(c *typgo.Context, d []*Directive) error {
 	return p(c, d)
 }
 
@@ -60,7 +60,7 @@ func (p ProcessFn) Process(c *typgo.Context, d Directives) error {
 
 var _ Processor = (Processors)(nil)
 
-func (p Processors) Process(c *typgo.Context, d Directives) error {
+func (p Processors) Process(c *typgo.Context, d []*Directive) error {
 	for _, processor := range p {
 		if err := processor.Process(c, d); err != nil {
 			return err

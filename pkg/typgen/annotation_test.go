@@ -13,7 +13,7 @@ func TestAnnotation_Process(t *testing.T) {
 	testcases := []struct {
 		TestName    string
 		Context     *typgo.Context
-		Directives  typgen.Directives
+		Directives  []*typgen.Directive
 		Annotation  *typgen.Annotation
 		ExpectedErr string
 	}{
@@ -22,21 +22,21 @@ func TestAnnotation_Process(t *testing.T) {
 			ExpectedErr: "mising annotation processor",
 		},
 		{
-			Directives: typgen.Directives{{}, {}},
+			Directives: []*typgen.Directive{{}, {}},
 			Annotation: &typgen.Annotation{
-				ProcessFn: func(c *typgo.Context, d typgen.Directives) error {
+				ProcessFn: func(c *typgo.Context, d []*typgen.Directive) error {
 					return fmt.Errorf("some-error: %d", len(d))
 				},
 			},
 			ExpectedErr: "some-error: 2",
 		},
 		{
-			Directives: typgen.Directives{{}, {}},
+			Directives: []*typgen.Directive{{}, {}},
 			Annotation: &typgen.Annotation{
 				Filter: typgen.NewFilter(func(d *typgen.Directive) bool {
 					return false
 				}),
-				ProcessFn: func(c *typgo.Context, d typgen.Directives) error {
+				ProcessFn: func(c *typgo.Context, d []*typgen.Directive) error {
 					return fmt.Errorf("some-error: %d", len(d))
 				},
 			},

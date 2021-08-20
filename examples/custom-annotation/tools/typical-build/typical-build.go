@@ -33,7 +33,7 @@ var descriptor = typgo.Descriptor{
 	},
 }
 
-func printAllAnnotation(c *typgo.Context, directives typgen.Directives) error {
+func printAllAnnotation(c *typgo.Context, directives []*typgen.Directive) error {
 	fmt.Println("Print all annotation: ")
 	for _, a := range directives {
 		fmt.Printf("TagName=%s\tName=%s\tType=%T\tParam=%s\tField1=%s\n",

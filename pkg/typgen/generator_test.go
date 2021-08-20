@@ -98,18 +98,18 @@ func TestGenerator(t *testing.T) {
 }
 
 func TestGenerator_Execute(t *testing.T) {
-	var directives typgen.Directives
+	var directives []*typgen.Directive
 	action := &typgen.Generator{
 		Walker: typgen.FilePaths{"sample_test.go"},
 		Processor: &typgen.Annotation{
-			ProcessFn: func(c *typgo.Context, d typgen.Directives) error {
+			ProcessFn: func(c *typgo.Context, d []*typgen.Directive) error {
 				directives = d
 				return nil
 			},
 		},
 	}
 	require.NoError(t, action.Execute(&typgo.Context{}))
-	require.EqualValues(t, typgen.Directives{
+	require.EqualValues(t, []*typgen.Directive{
 		{Decl: someStructDecl, TagName: "@tag1"},
 		{Decl: someStructDecl, TagName: "@tag2", TagParam: `key1:"", key2: "", key3:"value3"`},
 		{Decl: someFunctionDecl2, TagName: "@ctor"},
@@ -134,7 +134,7 @@ func TestGenerator_Error(t *testing.T) {
 			Generator: &typgen.Generator{
 				Walker: typgen.FilePaths{"sample_test.go"},
 				Processor: &typgen.Annotation{
-					ProcessFn: func(c *typgo.Context, d typgen.Directives) error {
+					ProcessFn: func(c *typgo.Context, d []*typgen.Directive) error {
 						return errors.New("some-error")
 					},
 				},

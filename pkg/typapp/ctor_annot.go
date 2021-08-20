@@ -50,7 +50,7 @@ func init() { {{if .Ctors}}{{range $c := .Ctors}}
 
 var _ typgen.Processor = (*CtorAnnot)(nil)
 
-func (a *CtorAnnot) Process(c *typgo.Context, directives typgen.Directives) error {
+func (a *CtorAnnot) Process(c *typgo.Context, directives []*typgen.Directive) error {
 	return a.Annotation().Process(c, directives)
 }
 
@@ -75,7 +75,7 @@ func (a *CtorAnnot) Annotation() *typgen.Annotation {
 	}
 }
 
-func (a *CtorAnnot) process(c *typgo.Context, directives typgen.Directives) error {
+func (a *CtorAnnot) process(c *typgo.Context, directives []*typgen.Directive) error {
 	var ctors []*Ctor
 	importAliases := typgen.NewImportAliases()
 	for _, directive := range directives {
