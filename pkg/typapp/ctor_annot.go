@@ -2,6 +2,7 @@ package typapp
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -14,35 +15,10 @@ type (
 	// CtorAnnot handle @ctor annotation
 	// e.g. `@ctor (name:"NAME")`
 	CtorAnnot struct {
-		TagName  string // By default is `@ctor`
-		Template string // By default defined in defaultCtorTemplate
-		Target   string // By default is `cfg_annotated.go`
-	}
-	// CtorTmplData template
-	CtorTmplData struct {
-		Signature typgen.Signature
-		Package   string
-		Imports   map[string]string
-		Ctors     []*Ctor
-	}
-	// Ctor is constructor model
-	Ctor struct {
-		Name string `json:"name"`
-		Def  string `json:"-"`
+		TagName string // By default is `@ctor`
+		Target  string // By default is `internal/generated/ctor/ctor.go`
 	}
 )
-
-const defaultCtorTemplate = `package {{.Package}}
-
-/* {{.Signature}}*/
-
-import ({{range $import, $name := .Imports}}
-	{{$name}} "{{$import}}"{{end}}
-)
-
-func init() { {{if .Ctors}}{{range $c := .Ctors}}
-	typapp.Provide("{{$c.Name}}", {{$c.Def}}){{end}}{{end}}
-}`
 
 //
 // CtorAnnot
@@ -61,9 +37,6 @@ func (a *CtorAnnot) Annotation() *typgen.Annotation {
 	if a.Target == "" {
 		a.Target = "internal/generated/ctor/ctor.go"
 	}
-	if a.Template == "" {
-		a.Template = defaultCtorTemplate
-	}
 
 	return &typgen.Annotation{
 		Filter: typgen.Filters{
@@ -76,28 +49,29 @@ func (a *CtorAnnot) Annotation() *typgen.Annotation {
 }
 
 func (a *CtorAnnot) process(c *typgo.Context, directives []*typgen.Directive) error {
-	var ctors []*Ctor
-	importAliases := typgen.NewImportAliases()
+	imports := tmplkit.NewImports(nil)
+	var lineCodes []fmt.Stringer
 	for _, directive := range directives {
-		alias := importAliases.Append(directive.Package())
-		ctors = append(ctors, &Ctor{
-			Name: directive.TagParam.Get("name"),
-			Def:  fmt.Sprintf("%s.%s", alias, directive.GetName()),
-		})
+		alias := imports.AppendWithAlias(directive.Package())
+		lineCodes = append(lineCodes, generateCodeForCtor(alias, directive))
 
 	}
-	importAliases.Map["github.com/typical-go/typical-go/pkg/typapp"] = ""
+	imports.Map["github.com/typical-go/typical-go/pkg/typapp"] = ""
 
 	dest := filepath.Dir(a.Target)
+	sourceCode := tmplkit.SourceCode{
+		Signature: tmplkit.Signature{TagName: a.TagName},
+		Package:   filepath.Base(dest),
+		Imports:   imports,
+		LineCodes: []fmt.Stringer{
+			tmplkit.InitFunction(lineCodes),
+		},
+	}
+
 	os.MkdirAll(dest, 0777)
 	c.Infof("Generate @ctor to %s\n", a.Target)
-	err := tmplkit.WriteFile(a.Target, a.Template, &CtorTmplData{
-		Signature: typgen.Signature{TagName: a.TagName},
-		Package:   filepath.Base(dest),
-		Imports:   importAliases.Map,
-		Ctors:     ctors,
-	})
 
+	err := ioutil.WriteFile(a.Target, []byte(sourceCode.String()), 0644)
 	if err != nil {
 		return err
 	}
@@ -105,10 +79,8 @@ func (a *CtorAnnot) process(c *typgo.Context, directives []*typgen.Directive) er
 	return nil
 }
 
-//
-// Ctor
-//
-
-func (c Ctor) String() string {
-	return fmt.Sprintf("{Name=%s Def=%s}", c.Name, c.Def)
+func generateCodeForCtor(importAlias string, d *typgen.Directive) tmplkit.LineCode {
+	name := d.TagParam.Get("name")
+	s := fmt.Sprintf("typapp.Provide(\"%s\", %s.%s)", name, importAlias, d.GetName())
+	return tmplkit.LineCode(s)
 }
