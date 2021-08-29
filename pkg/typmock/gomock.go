@@ -5,15 +5,19 @@ import (
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
-var (
-	// MockTag is tag for mock
-	MockTag = "@mock"
-)
-
 type (
 	// GoMock mock
 	GoMock struct {
 		Walker typgen.Walker
+	}
+)
+
+var (
+	DefaultMockTag    = "@mock"
+	DefaultMockFilter = typgen.Filters{
+		&typgen.TagNameFilter{DefaultMockTag},
+		&typgen.PublicFilter{},
+		&typgen.InterfaceFilter{},
 	}
 )
 
@@ -37,11 +41,7 @@ func (d *GoMock) Process(c *typgo.Context, directives []*typgen.Directive) error
 
 func (d *GoMock) Annotation() *typgen.Annotation {
 	return &typgen.Annotation{
-		Filter: typgen.Filters{
-			&typgen.TagNameFilter{MockTag},
-			&typgen.PublicFilter{},
-			&typgen.InterfaceFilter{},
-		},
+		Filter:    DefaultMockFilter,
 		ProcessFn: d.process,
 	}
 }

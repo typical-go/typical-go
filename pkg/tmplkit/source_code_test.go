@@ -30,6 +30,11 @@ func TestStringer(t *testing.T) {
 			Expected: `fmt.Println("Hello World")`,
 		},
 		{
+			TestName: "formatted line code",
+			Stringer: tmplkit.LineCodef(`fmt.Println("%s")`, "abcdefgh"),
+			Expected: `fmt.Println("abcdefgh")`,
+		},
+		{
 			TestName: "comment",
 			Stringer: tmplkit.Comment(`some comment`),
 			Expected: `// some comment`,

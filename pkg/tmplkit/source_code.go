@@ -39,6 +39,11 @@ type (
 
 func (l LineCode) String() string { return string(l) }
 
+func LineCodef(format string, a ...interface{}) fmt.Stringer {
+	s := fmt.Sprintf(format, a...)
+	return LineCode(s)
+}
+
 //
 // Comment
 //
