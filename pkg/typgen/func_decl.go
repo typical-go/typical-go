@@ -20,7 +20,7 @@ type (
 
 var _ Type = (*FuncDecl)(nil)
 
-func createFuncDecl(funcDecl *ast.FuncDecl, file File) Type {
+func CreateFuncDecl(funcDecl *ast.FuncDecl, file *File) *FuncDecl {
 	var recv, params *FieldList
 	if funcDecl.Recv != nil {
 		recv = createFuncParam(funcDecl.Recv)

@@ -12,9 +12,9 @@ import (
 
 var (
 	someStructDecl = &typgen.Decl{
-		File: typgen.File{
-			Path:    "sample_test.go",
-			Package: "typgen_test",
+		File: &typgen.File{
+			Path: "sample_test.go",
+			Name: "typgen_test",
 		},
 		Type: &typgen.StructDecl{
 			TypeDecl: typgen.TypeDecl{
@@ -43,9 +43,9 @@ var (
 	}
 
 	someFunctionDecl2 = &typgen.Decl{
-		File: typgen.File{
-			Path:    "sample_test.go",
-			Package: "typgen_test",
+		File: &typgen.File{
+			Path: "sample_test.go",
+			Name: "typgen_test",
 		},
 		Type: &typgen.FuncDecl{
 			Name:   "sampleFunction2",
@@ -58,9 +58,9 @@ var (
 	}
 
 	someInterface2Decl = &typgen.Decl{
-		File: typgen.File{
-			Path:    "sample_test.go",
-			Package: "typgen_test",
+		File: &typgen.File{
+			Path: "sample_test.go",
+			Name: "typgen_test",
 		},
 		Type: &typgen.InterfaceDecl{
 			TypeDecl: typgen.TypeDecl{
@@ -71,9 +71,9 @@ var (
 	}
 
 	someStruct2Decl = &typgen.Decl{
-		File: typgen.File{
-			Path:    "sample_test.go",
-			Package: "typgen_test",
+		File: &typgen.File{
+			Path: "sample_test.go",
+			Name: "typgen_test",
 		},
 		Type: &typgen.StructDecl{
 			TypeDecl: typgen.TypeDecl{

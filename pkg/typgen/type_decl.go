@@ -5,15 +5,7 @@ import (
 )
 
 type (
-	// InterfaceDecl interface declaration
-	InterfaceDecl struct {
-		TypeDecl
-	}
-	// StructDecl struct declaration
-	StructDecl struct {
-		TypeDecl
-		Fields []*Field
-	}
+
 	// TypeDecl type declaration
 	TypeDecl struct {
 		GenDecl
@@ -26,7 +18,7 @@ type (
 	}
 )
 
-func createGenDecl(genDecl *ast.GenDecl, file File) []Type {
+func createGenDecl(genDecl *ast.GenDecl, file *File) []Type {
 	var types []Type
 	for _, spec := range genDecl.Specs {
 		switch spec.(type) {
@@ -40,32 +32,13 @@ func createGenDecl(genDecl *ast.GenDecl, file File) []Type {
 
 			switch typeSpec.Type.(type) {
 			case *ast.InterfaceType:
-				types = append(types, createInterfaceDecl(typeDecl))
+				types = append(types, CreateInterfaceDecl(typeDecl))
 			case *ast.StructType:
-				types = append(types, createStructDecl(typeDecl, typeSpec.Type.(*ast.StructType)))
+				types = append(types, CreateStructDecl(typeDecl, typeSpec.Type.(*ast.StructType)))
 			}
 		}
 	}
 	return types
-}
-
-func createInterfaceDecl(typeDecl TypeDecl) *InterfaceDecl {
-	return &InterfaceDecl{TypeDecl: typeDecl}
-}
-
-func createStructDecl(typeDecl TypeDecl, structType *ast.StructType) *StructDecl {
-	return &StructDecl{
-		Fields:   structFields(structType),
-		TypeDecl: typeDecl,
-	}
-}
-
-func structFields(s *ast.StructType) []*Field {
-	var fields []*Field
-	for _, f := range s.Fields.List {
-		fields = append(fields, createField(f))
-	}
-	return fields
 }
 
 func docs(group *ast.CommentGroup) []string {

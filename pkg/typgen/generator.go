@@ -65,11 +65,12 @@ func compile(paths ...string) ([]*Directive, error) {
 			return nil, err
 		}
 
-		file := File{Path: path, Package: f.Name.Name}
+		file := CreateFile(path, f)
+
 		for _, decl := range f.Decls {
 			switch decl.(type) {
 			case *ast.FuncDecl:
-				declType := createFuncDecl(decl.(*ast.FuncDecl), file)
+				declType := CreateFuncDecl(decl.(*ast.FuncDecl), file)
 				directives = appendDecl(directives, file, declType)
 			case *ast.GenDecl:
 				declTypes := createGenDecl(decl.(*ast.GenDecl), file)
@@ -83,7 +84,7 @@ func compile(paths ...string) ([]*Directive, error) {
 	return directives, nil
 }
 
-func appendDecl(d []*Directive, file File, declType Type) []*Directive {
+func appendDecl(d []*Directive, file *File, declType Type) []*Directive {
 	decl := &Decl{
 		File: file,
 		Type: declType,

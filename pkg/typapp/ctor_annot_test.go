@@ -27,14 +27,14 @@ func TestCtorAnnot_Annotateß(t *testing.T) {
 			TagName: "@ctor",
 			Decl: &typgen.Decl{
 				Type: &typgen.FuncDecl{Name: "NewObject"},
-				File: typgen.File{Package: "pkg", Path: "project/pkg/file.go"},
+				File: &typgen.File{Name: "pkg", Path: "project/pkg/file.go"},
 			},
 		},
 		{
 			TagName:  "@ctor",
 			TagParam: `name:"obj2"`,
 			Decl: &typgen.Decl{
-				File: typgen.File{Package: "pkg2", Path: "project/pkg2/file.go"},
+				File: &typgen.File{Name: "pkg2", Path: "project/pkg2/file.go"},
 				Type: &typgen.FuncDecl{Name: "NewObject2"},
 			},
 		},
@@ -82,7 +82,7 @@ func TestCtorAnnot_GenerateCode(t *testing.T) {
 				TagName: "@ctor",
 				Decl: &typgen.Decl{
 					Type: &typgen.FuncDecl{Name: "NewObject"},
-					File: typgen.File{Package: "pkg", Path: "project/pkg/file.go"},
+					File: &typgen.File{Name: "pkg", Path: "project/pkg/file.go"},
 				},
 			},
 			ExpectedImports: map[string]string{
@@ -100,7 +100,7 @@ func TestCtorAnnot_GenerateCode(t *testing.T) {
 				TagParam: `name:"ctor1"`,
 				Decl: &typgen.Decl{
 					Type: &typgen.FuncDecl{Name: "NewObject"},
-					File: typgen.File{Package: "pkg", Path: "project/pkg/file.go"},
+					File: &typgen.File{Name: "pkg", Path: "project/pkg/file.go"},
 				},
 			},
 			ExpectedImports: map[string]string{
@@ -117,7 +117,7 @@ func TestCtorAnnot_GenerateCode(t *testing.T) {
 				TagName: "@ctor",
 				Decl: &typgen.Decl{
 					Type: &typgen.FuncDecl{Name: "NewObject", Recv: &typgen.FieldList{}},
-					File: typgen.File{Package: "pkg", Path: "project/pkg/file.go"},
+					File: &typgen.File{Name: "pkg", Path: "project/pkg/file.go"},
 				},
 			},
 			ExpectedImports: map[string]string{
@@ -133,6 +133,7 @@ func TestCtorAnnot_GenerateCode(t *testing.T) {
 			Directive: &typgen.Directive{
 				TagName: "@ctor",
 				Decl: &typgen.Decl{
+					File: &typgen.File{Name: "pkg", Path: "project/pkg/file.go"},
 					Type: &typgen.StructDecl{
 						TypeDecl: typgen.TypeDecl{
 							Name: "SomeStruct",
@@ -142,11 +143,9 @@ func TestCtorAnnot_GenerateCode(t *testing.T) {
 							{Names: []string{"args3"}, Type: "int64"},
 						},
 					},
-					File: typgen.File{Package: "pkg", Path: "project/pkg/file.go"},
 				},
 			},
 			ExpectedImports: map[string]string{
-				"github.com/user/project/project/pkg":         "a",
 				"github.com/typical-go/typical-go/pkg/typapp": "",
 			},
 			ExpectedInitFunc: []string{

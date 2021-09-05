@@ -56,11 +56,7 @@ func (a *CtorAnnot) Annotation() *typgen.Annotation {
 }
 
 func (a *CtorAnnot) appendImport(pkg string) string {
-	if a.imports == nil {
-		a.imports = tmplkit.NewImports(nil)
-		a.imports.Map["github.com/typical-go/typical-go/pkg/typapp"] = ""
-	}
-	return a.imports.AppendWithAlias(pkg)
+	return a.Imports().AppendWithAlias(pkg)
 }
 
 func (a *CtorAnnot) process(c *typgo.Context, directives []*typgen.Directive) error {
@@ -74,7 +70,7 @@ func (a *CtorAnnot) process(c *typgo.Context, directives []*typgen.Directive) er
 	sourceCode := tmplkit.SourceCode{
 		Signature: tmplkit.Signature{},
 		Package:   filepath.Base(dest),
-		Imports:   a.imports,
+		Imports:   a.Imports(),
 		LineCodes: []fmt.Stringer{
 			tmplkit.InitFunction(a.initFunc),
 		},
@@ -92,21 +88,13 @@ func (a *CtorAnnot) process(c *typgo.Context, directives []*typgen.Directive) er
 }
 
 func (a *CtorAnnot) GenerateCode(c *typgo.Context, d *typgen.Directive) error {
-	alias := a.appendImport(d.Package())
-	name := d.TagParam.Get("name")
 
 	var lines []string
 
 	switch d.Type.(type) {
 	case *typgen.FuncDecl:
-		funcDecl := d.Type.(*typgen.FuncDecl)
-		if !funcDecl.IsMethod() {
-			lines = append(lines, fmt.Sprintf(`typapp.Provide("%s", %s.%s)`, name, alias, d.GetName()))
-		} else {
-			lines = append(lines, fmt.Sprintf("// Method '%s' is not supported", d.GetName()))
-		}
+		lines = append(lines, a.generateCtorForFunc(d))
 	case *typgen.StructDecl:
-		// TODO:
 		lines = append(lines, "// TODO")
 	default:
 		lines = append(lines, fmt.Sprintf("// '%s' is not supported", d.GetName()))
@@ -118,10 +106,27 @@ func (a *CtorAnnot) GenerateCode(c *typgo.Context, d *typgen.Directive) error {
 	return nil
 }
 
+func (a *CtorAnnot) generateCtorForFunc(d *typgen.Directive) string {
+	currPackagePath := fmt.Sprintf("%s/%s", typgo.ProjectPkg, filepath.Dir(d.File.Path))
+	alias := a.appendImport(currPackagePath)
+
+	funcDecl := d.Type.(*typgen.FuncDecl)
+
+	name := d.TagParam.Get("name")
+	if !funcDecl.IsMethod() {
+		return fmt.Sprintf(`typapp.Provide("%s", %s.%s)`, name, alias, d.GetName())
+	}
+	return fmt.Sprintf("// Method '%s' is not supported", d.GetName())
+}
+
 func (a *CtorAnnot) InitFunc() []fmt.Stringer {
 	return a.initFunc
 }
 
 func (a *CtorAnnot) Imports() *tmplkit.Imports {
+	if a.imports == nil {
+		a.imports = tmplkit.NewImports(nil)
+		a.imports.Map["github.com/typical-go/typical-go/pkg/typapp"] = ""
+	}
 	return a.imports
 }

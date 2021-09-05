@@ -1,11 +1,7 @@
 package typgen
 
 import (
-	"fmt"
-	"path/filepath"
 	"reflect"
-
-	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 type (
@@ -18,18 +14,13 @@ type (
 	// Directives []*Directiveß
 	// Decl stand of declaration
 	Decl struct {
-		File
+		File *File
 		Type
 	}
 	// Type declaratio type
 	Type interface {
 		GetName() string
 		GetDocs() []string
-	}
-	// File information
-	File struct {
-		Path    string
-		Package string
 	}
 )
 
@@ -39,5 +30,15 @@ type (
 
 // Package of annotation
 func (d *Directive) Package() string {
-	return fmt.Sprintf("%s/%s", typgo.ProjectPkg, filepath.Dir(d.Path))
+	if d.Decl != nil && d.Decl.File != nil {
+		return d.Decl.File.Name
+	}
+	return ""
+}
+
+func (d *Directive) Path() string {
+	if d.Decl != nil && d.Decl.File != nil {
+		return d.Decl.File.Path
+	}
+	return ""
 }

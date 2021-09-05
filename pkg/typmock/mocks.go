@@ -45,11 +45,11 @@ func MockGen(c *typgo.Context, destPkg, dest, srcPkg, src string) error {
 }
 
 // CreateMock to create mock
-func CreateMock(annot *typgen.Directive) *Mock {
-	dir := filepath.Dir(annot.Decl.Path)
+func CreateMock(d *typgen.Directive) *Mock {
+	dir := filepath.Dir(d.Path())
 	target := GenTarget(dir)
-	mockPkg := fmt.Sprintf("%s_mock", annot.Decl.Package)
-	source := annot.GetName()
+	mockPkg := fmt.Sprintf("%s_mock", d.Decl.File.Name) // TODO:
+	source := d.GetName()
 
 	return &Mock{
 		Pkg:     fmt.Sprintf("%s/%s", typgo.ProjectPkg, dir),
