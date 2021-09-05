@@ -66,7 +66,7 @@ func (t TagNameFilter) IsAllowed(d *Directive) bool {
 var _ Filter = (*FuncFilter)(nil)
 
 func (*FuncFilter) IsAllowed(d *Directive) bool {
-	funcDecl, ok := d.Type.(*FuncDecl)
+	funcDecl, ok := d.Type.(*Function)
 	return ok && !funcDecl.IsMethod()
 }
 
@@ -77,7 +77,7 @@ func (*FuncFilter) IsAllowed(d *Directive) bool {
 var _ Filter = (*StructFilter)(nil)
 
 func (*StructFilter) IsAllowed(d *Directive) bool {
-	_, ok := d.Type.(*StructDecl)
+	_, ok := d.Type.(*Struct)
 	return ok
 }
 
@@ -88,7 +88,7 @@ func (*StructFilter) IsAllowed(d *Directive) bool {
 var _ Filter = (*InterfaceFilter)(nil)
 
 func (*InterfaceFilter) IsAllowed(d *Directive) bool {
-	_, ok := d.Type.(*InterfaceDecl)
+	_, ok := d.Type.(*Interface)
 	return ok
 }
 

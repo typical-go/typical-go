@@ -92,9 +92,9 @@ func (a *CtorAnnot) GenerateCode(c *typgo.Context, d *typgen.Directive) error {
 	var lines []string
 
 	switch d.Type.(type) {
-	case *typgen.FuncDecl:
+	case *typgen.Function:
 		lines = append(lines, a.generateCtorForFunc(d))
-	case *typgen.StructDecl:
+	case *typgen.Struct:
 		lines = append(lines, "// TODO")
 	default:
 		lines = append(lines, fmt.Sprintf("// '%s' is not supported", d.GetName()))
@@ -110,7 +110,7 @@ func (a *CtorAnnot) generateCtorForFunc(d *typgen.Directive) string {
 	currPackagePath := fmt.Sprintf("%s/%s", typgo.ProjectPkg, filepath.Dir(d.File.Path))
 	alias := a.appendImport(currPackagePath)
 
-	funcDecl := d.Type.(*typgen.FuncDecl)
+	funcDecl := d.Type.(*typgen.Function)
 
 	name := d.TagParam.Get("name")
 	if !funcDecl.IsMethod() {

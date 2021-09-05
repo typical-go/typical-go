@@ -13,6 +13,10 @@ type (
 		Type  string
 		reflect.StructTag
 	}
+	// FieldList function parameter
+	FieldList struct {
+		List []*Field
+	}
 )
 
 func createField(f *ast.Field) *Field {
@@ -37,6 +41,16 @@ func createField(f *ast.Field) *Field {
 		StructTag: structTag,
 	}
 }
+
+// func createFuncParam(l *ast.FieldList) *FieldList {
+// 	var list []*Field
+// 	if l != nil {
+// 		for _, f := range l.List {
+// 			list = append(list, createField(f))
+// 		}
+// 	}
+// 	return &FieldList{List: list}
+// }
 
 // StructTag create struct tag
 func StructTag(tag *ast.BasicLit) reflect.StructTag {

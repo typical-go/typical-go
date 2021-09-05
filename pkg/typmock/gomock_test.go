@@ -35,7 +35,7 @@ func TestAnnotate_MockgenError(t *testing.T) {
 			TagName: "@mock",
 			Decl: &typgen.Decl{
 				File: &typgen.File{Name: "mypkg", Path: "parent/path/some_interface.go"},
-				Type: &typgen.InterfaceDecl{TypeDecl: typgen.TypeDecl{Name: "SomeInterface"}},
+				Type: &typgen.Interface{TypeDecl: typgen.TypeDecl{Name: "SomeInterface"}},
 			},
 		},
 	}

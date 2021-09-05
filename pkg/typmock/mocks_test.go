@@ -21,13 +21,8 @@ func TestCreateMock(t *testing.T) {
 		{
 			annot: &typgen.Directive{
 				Decl: &typgen.Decl{
-					File: &typgen.File{
-						Name: "somePkg",
-						Path: "path/folder/source.go",
-					},
-					Type: &typgen.InterfaceDecl{
-						TypeDecl: typgen.TypeDecl{Name: "SomeInterface"},
-					},
+					File: &typgen.File{Name: "somePkg", Path: "path/folder/source.go"},
+					Type: &typgen.Interface{TypeDecl: typgen.TypeDecl{Name: "SomeInterface"}},
 				},
 				TagName: "mock",
 			},

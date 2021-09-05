@@ -26,7 +26,7 @@ func TestCtorAnnot_Annotateß(t *testing.T) {
 		{
 			TagName: "@ctor",
 			Decl: &typgen.Decl{
-				Type: &typgen.FuncDecl{Name: "NewObject"},
+				Type: &typgen.Function{Name: "NewObject"},
 				File: &typgen.File{Name: "pkg", Path: "project/pkg/file.go"},
 			},
 		},
@@ -35,7 +35,7 @@ func TestCtorAnnot_Annotateß(t *testing.T) {
 			TagParam: `name:"obj2"`,
 			Decl: &typgen.Decl{
 				File: &typgen.File{Name: "pkg2", Path: "project/pkg2/file.go"},
-				Type: &typgen.FuncDecl{Name: "NewObject2"},
+				Type: &typgen.Function{Name: "NewObject2"},
 			},
 		},
 	}
@@ -81,7 +81,7 @@ func TestCtorAnnot_GenerateCode(t *testing.T) {
 			Directive: &typgen.Directive{
 				TagName: "@ctor",
 				Decl: &typgen.Decl{
-					Type: &typgen.FuncDecl{Name: "NewObject"},
+					Type: &typgen.Function{Name: "NewObject"},
 					File: &typgen.File{Name: "pkg", Path: "project/pkg/file.go"},
 				},
 			},
@@ -99,7 +99,7 @@ func TestCtorAnnot_GenerateCode(t *testing.T) {
 				TagName:  "@ctor",
 				TagParam: `name:"ctor1"`,
 				Decl: &typgen.Decl{
-					Type: &typgen.FuncDecl{Name: "NewObject"},
+					Type: &typgen.Function{Name: "NewObject"},
 					File: &typgen.File{Name: "pkg", Path: "project/pkg/file.go"},
 				},
 			},
@@ -116,7 +116,7 @@ func TestCtorAnnot_GenerateCode(t *testing.T) {
 			Directive: &typgen.Directive{
 				TagName: "@ctor",
 				Decl: &typgen.Decl{
-					Type: &typgen.FuncDecl{Name: "NewObject", Recv: &typgen.FieldList{}},
+					Type: &typgen.Function{Name: "NewObject", Recv: []*typgen.Field{{}}},
 					File: &typgen.File{Name: "pkg", Path: "project/pkg/file.go"},
 				},
 			},
@@ -134,7 +134,7 @@ func TestCtorAnnot_GenerateCode(t *testing.T) {
 				TagName: "@ctor",
 				Decl: &typgen.Decl{
 					File: &typgen.File{Name: "pkg", Path: "project/pkg/file.go"},
-					Type: &typgen.StructDecl{
+					Type: &typgen.Struct{
 						TypeDecl: typgen.TypeDecl{
 							Name: "SomeStruct",
 						},

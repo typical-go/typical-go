@@ -16,7 +16,7 @@ func TestFilter(t *testing.T) {
 	}{
 		{
 			TestName:  "NewFilter",
-			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.FuncDecl{Name: "someFunc"}}},
+			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.Function{Name: "someFunc"}}},
 			Filter:    typgen.NewFilter(func(d *typgen.Directive) bool { return true }),
 			Expected:  true,
 		},
@@ -34,31 +34,31 @@ func TestFilter(t *testing.T) {
 		},
 		{
 			TestName:  "NewFilter",
-			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.FuncDecl{Name: "someFunc"}}},
+			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.Function{Name: "someFunc"}}},
 			Filter:    typgen.NewFilter(func(d *typgen.Directive) bool { return true }),
 			Expected:  true,
 		},
 		{
 			TestName:  "PublicFilter: function name start with lower case",
-			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.FuncDecl{Name: "someFunc"}}},
+			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.Function{Name: "someFunc"}}},
 			Filter:    &typgen.PublicFilter{},
 			Expected:  false,
 		},
 		{
 			TestName:  "PublicFilter: function name start with upper case",
-			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.FuncDecl{Name: "SomeFunc"}}},
+			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.Function{Name: "SomeFunc"}}},
 			Filter:    &typgen.PublicFilter{},
 			Expected:  true,
 		},
 		{
 			TestName:  "FuncFilter: type is function",
-			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.FuncDecl{Name: "SomeFunc"}}},
+			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.Function{Name: "SomeFunc"}}},
 			Filter:    &typgen.FuncFilter{},
 			Expected:  true,
 		},
 		{
 			TestName:  "FuncFilter: type is interface",
-			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.InterfaceDecl{}}},
+			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.Interface{}}},
 			Filter:    &typgen.FuncFilter{},
 			Expected:  false,
 		},
@@ -66,7 +66,7 @@ func TestFilter(t *testing.T) {
 			TestName: "FuncFilter: type is method",
 			Directive: &typgen.Directive{
 				Decl: &typgen.Decl{
-					Type: &typgen.FuncDecl{Name: "SomeFunc", Recv: &typgen.FieldList{}},
+					Type: &typgen.Function{Name: "SomeFunc", Recv: []*typgen.Field{{}}},
 				},
 			},
 			Filter:   &typgen.FuncFilter{},
@@ -74,25 +74,25 @@ func TestFilter(t *testing.T) {
 		},
 		{
 			TestName:  "InterfaceFilter: type is interface",
-			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.InterfaceDecl{}}},
+			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.Interface{}}},
 			Filter:    &typgen.InterfaceFilter{},
 			Expected:  true,
 		},
 		{
 			TestName:  "InterfaceFilter: type is function",
-			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.FuncDecl{Name: "SomeFunc"}}},
+			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.Function{Name: "SomeFunc"}}},
 			Filter:    &typgen.InterfaceFilter{},
 			Expected:  false,
 		},
 		{
 			TestName:  "StructFilter: type is interface",
-			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.StructDecl{}}},
+			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.Struct{}}},
 			Filter:    &typgen.StructFilter{},
 			Expected:  true,
 		},
 		{
 			TestName:  "StructFilter: type is function",
-			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.FuncDecl{Name: "SomeFunc"}}},
+			Directive: &typgen.Directive{Decl: &typgen.Decl{Type: &typgen.Function{Name: "SomeFunc"}}},
 			Filter:    &typgen.StructFilter{},
 			Expected:  false,
 		},

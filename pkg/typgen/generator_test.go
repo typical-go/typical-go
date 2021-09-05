@@ -16,7 +16,7 @@ var (
 			Path: "sample_test.go",
 			Name: "typgen_test",
 		},
-		Type: &typgen.StructDecl{
+		Type: &typgen.Struct{
 			TypeDecl: typgen.TypeDecl{
 				GenDecl: typgen.GenDecl{
 					Docs: []string{
@@ -47,9 +47,8 @@ var (
 			Path: "sample_test.go",
 			Name: "typgen_test",
 		},
-		Type: &typgen.FuncDecl{
-			Name:   "sampleFunction2",
-			Params: &typgen.FieldList{},
+		Type: &typgen.Function{
+			Name: "sampleFunction2",
 			Docs: []string{
 				"// GetWriter to get writer to greet the world",
 				"// @ctor",
@@ -62,7 +61,7 @@ var (
 			Path: "sample_test.go",
 			Name: "typgen_test",
 		},
-		Type: &typgen.InterfaceDecl{
+		Type: &typgen.Interface{
 			TypeDecl: typgen.TypeDecl{
 				Name: "sampleInterface2",
 				Docs: []string{"// @tag3"},
@@ -75,7 +74,7 @@ var (
 			Path: "sample_test.go",
 			Name: "typgen_test",
 		},
-		Type: &typgen.StructDecl{
+		Type: &typgen.Struct{
 			TypeDecl: typgen.TypeDecl{
 				Name: "sampleStruct2",
 				Docs: []string{
