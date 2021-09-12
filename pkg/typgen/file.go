@@ -18,6 +18,8 @@ type (
 	}
 )
 
+var _ SourceCoder = (*File)(nil)
+
 func CreateFile(path string, f *ast.File) *File {
 	var imports []*Import
 	for _, i := range f.Imports {
@@ -61,6 +63,5 @@ func (f *File) SourceCode() string {
 		b.WriteString("\n")
 	}
 	b.WriteString(")")
-	b.WriteString("\n")
 	return b.String()
 }

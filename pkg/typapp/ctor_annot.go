@@ -2,11 +2,9 @@ package typapp
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
-	"github.com/typical-go/typical-go/pkg/tmplkit"
 	"github.com/typical-go/typical-go/pkg/typgen"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
@@ -15,10 +13,10 @@ type (
 	// CtorAnnot handle @ctor annotation
 	// e.g. `@ctor (name:"NAME")`
 	CtorAnnot struct {
-		Target   string        // By default is `internal/generated/ctor/ctor.go`
-		Filter   typgen.Filter // By default is annotated by `@ctor` and has public acces
-		imports  *tmplkit.Imports
-		initFunc []fmt.Stringer
+		Target         string        // By default is `internal/generated/ctor/ctor.go`
+		Filter         typgen.Filter // By default is annotated by `@ctor` and has public acces
+		aliasGenerator *typgen.AliasGenerator
+		initLines      []string
 	}
 )
 
@@ -51,64 +49,50 @@ func (a *CtorAnnot) Annotation() *typgen.Annotation {
 
 	return &typgen.Annotation{
 		Filter:    a.Filter,
-		ProcessFn: a.process,
+		ProcessFn: a.GenerateCode,
 	}
 }
 
-func (a *CtorAnnot) appendImport(pkg string) string {
-	return a.Imports().AppendWithAlias(pkg)
+func (a *CtorAnnot) generateAlias(pkg string) string {
+	return a.AliasGenerator().Generate(pkg)
 }
 
-func (a *CtorAnnot) process(c *typgo.Context, directives []*typgen.Directive) error {
+func (a *CtorAnnot) GenerateCode(c *typgo.Context, directives []*typgen.Directive) error {
 	for _, d := range directives {
-		if err := a.GenerateCode(c, d); err != nil {
-			return err
+		switch d.Type.(type) {
+		case *typgen.Function:
+			a.initLines = append(a.initLines, a.generateCodeForFunc(d))
+		case *typgen.Struct:
+			a.initLines = append(a.initLines, a.generateCodeForStruct(d))
+		default:
+			a.initLines = append(a.initLines, a.unsupportedType(d))
 		}
 	}
 
 	dest := filepath.Dir(a.Target)
-	sourceCode := tmplkit.SourceCode{
-		Signature: tmplkit.Signature{},
-		Package:   filepath.Base(dest),
-		Imports:   a.Imports(),
-		LineCodes: []fmt.Stringer{
-			tmplkit.InitFunction(a.initFunc),
-		},
-	}
 
 	os.MkdirAll(dest, 0777)
 	c.Infof("Generate @ctor to %s\n", a.Target)
 
-	err := ioutil.WriteFile(a.Target, []byte(sourceCode.String()), 0644)
-	if err != nil {
-		return err
-	}
+	err := typgen.WriteSourceCode(a.Target,
+		&typgen.File{
+			Name:   filepath.Base(dest),
+			Import: a.AliasGenerator().Imports(),
+		},
+		typgen.Comment("DO NOT EDIT. Code-generated file."),
+		&typgen.Function{
+			Name: "init",
+			Body: a.initLines,
+		},
+	)
+
 	typgo.GoImports(c, a.Target)
-	return nil
+	return err
 }
 
-func (a *CtorAnnot) GenerateCode(c *typgo.Context, d *typgen.Directive) error {
-
-	var lines []string
-
-	switch d.Type.(type) {
-	case *typgen.Function:
-		lines = append(lines, a.generateCtorForFunc(d))
-	case *typgen.Struct:
-		lines = append(lines, "// TODO")
-	default:
-		lines = append(lines, fmt.Sprintf("// '%s' is not supported", d.GetName()))
-	}
-
-	for _, line := range lines {
-		a.initFunc = append(a.initFunc, tmplkit.LineCode(line))
-	}
-	return nil
-}
-
-func (a *CtorAnnot) generateCtorForFunc(d *typgen.Directive) string {
+func (a *CtorAnnot) generateCodeForFunc(d *typgen.Directive) string {
 	currPackagePath := fmt.Sprintf("%s/%s", typgo.ProjectPkg, filepath.Dir(d.File.Path))
-	alias := a.appendImport(currPackagePath)
+	alias := a.generateAlias(currPackagePath)
 
 	funcDecl := d.Type.(*typgen.Function)
 
@@ -119,14 +103,18 @@ func (a *CtorAnnot) generateCtorForFunc(d *typgen.Directive) string {
 	return fmt.Sprintf("// Method '%s' is not supported", d.GetName())
 }
 
-func (a *CtorAnnot) InitFunc() []fmt.Stringer {
-	return a.initFunc
+func (a *CtorAnnot) generateCodeForStruct(d *typgen.Directive) string {
+	return "// TODO"
 }
 
-func (a *CtorAnnot) Imports() *tmplkit.Imports {
-	if a.imports == nil {
-		a.imports = tmplkit.NewImports(nil)
-		a.imports.Map["github.com/typical-go/typical-go/pkg/typapp"] = ""
+func (a *CtorAnnot) unsupportedType(d *typgen.Directive) string {
+	return fmt.Sprintf("// '%s' is not supported", d.GetName())
+}
+
+func (a *CtorAnnot) AliasGenerator() *typgen.AliasGenerator {
+	if a.aliasGenerator == nil {
+		a.aliasGenerator = typgen.NewAliasGenerator(nil)
+		a.aliasGenerator.Map["github.com/typical-go/typical-go/pkg/typapp"] = ""
 	}
-	return a.imports
+	return a.aliasGenerator
 }

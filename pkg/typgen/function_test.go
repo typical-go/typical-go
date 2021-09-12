@@ -49,8 +49,7 @@ func TestFunction_SourceCode(t *testing.T) {
 				Name: "someFunc",
 			},
 			Expected: `func someFunc(){
-}
-`,
+}`,
 		},
 		{
 			Function: &typgen.Function{
@@ -59,14 +58,17 @@ func TestFunction_SourceCode(t *testing.T) {
 					{Names: []string{"arg1", "arg2"}, Type: "string"},
 					{Names: []string{"arg3"}, Type: "int64"},
 				},
+				Body: []string{
+					`fmt.Println("hello world")`,
+				},
 				Returns: []*typgen.Field{
 					{Type: "string"},
 					{Type: "error"},
 				},
 			},
 			Expected: `func someFunc(arg1,arg2 string,arg3 int64)( string, error){
-}
-`,
+	fmt.Println("hello world")
+}`,
 		},
 	}
 	for _, tt := range testCases {

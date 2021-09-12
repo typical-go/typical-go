@@ -26,8 +26,7 @@ func TestFile_SourceCode(t *testing.T) {
 import (
 	"fmt"
 	a "github.com/typical-go/typical-go"
-)
-`,
+)`,
 		},
 	}
 	for _, tt := range testCases {

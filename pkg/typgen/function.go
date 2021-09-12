@@ -18,6 +18,7 @@ type (
 )
 
 var _ Type = (*Function)(nil)
+var _ SourceCoder = (*Function)(nil)
 
 func CreateFuncDecl(funcDecl *ast.FuncDecl, file *File) *Function {
 	var recv, params []*Field
@@ -46,10 +47,6 @@ func CreateFuncDecl(funcDecl *ast.FuncDecl, file *File) *Function {
 		Params: params,
 	}
 }
-
-//
-// FuncDecl
-//
 
 // GetName of declaration
 func (f *Function) GetName() string {
@@ -88,7 +85,7 @@ func (f *Function) SourceCode() string {
 		o.WriteString(s)
 		o.WriteString("\n")
 	}
-	o.WriteString("}\n")
+	o.WriteString("}")
 	return o.String()
 }
 
