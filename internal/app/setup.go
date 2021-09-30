@@ -192,7 +192,7 @@ var descriptor = typgo.Descriptor{
 	Tasks: []typgo.Tasker{
 		// generate
 		&typgen.Generator{
-			Processor: typgen.Processors{
+			Annotations: []typgen.Annotation{
 				&typapp.CtorAnnot{},
 			},
 		},

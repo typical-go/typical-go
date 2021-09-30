@@ -13,8 +13,7 @@ type (
 	// CtorAnnot handle @ctor annotation
 	// e.g. `@ctor (name:"NAME")`
 	CtorAnnot struct {
-		Target         string        // By default is `internal/generated/ctor/ctor.go`
-		Filter         typgen.Filter // By default is annotated by `@ctor` and has public acces
+		Target         string // By default is `internal/generated/ctor/ctor.go`
 		aliasGenerator *typgen.AliasGenerator
 		initLines      []string
 	}
@@ -22,43 +21,25 @@ type (
 
 var (
 	DefaultCtorTag    = "@ctor"
-	DefaultCtorFilter = typgen.Filters{
-		&typgen.TagNameFilter{DefaultCtorTag},
-		&typgen.PublicFilter{},
-	}
 	DefaultCtorTarget = "internal/generated/ctor/ctor.go"
+
+	_ typgen.Annotation = (*CtorAnnot)(nil)
 )
 
-//
-// CtorAnnot
-//
-
-var _ typgen.Processor = (*CtorAnnot)(nil)
-
-func (a *CtorAnnot) Process(c *typgo.Context, directives []*typgen.Directive) error {
-	return a.Annotation().Process(c, directives)
+func (a *CtorAnnot) TagName() string {
+	return DefaultCtorTag
 }
 
-func (a *CtorAnnot) Annotation() *typgen.Annotation {
-	if a.Filter == nil {
-		a.Filter = DefaultCtorFilter
-	}
-	if a.Target == "" {
-		a.Target = DefaultCtorTarget
-	}
-
-	return &typgen.Annotation{
-		Filter:    a.Filter,
-		ProcessFn: a.GenerateCode,
-	}
+func (a *CtorAnnot) IsAllowed(d *typgen.Directive) bool {
+	return typgen.IsPublic(d)
 }
 
 func (a *CtorAnnot) generateAlias(pkg string) string {
 	return a.AliasGenerator().Generate(pkg)
 }
 
-func (a *CtorAnnot) GenerateCode(c *typgo.Context, directives []*typgen.Directive) error {
-	for _, d := range directives {
+func (a *CtorAnnot) Process(c *typgen.Context) error {
+	for _, d := range c.Dirs {
 		switch d.Type.(type) {
 		case *typgen.Function:
 			a.initLines = append(a.initLines, a.generateCodeForFunc(d))
@@ -67,6 +48,10 @@ func (a *CtorAnnot) GenerateCode(c *typgo.Context, directives []*typgen.Directiv
 		default:
 			a.initLines = append(a.initLines, a.unsupportedType(d))
 		}
+	}
+
+	if a.Target == "" {
+		a.Target = DefaultCtorTarget
 	}
 
 	dest := filepath.Dir(a.Target)
@@ -86,7 +71,7 @@ func (a *CtorAnnot) GenerateCode(c *typgo.Context, directives []*typgen.Directiv
 		},
 	)
 
-	typgo.GoImports(c, a.Target)
+	typgo.GoImports(c.Context, a.Target)
 	return err
 }
 

@@ -12,7 +12,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
-func TestCtorAnnot_Annotateß(t *testing.T) {
+func TestCtorAnnot_Annotate(t *testing.T) {
 	typgo.ProjectPkg = "github.com/user/project"
 
 	defer os.RemoveAll("internal")
@@ -22,25 +22,28 @@ func TestCtorAnnot_Annotateß(t *testing.T) {
 	c := &typgo.Context{Logger: typgo.Logger{Stdout: &out}}
 	defer c.PatchBash([]*typgo.MockCommand{})(t)
 
-	directives := []*typgen.Directive{
-		{
-			TagName: "@ctor",
-			Decl: &typgen.Decl{
-				Type: &typgen.Function{Name: "NewObject"},
-				File: &typgen.File{Name: "pkg", Path: "project/pkg/file.go"},
+	err := ctorAnnot.Process(&typgen.Context{
+		Context: c,
+		Dirs: []*typgen.Directive{
+			{
+				TagName: "@ctor",
+				Decl: &typgen.Decl{
+					Type: &typgen.Function{Name: "NewObject"},
+					File: &typgen.File{Name: "pkg", Path: "project/pkg/file.go"},
+				},
+			},
+			{
+				TagName:  "@ctor",
+				TagParam: `name:"obj2"`,
+				Decl: &typgen.Decl{
+					File: &typgen.File{Name: "pkg2", Path: "project/pkg2/file.go"},
+					Type: &typgen.Function{Name: "NewObject2"},
+				},
 			},
 		},
-		{
-			TagName:  "@ctor",
-			TagParam: `name:"obj2"`,
-			Decl: &typgen.Decl{
-				File: &typgen.File{Name: "pkg2", Path: "project/pkg2/file.go"},
-				Type: &typgen.Function{Name: "NewObject2"},
-			},
-		},
-	}
+	})
 
-	require.NoError(t, ctorAnnot.Process(c, directives))
+	require.NoError(t, err)
 
 	b, _ := ioutil.ReadFile("internal/generated/ctor/ctor.go")
 	require.Equal(t, `package ctor

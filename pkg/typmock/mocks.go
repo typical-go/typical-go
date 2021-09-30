@@ -11,7 +11,7 @@ import (
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
-const DefaultParent = "internal/generated/mock"
+const DefaultParent = "internal/generated"
 
 type (
 	// Mocks is art of mocking
@@ -46,30 +46,21 @@ func MockGen(c *typgo.Context, destPkg, dest, srcPkg, src string) error {
 
 // CreateMock to create mock
 func CreateMock(d *typgen.Directive) *Mock {
-	dir := filepath.Dir(d.Path())
-	target := GenTarget(dir)
-	mockPkg := fmt.Sprintf("%s_mock", d.Decl.File.Name) // TODO:
 	source := d.GetName()
 
 	return &Mock{
-		Pkg:     fmt.Sprintf("%s/%s", typgo.ProjectPkg, dir),
+		Pkg:     d.PackagePath(),
 		Source:  source,
-		Dest:    fmt.Sprintf("%s/%s/%s.go", target, mockPkg, strcase.ToSnake(source)),
-		MockPkg: mockPkg,
+		Dest:    fmt.Sprintf("%s/%s.go", GeneratedDir(d, "mock"), strcase.ToSnake(source)),
+		MockPkg: d.Package() + "_mock",
 	}
 }
 
-func GenTarget(dir string) string {
+func GeneratedDir(d *typgen.Directive, suffix string) string {
+	dir := filepath.Dir(d.Path())
 	if dir == "." {
 		return DefaultParent
 	}
-	target := filepath.Dir(dir)
-	var words []string
-	for _, word := range strings.Split(target, "/") {
-		if word != "internal" {
-			words = append(words, word)
-		}
-	}
-	words = append(strings.Split(DefaultParent, "/"), words...)
-	return strings.Join(words, "/")
+	dir = strings.ReplaceAll(dir, "internal/", "")
+	return DefaultParent + "/" + dir + "_" + suffix
 }

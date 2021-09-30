@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/typical-go/typical-go/examples/typmock-sample/internal/app"
-	"github.com/typical-go/typical-go/examples/typmock-sample/internal/greeter"
+	"github.com/typical-go/typical-go/examples/typmock-sample/internal/app/greeter"
 )
 
 func main() {

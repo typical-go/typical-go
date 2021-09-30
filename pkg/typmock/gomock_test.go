@@ -30,16 +30,6 @@ func TestAnnotate_MockgenError(t *testing.T) {
 	typgo.TypicalTmp = ".typical-tmp"
 	defer func() { typgo.TypicalTmp = "" }()
 
-	directives := []*typgen.Directive{
-		{
-			TagName: "@mock",
-			Decl: &typgen.Decl{
-				File: &typgen.File{Name: "mypkg", Path: "parent/path/some_interface.go"},
-				Type: &typgen.Interface{TypeDecl: typgen.TypeDecl{Name: "SomeInterface"}},
-			},
-		},
-	}
-
 	var out strings.Builder
 	c := &typgo.Context{
 		Context:    cli.NewContext(nil, &flag.FlagSet{}, nil),
@@ -48,10 +38,45 @@ func TestAnnotate_MockgenError(t *testing.T) {
 	}
 	defer c.PatchBash([]*typgo.MockCommand{
 		{CommandLine: "go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen"},
-		{CommandLine: ".typical-tmp/bin/mockgen -destination internal/generated/mock/parent/mypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface", ReturnError: errors.New("some-error")},
+		{CommandLine: ".typical-tmp/bin/mockgen -destination internal/generated/parent/mypkg_mock/some_interface.go -package mypkg_mock /parent/mypkg SomeInterface", ReturnError: errors.New("some-error")},
 	})(t)
 
 	gomock := &typmock.GoMock{}
-	require.NoError(t, gomock.Process(c, directives))
-	require.Equal(t, "> go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen\n> .typical-tmp/bin/mockgen -destination internal/generated/mock/parent/mypkg_mock/some_interface.go -package mypkg_mock /parent/path SomeInterface\n> Fail to mock '/parent/path': some-error\n", out.String())
+	require.NoError(t, gomock.Process(&typgen.Context{
+		Context: c,
+		Dirs: []*typgen.Directive{
+			{
+				TagName: "@mock",
+				Decl: &typgen.Decl{
+					File: &typgen.File{Name: "mypkg", Path: "parent/mypkg/some_interface.go"},
+					Type: &typgen.Interface{TypeDecl: typgen.TypeDecl{Name: "SomeInterface"}},
+				},
+			},
+		},
+	}))
+	require.Equal(t, `> go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen
+> .typical-tmp/bin/mockgen -destination internal/generated/parent/mypkg_mock/some_interface.go -package mypkg_mock /parent/mypkg SomeInterface
+> Fail to mock '/parent/mypkg': some-error
+`, out.String())
+}
+
+func TestGoMock(t *testing.T) {
+	gomock := &typmock.GoMock{}
+	require.Equal(t, "@mock", gomock.TagName())
+	require.True(t, gomock.IsAllowed(&typgen.Directive{
+		Decl: &typgen.Decl{
+			Type: &typgen.Interface{
+				TypeDecl: typgen.TypeDecl{
+					Name: "SomeInterface",
+				},
+			},
+		},
+	}))
+	require.Equal(t, &typgo.Task{
+		Name:   "mock",
+		Usage:  "Generate mock class",
+		Action: gomock,
+	}, gomock.Task())
+
+	require.EqualError(t, gomock.Execute(nil), "walker couldn't find any filepath")
 }

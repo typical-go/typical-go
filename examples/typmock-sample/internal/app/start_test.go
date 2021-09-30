@@ -7,7 +7,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/examples/typmock-sample/internal/app"
-	"github.com/typical-go/typical-go/examples/typmock-sample/internal/generated/mock/greeter_mock"
+	"github.com/typical-go/typical-go/examples/typmock-sample/internal/generated/app/greeter_mock"
 )
 
 func TestPrint(t *testing.T) {

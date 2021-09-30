@@ -1,7 +1,6 @@
 package typgen_test
 
 import (
-	"errors"
 	"reflect"
 	"testing"
 
@@ -96,102 +95,63 @@ func TestGenerator(t *testing.T) {
 	}, Generator.Task())
 }
 
-func TestGenerator_Execute(t *testing.T) {
-	var directives []*typgen.Directive
-	action := &typgen.Generator{
-		Walker: typgen.FilePaths{"sample_test.go"},
-		Processor: &typgen.Annotation{
-			ProcessFn: func(c *typgo.Context, d []*typgen.Directive) error {
-				directives = d
-				return nil
-			},
-		},
-	}
-	require.NoError(t, action.Execute(&typgo.Context{}))
-	require.EqualValues(t, []*typgen.Directive{
-		{Decl: someStructDecl, TagName: "@tag1"},
-		{Decl: someStructDecl, TagName: "@tag2", TagParam: `key1:"", key2: "", key3:"value3"`},
-		{Decl: someFunctionDecl2, TagName: "@ctor"},
-		{Decl: someInterface2Decl, TagName: "@tag3"},
-		{Decl: someStruct2Decl, TagName: "@tag4"},
-	}, directives)
-}
+// func TestGenerator_Execute(t *testing.T) {
+// 	var directives []*typgen.Directive
+// 	action := &typgen.Generator{
+// 		Walker: typgen.FilePaths{"sample_test.go"},
+// 		Processor: &typgen.Annotation{
+// 			ProcessFn: func(c *typgo.Context, d []*typgen.Directive) error {
+// 				directives = d
+// 				return nil
+// 			},
+// 		},
+// 	}
+// 	require.NoError(t, action.Execute(&typgo.Context{}))
+// 	require.EqualValues(t, []*typgen.Directive{
+// 		{Decl: someStructDecl, TagName: "@tag1"},
+// 		{Decl: someStructDecl, TagName: "@tag2", TagParam: `key1:"", key2: "", key3:"value3"`},
+// 		{Decl: someFunctionDecl2, TagName: "@ctor"},
+// 		{Decl: someInterface2Decl, TagName: "@tag3"},
+// 		{Decl: someStruct2Decl, TagName: "@tag4"},
+// 	}, directives)
+// }
 
-func TestGenerator_Error(t *testing.T) {
-	testcases := []struct {
-		TestName    string
-		Generator   *typgen.Generator
-		ExpectedErr string
-	}{
-		{
-			Generator: &typgen.Generator{
-				Walker: typgen.FilePaths{"bad_file.go"},
-			},
-			ExpectedErr: "open bad_file.go: no such file or directory",
-		},
-		{
-			Generator: &typgen.Generator{
-				Walker: typgen.FilePaths{"sample_test.go"},
-				Processor: &typgen.Annotation{
-					ProcessFn: func(c *typgo.Context, d []*typgen.Directive) error {
-						return errors.New("some-error")
-					},
-				},
-			},
-			ExpectedErr: "some-error",
-		},
-		{
-			Generator:   &typgen.Generator{},
-			ExpectedErr: "walker couldn't find any filepath",
-		},
-	}
-	for _, tt := range testcases {
-		t.Run(tt.TestName, func(t *testing.T) {
-			err := tt.Generator.Execute(&typgo.Context{})
-			if tt.ExpectedErr != "" {
-				require.EqualError(t, err, tt.ExpectedErr)
-			} else {
-				require.NoError(t, err)
-			}
-		})
-	}
-}
-
-func TestParseRawAnnot(t *testing.T) {
-	testcases := []struct {
-		TestName         string
-		Raw              string
-		ExpectedTagName  string
-		ExpectedTagAttrs string
-	}{
-		{
-			TestName:        "tag only",
-			Raw:             `@tag1`,
-			ExpectedTagName: "@tag1",
-		},
-		{
-			TestName:        "tag only with space",
-			Raw:             `@tag2 extra1`,
-			ExpectedTagName: "@tag2",
-		},
-		{
-			TestName:         "with attribute",
-			Raw:              `@tag3("name":"wire1")`,
-			ExpectedTagName:  "@tag3",
-			ExpectedTagAttrs: `"name":"wire1"`,
-		},
-		{
-			TestName:         "there is space between tagname and attribute",
-			Raw:              `@tag4 ("name":"wire1")`,
-			ExpectedTagName:  "@tag4",
-			ExpectedTagAttrs: `"name":"wire1"`,
-		},
-	}
-	for _, tt := range testcases {
-		t.Run(tt.TestName, func(t *testing.T) {
-			tagName, tagAttrs := typgen.ParseRawAnnot(tt.Raw)
-			require.Equal(t, tt.ExpectedTagName, tagName)
-			require.Equal(t, tt.ExpectedTagAttrs, tagAttrs)
-		})
-	}
-}
+// func TestGenerator_Error(t *testing.T) {
+// 	testcases := []struct {
+// 		TestName    string
+// 		Generator   *typgen.Generator
+// 		ExpectedErr string
+// 	}{
+// 		{
+// 			Generator: &typgen.Generator{
+// 				Walker: typgen.FilePaths{"bad_file.go"},
+// 			},
+// 			ExpectedErr: "open bad_file.go: no such file or directory",
+// 		},
+// 		{
+// 			Generator: &typgen.Generator{
+// 				Walker: typgen.FilePaths{"sample_test.go"},
+// 				Processor: &typgen.Annotation{
+// 					ProcessFn: func(c *typgo.Context, d []*typgen.Directive) error {
+// 						return errors.New("some-error")
+// 					},
+// 				},
+// 			},
+// 			ExpectedErr: "some-error",
+// 		},
+// 		{
+// 			Generator:   &typgen.Generator{},
+// 			ExpectedErr: "walker couldn't find any filepath",
+// 		},
+// 	}
+// 	for _, tt := range testcases {
+// 		t.Run(tt.TestName, func(t *testing.T) {
+// 			err := tt.Generator.Execute(&typgo.Context{})
+// 			if tt.ExpectedErr != "" {
+// 				require.EqualError(t, err, tt.ExpectedErr)
+// 			} else {
+// 				require.NoError(t, err)
+// 			}
+// 		})
+// 	}
+// }

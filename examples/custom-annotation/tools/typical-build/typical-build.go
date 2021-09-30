@@ -14,12 +14,9 @@ var descriptor = typgo.Descriptor{
 	ProjectVersion: "1.0.0",
 
 	Tasks: []typgo.Tasker{
+		// generate
 		&typgen.Generator{
-			Processor: typgen.Processors{
-				&typgen.Annotation{
-					ProcessFn: printAllAnnotation,
-				},
-			},
+			Annotations: []typgen.Annotation{},
 		},
 		// test
 		&typgo.GoTest{

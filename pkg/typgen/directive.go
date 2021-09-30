@@ -1,7 +1,10 @@
 package typgen
 
 import (
+	"path/filepath"
 	"reflect"
+
+	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 type (
@@ -41,4 +44,16 @@ func (d *Directive) Path() string {
 		return d.Decl.File.Path
 	}
 	return ""
+}
+
+func (d *Directive) Dir() string {
+	path := d.Path()
+	if path == "" {
+		return ""
+	}
+	return filepath.Dir(path)
+}
+
+func (d *Directive) PackagePath() string {
+	return typgo.ProjectPkg + "/" + d.Dir()
 }

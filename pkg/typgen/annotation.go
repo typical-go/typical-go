@@ -1,70 +1,61 @@
 package typgen
 
 import (
-	"errors"
+	"strings"
+	"unicode"
+	"unicode/utf8"
 
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 type (
-	Annotation struct {
-		Filter    Filter
-		ProcessFn ProcessFn
+	Annotation interface {
+		TagName() string
+		IsAllowed(d *Directive) bool
+		Process(*Context) error
 	}
-	Processor interface {
-		Process(*typgo.Context, []*Directive) error
+	Context struct {
+		*typgo.Context
+		Annot Annotation
+		Dirs  []*Directive
 	}
-	ProcessFn  func(*typgo.Context, []*Directive) error
-	Processors []Processor
 )
 
-//
-// Annotation
-//
+func ExecuteAnnotation(c *typgo.Context, annot Annotation, dirs []*Directive) error {
+	return annot.Process(&Context{
+		Context: c,
+		Annot:   annot,
+		Dirs:    Filter(dirs, annot),
+	})
+}
 
-var _ Processor = (*Annotation)(nil)
-
-func (a *Annotation) Process(c *typgo.Context, directives []*Directive) error {
-	if a.ProcessFn == nil {
-		return errors.New("mising annotation processor")
-	}
+func Filter(dirs []*Directive, annot Annotation) []*Directive {
 	var filtered []*Directive
-	for _, dir := range directives {
-		if a.isAllowed(dir) {
+	tagName := annot.TagName()
+	for _, dir := range dirs {
+		if strings.EqualFold(tagName, dir.TagName) && annot.IsAllowed(dir) {
 			filtered = append(filtered, dir)
 		}
 	}
-	return a.ProcessFn(c, filtered)
+	return filtered
 }
 
-func (a *Annotation) isAllowed(d *Directive) bool {
-	if a.Filter == nil {
-		return true
-	}
-	return a.Filter.IsAllowed(d)
+func IsFunc(d *Directive) bool {
+	funcDecl, ok := d.Type.(*Function)
+	return ok && !funcDecl.IsMethod()
 }
 
-//
-// ProcessFn
-//
-
-var _ Processor = (ProcessFn)(nil)
-
-func (p ProcessFn) Process(c *typgo.Context, d []*Directive) error {
-	return p(c, d)
+func IsStruct(d *Directive) bool {
+	_, ok := d.Type.(*Struct)
+	return ok
 }
 
-//
-// Processor
-//
+func IsInterface(d *Directive) bool {
+	_, ok := d.Type.(*Interface)
+	return ok
+}
 
-var _ Processor = (Processors)(nil)
-
-func (p Processors) Process(c *typgo.Context, d []*Directive) error {
-	for _, processor := range p {
-		if err := processor.Process(c, d); err != nil {
-			return err
-		}
-	}
-	return nil
+func IsPublic(d *Directive) bool {
+	rune, _ := utf8.DecodeRuneInString(d.GetName())
+	return unicode.IsUpper(rune)
 }

@@ -21,7 +21,7 @@ func TestCreateMock(t *testing.T) {
 		{
 			annot: &typgen.Directive{
 				Decl: &typgen.Decl{
-					File: &typgen.File{Name: "somePkg", Path: "path/folder/source.go"},
+					File: &typgen.File{Name: "folder", Path: "path/folder/source.go"},
 					Type: &typgen.Interface{TypeDecl: typgen.TypeDecl{Name: "SomeInterface"}},
 				},
 				TagName: "mock",
@@ -29,8 +29,8 @@ func TestCreateMock(t *testing.T) {
 			expected: &typmock.Mock{
 				Pkg:     "some-proj/path/folder",
 				Source:  "SomeInterface",
-				MockPkg: "somePkg_mock",
-				Dest:    "internal/generated/mock/path/somePkg_mock/some_interface.go",
+				MockPkg: "folder_mock",
+				Dest:    "internal/generated/path/folder_mock/some_interface.go",
 			},
 		},
 	}
@@ -42,31 +42,38 @@ func TestCreateMock(t *testing.T) {
 	}
 }
 
-func TestGenTarget(t *testing.T) {
-	typgo.TypicalTmp = ".typical-tmp"
-	defer func() { typgo.TypicalTmp = "" }()
-
-	testcases := []struct {
-		TestName string
-		Dir      string
-		Expected string
+func TestGeneratedDir(t *testing.T) {
+	testCases := []struct {
+		TestName  string
+		Directive *typgen.Directive
+		Suffix    string
+		Expected  string
 	}{
 		{
-			Dir:      "internal/app/service",
-			Expected: "internal/generated/mock/app",
+			Directive: &typgen.Directive{
+				Decl: &typgen.Decl{
+					File: &typgen.File{
+						Path: ".",
+					},
+				},
+			},
+			Expected: "internal/generated",
 		},
 		{
-			Dir:      "internal/service",
-			Expected: "internal/generated/mock",
-		},
-		{
-			Dir:      ".",
-			Expected: "internal/generated/mock",
+			Directive: &typgen.Directive{
+				Decl: &typgen.Decl{
+					File: &typgen.File{
+						Path: "internal/app/service/file.go",
+					},
+				},
+			},
+			Suffix:   "mock",
+			Expected: "internal/generated/app/service_mock",
 		},
 	}
-	for _, tt := range testcases {
+	for _, tt := range testCases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			require.Equal(t, tt.Expected, typmock.GenTarget(tt.Dir))
+			require.Equal(t, tt.Expected, typmock.GeneratedDir(tt.Directive, tt.Suffix))
 		})
 	}
 }
