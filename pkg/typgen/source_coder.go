@@ -1,26 +1,36 @@
 package typgen
 
-import "os"
+import (
+	"strings"
+)
 
 type (
 	SourceCoder interface {
 		SourceCode() string
 	}
-	Comment string
+	SourceCoders []SourceCoder
+	Comment      string
 )
 
-func WriteSourceCode(filename string, srcs ...SourceCoder) error {
-	f, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
-	if err != nil {
-		return err
+//
+// SourceCoders
+//
+
+var _ SourceCoder = (SourceCoders)(nil)
+
+func (s SourceCoders) SourceCode() string {
+	var b strings.Builder
+	for _, src := range s {
+		b.WriteString(src.SourceCode())
+		b.WriteString("\n")
 	}
 
-	for _, src := range srcs {
-		f.WriteString(src.SourceCode())
-		f.WriteString("\n")
-	}
-	return f.Close()
+	return b.String()
 }
+
+//
+// Comment
+//
 
 func (c Comment) SourceCode() string {
 	return "// " + string(c)

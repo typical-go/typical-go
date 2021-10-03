@@ -16,18 +16,11 @@ type (
 	}
 	Context struct {
 		*typgo.Context
+		*InitFile
 		Annot Annotation
 		Dirs  []*Directive
 	}
 )
-
-func ExecuteAnnotation(c *typgo.Context, annot Annotation, dirs []*Directive) error {
-	return annot.Process(&Context{
-		Context: c,
-		Annot:   annot,
-		Dirs:    Filter(dirs, annot),
-	})
-}
 
 func Filter(dirs []*Directive, annot Annotation) []*Directive {
 	var filtered []*Directive

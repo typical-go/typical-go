@@ -17,8 +17,10 @@ type (
 // Generator
 //
 
-var _ typgo.Tasker = (*Generator)(nil)
-var _ typgo.Action = (*Generator)(nil)
+var (
+	_ typgo.Tasker = (*Generator)(nil)
+	_ typgo.Action = (*Generator)(nil)
+)
 
 // Task to annotate
 func (g *Generator) Task() *typgo.Task {
@@ -40,12 +42,21 @@ func (g *Generator) Execute(c *typgo.Context) error {
 	if err != nil {
 		return err
 	}
+
+	initFile := NewInitFile()
 	for _, annot := range g.Annotations {
-		if err := ExecuteAnnotation(c, annot, dirs); err != nil {
+		ctx := &Context{
+			Context:  c,
+			InitFile: initFile,
+			Annot:    annot,
+			Dirs:     Filter(dirs, annot),
+		}
+
+		if err := annot.Process(ctx); err != nil {
 			return err
 		}
 	}
-	return nil
+	return initFile.WriteTo(c, "internal/generated/init.go")
 }
 
 func (a *Generator) walk() []string {

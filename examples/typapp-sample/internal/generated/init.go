@@ -1,13 +1,15 @@
-package ctor
+package generated
 
 import (
 	a "github.com/typical-go/typical-go/examples/typapp-sample/internal/app"
 	"github.com/typical-go/typical-go/pkg/typapp"
 )
 
-// DO NOT EDIT. This is code generated file
-
+// DO NOT EDIT. Code-generated file.
 func init() {
+	// <<< [Annotation:@ctor]
 	typapp.Provide("", a.HelloWorld)
 	typapp.Provide("typical", a.HelloTypical)
+	// [Annotation:@ctor] >>>
+
 }

@@ -39,7 +39,9 @@ func (g *GoMock) Execute(c *typgo.Context) error {
 	if err != nil {
 		return err
 	}
-	if err := typgen.ExecuteAnnotation(c, g, dirs); err != nil {
+
+	ctx := &typgen.Context{Context: c, Annot: g, Dirs: dirs}
+	if err := g.Process(ctx); err != nil {
 		return err
 	}
 

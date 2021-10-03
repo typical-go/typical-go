@@ -1,27 +1,17 @@
 package typapp
 
 import (
-	"fmt"
-	"os"
-	"path/filepath"
-
 	"github.com/typical-go/typical-go/pkg/typgen"
-	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 type (
 	// CtorAnnot handle @ctor annotation
 	// e.g. `@ctor (name:"NAME")`
-	CtorAnnot struct {
-		Target         string // By default is `internal/generated/ctor/ctor.go`
-		aliasGenerator *typgen.AliasGenerator
-		initLines      []string
-	}
+	CtorAnnot struct{}
 )
 
 var (
-	DefaultCtorTag    = "@ctor"
-	DefaultCtorTarget = "internal/generated/ctor/ctor.go"
+	DefaultCtorTag = "@ctor"
 
 	_ typgen.Annotation = (*CtorAnnot)(nil)
 )
@@ -34,72 +24,37 @@ func (a *CtorAnnot) IsAllowed(d *typgen.Directive) bool {
 	return typgen.IsPublic(d)
 }
 
-func (a *CtorAnnot) generateAlias(pkg string) string {
-	return a.AliasGenerator().Generate(pkg)
-}
-
 func (a *CtorAnnot) Process(c *typgen.Context) error {
+	if len(c.Dirs) < 1 {
+		return nil
+	}
+
+	c.PutInitSprintf("// <<< [Annotation:%s] ", a.TagName())
 	for _, d := range c.Dirs {
+		nameTag := d.TagParam.Get("name")
+		packagePath := d.PackagePath()
+
 		switch d.Type.(type) {
 		case *typgen.Function:
-			a.initLines = append(a.initLines, a.generateCodeForFunc(d))
+			funcDecl := d.Type.(*typgen.Function)
+			if !funcDecl.IsMethod() {
+				c.ProvideConstructor(nameTag, packagePath, d.GetName())
+			} else {
+				a.notSupported(c, d)
+			}
 		case *typgen.Struct:
-			a.initLines = append(a.initLines, a.generateCodeForStruct(d))
+			c.PutInit("// TODO: create constructor for struct")
 		default:
-			a.initLines = append(a.initLines, a.unsupportedType(d))
+			a.notSupported(c, d)
 		}
 	}
 
-	if a.Target == "" {
-		a.Target = DefaultCtorTarget
-	}
+	c.PutInitSprintf("// [Annotation:%s] >>>", a.TagName())
+	c.PutInit("") // NOTE: intentionally put blank
 
-	dest := filepath.Dir(a.Target)
-
-	os.MkdirAll(dest, 0777)
-	c.Infof("Generate @ctor to %s\n", a.Target)
-
-	err := typgen.WriteSourceCode(a.Target,
-		&typgen.File{
-			Name:   filepath.Base(dest),
-			Import: a.AliasGenerator().Imports(),
-		},
-		typgen.Comment("DO NOT EDIT. Code-generated file."),
-		&typgen.Function{
-			Name: "init",
-			Body: a.initLines,
-		},
-	)
-
-	typgo.GoImports(c.Context, a.Target)
-	return err
+	return nil
 }
 
-func (a *CtorAnnot) generateCodeForFunc(d *typgen.Directive) string {
-	currPackagePath := fmt.Sprintf("%s/%s", typgo.ProjectPkg, filepath.Dir(d.File.Path))
-	alias := a.generateAlias(currPackagePath)
-
-	funcDecl := d.Type.(*typgen.Function)
-
-	name := d.TagParam.Get("name")
-	if !funcDecl.IsMethod() {
-		return fmt.Sprintf(`typapp.Provide("%s", %s.%s)`, name, alias, d.GetName())
-	}
-	return fmt.Sprintf("// Method '%s' is not supported", d.GetName())
-}
-
-func (a *CtorAnnot) generateCodeForStruct(d *typgen.Directive) string {
-	return "// TODO"
-}
-
-func (a *CtorAnnot) unsupportedType(d *typgen.Directive) string {
-	return fmt.Sprintf("// '%s' is not supported", d.GetName())
-}
-
-func (a *CtorAnnot) AliasGenerator() *typgen.AliasGenerator {
-	if a.aliasGenerator == nil {
-		a.aliasGenerator = typgen.NewAliasGenerator(nil)
-		a.aliasGenerator.Map["github.com/typical-go/typical-go/pkg/typapp"] = ""
-	}
-	return a.aliasGenerator
+func (a *CtorAnnot) notSupported(c *typgen.Context, d *typgen.Directive) {
+	c.PutInitSprintf("// '%s' is not supported", d.GetName())
 }
