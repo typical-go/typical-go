@@ -13,7 +13,7 @@ var descriptor = typgo.Descriptor{
 	Tasks: []typgo.Tasker{
 		// generate
 		&typgen.Generator{
-			Annotations: []typgen.Annotation{
+			Annotators: []typgen.Annotator{
 				&typapp.CtorAnnot{},
 			},
 		},

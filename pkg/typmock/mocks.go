@@ -45,8 +45,8 @@ func MockGen(c *typgo.Context, destPkg, dest, srcPkg, src string) error {
 }
 
 // CreateMock to create mock
-func CreateMock(d *typgen.Directive) *Mock {
-	source := d.GetName()
+func CreateMock(d *typgen.Annotation) *Mock {
+	source := d.Decl.GetName()
 
 	return &Mock{
 		Pkg:     d.PackagePath(),
@@ -56,7 +56,7 @@ func CreateMock(d *typgen.Directive) *Mock {
 	}
 }
 
-func GeneratedDir(d *typgen.Directive, suffix string) string {
+func GeneratedDir(d *typgen.Annotation, suffix string) string {
 	dir := filepath.Dir(d.Path())
 	if dir == "." {
 		return DefaultParent

@@ -7,9 +7,9 @@ import (
 
 // DO NOT EDIT. Code-generated file.
 func init() {
-	// <<< [Annotation:@ctor]
+	// <<< [Annotator:@ctor]
 	typapp.Provide("", a.HelloWorld)
 	typapp.Provide("typical", a.HelloTypical)
-	// [Annotation:@ctor] >>>
+	// [Annotator:@ctor] >>>
 
 }

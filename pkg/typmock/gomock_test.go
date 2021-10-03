@@ -44,9 +44,9 @@ func TestAnnotate_MockgenError(t *testing.T) {
 	gomock := &typmock.GoMock{}
 	require.NoError(t, gomock.Process(&typgen.Context{
 		Context: c,
-		Dirs: []*typgen.Directive{
+		Annotations: []*typgen.Annotation{
 			{
-				TagName: "@mock",
+				Name: "@mock",
 				Decl: &typgen.Decl{
 					File: &typgen.File{Name: "mypkg", Path: "parent/mypkg/some_interface.go"},
 					Type: &typgen.Interface{TypeDecl: typgen.TypeDecl{Name: "SomeInterface"}},
@@ -62,8 +62,8 @@ func TestAnnotate_MockgenError(t *testing.T) {
 
 func TestGoMock(t *testing.T) {
 	gomock := &typmock.GoMock{}
-	require.Equal(t, "@mock", gomock.TagName())
-	require.True(t, gomock.IsAllowed(&typgen.Directive{
+	require.Equal(t, "@mock", gomock.AnnotationName())
+	require.True(t, gomock.IsAllowed(&typgen.Annotation{
 		Decl: &typgen.Decl{
 			Type: &typgen.Interface{
 				TypeDecl: typgen.TypeDecl{

@@ -8,8 +8,8 @@ import (
 	"strings"
 )
 
-func Compile(paths ...string) ([]*Directive, error) {
-	var directives []*Directive
+func Compile(paths ...string) ([]*Annotation, error) {
+	var directives []*Annotation
 	fset := token.NewFileSet() // positions are relative to fset
 
 	for _, path := range paths {
@@ -37,7 +37,7 @@ func Compile(paths ...string) ([]*Directive, error) {
 	return directives, nil
 }
 
-func appendDecl(d []*Directive, file *File, declType Type) []*Directive {
+func appendDecl(d []*Annotation, file *File, declType Type) []*Annotation {
 	decl := &Decl{
 		File: file,
 		Type: declType,
@@ -46,18 +46,18 @@ func appendDecl(d []*Directive, file *File, declType Type) []*Directive {
 	return append(d, retrieveAnnots(decl)...)
 }
 
-func retrieveAnnots(decl *Decl) []*Directive {
-	var annots []*Directive
+func retrieveAnnots(decl *Decl) []*Annotation {
+	var annots []*Annotation
 	for _, raw := range decl.GetDocs() {
 		if strings.HasPrefix(raw, "//") {
 			raw = strings.TrimSpace(raw[2:])
 		}
 		if strings.HasPrefix(raw, "@") {
-			tagName, tagAttrs := ParseRawAnnot(raw)
-			annots = append(annots, &Directive{
-				TagName:  tagName,
-				TagParam: reflect.StructTag(tagAttrs),
-				Decl:     decl,
+			name, params := ParseRawAnnot(raw)
+			annots = append(annots, &Annotation{
+				Name:   name,
+				Params: reflect.StructTag(params),
+				Decl:   decl,
 			})
 		}
 	}
@@ -66,27 +66,26 @@ func retrieveAnnots(decl *Decl) []*Directive {
 }
 
 // ParseRawAnnot parse raw string to annotation
-func ParseRawAnnot(raw string) (tagName, tagAttrs string) {
+func ParseRawAnnot(raw string) (name, params string) {
 	iOpen := strings.IndexRune(raw, '(')
 	iSpace := strings.IndexRune(raw, ' ')
 
 	if iOpen < 0 {
 		if iSpace < 0 {
-			tagName = strings.TrimSpace(raw)
-			return tagName, ""
+			return strings.TrimSpace(raw), ""
 		}
-		tagName = raw[:iSpace]
+		name = raw[:iSpace]
 	} else {
 		if iSpace < 0 {
-			tagName = raw[:iOpen]
+			name = raw[:iOpen]
 		} else {
-			tagName = raw[:iSpace]
+			name = raw[:iSpace]
 		}
 
 		if iClose := strings.IndexRune(raw, ')'); iClose > 0 {
-			tagAttrs = raw[iOpen+1 : iClose]
+			params = raw[iOpen+1 : iClose]
 		}
 	}
 
-	return tagName, tagAttrs
+	return name, params
 }

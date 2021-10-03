@@ -15,16 +15,16 @@ func TestCreateMock(t *testing.T) {
 
 	testcases := []struct {
 		testName string
-		annot    *typgen.Directive
+		annot    *typgen.Annotation
 		expected *typmock.Mock
 	}{
 		{
-			annot: &typgen.Directive{
+			annot: &typgen.Annotation{
 				Decl: &typgen.Decl{
 					File: &typgen.File{Name: "folder", Path: "path/folder/source.go"},
 					Type: &typgen.Interface{TypeDecl: typgen.TypeDecl{Name: "SomeInterface"}},
 				},
-				TagName: "mock",
+				Name: "mock",
 			},
 			expected: &typmock.Mock{
 				Pkg:     "some-proj/path/folder",
@@ -44,13 +44,13 @@ func TestCreateMock(t *testing.T) {
 
 func TestGeneratedDir(t *testing.T) {
 	testCases := []struct {
-		TestName  string
-		Directive *typgen.Directive
-		Suffix    string
-		Expected  string
+		TestName   string
+		Annotation *typgen.Annotation
+		Suffix     string
+		Expected   string
 	}{
 		{
-			Directive: &typgen.Directive{
+			Annotation: &typgen.Annotation{
 				Decl: &typgen.Decl{
 					File: &typgen.File{
 						Path: ".",
@@ -60,7 +60,7 @@ func TestGeneratedDir(t *testing.T) {
 			Expected: "internal/generated",
 		},
 		{
-			Directive: &typgen.Directive{
+			Annotation: &typgen.Annotation{
 				Decl: &typgen.Decl{
 					File: &typgen.File{
 						Path: "internal/app/service/file.go",
@@ -73,7 +73,7 @@ func TestGeneratedDir(t *testing.T) {
 	}
 	for _, tt := range testCases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			require.Equal(t, tt.Expected, typmock.GeneratedDir(tt.Directive, tt.Suffix))
+			require.Equal(t, tt.Expected, typmock.GeneratedDir(tt.Annotation, tt.Suffix))
 		})
 	}
 }

@@ -1,54 +1,58 @@
 package typgen
 
 import (
-	"strings"
-	"unicode"
-	"unicode/utf8"
+	"path/filepath"
+	"reflect"
 
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
 type (
-	Annotation interface {
-		TagName() string
-		IsAllowed(d *Directive) bool
-		Process(*Context) error
+	// Annotation that contain extra additional information
+	Annotation struct {
+		Name   string            `json:"name"`
+		Params reflect.StructTag `json:"params"`
+		Decl   *Decl             `json:"decl"`
 	}
-	Context struct {
-		*typgo.Context
-		*InitFile
-		Annot Annotation
-		Dirs  []*Directive
+	// Decl stand of declaration
+	Decl struct {
+		File *File
+		Type
+	}
+	// Type declaratio type
+	Type interface {
+		GetName() string
+		GetDocs() []string
 	}
 )
 
-func Filter(dirs []*Directive, annot Annotation) []*Directive {
-	var filtered []*Directive
-	tagName := annot.TagName()
-	for _, dir := range dirs {
-		if strings.EqualFold(tagName, dir.TagName) && annot.IsAllowed(dir) {
-			filtered = append(filtered, dir)
-		}
+//
+// Annotation
+//
+
+// Package of annotation
+func (d *Annotation) Package() string {
+	if d.Decl != nil && d.Decl.File != nil {
+		return d.Decl.File.Name
 	}
-	return filtered
+	return ""
 }
 
-func IsFunc(d *Directive) bool {
-	funcDecl, ok := d.Type.(*Function)
-	return ok && !funcDecl.IsMethod()
+func (d *Annotation) Path() string {
+	if d.Decl != nil && d.Decl.File != nil {
+		return d.Decl.File.Path
+	}
+	return ""
 }
 
-func IsStruct(d *Directive) bool {
-	_, ok := d.Type.(*Struct)
-	return ok
+func (d *Annotation) Dir() string {
+	path := d.Path()
+	if path == "" {
+		return ""
+	}
+	return filepath.Dir(path)
 }
 
-func IsInterface(d *Directive) bool {
-	_, ok := d.Type.(*Interface)
-	return ok
-}
-
-func IsPublic(d *Directive) bool {
-	rune, _ := utf8.DecodeRuneInString(d.GetName())
-	return unicode.IsUpper(rune)
+func (d *Annotation) PackagePath() string {
+	return typgo.ProjectPkg + "/" + d.Dir()
 }

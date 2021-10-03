@@ -15,10 +15,10 @@ type (
 )
 
 var (
-	DefaultMockTag = "@mock"
+	DefaultMockAnnot = "@mock"
 
-	_ typgo.Tasker      = (*GoMock)(nil)
-	_ typgen.Annotation = (*GoMock)(nil)
+	_ typgo.Tasker     = (*GoMock)(nil)
+	_ typgen.Annotator = (*GoMock)(nil)
 )
 
 // Task to mock
@@ -35,12 +35,12 @@ func (g *GoMock) Execute(c *typgo.Context) error {
 	if len(filePaths) < 1 {
 		return errors.New("walker couldn't find any filepath")
 	}
-	dirs, err := typgen.Compile(filePaths...)
+	annotations, err := typgen.Compile(filePaths...)
 	if err != nil {
 		return err
 	}
 
-	ctx := &typgen.Context{Context: c, Annot: g, Dirs: dirs}
+	ctx := &typgen.Context{Context: c, Annotator: g, Annotations: annotations}
 	if err := g.Process(ctx); err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func (g *GoMock) walk() []string {
 
 func (g *GoMock) Process(c *typgen.Context) error {
 	var mocks Mocks
-	for _, annot := range c.Dirs {
+	for _, annot := range c.Annotations {
 		mocks = append(mocks, CreateMock(annot))
 	}
 
@@ -70,10 +70,10 @@ func (g *GoMock) Process(c *typgen.Context) error {
 	return nil
 }
 
-func (g *GoMock) TagName() string {
-	return DefaultMockTag
+func (g *GoMock) AnnotationName() string {
+	return DefaultMockAnnot
 }
 
-func (g *GoMock) IsAllowed(d *typgen.Directive) bool {
+func (g *GoMock) IsAllowed(d *typgen.Annotation) bool {
 	return typgen.IsPublic(d) && typgen.IsInterface(d)
 }

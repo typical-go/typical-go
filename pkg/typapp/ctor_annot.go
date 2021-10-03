@@ -11,50 +11,50 @@ type (
 )
 
 var (
-	DefaultCtorTag = "@ctor"
+	DefaultCtorAnnot = "@ctor"
 
-	_ typgen.Annotation = (*CtorAnnot)(nil)
+	_ typgen.Annotator = (*CtorAnnot)(nil)
 )
 
-func (a *CtorAnnot) TagName() string {
-	return DefaultCtorTag
+func (a *CtorAnnot) AnnotationName() string {
+	return DefaultCtorAnnot
 }
 
-func (a *CtorAnnot) IsAllowed(d *typgen.Directive) bool {
+func (a *CtorAnnot) IsAllowed(d *typgen.Annotation) bool {
 	return typgen.IsPublic(d)
 }
 
 func (a *CtorAnnot) Process(c *typgen.Context) error {
-	if len(c.Dirs) < 1 {
+	if len(c.Annotations) < 1 {
 		return nil
 	}
 
-	c.PutInitSprintf("// <<< [Annotation:%s] ", a.TagName())
-	for _, d := range c.Dirs {
-		nameTag := d.TagParam.Get("name")
-		packagePath := d.PackagePath()
+	c.PutInitSprintf("// <<< [Annotator:%s] ", a.AnnotationName())
+	for _, annot := range c.Annotations {
+		nameParam := annot.Params.Get("name")
+		packagePath := annot.PackagePath()
 
-		switch d.Type.(type) {
+		switch annot.Decl.Type.(type) {
 		case *typgen.Function:
-			funcDecl := d.Type.(*typgen.Function)
+			funcDecl := annot.Decl.Type.(*typgen.Function)
 			if !funcDecl.IsMethod() {
-				c.ProvideConstructor(nameTag, packagePath, d.GetName())
+				c.ProvideConstructor(nameParam, packagePath, annot.Decl.GetName())
 			} else {
-				a.notSupported(c, d)
+				a.notSupported(c, annot)
 			}
 		case *typgen.Struct:
 			c.PutInit("// TODO: create constructor for struct")
 		default:
-			a.notSupported(c, d)
+			a.notSupported(c, annot)
 		}
 	}
 
-	c.PutInitSprintf("// [Annotation:%s] >>>", a.TagName())
+	c.PutInitSprintf("// [Annotator:%s] >>>", a.AnnotationName())
 	c.PutInit("") // NOTE: intentionally put blank
 
 	return nil
 }
 
-func (a *CtorAnnot) notSupported(c *typgen.Context, d *typgen.Directive) {
-	c.PutInitSprintf("// '%s' is not supported", d.GetName())
+func (a *CtorAnnot) notSupported(c *typgen.Context, annot *typgen.Annotation) {
+	c.PutInitSprintf("// '%s' is not supported", annot.Decl.GetName())
 }

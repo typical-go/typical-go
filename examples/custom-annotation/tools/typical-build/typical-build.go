@@ -16,7 +16,7 @@ var descriptor = typgo.Descriptor{
 	Tasks: []typgo.Tasker{
 		// generate
 		&typgen.Generator{
-			Annotations: []typgen.Annotation{},
+			Annotators: []typgen.Annotator{},
 		},
 		// test
 		&typgo.GoTest{
@@ -30,11 +30,11 @@ var descriptor = typgo.Descriptor{
 	},
 }
 
-func printAllAnnotation(c *typgo.Context, directives []*typgen.Directive) error {
+func printAllAnnotation(c *typgo.Context, directives []*typgen.Annotation) error {
 	fmt.Println("Print all annotation: ")
 	for _, a := range directives {
 		fmt.Printf("TagName=%s\tName=%s\tType=%T\tParam=%s\tField1=%s\n",
-			a.TagName, a.GetName(), a.Decl.Type, a.TagParam, a.TagParam.Get("field1"))
+			a.Name, a.Decl.GetName(), a.Decl.Type, a.Params, a.Params.Get("field1"))
 	}
 	fmt.Println()
 	return nil

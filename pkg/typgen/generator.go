@@ -8,8 +8,8 @@ import (
 
 type (
 	Generator struct {
-		Walker      Walker
-		Annotations []Annotation
+		Walker     Walker
+		Annotators []Annotator
 	}
 )
 
@@ -38,18 +38,18 @@ func (g *Generator) Execute(c *typgo.Context) error {
 	if len(filePaths) < 1 {
 		return errors.New("walker couldn't find any filepath")
 	}
-	dirs, err := Compile(filePaths...)
+	annotations, err := Compile(filePaths...)
 	if err != nil {
 		return err
 	}
 
 	initFile := NewInitFile()
-	for _, annot := range g.Annotations {
+	for _, annot := range g.Annotators {
 		ctx := &Context{
-			Context:  c,
-			InitFile: initFile,
-			Annot:    annot,
-			Dirs:     Filter(dirs, annot),
+			Context:     c,
+			InitFile:    initFile,
+			Annotator:   annot,
+			Annotations: Filter(annotations, annot),
 		}
 
 		if err := annot.Process(ctx); err != nil {
