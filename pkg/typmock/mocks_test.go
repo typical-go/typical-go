@@ -1,6 +1,7 @@
 package typmock_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -27,10 +28,10 @@ func TestCreateMock(t *testing.T) {
 				Name: "mock",
 			},
 			expected: &typmock.Mock{
-				Pkg:     "some-proj/path/folder",
-				Source:  "SomeInterface",
-				MockPkg: "folder_mock",
-				Dest:    "internal/generated/path/folder_mock/some_interface.go",
+				Package:            "some-proj/path/folder",
+				Source:             "SomeInterface",
+				DestinationPackage: "folder_mock",
+				Destination:        "internal/generated/path/folder_mock/some_interface.go",
 			},
 		},
 	}
@@ -42,38 +43,16 @@ func TestCreateMock(t *testing.T) {
 	}
 }
 
-func TestGeneratedDir(t *testing.T) {
-	testCases := []struct {
-		TestName   string
-		Annotation *typgen.Annotation
-		Suffix     string
-		Expected   string
-	}{
-		{
-			Annotation: &typgen.Annotation{
-				Decl: &typgen.Decl{
-					File: &typgen.File{
-						Path: ".",
-					},
-				},
-			},
-			Expected: "internal/generated",
-		},
-		{
-			Annotation: &typgen.Annotation{
-				Decl: &typgen.Decl{
-					File: &typgen.File{
-						Path: "internal/app/service/file.go",
-					},
-				},
-			},
-			Suffix:   "mock",
-			Expected: "internal/generated/app/service_mock",
-		},
-	}
-	for _, tt := range testCases {
-		t.Run(tt.TestName, func(t *testing.T) {
-			require.Equal(t, tt.Expected, typmock.GeneratedDir(tt.Annotation, tt.Suffix))
-		})
-	}
+func TestMock_Generate_WhenInstallMockgenError(t *testing.T) {
+	typgo.TypicalTmp = ".typical-tmp2"
+	defer func() { typgo.TypicalTmp = "" }()
+
+	c := &typgo.Context{}
+	defer c.PatchBash([]*typgo.MockCommand{
+		{CommandLine: "go build -o .typical-tmp2/bin/mockgen github.com/golang/mock/mockgen", ReturnError: errors.New("some-error")},
+	})(t)
+
+	mock := &typmock.Mock{}
+	err := mock.Generate(c)
+	require.EqualError(t, err, "some-error")
 }

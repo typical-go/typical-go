@@ -35,14 +35,16 @@ func (g *GoMock) Execute(c *typgo.Context) error {
 	if len(filePaths) < 1 {
 		return errors.New("walker couldn't find any filepath")
 	}
-	annotations, err := typgen.Compile(filePaths...)
+	annots, err := typgen.Compile(filePaths...)
 	if err != nil {
 		return err
 	}
-
-	ctx := &typgen.Context{Context: c, Annotator: g, Annotations: annotations}
-	if err := g.Process(ctx); err != nil {
-		return err
+	annots = typgen.Filter(annots, g)
+	ctx := &typgen.Context{Context: c}
+	for _, annot := range annots {
+		if err := g.ProcessAnnot(ctx, annot); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -55,17 +57,10 @@ func (g *GoMock) walk() []string {
 	return g.Walker.Walk()
 }
 
-func (g *GoMock) Process(c *typgen.Context) error {
-	var mocks Mocks
-	for _, annot := range c.Annotations {
-		mocks = append(mocks, CreateMock(annot))
-	}
-
-	for _, t := range mocks {
-		err := MockGen(c.Context, t.MockPkg, t.Dest, t.Pkg, t.Source)
-		if err != nil {
-			c.Infof("Fail to mock '%s': %s\n", t.Pkg, err.Error())
-		}
+func (g *GoMock) ProcessAnnot(c *typgen.Context, annot *typgen.Annotation) error {
+	mock := CreateMock(annot)
+	if err := mock.Generate(c.Context); err != nil {
+		c.Infof("Fail to mock '%s': %s\n", mock.Package, err.Error())
 	}
 	return nil
 }

@@ -3,30 +3,24 @@ package typmock
 import (
 	"fmt"
 	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/iancoleman/strcase"
 	"github.com/typical-go/typical-go/pkg/typgen"
 	"github.com/typical-go/typical-go/pkg/typgo"
 )
 
-const DefaultParent = "internal/generated"
-
 type (
-	// Mocks is art of mocking
-	Mocks []*Mock
 	// Mock annotation data
 	Mock struct {
-		Pkg     string `json:"-"`
-		Source  string `json:"-"`
-		Dest    string `json:"-"`
-		MockPkg string `json:"-"`
+		Package            string
+		Source             string
+		Destination        string
+		DestinationPackage string
 	}
 )
 
 // MockGen execute mockgen bash
-func MockGen(c *typgo.Context, destPkg, dest, srcPkg, src string) error {
+func (m *Mock) Generate(c *typgo.Context) error {
 	mockgen, err := typgo.InstallTool(c, "mockgen", "github.com/golang/mock/mockgen")
 	if err != nil {
 		return err
@@ -35,10 +29,10 @@ func MockGen(c *typgo.Context, destPkg, dest, srcPkg, src string) error {
 	return c.ExecuteCommand(&typgo.Command{
 		Name: mockgen,
 		Args: []string{
-			"-destination", dest,
-			"-package", destPkg,
-			srcPkg,
-			src,
+			"-destination", m.Destination,
+			"-package", m.DestinationPackage,
+			m.Package,
+			m.Source,
 		},
 		Stderr: os.Stderr,
 	})
@@ -47,20 +41,12 @@ func MockGen(c *typgo.Context, destPkg, dest, srcPkg, src string) error {
 // CreateMock to create mock
 func CreateMock(d *typgen.Annotation) *Mock {
 	source := d.Decl.GetName()
+	dir := typgen.CreateTargetDir(d, "mock")
 
 	return &Mock{
-		Pkg:     d.PackagePath(),
-		Source:  source,
-		Dest:    fmt.Sprintf("%s/%s.go", GeneratedDir(d, "mock"), strcase.ToSnake(source)),
-		MockPkg: d.Package() + "_mock",
+		Package:            d.PackagePath(),
+		Source:             source,
+		Destination:        fmt.Sprintf("%s/%s.go", dir, strcase.ToSnake(source)),
+		DestinationPackage: d.Package() + "_mock",
 	}
-}
-
-func GeneratedDir(d *typgen.Annotation, suffix string) string {
-	dir := filepath.Dir(d.Path())
-	if dir == "." {
-		return DefaultParent
-	}
-	dir = strings.ReplaceAll(dir, "internal/", "")
-	return DefaultParent + "/" + dir + "_" + suffix
 }

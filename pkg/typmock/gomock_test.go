@@ -13,19 +13,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func TestMockGen_InstallMockgenError(t *testing.T) {
-	typgo.TypicalTmp = ".typical-tmp2"
-	defer func() { typgo.TypicalTmp = "" }()
-
-	c := &typgo.Context{}
-	defer c.PatchBash([]*typgo.MockCommand{
-		{CommandLine: "go build -o .typical-tmp2/bin/mockgen github.com/golang/mock/mockgen", ReturnError: errors.New("some-error")},
-	})(t)
-
-	err := typmock.MockGen(c, "", "", "", "")
-	require.EqualError(t, err, "some-error")
-}
-
 func TestAnnotate_MockgenError(t *testing.T) {
 	typgo.TypicalTmp = ".typical-tmp"
 	defer func() { typgo.TypicalTmp = "" }()
@@ -37,23 +24,25 @@ func TestAnnotate_MockgenError(t *testing.T) {
 		Logger:     typgo.Logger{Stdout: &out},
 	}
 	defer c.PatchBash([]*typgo.MockCommand{
-		{CommandLine: "go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen"},
-		{CommandLine: ".typical-tmp/bin/mockgen -destination internal/generated/parent/mypkg_mock/some_interface.go -package mypkg_mock /parent/mypkg SomeInterface", ReturnError: errors.New("some-error")},
+		{
+			CommandLine: "go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen",
+		},
+		{
+			CommandLine: ".typical-tmp/bin/mockgen -destination internal/generated/parent/mypkg_mock/some_interface.go -package mypkg_mock /parent/mypkg SomeInterface",
+			ReturnError: errors.New("some-error"),
+		},
 	})(t)
 
 	gomock := &typmock.GoMock{}
-	require.NoError(t, gomock.Process(&typgen.Context{
-		Context: c,
-		Annotations: []*typgen.Annotation{
-			{
-				Name: "@mock",
-				Decl: &typgen.Decl{
-					File: &typgen.File{Name: "mypkg", Path: "parent/mypkg/some_interface.go"},
-					Type: &typgen.Interface{TypeDecl: typgen.TypeDecl{Name: "SomeInterface"}},
-				},
-			},
+	ctx := &typgen.Context{Context: c}
+	annot := &typgen.Annotation{
+		Name: "@mock",
+		Decl: &typgen.Decl{
+			File: &typgen.File{Name: "mypkg", Path: "parent/mypkg/some_interface.go"},
+			Type: &typgen.Interface{TypeDecl: typgen.TypeDecl{Name: "SomeInterface"}},
 		},
-	}))
+	}
+	require.NoError(t, gomock.ProcessAnnot(ctx, annot))
 	require.Equal(t, `> go build -o .typical-tmp/bin/mockgen github.com/golang/mock/mockgen
 > .typical-tmp/bin/mockgen -destination internal/generated/parent/mypkg_mock/some_interface.go -package mypkg_mock /parent/mypkg SomeInterface
 > Fail to mock '/parent/mypkg': some-error

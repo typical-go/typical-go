@@ -24,33 +24,23 @@ func (a *CtorAnnot) IsAllowed(d *typgen.Annotation) bool {
 	return typgen.IsPublic(d)
 }
 
-func (a *CtorAnnot) Process(c *typgen.Context) error {
-	if len(c.Annotations) < 1 {
-		return nil
-	}
+func (a *CtorAnnot) ProcessAnnot(c *typgen.Context, annot *typgen.Annotation) error {
+	nameParam := annot.Params.Get("name")
+	packagePath := annot.PackagePath()
 
-	c.PutInitSprintf("// <<< [Annotator:%s] ", a.AnnotationName())
-	for _, annot := range c.Annotations {
-		nameParam := annot.Params.Get("name")
-		packagePath := annot.PackagePath()
-
-		switch annot.Decl.Type.(type) {
-		case *typgen.Function:
-			funcDecl := annot.Decl.Type.(*typgen.Function)
-			if !funcDecl.IsMethod() {
-				c.ProvideConstructor(nameParam, packagePath, annot.Decl.GetName())
-			} else {
-				a.notSupported(c, annot)
-			}
-		case *typgen.Struct:
-			c.PutInit("// TODO: create constructor for struct")
-		default:
+	switch annot.Decl.Type.(type) {
+	case *typgen.Function:
+		funcDecl := annot.Decl.Type.(*typgen.Function)
+		if !funcDecl.IsMethod() {
+			c.ProvideConstructor(nameParam, packagePath, annot.Decl.GetName())
+		} else {
 			a.notSupported(c, annot)
 		}
+	case *typgen.Struct:
+		c.PutInit("// TODO: create constructor for struct")
+	default:
+		a.notSupported(c, annot)
 	}
-
-	c.PutInitSprintf("// [Annotator:%s] >>>", a.AnnotationName())
-	c.PutInit("") // NOTE: intentionally put blank
 
 	return nil
 }

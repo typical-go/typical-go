@@ -11,13 +11,12 @@ import (
 type (
 	Annotator interface {
 		AnnotationName() string
-		IsAllowed(d *Annotation) bool
-		Process(*Context) error
+		IsAllowed(*Annotation) bool
+		ProcessAnnot(*Context, *Annotation) error
 	}
 	Context struct {
 		*typgo.Context
 		*InitFile
-		Annotator   Annotator
 		Annotations []*Annotation
 	}
 )

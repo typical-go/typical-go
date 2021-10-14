@@ -44,16 +44,25 @@ func (g *Generator) Execute(c *typgo.Context) error {
 	}
 
 	initFile := NewInitFile()
-	for _, annot := range g.Annotators {
-		ctx := &Context{
-			Context:     c,
-			InitFile:    initFile,
-			Annotator:   annot,
-			Annotations: Filter(annotations, annot),
-		}
+	ctx := &Context{
+		Context:     c,
+		InitFile:    initFile,
+		Annotations: annotations,
+	}
 
-		if err := annot.Process(ctx); err != nil {
-			return err
+	for _, a := range g.Annotators {
+
+		annots := Filter(annotations, a)
+
+		if len(annots) > 0 {
+			ctx.PutInit("") // NOTE: intentionally put blank
+			ctx.PutInitSprintf("// <<< [Annotator:%s] ", a.AnnotationName())
+			for _, annot := range Filter(annotations, a) {
+				if err := a.ProcessAnnot(ctx, annot); err != nil {
+					return err
+				}
+			}
+			ctx.PutInitSprintf("// [Annotator:%s] >>>", a.AnnotationName())
 		}
 	}
 	return initFile.WriteTo(c, "internal/generated/init.go")

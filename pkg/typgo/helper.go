@@ -24,10 +24,7 @@ func InstallTool(c *Context, name, source string) (string, error) {
 	output := fmt.Sprintf("%s/bin/%s", TypicalTmp, name)
 
 	if _, err := os.Stat(output); os.IsNotExist(err) {
-		cmd := &GoBuild{
-			Output:      output,
-			MainPackage: source,
-		}
+		cmd := &GoBuild{Output: output, MainPackage: source}
 		if err := c.ExecuteCommand(cmd); err != nil {
 			return "", err
 		}
