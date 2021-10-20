@@ -37,7 +37,7 @@ func (a *CtorAnnot) ProcessAnnot(c *typgen.Context, annot *typgen.Annotation) er
 			a.notSupported(c, annot)
 		}
 	case *typgen.Struct:
-		c.PutInit("// TODO: create constructor for struct")
+		c.AppendInit("// TODO: create constructor for struct")
 	default:
 		a.notSupported(c, annot)
 	}
@@ -46,5 +46,5 @@ func (a *CtorAnnot) ProcessAnnot(c *typgen.Context, annot *typgen.Annotation) er
 }
 
 func (a *CtorAnnot) notSupported(c *typgen.Context, annot *typgen.Annotation) {
-	c.PutInitSprintf("// '%s' is not supported", annot.Decl.GetName())
+	c.AppendInitf("// '%s' is not supported", annot.Decl.GetName())
 }

@@ -35,3 +35,21 @@ import (
 		})
 	}
 }
+
+func TestPackageName(t *testing.T) {
+	testcases := []struct {
+		TestName string
+		Path     string
+		Expected string
+	}{
+		{
+			Path:     "a/b/c/file.go",
+			Expected: "c",
+		},
+	}
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			require.Equal(t, tt.Expected, typgen.PackageName(tt.Path))
+		})
+	}
+}

@@ -60,12 +60,7 @@ func (g *CodeGenerator) Execute(c *typgo.Context) error {
 		return err
 	}
 
-	initFile := NewInitFile()
-	ctx := &Context{
-		Context:     c,
-		InitFile:    initFile,
-		Annotations: annotations,
-	}
+	ctx := NewContext(c, annotations)
 
 	for _, ator := range g.Annotators {
 		filtered := Filter(ctx.Annotations, ator)
@@ -76,7 +71,7 @@ func (g *CodeGenerator) Execute(c *typgo.Context) error {
 			}
 		}
 	}
-	return initFile.WriteTo(c, InitFilePath)
+	return ctx.WriteInitFile(c, InitFilePath)
 }
 
 func (a *CodeGenerator) walk() []string {
@@ -105,14 +100,14 @@ func ExecuteAnnotator(ctx *Context, ator Annotator, filtered []*Annotation) erro
 	}
 
 	if proc, ok := ator.(AnnotProcessor); ok {
-		ctx.PutInit("") // NOTE: intentionally put blank
-		ctx.PutInitSprintf("// <<< [Annotator:%s] ", ator.AnnotationName())
+		ctx.AppendInit("") // NOTE: intentionally put blank
+		ctx.AppendInitf("// <<< [Annotator:%s] ", ator.AnnotationName())
 		for _, annot := range filtered {
 			if err := proc.ProcessAnnot(ctx, annot); err != nil {
 				return err
 			}
 		}
-		ctx.PutInitSprintf("// [Annotator:%s] >>>", ator.AnnotationName())
+		ctx.AppendInitf("// [Annotator:%s] >>>", ator.AnnotationName())
 	}
 
 	if proc, ok := ator.(AnnotatedFileProcessor); ok {

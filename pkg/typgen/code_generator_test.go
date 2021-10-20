@@ -88,9 +88,7 @@ func TestExecuteProcessor_WhenBeforeAnnotateError(t *testing.T) {
 }
 
 func TestExecuteProcessor_WhenProcessAnnotError(t *testing.T) {
-	ctx := &typgen.Context{
-		InitFile: typgen.NewInitFile(),
-	}
+	ctx := typgen.NewContext(nil, nil)
 	ator := &annotator{
 		ProcessAnnotFn: func(c *typgen.Context, a *typgen.Annotation) error {
 			return errors.New("process-error")
@@ -103,9 +101,7 @@ func TestExecuteProcessor_WhenProcessAnnotError(t *testing.T) {
 }
 
 func TestExecuteProcessor_WhenProcessAnnotedFileError(t *testing.T) {
-	ctx := &typgen.Context{
-		InitFile: typgen.NewInitFile(),
-	}
+	ctx := typgen.NewContext(nil, nil)
 	ator := &annotator{
 		ProcessAnnotatedFileFn: func(c *typgen.Context, f *typgen.File, a []*typgen.Annotation) error {
 			return errors.New("process-error")
@@ -124,9 +120,7 @@ func TestExecuteProcessor_WhenProcessAnnotedFileError(t *testing.T) {
 }
 
 func TestExecuteProcessor_WhenAfterAnnotateError(t *testing.T) {
-	ctx := &typgen.Context{
-		InitFile: typgen.NewInitFile(),
-	}
+	ctx := typgen.NewContext(nil, nil)
 	ator := &annotator{
 		AfterAnnotateFn: func(c *typgen.Context, a []*typgen.Annotation) error {
 			return errors.New("after-error")
@@ -139,9 +133,7 @@ func TestExecuteProcessor_WhenAfterAnnotateError(t *testing.T) {
 }
 
 func TestExecuteProcessor(t *testing.T) {
-	ctx := &typgen.Context{
-		InitFile: typgen.NewInitFile(),
-	}
+	ctx := typgen.NewContext(nil, nil)
 	ator := &annotator{}
 	filtered := []*typgen.Annotation{}
 

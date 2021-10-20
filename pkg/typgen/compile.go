@@ -18,7 +18,11 @@ func Compile(paths ...string) ([]*Annotation, error) {
 			return nil, err
 		}
 
-		file := CreateFile(path, f)
+		file := &File{
+			Path:   path,
+			Name:   f.Name.Name,
+			Import: CreateImports(f),
+		}
 
 		for _, decl := range f.Decls {
 			switch decl.(type) {
@@ -42,7 +46,6 @@ func appendDecl(d []*Annotation, file *File, declType Type) []*Annotation {
 		File: file,
 		Type: declType,
 	}
-	// s.Decls = append(s.Decls, decl)
 	return append(d, retrieveAnnots(decl)...)
 }
 

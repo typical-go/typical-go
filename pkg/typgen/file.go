@@ -2,6 +2,7 @@ package typgen
 
 import (
 	"go/ast"
+	"path/filepath"
 	"strings"
 )
 
@@ -20,17 +21,16 @@ type (
 
 var _ Coder = (*File)(nil)
 
-func CreateFile(path string, f *ast.File) *File {
+func CreateImports(f *ast.File) []*Import {
 	var imports []*Import
 	for _, i := range f.Imports {
 		imports = append(imports, createImport(i))
 	}
+	return imports
+}
 
-	return &File{
-		Path:   path,
-		Name:   f.Name.Name,
-		Import: imports,
-	}
+func PackageName(path string) string {
+	return filepath.Base(filepath.Dir(path))
 }
 
 func createImport(i *ast.ImportSpec) *Import {
