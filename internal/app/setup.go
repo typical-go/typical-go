@@ -191,7 +191,7 @@ var descriptor = typgo.Descriptor{
 
 	Tasks: []typgo.Tasker{
 		// generate
-		&typgen.Generator{
+		&typgen.CodeGenerator{
 			Annotators: []typgen.Annotator{
 				&typapp.CtorAnnot{},
 			},

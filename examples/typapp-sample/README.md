@@ -7,7 +7,7 @@ Add `CtorAnnot` and `DtorAnnotation` in annotators
 var descriptor = typgo.Descriptor{
 	Cmds: []typgo.Cmd{
 		// generate
-		&typgen.Generator{
+		&typgen.CodeGenerator{
 			Annotators: []typgen.Annotator{
 				&typapp.CtorAnnot{}, // constructor
 				&typapp.DtorAnnotation{}, // destructor
