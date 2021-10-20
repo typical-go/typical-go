@@ -18,7 +18,7 @@ type (
 )
 
 var _ Type = (*Function)(nil)
-var _ SourceCoder = (*Function)(nil)
+var _ Coder = (*Function)(nil)
 
 func CreateFuncDecl(funcDecl *ast.FuncDecl, file *File) *Function {
 	var recv, params []*Field
@@ -63,7 +63,7 @@ func (f *Function) IsMethod() bool {
 	return len(f.Recv) > 0
 }
 
-func (f *Function) SourceCode() string {
+func (f *Function) Code() string {
 	var o strings.Builder
 	o.WriteString("func ")
 	o.WriteString(f.Name)

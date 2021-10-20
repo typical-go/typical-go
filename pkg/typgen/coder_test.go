@@ -8,9 +8,9 @@ import (
 )
 
 func TestWriteSourceCode(t *testing.T) {
-	sourceCoders := typgen.SourceCoders{
+	sourceCoders := typgen.Coders{
 		typgen.Comment("some comment 1"),
 		typgen.Comment("some comment 2"),
 	}
-	require.Equal(t, "// some comment 1\n// some comment 2\n", sourceCoders.SourceCode())
+	require.Equal(t, "// some comment 1\n// some comment 2\n", sourceCoders.Code())
 }

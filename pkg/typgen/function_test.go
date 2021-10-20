@@ -73,7 +73,7 @@ func TestFunction_SourceCode(t *testing.T) {
 	}
 	for _, tt := range testCases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			require.Equal(t, tt.Expected, tt.Function.SourceCode())
+			require.Equal(t, tt.Expected, tt.Function.Code())
 		})
 	}
 }

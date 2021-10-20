@@ -31,7 +31,7 @@ import (
 	}
 	for _, tt := range testCases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			require.Equal(t, tt.Expected, tt.File.SourceCode())
+			require.Equal(t, tt.Expected, tt.File.Code())
 		})
 	}
 }

@@ -18,7 +18,7 @@ type (
 	}
 )
 
-var _ SourceCoder = (*File)(nil)
+var _ Coder = (*File)(nil)
 
 func CreateFile(path string, f *ast.File) *File {
 	var imports []*Import
@@ -44,7 +44,7 @@ func createImport(i *ast.ImportSpec) *Import {
 	}
 }
 
-func (f *File) SourceCode() string {
+func (f *File) Code() string {
 	var b strings.Builder
 	b.WriteString("package ")
 	b.WriteString(f.Name)

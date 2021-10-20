@@ -34,7 +34,7 @@ func (i *InitFile) WriteTo(c *typgo.Context, target string) error {
 	dir := filepath.Dir(target)
 	os.MkdirAll(dir, 0777)
 
-	sourceCoders := SourceCoders{
+	sourceCoders := Coders{
 		&File{
 			Name:   filepath.Base(dir),
 			Import: i.AliasGen.Imports(),
@@ -46,7 +46,7 @@ func (i *InitFile) WriteTo(c *typgo.Context, target string) error {
 		},
 	}
 
-	data := sourceCoders.SourceCode()
+	data := sourceCoders.Code()
 	return ioutil.WriteFile(target, []byte(data), 0777)
 }
 
