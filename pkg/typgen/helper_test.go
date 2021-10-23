@@ -9,36 +9,24 @@ import (
 
 func TestCreateTargetDir(t *testing.T) {
 	testCases := []struct {
-		TestName   string
-		Annotation *typgen.Annotation
-		Suffix     string
-		Expected   string
+		TestName string
+		Path     string
+		Suffix   string
+		Expected string
 	}{
 		{
-			Annotation: &typgen.Annotation{
-				Decl: &typgen.Decl{
-					File: &typgen.File{
-						Path: ".",
-					},
-				},
-			},
+			Path:     ".",
 			Expected: "internal/generated",
 		},
 		{
-			Annotation: &typgen.Annotation{
-				Decl: &typgen.Decl{
-					File: &typgen.File{
-						Path: "internal/app/service/file.go",
-					},
-				},
-			},
+			Path:     "internal/app/service/file.go",
 			Suffix:   "mock",
 			Expected: "internal/generated/app/service_mock",
 		},
 	}
 	for _, tt := range testCases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			dir := typgen.CreateTargetDir(tt.Annotation, tt.Suffix)
+			dir := typgen.CreateTargetDir(tt.Path, tt.Suffix)
 			require.Equal(t, tt.Expected, dir)
 		})
 	}
@@ -113,6 +101,24 @@ func TestFilterFunc(t *testing.T) {
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
 			require.Equal(t, tt.Expected, tt.Fn(tt.Annotation))
+		})
+	}
+}
+
+func TestPackageName(t *testing.T) {
+	testcases := []struct {
+		TestName string
+		Path     string
+		Expected string
+	}{
+		{
+			Path:     "a/b/c/file.go",
+			Expected: "c",
+		},
+	}
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			require.Equal(t, tt.Expected, typgen.PackageName(tt.Path))
 		})
 	}
 }

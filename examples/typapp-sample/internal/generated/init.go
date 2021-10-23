@@ -7,9 +7,8 @@ import (
 
 // DO NOT EDIT. Code-generated file.
 func init() {
-
-	// <<< [Annotator:@ctor]
+	// TODO: provide struct constructor
+	// TODO: provide interface constructor
 	typapp.Provide("", a.HelloWorld)
 	typapp.Provide("typical", a.HelloTypical)
-	// [Annotator:@ctor] >>>
 }

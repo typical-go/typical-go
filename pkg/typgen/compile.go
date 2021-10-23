@@ -19,9 +19,9 @@ func Compile(paths ...string) ([]*Annotation, error) {
 		}
 
 		file := &File{
-			Path:   path,
-			Name:   f.Name.Name,
-			Import: CreateImports(f),
+			Path:    path,
+			Name:    f.Name.Name,
+			Imports: CreateImports(f),
 		}
 
 		for _, decl := range f.Decls {

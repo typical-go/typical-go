@@ -6,6 +6,13 @@ import (
 	"go.uber.org/dig"
 )
 
+type (
+	// @ctor
+	SomeStruct struct{}
+	// @ctor
+	SomeInterface interface{}
+)
+
 // Start the application which invoked from main() function in cmd package.
 func Start(di *dig.Container, text string) {
 	// "text" is provided by dependency-injection

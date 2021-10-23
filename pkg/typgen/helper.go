@@ -11,8 +11,8 @@ const (
 	DefaultParent = "internal/generated"
 )
 
-func CreateTargetDir(d *Annotation, suffix string) string {
-	dir := filepath.Dir(d.Path())
+func CreateTargetDir(path string, suffix string) string {
+	dir := filepath.Dir(path)
 	if dir == "." {
 		return DefaultParent
 	}
@@ -38,4 +38,8 @@ func IsInterface(d *Annotation) bool {
 func IsPublic(d *Annotation) bool {
 	rune, _ := utf8.DecodeRuneInString(d.Decl.GetName())
 	return unicode.IsUpper(rune)
+}
+
+func PackageName(path string) string {
+	return filepath.Base(filepath.Dir(path))
 }

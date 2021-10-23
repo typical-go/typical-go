@@ -9,47 +9,31 @@ import (
 type (
 	Context struct {
 		*typgo.Context
-		InitAlias    *AliasGenerator
+		InitAliasGen *AliasGenerator
 		InitFuncBody []string
+		MappedCoders map[*File][]Coder
 		Annotations  []*Annotation
 	}
 )
 
 var (
-	defaultInitFileImports = map[string]string{
+	DefaultInitImports = map[string]string{
 		"github.com/typical-go/typical-go/pkg/typapp": "",
 	}
+	InfoSignature = CodeLine("// DO NOT EDIT. Code-generated file\n")
 )
 
 func NewContext(c *typgo.Context, annots []*Annotation) *Context {
 	return &Context{
-		Context:     c,
-		InitAlias:   NewAliasGenerator(defaultInitFileImports),
-		Annotations: annots,
+		Context:      c,
+		InitAliasGen: NewAliasGenerator(DefaultInitImports),
+		Annotations:  annots,
+		MappedCoders: make(map[*File][]Coder),
 	}
 }
 
-func (i *Context) WriteInitFile(c *typgo.Context, target string) error {
-	coder := i.createInitCoder(target)
-	return WriteCoder(c, coder, target)
-}
-
-func (i *Context) createInitCoder(target string) Coder {
-	return Coders{
-		&File{
-			Name:   PackageName(target),
-			Import: i.InitAlias.Imports(),
-		},
-		Comment("DO NOT EDIT. Code-generated file."),
-		&Function{
-			Name: "init",
-			Body: i.InitFuncBody,
-		},
-	}
-}
-
-func (i *Context) AppendInit(s string) {
-	i.InitFuncBody = append(i.InitFuncBody, s)
+func (c *Context) AppendInit(s string) {
+	c.InitFuncBody = append(c.InitFuncBody, s)
 }
 
 func (i *Context) AppendInitf(format string, args ...interface{}) {
@@ -57,7 +41,40 @@ func (i *Context) AppendInitf(format string, args ...interface{}) {
 }
 
 func (i *Context) ProvideConstructor(name, importPath, constructor string) {
-	alias := i.InitAlias.Generate(importPath)
+	alias := i.InitAliasGen.Generate(importPath)
 	s := fmt.Sprintf(`typapp.Provide("%s", %s.%s)`, name, alias, constructor)
 	i.AppendInit(s)
+}
+
+func (i *Context) AppendFileCoder(file *File, coder Coder) {
+	i.MappedCoders[file] = append(i.MappedCoders[file], coder)
+}
+
+func (i *Context) WriteInitFile(target string) error {
+	coder := Coders{
+		&File{
+			Path:    target,
+			Name:    PackageName(target),
+			Imports: i.InitAliasGen.Imports(),
+		},
+		InfoSignature,
+		&Function{
+			Name: "init",
+			Body: i.InitFuncBody,
+		},
+	}
+	return WriteCoder(i.Context, coder, target)
+}
+
+func (i *Context) WriteFile(f *File, target string) error {
+	coder := Coders{
+		&File{
+			Path:    target,
+			Name:    PackageName(target),
+			Imports: f.Imports,
+		},
+		CodeLine(InfoSignature),
+	}
+	coder = append(coder, i.MappedCoders[f]...)
+	return WriteCoder(i.Context, coder, target)
 }

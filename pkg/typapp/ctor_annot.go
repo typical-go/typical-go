@@ -13,7 +13,8 @@ type (
 var (
 	DefaultCtorAnnot = "@ctor"
 
-	_ typgen.Annotator = (*CtorAnnot)(nil)
+	_ typgen.Annotator              = (*CtorAnnot)(nil)
+	_ typgen.AnnotatedFileProcessor = (*CtorAnnot)(nil)
 )
 
 func (a *CtorAnnot) AnnotationName() string {
@@ -24,27 +25,35 @@ func (a *CtorAnnot) IsAllowed(d *typgen.Annotation) bool {
 	return typgen.IsPublic(d)
 }
 
-func (a *CtorAnnot) ProcessAnnot(c *typgen.Context, annot *typgen.Annotation) error {
-	nameParam := annot.Params.Get("name")
-	packagePath := annot.PackagePath()
+func (a *CtorAnnot) ProcessAnnotatedFile(c *typgen.Context, f *typgen.File, annots []*typgen.Annotation) error {
 
-	switch annot.Decl.Type.(type) {
-	case *typgen.Function:
-		funcDecl := annot.Decl.Type.(*typgen.Function)
-		if !funcDecl.IsMethod() {
-			c.ProvideConstructor(nameParam, packagePath, annot.Decl.GetName())
-		} else {
-			a.notSupported(c, annot)
+	for _, annot := range annots {
+		nameParam := annot.Params.Get("name")
+		packagePath := annot.PackagePath()
+
+		switch annot.Decl.Type.(type) {
+		case *typgen.Function:
+			funcDecl := annot.Decl.Type.(*typgen.Function)
+			if !funcDecl.IsMethod() {
+				c.ProvideConstructor(nameParam, packagePath, annot.Decl.GetName())
+			} else {
+				notSupported(c, annot)
+			}
+		case *typgen.Struct:
+			c.AppendInit("// TODO: provide struct constructor")
+			c.AppendFileCoder(f, typgen.CodeLine("// TODO: create constructor function for struct\n"))
+		case *typgen.Interface:
+			c.AppendInit("// TODO: provide interface constructor")
+			c.AppendFileCoder(f, typgen.CodeLine("// TODO: create constructor function for interface\n"))
+		default:
+			notSupported(c, annot)
 		}
-	case *typgen.Struct:
-		c.AppendInit("// TODO: create constructor for struct")
-	default:
-		a.notSupported(c, annot)
+
 	}
 
 	return nil
 }
 
-func (a *CtorAnnot) notSupported(c *typgen.Context, annot *typgen.Annotation) {
+func notSupported(c *typgen.Context, annot *typgen.Annotation) {
 	c.AppendInitf("// '%s' is not supported", annot.Decl.GetName())
 }

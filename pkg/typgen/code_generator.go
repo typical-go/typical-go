@@ -2,6 +2,7 @@ package typgen
 
 import (
 	"errors"
+	"path/filepath"
 	"strings"
 
 	"github.com/typical-go/typical-go/pkg/typgo"
@@ -71,7 +72,7 @@ func (g *CodeGenerator) Execute(c *typgo.Context) error {
 			}
 		}
 	}
-	return ctx.WriteInitFile(c, InitFilePath)
+	return ctx.WriteInitFile(InitFilePath)
 }
 
 func (a *CodeGenerator) walk() []string {
@@ -116,6 +117,8 @@ func ExecuteAnnotator(ctx *Context, ator Annotator, filtered []*Annotation) erro
 			if err := proc.ProcessAnnotatedFile(ctx, file, annots); err != nil {
 				return err
 			}
+			path := CreateTargetDir(file.Path, "") + filepath.Base(file.Path)
+			ctx.WriteFile(file, path)
 		}
 	}
 

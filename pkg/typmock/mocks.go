@@ -41,7 +41,7 @@ func (m *Mock) Generate(c *typgo.Context) error {
 // CreateMock to create mock
 func CreateMock(d *typgen.Annotation) *Mock {
 	source := d.Decl.GetName()
-	dir := typgen.CreateTargetDir(d, "mock")
+	dir := typgen.CreateTargetDir(d.Path(), "mock")
 
 	return &Mock{
 		Package:            d.PackagePath(),

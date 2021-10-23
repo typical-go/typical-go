@@ -13,8 +13,8 @@ type (
 	Coder interface {
 		Code() string
 	}
-	Coders  []Coder
-	Comment string
+	Coders   []Coder
+	CodeLine string
 )
 
 func WriteCoder(c *typgo.Context, coder Coder, target string) error {
@@ -44,11 +44,11 @@ func (s Coders) Code() string {
 }
 
 //
-// Comment
+// CodeLine
 //
 
 var _ Coder = (Coders)(nil)
 
-func (c Comment) Code() string {
-	return "// " + string(c)
+func (c CodeLine) Code() string {
+	return string(c)
 }
