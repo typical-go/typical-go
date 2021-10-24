@@ -13,8 +13,14 @@ type (
 	Coder interface {
 		Code() string
 	}
-	Coders   []Coder
-	CodeLine string
+	Coders    []Coder
+	CodeLine  string
+	CodeLines []string
+)
+
+var (
+	_ Coder = (Coders)(nil)
+	_ Coder = (CodeLine)("")
 )
 
 func WriteCoder(c *typgo.Context, coder Coder, target string) error {
@@ -27,12 +33,6 @@ func WriteCoder(c *typgo.Context, coder Coder, target string) error {
 	return ioutil.WriteFile(target, []byte(data), 0777)
 }
 
-//
-// Coders
-//
-
-var _ Coder = (Coders)(nil)
-
 func (s Coders) Code() string {
 	var b strings.Builder
 	for _, src := range s {
@@ -43,12 +43,15 @@ func (s Coders) Code() string {
 	return b.String()
 }
 
-//
-// CodeLine
-//
-
-var _ Coder = (Coders)(nil)
-
 func (c CodeLine) Code() string {
 	return string(c)
+}
+
+func (c CodeLines) Code() string {
+	var b strings.Builder
+	for _, s := range c {
+		b.WriteString(s)
+		b.WriteString("\n")
+	}
+	return b.String()
 }

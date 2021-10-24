@@ -8,9 +8,29 @@ import (
 )
 
 func TestWriteSourceCode(t *testing.T) {
-	sourceCoders := typgen.Coders{
-		typgen.CodeLine("// some comment 1"),
-		typgen.CodeLine("// some comment 2"),
+	testcases := []struct {
+		TestName string
+		Coder    typgen.Coder
+		Expected string
+	}{
+		{
+			Coder: typgen.Coders{
+				typgen.CodeLine("some-code-1"),
+				typgen.CodeLine("some-code-2"),
+			},
+			Expected: "some-code-1\nsome-code-2\n",
+		},
+		{
+			Coder: typgen.CodeLines{
+				"some-code-1",
+				"some-code-2",
+			},
+			Expected: "some-code-1\nsome-code-2\n",
+		},
 	}
-	require.Equal(t, "// some comment 1\n// some comment 2\n", sourceCoders.Code())
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			require.Equal(t, tt.Expected, tt.Coder.Code())
+		})
+	}
 }

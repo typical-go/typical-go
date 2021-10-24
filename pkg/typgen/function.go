@@ -13,7 +13,7 @@ type (
 		Recv    []*Field
 		Params  []*Field
 		Returns []*Field
-		Body    []string
+		Body    Coder
 	}
 )
 
@@ -77,14 +77,13 @@ func (f *Function) Code() string {
 		writeFields(&o, f.Returns)
 		o.WriteString(")")
 	}
-
 	o.WriteString("{\n")
 
-	for _, s := range f.Body {
-		o.WriteString("\t")
-		o.WriteString(s)
+	if f.Body != nil {
+		o.WriteString(f.Body.Code())
 		o.WriteString("\n")
 	}
+
 	o.WriteString("}")
 	return o.String()
 }

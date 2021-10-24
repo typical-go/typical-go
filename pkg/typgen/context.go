@@ -10,7 +10,7 @@ type (
 	Context struct {
 		*typgo.Context
 		InitAliasGen *AliasGenerator
-		InitFuncBody []string
+		InitFuncBody CodeLines
 		MappedCoders map[*File][]Coder
 		Annotations  []*Annotation
 	}

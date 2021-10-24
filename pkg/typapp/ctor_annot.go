@@ -1,6 +1,8 @@
 package typapp
 
 import (
+	"fmt"
+
 	"github.com/typical-go/typical-go/pkg/typgen"
 )
 
@@ -35,16 +37,30 @@ func (a *CtorAnnot) ProcessAnnotatedFile(c *typgen.Context, f *typgen.File, anno
 		case *typgen.Function:
 			funcDecl := annot.Decl.Type.(*typgen.Function)
 			if !funcDecl.IsMethod() {
-				c.ProvideConstructor(nameParam, packagePath, annot.Decl.GetName())
+				c.ProvideConstructor(nameParam, packagePath, funcDecl.GetName())
 			} else {
 				notSupported(c, annot)
 			}
 		case *typgen.Struct:
+			stDecl := annot.Decl.Type.(*typgen.Struct)
+			name := fmt.Sprintf("New%s", stDecl.GetName())
 			c.AppendInit("// TODO: provide struct constructor")
-			c.AppendFileCoder(f, typgen.CodeLine("// TODO: create constructor function for struct\n"))
+			c.AppendFileCoder(f, &typgen.Function{
+				Name: name,
+				Body: typgen.CodeLines{
+					"// TODO: create constructor function for struct",
+				},
+			})
 		case *typgen.Interface:
+			itDecl := annot.Decl.Type.(*typgen.Interface)
+			name := fmt.Sprintf("New%s", itDecl.GetName())
 			c.AppendInit("// TODO: provide interface constructor")
-			c.AppendFileCoder(f, typgen.CodeLine("// TODO: create constructor function for interface\n"))
+			c.AppendFileCoder(f, &typgen.Function{
+				Name: name,
+				Body: typgen.CodeLines{
+					"// TODO: create constructor function for interface",
+				},
+			})
 		default:
 			notSupported(c, annot)
 		}
