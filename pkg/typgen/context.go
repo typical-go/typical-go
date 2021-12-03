@@ -42,7 +42,7 @@ func (i *Context) AppendInitf(format string, args ...interface{}) {
 
 func (i *Context) ProvideConstructor(name, importPath, constructor string) {
 	alias := i.InitAliasGen.Generate(importPath)
-	s := fmt.Sprintf(`typapp.Provide("%s", %s.%s)`, name, alias, constructor)
+	s := fmt.Sprintf("\ttypapp.Provide(\"%s\", %s.%s)", name, alias, constructor)
 	i.AppendInit(s)
 }
 
