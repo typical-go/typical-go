@@ -63,7 +63,7 @@ Any downloaded or required file will be saved in temporary folder which is locat
 
 To update typical-go to new version
 ```
-$ go get -u go get -u github.com/typical-go/typical-go
+$ go get -u github.com/typical-go/typical-go
 $ rm -rf .typical-tmp
 ```
 
