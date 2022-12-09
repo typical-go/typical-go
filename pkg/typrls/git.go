@@ -46,7 +46,7 @@ func CreateLog(raw string) *Log {
 	}
 }
 
-// GitFetch fetch latest update
+// GitFetch fetch the latest update
 func GitFetch(c *typgo.Context) error {
 	return c.ExecuteCommand(&typgo.Command{Name: "git", Args: []string{"fetch"}, Stderr: os.Stderr})
 }

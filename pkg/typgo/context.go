@@ -36,7 +36,7 @@ func NewContext(c *cli.Context, d *Descriptor) *Context {
 	}
 }
 
-// Execute command
+// ExecuteCommand execute a command
 func (c *Context) ExecuteCommand(basher Commander) error {
 	bash := basher.Command()
 	c.Logger.Command(bash)

@@ -19,10 +19,11 @@ Typical Go known to work with Go 1.17 and later.
 
 ## Getting Started
 
-1. Install typical-go (Optional, only needed to setup new project)
+1. Install typical-go (Optional, only needed to set up new project)
    ```
    $ go get -u github.com/typical-go/typical-go
    ```
+
 2. Setup new project
    ```
    $ typical-go setup -new -go-mod -project-pkg=[PACKAGE_NAME]
