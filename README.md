@@ -15,7 +15,7 @@ Build Automation Tool For Golang
 
 ## Requirements
 
-Typical Go known to work with Go 1.17 and later. Typical Go may work with older versions of Go but this is not guaranteed.
+Typical Go known to work with Go 1.17 and later.
 
 ## Getting Started
 

@@ -9,17 +9,38 @@ on:
 jobs:
 
   build:
-    name: Build
-    runs-on: ubuntu-latest
+    name: Go ${{ matrix.go }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    # The maximum number of minutes to let a workflow run
+    # before GitHub automatically cancels it. Default: 360
+    timeout-minutes: 30
+
+    strategy:
+      # When set to true, GitHub cancels
+      # all in-progress jobs if any matrix job fails.
+      fail-fast: false
+
+      matrix:
+        go:
+          - '1.17'
+          - '1.18'
+          - '1.19'
+        os:
+          - ubuntu-latest
+          - macos-latest
+
     steps:
 
-    - name: Set up Go
+    - name: Set up Go ${{ matrix.go }}
       uses: actions/setup-go@v3
       with:
-        go-version: 1.17
+        go-version: ${{ matrix.go }}
 
-    - name: Check out code into the Go module directory
+    - name: Check out code
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 5
 
     - name: Test
       run: ./typicalw test -coverprofile=cover.out
@@ -38,3 +59,6 @@ jobs:
       with:
         fail_ci_if_error: true
 
+    - name: Success Reporting
+      if: success()
+      run: git log --format=fuller -5
