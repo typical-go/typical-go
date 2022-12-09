@@ -1,6 +1,6 @@
 module github.com/typical-go/typical-go
 
-go 1.14
+go 1.17
 
 require (
 	bou.ke/monkey v1.0.2

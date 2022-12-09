@@ -13,6 +13,10 @@ Build Automation Tool For Golang
 - Wrapper Script  &mdash; *single script to prepare and run the build-tool*
 - Supporting java-like annotation for code generation &mdash; *alternative for [go-generate](https://blog.golang.org/generate)*
 
+## Requirements
+
+Typical Go known to work with Go 1.17 and later. Typical Go may work with older versions of Go but this is not guaranteed.
+
 ## Getting Started
 
 1. Install typical-go (Optional, only needed to setup new project)
