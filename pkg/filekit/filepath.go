@@ -19,7 +19,7 @@ func MatchMulti(patterns []string, name string) bool {
 
 // FindDir find directory
 func FindDir(includes, excludes []string) (packages []string, err error) {
-	err = filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
+	err = filepath.WalkDir(".", func(path string, info os.DirEntry, err error) error {
 		if MatchMulti(includes, path) && !MatchMulti(excludes, path) && info.IsDir() {
 			packages = append(packages, "./"+path)
 		}

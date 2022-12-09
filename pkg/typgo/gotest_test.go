@@ -2,13 +2,10 @@ package typgo_test
 
 import (
 	"flag"
-	"path/filepath"
+	"os"
 	"testing"
 	"time"
 
-	"github.com/typical-go/typical-go/pkg/filekit"
-
-	"bou.ke/monkey"
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/typgo"
 	"github.com/urfave/cli/v2"
@@ -22,15 +19,30 @@ func TestGoTest_NoPackages(t *testing.T) {
 	require.NoError(t, testProj.Execute(c))
 }
 
+func setupGoTest(t *testing.T) func(t *testing.T) {
+	dirs := []string{
+		"pkg1",
+		"pkg2",
+		"pkg_mock",
+	}
+
+	for _, dir := range dirs {
+		err := os.MkdirAll(dir, os.ModePerm)
+		if err != nil && !os.IsExist(err) {
+			t.Skip(err.Error())
+		}
+	}
+
+	return func(t *testing.T) {
+		os.RemoveAll("pkg1")
+		os.RemoveAll("pkg2")
+		os.RemoveAll("pkg")
+	}
+}
+
 func TestGoTest(t *testing.T) {
-	defer monkey.Patch(filepath.Walk,
-		func(root string, walkFn filepath.WalkFunc) error {
-			walkFn("pkg1", &filekit.FileInfo{IsDirField: true}, nil)
-			walkFn("pkg2", &filekit.FileInfo{IsDirField: true}, nil)
-			walkFn("pkg/service_mock", &filekit.FileInfo{IsDirField: true}, nil)
-			return nil
-		},
-	).Unpatch()
+	teardownTest := setupGoTest(t)
+	defer teardownTest(t)
 
 	c := &typgo.Context{
 		Context: cli.NewContext(nil, &flag.FlagSet{}, nil),
