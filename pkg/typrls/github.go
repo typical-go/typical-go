@@ -3,7 +3,6 @@ package typrls
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -48,7 +47,7 @@ func (g *Github) Publish(c *Context) (err error) {
 		return
 	}
 
-	files, _ := ioutil.ReadDir(c.ReleaseFolder)
+	files, _ := os.ReadDir(c.ReleaseFolder)
 	for _, fileInfo := range files {
 		path := c.ReleaseFolder + "/" + fileInfo.Name()
 		c.Infof("Upload '%s'\n", path)

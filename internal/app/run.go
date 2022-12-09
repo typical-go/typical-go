@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -42,11 +41,11 @@ func Run(c *typgo.Context) error {
 	bin := fmt.Sprintf("%s/bin/%s", p.TypicalTmp, filepath.Base(p.TypicalBuild))
 
 	chksum := generateChecksum(p.TypicalBuild)
-	chksum0, _ := ioutil.ReadFile(chksumTarget)
+	chksum0, _ := os.ReadFile(chksumTarget)
 	_, err = os.Stat(chksumTarget)
 
 	if os.IsNotExist(err) || !bytes.Equal(chksum, chksum0) {
-		if err = ioutil.WriteFile(chksumTarget, chksum, 0777); err != nil {
+		if err = os.WriteFile(chksumTarget, chksum, 0777); err != nil {
 			return err
 		}
 
@@ -86,7 +85,7 @@ func Run(c *typgo.Context) error {
 func generateChecksum(source string) []byte {
 	h := sha256.New()
 	filepath.Walk(source, func(path string, info os.FileInfo, err error) error {
-		if b, err := ioutil.ReadFile(path); err == nil {
+		if b, err := os.ReadFile(path); err == nil {
 			h.Write(b)
 		}
 		return nil

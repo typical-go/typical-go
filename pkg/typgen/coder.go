@@ -1,7 +1,6 @@
 package typgen
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -30,7 +29,7 @@ func WriteCoder(c *typgo.Context, coder Coder, target string) error {
 	os.MkdirAll(dir, 0777)
 
 	data := coder.Code()
-	return ioutil.WriteFile(target, []byte(data), 0777)
+	return os.WriteFile(target, []byte(data), 0777)
 }
 
 func (s Coders) Code() string {

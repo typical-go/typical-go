@@ -1,7 +1,6 @@
 package tmplkit_test
 
 import (
-	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
@@ -28,7 +27,7 @@ func TestExecuteTmplToFile(t *testing.T) {
 	defer os.Remove(target)
 	require.NoError(t, tmplkit.WriteFile(target, "hello {{.Name}}", &data{Name: "world"}))
 
-	b, _ := ioutil.ReadFile(target)
+	b, _ := os.ReadFile(target)
 	require.Equal(t, "hello world", string(b))
 }
 

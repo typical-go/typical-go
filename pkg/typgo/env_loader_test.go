@@ -1,7 +1,6 @@
 package typgo_test
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -10,7 +9,7 @@ import (
 )
 
 func TestDotEnv(t *testing.T) {
-	ioutil.WriteFile(".env", []byte("key1=value1\nkey2=value2\n"), 0777)
+	os.WriteFile(".env", []byte("key1=value1\nkey2=value2\n"), 0777)
 	defer os.Remove(".env")
 
 	m, err := typgo.DotEnv(".env").EnvLoad()
