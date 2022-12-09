@@ -36,7 +36,7 @@ func setupGoTest(t *testing.T) func(t *testing.T) {
 	return func(t *testing.T) {
 		os.RemoveAll("pkg1")
 		os.RemoveAll("pkg2")
-		os.RemoveAll("pkg")
+		os.RemoveAll("pkg_mock")
 	}
 }
 
