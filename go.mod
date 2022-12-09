@@ -16,5 +16,5 @@ require (
 	github.com/urfave/cli/v2 v2.2.0
 	go.uber.org/dig v1.10.0
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
-	golang.org/x/sys v0.0.0-20200922070232-aee5d888a860 // indirect
+	golang.org/x/sys v0.3.0 // indirect
 )
