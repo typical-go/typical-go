@@ -6,7 +6,7 @@ import "github.com/fatih/color"
 var (
 	// ProjectName of application.
 	ProjectName string
-	// ProjectVersion of applicatoin.
+	// ProjectVersion of application.
 	ProjectVersion string
 )
 

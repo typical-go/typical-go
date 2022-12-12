@@ -10,7 +10,7 @@ type (
 		Mocks []*MockCommand
 		Ptr   int
 	}
-	// MockCommand is test expectation
+	// MockCommand is the test expectation
 	MockCommand struct {
 		CommandLine string
 		OutputBytes []byte

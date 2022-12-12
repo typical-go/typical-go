@@ -30,7 +30,7 @@ func Start(di *dig.Container, text string) {
 	})
 }
 
-// Stop the application which invoked gracefull when the application stop or received exit signal
+// Stop the application which invoked gracefully when the application stop or received exit signal
 func Stop() { fmt.Println("Bye") }
 
 // HelloWorld text

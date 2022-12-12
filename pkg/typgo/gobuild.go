@@ -10,8 +10,8 @@ import (
 type (
 	// GoBuild command
 	GoBuild struct {
-		MainPackage string // By default is "cmd/PROJECT_NAME"
-		Output      string // By default is "bin/PROJECT_NAME"
+		MainPackage string // By default, is "cmd/PROJECT_NAME"
+		Output      string // By default, is "bin/PROJECT_NAME"
 		// By default is set variable typgo.ProjectName to PROJECT_NAME
 		// and typgo.ProjectVersion to PROJECT-VERSION
 		Ldflags fmt.Stringer

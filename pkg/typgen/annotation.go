@@ -19,7 +19,7 @@ type (
 		File *File
 		Type
 	}
-	// Type declaratio type
+	// Type declaration type
 	Type interface {
 		GetName() string
 		GetDocs() []string
