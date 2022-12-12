@@ -2,7 +2,6 @@ package envkit_test
 
 import (
 	"errors"
-	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
@@ -82,12 +81,12 @@ func TestSaveFile(t *testing.T) {
 	}, "some-target"))
 	defer os.Remove("some-target")
 
-	b, _ := ioutil.ReadFile("some-target")
+	b, _ := os.ReadFile("some-target")
 	require.Equal(t, "key1=value1\nkey2=value2\n", string(b))
 }
 
 func TestReadFile(t *testing.T) {
-	ioutil.WriteFile("some-dotenv", []byte("key1=value1\nkey2=value2\n"), 0777)
+	os.WriteFile("some-dotenv", []byte("key1=value1\nkey2=value2\n"), 0777)
 	defer os.Remove("some-dotenv")
 	m, err := envkit.ReadFile("some-dotenv")
 	require.NoError(t, err)

@@ -3,7 +3,6 @@ package app
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -87,13 +86,13 @@ func newProject(p *Param) {
 	appStart := appPkg + "/start.go"
 	fmt.Fprintf(Stdout, "Create '%s'\n", appStart)
 	os.MkdirAll(appPkg, 0777)
-	ioutil.WriteFile(appStart, []byte(appStartSrc), 0777)
+	os.WriteFile(appStart, []byte(appStartSrc), 0777)
 
 	generatedPkg := p.SetupTarget + "/internal/generated/ctor"
 	generatedDoc := generatedPkg + "/ctor.go"
 	fmt.Fprintf(Stdout, "Create '%s'\n", generatedDoc)
 	os.MkdirAll(generatedPkg, 0777)
-	ioutil.WriteFile(generatedDoc, []byte(generatedDocSrc), 0777)
+	os.WriteFile(generatedDoc, []byte(generatedDocSrc), 0777)
 
 	typicalBuildPkg := p.SetupTarget + "/tools/typical-build"
 	typicalBuild := typicalBuildPkg + "/typical-build.go"
@@ -101,7 +100,7 @@ func newProject(p *Param) {
 	os.MkdirAll(typicalBuildPkg, 0777)
 	tmplkit.WriteFile(typicalBuild, typicalBuildTmpl, p)
 
-	ioutil.WriteFile(p.SetupTarget+"/.gitignore", []byte(gitignore), 0777)
+	os.WriteFile(p.SetupTarget+"/.gitignore", []byte(gitignore), 0777)
 }
 
 const typicalwTmpl = `#!/bin/bash
