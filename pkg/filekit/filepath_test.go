@@ -1,10 +1,9 @@
 package filekit_test
 
 import (
-	"path/filepath"
+	"os"
 	"testing"
 
-	"bou.ke/monkey"
 	"github.com/stretchr/testify/require"
 	"github.com/typical-go/typical-go/pkg/filekit"
 )
@@ -39,47 +38,52 @@ func TestMatchMulti(t *testing.T) {
 	}
 }
 
+func setupFindDirTest(t *testing.T) func(t *testing.T) {
+	dirs := []string{
+		"tmp/internal/app/infra",
+		"tmp/internal/app/domain/mylibrary/controller",
+		"tmp/internal/app/domain/mylibrary/repo",
+		"tmp/internal/app/domain/mylibrary/service",
+		"tmp/internal/app/domain/mybook/controller",
+		"tmp/internal/app/domain/mybook/repo",
+		"tmp/internal/app/domain/mybook/service",
+		"tmp/internal/app/generated/constructor",
+		"tmp/internal/app/generated/config",
+	}
+
+	for _, dir := range dirs {
+		err := os.MkdirAll(dir, os.ModePerm)
+		if err != nil && !os.IsExist(err) {
+			t.Skip(err.Error())
+		}
+	}
+
+	return func(t *testing.T) {
+		os.RemoveAll("tmp")
+	}
+}
+
 func TestFindDir(t *testing.T) {
-	defer monkey.Patch(filepath.Walk,
-		func(root string, walkFn filepath.WalkFunc) error {
-			dirs := []string{
-				"internal/app/infra",
-				"internal/app/domain",
-				"internal/app/domain/mylibrary",
-				"internal/app/domain/mylibrary/controller",
-				"internal/app/domain/mylibrary/service",
-				"internal/app/domain/mylibrary/repo",
-				"internal/app/domain/mybook/controller",
-				"internal/app/domain/mybook/service",
-				"internal/app/domain/mybook/repo",
-				"internal/app/generated",
-				"internal/app/generated/constructor",
-				"internal/app/generated/config",
-			}
-
-			for _, dir := range dirs {
-				walkFn(dir, &filekit.FileInfo{IsDirField: true}, nil)
-			}
-
-			return nil
-		},
-	).Unpatch()
+	teardownTest := setupFindDirTest(t)
+	defer teardownTest(t)
 
 	dirs, err := filekit.FindDir(
-		[]string{"internal/**/*"},
-		[]string{"internal/**/generated/**"},
+		[]string{"tmp/internal/**/*"},
+		[]string{"tmp/internal/**/generated/**"},
 	)
 	require.NoError(t, err)
 	require.Equal(t, []string{
-		"./internal/app/infra",
-		"./internal/app/domain",
-		"./internal/app/domain/mylibrary",
-		"./internal/app/domain/mylibrary/controller",
-		"./internal/app/domain/mylibrary/service",
-		"./internal/app/domain/mylibrary/repo",
-		"./internal/app/domain/mybook/controller",
-		"./internal/app/domain/mybook/service",
-		"./internal/app/domain/mybook/repo",
-		"./internal/app/generated",
+		"./tmp/internal/app",
+		"./tmp/internal/app/domain",
+		"./tmp/internal/app/domain/mybook",
+		"./tmp/internal/app/domain/mybook/controller",
+		"./tmp/internal/app/domain/mybook/repo",
+		"./tmp/internal/app/domain/mybook/service",
+		"./tmp/internal/app/domain/mylibrary",
+		"./tmp/internal/app/domain/mylibrary/controller",
+		"./tmp/internal/app/domain/mylibrary/repo",
+		"./tmp/internal/app/domain/mylibrary/service",
+		"./tmp/internal/app/generated",
+		"./tmp/internal/app/infra",
 	}, dirs)
 }

@@ -3,7 +3,6 @@ module github.com/typical-go/typical-go
 go 1.17
 
 require (
-	bou.ke/monkey v1.0.2
 	github.com/bmatcuk/doublestar/v2 v2.0.4
 	github.com/fatih/color v1.9.0
 	github.com/golang/mock v1.4.4
